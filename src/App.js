@@ -54,7 +54,7 @@ function App() {
             <Flex justifyContent="space-between" alignItems="center" flexDirection="row">
               <Flex justifyContent="end" alignItems="center" flexDirection="column" m="40px">
                 <Spacer/>
-                <Heading as="h1" fontSize="6xl" fontWeight="800" color="gray.700">EZ!</Heading>
+                <Heading as="h1" fontSize="6xl" fontWeight="800" color="gray.700">Section 1</Heading>
               </Flex>
             </Flex>
           </Box>
@@ -63,7 +63,7 @@ function App() {
             <Flex justifyContent="space-between" alignItems="center" flexDirection="row">
               <Flex justifyContent="end" alignItems="center" flexDirection="column" m="40px">
                 <Spacer/>
-                <Heading as="h1" fontSize="6xl" fontWeight="800" color="gray.700">EZ!</Heading>
+                <Heading as="h1" fontSize="6xl" fontWeight="800" color="gray.700">Section 2</Heading>
               </Flex>
             </Flex>
           </Box>
