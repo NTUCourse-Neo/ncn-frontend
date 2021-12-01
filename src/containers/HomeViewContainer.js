@@ -10,8 +10,10 @@ import {
   } from '@chakra-ui/react';
 import homeMainSvg from '../img/home_main.svg';
 import HomeCard from '../components/HomeCard';
+import CourseInfoRowContainer from './CourseInfoRowContainer';
 import { FaArrowDown } from "react-icons/fa";
 import { animateScroll as scroll } from 'react-scroll'
+import DataSet from '../components/FakeDataSet';
 
 function HomeViewContainer() {
     return (
@@ -32,6 +34,7 @@ function HomeViewContainer() {
             <Spacer/>
             <Image src={homeMainSvg} alt="home_main" w="50vw"/>
           </Flex>
+            <CourseInfoRowContainer courseInfo={DataSet.courseInfo} />
           <Spacer my={10}/>
           <Button variant="ghost" size="lg" onClick={() => scroll.scrollTo(750)}><FaArrowDown/></Button>
           <Spacer my={5}/>
