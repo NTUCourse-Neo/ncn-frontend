@@ -16,14 +16,15 @@ import {
     TagLabel,
     IconButton,
   } from '@chakra-ui/react';
+import CourseDrawerContainer from '../containers/CourseDrawerContainer';
 import { FaUserPlus, FaPuzzlePiece, FaPlus} from 'react-icons/fa';
 function CourseInfoRow(props) {
     return(
         <AccordionItem id={props.index} bg="gray.100" borderRadius="md">
             <AccordionButton>
-                <Flex alignItems="center" justifyContent="start" flexDirection="row" w="100%">
+                <Flex alignItems="center" justifyContent="start" flexDirection="row" w="100%" px="5px">
                     <Flex alignItems="center" justifyContent="start">
-                        <Badge variant='outline' mx="4px">{props.courseInfo.id}</Badge>
+                        <Badge variant='outline' mr="4px">{props.courseInfo.id}</Badge>
                         <Badge colorScheme="blue" variant='solid' mx="4px">{props.courseInfo.department[0]}</Badge>
                         <Heading as="h3" size="md" ml="10px" mr="5px" color="gray.600">{props.courseInfo.course_name}</Heading>
                         <Badge variant='outline' colorScheme="gray">{props.courseInfo.credit[0]}</Badge>
@@ -43,8 +44,8 @@ function CourseInfoRow(props) {
                     </Flex>
                 </Flex>
             </AccordionButton>
-            <AccordionPanel pb={4}>
-                aaa
+            <AccordionPanel>
+                <CourseDrawerContainer courseInfo={props.courseInfo}/>
             </AccordionPanel>
         </AccordionItem>
     );
