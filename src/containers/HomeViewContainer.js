@@ -10,12 +10,13 @@ import {
   } from '@chakra-ui/react';
 import homeMainSvg from '../img/home_main.svg';
 import HomeCard from '../components/HomeCard';
+
 import { FaArrowDown } from "react-icons/fa";
 import { animateScroll as scroll } from 'react-scroll'
 
 function HomeViewContainer() {
     return (
-        <Box maxW="screen-md" mx="auto" overflow="visible" px="64px">
+        <Box maxW="screen-md" mx="auto" overflow="visible" p="64px">
         <Flex justifyContent="space-between" mb={4} grow="1" flexDirection="column" alignItems="center">
           <Spacer/>
           <Flex justifyContent="space-between" flexDirection="row" alignItems="center" w="90vw">
@@ -37,9 +38,6 @@ function HomeViewContainer() {
           <Spacer my={5}/>
           <HomeCard title="Section 1" bg="gray.100" img=""/>
           <Spacer mt="10" mb="10"/>
-          <HomeCard title="Section 2" bg="blue.100" img=""/>
-          <Spacer mt="10" mb="10"/>
-          <HomeCard title="Section 3" bg="teal.100" img=""/>
         </Flex>
       </Box>
     );
