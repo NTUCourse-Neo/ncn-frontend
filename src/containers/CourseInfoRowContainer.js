@@ -9,10 +9,10 @@ import {
 function CourseInfoRowContainer(props) {
     const renderCourseInfoRow = () => {
         return(
-            Object.keys(props.courseInfo).map((key, index) => {
+            props.courseInfo.map((info, index) => {
                 return(
                     <Accordion allowToggle w="50vw">
-                        <CourseInfoRow index={key} courseInfo={props.courseInfo[key]}/>
+                        <CourseInfoRow id={info["id"]} index={index} courseInfo={info}/>
                         <Spacer my="1" />
                     </Accordion>
                 );
