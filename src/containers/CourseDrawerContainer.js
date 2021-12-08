@@ -28,8 +28,14 @@ import {
   import { IoMdOpen } from 'react-icons/io';
 function CourseDrawerContainer(props) {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    function openPage(url){
-        window.open(url, '_blank');
+    function openPage(url, doClose){
+        var wnd = window.open(url, '_blank');
+        if(doClose){
+            console.log("closing");
+            setTimeout(() => {
+                wnd.close();
+            }, 1000);
+        }
     }
     const genNolAddUrl = (course) => {
         let d_id = "T010"
@@ -49,7 +55,7 @@ function CourseDrawerContainer(props) {
         
               <Modal size="xl" isOpen={isOpen} onClose={onClose} motionPreset='slideInBottom' scrollBehavior="outside">
                 <ModalOverlay />
-                <ModalContent maxW="50vw" height="90vh">
+                <ModalContent maxW="850px" height="90vh">
                   <ModalHeader>課程詳細資訊</ModalHeader>
                   <ModalCloseButton />
                   <ModalBody>
@@ -58,7 +64,7 @@ function CourseDrawerContainer(props) {
                   <ModalFooter>
                     <Text fontWeight="500" fontSize="sm" color="gray.300">資料來自 台大課程網</Text>
                     <Spacer/>
-                    <Button size="sm" mr="-px" rightIcon={<IoMdOpen />} onClick={() => openPage(genNolUrl(course))}>在新分頁中打開</Button>
+                    <Button size="sm" mr="-px" rightIcon={<IoMdOpen />} onClick={() => openPage(genNolUrl(course), false)}>在新分頁中打開</Button>
                   </ModalFooter>
                 </ModalContent>
               </Modal>
@@ -110,7 +116,7 @@ function CourseDrawerContainer(props) {
                     {renderHyperButton("COOL", props.courseInfo.url["cool"])}
                 </ButtonGroup>
                 <Spacer/>
-                <Button variant="ghost" colorScheme="blue" leftIcon={<FaPlus/>} size="sm" onClick={() => window.open(genNolAddUrl(props.courseInfo), '_blank')}>加入課程網</Button>
+                <Button variant="ghost" colorScheme="blue" leftIcon={<FaPlus/>} size="sm" onClick={() => openPage(genNolAddUrl(props.courseInfo), true)}>加入課程網</Button>
                 {renderNolContentBtn(props.courseInfo)}
             </Flex>
         </Flex>
