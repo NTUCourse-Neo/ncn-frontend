@@ -19,7 +19,7 @@ function HeaderBar(props) {
       <Flex position="fixed" w="100%" h="64px" bg="teal.300" flexDirection="row" justifyContent="start" alignItems="center" zIndex="1000">
         <Flex justifyContent="center" alignItems="center" ml="60px">
           <Heading fontSize="2xl" fontWeight="700" mr="auto" color="gray.700" minW="200px">NTUCourse Neo</Heading>
-          <Button colorScheme="blue" variant="ghost" size="md" ml="30px">課程</Button>
+          <Button colorScheme="blue" variant="ghost" size="md" ml="30px" onClick={() => props.setView(props.view*-1)}>課程</Button>
         </Flex>
         <Spacer />
         <InputGroup maxW="30vw">
