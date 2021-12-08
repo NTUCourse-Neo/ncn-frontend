@@ -22,14 +22,6 @@ function HeaderBar(props) {
           <Button colorScheme="blue" variant="ghost" size="md" ml="30px" onClick={() => props.setView(props.view*-1)}>課程</Button>
         </Flex>
         <Spacer />
-        <InputGroup maxW="30vw">
-          <InputLeftElement children={<Search2Icon color="gray.500"/>} />
-          <Input variant="filled" size="md" focusBorderColor="white" color="white"/>
-          <InputRightElement>
-            <Kbd>/</Kbd>
-          </InputRightElement>
-        </InputGroup>
-        <Spacer />
         <Flex justifyContent="center" alignItems="center" mr="60px">
           <Button colorScheme="blue" variant="ghost" size="md" ml="10px" mr="10px">登入</Button>
           <Button colorScheme="yellow" rightIcon={<ChevronRightIcon/>} size="md" ml="10px" mr="10px">註冊</Button>
