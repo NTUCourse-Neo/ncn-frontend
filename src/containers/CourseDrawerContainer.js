@@ -99,7 +99,7 @@ function CourseDrawerContainer(props) {
                     <Text fontSize="sm" color="gray.800" mx="4px">{props.courseInfo.limit === "" ? "無" : props.courseInfo.limit}</Text>
                 </Flex>
                 <Flex w="70%" flexDirection="column" alignItems="start" justifyContent="start" p="2">
-                    <Heading as="h3" color="gray.600" fontSize="lg" ml="4px" mb="1">更多資訊</Heading>
+                    <Heading as="h3" color="gray.600" fontSize="lg" ml="4px" mb="1">備註</Heading>
                     <Text fontSize="sm" color="gray.800" mx="4px">{props.courseInfo.note === "" ? "無" : props.courseInfo.note}</Text>
                 </Flex>
             </Flex>
