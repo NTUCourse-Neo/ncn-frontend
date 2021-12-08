@@ -7,11 +7,17 @@ import {
     Accordion
   } from '@chakra-ui/react';
 function CourseInfoRowContainer(props) {
+    const hide_scroll_bar = {
+        '::-webkit-scrollbar': {
+            display: "none"
+        },
+    }
+
     const renderCourseInfoRow = () => {
         return(
             props.courseInfo.map((info, index) => {
                 return(
-                    <Accordion allowToggle w="60vw">
+                    <Accordion allowToggle w="100%" minW="50rem">
                         <CourseInfoRow id={info["id"]} index={index} courseInfo={info}/>
                         <Spacer my="1" />
                     </Accordion>
