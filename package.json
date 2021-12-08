@@ -18,6 +18,7 @@
     "react-scroll": "^1.8.4",
     "web-vitals": "^0.2.2"
   },
+  "prettier": ".prettierrc",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
