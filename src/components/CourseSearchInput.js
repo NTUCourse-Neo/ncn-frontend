@@ -35,7 +35,7 @@ function CourseSearchInput() {
                         </MenuOptionGroup>
                     </MenuList>
                 </Menu>
-                <InputGroup w="100%">
+                <InputGroup w="80%">
                     <InputLeftElement children={<Search2Icon color="gray.500"/>} />
                     <Input variant="flushed" size="md" focusBorderColor="teal.500" placeholder="直接搜尋可顯示全部課程"/>
                 </InputGroup>
