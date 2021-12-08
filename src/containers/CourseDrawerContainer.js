@@ -15,22 +15,55 @@ import {
     IconButton,
     Button,
     ButtonGroup,
+    useDisclosure,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalFooter,
+    ModalBody,
+    ModalCloseButton,
   } from '@chakra-ui/react';
-  import { FaPlus } from 'react-icons/fa';
+  import { FaPlus, FaInfo } from 'react-icons/fa';
+  import { IoMdOpen } from 'react-icons/io';
 function CourseDrawerContainer(props) {
+    const { isOpen, onOpen, onClose } = useDisclosure();
     function openPage(url){
         window.open(url, '_blank');
     }
     const genNolAddUrl = (course) => {
         let d_id = "T010"
         return `https://nol.ntu.edu.tw/nol/coursesearch/myschedule.php?add=${course.id}&ddd=${d_id}`;
-
+        
     };
     const genNolUrl = (course) => {
         let lang="CH";
         let base_url = "https://nol.ntu.edu.tw/nol/coursesearch/print_table.php?";
         let params = `course_id=${course.course_id.substr(0,3)}%20${course.course_id.substr(3)}&class=${course.class_id}&ser_no=${course.id}&semester=${course.semester.substr(0,3)}-${course.semester.substr(3,1)}&lang=${lang}`;
         return base_url+params;
+    }
+    function renderNolContentBtn(course){
+        return (
+            <>
+              <Button variant="ghost" colorScheme="blue" leftIcon={<FaInfo/>} size="sm" onClick={onOpen}>課程詳細資訊</Button>
+        
+              <Modal size="xl" isOpen={isOpen} onClose={onClose} motionPreset='slideInBottom' scrollBehavior="outside">
+                <ModalOverlay />
+                <ModalContent maxW="50vw" height="90vh">
+                  <ModalHeader>課程詳細資訊</ModalHeader>
+                  <ModalCloseButton />
+                  <ModalBody>
+                    <iframe sandbox="allow-scripts" src={genNolUrl(course)} height="100%" width="100%"/>   
+                  </ModalBody>
+                  <ModalFooter>
+                    <Text fontWeight="500" fontSize="sm" color="gray.300">資料來自 台大課程網</Text>
+                    <Spacer/>
+                    <Button size="sm" mr="-px" rightIcon={<IoMdOpen />} onClick={() => openPage(genNolUrl(course))}>在新分頁中打開</Button>
+                  </ModalFooter>
+                </ModalContent>
+              </Modal>
+            </>
+        );
     }
     const renderDataElement = (fieldName, data) => {
         if (data === "") {
@@ -75,10 +108,10 @@ function CourseDrawerContainer(props) {
                 <ButtonGroup size="sm" isAttached variant='outline' colorScheme="blue">
                     {renderHyperButton("CEIBA", props.courseInfo.url["ceiba"])}
                     {renderHyperButton("COOL", props.courseInfo.url["cool"])}
-                    {renderHyperButton("課程網", genNolUrl(props.courseInfo))}
                 </ButtonGroup>
                 <Spacer/>
                 <Button variant="ghost" colorScheme="blue" leftIcon={<FaPlus/>} size="sm" onClick={() => window.open(genNolAddUrl(props.courseInfo), '_blank')}>加入課程網</Button>
+                {renderNolContentBtn(props.courseInfo)}
             </Flex>
         </Flex>
     );
