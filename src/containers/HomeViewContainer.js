@@ -16,7 +16,7 @@ import { animateScroll as scroll } from 'react-scroll'
 
 function HomeViewContainer() {
     return (
-        <Box maxW="screen-md" mx="auto" overflow="visible" px="64px">
+        <Box maxW="screen-md" mx="auto" overflow="visible" p="64px">
         <Flex justifyContent="space-between" mb={4} grow="1" flexDirection="column" alignItems="center">
           <Spacer/>
           <Flex justifyContent="space-between" flexDirection="row" alignItems="center" w="90vw">
