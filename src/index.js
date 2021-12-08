@@ -5,11 +5,15 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import * as serviceWorker from './serviceWorker';
 import theme from './theme';
+import { Provider } from "react-redux";
+import store from "./store/index";
 
 ReactDOM.render(
   <StrictMode>
-    <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-    <App />
+    <Provider store={store}>
+      <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+      <App />
+    </Provider>
   </StrictMode>,
   document.getElementById('root')
 );
