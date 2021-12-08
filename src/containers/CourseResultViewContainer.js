@@ -36,7 +36,7 @@ function CourseResultViewContainer() {
     return (
         <Box display='flex'flexDirection="column" alignItems='center' h="95vh" overflow="auto" maxW="screen-md" mx="auto" pt="64px" pb="40px">
             <Flex w="100%" direction="column" position="sticky" top="0" bgColor="white" zIndex="100" boxShadow="md">
-                <Flex w="100%" px="20vw" py="4" direction="column" >
+                <Flex w="100%" px="10vw" py="4" direction="column" >
                     <CourseSearchInput />
                     <Collapse in={displayFilter}>
                         <Box w="100%" py="8px" mt="4">
