@@ -1,6 +1,8 @@
 // write all function that generate actions here
+import {FETCH_SEARCH_RESULTS_FAILURE,FETCH_SEARCH_RESULTS_REQUEST,FETCH_SEARCH_RESULTS_SUCCESS} from '../constants/action-types';
+import instance from '../api/axios'
 
-// template
+// normal actions template
 // const template = (type, payload) => ({ type: type, payload: payload });
 
 // redux-thunk template (w/ async/await)
@@ -22,3 +24,19 @@
 //       }
 //     }
 // }
+
+const fetchSearchResults = () => async (dispatch)=>{
+    dispatch({type: FETCH_SEARCH_RESULTS_REQUEST});
+
+    try {
+        const {data: {courses}} = await instance.get('/search');
+        console.log(courses); // checking receive array of courses 
+        dispatch({type: FETCH_SEARCH_RESULTS_SUCCESS, payload: courses});
+        return courses
+    } catch (error) {
+        dispatch({type: FETCH_SEARCH_RESULTS_FAILURE, payload: error});
+        return error
+    }
+}
+
+export {fetchSearchResults}

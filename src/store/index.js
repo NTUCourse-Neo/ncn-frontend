@@ -12,4 +12,7 @@ const store = createStore(
     // when dispatch action, it will run through all middlewares
 );
 
+// for debugging purpose
+store.subscribe(() => {console.log(store.getState());})
+
 export default store;

@@ -1,4 +1,4 @@
-import { React } from 'react';
+import { React, useEffect } from 'react';
 import {
     Flex,
     InputGroup,
@@ -19,7 +19,14 @@ import {
 } from '@chakra-ui/react';
 import { Search2Icon, ChevronDownIcon } from "@chakra-ui/icons"
 import { FaArrowRight } from 'react-icons/fa';
+
+import {fetchSearchResults} from '../actions/index'
+import {useDispatch, useSelector} from 'react-redux'
+
 function CourseSearchInput() {
+
+    const dispatch = useDispatch()
+
     return(
         <Flex flexDirection="column">
             <Flex flexDirection="row" alignItems="center" justifyContent="center">
@@ -39,7 +46,7 @@ function CourseSearchInput() {
                     <InputLeftElement children={<Search2Icon color="gray.500"/>} />
                     <Input variant="flushed" size="md" focusBorderColor="teal.500" placeholder="直接搜尋可顯示全部課程"/>
                 </InputGroup>
-                <Button colorScheme="blue" variant="solid" rightIcon={<FaArrowRight/>}>搜尋</Button>
+                <Button colorScheme="blue" variant="solid" rightIcon={<FaArrowRight/>} onClick={()=>{dispatch(fetchSearchResults())}}>搜尋</Button>
             </Flex>
         </Flex>
     );
