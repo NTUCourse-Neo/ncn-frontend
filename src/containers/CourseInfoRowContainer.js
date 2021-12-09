@@ -7,12 +7,6 @@ import {
     Accordion
   } from '@chakra-ui/react';
 function CourseInfoRowContainer(props) {
-    const hide_scroll_bar = {
-        '::-webkit-scrollbar': {
-            display: "none"
-        },
-    }
-
     const renderCourseInfoRow = () => {
         return(
             props.courseInfo.map((info, index) => {

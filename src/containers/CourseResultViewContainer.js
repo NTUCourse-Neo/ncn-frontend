@@ -25,6 +25,11 @@ import CourseSearchInput from '../components/CourseSearchInput';
 function CourseResultViewContainer() {
     const [ displayFilter, setDisplayFilter ] = useState(false);
     const [ displayTable, setDisplayTable ] = useState(true);
+    const hide_scroll_bar = {
+        '::-webkit-scrollbar': {
+            display: "none"
+        },
+    }
     const renderSettingSwitch = (label, default_checked) => {
         return(
             <FormControl display='flex' alignItems='center' my="2">
@@ -37,7 +42,7 @@ function CourseResultViewContainer() {
     };
     return (
         <Flex w="100vw" direction="row" justifyContent="center" alignItems="center" overflow="hidden">
-            <Box display="flex" flexBasis="100vw" flexDirection="column" alignItems='center' h="95vh" overflow="auto" maxW="screen-md" mx="auto" pt="64px" pb="40px">
+            <Box display="flex" flexBasis="100vw" flexDirection="column" alignItems='center' h="95vh" overflow="auto" maxW="screen-md" mx="auto" pt="64px" pb="40px" css={hide_scroll_bar}>
                 <Flex w="100%" direction="column" position="sticky" top="0" bgColor="white" zIndex="100" boxShadow="md">
                     <Flex w="100%" px="10vw" py="4" direction="column" >
                         <CourseSearchInput />
