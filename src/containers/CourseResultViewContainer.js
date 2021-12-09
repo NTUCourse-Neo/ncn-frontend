@@ -21,8 +21,12 @@ import CourseInfoRowContainer from './CourseInfoRowContainer';
 import DataSet from '../components/FakeDataSet';
 import CourseSearchInput from '../components/CourseSearchInput';
 
+import {useSelector} from 'react-redux';
+
 
 function CourseResultViewContainer() {
+    const search_results = useSelector(state => state.search_results);
+
     const [ displayFilter, setDisplayFilter ] = useState(false);
     const [ displayTable, setDisplayTable ] = useState(true);
     const renderSettingSwitch = (label, default_checked) => {
@@ -66,7 +70,7 @@ function CourseResultViewContainer() {
                     </Flex>
                     <IconButton size="xs" variant='ghost' icon={displayFilter? <FaChevronUp />:<FaChevronDown />} onClick={() => setDisplayFilter(!displayFilter)} />
                 </Flex>
-                <CourseInfoRowContainer courseInfo={DataSet.courseInfo} />
+                <CourseInfoRowContainer courseInfo={search_results} />
             </Box>
             <Button size="xs" h="95vh" variant="ghost" onClick={() => setDisplayTable(!displayTable)}>{displayTable? <FaChevronRight/>:<FaChevronLeft />}</Button>
             <Flex flexBasis={displayTable? "40vw" : "5vw"} h="95vh" bg="gray.100" alignItems="center" justifyContent="center" transition="flex-basis 500ms ease-in-out">
