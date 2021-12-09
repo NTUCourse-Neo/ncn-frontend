@@ -8,14 +8,19 @@ import theme from './theme';
 import { Provider } from "react-redux";
 import store from "./store/index";
 import 'focus-visible/dist/focus-visible';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 ReactDOM.render(
-  <StrictMode>
     <Provider store={store}>
-      <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-      <App />
+      <BrowserRouter>
+        <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+        <Routes>
+          <Route path="/" element={<App route="home"/>} />
+          <Route path="/course" element={<App route="course"/>} />
+        </Routes>
+      </BrowserRouter>
     </Provider>
-  </StrictMode>,
+  ,
   document.getElementById('root')
 );
 

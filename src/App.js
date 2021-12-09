@@ -10,12 +10,23 @@ import HomeViewContainer from './containers/HomeViewContainer';
 import CourseResultViewContainer from './containers/CourseResultViewContainer';
 
 
-function App() {
-  const [view, setView] = useState(1);
+function App(props) {
+  
+  const content = (route)=>{
+    switch(route){
+      case "home":
+        return <HomeViewContainer />
+      case "course":
+        return <CourseResultViewContainer />
+      default:
+        return <HomeViewContainer />
+    }
+  }
+
   return (
     <ChakraProvider theme={theme}>
-      <HeaderBar useColorModeValue={useColorModeValue} view={view} setView={setView}/>
-      {view === 1 ? <HomeViewContainer/>:<CourseResultViewContainer/>}
+      <HeaderBar useColorModeValue={useColorModeValue}/>
+      {content(props.route)}
       <Footer />
     </ChakraProvider>
   );
