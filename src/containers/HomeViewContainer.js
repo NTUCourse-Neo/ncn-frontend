@@ -13,6 +13,7 @@ import HomeCard from '../components/HomeCard';
 
 import { FaArrowDown } from "react-icons/fa";
 import { animateScroll as scroll } from 'react-scroll'
+import { Link } from "react-router-dom";
 
 function HomeViewContainer() {
     return (
@@ -26,7 +27,7 @@ function HomeViewContainer() {
               <Heading as="h1" fontSize="3xl" fontWeight="500" color="gray.500" mb={4}>修課安排不再是難事。</Heading>
               <Spacer my={8}/>
               <Flex justifyContent="start" alignItems="center" flexDirection="row">
-                <Button colorScheme="teal" variant="solid" size="lg" mr={4}>開始使用</Button>
+                <Link to="/course"><Button colorScheme="teal" variant="solid" size="lg" mr={4}>開始使用</Button></Link>
                 <Button colorScheme="teal" variant="outline" size="lg" mr={4}>了解更多</Button>
               </Flex> 
             </Box>

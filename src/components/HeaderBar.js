@@ -24,8 +24,8 @@ function HeaderBar() {
         </Flex>
         <Spacer />
         <Flex justifyContent="center" alignItems="center" mr="60px">
-          <Button colorScheme="blue" variant="ghost" size="md" ml="10px" mr="10px">登入</Button>
-          <Button colorScheme="yellow" rightIcon={<ChevronRightIcon/>} size="md" ml="10px" mr="10px">註冊</Button>
+          <Link to="/login"><Button colorScheme="blue" variant="ghost" size="md" ml="10px" mr="10px">登入</Button></Link>
+          <Link to="/signup"><Button colorScheme="yellow" rightIcon={<ChevronRightIcon/>} size="md" ml="10px" mr="10px">註冊</Button></Link>
         </Flex>
       </Flex>
   );
