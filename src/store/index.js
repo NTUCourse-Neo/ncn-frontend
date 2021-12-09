@@ -8,7 +8,8 @@ const storeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(
     reducer,
     storeEnhancers(applyMiddleware(thunk)) 
-    // use redux-thunk, can add custom middleware inside applyMiddleware(takes multiple middlewares as arguments)
+    // use redux-thunk to achieve API call
+    // can add custom middleware inside applyMiddleware(takes multiple middlewares as arguments)
     // when dispatch action, it will run through all middlewares
 );
 

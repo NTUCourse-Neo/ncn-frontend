@@ -1,4 +1,4 @@
-import { React, useEffect } from 'react';
+import { React, useEffect, useState } from 'react';
 import {
     Flex,
     InputGroup,
@@ -25,6 +25,11 @@ import {useDispatch, useSelector} from 'react-redux'
 
 function CourseSearchInput() {
 
+    const [search, setSearch]=useState('')
+    useEffect(() => {
+        setSearch('')
+    },[])
+
     const dispatch = useDispatch()
 
     return(
@@ -44,9 +49,11 @@ function CourseSearchInput() {
                 </Menu>
                 <InputGroup w="80%">
                     <InputLeftElement children={<Search2Icon color="gray.500"/>} />
-                    <Input variant="flushed" size="md" focusBorderColor="teal.500" placeholder="直接搜尋可顯示全部課程"/>
+                    <Input variant="flushed" size="md" focusBorderColor="teal.500" placeholder="直接搜尋可顯示全部課程" value={search} onChange={(e)=>{setSearch(e.target.value)}}/>
                 </InputGroup>
-                <Button colorScheme="blue" variant="solid" rightIcon={<FaArrowRight/>} onClick={()=>{dispatch(fetchSearchResults())}}>搜尋</Button>
+                <Button colorScheme="blue" variant="solid" rightIcon={<FaArrowRight/>} onClick={()=>{
+                    dispatch(fetchSearchResults(search)); 
+                    setSearch('')}}>搜尋</Button>
             </Flex>
         </Flex>
     );
