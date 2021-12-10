@@ -1,9 +1,11 @@
 // write all function that generate actions here
-import {FETCH_SEARCH_RESULTS_FAILURE,FETCH_SEARCH_RESULTS_REQUEST,FETCH_SEARCH_RESULTS_SUCCESS, SET_SEARCH_COLUMN} from '../constants/action-types';
+import {FETCH_SEARCH_RESULTS_FAILURE,FETCH_SEARCH_RESULTS_REQUEST,FETCH_SEARCH_RESULTS_SUCCESS, SET_SEARCH_COLUMN,SET_SEARCH_SETTINGS} from '../constants/action-types';
 import instance from '../api/axios'
 
 // normal actions
 const setSearchColumn = (col_name) => ({ type: SET_SEARCH_COLUMN, payload: col_name });
+
+const setSearchSettings = (setting_obj)=>({type: SET_SEARCH_SETTINGS, payload: setting_obj});
 
 // async actions (used redux-thunk template)
 const fetchSearchResults = (searchString, paths) => async (dispatch)=>{
@@ -20,4 +22,4 @@ const fetchSearchResults = (searchString, paths) => async (dispatch)=>{
     }
 }
 
-export {setSearchColumn,fetchSearchResults}
+export {setSearchColumn,setSearchSettings,fetchSearchResults}

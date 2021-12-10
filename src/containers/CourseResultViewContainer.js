@@ -1,4 +1,4 @@
-import { React, useState } from 'react';
+import { React, useEffect, useState } from 'react';
 import {
     Box,
     Flex,
@@ -21,24 +21,53 @@ import CourseInfoRowContainer from './CourseInfoRowContainer';
 import DataSet from '../components/FakeDataSet';
 import CourseSearchInput from '../components/CourseSearchInput';
 
-import {useSelector} from 'react-redux';
+import { setSearchSettings } from '../actions/index';
+import {useSelector, useDispatch} from 'react-redux';
 
 
 function CourseResultViewContainer() {
+    const dispatch = useDispatch();
     const search_results = useSelector(state => state.search_results);
 
     const [ displayFilter, setDisplayFilter ] = useState(false);
     const [ displayTable, setDisplayTable ] = useState(true);
+
+    const [show_selected_courses, set_show_selected_courses] = useState(true);
+    const [only_show_not_conflicted_courses, set_only_show_not_conflicted_courses] = useState(false);
+    const [sync_add_to_nol, set_sync_add_to_nol] = useState(false);
+
     const renderSettingSwitch = (label, default_checked) => {
+        
+        const handleChangeSettings = (e)=>{
+            // console.log(e.currentTarget.checked);
+            if (label==='顯示已選課程'){
+                set_show_selected_courses(e.currentTarget.checked);
+            }
+            else if (label==='只顯示未衝堂課程'){
+                set_only_show_not_conflicted_courses(e.currentTarget.checked);
+            }
+            else if (label==='同步新增至課程網'){
+                set_sync_add_to_nol(e.currentTarget.checked);
+            }
+        }
+
         return(
             <FormControl display='flex' alignItems='center' my="2">
-                <Switch id='add-nol' defaultChecked={default_checked} mr="2"/>
+                <Switch id='add-nol' defaultChecked={default_checked} mr="2" onChange={(e)=>{handleChangeSettings(e)}}/>
                 <FormLabel htmlFor='add-nol' mb='0' fontWeight="500" color="gray.600">
                     {label}
                 </FormLabel>
             </FormControl>
         );
     };
+
+    // for debugging
+    // useEffect(()=>{
+    //     console.log(show_selected_courses);
+    //     console.log(only_show_not_conflicted_courses);
+    //     console.log(sync_add_to_nol);
+    // },[show_selected_courses, only_show_not_conflicted_courses, sync_add_to_nol]);
+
     return (
         <Flex w="100vw" direction="row" justifyContent="center" alignItems="center" overflow="hidden">
             <Box display="flex" flexBasis="100vw" flexDirection="column" alignItems='center' h="95vh" overflow="auto" maxW="screen-md" mx="auto" pt="64px" pb="40px">
@@ -58,10 +87,17 @@ function CourseResultViewContainer() {
                                         </TabPanel>
                                         <TabPanel>
                                             <Flex flexDirection="column" alignItems="center">
-                                                {renderSettingSwitch('顯示已選課程', true)}
-                                                {renderSettingSwitch('只顯示未衝堂課程', false)}
-                                                {renderSettingSwitch('同步新增至課程網', false)}
+                                                {renderSettingSwitch('顯示已選課程', show_selected_courses)}
+                                                {renderSettingSwitch('只顯示未衝堂課程', only_show_not_conflicted_courses)}
+                                                {renderSettingSwitch('同步新增至課程網', sync_add_to_nol)}
                                             </Flex>
+                                            <Button mt={5} colorScheme='teal' size='md' onClick={()=>{
+                                                dispatch(setSearchSettings({
+                                                    show_selected_courses: show_selected_courses, 
+                                                    only_show_not_conflicted_courses: only_show_not_conflicted_courses, 
+                                                    sync_add_to_nol: sync_add_to_nol}
+                                                ))}
+                                            }>套用</Button>
                                         </TabPanel>
                                     </TabPanels>
                                 </Tabs>
