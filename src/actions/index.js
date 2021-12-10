@@ -1,16 +1,16 @@
 // write all function that generate actions here
-import {FETCH_SEARCH_RESULTS_FAILURE,FETCH_SEARCH_RESULTS_REQUEST,FETCH_SEARCH_RESULTS_SUCCESS} from '../constants/action-types';
+import {FETCH_SEARCH_RESULTS_FAILURE,FETCH_SEARCH_RESULTS_REQUEST,FETCH_SEARCH_RESULTS_SUCCESS, SET_SEARCH_COLUMN} from '../constants/action-types';
 import instance from '../api/axios'
 
 // normal actions
-// const template = (type, payload) => ({ type: type, payload: payload });
+const setSearchColumn = (col_name) => ({ type: SET_SEARCH_COLUMN, payload: col_name });
 
 // async actions (used redux-thunk template)
-const fetchSearchResults = (searchString) => async (dispatch)=>{
+const fetchSearchResults = (searchString, paths) => async (dispatch)=>{
     dispatch({type: FETCH_SEARCH_RESULTS_REQUEST});
 
     try {
-        const {data: {courses}} = await instance.get(`/search?query=${searchString}`);
+        const {data: {courses}} = await instance.post(`/search`, {query: searchString, paths: paths});
         console.log(courses); // checking receive array of courses 
         dispatch({type: FETCH_SEARCH_RESULTS_SUCCESS, payload: courses});
         return courses
@@ -20,4 +20,4 @@ const fetchSearchResults = (searchString) => async (dispatch)=>{
     }
 }
 
-export {fetchSearchResults}
+export {setSearchColumn,fetchSearchResults}
