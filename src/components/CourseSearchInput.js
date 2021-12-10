@@ -20,17 +20,25 @@ import {
 import { Search2Icon, ChevronDownIcon } from "@chakra-ui/icons"
 import { FaArrowRight } from 'react-icons/fa';
 
-import {fetchSearchResults} from '../actions/index'
+import {setSearchColumn,fetchSearchResults} from '../actions/index'
 import {useDispatch, useSelector} from 'react-redux'
 
 function CourseSearchInput() {
 
+    const search_columns = useSelector(state => state.search_columns)
+
     const [search, setSearch]=useState('')
+    
+
+    const dispatch = useDispatch()
+
+    const toggle_search_column = (e)=>{
+        dispatch(setSearchColumn(e.currentTarget.value))
+    }
+
     useEffect(() => {
         setSearch('')
     },[])
-
-    const dispatch = useDispatch()
 
     return(
         <Flex flexDirection="column">
@@ -38,12 +46,12 @@ function CourseSearchInput() {
                 <Menu closeOnSelect={false} mx="2">
                     <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>搜尋欄位</MenuButton>
                     <MenuList>
-                        <MenuOptionGroup type='checkbox'>
-                            <MenuItemOption value='course_name'>課程名稱</MenuItemOption>
-                            <MenuItemOption value='teacher'>教師</MenuItemOption>
-                            <MenuItemOption value='id'>流水號</MenuItemOption>
-                            <MenuItemOption value='course_code'>課號</MenuItemOption>
-                            <MenuItemOption value='course_id'>課程識別碼</MenuItemOption>
+                        <MenuOptionGroup defaultValue={['course_name', 'teacher', 'id', 'course_code', 'course_id']} type='checkbox'>
+                            <MenuItemOption value='course_name'  onClick={(e)=>{toggle_search_column(e)}}>課程名稱</MenuItemOption>
+                            <MenuItemOption value='teacher' onClick={(e)=>{toggle_search_column(e)}}>教師</MenuItemOption>
+                            <MenuItemOption value='id' onClick={(e)=>{toggle_search_column(e)}}>流水號</MenuItemOption>
+                            <MenuItemOption value='course_code' onClick={(e)=>{toggle_search_column(e)}}>課號</MenuItemOption>
+                            <MenuItemOption value='course_id' onClick={(e)=>{toggle_search_column(e)}}>課程識別碼</MenuItemOption>
                         </MenuOptionGroup>
                     </MenuList>
                 </Menu>
@@ -52,8 +60,7 @@ function CourseSearchInput() {
                     <Input variant="flushed" size="md" focusBorderColor="teal.500" placeholder="直接搜尋可顯示全部課程" value={search} onChange={(e)=>{setSearch(e.target.value)}}/>
                 </InputGroup>
                 <Button colorScheme="blue" variant="solid" rightIcon={<FaArrowRight/>} onClick={()=>{
-                    dispatch(fetchSearchResults(search)); 
-                    setSearch('')}}>搜尋</Button>
+                    dispatch(fetchSearchResults(search, search_columns))}}>搜尋</Button>
             </Flex>
         </Flex>
     );
