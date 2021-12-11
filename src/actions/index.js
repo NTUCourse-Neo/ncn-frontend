@@ -12,7 +12,7 @@ const fetchSearchResults = (searchString, paths) => async (dispatch)=>{
     dispatch({type: FETCH_SEARCH_RESULTS_REQUEST});
 
     try {
-        const {data: {courses}} = await instance.post(`/search`, {query: searchString, paths: paths});
+        const {data: {courses}} = await instance.post(`/courses/search`, {query: searchString, paths: paths});
         console.log(courses); // checking receive array of courses 
         dispatch({type: FETCH_SEARCH_RESULTS_SUCCESS, payload: courses});
         return courses
