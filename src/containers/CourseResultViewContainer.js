@@ -25,13 +25,13 @@ import {
     MenuIcon,
     MenuCommand,
     MenuDivider,
-    Spacer
+    Spacer,
+    Divider
 } from '@chakra-ui/react';
-import { FaChevronDown, FaChevronUp, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaChevronDown, FaChevronUp, FaChevronLeft, FaChevronRight, } from 'react-icons/fa';
 import CourseInfoRowContainer from './CourseInfoRowContainer';
 import DataSet from '../components/FakeDataSet';
 import CourseSearchInput from '../components/CourseSearchInput';
-
 import { setSearchSettings } from '../actions/index';
 import {useSelector, useDispatch} from 'react-redux';
 
@@ -49,7 +49,7 @@ function CourseResultViewContainer() {
     const [sync_add_to_nol, set_sync_add_to_nol] = useState(search_settings.sync_add_to_nol);
 
     const renderSettingSwitch = (label, default_checked) => {
-        
+
         const handleChangeSettings = (e)=>{
             // console.log(e.currentTarget.checked);
             if (label==='顯示已選課程'){
@@ -76,12 +76,9 @@ function CourseResultViewContainer() {
     const checkboxMenu = (prompt, name, checkboxes)=>{
         return(
             <Flex flexDirection="row" justifyContent="start" my='1'>
-                <Flex flexDirection="column" justifyContent="center">
-                    <Text color="gray.700" fontSize="l" fontWeight="700">{prompt}</Text>
-                </Flex>
-                <Menu closeOnSelect={false} display='flex' my='2' >
-                    <MenuButton as={Button} colorScheme="gray" w='30' h='8'>
-                        Select
+                <Menu closeOnSelect={false} display='flex' my='2'>
+                    <MenuButton as={Button} colorScheme="gray" w='30' h='8' rightIcon={<FaChevronDown />}>
+                        {prompt}
                     </MenuButton>
                     <MenuList minWidth="240px" overflowY={true}>
                         <MenuOptionGroup title={name} type="checkbox">
@@ -118,11 +115,34 @@ function CourseResultViewContainer() {
                                     <TabPanels>
                                         <TabPanel>
                                             {/* Filters: time, department, type of courses */}
-                                            <Flex flexDirection="column">
-                                                {checkboxMenu('開課系所: ', 'Departments', ['醫學系', '電機系'])}
-                                                {checkboxMenu('課程類別: ', 'Types', ['通識', '體育', '軍訓'])}
+                                            <Flex flexDirection="row">
+                                                <Flex flexDirection="column" w="30%" px="4">
+                                                    <Flex flexDirection="row" alignItems="center" justifyContent="center">
+                                                      <Switch size="lg" mr="2"/>
+                                                      <Button display="flex" flexDirection="column" alignItems="center" justifyContent="center">
+                                                        開課時間
+                                                      </Button>
+                                                    </Flex>
+                                                </Flex>
+                                                <Flex flexDirection="column" w="30%" px="4">
+                                                    <Flex flexDirection="row" alignItems="center" justifyContent="center">
+                                                      <Switch size="lg" mr="2"/>
+                                                      <Button display="flex" flexDirection="column" alignItems="center" justifyContent="center">
+                                                        開課系所
+                                                      </Button>
+                                                    </Flex>
+                                                </Flex>
+                                                <Flex flexDirection="column" w="30%" px="4">
+                                                    <Flex flexDirection="row" alignItems="center" justifyContent="center">
+                                                      <Switch size="lg" mr="2"/>
+                                                      <Button display="flex" flexDirection="column" alignItems="center" justifyContent="center">
+                                                        課程類別
+                                                      </Button>
+                                                    </Flex>
+                                                </Flex>
+                                                
+                                                
                                             </Flex>
-                                            <Button mt={5} colorScheme='teal' size='md'>套用</Button>
                                         </TabPanel>
                                         <TabPanel>
                                             {/* Settings */}
@@ -133,8 +153,8 @@ function CourseResultViewContainer() {
                                             </Flex>
                                             <Button mt={5} colorScheme='teal' size='md' onClick={()=>{
                                                 dispatch(setSearchSettings({
-                                                    show_selected_courses: show_selected_courses, 
-                                                    only_show_not_conflicted_courses: only_show_not_conflicted_courses, 
+                                                    show_selected_courses: show_selected_courses,
+                                                    only_show_not_conflicted_courses: only_show_not_conflicted_courses,
                                                     sync_add_to_nol: sync_add_to_nol}
                                                 ))}
                                             }>套用</Button>
