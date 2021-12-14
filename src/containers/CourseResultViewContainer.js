@@ -14,19 +14,24 @@ import {
     Collapse,
     IconButton,
     Button,
-    Container,
     Menu,
     MenuButton,
     MenuList,
-    MenuItem,
     MenuItemOption,
-    MenuGroup,
     MenuOptionGroup,
-    MenuIcon,
-    MenuCommand,
-    MenuDivider,
+    useDisclosure,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalFooter,
+    ModalBody,
+    ModalCloseButton,
+    useToast,
+    Badge,
     Spacer,
-    Divider
+    Heading,
+    Divider,
 } from '@chakra-ui/react';
 import { FaChevronDown, FaChevronUp, FaChevronLeft, FaChevronRight, } from 'react-icons/fa';
 import CourseInfoRowContainer from './CourseInfoRowContainer';
@@ -37,18 +42,24 @@ import {useSelector, useDispatch} from 'react-redux';
 
 
 function CourseResultViewContainer() {
-    const dispatch = useDispatch();
-    const search_results = useSelector(state => state.search_results);
-    const search_settings = useSelector(state => state.search_settings);
+  const toast = useToast()
+  const dispatch = useDispatch();
+  const search_results = useSelector(state => state.search_results);
+  const search_settings = useSelector(state => state.search_settings);
 
-    const [ displayFilter, setDisplayFilter ] = useState(false);
-    const [ displayTable, setDisplayTable ] = useState(true);
+  const [selectedDept, setSelectedDept] = useState([]);
+  const [ timeFilterOn, setTimeFilterOn ] = useState(false);
+  const [ deptFilterOn, setDeptFilterOn ] = useState(false);
+  const [ catFilterOn, setCatFilterOn ] = useState(false);
 
-    const [show_selected_courses, set_show_selected_courses] = useState(search_settings.show_selected_courses);
-    const [only_show_not_conflicted_courses, set_only_show_not_conflicted_courses] = useState(search_settings.only_show_not_conflicted_courses);
-    const [sync_add_to_nol, set_sync_add_to_nol] = useState(search_settings.sync_add_to_nol);
+  const [ displayFilter, setDisplayFilter ] = useState(false);
+  const [ displayTable, setDisplayTable ] = useState(true);
 
-    const renderSettingSwitch = (label, default_checked) => {
+  const [show_selected_courses, set_show_selected_courses] = useState(search_settings.show_selected_courses);
+  const [only_show_not_conflicted_courses, set_only_show_not_conflicted_courses] = useState(search_settings.only_show_not_conflicted_courses);
+  const [sync_add_to_nol, set_sync_add_to_nol] = useState(search_settings.sync_add_to_nol);
+
+  const renderSettingSwitch = (label, default_checked) => {
 
         const handleChangeSettings = (e)=>{
             // console.log(e.currentTarget.checked);
@@ -71,6 +82,78 @@ function CourseResultViewContainer() {
                 </FormLabel>
             </FormControl>
         );
+    };
+    const RenderModalBody = (type) => {
+      const handleClick = (value) => {
+        var index = selectedDept.indexOf(value);
+            if (index === -1) {
+              setSelectedDept([...selectedDept, value]);
+            } else {
+              selectedDept.splice(index, 1);
+              setSelectedDept([...selectedDept]);
+            }
+      };
+      const renderButton = (dept) => {
+        return(
+          <Button key={dept.code} 
+                  colorScheme="teal" 
+                  variant={selectedDept.indexOf(dept.code) === -1 ? "outline":"solid"} 
+                  size="sm" 
+                  minW="100px" 
+                  m="1"
+                  onClick={()=>handleClick(dept.code)}>
+            <Badge mx="2" colorScheme="blue">{dept.code}</Badge>
+            {dept.full_name}
+          </Button>
+        );
+      };
+      if (type === "department"){
+        const dept_info = DataSet.deptInfo;
+        const college_map = DataSet.collegeMap;
+        return(
+          <>
+            {dept_info.map((dept, index) => {
+              if (index === 0 || dept.code.substr(1,3) === "000"){
+                let college_code = dept.code.substr(0, 1);
+                return(
+                  <>
+                  <Heading position="sticky" fontSize="2xl" color="gray.600" mt={index === 0 ? "0":"6"}>{college_code+" "+college_map[college_code].name}</Heading>
+                  <Divider mb="2"/>
+                  {renderButton(dept)}
+                  </>
+                );
+              }
+              return(
+                renderButton(dept)
+              );
+            })}
+          </>
+        );
+      }
+    };
+    const RenderFilterModal = (title, filterOn, type) => {
+      const { isOpen, onOpen, onClose } = useDisclosure();
+      return (
+      <>
+      <Button isDisabled={!filterOn} onClick={onOpen}>{title}</Button>
+      <Modal isOpen={isOpen} onClose={onClose} size="xl" scrollBehavior="inside">
+        <ModalOverlay />
+        <ModalContent >
+          <ModalHeader>{title}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody overflow="auto">
+            {RenderModalBody(type)}
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme='blue' mr={3} onClick={onClose}>
+              套用
+            </Button>
+            <Button variant='ghost' onClick={()=> setSelectedDept([])}>重設</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      </>
+      );
     };
 
     const checkboxMenu = (prompt, name, checkboxes)=>{
@@ -118,26 +201,26 @@ function CourseResultViewContainer() {
                                             <Flex flexDirection="row">
                                                 <Flex flexDirection="column" w="30%" px="4">
                                                     <Flex flexDirection="row" alignItems="center" justifyContent="center">
-                                                      <Switch size="lg" mr="2"/>
-                                                      <Button display="flex" flexDirection="column" alignItems="center" justifyContent="center">
-                                                        開課時間
-                                                      </Button>
+                                                    <Switch size="lg" mr="2" onChange={ (e) => {
+                                                      setTimeFilterOn(e.currentTarget.checked);
+                                                    } }/>
+                                                      {RenderFilterModal("課程時間篩選", timeFilterOn, "time")}
                                                     </Flex>
                                                 </Flex>
                                                 <Flex flexDirection="column" w="30%" px="4">
                                                     <Flex flexDirection="row" alignItems="center" justifyContent="center">
-                                                      <Switch size="lg" mr="2"/>
-                                                      <Button display="flex" flexDirection="column" alignItems="center" justifyContent="center">
-                                                        開課系所
-                                                      </Button>
+                                                      <Switch size="lg" mr="2" onChange={ (e) => {
+                                                        setDeptFilterOn(e.currentTarget.checked);
+                                                      } }/>
+                                                      {RenderFilterModal("開課系所篩選", deptFilterOn, "department")}
                                                     </Flex>
                                                 </Flex>
                                                 <Flex flexDirection="column" w="30%" px="4">
                                                     <Flex flexDirection="row" alignItems="center" justifyContent="center">
-                                                      <Switch size="lg" mr="2"/>
-                                                      <Button display="flex" flexDirection="column" alignItems="center" justifyContent="center">
-                                                        課程類別
-                                                      </Button>
+                                                    <Switch size="lg" mr="2" onChange={ (e) => {
+                                                      setCatFilterOn(e.currentTarget.checked);
+                                                    } }/>
+                                                    {RenderFilterModal("課程類別篩選", catFilterOn, "category")}
                                                     </Flex>
                                                 </Flex>
                                                 
@@ -156,7 +239,15 @@ function CourseResultViewContainer() {
                                                     show_selected_courses: show_selected_courses,
                                                     only_show_not_conflicted_courses: only_show_not_conflicted_courses,
                                                     sync_add_to_nol: sync_add_to_nol}
-                                                ))}
+                                                ));
+                                                toast({
+                                                    title: '設定已儲存',
+                                                    description: '讚啦',
+                                                    status: 'success',
+                                                    duration: 1000,
+                                                    isClosable: true
+                                                })
+                                              }
                                             }>套用</Button>
                                         </TabPanel>
                                     </TabPanels>
