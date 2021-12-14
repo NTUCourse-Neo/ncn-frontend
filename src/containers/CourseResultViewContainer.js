@@ -38,9 +38,11 @@ function CourseResultViewContainer() {
   const [ displayFilter, setDisplayFilter ] = useState(false);
   const [ displayTable, setDisplayTable ] = useState(true);
 
+  // search_settings local states
   const [show_selected_courses, set_show_selected_courses] = useState(search_settings.show_selected_courses);
   const [only_show_not_conflicted_courses, set_only_show_not_conflicted_courses] = useState(search_settings.only_show_not_conflicted_courses);
   const [sync_add_to_nol, set_sync_add_to_nol] = useState(search_settings.sync_add_to_nol);
+  const [strict_search_mode, set_strict_search_mode] = useState(search_settings.strict_search_mode);
 
   const renderSettingSwitch = (label, default_checked) => {
 
@@ -54,6 +56,8 @@ function CourseResultViewContainer() {
             }
             else if (label==='同步新增至課程網'){
                 set_sync_add_to_nol(e.currentTarget.checked);
+            } else if (label==='篩選條件嚴格搜尋'){
+                set_strict_search_mode(e.currentTarget.checked);
             }
         }
 
@@ -117,12 +121,14 @@ function CourseResultViewContainer() {
                                                 {renderSettingSwitch('顯示已選課程', show_selected_courses)}
                                                 {renderSettingSwitch('只顯示未衝堂課程', only_show_not_conflicted_courses)}
                                                 {renderSettingSwitch('同步新增至課程網', sync_add_to_nol)}
+                                                {renderSettingSwitch('篩選條件嚴格搜尋', strict_search_mode)}
                                             </Flex>
                                             <Button mt={5} colorScheme='teal' size='md' onClick={()=>{
                                                 dispatch(setSearchSettings({
                                                     show_selected_courses: show_selected_courses,
                                                     only_show_not_conflicted_courses: only_show_not_conflicted_courses,
-                                                    sync_add_to_nol: sync_add_to_nol}
+                                                    sync_add_to_nol: sync_add_to_nol,
+                                                    strict_search_mode: strict_search_mode}
                                                 ));
                                                 toast({
                                                     title: '設定已儲存',
