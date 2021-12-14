@@ -7,7 +7,7 @@ const initState = {
     search_error: null, // null(no error) or error_message
     search_columns: ['course_name', 'teacher', 'id', 'course_code', 'course_id'], // array of column names, default is all columns
     search_settings: {show_selected_courses: true, only_show_not_conflicted_courses: false, sync_add_to_nol: false, strict_search_mode: false}, // object of settings
-    search_filters: {time:null, department: null, category: null, enroll_method: null},
+    search_filters: {time: null, department: null, category: null, enroll_method: null},
 }
 
 const reducer = (state = initState, action) => {

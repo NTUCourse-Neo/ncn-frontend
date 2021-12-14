@@ -17,8 +17,28 @@ import { college_map } from '../data/college';
 import { dept_list } from '../data/department';
 import { type_list, code_map } from '../data/course_type';
 import TimetableSelector from "./TimetableSelector";
+import {useSelector, useDispatch} from 'react-redux';
+import {setFilter} from '../actions';
+
 
 function FilterModal(props){
+  const dispatch = useDispatch();
+
+  const handleSet = (type) => {
+    if (type==='department'){
+      dispatch(setFilter('department', props.selectedDept));
+    }
+    else if (type==='time'){
+      // todo
+    }
+    else if (type==='category'){
+      // todo
+    }
+    else if (type==='enroll_method'){
+      // todo
+    }
+  }
+
   const renderSelectedHeader = () => {
     if (props.type === "department"){
       return(
@@ -110,7 +130,7 @@ function FilterModal(props){
         <ModalFooter>
           <Button colorScheme='blue' mr={3} onClick={()=>{
             onClose();
-            // dispatch(setFilter('department', props.selectedDept));
+            handleSet(props.type);
           }}>
             套用
           </Button>
