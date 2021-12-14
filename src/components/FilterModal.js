@@ -41,7 +41,7 @@ function FilterModal(props){
     return (<></>);
   };
   const handleSelect = (value, selected, setSelected) => {
-    var index = selected.indexOf(value);
+    let index = selected.indexOf(value);
         if (index === -1) {
           setSelected([...selected, value]);
         } else {
@@ -50,7 +50,7 @@ function FilterModal(props){
         }
   };
   const renderButton = (type, data, selected, setSelected, renderSelected) => {
-    var key;
+    let key;
     switch(type){
       case "department":
         key = data.code
@@ -61,7 +61,7 @@ function FilterModal(props){
       default:
         key = data.code
     }
-    var index = selected.indexOf(key);
+    let index = selected.indexOf(key);
     if((index === -1) === !renderSelected){
       return(
         <Button key={key} 
@@ -82,7 +82,7 @@ function FilterModal(props){
   };
   const FilterModalContainer = (title, filterOn, type) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    var setSelected;
+    let setSelected;
     switch(type){
       case "department":
         setSelected = props.setSelectedDept;
