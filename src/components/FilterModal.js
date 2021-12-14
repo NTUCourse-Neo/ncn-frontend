@@ -19,6 +19,18 @@ import { college_map } from '../data/college';
 import { dept_list } from '../data/department';
 
 function FilterModal(props){
+  const renderSelectedDepts = () => {
+    if (props.type === "department"){
+      return(
+        <Flex flexDirection="column" justifyContent="start" alignItems="start" mx="8" mb="4">
+        <Flex w="100%" flexWrap="wrap" flexDirection="row" justifyContent="start" alignItems="start">
+          {dept_list.map(dept => renderButton(dept, true))} 
+        </Flex>
+      </Flex>
+      );
+    }
+    return (<></>);
+  };
   const handleSelectDept = (value) => {
     var index = props.selectedDept.indexOf(value);
         if (index === -1) {
@@ -62,11 +74,7 @@ function FilterModal(props){
           </Flex>
         </ModalHeader>
         <ModalCloseButton />
-        <Flex flexDirection="column" justifyContent="start" alignItems="start" mx="8" mb="4">
-          <Flex w="100%" flexWrap="wrap" flexDirection="row" justifyContent="start" alignItems="start">
-            {dept_list.map(dept => renderButton(dept, true))} 
-          </Flex>
-        </Flex>
+        {renderSelectedDepts()}
         <ModalBody overflow="auto" pt="0">
           {FilterModalBody(type)}
         </ModalBody>
