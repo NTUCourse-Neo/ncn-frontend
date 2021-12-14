@@ -16,6 +16,7 @@ import {
 import { college_map } from '../data/college';
 import { dept_list } from '../data/department';
 import { type_list, code_map } from '../data/course_type';
+import TimetableSelector from "./TimetableSelector";
 
 function FilterModal(props){
   const renderSelectedHeader = () => {
@@ -95,7 +96,7 @@ function FilterModal(props){
     <Button isDisabled={!filterOn} onClick={onOpen}>{title}</Button>
     <Modal isOpen={isOpen} onClose={onClose} size="xl" scrollBehavior="inside">
       <ModalOverlay />
-      <ModalContent >
+      <ModalContent maxW="50vw">
         <ModalHeader>
           <Flex flexDirection="row" justifyContent="start" alignItems="center">
             {title}
@@ -119,6 +120,11 @@ function FilterModal(props){
   };
 
 const FilterModalBody = (type) => {
+    if (type === "time"){
+      return (
+        <TimetableSelector selectedTime={props.selectedTime} setSelectedTime={props.setSelectedTime}/>
+      );
+    }
     if (type === "department"){
       return(
         <>

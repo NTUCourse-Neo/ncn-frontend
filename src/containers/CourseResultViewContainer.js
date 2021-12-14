@@ -90,7 +90,7 @@ function CourseResultViewContainer() {
                                                     <Switch size="lg" mr="2" onChange={ (e) => {
                                                       setTimeFilterOn(e.currentTarget.checked);
                                                     } }/>
-                                                      <FilterModal title="未選擇課程時間" toggle={timeFilterOn} type="time" selectedTime={selectedTime} setSelectedTime={setSelectedTime}/>
+                                                      <FilterModal title={selectedTime.length===0 ? "未選擇課程時間" : "已選擇 "+selectedTime.length+" 節次"} toggle={timeFilterOn} type="time" selectedTime={selectedTime} setSelectedTime={setSelectedTime}/>
                                                     </Flex>
                                                 </Flex>
                                                 <Flex flexDirection="column" w="30%" px="4">
