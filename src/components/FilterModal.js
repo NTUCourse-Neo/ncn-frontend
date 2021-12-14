@@ -17,10 +17,14 @@ import { render } from "@testing-library/react";
 import { useState } from "react";
 import { college_map } from '../data/college';
 import { dept_list } from '../data/department';
+import {useSelector, useDispatch} from 'react-redux';
+import {setFilter} from '../actions/index';
 
 function FilterModal(props){
+  const dispatch = useDispatch();
+
   const handleSelectDept = (value) => {
-    var index = props.selectedDept.indexOf(value);
+    let index = props.selectedDept.indexOf(value);
         if (index === -1) {
           props.setSelectedDept([...props.selectedDept, value]);
         } else {
@@ -29,7 +33,7 @@ function FilterModal(props){
         }
   };
   const renderButton = (dept, renderSelected) => {
-    var index = props.selectedDept.indexOf(dept.code);
+    let index = props.selectedDept.indexOf(dept.code);
     if((index === -1) === !renderSelected){
       return(
         <Button key={dept.code} 
@@ -71,7 +75,10 @@ function FilterModal(props){
           {FilterModalBody(type)}
         </ModalBody>
         <ModalFooter>
-          <Button colorScheme='blue' mr={3} onClick={onClose}>
+          <Button colorScheme='blue' mr={3} onClick={()=>{
+            onClose();
+            dispatch(setFilter('department', props.selectedDept));
+          }}>
             套用
           </Button>
           <Button variant='ghost' onClick={()=> props.setSelectedDept([])}>重設</Button>

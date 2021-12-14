@@ -44,6 +44,10 @@ function CourseResultViewContainer() {
   const [sync_add_to_nol, set_sync_add_to_nol] = useState(search_settings.sync_add_to_nol);
   const [strict_search_mode, set_strict_search_mode] = useState(search_settings.strict_search_mode);
 
+  useEffect(()=>{
+    console.log(selectedDept);
+  },[selectedDept])
+
   const renderSettingSwitch = (label, default_checked) => {
 
         const handleChangeSettings = (e)=>{
