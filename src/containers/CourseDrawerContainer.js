@@ -29,7 +29,7 @@ import {
 function CourseDrawerContainer(props) {
     const { isOpen, onOpen, onClose } = useDisclosure();
     function openPage(url, doClose){
-        var wnd = window.open(url, '_blank');
+        let wnd = window.open(url, '_blank');
         if(doClose){
             console.log("closing");
             setTimeout(() => {
