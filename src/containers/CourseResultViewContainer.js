@@ -33,7 +33,7 @@ function CourseResultViewContainer() {
 
   const [selectedTime, setSelectedTime] = useState([]);
   const [selectedDept, setSelectedDept] = useState(search_filters.department===null?[]:search_filters.department);
-  const [selectedType, setSelectedType] = useState([]);
+  const [selectedType, setSelectedType] = useState(search_filters.category===null?[]:search_filters.category);
 
   const [ timeFilterOn, setTimeFilterOn ] = useState(search_filters.time===null?false:true);
   const [ deptFilterOn, setDeptFilterOn ] = useState(search_filters.department===null?false:true);

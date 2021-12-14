@@ -41,8 +41,7 @@ const reducer = (state = initState, action) => {
                 return {...state}
             }
             else if (filter_name==='category'){
-                //todo
-                return {...state}
+                return {...state, search_filters: {...state.search_filters, category: data}}
             }
             else if (filter_name==='enroll_method'){
                 // todo

@@ -32,7 +32,7 @@ function FilterModal(props){
       // todo
     }
     else if (type==='category'){
-      // todo
+      dispatch(setFilter('category', props.selectedType));
     }
     else if (type==='enroll_method'){
       // todo
