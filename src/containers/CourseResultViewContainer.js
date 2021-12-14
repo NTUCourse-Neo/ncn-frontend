@@ -30,6 +30,8 @@ function CourseResultViewContainer() {
   const search_results = useSelector(state => state.search_results);
   const search_settings = useSelector(state => state.search_settings);
   const [selectedDept, setSelectedDept] = useState([]);
+  const [selectedType, setSelectedType] = useState([]);
+  const [selectedTime, setSelectedTime] = useState([]);
 
   const [ timeFilterOn, setTimeFilterOn ] = useState(false);
   const [ deptFilterOn, setDeptFilterOn ] = useState(false);
@@ -88,7 +90,7 @@ function CourseResultViewContainer() {
                                                     <Switch size="lg" mr="2" onChange={ (e) => {
                                                       setTimeFilterOn(e.currentTarget.checked);
                                                     } }/>
-                                                      <FilterModal title="未選擇課程時間" toggle={timeFilterOn} type="time" selectedDept={selectedDept} setSelectedDept={setSelectedDept}/>
+                                                      <FilterModal title="未選擇課程時間" toggle={timeFilterOn} type="time" selectedTime={selectedTime} setSelectedTime={setSelectedTime}/>
                                                     </Flex>
                                                 </Flex>
                                                 <Flex flexDirection="column" w="30%" px="4">
@@ -104,7 +106,7 @@ function CourseResultViewContainer() {
                                                     <Switch size="lg" mr="2" onChange={ (e) => {
                                                       setCatFilterOn(e.currentTarget.checked);
                                                     } }/>
-                                                    <FilterModal title="未選擇課程類別" toggle={catFilterOn} type="category" selectedDept={selectedDept} setSelectedDept={setSelectedDept}/>
+                                                    <FilterModal title={selectedType.length===0 ? "未選擇課程類別" : "已選擇 "+selectedType.length+" 類別"} toggle={catFilterOn} type="category" selectedType={selectedType} setSelectedType={setSelectedType}/>
                                                     </Flex>
                                                 </Flex>
                                                 
