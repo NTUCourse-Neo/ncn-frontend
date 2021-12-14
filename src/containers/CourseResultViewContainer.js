@@ -15,6 +15,17 @@ import {
     IconButton,
     Button,
     Container,
+    Menu,
+    MenuButton,
+    MenuList,
+    MenuItem,
+    MenuItemOption,
+    MenuGroup,
+    MenuOptionGroup,
+    MenuIcon,
+    MenuCommand,
+    MenuDivider,
+    Spacer
 } from '@chakra-ui/react';
 import { FaChevronDown, FaChevronUp, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import CourseInfoRowContainer from './CourseInfoRowContainer';
@@ -28,13 +39,14 @@ import {useSelector, useDispatch} from 'react-redux';
 function CourseResultViewContainer() {
     const dispatch = useDispatch();
     const search_results = useSelector(state => state.search_results);
+    const search_settings = useSelector(state => state.search_settings);
 
     const [ displayFilter, setDisplayFilter ] = useState(false);
     const [ displayTable, setDisplayTable ] = useState(true);
 
-    const [show_selected_courses, set_show_selected_courses] = useState(true);
-    const [only_show_not_conflicted_courses, set_only_show_not_conflicted_courses] = useState(false);
-    const [sync_add_to_nol, set_sync_add_to_nol] = useState(false);
+    const [show_selected_courses, set_show_selected_courses] = useState(search_settings.show_selected_courses);
+    const [only_show_not_conflicted_courses, set_only_show_not_conflicted_courses] = useState(search_settings.only_show_not_conflicted_courses);
+    const [sync_add_to_nol, set_sync_add_to_nol] = useState(search_settings.sync_add_to_nol);
 
     const renderSettingSwitch = (label, default_checked) => {
         
@@ -61,6 +73,28 @@ function CourseResultViewContainer() {
         );
     };
 
+    const checkboxMenu = (prompt, name, checkboxes)=>{
+        return(
+            <Flex flexDirection="row" justifyContent="start" my='1'>
+                <Flex flexDirection="column" justifyContent="center">
+                    <Text color="gray.700" fontSize="l" fontWeight="700">{prompt}</Text>
+                </Flex>
+                <Menu closeOnSelect={false} display='flex' my='2' >
+                    <MenuButton as={Button} colorScheme="gray" w='30' h='8'>
+                        Select
+                    </MenuButton>
+                    <MenuList minWidth="240px" overflowY={true}>
+                        <MenuOptionGroup title={name} type="checkbox">
+                            {checkboxes.map((checkbox, index)=>{
+                                return <MenuItemOption value={checkbox} key={index}>{checkbox}</MenuItemOption>
+                            })}
+                        </MenuOptionGroup>
+                    </MenuList>
+                </Menu>
+            </Flex>
+        )
+    }
+
     // for debugging
     // useEffect(()=>{
     //     console.log(show_selected_courses);
@@ -83,9 +117,15 @@ function CourseResultViewContainer() {
                                     </TabList>
                                     <TabPanels>
                                         <TabPanel>
-                                        讚
+                                            {/* Filters: time, department, type of courses */}
+                                            <Flex flexDirection="column">
+                                                {checkboxMenu('開課系所: ', 'Departments', ['醫學系', '電機系'])}
+                                                {checkboxMenu('課程類別: ', 'Types', ['通識', '體育', '軍訓'])}
+                                            </Flex>
+                                            <Button mt={5} colorScheme='teal' size='md'>套用</Button>
                                         </TabPanel>
                                         <TabPanel>
+                                            {/* Settings */}
                                             <Flex flexDirection="column" alignItems="center">
                                                 {renderSettingSwitch('顯示已選課程', show_selected_courses)}
                                                 {renderSettingSwitch('只顯示未衝堂課程', only_show_not_conflicted_courses)}
