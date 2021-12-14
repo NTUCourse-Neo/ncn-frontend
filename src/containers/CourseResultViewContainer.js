@@ -14,28 +14,11 @@ import {
     Collapse,
     IconButton,
     Button,
-    Menu,
-    MenuButton,
-    MenuList,
-    MenuItemOption,
-    MenuOptionGroup,
-    useDisclosure,
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalFooter,
-    ModalBody,
-    ModalCloseButton,
     useToast,
-    Badge,
-    Spacer,
-    Heading,
-    Divider,
 } from '@chakra-ui/react';
 import { FaChevronDown, FaChevronUp, FaChevronLeft, FaChevronRight, } from 'react-icons/fa';
 import CourseInfoRowContainer from './CourseInfoRowContainer';
-import DataSet from '../components/FakeDataSet';
+import FilterModal from '../components/FilterModal';
 import CourseSearchInput from '../components/CourseSearchInput';
 import { setSearchSettings } from '../actions/index';
 import {useSelector, useDispatch} from 'react-redux';
@@ -46,8 +29,8 @@ function CourseResultViewContainer() {
   const dispatch = useDispatch();
   const search_results = useSelector(state => state.search_results);
   const search_settings = useSelector(state => state.search_settings);
-
   const [selectedDept, setSelectedDept] = useState([]);
+
   const [ timeFilterOn, setTimeFilterOn ] = useState(false);
   const [ deptFilterOn, setDeptFilterOn ] = useState(false);
   const [ catFilterOn, setCatFilterOn ] = useState(false);
@@ -83,105 +66,6 @@ function CourseResultViewContainer() {
             </FormControl>
         );
     };
-    const RenderModalBody = (type) => {
-      const handleClick = (value) => {
-        var index = selectedDept.indexOf(value);
-            if (index === -1) {
-              setSelectedDept([...selectedDept, value]);
-            } else {
-              selectedDept.splice(index, 1);
-              setSelectedDept([...selectedDept]);
-            }
-      };
-      const renderButton = (dept) => {
-        return(
-          <Button key={dept.code} 
-                  colorScheme="teal" 
-                  variant={selectedDept.indexOf(dept.code) === -1 ? "outline":"solid"} 
-                  size="sm" 
-                  minW="100px" 
-                  m="1"
-                  onClick={()=>handleClick(dept.code)}>
-            <Badge mx="2" colorScheme="blue">{dept.code}</Badge>
-            {dept.full_name}
-          </Button>
-        );
-      };
-      if (type === "department"){
-        const dept_info = DataSet.deptInfo;
-        const college_map = DataSet.collegeMap;
-        return(
-          <>
-            {dept_info.map((dept, index) => {
-              if (index === 0 || dept.code.substr(1,3) === "000"){
-                let college_code = dept.code.substr(0, 1);
-                return(
-                  <>
-                  <Heading position="sticky" fontSize="2xl" color="gray.600" mt={index === 0 ? "0":"6"}>{college_code+" "+college_map[college_code].name}</Heading>
-                  <Divider mb="2"/>
-                  {renderButton(dept)}
-                  </>
-                );
-              }
-              return(
-                renderButton(dept)
-              );
-            })}
-          </>
-        );
-      }
-    };
-    const RenderFilterModal = (title, filterOn, type) => {
-      const { isOpen, onOpen, onClose } = useDisclosure();
-      return (
-      <>
-      <Button isDisabled={!filterOn} onClick={onOpen}>{title}</Button>
-      <Modal isOpen={isOpen} onClose={onClose} size="xl" scrollBehavior="inside">
-        <ModalOverlay />
-        <ModalContent >
-          <ModalHeader>{title}</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody overflow="auto">
-            {RenderModalBody(type)}
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme='blue' mr={3} onClick={onClose}>
-              套用
-            </Button>
-            <Button variant='ghost' onClick={()=> setSelectedDept([])}>重設</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-      </>
-      );
-    };
-
-    const checkboxMenu = (prompt, name, checkboxes)=>{
-        return(
-            <Flex flexDirection="row" justifyContent="start" my='1'>
-                <Menu closeOnSelect={false} display='flex' my='2'>
-                    <MenuButton as={Button} colorScheme="gray" w='30' h='8' rightIcon={<FaChevronDown />}>
-                        {prompt}
-                    </MenuButton>
-                    <MenuList minWidth="240px" overflowY={true}>
-                        <MenuOptionGroup title={name} type="checkbox">
-                            {checkboxes.map((checkbox, index)=>{
-                                return <MenuItemOption value={checkbox} key={index}>{checkbox}</MenuItemOption>
-                            })}
-                        </MenuOptionGroup>
-                    </MenuList>
-                </Menu>
-            </Flex>
-        )
-    }
-
-    // for debugging
-    // useEffect(()=>{
-    //     console.log(show_selected_courses);
-    //     console.log(only_show_not_conflicted_courses);
-    //     console.log(sync_add_to_nol);
-    // },[show_selected_courses, only_show_not_conflicted_courses, sync_add_to_nol]);
-
     return (
         <Flex w="100vw" direction="row" justifyContent="center" alignItems="center" overflow="hidden">
             <Box display="flex" flexBasis="100vw" flexDirection="column" alignItems='center' h="95vh" overflow="auto" maxW="screen-md" mx="auto" pt="64px" pb="40px">
@@ -204,7 +88,7 @@ function CourseResultViewContainer() {
                                                     <Switch size="lg" mr="2" onChange={ (e) => {
                                                       setTimeFilterOn(e.currentTarget.checked);
                                                     } }/>
-                                                      {RenderFilterModal("課程時間篩選", timeFilterOn, "time")}
+                                                      <FilterModal title="選擇課程時間" toggle={timeFilterOn} type="time" selectedDept={selectedDept} setSelectedDept={setSelectedDept}/>
                                                     </Flex>
                                                 </Flex>
                                                 <Flex flexDirection="column" w="30%" px="4">
@@ -212,7 +96,7 @@ function CourseResultViewContainer() {
                                                       <Switch size="lg" mr="2" onChange={ (e) => {
                                                         setDeptFilterOn(e.currentTarget.checked);
                                                       } }/>
-                                                      {RenderFilterModal("開課系所篩選", deptFilterOn, "department")}
+                                                      <FilterModal title={selectedDept.length===0 ? "選擇開課系所" : "已選擇 "+selectedDept.length+" 系所"} toggle={deptFilterOn} type="department" selectedDept={selectedDept} setSelectedDept={setSelectedDept}/>
                                                     </Flex>
                                                 </Flex>
                                                 <Flex flexDirection="column" w="30%" px="4">
@@ -220,7 +104,7 @@ function CourseResultViewContainer() {
                                                     <Switch size="lg" mr="2" onChange={ (e) => {
                                                       setCatFilterOn(e.currentTarget.checked);
                                                     } }/>
-                                                    {RenderFilterModal("課程類別篩選", catFilterOn, "category")}
+                                                    <FilterModal title="選擇課程類別" toggle={catFilterOn} type="category" selectedDept={selectedDept} setSelectedDept={setSelectedDept}/>
                                                     </Flex>
                                                 </Flex>
                                                 
