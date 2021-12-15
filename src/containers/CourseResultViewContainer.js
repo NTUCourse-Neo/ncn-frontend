@@ -15,11 +15,13 @@ import {
     IconButton,
     Button,
     useToast,
+    Skeleton
 } from '@chakra-ui/react';
 import { FaChevronDown, FaChevronUp, FaChevronLeft, FaChevronRight, } from 'react-icons/fa';
 import CourseInfoRowContainer from './CourseInfoRowContainer';
 import FilterModal from '../components/FilterModal';
 import CourseSearchInput from '../components/CourseSearchInput';
+import SkeletonRow from '../components/SkeletonRow';
 import { setSearchSettings } from '../actions/index';
 import {useSelector, useDispatch} from 'react-redux';
 
@@ -30,6 +32,8 @@ function CourseResultViewContainer() {
   const search_results = useSelector(state => state.search_results);
   const search_settings = useSelector(state => state.search_settings);
   const search_filters = useSelector(state => state.search_filters);
+  const search_loading = useSelector(state => state.search_loading);
+  const search_error = useSelector(state => state.search_error);
 
   const [selectedTime, setSelectedTime] = useState([]);
   const [selectedDept, setSelectedDept] = useState(search_filters.department===null?[]:search_filters.department);
@@ -74,9 +78,18 @@ function CourseResultViewContainer() {
             </FormControl>
         );
     };
+
+    const handleScroll = (e) => {
+      const reach_bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
+      if(reach_bottom){
+          console.log('BOTTOM!');
+          // todo
+      }
+    }
+
     return (
         <Flex w="100vw" direction="row" justifyContent="center" alignItems="center" overflow="hidden">
-            <Box display="flex" flexBasis="100vw" flexDirection="column" alignItems='center' h="95vh" overflow="auto" maxW="screen-md" mx="auto" pt="64px" pb="40px">
+            <Box display="flex" flexBasis="100vw" flexDirection="column" alignItems='center' h="95vh" overflow="auto" maxW="screen-md" mx="auto" pt="64px" pb="40px"  onScroll={handleScroll}>
                 <Flex w="100%" direction="column" position="sticky" top="0" bgColor="white" zIndex="100" boxShadow="md">
                     <Flex w="100%" px="10vw" py="4" direction="column" >
                         <CourseSearchInput />
@@ -152,6 +165,7 @@ function CourseResultViewContainer() {
                     <IconButton size="xs" variant='ghost' icon={displayFilter? <FaChevronUp />:<FaChevronDown />} onClick={() => setDisplayFilter(!displayFilter)} />
                 </Flex>
                 <CourseInfoRowContainer courseInfo={search_results} />
+                <SkeletonRow loading={search_loading} error={search_error}/>
             </Box>
             <Button size="xs" h="95vh" variant="ghost" onClick={() => setDisplayTable(!displayTable)}>{displayTable? <FaChevronRight/>:<FaChevronLeft />}</Button>
             <Flex flexBasis={displayTable? "40vw" : "5vw"} h="95vh" bg="gray.100" alignItems="center" justifyContent="center" transition="flex-basis 500ms ease-in-out">
