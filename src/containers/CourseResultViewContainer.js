@@ -22,7 +22,7 @@ import CourseInfoRowContainer from './CourseInfoRowContainer';
 import FilterModal from '../components/FilterModal';
 import CourseSearchInput from '../components/CourseSearchInput';
 import SkeletonRow from '../components/SkeletonRow';
-import { setSearchSettings } from '../actions/index';
+import { setSearchSettings, fetchSearchResults } from '../actions/index';
 import {useSelector, useDispatch} from 'react-redux';
 
 
@@ -30,10 +30,13 @@ function CourseResultViewContainer() {
   const toast = useToast()
   const dispatch = useDispatch();
   const search_ids = useSelector(state => state.search_ids);
+  const search_results = useSelector(state => state.search_results);
   const search_settings = useSelector(state => state.search_settings);
   const search_filters = useSelector(state => state.search_filters);
   const search_loading = useSelector(state => state.search_loading);
   const search_error = useSelector(state => state.search_error);
+  const offset = useSelector(state => state.offset);
+  const batch_size = useSelector(state => state.batch_size);
 
   const [selectedTime, setSelectedTime] = useState([]);
   const [selectedDept, setSelectedDept] = useState(search_filters.department===null?[]:search_filters.department);
@@ -84,6 +87,7 @@ function CourseResultViewContainer() {
       if(reach_bottom){
           console.log('BOTTOM!');
           // todo
+          dispatch(fetchSearchResults(search_ids,search_filters, batch_size, offset));
       }
     }
 
@@ -164,7 +168,7 @@ function CourseResultViewContainer() {
                     </Flex>
                     <IconButton size="xs" variant='ghost' icon={displayFilter? <FaChevronUp />:<FaChevronDown />} onClick={() => setDisplayFilter(!displayFilter)} />
                 </Flex>
-                <CourseInfoRowContainer courseInfo={search_ids} />
+                <CourseInfoRowContainer courseInfo={search_results} />
                 <SkeletonRow loading={search_loading} error={search_error}/>
             </Box>
             <Button size="xs" h="95vh" variant="ghost" onClick={() => setDisplayTable(!displayTable)}>{displayTable? <FaChevronRight/>:<FaChevronLeft />}</Button>

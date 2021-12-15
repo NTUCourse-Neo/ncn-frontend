@@ -26,6 +26,8 @@ import {useDispatch, useSelector} from 'react-redux'
 function CourseSearchInput() {
 
     const search_columns = useSelector(state => state.search_columns)
+    const search_filters = useSelector(state => state.search_filters)
+    const batch_size = useSelector(state => state.batch_size)
 
     const [search, setSearch]=useState('')
     
@@ -60,12 +62,12 @@ function CourseSearchInput() {
                     <Input variant="flushed" size="md" focusBorderColor="teal.500" placeholder="直接搜尋可顯示全部課程" value={search} 
                         onChange={(e)=>{setSearch(e.target.value)}} 
                         onKeyPress={(e)=>{if (e.key === 'Enter') {
-                            dispatch(fetchSearchIDs(search, search_columns))
+                            dispatch(fetchSearchIDs(search, search_columns, search_filters, batch_size))
                         }}}
                     />
                 </InputGroup>
                 <Button colorScheme="blue" variant="solid" rightIcon={<FaArrowRight/>} onClick={()=>{
-                    dispatch(fetchSearchIDs(search, search_columns))}
+                    dispatch(fetchSearchIDs(search, search_columns, search_filters, batch_size))}
                 }>搜尋</Button>
             </Flex>
         </Flex>
