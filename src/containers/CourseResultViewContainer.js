@@ -29,7 +29,7 @@ import {useSelector, useDispatch} from 'react-redux';
 function CourseResultViewContainer() {
   const toast = useToast()
   const dispatch = useDispatch();
-  const search_results = useSelector(state => state.search_results);
+  const search_ids = useSelector(state => state.search_ids);
   const search_settings = useSelector(state => state.search_settings);
   const search_filters = useSelector(state => state.search_filters);
   const search_loading = useSelector(state => state.search_loading);
@@ -164,7 +164,7 @@ function CourseResultViewContainer() {
                     </Flex>
                     <IconButton size="xs" variant='ghost' icon={displayFilter? <FaChevronUp />:<FaChevronDown />} onClick={() => setDisplayFilter(!displayFilter)} />
                 </Flex>
-                <CourseInfoRowContainer courseInfo={search_results} />
+                <CourseInfoRowContainer courseInfo={search_ids} />
                 <SkeletonRow loading={search_loading} error={search_error}/>
             </Box>
             <Button size="xs" h="95vh" variant="ghost" onClick={() => setDisplayTable(!displayTable)}>{displayTable? <FaChevronRight/>:<FaChevronLeft />}</Button>

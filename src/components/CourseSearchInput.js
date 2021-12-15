@@ -20,7 +20,7 @@ import {
 import { Search2Icon, ChevronDownIcon } from "@chakra-ui/icons"
 import { FaArrowRight } from 'react-icons/fa';
 
-import {setSearchColumn,fetchSearchResults} from '../actions/index'
+import {setSearchColumn,fetchSearchIDs} from '../actions/index'
 import {useDispatch, useSelector} from 'react-redux'
 
 function CourseSearchInput() {
@@ -60,12 +60,12 @@ function CourseSearchInput() {
                     <Input variant="flushed" size="md" focusBorderColor="teal.500" placeholder="直接搜尋可顯示全部課程" value={search} 
                         onChange={(e)=>{setSearch(e.target.value)}} 
                         onKeyPress={(e)=>{if (e.key === 'Enter') {
-                            dispatch(fetchSearchResults(search, search_columns))
+                            dispatch(fetchSearchIDs(search, search_columns))
                         }}}
                     />
                 </InputGroup>
                 <Button colorScheme="blue" variant="solid" rightIcon={<FaArrowRight/>} onClick={()=>{
-                    dispatch(fetchSearchResults(search, search_columns))}
+                    dispatch(fetchSearchIDs(search, search_columns))}
                 }>搜尋</Button>
             </Flex>
         </Flex>
