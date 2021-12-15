@@ -18,7 +18,7 @@ const reducer = (state = initState, action) => {
         case FETCH_SEARCH_IDS_REQUEST:
             return {...state, search_loading: true}
         case FETCH_SEARCH_IDS_SUCCESS:
-            return {...state,search_ids: action.payload, search_loading: false, search_error: null, offset: 0}
+            return {...state,search_ids: action.payload, search_loading: false, search_error: null, offset: 0, search_results: []}
         case FETCH_SEARCH_IDS_FAILURE:
             return {...state, search_loading: false, search_error: action.payload}
         case FETCH_SEARCH_RESULTS_REQUEST:
