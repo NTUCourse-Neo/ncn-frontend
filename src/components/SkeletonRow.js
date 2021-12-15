@@ -5,7 +5,7 @@ function SkeletonRow(props) {
 
     const visible_logic = () =>{
         if (props.loading){
-            return (<Skeleton w='60%' speed='0.1' startColor='gray.100' endColor='teal.300' height='30px' >
+            return (<Skeleton w='60%' speed='0.5' startColor='gray.100' endColor='teal.300' height='30px' >
                 <div>won't be visible</div>
             </Skeleton>)
         }
