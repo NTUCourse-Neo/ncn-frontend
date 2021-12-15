@@ -1,4 +1,4 @@
-import { React, useEffect, useState } from 'react';
+import { React, useEffect, useState, useRef } from 'react';
 import {
     Box,
     Flex,
@@ -27,7 +27,9 @@ import {useSelector, useDispatch} from 'react-redux';
 
 
 function CourseResultViewContainer() {
-  const toast = useToast()
+  const toast = useToast();
+  const topRef = useRef();
+
   const dispatch = useDispatch();
   const search_ids = useSelector(state => state.search_ids);
   const search_results = useSelector(state => state.search_results);
@@ -93,10 +95,11 @@ function CourseResultViewContainer() {
 
     return (
         <Flex w="100vw" direction="row" justifyContent="center" alignItems="center" overflow="hidden">
+            <div ref={topRef}/>
             <Box display="flex" flexBasis="100vw" flexDirection="column" alignItems='center' h="95vh" overflow="auto" maxW="screen-md" mx="auto" pt="64px" pb="40px"  onScroll={handleScroll}>
                 <Flex w="100%" direction="column" position="sticky" top="0" bgColor="white" zIndex="100" boxShadow="md">
                     <Flex w="100%" px="10vw" py="4" direction="column" >
-                        <CourseSearchInput />
+                        <CourseSearchInput topRef={topRef}/>
                         <Collapse in={displayFilter} animateOpacity>
                             <Box w="100%" py="8px" mt="4">
                                 <Tabs>

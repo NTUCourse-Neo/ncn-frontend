@@ -23,7 +23,7 @@ import { FaArrowRight } from 'react-icons/fa';
 import {setSearchColumn,fetchSearchIDs} from '../actions/index'
 import {useDispatch, useSelector} from 'react-redux'
 
-function CourseSearchInput() {
+function CourseSearchInput(props) {
 
     const search_columns = useSelector(state => state.search_columns)
     const search_filters = useSelector(state => state.search_filters)
@@ -63,11 +63,14 @@ function CourseSearchInput() {
                         onChange={(e)=>{setSearch(e.target.value)}} 
                         onKeyPress={(e)=>{if (e.key === 'Enter') {
                             dispatch(fetchSearchIDs(search, search_columns, search_filters, batch_size))
+                            props.topRef.current.focus();
                         }}}
                     />
                 </InputGroup>
                 <Button colorScheme="blue" variant="solid" rightIcon={<FaArrowRight/>} onClick={()=>{
-                    dispatch(fetchSearchIDs(search, search_columns, search_filters, batch_size))}
+                    dispatch(fetchSearchIDs(search, search_columns, search_filters, batch_size))
+                    props.topRef.current.focus();
+                }
                 }>搜尋</Button>
             </Flex>
         </Flex>
