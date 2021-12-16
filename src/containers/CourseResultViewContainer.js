@@ -24,11 +24,14 @@ import CourseSearchInput from '../components/CourseSearchInput';
 import SkeletonRow from '../components/SkeletonRow';
 import { setSearchSettings, fetchSearchResults } from '../actions/index';
 import {useSelector, useDispatch} from 'react-redux';
+import useOnScreen from '../hooks/useOnScreen';
 
 
 function CourseResultViewContainer() {
   const toast = useToast();
   const topRef = useRef();
+  const bottomRef = useRef();
+  const reachedBottom = useOnScreen(bottomRef);
 
   const dispatch = useDispatch();
   const search_ids = useSelector(state => state.search_ids);
@@ -85,14 +88,14 @@ function CourseResultViewContainer() {
         );
     };
 
-    const handleScroll = (e) => {
-      const reach_bottom = e.target.scrollHeight - Math.ceil(e.target.scrollTop) === e.target.clientHeight;
-      if(reach_bottom && search_results.length !== 0){
+    const handleScrollToBottom = () => {
+    //   const reach_bottom = e.target.scrollHeight - Math.ceil(e.target.scrollTop) === e.target.clientHeight;
+      if(reachedBottom && search_results.length !== 0){
           console.log('BOTTOM!');
           // fetch next batch of search results
-          if (search_results.length < total_count){
-            dispatch(fetchSearchResults(search_ids,search_filters, batch_size, offset));
-          }
+          // if (search_results.length < total_count){
+                dispatch(fetchSearchResults(search_ids,search_filters, batch_size, offset));
+          // }
         }
     }
 
@@ -100,9 +103,14 @@ function CourseResultViewContainer() {
         topRef.current.focus();
     },[search_ids])
 
+    useEffect(()=>{
+        console.log('reachedBottom: ',reachedBottom);
+        handleScrollToBottom();
+    },[reachedBottom])
+
     return (
         <Flex w="100vw" direction="row" justifyContent="center" alignItems="center" overflow="hidden">
-            <Box display="flex" flexBasis="100vw" flexDirection="column" alignItems='center' h="95vh" overflow="auto" maxW="screen-md" mx="auto" pt="64px" pb="40px"  onScroll={handleScroll}>
+            <Box display="flex" flexBasis="100vw" flexDirection="column" alignItems='center' h="95vh" overflow="auto" maxW="screen-md" mx="auto" pt="64px" pb="40px">
                 <div ref={topRef}/>
                 <Flex w="100%" direction="column" position="sticky" top="0" bgColor="white" zIndex="100" boxShadow="md">
                     <Flex w="100%" px="10vw" py="4" direction="column" >
@@ -179,6 +187,7 @@ function CourseResultViewContainer() {
                     <IconButton size="xs" variant='ghost' icon={displayFilter? <FaChevronUp />:<FaChevronDown />} onClick={() => setDisplayFilter(!displayFilter)} />
                 </Flex>
                 <CourseInfoRowContainer courseInfo={search_results} />
+                <div ref={bottomRef}/>
                 <SkeletonRow loading={search_loading} error={search_error}/>
             </Box>
             <Button size="xs" h="95vh" variant="ghost" onClick={() => setDisplayTable(!displayTable)}>{displayTable? <FaChevronRight/>:<FaChevronLeft />}</Button>
