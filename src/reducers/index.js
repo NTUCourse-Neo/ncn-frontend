@@ -6,6 +6,7 @@ const initState = {
     search_results:[], // array of course objects
     search_loading: false, // boolean
     search_error: null, // null(no error) or error_message
+    total_count: 0, // total number of results
     batch_size: 20,
     offset: 0,
     search_columns: ['course_name', 'teacher', 'id', 'course_code', 'course_id'], // array of column names, default is all columns
@@ -18,7 +19,7 @@ const reducer = (state = initState, action) => {
         case FETCH_SEARCH_IDS_REQUEST:
             return {...state, search_loading: true}
         case FETCH_SEARCH_IDS_SUCCESS:
-            return {...state,search_ids: action.payload, search_loading: false, search_error: null, offset: 0, search_results: []}
+            return {...state,search_ids: action.payload, search_loading: false, search_error: null, offset: 0, search_results: [], total_count: 0}
         case FETCH_SEARCH_IDS_FAILURE:
             return {...state, search_loading: false, search_error: action.payload}
         case FETCH_SEARCH_RESULTS_REQUEST:

@@ -1,5 +1,5 @@
 // write all function that generate actions here
-import {FETCH_SEARCH_RESULTS_FAILURE, FETCH_SEARCH_RESULTS_SUCCESS,FETCH_SEARCH_RESULTS_REQUEST,FETCH_SEARCH_IDS_FAILURE,FETCH_SEARCH_IDS_REQUEST,FETCH_SEARCH_IDS_SUCCESS,SET_SEARCH_COLUMN, SET_SEARCH_SETTINGS, SET_FILTERS, INCREMENT_OFFSET} from '../constants/action-types';
+import {FETCH_SEARCH_RESULTS_FAILURE, FETCH_SEARCH_RESULTS_SUCCESS,FETCH_SEARCH_RESULTS_REQUEST,FETCH_SEARCH_IDS_FAILURE,FETCH_SEARCH_IDS_REQUEST,FETCH_SEARCH_IDS_SUCCESS,SET_SEARCH_COLUMN, SET_SEARCH_SETTINGS, SET_FILTERS, INCREMENT_OFFSET, UPDATE_TOTAL_COUNT} from '../constants/action-types';
 import instance from '../api/axios'
 
 // normal actions
@@ -27,10 +27,12 @@ const fetchSearchIDs = (searchString, paths, filter_obj, batch_size) => async (d
         // fetch batch 0 first
         dispatch({type: FETCH_SEARCH_RESULTS_REQUEST});
         try {
-            const {data: {courses}} = await instance.post(`/courses/ids`, {ids: ids, filter: filter_obj, batch_size: batch_size, offset: 0});
+            const {data: {courses, total_count}} = await instance.post(`/courses/ids`, {ids: ids, filter: filter_obj, batch_size: batch_size, offset: 0});
             dispatch({type: FETCH_SEARCH_RESULTS_SUCCESS, payload: courses});
             // increment offset
             dispatch({type: INCREMENT_OFFSET});
+            // update total_results count
+            dispatch({type: UPDATE_TOTAL_COUNT, payload: total_count})
         } catch (error) {
             dispatch({type: FETCH_SEARCH_RESULTS_FAILURE, payload: error});
             // throw error?

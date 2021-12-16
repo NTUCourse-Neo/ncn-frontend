@@ -39,6 +39,7 @@ function CourseResultViewContainer() {
   const search_error = useSelector(state => state.search_error);
   const offset = useSelector(state => state.offset);
   const batch_size = useSelector(state => state.batch_size);
+  const total_count = useSelector(state => state.total_count);
 
   const [selectedTime, setSelectedTime] = useState([]);
   const [selectedDept, setSelectedDept] = useState(search_filters.department===null?[]:search_filters.department);
@@ -85,21 +86,27 @@ function CourseResultViewContainer() {
     };
 
     const handleScroll = (e) => {
-      const reach_bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
-      if(reach_bottom){
+      const reach_bottom = e.target.scrollHeight - Math.ceil(e.target.scrollTop) === e.target.clientHeight;
+      if(reach_bottom && search_results.length !== 0){
           console.log('BOTTOM!');
-          // todo
-          dispatch(fetchSearchResults(search_ids,search_filters, batch_size, offset));
-      }
+          // fetch next batch of search results
+          if (search_results.length < total_count){
+            dispatch(fetchSearchResults(search_ids,search_filters, batch_size, offset));
+          }
+        }
     }
+
+    useEffect(()=>{
+        topRef.current.focus();
+    },[search_ids])
 
     return (
         <Flex w="100vw" direction="row" justifyContent="center" alignItems="center" overflow="hidden">
-            <div ref={topRef}/>
             <Box display="flex" flexBasis="100vw" flexDirection="column" alignItems='center' h="95vh" overflow="auto" maxW="screen-md" mx="auto" pt="64px" pb="40px"  onScroll={handleScroll}>
+                <div ref={topRef}/>
                 <Flex w="100%" direction="column" position="sticky" top="0" bgColor="white" zIndex="100" boxShadow="md">
                     <Flex w="100%" px="10vw" py="4" direction="column" >
-                        <CourseSearchInput topRef={topRef}/>
+                        <CourseSearchInput />
                         <Collapse in={displayFilter} animateOpacity>
                             <Box w="100%" py="8px" mt="4">
                                 <Tabs>
