@@ -28,7 +28,7 @@ import CourseInfoRowContainer from './CourseInfoRowContainer';
 import FilterModal from '../components/FilterModal';
 import CourseSearchInput from '../components/CourseSearchInput';
 import SkeletonRow from '../components/SkeletonRow';
-import { setSearchSettings, fetchSearchResults, setEnrollMethod } from '../actions/index';
+import { setSearchSettings, fetchSearchResults, setFilter} from '../actions/index';
 import {useSelector, useDispatch} from 'react-redux';
 import useOnScreen from '../hooks/useOnScreen';
 
@@ -53,12 +53,12 @@ function CourseResultViewContainer() {
   const [selectedTime, setSelectedTime] = useState([]);
   const [selectedDept, setSelectedDept] = useState(search_filters.department===null?[]:search_filters.department);
   const [selectedType, setSelectedType] = useState(search_filters.category===null?[]:search_filters.category);
+  const [selectedEnrollMethod, setSelectedEnrollMethod] = useState([]);
 
   const [ timeFilterOn, setTimeFilterOn ] = useState(search_filters.time===null?false:true);
   const [ deptFilterOn, setDeptFilterOn ] = useState(search_filters.department===null?false:true);
   const [ catFilterOn, setCatFilterOn ] = useState(search_filters.category===null?false:true);
-  // TODO: add the enroll method filter config.
-  const [ enrollFilterOn, setEnrollFilterOn ] = useState(search_filters.category===null?false:true);
+  const [ enrollFilterOn, setEnrollFilterOn ] = useState(false);
 
   const [ displayFilter, setDisplayFilter ] = useState(false);
   const [ displayTable, setDisplayTable ] = useState(true);
@@ -68,6 +68,7 @@ function CourseResultViewContainer() {
   const [only_show_not_conflicted_courses, set_only_show_not_conflicted_courses] = useState(search_settings.only_show_not_conflicted_courses);
   const [sync_add_to_nol, set_sync_add_to_nol] = useState(search_settings.sync_add_to_nol);
   const [strict_search_mode, set_strict_search_mode] = useState(search_settings.strict_search_mode);
+
   const renderSettingSwitch = (label, default_checked) => {
 
         const handleChangeSettings = (e)=>{
@@ -105,9 +106,29 @@ function CourseResultViewContainer() {
           }
         }
     }
-    const toggle_enroll_method = (e)=>{
-      setEnrollMethod(e.currentTarget.value)
-  }
+
+    const set_enroll_method = (e)=>{
+      // console.log(e.currentTarget.value)
+      let new_enroll_method =e.currentTarget.value ;
+      let idx = selectedEnrollMethod.indexOf(new_enroll_method);
+      if (idx===-1){
+          //add
+          setSelectedEnrollMethod([...selectedEnrollMethod, new_enroll_method]);
+      } else {
+          // remove
+          setSelectedEnrollMethod(selectedEnrollMethod.filter(item => item !== new_enroll_method));
+      }
+    }
+
+    useEffect(()=>{
+        console.log(selectedEnrollMethod);
+        if (selectedEnrollMethod.length===0){
+            dispatch(setFilter('enroll_method', null));
+        }
+        else {
+            dispatch(setFilter('enroll_method', selectedEnrollMethod));
+        }
+    },[selectedEnrollMethod]);
 
     useEffect(()=>{
         topRef.current.focus();
@@ -164,14 +185,19 @@ function CourseResultViewContainer() {
                                                     <Flex flexDirection="row" alignItems="center" justifyContent="center">
                                                     <Switch size="lg" mr="2" isChecked={enrollFilterOn} onChange={ (e) => {
                                                       setEnrollFilterOn(e.currentTarget.checked);
+                                                      if (e.currentTarget.checked===true){
+                                                        setSelectedEnrollMethod(['1','2','3'])
+                                                      } else {
+                                                        setSelectedEnrollMethod([])
+                                                      }
                                                     } }/>
                                                     <Menu closeOnSelect={false} mx="2">
                                                         <MenuButton as={Button} rightIcon={<FaChevronDown />} disabled={!enrollFilterOn}>加選方式</MenuButton>
                                                         <MenuList>
                                                             <MenuOptionGroup defaultValue={['1','2','3']} type='checkbox'>
-                                                                <MenuItemOption value='1' ><Badge mr="2" colorScheme="blue" onClick={(e) => {toggle_enroll_method(e)}}>1</Badge>直接加選</MenuItemOption>
-                                                                <MenuItemOption value='2' ><Badge mr="2" colorScheme="blue" onClick={(e) => {toggle_enroll_method(e)}}>2</Badge>授權碼加選</MenuItemOption>
-                                                                <MenuItemOption value='3' ><Badge mr="2" colorScheme="blue" onClick={(e) => {toggle_enroll_method(e)}}>3</Badge>登記後加選</MenuItemOption>
+                                                                <MenuItemOption value='1' onClick={(e) => {set_enroll_method(e)}}><Badge mr="2" colorScheme="blue" >1</Badge>直接加選</MenuItemOption>
+                                                                <MenuItemOption value='2' onClick={(e) => {set_enroll_method(e)}}><Badge mr="2" colorScheme="blue" >2</Badge>授權碼加選</MenuItemOption>
+                                                                <MenuItemOption value='3' onClick={(e) => {set_enroll_method(e)}}><Badge mr="2" colorScheme="blue" >3</Badge>登記後加選</MenuItemOption>
                                                             </MenuOptionGroup>
                                                             <MenuDivider />
                                                             <Flex flexDirection="row" justifyContent="center"><Text fontSize="sm" color="gray.500">加退選規定詳洽教務處</Text></Flex>
