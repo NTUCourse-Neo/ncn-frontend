@@ -1,17 +1,27 @@
 import React from 'react';
-import {Skeleton} from '@chakra-ui/react';
+import {Flex, Spinner, useToast} from '@chakra-ui/react';
 
 function SkeletonRow(props) {
-
+    const toast = useToast();
     const visible_logic = () =>{
         if (props.loading){
-            return (<Skeleton w='60%' speed='0.5' startColor='gray.100' endColor='teal.300' height='30px' >
-                <div>won't be visible</div>
-            </Skeleton>)
+            return (
+                <Flex p="4">
+                    <Spinner size="lg" color="teal.600"/>
+                </Flex>
+            )
         }
         else if (props.error){
-            // what to render if network error when fetching
-            return (<></>)
+            console.log(props.error);
+            return (
+                toast({
+                    title: '錯誤',
+                    description: '😢 哭阿，發生錯誤了，請稍後再試一次。',
+                    status: 'error',
+                    duration: 5000,
+                    isClosable: true
+                })
+            )
         }
         else {
             return (<></>)
