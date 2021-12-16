@@ -53,12 +53,12 @@ function CourseResultViewContainer() {
   const [selectedTime, setSelectedTime] = useState([]);
   const [selectedDept, setSelectedDept] = useState(search_filters.department===null?[]:search_filters.department);
   const [selectedType, setSelectedType] = useState(search_filters.category===null?[]:search_filters.category);
-  const [selectedEnrollMethod, setSelectedEnrollMethod] = useState([]);
+  const [selectedEnrollMethod, setSelectedEnrollMethod] = useState(search_filters.enroll_method===null?[]:search_filters.enroll_method);
 
   const [ timeFilterOn, setTimeFilterOn ] = useState(search_filters.time===null?false:true);
   const [ deptFilterOn, setDeptFilterOn ] = useState(search_filters.department===null?false:true);
   const [ catFilterOn, setCatFilterOn ] = useState(search_filters.category===null?false:true);
-  const [ enrollFilterOn, setEnrollFilterOn ] = useState(false);
+  const [ enrollFilterOn, setEnrollFilterOn ] = useState(search_filters.enroll_method===null?false:true);
 
   const [ displayFilter, setDisplayFilter ] = useState(false);
   const [ displayTable, setDisplayTable ] = useState(true);
@@ -121,7 +121,7 @@ function CourseResultViewContainer() {
     }
 
     useEffect(()=>{
-        console.log(selectedEnrollMethod);
+        // console.log(selectedEnrollMethod);
         if (selectedEnrollMethod.length===0){
             dispatch(setFilter('enroll_method', null));
         }
@@ -194,7 +194,7 @@ function CourseResultViewContainer() {
                                                     <Menu closeOnSelect={false} mx="2">
                                                         <MenuButton as={Button} rightIcon={<FaChevronDown />} disabled={!enrollFilterOn}>加選方式</MenuButton>
                                                         <MenuList>
-                                                            <MenuOptionGroup defaultValue={['1','2','3']} type='checkbox'>
+                                                            <MenuOptionGroup value={selectedEnrollMethod} type='checkbox'>
                                                                 <MenuItemOption value='1' onClick={(e) => {set_enroll_method(e)}}><Badge mr="2" colorScheme="blue" >1</Badge>直接加選</MenuItemOption>
                                                                 <MenuItemOption value='2' onClick={(e) => {set_enroll_method(e)}}><Badge mr="2" colorScheme="blue" >2</Badge>授權碼加選</MenuItemOption>
                                                                 <MenuItemOption value='3' onClick={(e) => {set_enroll_method(e)}}><Badge mr="2" colorScheme="blue" >3</Badge>登記後加選</MenuItemOption>
