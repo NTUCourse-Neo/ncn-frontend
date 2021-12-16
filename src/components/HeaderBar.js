@@ -12,27 +12,20 @@ import {
 } from '@chakra-ui/react';
 import {ChevronRightIcon, Search2Icon} from "@chakra-ui/icons"
 import { ColorModeSwitcher } from '../ColorModeSwitcher';
+import { Link } from "react-router-dom";
 
 
-function HeaderBar(props) {
+function HeaderBar() {
     return (
       <Flex position="fixed" w="100%" h="64px" bg="teal.300" flexDirection="row" justifyContent="start" alignItems="center" zIndex="1000">
         <Flex justifyContent="center" alignItems="center" ml="60px">
-          <Heading fontSize="2xl" fontWeight="700" mr="auto" color="gray.700" minW="200px">NTUCourse Neo</Heading>
-          <Button colorScheme="blue" variant="ghost" size="md" ml="30px">課程</Button>
+          <Link to="/"><Heading fontSize="2xl" fontWeight="700" mr="auto" color="gray.700" minW="200px">NTUCourse Neo</Heading></Link>
+          <Link to="/course"><Button colorScheme="blue" variant="ghost" size="md" ml="30px">課程</Button></Link>
         </Flex>
         <Spacer />
-        <InputGroup maxW="30vw">
-          <InputLeftElement children={<Search2Icon color="gray.500"/>} />
-          <Input variant="filled" size="md" focusBorderColor="white" color="white"/>
-          <InputRightElement>
-            <Kbd>/</Kbd>
-          </InputRightElement>
-        </InputGroup>
-        <Spacer />
         <Flex justifyContent="center" alignItems="center" mr="60px">
-          <Button colorScheme="blue" variant="ghost" size="md" ml="10px" mr="10px">登入</Button>
-          <Button colorScheme="yellow" rightIcon={<ChevronRightIcon/>} size="md" ml="10px" mr="10px">註冊</Button>
+          <Link to="/login"><Button colorScheme="blue" variant="ghost" size="md" ml="10px" mr="10px">登入</Button></Link>
+          <Link to="/signup"><Button colorScheme="yellow" rightIcon={<ChevronRightIcon/>} size="md" ml="10px" mr="10px">註冊</Button></Link>
         </Flex>
       </Flex>
   );

@@ -1,4 +1,4 @@
-import React from 'react';
+import { React, useState } from 'react';
 import {
   ChakraProvider,
   useColorModeValue,
@@ -7,13 +7,26 @@ import theme from './theme';
 import HeaderBar from './components/HeaderBar';
 import Footer from './components/Footer';
 import HomeViewContainer from './containers/HomeViewContainer';
+import CourseResultViewContainer from './containers/CourseResultViewContainer';
 
 
-function App() {
+function App(props) {
+  
+  const content = (route)=>{
+    switch(route){
+      case "home":
+        return <HomeViewContainer />
+      case "course":
+        return <CourseResultViewContainer />
+      default:
+        return <HomeViewContainer />
+    }
+  }
+
   return (
     <ChakraProvider theme={theme}>
       <HeaderBar useColorModeValue={useColorModeValue}/>
-      <HomeViewContainer/>
+      {content(props.route)}
       <Footer />
     </ChakraProvider>
   );

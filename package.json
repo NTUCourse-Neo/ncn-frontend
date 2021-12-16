@@ -1,42 +1,50 @@
 {
-  "name": "ncn-frontend",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@chakra-ui/icons": "^1.1.1",
-    "@chakra-ui/react": "^1.0.0",
-    "@emotion/react": "^11.0.0",
-    "@emotion/styled": "^11.0.0",
-    "@testing-library/jest-dom": "^5.9.0",
-    "@testing-library/react": "^10.2.1",
-    "@testing-library/user-event": "^12.0.2",
-    "framer-motion": "^4.0.0",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-icons": "^3.0.0",
-    "react-scripts": "4.0.3",
-    "react-scroll": "^1.8.4",
-    "web-vitals": "^0.2.2"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "CI=false && react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
+    "name": "ncn-frontend",
+    "version": "0.1.0",
+    "private": true,
+    "dependencies": {
+        "@chakra-ui/icons": "^1.1.1",
+        "@chakra-ui/react": "^1.0.0",
+        "@emotion/react": "^11.0.0",
+        "@emotion/styled": "^11.0.0",
+        "@testing-library/jest-dom": "^5.9.0",
+        "@testing-library/react": "^10.2.1",
+        "@testing-library/user-event": "^12.0.2",
+        "axios": "^0.24.0",
+        "focus-visible": "^5.2.0",
+        "framer-motion": "^4.0.0",
+        "react": "^17.0.2",
+        "react-dom": "^17.0.2",
+        "react-icons": "^3.0.0",
+        "react-redux": "^7.2.6",
+        "react-router-dom": "6",
+        "react-scripts": "4.0.3",
+        "react-scroll": "^1.8.4",
+        "react-table-drag-select": "^0.3.1",
+        "redux": "^4.1.2",
+        "redux-thunk": "^2.4.1",
+        "web-vitals": "^0.2.2"
+    },
+    "prettier": ".prettierrc",
+    "scripts": {
+        "start": "react-scripts start",
+        "build": "CI=false && react-scripts build",
+        "test": "react-scripts test",
+        "eject": "react-scripts eject"
+    },
+    "eslintConfig": {
+        "extends": "react-app"
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    }
 }

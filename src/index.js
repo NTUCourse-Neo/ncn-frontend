@@ -5,12 +5,25 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import * as serviceWorker from './serviceWorker';
 import theme from './theme';
+import { Provider } from "react-redux";
+import store from "./store/index";
+import 'focus-visible/dist/focus-visible';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 ReactDOM.render(
-  <StrictMode>
-    <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-    <App />
-  </StrictMode>,
+    <Provider store={store}>
+      <BrowserRouter>
+        <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+        <Routes>
+          <Route path="/" element={<App route="home"/>} />
+          <Route path="/course" element={<App route="course"/>} />
+          {/* <Route path="/login" element={<LoginPage />} /> */}
+          {/* <Route path="/signup" element={<SignUpPage />} /> */}
+          <Route path="*" element={<App route="home"/>}/>
+        </Routes>
+      </BrowserRouter>
+    </Provider>
+  ,
   document.getElementById('root')
 );
 
