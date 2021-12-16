@@ -1,5 +1,5 @@
 // store initial states and reducers
-import {FETCH_SEARCH_RESULTS_FAILURE, FETCH_SEARCH_RESULTS_SUCCESS,FETCH_SEARCH_RESULTS_REQUEST,FETCH_SEARCH_IDS_FAILURE,FETCH_SEARCH_IDS_REQUEST,FETCH_SEARCH_IDS_SUCCESS,SET_SEARCH_COLUMN, SET_SEARCH_SETTINGS, SET_FILTERS, INCREMENT_OFFSET} from '../constants/action-types'
+import {FETCH_SEARCH_RESULTS_FAILURE, FETCH_SEARCH_RESULTS_SUCCESS,FETCH_SEARCH_RESULTS_REQUEST,FETCH_SEARCH_IDS_FAILURE,FETCH_SEARCH_IDS_REQUEST,FETCH_SEARCH_IDS_SUCCESS,SET_SEARCH_COLUMN, SET_SEARCH_SETTINGS, SET_FILTERS, INCREMENT_OFFSET, UPDATE_TOTAL_COUNT} from '../constants/action-types'
 
 const initState = {
     search_ids: [], // array of course_id
@@ -30,6 +30,8 @@ const reducer = (state = initState, action) => {
             return {...state, search_loading: false, search_error: action.payload}
         case INCREMENT_OFFSET:
             return {...state, offset: state.offset + state.batch_size}
+        case UPDATE_TOTAL_COUNT:
+            return {...state, total_count: action.payload}
         case SET_SEARCH_COLUMN:
             let col_name = action.payload;
             if (state.search_columns.includes(col_name)){

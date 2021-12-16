@@ -16,3 +16,5 @@ export default function useOnScreen(ref) {
   
     return isIntersecting
 }
+
+// source: https://stackoverflow.com/a/70179193/17420003

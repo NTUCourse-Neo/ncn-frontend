@@ -100,9 +100,9 @@ function CourseResultViewContainer() {
       if(reachedBottom && search_results.length !== 0){
           console.log('BOTTOM!');
           // fetch next batch of search results
-          // if (search_results.length < total_count){
-                dispatch(fetchSearchResults(search_ids,search_filters, batch_size, offset));
-          // }
+          if (search_results.length < total_count){
+            dispatch(fetchSearchResults(search_ids,search_filters, batch_size, offset));
+          }
         }
     }
     const toggle_enroll_method = (e)=>{
@@ -114,7 +114,7 @@ function CourseResultViewContainer() {
     },[search_ids])
 
     useEffect(()=>{
-        console.log('reachedBottom: ',reachedBottom);
+        // console.log('reachedBottom: ',reachedBottom);
         handleScrollToBottom();
     },[reachedBottom])
 

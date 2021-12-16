@@ -22,7 +22,7 @@ const fetchSearchIDs = (searchString, paths, filter_obj, batch_size) => async (d
 
     try {
         const {data: {ids}} = await instance.post(`/courses/search`, {query: searchString, paths: paths});
-        console.log(ids); // checking receive array of courses 
+        // console.log(ids); // checking receive array of courses 
         dispatch({type: FETCH_SEARCH_IDS_SUCCESS, payload: ids});
 
         // fetch batch 0 first
@@ -52,7 +52,7 @@ const fetchSearchResults = (ids_arr, filter_obj, batch_size, offset) =>async (di
 
     try {
         const {data: {courses}} = await instance.post(`/courses/ids`, {ids: ids_arr, filter: filter_obj, batch_size: batch_size, offset: offset});
-        console.log(courses); // checking receive array of courses 
+        // console.log(courses); // checking receive array of courses 
         dispatch({type: FETCH_SEARCH_RESULTS_SUCCESS, payload: courses});
         // increment offset
         dispatch({type: INCREMENT_OFFSET});
