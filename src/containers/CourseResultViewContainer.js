@@ -97,7 +97,6 @@ function CourseResultViewContainer() {
     };
 
     const handleScrollToBottom = () => {
-    //   const reach_bottom = e.target.scrollHeight - Math.ceil(e.target.scrollTop) === e.target.clientHeight;
       if(reachedBottom && search_results.length !== 0){
           console.log('BOTTOM!');
           // fetch next batch of search results
