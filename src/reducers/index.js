@@ -51,8 +51,7 @@ const reducer = (state = initState, action) => {
                 return {...state, search_filters: {...state.search_filters, department: data}}
             }
             else if (filter_name==='time'){
-                //todo
-                return {...state}
+                return {...state, search_filters: {...state.search_filters, time: data}}
             }
             else if (filter_name==='category'){
                 return {...state, search_filters: {...state.search_filters, category: data}}
@@ -61,7 +60,6 @@ const reducer = (state = initState, action) => {
                 return {...state, search_filters: {...state.search_filters, enroll_method: data}}
             }
             else {
-                //default
                 return {...state}
             }
         default:

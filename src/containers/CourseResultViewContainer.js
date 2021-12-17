@@ -54,6 +54,7 @@ function CourseResultViewContainer() {
   const [selectedDept, setSelectedDept] = useState(search_filters.department===null?[]:search_filters.department);
   const [selectedType, setSelectedType] = useState(search_filters.category===null?[]:search_filters.category);
   const [selectedEnrollMethod, setSelectedEnrollMethod] = useState(search_filters.enroll_method===null?[]:search_filters.enroll_method);
+  const [intervalCount, setIntervalCount] = useState(0);
 
   const [ timeFilterOn, setTimeFilterOn ] = useState(search_filters.time===null?false:true);
   const [ deptFilterOn, setDeptFilterOn ] = useState(search_filters.department===null?false:true);
@@ -138,6 +139,11 @@ function CourseResultViewContainer() {
         handleScrollToBottom();
     },[reachedBottom])
 
+    // for debugging
+    useEffect(()=>{
+        console.log(selectedTime);
+    },[selectedTime])
+
     return (
         <Flex w="100vw" direction="row" justifyContent="center" alignItems="center" overflow="hidden">
             <Box display="flex" flexBasis="100vw" flexDirection="column" alignItems='center' h="95vh" overflow="auto" maxW="screen-md" mx="auto" pt="64px" pb="40px">
@@ -161,7 +167,8 @@ function CourseResultViewContainer() {
                                                     <Switch size="lg" mr="2" isChecked={timeFilterOn} onChange={ (e) => {
                                                       setTimeFilterOn(e.currentTarget.checked);
                                                     } }/>
-                                                      <FilterModal title={selectedTime.length===0 ? "未選擇課程時間" : "已選擇 "+selectedTime.length+" 節次"} toggle={timeFilterOn} type="time" selectedTime={selectedTime} setSelectedTime={setSelectedTime}/>
+                                                        {/* TODO: NOT selectedTime.length bcz its 2-dim array, need t ocount # of true */}
+                                                      <FilterModal title={intervalCount===0 ? "未選擇課程時間" : "已選擇 "+intervalCount+" 節次"} toggle={timeFilterOn} type="time" selectedTime={selectedTime} setSelectedTime={setSelectedTime} setIntervalCount={setIntervalCount}/>
                                                     </Flex>
                                                 </Flex>
                                                 <Flex flexDirection="column" px="4">

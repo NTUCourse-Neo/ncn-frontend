@@ -27,7 +27,7 @@ function TimetableSelector (props) {
     props.setSelectedTime(cells);
   },[cells])
 
-  const days = ["日", "一", "二", "三", "四", "五", "六"];
+  const days = ["一", "二", "三", "四", "五", "六" ,"日"];
   const interval = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "A", "B", "C", "D"];
  
   return (

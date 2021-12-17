@@ -29,7 +29,21 @@ function FilterModal(props){
       dispatch(setFilter('department', props.selectedDept));
     }
     else if (type==='time'){
-      // todo
+      // turn 15x7 2D array (selectedTime) to 7x15 array
+      let intervalCount = 0
+      let timeTable = [[],[],[],[],[],[],[]];
+      const intervals = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "A", "B", "C", "D"];
+      for (let i=0;i<intervals.length;i++){
+        let interval = intervals[i]
+        for (let j=0;j<7;j++){
+          if (props.selectedTime[i][j] === true){
+            intervalCount++;
+            timeTable[j].push(interval)
+          }
+        }
+      }
+      dispatch(setFilter('time', timeTable))
+      props.setIntervalCount(intervalCount);
     }
     else if (type==='category'){
       dispatch(setFilter('category', props.selectedType));

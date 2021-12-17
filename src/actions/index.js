@@ -9,7 +9,7 @@ const setSearchSettings = (setting_obj)=>({type: SET_SEARCH_SETTINGS, payload: s
 
 // data = 
 // when filter_name == 'department', arr of dept_code (4-digits),
-// when filter_name == 'time',
+// when filter_name == 'time', 2D array, each subarray have length == 15
 // when filter_name == 'category', arr of string (type of courses),
 // when filter_name == 'enroll_method', arr of string (type of enroll method) || null (disable this function)
 const setFilter = (filter_name, data)=>({type: SET_FILTERS, filter_name: filter_name, payload: data});
