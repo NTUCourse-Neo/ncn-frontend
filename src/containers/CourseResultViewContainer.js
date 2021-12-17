@@ -175,15 +175,23 @@ function CourseResultViewContainer() {
                                                     <Flex flexDirection="row" alignItems="center" justifyContent="center">
                                                       <Switch size="lg" mr="2" isChecked={deptFilterOn} onChange={ (e) => {
                                                         setDeptFilterOn(e.currentTarget.checked);
+                                                        if (e.currentTarget.checked===false){
+                                                            setSelectedDept([]);
+                                                            dispatch(setFilter('department', null))
+                                                        }
                                                       } }/>
                                                       <FilterModal title={selectedDept.length===0 ? "未選擇開課系所" : "已選擇 "+selectedDept.length+" 系所"} toggle={deptFilterOn} type="department" selectedDept={selectedDept} setSelectedDept={setSelectedDept}/>
                                                     </Flex>
                                                 </Flex>
                                                 <Flex flexDirection="column" px="4">
                                                     <Flex flexDirection="row" alignItems="center" justifyContent="center">
-                                                    <Switch size="lg" mr="2" isChecked={catFilterOn} onChange={ (e) => {
-                                                      setCatFilterOn(e.currentTarget.checked);
-                                                    } }/>
+                                                      <Switch size="lg" mr="2" isChecked={catFilterOn} onChange={ (e) => {
+                                                        setCatFilterOn(e.currentTarget.checked);
+                                                        if (e.currentTarget.checked===false){
+                                                            setSelectedType([]);
+                                                            dispatch(setFilter('category', null))
+                                                        }
+                                                      }}/>
                                                     <FilterModal title={selectedType.length===0 ? "未選擇課程類別" : "已選擇 "+selectedType.length+" 類別"} toggle={catFilterOn} type="category" selectedType={selectedType} setSelectedType={setSelectedType}/>
                                                     </Flex>
                                                 </Flex>
