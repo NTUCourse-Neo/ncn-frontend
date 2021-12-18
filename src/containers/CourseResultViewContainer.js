@@ -23,11 +23,12 @@ import {
     Badge,
     MenuDivider
 } from '@chakra-ui/react';
-import { FaChevronDown, FaChevronUp, FaChevronLeft, FaChevronRight, FaInfoCircle, } from 'react-icons/fa';
+import { FaChevronDown, FaChevronUp, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import CourseInfoRowContainer from './CourseInfoRowContainer';
 import FilterModal from '../components/FilterModal';
 import CourseSearchInput from '../components/CourseSearchInput';
 import SkeletonRow from '../components/SkeletonRow';
+import SideCourseTableContainer from './SideCourseTableContainer';
 import { setSearchSettings, fetchSearchResults, setFilter} from '../actions/index';
 import {useSelector, useDispatch} from 'react-redux';
 import useOnScreen from '../hooks/useOnScreen';
@@ -267,7 +268,7 @@ function CourseResultViewContainer() {
             </Box>
             <Button size="xs" h="95vh" variant="ghost" onClick={() => setDisplayTable(!displayTable)}>{displayTable? <FaChevronRight/>:<FaChevronLeft />}</Button>
             <Flex flexBasis={displayTable? "40vw" : "5vw"} h="95vh" bg="gray.100" alignItems="center" justifyContent="center" transition="flex-basis 500ms ease-in-out">
-                Table
+                <SideCourseTableContainer courseTable={"a"} isOpen={displayTable}/>
             </Flex>
         </Flex>
     );
