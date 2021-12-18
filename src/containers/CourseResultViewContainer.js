@@ -144,9 +144,9 @@ function CourseResultViewContainer() {
     },[])
 
     // for debugging
-    useEffect(()=>{
-        console.log(selectedTime);
-    },[selectedTime])
+    // useEffect(()=>{
+    //     console.log(selectedTime);
+    // },[selectedTime])
 
     return (
         <Flex w="100vw" direction="row" justifyContent="center" alignItems="center" overflow="hidden">
