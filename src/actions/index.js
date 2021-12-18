@@ -16,7 +16,7 @@ const setFilter = (filter_name, data)=>({type: SET_FILTERS, filter_name: filter_
 
 // ============================================================
 // async actions (used redux-thunk template)
-const fetchSearchIDs = (searchString, paths, filter_obj, batch_size) => async (dispatch)=>{
+const fetchSearchIDs = (searchString, paths, filter_obj, batch_size, strict_match) => async (dispatch)=>{
     dispatch({type: FETCH_SEARCH_IDS_REQUEST});
 
     try {
@@ -27,7 +27,7 @@ const fetchSearchIDs = (searchString, paths, filter_obj, batch_size) => async (d
         // fetch batch 0 first
         dispatch({type: FETCH_SEARCH_RESULTS_REQUEST});
         try {
-            const {data: {courses, total_count}} = await instance.post(`/courses/ids`, {ids: ids, filter: filter_obj, batch_size: batch_size, offset: 0});
+            const {data: {courses, total_count}} = await instance.post(`/courses/ids`, {ids: ids, filter: filter_obj, batch_size: batch_size, offset: 0, strict_match: strict_match});
             dispatch({type: FETCH_SEARCH_RESULTS_SUCCESS, payload: courses});
             // increment offset
             dispatch({type: INCREMENT_OFFSET});
