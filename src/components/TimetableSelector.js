@@ -4,28 +4,6 @@ import "react-table-drag-select/style.css";
 import { Flex, Text } from '@chakra-ui/react';
  
 function TimetableSelector (props) {
-  const [cells, setCells] = useState(
-    [
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-    ])
-
-  useEffect(()=>{
-    props.setSelectedTime(cells);
-  },[cells])
 
   const days = ["一", "二", "三", "四", "五", "六" ,"日"];
   const interval = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "A", "B", "C", "D"];
@@ -47,7 +25,7 @@ function TimetableSelector (props) {
           );
         })}
       </Flex>
-      <TableDragSelect value={cells} onChange={cells => setCells(cells)}>
+      <TableDragSelect value={props.selectedTime} onChange={new_time_table => props.setSelectedTime(new_time_table)}>
         {interval.map((day, i) =>{
           return (
             <tr key={i}>

@@ -19,10 +19,30 @@ import { type_list, code_map } from '../data/course_type';
 import TimetableSelector from "./TimetableSelector";
 import {useSelector, useDispatch} from 'react-redux';
 import {setFilter} from '../actions';
+import { mapStateToTimeTable } from "../utils/timeTableConverter";
 
 
 function FilterModal(props){
   const dispatch = useDispatch();
+  const time_state = useSelector(state => state.search_filters.time);
+
+  const initTimeTable=[
+    [false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false],
+  ];
 
   const handleSet = (type) => {
     if (type==='department'){
@@ -30,20 +50,17 @@ function FilterModal(props){
     }
     else if (type==='time'){
       // turn 15x7 2D array (selectedTime) to 7x15 array
-      let intervalCount = 0
       let timeTable = [[],[],[],[],[],[],[]];
       const intervals = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "A", "B", "C", "D"];
       for (let i=0;i<intervals.length;i++){
         let interval = intervals[i]
         for (let j=0;j<7;j++){
           if (props.selectedTime[i][j] === true){
-            intervalCount++;
             timeTable[j].push(interval)
           }
         }
       }
-      dispatch(setFilter('time', timeTable))
-      props.setIntervalCount(intervalCount);
+      dispatch(setFilter('time', timeTable));      
     }
     else if (type==='category'){
       dispatch(setFilter('category', props.selectedType));
@@ -124,10 +141,23 @@ function FilterModal(props){
       case "category":
         setSelected = props.setSelectedType;
         break;
+      case "time":
+        // used when reset
+        setSelected = ()=>{props.setSelectedTime(initTimeTable)};
+        break;
+      default:
+        setSelected = ()=>{console.log('No setSelected defined!')};
+        break;
     }
     return (
     <>
-    <Button isDisabled={!filterOn} onClick={onOpen}>{title}</Button>
+    <Button isDisabled={!filterOn} onClick={()=>{
+      onOpen();
+      // because this modal will not re-render, so manually reload from redux state 
+      if (props.type==='time'){
+        props.setSelectedTime(mapStateToTimeTable(time_state));
+      }
+    }}>{title}</Button>
     <Modal isOpen={isOpen} onClose={onClose} size="xl" scrollBehavior="inside">
       <ModalOverlay />
       <ModalContent maxW="50vw">

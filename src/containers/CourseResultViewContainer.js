@@ -31,6 +31,7 @@ import SkeletonRow from '../components/SkeletonRow';
 import { setSearchSettings, fetchSearchResults, setFilter} from '../actions/index';
 import {useSelector, useDispatch} from 'react-redux';
 import useOnScreen from '../hooks/useOnScreen';
+import {mapStateToTimeTable, mapStateToIntervals} from '../utils/timeTableConverter';
 
 
 function CourseResultViewContainer() {
@@ -50,11 +51,10 @@ function CourseResultViewContainer() {
   const batch_size = useSelector(state => state.batch_size);
   const total_count = useSelector(state => state.total_count);
 
-  const [selectedTime, setSelectedTime] = useState([]);
+  const [selectedTime, setSelectedTime] = useState(mapStateToTimeTable(search_filters.time));
   const [selectedDept, setSelectedDept] = useState(search_filters.department===null?[]:search_filters.department);
   const [selectedType, setSelectedType] = useState(search_filters.category===null?[]:search_filters.category);
   const [selectedEnrollMethod, setSelectedEnrollMethod] = useState(search_filters.enroll_method===null?[]:search_filters.enroll_method);
-  const [intervalCount, setIntervalCount] = useState(0);
 
   const [ timeFilterOn, setTimeFilterOn ] = useState(search_filters.time===null?false:true);
   const [ deptFilterOn, setDeptFilterOn ] = useState(search_filters.department===null?false:true);
@@ -139,6 +139,10 @@ function CourseResultViewContainer() {
         handleScrollToBottom();
     },[reachedBottom])
 
+    useEffect(()=>{
+      setSelectedTime(mapStateToTimeTable(search_filters.time));
+    },[])
+
     // for debugging
     useEffect(()=>{
         console.log(selectedTime);
@@ -166,9 +170,11 @@ function CourseResultViewContainer() {
                                                     <Flex flexDirection="row" alignItems="center" justifyContent="center">
                                                     <Switch size="lg" mr="2" isChecked={timeFilterOn} onChange={ (e) => {
                                                       setTimeFilterOn(e.currentTarget.checked);
+                                                      if (e.currentTarget.checked===false){
+                                                        dispatch(setFilter('time', null))
+                                                      }
                                                     } }/>
-                                                        {/* TODO: NOT selectedTime.length bcz its 2-dim array, need t ocount # of true */}
-                                                      <FilterModal title={intervalCount===0 ? "未選擇課程時間" : "已選擇 "+intervalCount+" 節次"} toggle={timeFilterOn} type="time" selectedTime={selectedTime} setSelectedTime={setSelectedTime} setIntervalCount={setIntervalCount}/>
+                                                      <FilterModal title={mapStateToIntervals(search_filters.time)===0 ? "未選擇課程時間" : "已選擇 "+mapStateToIntervals(search_filters.time)+" 節次"} toggle={timeFilterOn} type="time" selectedTime={selectedTime} setSelectedTime={setSelectedTime}/>
                                                     </Flex>
                                                 </Flex>
                                                 <Flex flexDirection="column" px="4">
