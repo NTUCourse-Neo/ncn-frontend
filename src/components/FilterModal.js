@@ -21,28 +21,9 @@ import {useSelector, useDispatch} from 'react-redux';
 import {setFilter} from '../actions';
 import { mapStateToTimeTable } from "../utils/timeTableConverter";
 
-
 function FilterModal(props){
   const dispatch = useDispatch();
   const time_state = useSelector(state => state.search_filters.time);
-
-  const initTimeTable=[
-    [false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false],
-  ];
 
   const handleSet = (type) => {
     if (type==='department'){
@@ -91,6 +72,8 @@ function FilterModal(props){
     }
     return (<></>);
   };
+
+  // for dept and category
   const handleSelect = (value, selected, setSelected) => {
     let index = selected.indexOf(value);
         if (index === -1) {
@@ -100,6 +83,7 @@ function FilterModal(props){
           setSelected([...selected]);
         }
   };
+  // for dept and category
   const renderButton = (type, data, selected, setSelected, renderSelected) => {
     let key;
     switch(type){
@@ -143,10 +127,26 @@ function FilterModal(props){
         break;
       case "time":
         // used when reset
-        setSelected = ()=>{props.setSelectedTime(initTimeTable)};
+        setSelected = ()=>{props.setSelectedTime([
+          [false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false],
+        ])};
         break;
       default:
-        setSelected = ()=>{console.log('No setSelected defined!')};
+        setSelected = ()=>{console.log('setSelected defined!')};
         break;
     }
     return (
