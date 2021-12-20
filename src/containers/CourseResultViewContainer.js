@@ -143,11 +143,6 @@ function CourseResultViewContainer() {
       setSelectedTime(mapStateToTimeTable(search_filters.time));
     },[])
 
-    // for debugging
-    // useEffect(()=>{
-    //     console.log(selectedTime);
-    // },[selectedTime])
-
     return (
         <Flex w="100vw" direction="row" justifyContent="center" alignItems="center" overflow="hidden">
             <Box display="flex" flexBasis="100vw" flexDirection="column" alignItems='center' h="95vh" overflow="auto" maxW="screen-md" mx="auto" pt="64px" pb="40px">
@@ -262,7 +257,7 @@ function CourseResultViewContainer() {
                     <IconButton size="xs" variant='ghost' icon={displayFilter? <FaChevronUp />:<FaChevronDown />} onClick={() => setDisplayFilter(!displayFilter)} />
                 </Flex>
                 <Flex w="100%" flexDirection="row" py="2" justifyContent="center">
-                  <Text fontSize="md" fontWeight="medium" color="gray.400">共找到 N 筆結果</Text>
+                  <Text fontSize="md" fontWeight="medium" color="gray.400">共找到 {total_count} 筆結果</Text>
                 </Flex>
                 <CourseInfoRowContainer courseInfo={search_results} />
                 <div ref={bottomRef}/>
