@@ -28,7 +28,7 @@ import CourseInfoRowContainer from './CourseInfoRowContainer';
 import FilterModal from '../components/FilterModal';
 import CourseSearchInput from '../components/CourseSearchInput';
 import SkeletonRow from '../components/SkeletonRow';
-import { setSearchSettings, fetchSearchResults, setFilter} from '../actions/index';
+import { setSearchSettings, fetchSearchResults, setFilter, setFilterEnable} from '../actions/index';
 import {useSelector, useDispatch} from 'react-redux';
 import useOnScreen from '../hooks/useOnScreen';
 import {mapStateToTimeTable, mapStateToIntervals} from '../utils/timeTableConverter';
@@ -44,6 +44,7 @@ function CourseResultViewContainer() {
   const search_ids = useSelector(state => state.search_ids);
   const search_results = useSelector(state => state.search_results);
   const search_settings = useSelector(state => state.search_settings);
+  const search_filters_enable = useSelector(state => state.search_filters_enable);
   const search_filters = useSelector(state => state.search_filters);
   const search_loading = useSelector(state => state.search_loading);
   const search_error = useSelector(state => state.search_error);
@@ -52,14 +53,14 @@ function CourseResultViewContainer() {
   const total_count = useSelector(state => state.total_count);
 
   const [selectedTime, setSelectedTime] = useState(mapStateToTimeTable(search_filters.time));
-  const [selectedDept, setSelectedDept] = useState(search_filters.department===null?[]:search_filters.department);
-  const [selectedType, setSelectedType] = useState(search_filters.category===null?[]:search_filters.category);
-  const [selectedEnrollMethod, setSelectedEnrollMethod] = useState(search_filters.enroll_method===null?[]:search_filters.enroll_method);
+  const [selectedDept, setSelectedDept] = useState(search_filters.department);
+  const [selectedType, setSelectedType] = useState(search_filters.category);
+  const [selectedEnrollMethod, setSelectedEnrollMethod] = useState(search_filters.enroll_method);
 
-  const [ timeFilterOn, setTimeFilterOn ] = useState(search_filters.time===null?false:true);
-  const [ deptFilterOn, setDeptFilterOn ] = useState(search_filters.department===null?false:true);
-  const [ catFilterOn, setCatFilterOn ] = useState(search_filters.category===null?false:true);
-  const [ enrollFilterOn, setEnrollFilterOn ] = useState(search_filters.enroll_method===null?false:true);
+  const [ timeFilterOn, setTimeFilterOn ] = useState(search_filters_enable.time);
+  const [ deptFilterOn, setDeptFilterOn ] = useState(search_filters_enable.department);
+  const [ catFilterOn, setCatFilterOn ] = useState(search_filters_enable.category);
+  const [ enrollFilterOn, setEnrollFilterOn ] = useState(search_filters_enable.enroll_method);
 
   const [ displayFilter, setDisplayFilter ] = useState(false);
   const [ displayTable, setDisplayTable ] = useState(true);
@@ -165,9 +166,7 @@ function CourseResultViewContainer() {
                                                     <Flex flexDirection="row" alignItems="center" justifyContent="center">
                                                     <Switch size="lg" mr="2" isChecked={timeFilterOn} onChange={ (e) => {
                                                       setTimeFilterOn(e.currentTarget.checked);
-                                                      if (e.currentTarget.checked===false){
-                                                        dispatch(setFilter('time', null))
-                                                      }
+                                                      dispatch(setFilterEnable('time', e.currentTarget.checked))
                                                     } }/>
                                                       <FilterModal title={mapStateToIntervals(search_filters.time)===0 ? "未選擇課程時間" : "已選擇 "+mapStateToIntervals(search_filters.time)+" 節次"} toggle={timeFilterOn} type="time" selectedTime={selectedTime} setSelectedTime={setSelectedTime}/>
                                                     </Flex>
@@ -176,10 +175,7 @@ function CourseResultViewContainer() {
                                                     <Flex flexDirection="row" alignItems="center" justifyContent="center">
                                                       <Switch size="lg" mr="2" isChecked={deptFilterOn} onChange={ (e) => {
                                                         setDeptFilterOn(e.currentTarget.checked);
-                                                        if (e.currentTarget.checked===false){
-                                                            setSelectedDept([]);
-                                                            dispatch(setFilter('department', null))
-                                                        }
+                                                        dispatch(setFilterEnable('department', e.currentTarget.checked))
                                                       } }/>
                                                       <FilterModal title={selectedDept.length===0 ? "未選擇開課系所" : "已選擇 "+selectedDept.length+" 系所"} toggle={deptFilterOn} type="department" selectedDept={selectedDept} setSelectedDept={setSelectedDept}/>
                                                     </Flex>
@@ -188,10 +184,7 @@ function CourseResultViewContainer() {
                                                     <Flex flexDirection="row" alignItems="center" justifyContent="center">
                                                       <Switch size="lg" mr="2" isChecked={catFilterOn} onChange={ (e) => {
                                                         setCatFilterOn(e.currentTarget.checked);
-                                                        if (e.currentTarget.checked===false){
-                                                            setSelectedType([]);
-                                                            dispatch(setFilter('category', null))
-                                                        }
+                                                        dispatch(setFilterEnable('category', e.currentTarget.checked))
                                                       }}/>
                                                     <FilterModal title={selectedType.length===0 ? "未選擇課程類別" : "已選擇 "+selectedType.length+" 類別"} toggle={catFilterOn} type="category" selectedType={selectedType} setSelectedType={setSelectedType}/>
                                                     </Flex>

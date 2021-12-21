@@ -11,7 +11,7 @@ const mapStateToTimeTable = (time_state) => {
             ["B"]
         ]
     */
-    if (time_state===null){
+    if (time_state===null || time_state===[[],[],[],[],[],[],[]]){
         return [
           [false, false, false, false, false, false, false],
           [false, false, false, false, false, false, false],

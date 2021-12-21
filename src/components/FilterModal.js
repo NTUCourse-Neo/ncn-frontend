@@ -24,6 +24,8 @@ import { mapStateToTimeTable } from "../utils/timeTableConverter";
 function FilterModal(props){
   const dispatch = useDispatch();
   const time_state = useSelector(state => state.search_filters.time);
+  const department_state = useSelector(state => state.search_filters.department);
+  const category_state = useSelector(state => state.search_filters.category);
 
   const handleSet = (type) => {
     if (type==='department'){
@@ -158,7 +160,16 @@ function FilterModal(props){
         props.setSelectedTime(mapStateToTimeTable(time_state));
       }
     }}>{title}</Button>
-    <Modal isOpen={isOpen} onClose={onClose} size="xl" scrollBehavior="inside">
+    <Modal isOpen={isOpen} onClose={()=>{
+      // when click "X", overwrite local state from redux state
+      if (type==="department"){
+        setSelected(department_state);
+      }
+      else if (type==="category"){
+        setSelected(category_state);
+      }
+      onClose();
+    }} size="xl" scrollBehavior="inside">
       <ModalOverlay />
       <ModalContent maxW="50vw">
         <ModalHeader>
