@@ -20,6 +20,7 @@ import {
   } from '@chakra-ui/react';
 import CourseDrawerContainer from '../containers/CourseDrawerContainer';
 import { FaUserPlus, FaPuzzlePiece, FaPlus} from 'react-icons/fa';
+import mapping_tables from '../data/mapping_table';
 function CourseInfoRow(props) {
     const toast = useToast();
     function addCourse(course){
@@ -60,7 +61,7 @@ function CourseInfoRow(props) {
                     </Flex>
                     <Spacer />
                     <Flex alignItems="center" justifyContent="end">
-                        <Tag mx="2px" variant='subtle' colorScheme='blue'>
+                        <Tag mx="2px" variant='subtle' colorScheme='blue' hidden={props.courseInfo.total_slot===-1}>
                             <TagLeftIcon boxSize='12px' as={FaUserPlus} />
                             <TagLabel>{props.courseInfo.total_slot}</TagLabel>
                         </Tag>
