@@ -15,7 +15,7 @@ const mapping_tables = {
         "name": "修課人數上限",
         "logo": FaUserPlus,
         "color": "blue"
-    },
+    }
 }
 
 export default mapping_tables;
