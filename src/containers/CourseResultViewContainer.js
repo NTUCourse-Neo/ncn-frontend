@@ -103,7 +103,7 @@ function CourseResultViewContainer() {
           console.log('BOTTOM!');
           // fetch next batch of search results
           if (search_results.length < total_count){
-            dispatch(fetchSearchResults(search_ids,search_filters, batch_size, offset));
+            dispatch(fetchSearchResults(search_ids, search_filters_enable, search_filters, batch_size, offset));
           }
         }
     }
@@ -123,12 +123,7 @@ function CourseResultViewContainer() {
 
     useEffect(()=>{
         // console.log(selectedEnrollMethod);
-        if (selectedEnrollMethod.length===0){
-            dispatch(setFilter('enroll_method', null));
-        }
-        else {
-            dispatch(setFilter('enroll_method', selectedEnrollMethod));
-        }
+        dispatch(setFilter('enroll_method', selectedEnrollMethod));
     },[selectedEnrollMethod]);
 
     useEffect(()=>{
@@ -193,11 +188,7 @@ function CourseResultViewContainer() {
                                                     <Flex flexDirection="row" alignItems="center" justifyContent="center">
                                                     <Switch size="lg" mr="2" isChecked={enrollFilterOn} onChange={ (e) => {
                                                       setEnrollFilterOn(e.currentTarget.checked);
-                                                      if (e.currentTarget.checked===true){
-                                                        setSelectedEnrollMethod(['1','2','3'])
-                                                      } else {
-                                                        setSelectedEnrollMethod([])
-                                                      }
+                                                      dispatch(setFilterEnable('enroll_method', e.currentTarget.checked))
                                                     } }/>
                                                     <Menu closeOnSelect={false} mx="2">
                                                         <MenuButton as={Button} rightIcon={<FaChevronDown />} disabled={!enrollFilterOn}>加選方式</MenuButton>

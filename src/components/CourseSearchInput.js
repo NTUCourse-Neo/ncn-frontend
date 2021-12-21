@@ -29,6 +29,7 @@ function CourseSearchInput() {
     const search_filters = useSelector(state => state.search_filters)
     const batch_size = useSelector(state => state.batch_size)
     const strict_match = useSelector(state => state.search_settings.strict_search_mode)
+    const search_filters_enable = useSelector(state => state.search_filters_enable)
 
     const [search, setSearch]=useState('')
     
@@ -63,12 +64,12 @@ function CourseSearchInput() {
                     <Input variant="flushed" size="md" focusBorderColor="teal.500" placeholder="直接搜尋可顯示全部課程" value={search} 
                         onChange={(e)=>{setSearch(e.target.value)}} 
                         onKeyPress={(e)=>{if (e.key === 'Enter') {
-                            dispatch(fetchSearchIDs(search, search_columns, search_filters, batch_size, strict_match))
+                            dispatch(fetchSearchIDs(search, search_columns, search_filters_enable, search_filters, batch_size, strict_match))
                         }}}
                     />
                 </InputGroup>
                 <Button colorScheme="blue" variant="solid" rightIcon={<FaArrowRight/>} onClick={()=>{
-                    dispatch(fetchSearchIDs(search, search_columns, search_filters, batch_size, strict_match))
+                    dispatch(fetchSearchIDs(search, search_columns, search_filters_enable, search_filters, batch_size, strict_match))
                 }
                 }>搜尋</Button>
             </Flex>
