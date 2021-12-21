@@ -48,9 +48,6 @@ function FilterModal(props){
     else if (type==='category'){
       dispatch(setFilter('category', props.selectedType));
     }
-    else if (type==='enroll_method'){
-      // todo
-    }
   }
 
   const renderSelectedHeader = () => {
@@ -109,7 +106,7 @@ function FilterModal(props){
                 m="1"
                 onClick={()=>handleSelect(key, selected, setSelected)}
                 _hover={index === -1 ? { bg: "teal.100" }:{ bg: "red.700" }}>
-          <Badge mx="2" colorScheme="blue">{data.code}</Badge>
+          <Badge mx="2" colorScheme="blue" key={key}>{data.code}</Badge>
           {data.full_name}
         </Button>
       );
@@ -211,9 +208,9 @@ const FilterModalBody = (type) => {
               let college_code = dept.code.substr(0, 1);
               return(
                 <>
-                <Flex px="2" h="40px" flexDirection="column" justifyContent="center" position="sticky" top="0" mt={index === 0 ? "0":"6"} bgColor="white" zIndex="50">
-                  <Heading fontSize="2xl" color="gray.600">{college_code+" "+college_map[college_code].name}</Heading>
-                  <Divider/>
+                <Flex key={dept.code} px="2" h="40px" flexDirection="column" justifyContent="center" position="sticky" top="0" mt={index === 0 ? "0":"6"} bgColor="white" zIndex="50">
+                  <Heading key={dept.code} fontSize="2xl" color="gray.600">{college_code+" "+college_map[college_code].name}</Heading>
+                  <Divider key={dept.code}/>
                 </Flex>
                 {renderButton("department", dept, props.selectedDept, props.setSelectedDept, false)}
                 </>
@@ -233,9 +230,9 @@ const FilterModalBody = (type) => {
             if (index === 0 || type.code.substr(0,1) !== type_list[index-1].code.substr(0,1)){
               return(
                 <>
-                <Flex px="2" h="40px" flexDirection="column" justifyContent="center" position="sticky" top="0" mt={index === 0 ? "0":"6"} bgColor="white" zIndex="50">
-                  <Heading fontSize="2xl" color="gray.600">{code_map[type.code.substr(0,1)].name}</Heading>
-                  <Divider/>
+                <Flex key={type.id} px="2" h="40px" flexDirection="column" justifyContent="center" position="sticky" top="0" mt={index === 0 ? "0":"6"} bgColor="white" zIndex="50">
+                  <Heading key={type.id} fontSize="2xl" color="gray.600">{code_map[type.code.substr(0,1)].name}</Heading>
+                  <Divider key={type.id}/>
                 </Flex>
                 {renderButton("category", type, props.selectedType, props.setSelectedType, false)}
                 </>

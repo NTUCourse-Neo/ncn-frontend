@@ -11,7 +11,7 @@ const setFilterEnable = (filter_name, enable) => ({type: SET_FILTERS_ENABLE, fil
 // when filter_name == 'department', arr of dept_code (4-digits),
 // when filter_name == 'time', 2D array, each subarray have length == 15
 // when filter_name == 'category', arr of string (type of courses),
-// when filter_name == 'enroll_method', arr of string (type of enroll method) || null (disable this function)
+// when filter_name == 'enroll_method', arr of string (type of enroll method)
 const setFilter = (filter_name, data)=>({type: SET_FILTERS, filter_name: filter_name, payload: data});
 
 // ============================================================
@@ -50,7 +50,6 @@ const fetchSearchIDs = (searchString, paths, filters_enable, filter_obj, batch_s
     }
 }
 
-// todo
 const fetchSearchResults = (ids_arr, filters_enable, filter_obj, batch_size, offset) =>async (dispatch)=>{
     dispatch({type: FETCH_SEARCH_RESULTS_REQUEST});
 

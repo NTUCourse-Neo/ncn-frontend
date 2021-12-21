@@ -65,7 +65,7 @@ function CourseInfoRow(props) {
                         {
                             tags.map((tag, index) => {
                                 return(
-                                    <Tag mx="2px" variant='subtle' colorScheme={mapping_tables[tag].color} hidden={props.courseInfo[tag]===-1}>
+                                    <Tag mx="2px" key={tag} variant='subtle' colorScheme={mapping_tables[tag].color} hidden={props.courseInfo[tag]===-1}>
                                         <TagLeftIcon boxSize='12px' as={mapping_tables[tag].logo} />
                                         <TagLabel>{ "map" in mapping_tables[tag] ? mapping_tables[tag].map[props.courseInfo[tag]] : props.courseInfo[tag]}</TagLabel>
                                     </Tag>
