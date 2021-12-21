@@ -1,5 +1,5 @@
 const mapping_tables = {
-    requirements: {
+    required: {
         "0": "必帶",
         "1": "必修",
         "2": "選修",
