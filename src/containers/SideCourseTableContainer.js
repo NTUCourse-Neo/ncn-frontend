@@ -22,8 +22,10 @@ import {
 import {
     FaRegEdit,
 } from 'react-icons/fa';
+import CourseTableContainer from './CourseTableContainer';
 
 function SideCourseTableContainer(props) {
+    const courses = ["1101_27674", "1101_30859"];
     const { onOpen, onClose, isOpen } = useDisclosure()
     const firstFieldRef = useRef(null)
     const TextInput = forwardRef((props, ref) => {
@@ -77,18 +79,26 @@ function SideCourseTableContainer(props) {
         );
     };
     return (
-        <Box w="100%" h="100%" bg="gray.200" mt="128px" transition="1000ms ease-in-out">
+        <Box w="100%" h="100%" bg="gray.200" mt="128px" transition="500ms ease-in-out" overflow="auto">
             <Flex flexDirection="column" m="4" ml="8">
-                <Flex flexDirection="row" justifyContent="start" alignItems="center" mb="4">
+                <Flex h="5vh" flexDirection="row" justifyContent="start" alignItems="center" mb="4" position="fixed" bg="gray.200">
                     <Text fontWeight="700" fontSize={props.isOpen ? "3xl":"xl"} color="gray.600" mr="4" transition="1000ms ease-in-out">我的課表</Text>
                     {renderEditName()}
                 </Flex>
-                <Flex flexDirection="row" justifyContent="start" alignItems="center">
-                    <Flex w="100%" h="50vh" bg="white"/>
-                    <Flex w="100%" h="50vh" bg="white"/>
-                    <Flex w="100%" h="50vh" bg="white"/>
-                    <Flex w="100%" h="50vh" bg="white"/>
-                    <Flex w="100%" h="50vh" bg="white"/>
+                <Flex flexDirection="row" justifyContent="start" alignItems="center" my="5vh" >
+                    <CourseTableContainer courses={courses}/>
+                    {/* {
+                        days.map((day, index) => {
+                            return (
+                                <Flex w="100%" flexDirection="column" key={index}>
+                                    <Flex mx="1" mb="1" justifyContent="center" alignItems="center">
+                                        {day}
+                                    </Flex>
+                                    <Flex h="70vh" bg="gray.300" mx="1"/>
+                                </Flex>
+                            );
+                        })
+                    }  */}
                 </Flex>
             </Flex>
         </Box>

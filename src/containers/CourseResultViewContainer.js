@@ -267,7 +267,7 @@ function CourseResultViewContainer() {
                 <SkeletonRow loading={search_loading} error={search_error}/>
             </Box>
             <Button size="xs" h="95vh" variant="ghost" onClick={() => setDisplayTable(!displayTable)}>{displayTable? <FaChevronRight/>:<FaChevronLeft />}</Button>
-            <Flex flexBasis={displayTable? "40vw" : "5vw"} h="95vh" bg="gray.100" alignItems="center" justifyContent="center" transition="flex-basis 500ms ease-in-out">
+            <Flex flexBasis={displayTable? "50vw" : "5vw"} h="95vh" bg="gray.100" alignItems="center" justifyContent="center" transition="flex-basis 500ms ease-in-out">
                 <SideCourseTableContainer courseTable={"a"} isOpen={displayTable}/>
             </Flex>
         </Flex>
