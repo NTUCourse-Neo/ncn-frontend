@@ -83,6 +83,13 @@ function SideCourseTableContainer(props) {
                     <Text fontWeight="700" fontSize={props.isOpen ? "3xl":"xl"} color="gray.600" mr="4" transition="1000ms ease-in-out">我的課表</Text>
                     {renderEditName()}
                 </Flex>
+                <Flex flexDirection="row" justifyContent="start" alignItems="center">
+                    <Flex w="100%" h="50vh" bg="white"/>
+                    <Flex w="100%" h="50vh" bg="white"/>
+                    <Flex w="100%" h="50vh" bg="white"/>
+                    <Flex w="100%" h="50vh" bg="white"/>
+                    <Flex w="100%" h="50vh" bg="white"/>
+                </Flex>
             </Flex>
         </Box>
     );
