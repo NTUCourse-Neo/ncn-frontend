@@ -20,7 +20,7 @@ import {
   } from '@chakra-ui/react';
 import CourseDrawerContainer from '../containers/CourseDrawerContainer';
 import { FaUserPlus, FaPuzzlePiece, FaPlus} from 'react-icons/fa';
-import mapping_tables from '../data/mapping_table';
+import { info_view_map } from '../data/mapping_table';
 function CourseInfoRow(props) {
     const toast = useToast();
     function addCourse(course){
@@ -65,9 +65,9 @@ function CourseInfoRow(props) {
                         {
                             tags.map((tag, index) => {
                                 return(
-                                    <Tag mx="2px" variant='subtle' colorScheme={mapping_tables[tag].color} hidden={props.courseInfo[tag]===-1}>
-                                        <TagLeftIcon boxSize='12px' as={mapping_tables[tag].logo} />
-                                        <TagLabel>{ "map" in mapping_tables[tag] ? mapping_tables[tag].map[props.courseInfo[tag]] : props.courseInfo[tag]}</TagLabel>
+                                    <Tag mx="2px" variant='subtle' colorScheme={info_view_map[tag].color} hidden={props.courseInfo[tag]===-1}>
+                                        <TagLeftIcon boxSize='12px' as={info_view_map[tag].logo} />
+                                        <TagLabel>{ "map" in info_view_map[tag] ? info_view_map[tag].map[props.courseInfo[tag]] : props.courseInfo[tag]}</TagLabel>
                                     </Tag>
                                 );
                             })

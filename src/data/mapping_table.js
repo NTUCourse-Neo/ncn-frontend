@@ -1,5 +1,5 @@
 import { FaUserPlus, FaPuzzlePiece } from 'react-icons/fa';
-const mapping_tables = {
+const info_view_map = {
     required: {
         "name": "必選修",
         "logo": FaPuzzlePiece,
@@ -17,5 +17,14 @@ const mapping_tables = {
         "color": "blue"
     }
 }
+const weekdays_map = {
+    "1": "一",
+    "2": "二",
+    "3": "三",
+    "4": "四",
+    "5": "五",
+    "6": "六",
+    "7": "日"
+}
 
-export default mapping_tables;
+export {info_view_map, weekdays_map};

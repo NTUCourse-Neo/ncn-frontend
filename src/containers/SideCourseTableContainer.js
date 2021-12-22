@@ -50,7 +50,6 @@ function SideCourseTableContainer(props) {
         setLoading(false);
       }
       fetchData();
-      console.log(courses);
     }, []);
     const { onOpen, onClose, isOpen } = useDisclosure()
     const firstFieldRef = useRef(null)
