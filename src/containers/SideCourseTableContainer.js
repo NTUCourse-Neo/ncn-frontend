@@ -1,4 +1,4 @@
-import { React, useRef, forwardRef } from 'react';
+import { React, useRef, forwardRef, useEffect,useState } from 'react';
 import  FocusLock from "react-focus-lock"
 import {
     Flex,
@@ -23,9 +23,35 @@ import {
     FaRegEdit,
 } from 'react-icons/fa';
 import CourseTableContainer from './CourseTableContainer';
+import { get_courses_by_ids } from '../api/courses';
 
 function SideCourseTableContainer(props) {
-    const courses = ["1101_27674", "1101_30859"];
+    const [courseIds, setCourseIds] = useState(["1101_27674", "1101_30859"]);
+    const [courses, setCourses] = useState({});
+    const [loading, setLoading] = useState(false);
+    const convertArrayToObject = (array, key) => {
+        const initialValue = {};
+        return array.reduce((obj, item) => {
+            return {
+            ...obj,
+            [item[key]]: item,
+            };
+        }, initialValue);
+    };
+    useEffect(() => {const fetchData = async () =>{
+        setLoading(true);
+        try {
+            await get_courses_by_ids(courseIds, 100, 0).then(res => {
+                setCourses(convertArrayToObject(res, "_id"));
+            });
+        } catch (error) {
+          console.error(error.message);
+        }
+        setLoading(false);
+      }
+      fetchData();
+      console.log(courses);
+    }, []);
     const { onOpen, onClose, isOpen } = useDisclosure()
     const firstFieldRef = useRef(null)
     const TextInput = forwardRef((props, ref) => {
