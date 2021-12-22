@@ -30,13 +30,14 @@ function SideCourseTableContainer(props) {
     const [courses, setCourses] = useState({});
     const [courseTimes, setCourseTimes] = useState({});
     const [loading, setLoading] = useState(false);
+
     const extract_course_info = (courses) => {
         let course_time_tmp = Object.assign({}, courseTimes);
         if (!course_time_tmp.parsed){
           course_time_tmp.parsed = [];
         }
         if (!course_time_tmp.time_map){
-          course_time_tmp.time_map = [];
+          course_time_tmp.time_map = {};
         }
         Object.keys(courses).forEach(key => {
           if (course_time_tmp.parsed.includes(courses[key]._id)){
@@ -59,8 +60,8 @@ function SideCourseTableContainer(props) {
           course_time_tmp.parsed.push(courses[key]._id);
         })
         setCourseTimes(course_time_tmp);
-        console.log(course_time_tmp);
-      };
+    };
+
     const convertArrayToObject = (array, key) => {
         const initialValue = {};
         return array.reduce((obj, item) => {
@@ -70,22 +71,25 @@ function SideCourseTableContainer(props) {
             };
         }, initialValue);
     };
-    useEffect(() => {const fetchData = async () =>{
-        setLoading(true);
+
+    useEffect(() => {const fetchData = async (_callback) =>{
+      setLoading(true);
         try {
-            await get_courses_by_ids(courseIds, 100, 0).then(res => {
-                setCourses(convertArrayToObject(res, "_id"));
-            });
+          await get_courses_by_ids(courseIds, 100, 0).then(res => {
+            extract_course_info(convertArrayToObject(res, "_id"))
+            setCourses(convertArrayToObject(res, "_id"));
+          });
         } catch (error) {
           console.error(error.message);
         }
-        console.log(courses);
-        extract_course_info(courses);
-        console.log(courseTimes);
-    }
-    fetchData();
-    setLoading(false);
+        _callback();
+      };
+      fetchData(() => setLoading(false));
+      console.log(courseTimes);
     }, []);
+    
+    // useEffect(() => console.log(courseTimes), [courseTimes]);
+
     const { onOpen, onClose, isOpen } = useDisclosure()
     const firstFieldRef = useRef(null)
     const TextInput = forwardRef((props, ref) => {
@@ -145,8 +149,8 @@ function SideCourseTableContainer(props) {
                     <Text fontWeight="700" fontSize={props.isOpen ? "3xl":"xl"} color="gray.600" mr="4" transition="1000ms ease-in-out">我的課表</Text>
                     {renderEditName()}
                 </Flex>
-                <Flex flexDirection="row" justifyContent="start" alignItems="center" my="5vh" >
-                    <CourseTableContainer courseTimes={courseTimes} loading={loading}/>
+                <Flex flexDirection="row" justifyContent="center" alignItems="center" my="5vh" >
+                    <CourseTableContainer courseTimes={courseTimes} courses={courses} loading={loading}/>
                 </Flex>
             </Flex>
         </Box>

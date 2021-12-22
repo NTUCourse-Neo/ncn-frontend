@@ -7,25 +7,35 @@ import {
   Th,
   Td,
   TableCaption,
+  Flex,
+  Spinner,
+  Center,
+  Box,
+  Text,
 } from '@chakra-ui/react'
 import { useState, useEffect } from 'react';
+import CourseTableCard from '../components/CourseTableCard';
 import { weekdays_map } from '../data/mapping_table';
 
 function CourseTableContainer(props) {
-  const days = ["1", "2", "3", "4", "5", "6" ,"7"];
+  const days = ["1", "2", "3", "4", "5"];
   const interval = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "A", "B", "C", "D"];
   const renderTable = () => {
     if (props.loading){
-      return (<div>Loading...</div>);
+      return (
+        <Flex justifyContent="center" alignItems="center" h="100vh">
+          <Spinner />
+        </Flex>
+      );
     }
     return(
-      <Table variant='simple' size='lg'>
+      <Table variant='simple' size='lg' colorScheme='blue'>
       <Thead>
         <Tr>
           {
             days.map((day, j) => {
               return(
-                <Th key={j}>{weekdays_map[day]}</Th>
+                <Th key={j}><Center>{weekdays_map[day]}</Center></Th>
               );
             })
           }
@@ -40,11 +50,13 @@ function CourseTableContainer(props) {
                   days.map((day, j) => {
                     if (props.courseTimes.time_map && day in props.courseTimes.time_map && interval in props.courseTimes.time_map[day]){
                       return(
-                        <Td>{props.courseTimes.time_map[day][interval]}</Td>
+                        <Td><CourseTableCard course={props.courses[props.courseTimes.time_map[day][interval]]} /></Td>
                       );
                     }
                     return(
-                      <Td>{interval}</Td>
+                      <Td><Flex w="3vw" justifyContent="center" alignItems="center">
+                        <Text color="gray.300" fontSize="5xl" fontWeight="700">{interval}</Text>
+                      </Flex></Td>
                     );
                   })
                 }
