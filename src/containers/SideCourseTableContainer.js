@@ -28,7 +28,39 @@ import { get_courses_by_ids } from '../api/courses';
 function SideCourseTableContainer(props) {
     const [courseIds, setCourseIds] = useState(["1101_27674", "1101_30859"]);
     const [courses, setCourses] = useState({});
+    const [courseTimes, setCourseTimes] = useState({});
     const [loading, setLoading] = useState(false);
+    const extract_course_info = (courses) => {
+        let course_time_tmp = Object.assign({}, courseTimes);
+        if (!course_time_tmp.parsed){
+          course_time_tmp.parsed = [];
+        }
+        if (!course_time_tmp.time_map){
+          course_time_tmp.time_map = [];
+        }
+        Object.keys(courses).forEach(key => {
+          if (course_time_tmp.parsed.includes(courses[key]._id)){
+            return;
+          }
+          courses[key].time_loc_pair.map(time_loc_pair => {
+            Object.keys(time_loc_pair.time).forEach(day => {
+              time_loc_pair.time[day].map(time => {
+                if (!(day in course_time_tmp.time_map)) {
+                  course_time_tmp.time_map[day] = {};
+                }
+                if (! (time in course_time_tmp.time_map[day])){
+                  course_time_tmp.time_map[day][time] = [courses[key]._id];
+                }else{
+                  course_time_tmp.time_map[day][time].push(courses[key]._id);
+                }
+              })
+            })
+          })
+          course_time_tmp.parsed.push(courses[key]._id);
+        })
+        setCourseTimes(course_time_tmp);
+        console.log(course_time_tmp);
+      };
     const convertArrayToObject = (array, key) => {
         const initialValue = {};
         return array.reduce((obj, item) => {
@@ -47,9 +79,12 @@ function SideCourseTableContainer(props) {
         } catch (error) {
           console.error(error.message);
         }
-        setLoading(false);
-      }
-      fetchData();
+        console.log(courses);
+        extract_course_info(courses);
+        console.log(courseTimes);
+    }
+    fetchData();
+    setLoading(false);
     }, []);
     const { onOpen, onClose, isOpen } = useDisclosure()
     const firstFieldRef = useRef(null)
@@ -111,19 +146,7 @@ function SideCourseTableContainer(props) {
                     {renderEditName()}
                 </Flex>
                 <Flex flexDirection="row" justifyContent="start" alignItems="center" my="5vh" >
-                    <CourseTableContainer courses={courses}/>
-                    {/* {
-                        days.map((day, index) => {
-                            return (
-                                <Flex w="100%" flexDirection="column" key={index}>
-                                    <Flex mx="1" mb="1" justifyContent="center" alignItems="center">
-                                        {day}
-                                    </Flex>
-                                    <Flex h="70vh" bg="gray.300" mx="1"/>
-                                </Flex>
-                            );
-                        })
-                    }  */}
+                    <CourseTableContainer courseTimes={courseTimes} loading={loading}/>
                 </Flex>
             </Flex>
         </Box>
