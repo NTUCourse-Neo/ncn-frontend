@@ -23,7 +23,7 @@ import {
     Badge,
     MenuDivider
 } from '@chakra-ui/react';
-import { FaChevronDown, FaChevronUp, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaChevronDown, FaChevronUp, FaChevronLeft, FaChevronRight, FaHandPeace, } from 'react-icons/fa';
 import CourseInfoRowContainer from './CourseInfoRowContainer';
 import FilterModal from '../components/FilterModal';
 import CourseSearchInput from '../components/CourseSearchInput';
@@ -144,11 +144,6 @@ function CourseResultViewContainer() {
       setSelectedTime(mapStateToTimeTable(search_filters.time));
     },[])
 
-    // for debugging
-    // useEffect(()=>{
-    //     console.log(selectedTime);
-    // },[selectedTime])
-
     return (
         <Flex w="100vw" direction="row" justifyContent="center" alignItems="center" overflow="hidden">
             <Box display="flex" flexBasis="100vw" flexDirection="column" alignItems='center' h="95vh" overflow="auto" maxW="screen-md" mx="auto" pt="64px" pb="40px">
@@ -261,6 +256,9 @@ function CourseResultViewContainer() {
                         </Collapse>
                     </Flex>
                     <IconButton size="xs" variant='ghost' icon={displayFilter? <FaChevronUp />:<FaChevronDown />} onClick={() => setDisplayFilter(!displayFilter)} />
+                </Flex>
+                <Flex w="100%" flexDirection="row" py="2" justifyContent="center">
+                  <Text fontSize="md" fontWeight="medium" color="gray.400">共找到 {total_count} 筆結果</Text>
                 </Flex>
                 <CourseInfoRowContainer courseInfo={search_results} />
                 <div ref={bottomRef}/>

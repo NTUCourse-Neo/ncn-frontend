@@ -17,7 +17,7 @@ function CourseInfoRowContainer(props) {
         return(
             props.courseInfo.map((info, index) => {
                 return(
-                    <Accordion allowToggle w="100%" minW="50rem" key={index}>
+                    <Accordion allowToggle w="60vw" key={index}>
                         <CourseInfoRow id={info["id"]} index={index} courseInfo={info}/>
                         <Spacer my="1" />
                     </Accordion>

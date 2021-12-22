@@ -20,6 +20,7 @@ import {
   } from '@chakra-ui/react';
 import CourseDrawerContainer from '../containers/CourseDrawerContainer';
 import { FaUserPlus, FaPuzzlePiece, FaPlus} from 'react-icons/fa';
+import mapping_tables from '../data/mapping_table';
 function CourseInfoRow(props) {
     const toast = useToast();
     function addCourse(course){
@@ -45,6 +46,7 @@ function CourseInfoRow(props) {
             <Badge colorScheme="blue" variant='solid' mx="4px">{props.courseInfo.department[0]}</Badge>
         );
     }
+    const tags = ["required", "total_slot"];
     return(
         <AccordionItem bg="gray.100" borderRadius="md">
             <Flex alignItems="center" justifyContent="start" flexDirection="row" w="100%" pr="2" pl="2" py="1">
@@ -60,14 +62,16 @@ function CourseInfoRow(props) {
                     </Flex>
                     <Spacer />
                     <Flex alignItems="center" justifyContent="end">
-                        <Tag mx="2px" variant='subtle' colorScheme='blue'>
-                            <TagLeftIcon boxSize='12px' as={FaUserPlus} />
-                            <TagLabel>{props.courseInfo.total_slot}</TagLabel>
-                        </Tag>
-                        <Tag mx="2px" variant='subtle' colorScheme='blue'>
-                            <TagLeftIcon boxSize='12px' as={FaPuzzlePiece} />
-                            <TagLabel>{props.courseInfo.required}</TagLabel>
-                        </Tag>
+                        {
+                            tags.map((tag, index) => {
+                                return(
+                                    <Tag mx="2px" variant='subtle' colorScheme={mapping_tables[tag].color} hidden={props.courseInfo[tag]===-1}>
+                                        <TagLeftIcon boxSize='12px' as={mapping_tables[tag].logo} />
+                                        <TagLabel>{ "map" in mapping_tables[tag] ? mapping_tables[tag].map[props.courseInfo[tag]] : props.courseInfo[tag]}</TagLabel>
+                                    </Tag>
+                                );
+                            })
+                        }
                     </Flex>
                 </AccordionButton>
                 <IconButton ml="20px" colorScheme='blue' icon={<FaPlus />} onClick={() => addCourse(props.courseInfo)}/>
