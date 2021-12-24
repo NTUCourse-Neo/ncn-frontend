@@ -50,7 +50,7 @@ function CourseTableContainer(props) {
                   days.map((day, j) => {
                     if (props.courseTimes.time_map && day in props.courseTimes.time_map && interval in props.courseTimes.time_map[day]){
                       return(
-                        <Td><CourseTableCard course={props.courses[props.courseTimes.time_map[day][interval]]} /></Td>
+                        <Td><CourseTableCard courseTime={props.courseTimes.time_map[day][interval]} courseData={props.courses} /></Td>
                       );
                     }
                     return(

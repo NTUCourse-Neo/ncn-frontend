@@ -20,16 +20,24 @@ import {
     useDisclosure,
     Tooltip
 } from '@chakra-ui/react';
-import {
-    FaRegEdit,
-} from 'react-icons/fa';
+import { hash_to_color_hex, random_color_hex } from '../utils/colorAgent';
+
 function CourseTableCard(props){
-    return(
-        <Tooltip label={props.course.course_name} placement="top" hasArrow >
-            <Box bg="blue.100" borderRadius="lg" boxShadow="lg" p="2" w="4vw">
-                <Text fontSize="2" isTruncated> {props.course.course_name} </Text>
+    const renderCourseBox = (courseId, courseData) => {
+        const course = courseData[courseId];
+        return (
+        <Tooltip label={course.course_name} placement="top" hasArrow >
+            <Box bg={hash_to_color_hex(course._id, 0.8)} borderRadius="lg" boxShadow="lg" p="2" w="4vw" mb="1">
+                <Text fontSize="2" isTruncated> {course.course_name} </Text>
             </Box>
         </Tooltip>
+        );
+    };
+    console.log(props.courseTime);
+    return(
+        props.courseTime.map(courseId => {
+            return renderCourseBox(courseId, props.courseData);
+        })
     );
 }
 export default CourseTableCard;

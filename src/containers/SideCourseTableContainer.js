@@ -26,7 +26,7 @@ import CourseTableContainer from './CourseTableContainer';
 import { get_courses_by_ids } from '../api/courses';
 
 function SideCourseTableContainer(props) {
-    const [courseIds, setCourseIds] = useState(["1101_27674", "1101_30859"]);
+    const [courseIds, setCourseIds] = useState(["1101_27674", "1101_30859", "1101_75633"]);
     const [courses, setCourses] = useState({});
     const [courseTimes, setCourseTimes] = useState({});
     const [loading, setLoading] = useState(false);
@@ -60,6 +60,7 @@ function SideCourseTableContainer(props) {
           course_time_tmp.parsed.push(courses[key]._id);
         })
         setCourseTimes(course_time_tmp);
+        console.log(course_time_tmp);
     };
 
     const convertArrayToObject = (array, key) => {
@@ -150,7 +151,7 @@ function SideCourseTableContainer(props) {
                     {renderEditName()}
                 </Flex>
                 <Flex flexDirection="row" justifyContent="center" alignItems="center" my="5vh" >
-                    <CourseTableContainer courseTimes={courseTimes} courses={courses} loading={loading}/>
+                  {props.isOpen ? <CourseTableContainer courseTimes={courseTimes} courses={courses} loading={loading}/> : <></>}  
                 </Flex>
             </Flex>
         </Box>
