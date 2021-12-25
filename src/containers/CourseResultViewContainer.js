@@ -246,7 +246,7 @@ function CourseResultViewContainer() {
                     <Flex w="100%" flexDirection="row" py="2" justifyContent="center">
                         <Text fontSize="md" fontWeight="medium" color="gray.400">共找到 {total_count} 筆結果</Text>
                     </Flex>
-                    <Box pr={displayTable ? "50vw":"20vw"} w={displayTable ? "55vw":"70vw"} transition="all 500ms ease-in-out">
+                    <Box ml={displayTable ? "2vw":"15vw"} w={displayTable ? "55vw":"70vw"} transition="all 500ms ease-in-out">
                         <CourseInfoRowContainer courseInfo={search_results} />
                     </Box>
                     <div ref={bottomRef}/>
