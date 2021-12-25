@@ -18,6 +18,7 @@ import {
     FormLabel,
     Input,
     useDisclosure,
+    Collapse
 } from '@chakra-ui/react';
 import {
     FaRegEdit,
@@ -151,7 +152,7 @@ function SideCourseTableContainer(props) {
                     {renderEditName()}
                 </Flex>
                 <Flex flexDirection="row" justifyContent="center" alignItems="center" my="5vh" >
-                  {props.isOpen ? <CourseTableContainer courseTimes={courseTimes} courses={courses} loading={loading}/> : <></>}  
+                  <CourseTableContainer courseTimes={courseTimes} courses={courses} loading={loading}/>  
                 </Flex>
             </Flex>
         </Box>

@@ -18,7 +18,7 @@ import {
     Tooltip,
     useToast
   } from '@chakra-ui/react';
-import CourseDrawerContainer from '../containers/CourseDrawerContainer';
+import {CourseDrawerContainer} from '../containers/CourseDrawerContainer';
 import { FaUserPlus, FaPuzzlePiece, FaPlus} from 'react-icons/fa';
 import { info_view_map } from '../data/mapping_table';
 function CourseInfoRow(props) {
