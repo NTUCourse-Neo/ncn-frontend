@@ -1,5 +1,6 @@
 import React from 'react';
 import {Flex, Spinner, useToast, Text, VisuallyHidden} from '@chakra-ui/react';
+import {HashLoader} from 'react-spinners';
 import { FaSadTear } from 'react-icons/fa';
 
 function SkeletonRow(props) {
@@ -8,7 +9,7 @@ function SkeletonRow(props) {
         if (props.loading){
             return (
                 <Flex p="4">
-                    <Spinner size="lg" color="teal.600"/>
+                    <HashLoader size="60" color="teal"/>
                 </Flex>
             )
         }
