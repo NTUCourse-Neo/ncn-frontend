@@ -30,6 +30,7 @@ import CourseTableContainer from './CourseTableContainer';
 import { get_courses_by_ids } from '../api/courses';
 
 function SideCourseTableContainer(props) {
+    const [courseTableName, setCourseTableName] = useState("我的課表");
     const [courseIds, setCourseIds] = useState(["1101_74030", "1101_27674", "1101_30859", "1101_75633"]);
     const [courses, setCourses] = useState({});
     const [courseTimes, setCourseTimes] = useState({});
@@ -105,20 +106,29 @@ function SideCourseTableContainer(props) {
           </FormControl>
         )
       })
-    const Form = ({ firstFieldRef, onCancel }) => {
+    const Form = ({ firstFieldRef, onClose, onSet }) => {
+        const handleSave = () => {
+          onClose();
+          setCourseTableName(firstFieldRef.current.value);
+        }
         return (
             <Stack spacing={4}>
             <TextInput
                 label='課表名稱'
                 id='table_name'
                 ref={firstFieldRef}
-                defaultValue='我的課表'
+                defaultValue={courseTableName}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                        handleSave();
+                    }
+                }}
             />
             <ButtonGroup d='flex' justifyContent='flex-end'>
-                <Button variant='outline' onClick={onCancel}>
+                <Button variant='outline' onClick={onClose}>
                 Cancel
                 </Button>
-                <Button colorScheme='teal' onClick={onCancel}>
+                <Button colorScheme='teal' onClick={() => {handleSave()}}>
                 Save
                 </Button>
             </ButtonGroup>
@@ -137,7 +147,7 @@ function SideCourseTableContainer(props) {
                         <PopoverCloseButton />
                         <PopoverHeader color="gray.500" fontWeight="700">課表設定</PopoverHeader>
                         <PopoverBody p={5}>
-                            <Form firstFieldRef={firstFieldRef} onCancel={onClose} onSet={onClose} />
+                            <Form firstFieldRef={firstFieldRef} onClose={onClose} />
                         </PopoverBody>
                     </FocusLock>
                 </PopoverContent>
@@ -151,10 +161,9 @@ function SideCourseTableContainer(props) {
         </Flex>
         <Box overflow="auto">
             <Flex flexDirection="column" m="4" ml="0">
-                <Flex flexDirection="row" justifyContent="space-between" alignItems="center" mb="4" position="fixed">
-                    <Text fontWeight="700" fontSize="3xl" color="gray.600" mr="4">我的課表</Text>
+                <Flex flexDirection="row" justifyContent="space-between" alignItems="center" mb="4" position="fixed" zIndex={100}>
+                    <Text fontWeight="700" fontSize="3xl" color="gray.600" mr="4">{courseTableName}</Text>
                     {renderEditName()}
-                    <Spacer/>
                 </Flex>
                 <Flex flexDirection="row" justifyContent="center" alignItems="center" my="5vh" >
                   <CourseTableContainer courseTimes={courseTimes} courses={courses} loading={loading}/>  
