@@ -21,9 +21,10 @@ import {
     MenuOptionGroup,
     MenuItemOption,
     Badge,
-    MenuDivider
+    MenuDivider,
+    SlideFade,
 } from '@chakra-ui/react';
-import { FaChevronDown, FaChevronUp, FaChevronLeft, FaChevronRight, FaHandPeace, } from 'react-icons/fa';
+import { FaChevronDown, FaChevronUp, FaTable} from 'react-icons/fa';
 import CourseInfoRowContainer from './CourseInfoRowContainer';
 import FilterModal from '../components/FilterModal';
 import CourseSearchInput from '../components/CourseSearchInput';
@@ -141,120 +142,127 @@ function CourseResultViewContainer() {
     },[])
 
     return (
-        <Flex w="100vw" direction="row" justifyContent="center" alignItems="center" overflow="hidden">
-            <Box display="flex" flexBasis="100vw" flexDirection="column" alignItems='center' h="95vh" overflow="auto" maxW="screen-md" mx="auto" pt="64px" pb="40px">
-                <div ref={topRef}/>
-                <Flex w="100%" direction="column" position="sticky" top="0" bgColor="white" zIndex="100" boxShadow="md">
-                    <Flex w="100%" px="10vw" py="4" direction="column" >
-                        <CourseSearchInput />
-                        <Collapse in={displayFilter} animateOpacity>
-                            <Box w="100%" py="8px" mt="4">
-                                <Tabs>
-                                    <TabList>
-                                        <Tab><Text color="gray.700" fontSize="xl" fontWeight="700">篩選</Text></Tab>
-                                        <Tab><Text color="gray.700" fontSize="xl" fontWeight="700">設定</Text></Tab>
-                                    </TabList>
-                                    <TabPanels>
-                                        <TabPanel>
-                                            {/* Filters: time, department, type of courses */}
-                                            <Flex flexDirection="row">
-                                                <Flex flexDirection="column" px="4">
-                                                    <Flex flexDirection="row" alignItems="center" justifyContent="center">
-                                                    <Switch size="lg" mr="2" isChecked={timeFilterOn} onChange={ (e) => {
-                                                      setTimeFilterOn(e.currentTarget.checked);
-                                                      dispatch(setFilterEnable('time', e.currentTarget.checked))
-                                                    } }/>
-                                                      <FilterModal title={mapStateToIntervals(search_filters.time)===0 ? "未選擇課程時間" : "已選擇 "+mapStateToIntervals(search_filters.time)+" 節次"} toggle={timeFilterOn} type="time" selectedTime={selectedTime} setSelectedTime={setSelectedTime}/>
+        <>
+            <Flex w="100vw" direction="row" justifyContent="center" alignItems="center" overflow="hidden">
+                <Box display="flex" flexBasis="100vw" flexDirection="column" alignItems="start" h="95vh" overflow="auto" maxW="screen-md" mx="auto" pt="64px" pb="40px">
+                    <div ref={topRef}/>
+                    <Flex w="100%" direction="column" position="sticky" top="0" bgColor="white" zIndex="100" boxShadow="md">
+                        <Flex w="100%" px="10vw" py="4" direction="column" >
+                            <CourseSearchInput />
+                            <Collapse in={displayFilter} animateOpacity>
+                                <Box w="100%" py="8px" mt="4">
+                                    <Tabs>
+                                        <TabList>
+                                            <Tab><Text color="gray.700" fontSize="xl" fontWeight="700">篩選</Text></Tab>
+                                            <Tab><Text color="gray.700" fontSize="xl" fontWeight="700">設定</Text></Tab>
+                                        </TabList>
+                                        <TabPanels>
+                                            <TabPanel>
+                                                {/* Filters: time, department, type of courses */}
+                                                <Flex flexDirection="row">
+                                                    <Flex flexDirection="column" px="4">
+                                                        <Flex flexDirection="row" alignItems="center" justifyContent="center">
+                                                        <Switch size="lg" mr="2" isChecked={timeFilterOn} onChange={ (e) => {
+                                                        setTimeFilterOn(e.currentTarget.checked);
+                                                        dispatch(setFilterEnable('time', e.currentTarget.checked))
+                                                        } }/>
+                                                        <FilterModal title={mapStateToIntervals(search_filters.time)===0 ? "未選擇課程時間" : "已選擇 "+mapStateToIntervals(search_filters.time)+" 節次"} toggle={timeFilterOn} type="time" selectedTime={selectedTime} setSelectedTime={setSelectedTime}/>
+                                                        </Flex>
                                                     </Flex>
-                                                </Flex>
-                                                <Flex flexDirection="column" px="4">
-                                                    <Flex flexDirection="row" alignItems="center" justifyContent="center">
-                                                      <Switch size="lg" mr="2" isChecked={deptFilterOn} onChange={ (e) => {
-                                                        setDeptFilterOn(e.currentTarget.checked);
-                                                        dispatch(setFilterEnable('department', e.currentTarget.checked))
-                                                      } }/>
-                                                      <FilterModal title={selectedDept.length===0 ? "未選擇開課系所" : "已選擇 "+selectedDept.length+" 系所"} toggle={deptFilterOn} type="department" selectedDept={selectedDept} setSelectedDept={setSelectedDept}/>
+                                                    <Flex flexDirection="column" px="4">
+                                                        <Flex flexDirection="row" alignItems="center" justifyContent="center">
+                                                        <Switch size="lg" mr="2" isChecked={deptFilterOn} onChange={ (e) => {
+                                                            setDeptFilterOn(e.currentTarget.checked);
+                                                            dispatch(setFilterEnable('department', e.currentTarget.checked))
+                                                        } }/>
+                                                        <FilterModal title={selectedDept.length===0 ? "未選擇開課系所" : "已選擇 "+selectedDept.length+" 系所"} toggle={deptFilterOn} type="department" selectedDept={selectedDept} setSelectedDept={setSelectedDept}/>
+                                                        </Flex>
                                                     </Flex>
-                                                </Flex>
-                                                <Flex flexDirection="column" px="4">
-                                                    <Flex flexDirection="row" alignItems="center" justifyContent="center">
-                                                      <Switch size="lg" mr="2" isChecked={catFilterOn} onChange={ (e) => {
-                                                        setCatFilterOn(e.currentTarget.checked);
-                                                        dispatch(setFilterEnable('category', e.currentTarget.checked))
-                                                      }}/>
-                                                    <FilterModal title={selectedType.length===0 ? "未選擇課程類別" : "已選擇 "+selectedType.length+" 類別"} toggle={catFilterOn} type="category" selectedType={selectedType} setSelectedType={setSelectedType}/>
+                                                    <Flex flexDirection="column" px="4">
+                                                        <Flex flexDirection="row" alignItems="center" justifyContent="center">
+                                                        <Switch size="lg" mr="2" isChecked={catFilterOn} onChange={ (e) => {
+                                                            setCatFilterOn(e.currentTarget.checked);
+                                                            dispatch(setFilterEnable('category', e.currentTarget.checked))
+                                                        }}/>
+                                                        <FilterModal title={selectedType.length===0 ? "未選擇課程類別" : "已選擇 "+selectedType.length+" 類別"} toggle={catFilterOn} type="category" selectedType={selectedType} setSelectedType={setSelectedType}/>
+                                                        </Flex>
                                                     </Flex>
-                                                </Flex>
-                                                <Flex flexDirection="column" px="4">
-                                                    <Flex flexDirection="row" alignItems="center" justifyContent="center">
-                                                    <Switch size="lg" mr="2" isChecked={enrollFilterOn} onChange={ (e) => {
-                                                      setEnrollFilterOn(e.currentTarget.checked);
-                                                      dispatch(setFilterEnable('enroll_method', e.currentTarget.checked))
-                                                    } }/>
-                                                    <Menu closeOnSelect={false} mx="2">
-                                                        <MenuButton as={Button} rightIcon={<FaChevronDown />} disabled={!enrollFilterOn}>加選方式</MenuButton>
-                                                        <MenuList>
-                                                            <MenuOptionGroup value={selectedEnrollMethod} type='checkbox'>
-                                                                <MenuItemOption value='1' onClick={(e) => {set_enroll_method(e)}}><Badge mr="2" colorScheme="blue" >1</Badge>直接加選</MenuItemOption>
-                                                                <MenuItemOption value='2' onClick={(e) => {set_enroll_method(e)}}><Badge mr="2" colorScheme="blue" >2</Badge>授權碼加選</MenuItemOption>
-                                                                <MenuItemOption value='3' onClick={(e) => {set_enroll_method(e)}}><Badge mr="2" colorScheme="blue" >3</Badge>登記後加選</MenuItemOption>
-                                                            </MenuOptionGroup>
-                                                            <MenuDivider />
-                                                            <Flex flexDirection="row" justifyContent="center"><Text fontSize="sm" color="gray.500">加退選規定詳洽教務處</Text></Flex>
-                                                        </MenuList>
-                                                    </Menu>
+                                                    <Flex flexDirection="column" px="4">
+                                                        <Flex flexDirection="row" alignItems="center" justifyContent="center">
+                                                        <Switch size="lg" mr="2" isChecked={enrollFilterOn} onChange={ (e) => {
+                                                        setEnrollFilterOn(e.currentTarget.checked);
+                                                        dispatch(setFilterEnable('enroll_method', e.currentTarget.checked))
+                                                        } }/>
+                                                        <Menu closeOnSelect={false} mx="2">
+                                                            <MenuButton as={Button} rightIcon={<FaChevronDown />} disabled={!enrollFilterOn}>加選方式</MenuButton>
+                                                            <MenuList>
+                                                                <MenuOptionGroup value={selectedEnrollMethod} type='checkbox'>
+                                                                    <MenuItemOption value='1' onClick={(e) => {set_enroll_method(e)}}><Badge mr="2" colorScheme="blue" >1</Badge>直接加選</MenuItemOption>
+                                                                    <MenuItemOption value='2' onClick={(e) => {set_enroll_method(e)}}><Badge mr="2" colorScheme="blue" >2</Badge>授權碼加選</MenuItemOption>
+                                                                    <MenuItemOption value='3' onClick={(e) => {set_enroll_method(e)}}><Badge mr="2" colorScheme="blue" >3</Badge>登記後加選</MenuItemOption>
+                                                                </MenuOptionGroup>
+                                                                <MenuDivider />
+                                                                <Flex flexDirection="row" justifyContent="center"><Text fontSize="sm" color="gray.500">加退選規定詳洽教務處</Text></Flex>
+                                                            </MenuList>
+                                                        </Menu>
+                                                        </Flex>
                                                     </Flex>
+                                                    
+                                                    
                                                 </Flex>
-                                                
-                                                
-                                            </Flex>
-                                        </TabPanel>
-                                        <TabPanel>
-                                            {/* Settings */}
-                                            <Flex flexDirection="column" alignItems="center">
-                                                {renderSettingSwitch('顯示已選課程', show_selected_courses)}
-                                                {renderSettingSwitch('只顯示未衝堂課程', only_show_not_conflicted_courses)}
-                                                {renderSettingSwitch('同步新增至課程網', sync_add_to_nol)}
-                                                {renderSettingSwitch('篩選條件嚴格搜尋', strict_search_mode)}
-                                            </Flex>
-                                            <Button mt={5} colorScheme='teal' size='md' onClick={()=>{
-                                                dispatch(setSearchSettings({
-                                                    show_selected_courses: show_selected_courses,
-                                                    only_show_not_conflicted_courses: only_show_not_conflicted_courses,
-                                                    sync_add_to_nol: sync_add_to_nol,
-                                                    strict_search_mode: strict_search_mode}
-                                                ));
-                                                toast({
-                                                    title: '設定已儲存',
-                                                    description: '讚啦',
-                                                    status: 'success',
-                                                    duration: 1000,
-                                                    isClosable: true
-                                                })
-                                              }
-                                            }>套用</Button>
-                                        </TabPanel>
-                                    </TabPanels>
-                                </Tabs>
-                            </Box>
-                        </Collapse>
+                                            </TabPanel>
+                                            <TabPanel>
+                                                {/* Settings */}
+                                                <Flex flexDirection="column" alignItems="center">
+                                                    {renderSettingSwitch('顯示已選課程', show_selected_courses)}
+                                                    {renderSettingSwitch('只顯示未衝堂課程', only_show_not_conflicted_courses)}
+                                                    {renderSettingSwitch('同步新增至課程網', sync_add_to_nol)}
+                                                    {renderSettingSwitch('篩選條件嚴格搜尋', strict_search_mode)}
+                                                </Flex>
+                                                <Button mt={5} colorScheme='teal' size='md' onClick={()=>{
+                                                    dispatch(setSearchSettings({
+                                                        show_selected_courses: show_selected_courses,
+                                                        only_show_not_conflicted_courses: only_show_not_conflicted_courses,
+                                                        sync_add_to_nol: sync_add_to_nol,
+                                                        strict_search_mode: strict_search_mode}
+                                                    ));
+                                                    toast({
+                                                        title: '設定已儲存',
+                                                        description: '讚啦',
+                                                        status: 'success',
+                                                        duration: 1000,
+                                                        isClosable: true
+                                                    })
+                                                }
+                                                }>套用</Button>
+                                            </TabPanel>
+                                        </TabPanels>
+                                    </Tabs>
+                                </Box>
+                            </Collapse>
+                        </Flex>
+                        <IconButton size="xs" variant='ghost' icon={displayFilter? <FaChevronUp />:<FaChevronDown />} onClick={() => setDisplayFilter(!displayFilter)} />
                     </Flex>
-                    <IconButton size="xs" variant='ghost' icon={displayFilter? <FaChevronUp />:<FaChevronDown />} onClick={() => setDisplayFilter(!displayFilter)} />
-                </Flex>
-                <Flex w="100%" flexDirection="row" py="2" justifyContent="center">
-                  <Text fontSize="md" fontWeight="medium" color="gray.400">共找到 {total_count} 筆結果</Text>
-                </Flex>
-                <CourseInfoRowContainer courseInfo={search_results} />
-                <div ref={bottomRef}/>
-                <SkeletonRow loading={search_loading} error={search_error}/>
-            </Box>
-            <Button size="xs" h="95vh" variant="ghost" onClick={() => setDisplayTable(!displayTable)}>{displayTable? <FaChevronRight/>:<FaChevronLeft />}</Button>
-            <Flex flexBasis={displayTable? "50vw" : "5vw"} h="95vh" bg="gray.100" alignItems="center" justifyContent="center" transition="flex-basis 500ms ease-in-out">
-                
-                <SideCourseTableContainer courseTable={"a"} isOpen={displayTable}/>
+                    <Flex w="100%" flexDirection="row" py="2" justifyContent="center">
+                        <Text fontSize="md" fontWeight="medium" color="gray.400">共找到 {total_count} 筆結果</Text>
+                    </Flex>
+                    <Box pr={displayTable ? "50vw":"20vw"} w={displayTable ? "55vw":"70vw"} transition="all 500ms ease-in-out">
+                        <CourseInfoRowContainer courseInfo={search_results} />
+                    </Box>
+                    <div ref={bottomRef}/>
+                    <SkeletonRow loading={search_loading} error={search_error}/>
+                </Box>
             </Flex>
-        </Flex>
-    );
+            <Button position="absolute" top="80vh" left="90vw" size="md" variant="outline" onClick={() => setDisplayTable(!displayTable)} leftIcon={<FaChevronUp />}>顯示課表</Button>
+            <Collapse in={displayTable} animateOpacity>
+                <Flex justifyContent="end" mr="2">
+                    <Box position="absolute" top="10vh" zIndex="1" w="40vw" h="70vh" bg="gray.200" mt="128px" borderRadius="lg" boxShadow="xl">
+                        <SideCourseTableContainer courseTable={"a"} isOpen={displayTable} setIsOpen={setDisplayTable}/>
+                    </Box>
+                </Flex>
+            </Collapse>
+        </>
+);
 };
 
 export default CourseResultViewContainer;

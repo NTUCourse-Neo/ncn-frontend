@@ -18,10 +18,12 @@ import {
     FormLabel,
     Input,
     useDisclosure,
-    Collapse
+    Collapse,
+    IconButton
 } from '@chakra-ui/react';
 import {
     FaRegEdit,
+    FaAngleDown
 } from 'react-icons/fa';
 import CourseTableContainer from './CourseTableContainer';
 import { get_courses_by_ids } from '../api/courses';
@@ -123,9 +125,6 @@ function SideCourseTableContainer(props) {
         )
     }
     const renderEditName = () => {
-        if (!props.isOpen){
-            return (<></>);
-        }
         return(
             <Popover isOpen={isOpen} initialFocusRef={firstFieldRef} onOpen={onOpen} onClose={onClose}>
                 <PopoverTrigger>
@@ -145,10 +144,14 @@ function SideCourseTableContainer(props) {
         );
     };
     return (
-        <Box w="100%" h="100%" bg="gray.200" mt="128px" transition="500ms ease-in-out" overflow="auto">
+      <Flex flexDirection="column" h="100%">
+        <Flex justifyContent="center" alignItems="center">
+          <IconButton icon={<FaAngleDown/>} onClick={()=>{props.setIsOpen(!props.isOpen)}} size="sm" w="100%" variant="ghost"/>
+        </Flex>
+        <Box overflow="auto">
             <Flex flexDirection="column" m="4" ml="8">
                 <Flex h="5vh" flexDirection="row" justifyContent="start" alignItems="center" mb="4" position="fixed" bg="gray.200">
-                    <Text fontWeight="700" fontSize={props.isOpen ? "3xl":"xl"} color="gray.600" mr="4" transition="1000ms ease-in-out">我的課表</Text>
+                    <Text fontWeight="700" fontSize="3xl" color="gray.600" mr="4">我的課表</Text>
                     {renderEditName()}
                 </Flex>
                 <Flex flexDirection="row" justifyContent="center" alignItems="center" my="5vh" >
@@ -156,6 +159,7 @@ function SideCourseTableContainer(props) {
                 </Flex>
             </Flex>
         </Box>
+      </Flex>
     );
 }
 
