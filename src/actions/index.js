@@ -1,22 +1,22 @@
 // write all function that generate actions here
-import {FETCH_SEARCH_RESULTS_FAILURE, FETCH_SEARCH_RESULTS_SUCCESS,FETCH_SEARCH_RESULTS_REQUEST,FETCH_SEARCH_IDS_FAILURE,FETCH_SEARCH_IDS_REQUEST,FETCH_SEARCH_IDS_SUCCESS,SET_SEARCH_COLUMN, SET_SEARCH_SETTINGS, SET_FILTERS, INCREMENT_OFFSET, UPDATE_TOTAL_COUNT} from '../constants/action-types';
+import {FETCH_SEARCH_RESULTS_FAILURE, FETCH_SEARCH_RESULTS_SUCCESS,FETCH_SEARCH_RESULTS_REQUEST,FETCH_SEARCH_IDS_FAILURE,FETCH_SEARCH_IDS_REQUEST,FETCH_SEARCH_IDS_SUCCESS,SET_SEARCH_COLUMN, SET_SEARCH_SETTINGS, SET_FILTERS, INCREMENT_OFFSET, UPDATE_TOTAL_COUNT, SET_FILTERS_ENABLE} from '../constants/action-types';
 import instance from '../api/axios'
 
 // normal actions
 const setSearchColumn = (col_name) => ({ type: SET_SEARCH_COLUMN, payload: col_name });
-
 const setSearchSettings = (setting_obj)=>({type: SET_SEARCH_SETTINGS, payload: setting_obj});
+const setFilterEnable = (filter_name, enable) => ({type: SET_FILTERS_ENABLE, filter_name: filter_name, payload: enable});
 
 // data = 
 // when filter_name == 'department', arr of dept_code (4-digits),
 // when filter_name == 'time', 2D array, each subarray have length == 15
 // when filter_name == 'category', arr of string (type of courses),
-// when filter_name == 'enroll_method', arr of string (type of enroll method) || null (disable this function)
+// when filter_name == 'enroll_method', arr of string (type of enroll method)
 const setFilter = (filter_name, data)=>({type: SET_FILTERS, filter_name: filter_name, payload: data});
 
 // ============================================================
 // async actions (used redux-thunk template)
-const fetchSearchIDs = (searchString, paths, filter_obj, batch_size, strict_match) => async (dispatch)=>{
+const fetchSearchIDs = (searchString, paths, filters_enable, filter_obj, batch_size, strict_match) => async (dispatch)=>{
     dispatch({type: FETCH_SEARCH_IDS_REQUEST});
 
     try {
@@ -27,7 +27,12 @@ const fetchSearchIDs = (searchString, paths, filter_obj, batch_size, strict_matc
         // fetch batch 0 first
         dispatch({type: FETCH_SEARCH_RESULTS_REQUEST});
         try {
-            const {data: {courses, total_count}} = await instance.post(`/courses/ids`, {ids: ids, filter: filter_obj, batch_size: batch_size, offset: 0, strict_match: strict_match});
+            let search_filter={...filter_obj};
+            if (filters_enable.time===false){search_filter.time=null;}
+            if (filters_enable.department===false){search_filter.department=null;}
+            if (filters_enable.category===false){search_filter.category=null;}
+            if (filters_enable.enroll_method===false){search_filter.enroll_method=null;}
+            const {data: {courses, total_count}} = await instance.post(`/courses/ids`, {ids: ids, filter: search_filter, batch_size: batch_size, offset: 0, strict_match: strict_match});
             dispatch({type: FETCH_SEARCH_RESULTS_SUCCESS, payload: courses});
             // increment offset
             dispatch({type: INCREMENT_OFFSET});
@@ -45,12 +50,16 @@ const fetchSearchIDs = (searchString, paths, filter_obj, batch_size, strict_matc
     }
 }
 
-// todo
-const fetchSearchResults = (ids_arr, filter_obj, batch_size, offset) =>async (dispatch)=>{
+const fetchSearchResults = (ids_arr, filters_enable, filter_obj, batch_size, offset) =>async (dispatch)=>{
     dispatch({type: FETCH_SEARCH_RESULTS_REQUEST});
 
     try {
-        const {data: {courses}} = await instance.post(`/courses/ids`, {ids: ids_arr, filter: filter_obj, batch_size: batch_size, offset: offset});
+        let search_filter={...filter_obj};
+        if (filters_enable.time===false){search_filter.time=null;}
+        if (filters_enable.department===false){search_filter.department=null;}
+        if (filters_enable.category===false){search_filter.category=null;}
+        if (filters_enable.enroll_method===false){search_filter.enroll_method=null;}
+        const {data: {courses}} = await instance.post(`/courses/ids`, {ids: ids_arr, filter: search_filter, batch_size: batch_size, offset: offset});
         // console.log(courses); // checking receive array of courses 
         dispatch({type: FETCH_SEARCH_RESULTS_SUCCESS, payload: courses});
         // increment offset
@@ -62,4 +71,4 @@ const fetchSearchResults = (ids_arr, filter_obj, batch_size, offset) =>async (di
     }
 }
 
-export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter}
+export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable}
