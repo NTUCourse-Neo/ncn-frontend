@@ -22,9 +22,9 @@ import {
     MenuItemOption,
     Badge,
     MenuDivider,
-    SlideFade,
+    Fade,
 } from '@chakra-ui/react';
-import { FaChevronDown, FaChevronUp, FaTable} from 'react-icons/fa';
+import { FaAngleLeft, FaAngleRight, FaChevronDown, FaChevronUp, FaTable} from 'react-icons/fa';
 import CourseInfoRowContainer from './CourseInfoRowContainer';
 import FilterModal from '../components/FilterModal';
 import CourseSearchInput from '../components/CourseSearchInput';
@@ -253,11 +253,17 @@ function CourseResultViewContainer() {
                     <SkeletonRow loading={search_loading} error={search_error}/>
                 </Box>
             </Flex>
-            <Button position="absolute" top="80vh" left="90vw" size="md" variant="outline" onClick={() => setDisplayTable(!displayTable)} leftIcon={<FaChevronUp />}>顯示課表</Button>
+            <Fade in={!displayTable}>
+                <Flex as="Button" flexDirection="column" alignItems="center" justifyContent="center" position="absolute" top="80vh" left="90vw" bg="gray.100" boxShadow="md" py="4" px="2" borderRadius="xl"
+                onClick={() => setDisplayTable(!displayTable)} _hover={{boxShadow:"lg", transform:"translateY(-2px) scale(1.02)"}} transition="all 200ms">
+                    <FaAngleLeft size={24}/>
+                    <Text my="2" fontWeight={800} fontSize="lg" color="gray.600" style={{writingMode: "vertical-rl"}}>課表</Text>
+                </Flex>
+            </Fade>
             <Collapse in={displayTable} animateOpacity>
                 <Flex justifyContent="end" mr="2">
-                    <Box position="absolute" top="10vh" zIndex="1" w="40vw" h="70vh" bg="gray.200" mt="128px" borderRadius="lg" boxShadow="xl">
-                        <SideCourseTableContainer courseTable={"a"} isOpen={displayTable} setIsOpen={setDisplayTable}/>
+                    <Box position="absolute" top="8vh" zIndex="1" w="40vw" h="70vh" bg="gray.200" mt="128px" borderRadius="lg" boxShadow="xl">
+                        <SideCourseTableContainer isOpen={displayTable} setIsOpen={setDisplayTable}/>
                     </Box>
                 </Flex>
             </Collapse>

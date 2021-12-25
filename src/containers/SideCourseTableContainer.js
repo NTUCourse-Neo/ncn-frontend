@@ -19,11 +19,12 @@ import {
     Input,
     useDisclosure,
     Collapse,
-    IconButton
+    IconButton,
+    Spacer
 } from '@chakra-ui/react';
 import {
     FaRegEdit,
-    FaAngleDown
+    FaAngleRight
 } from 'react-icons/fa';
 import CourseTableContainer from './CourseTableContainer';
 import { get_courses_by_ids } from '../api/courses';
@@ -144,15 +145,16 @@ function SideCourseTableContainer(props) {
         );
     };
     return (
-      <Flex flexDirection="column" h="100%">
+      <Flex flexDirection="row" h="100%">
         <Flex justifyContent="center" alignItems="center">
-          <IconButton icon={<FaAngleDown/>} onClick={()=>{props.setIsOpen(!props.isOpen)}} size="sm" w="100%" variant="ghost"/>
+          <IconButton h="100%" icon={<FaAngleRight size={24}/>} onClick={()=>{props.setIsOpen(!props.isOpen)}} size="sm" variant="ghost"/>
         </Flex>
         <Box overflow="auto">
-            <Flex flexDirection="column" m="4" ml="8">
-                <Flex h="5vh" flexDirection="row" justifyContent="start" alignItems="center" mb="4" position="fixed" bg="gray.200">
+            <Flex flexDirection="column" m="4" ml="0">
+                <Flex flexDirection="row" justifyContent="space-between" alignItems="center" mb="4" position="fixed">
                     <Text fontWeight="700" fontSize="3xl" color="gray.600" mr="4">我的課表</Text>
                     {renderEditName()}
+                    <Spacer/>
                 </Flex>
                 <Flex flexDirection="row" justifyContent="center" alignItems="center" my="5vh" >
                   <CourseTableContainer courseTimes={courseTimes} courses={courses} loading={loading}/>  
