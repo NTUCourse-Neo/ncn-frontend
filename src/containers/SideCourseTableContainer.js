@@ -26,7 +26,7 @@ import CourseTableContainer from './CourseTableContainer';
 import { get_courses_by_ids } from '../api/courses';
 
 function SideCourseTableContainer(props) {
-    const [courseIds, setCourseIds] = useState(["1101_27674", "1101_30859", "1101_75633"]);
+    const [courseIds, setCourseIds] = useState(["1101_74030", "1101_27674", "1101_30859", "1101_75633"]);
     const [courses, setCourses] = useState({});
     const [courseTimes, setCourseTimes] = useState({});
     const [loading, setLoading] = useState(false);
