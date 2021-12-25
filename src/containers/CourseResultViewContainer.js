@@ -24,7 +24,8 @@ import {
     MenuDivider,
     Fade,
 } from '@chakra-ui/react';
-import { FaAngleLeft, FaAngleRight, FaChevronDown, FaChevronUp, FaTable} from 'react-icons/fa';
+import { BeatLoader } from 'react-spinners';
+import { FaAngleLeft, FaAngleRight, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import CourseInfoRowContainer from './CourseInfoRowContainer';
 import FilterModal from '../components/FilterModal';
 import CourseSearchInput from '../components/CourseSearchInput';
@@ -65,7 +66,7 @@ function CourseResultViewContainer() {
   const [ enrollFilterOn, setEnrollFilterOn ] = useState(search_filters_enable.enroll_method);
 
   const [ displayFilter, setDisplayFilter ] = useState(false);
-  const [ displayTable, setDisplayTable ] = useState(true);
+  const [ displayTable, setDisplayTable ] = useState(false);
 
   // search_settings local states
   const [show_selected_courses, set_show_selected_courses] = useState(search_settings.show_selected_courses);
@@ -243,14 +244,17 @@ function CourseResultViewContainer() {
                         </Flex>
                         <IconButton size="xs" variant='ghost' icon={displayFilter? <FaChevronUp />:<FaChevronDown />} onClick={() => setDisplayFilter(!displayFilter)} />
                     </Flex>
-                    <Flex w="100%" flexDirection="row" py="2" justifyContent="center">
-                        <Text fontSize="md" fontWeight="medium" color="gray.400">共找到 {total_count} 筆結果</Text>
-                    </Flex>
                     <Box ml={displayTable ? "2vw":"15vw"} w={displayTable ? "55vw":"70vw"} transition="all 500ms ease-in-out">
+                        <Flex flexDirection="row" alignItems="center" justifyContent="start">
+                            {search_loading ? <BeatLoader size={8} color='teal'/>:<></>}
+                            <Text fontSize="md" fontWeight="medium" color="gray.400" my="2" ml="1">共找到 {total_count} 筆結果</Text>
+                        </Flex>
                         <CourseInfoRowContainer courseInfo={search_results} />
                     </Box>
+                    <Box ml={displayTable ? "24vw":"48vw"} transition="all 500ms ease-in-out">
+                        <SkeletonRow loading={search_loading} error={search_error}/>
+                    </Box>
                     <div ref={bottomRef}/>
-                    <SkeletonRow loading={search_loading} error={search_error}/>
                 </Box>
             </Flex>
             <Fade in={!displayTable}>
