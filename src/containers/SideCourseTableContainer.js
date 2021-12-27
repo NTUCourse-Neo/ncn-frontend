@@ -27,9 +27,11 @@ import {
     FaAngleRight
 } from 'react-icons/fa';
 import CourseTableContainer from './CourseTableContainer';
-import { get_courses_by_ids } from '../api/courses';
+import { fetchCourseTableCoursesByIds } from '../actions/index';
+import { useDispatch } from 'react-redux';
 
 function SideCourseTableContainer(props) {
+  const dispatch = useDispatch();
     const [courseTableName, setCourseTableName] = useState("我的課表");
     // arr of course ids
     const [courseIds, setCourseIds] = useState(["1101_74030", "1101_27674", "1101_30859", "1101_75633"]);
@@ -82,25 +84,20 @@ function SideCourseTableContainer(props) {
         }, initialValue);
     };
 
-    // refactor to redux later
     // fetch data from server based on courseIds(arr of ids)
+    // execute when every reload
     useEffect(() => {
       const fetchData = async (_callback) =>{
         setLoading(true);
-          try {
-            await get_courses_by_ids(courseIds, 100, 0).then(res => {
-              // set courseTimes
-              extract_course_info(convertArrayToObject(res, "_id"))
-              // set courses
-              setCourses(convertArrayToObject(res, "_id"));
-            });
-          } catch (error) {
-            console.error(error.message);
-          }
-          _callback();
+        const courseResult = await dispatch(fetchCourseTableCoursesByIds(courseIds));
+        // set courseTimes
+        extract_course_info(convertArrayToObject(courseResult, "_id"));
+        // set courses
+        setCourses(convertArrayToObject(courseResult, "_id"));
+        _callback();
       };
       fetchData(() => setLoading(false));
-      console.log(courseTimes);
+      // console.log(courseTimes);
     }, []);
     
     // debugger

@@ -1,5 +1,5 @@
 // write all function that generate actions here
-import {FETCH_SEARCH_RESULTS_FAILURE, FETCH_SEARCH_RESULTS_SUCCESS,FETCH_SEARCH_RESULTS_REQUEST,FETCH_SEARCH_IDS_FAILURE,FETCH_SEARCH_IDS_REQUEST,FETCH_SEARCH_IDS_SUCCESS,SET_SEARCH_COLUMN, SET_SEARCH_SETTINGS, SET_FILTERS, INCREMENT_OFFSET, UPDATE_TOTAL_COUNT, SET_FILTERS_ENABLE} from '../constants/action-types';
+import {FETCH_SEARCH_RESULTS_FAILURE, FETCH_SEARCH_RESULTS_SUCCESS,FETCH_SEARCH_RESULTS_REQUEST,FETCH_SEARCH_IDS_FAILURE,FETCH_SEARCH_IDS_REQUEST,FETCH_SEARCH_IDS_SUCCESS,SET_SEARCH_COLUMN, SET_SEARCH_SETTINGS, SET_FILTERS, INCREMENT_OFFSET, UPDATE_TOTAL_COUNT, SET_FILTERS_ENABLE, COURSETABLE_FETCH_COURSES_BY_IDS_SUCCESS} from '../constants/action-types';
 import instance from '../api/axios'
 
 // normal actions
@@ -71,4 +71,19 @@ const fetchSearchResults = (ids_arr, filters_enable, filter_obj, batch_size, off
     }
 }
 
-export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable}
+// used in SideCourseTableContainer initialization, to fetch all course objects by ids
+const fetchCourseTableCoursesByIds = (ids_arr) => async (dispatch)=>{
+    try {
+        let search_filter={strict_match:false, time: null, department: null, category: null, enroll_method: null};
+        let batch_size=15000; // max batch size
+        let offset=0;
+        const {data: {courses}} = await instance.post(`/courses/ids`, {ids: ids_arr, filter: search_filter, batch_size: batch_size, offset: offset});
+        dispatch({type: COURSETABLE_FETCH_COURSES_BY_IDS_SUCCESS, payload: courses});
+        return courses
+    }
+    catch (e){
+        throw new Error("Error in fetchCoursesByIds: "+e);
+    }
+};
+
+export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable, fetchCourseTableCoursesByIds}
