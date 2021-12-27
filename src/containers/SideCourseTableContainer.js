@@ -31,11 +31,15 @@ import { get_courses_by_ids } from '../api/courses';
 
 function SideCourseTableContainer(props) {
     const [courseTableName, setCourseTableName] = useState("我的課表");
+    // arr of course ids
     const [courseIds, setCourseIds] = useState(["1101_74030", "1101_27674", "1101_30859", "1101_75633"]);
+    // dictionary of Course objects using courseId as key
     const [courses, setCourses] = useState({});
+    // coursesTime is a dictionary of courseIds and their corresponding time in time table
     const [courseTimes, setCourseTimes] = useState({});
     const [loading, setLoading] = useState(false);
 
+    // will set courseTimes in this function
     const extract_course_info = (courses) => {
         let course_time_tmp = Object.assign({}, courseTimes);
         if (!course_time_tmp.parsed){
@@ -65,7 +69,7 @@ function SideCourseTableContainer(props) {
           course_time_tmp.parsed.push(courses[key]._id);
         })
         setCourseTimes(course_time_tmp);
-        console.log(course_time_tmp);
+        //console.log('Course Times: ',course_time_tmp);
     };
 
     const convertArrayToObject = (array, key) => {
@@ -78,23 +82,31 @@ function SideCourseTableContainer(props) {
         }, initialValue);
     };
 
-    useEffect(() => {const fetchData = async (_callback) =>{
-      setLoading(true);
-        try {
-          await get_courses_by_ids(courseIds, 100, 0).then(res => {
-            extract_course_info(convertArrayToObject(res, "_id"))
-            setCourses(convertArrayToObject(res, "_id"));
-          });
-        } catch (error) {
-          console.error(error.message);
-        }
-        _callback();
+    // refactor to redux later
+    // fetch data from server based on courseIds(arr of ids)
+    useEffect(() => {
+      const fetchData = async (_callback) =>{
+        setLoading(true);
+          try {
+            await get_courses_by_ids(courseIds, 100, 0).then(res => {
+              // set courseTimes
+              extract_course_info(convertArrayToObject(res, "_id"))
+              // set courses
+              setCourses(convertArrayToObject(res, "_id"));
+            });
+          } catch (error) {
+            console.error(error.message);
+          }
+          _callback();
       };
       fetchData(() => setLoading(false));
       console.log(courseTimes);
     }, []);
     
-    // useEffect(() => console.log(courseTimes), [courseTimes]);
+    // debugger
+    useEffect(() => console.log('courseTimes: ',courseTimes), [courseTimes]);
+    useEffect(() => console.log('courses: ',courses), [courses]);
+    useEffect(() => console.log('courseIds: ',courseIds), [courseIds]);
 
     const { onOpen, onClose, isOpen } = useDisclosure()
     const firstFieldRef = useRef(null)

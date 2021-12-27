@@ -46,6 +46,8 @@ function CourseInfoRow(props) {
             <Badge colorScheme="blue" variant='solid' mx="4px">{props.courseInfo.department[0]}</Badge>
         );
     }
+
+    // later will implement tags checklist for user to customize which tags to show
     const tags = ["required", "total_slot"];
     return(
         <AccordionItem bg="gray.100" borderRadius="md">
