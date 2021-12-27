@@ -51,7 +51,7 @@ function CourseTableContainer(props) {
                     if (props.courseTimes.time_map && day in props.courseTimes.time_map && interval in props.courseTimes.time_map[day]){
                       return(
                         <Td>
-                          <CourseTableCard courseTime={props.courseTimes.time_map[day][interval]} courseData={props.courses} />
+                          <CourseTableCard courseTime={props.courseTimes.time_map[day][interval]} courseData={props.courses} interval={interval} day={weekdays_map[day]}/>
                         </Td>
                       );
                     }

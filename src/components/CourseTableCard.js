@@ -56,6 +56,8 @@ function CourseTableCard(props){
     const onSortEnd = ({oldIndex, newIndex}) => {
         setCourseList(arrayMove(courseList, oldIndex, newIndex));
     };
+    // when open Popover, overwrite the courseList by courseOrder
+    // when click save, overwrite the courseOrder by courseList
     const renderPopoverBody = (courseData) => {
         return(
             <SortableContainer useDragHandle onSortEnd={onSortEnd} lockAxis="y">
@@ -80,6 +82,11 @@ function CourseTableCard(props){
         </>
         );
     };
+
+    // debugger
+    useEffect(()=>{console.log('CourseTableCard--courseOrder: ', courseOrder);},[courseOrder])
+    useEffect(()=>{console.log('CourseTableCard--courseList: ', courseList);},[courseList])
+
     return(
     <>
         <Popover onOpen={onOpen} onClose={onClose} isOpen={isOpen} closeOnBlur={false} placement="left">
@@ -96,7 +103,7 @@ function CourseTableCard(props){
                     <PopoverHeader>
                         <Flex flexDirection="row" alignItems="center" justifyContent="start" mb="2">
                             節次資訊
-                            <Badge ml="2" size="sm">週Ｘ第Ｘ節</Badge>
+                            <Badge ml="2" size="sm">週{props.day}第{props.interval}節</Badge>
                         </Flex>
                     </PopoverHeader>
                     <PopoverBody>
