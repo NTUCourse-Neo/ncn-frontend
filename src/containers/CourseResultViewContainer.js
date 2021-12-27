@@ -258,7 +258,7 @@ function CourseResultViewContainer() {
                 </Box>
             </Flex>
             <Fade in={!displayTable}>
-                <Flex as="Button" flexDirection="column" alignItems="center" justifyContent="center" position="absolute" top="80vh" left="90vw" bg="gray.100" boxShadow="md" py="4" px="2" borderRadius="xl"
+                <Flex as="button" flexDirection="column" alignItems="center" justifyContent="center" position="absolute" top="80vh" left="90vw" bg="gray.100" boxShadow="md" py="4" px="2" borderRadius="xl"
                 onClick={() => setDisplayTable(!displayTable)} _hover={{boxShadow:"lg", transform:"translateY(-2px) scale(1.02)"}} transition="all 200ms">
                     <FaAngleLeft size={24}/>
                     <Text my="2" fontWeight={800} fontSize="lg" color="gray.600" style={{writingMode: "vertical-rl"}}>課表</Text>
