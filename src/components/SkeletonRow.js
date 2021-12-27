@@ -9,7 +9,7 @@ function SkeletonRow(props) {
         if (props.loading){
             return (
                 <Flex p="4">
-                    <HashLoader size="60" color="teal"/>
+                    <HashLoader size="60px" color="teal"/>
                 </Flex>
             )
         }
