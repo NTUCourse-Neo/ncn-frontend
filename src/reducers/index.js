@@ -18,6 +18,7 @@ const initState = {
 }
 
 const reducer = (state = initState, action) => {
+    console.log("Redux action: ", action.type);
     switch (action.type){
         case FETCH_SEARCH_IDS_REQUEST:
             return {...state, search_loading: true}
