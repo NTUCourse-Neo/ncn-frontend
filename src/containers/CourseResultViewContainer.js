@@ -106,7 +106,7 @@ function CourseResultViewContainer() {
           console.log('BOTTOM!');
           // fetch next batch of search results
           if (search_results.length < total_count){
-            dispatch(fetchSearchResults(search_ids, search_filters_enable, search_filters, batch_size, offset));
+            dispatch(fetchSearchResults(search_ids, search_filters_enable, search_filters, batch_size, offset, search_settings.strict_search_mode));
           }
         }
     }

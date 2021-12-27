@@ -16,7 +16,7 @@ const setFilter = (filter_name, data)=>({type: SET_FILTERS, filter_name: filter_
 
 // ============================================================
 // async actions (used redux-thunk template)
-const fetchSearchIDs = (searchString, paths, filters_enable, filter_obj, batch_size, strict_match) => async (dispatch)=>{
+const fetchSearchIDs = (searchString, paths, filters_enable, filter_obj, batch_size, strict_match_bool) => async (dispatch)=>{
     dispatch({type: FETCH_SEARCH_IDS_REQUEST});
 
     try {
@@ -27,12 +27,12 @@ const fetchSearchIDs = (searchString, paths, filters_enable, filter_obj, batch_s
         // fetch batch 0 first
         dispatch({type: FETCH_SEARCH_RESULTS_REQUEST});
         try {
-            let search_filter={...filter_obj};
+            let search_filter={...filter_obj, strict_match: strict_match_bool};
             if (filters_enable.time===false){search_filter.time=null;}
             if (filters_enable.department===false){search_filter.department=null;}
             if (filters_enable.category===false){search_filter.category=null;}
             if (filters_enable.enroll_method===false){search_filter.enroll_method=null;}
-            const {data: {courses, total_count}} = await instance.post(`/courses/ids`, {ids: ids, filter: search_filter, batch_size: batch_size, offset: 0, strict_match: strict_match});
+            const {data: {courses, total_count}} = await instance.post(`/courses/ids`, {ids: ids, filter: search_filter, batch_size: batch_size, offset: 0});
             dispatch({type: FETCH_SEARCH_RESULTS_SUCCESS, payload: courses});
             // increment offset
             dispatch({type: INCREMENT_OFFSET});
@@ -50,11 +50,11 @@ const fetchSearchIDs = (searchString, paths, filters_enable, filter_obj, batch_s
     }
 }
 
-const fetchSearchResults = (ids_arr, filters_enable, filter_obj, batch_size, offset) =>async (dispatch)=>{
+const fetchSearchResults = (ids_arr, filters_enable, filter_obj, batch_size, offset, strict_match_bool) =>async (dispatch)=>{
     dispatch({type: FETCH_SEARCH_RESULTS_REQUEST});
 
     try {
-        let search_filter={...filter_obj};
+        let search_filter={...filter_obj, strict_match: strict_match_bool};
         if (filters_enable.time===false){search_filter.time=null;}
         if (filters_enable.department===false){search_filter.department=null;}
         if (filters_enable.category===false){search_filter.category=null;}
