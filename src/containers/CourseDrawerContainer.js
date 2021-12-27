@@ -39,7 +39,7 @@ function RenderNolContentBtn(course, title){
                 <ModalHeader>課程詳細資訊</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
-                <iframe sandbox="allow-scripts" src={genNolUrl(course)} height="100%" width="100%"/>   
+                <iframe title={course.id} sandbox="allow-scripts" src={genNolUrl(course)} height="100%" width="100%"/>   
                 </ModalBody>
                 <ModalFooter>
                 <Text fontWeight="500" fontSize="sm" color="gray.300">資料來自 台大課程網</Text>
