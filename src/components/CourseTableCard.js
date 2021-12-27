@@ -84,8 +84,8 @@ function CourseTableCard(props){
     };
 
     // debugger
-    useEffect(()=>{console.log('CourseTableCard--courseOrder: ', courseOrder);},[courseOrder])
-    useEffect(()=>{console.log('CourseTableCard--courseList: ', courseList);},[courseList])
+    // useEffect(()=>{console.log('CourseTableCard--courseOrder: ', courseOrder);},[courseOrder])
+    // useEffect(()=>{console.log('CourseTableCard--courseList: ', courseList);},[courseList])
 
     return(
     <>
