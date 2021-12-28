@@ -14,7 +14,6 @@ const setFilterEnable = (filter_name, enable) => ({type: SET_FILTERS_ENABLE, fil
 // when filter_name == 'enroll_method', arr of string (type of enroll method)
 const setFilter = (filter_name, data)=>({type: SET_FILTERS, filter_name: filter_name, payload: data});
 
-// ============================================================
 // async actions (used redux-thunk template)
 const fetchSearchIDs = (searchString, paths, filters_enable, filter_obj, batch_size, strict_match) => async (dispatch)=>{
     dispatch({type: FETCH_SEARCH_IDS_REQUEST});
@@ -40,13 +39,13 @@ const fetchSearchIDs = (searchString, paths, filters_enable, filter_obj, batch_s
             dispatch({type: UPDATE_TOTAL_COUNT, payload: total_count})
         } catch (error) {
             dispatch({type: FETCH_SEARCH_RESULTS_FAILURE, payload: error});
-            // throw error?
+            throw new Error("FETCH_SEARCH_RESULTS_FAILURE: "+error)
         }
 
         return ids
     } catch (error) {
         dispatch({type: FETCH_SEARCH_IDS_FAILURE, payload: error});
-        return error
+        throw new Error("FETCH_SEARCH_IDS_FAILURE: "+error)
     }
 }
 
@@ -67,7 +66,7 @@ const fetchSearchResults = (ids_arr, filters_enable, filter_obj, batch_size, off
         return courses
     } catch (error) {
         dispatch({type: FETCH_SEARCH_RESULTS_FAILURE, payload: error});
-        return error
+        throw new Error("FETCH_SEARCH_RESULTS_FAILURE: "+error)
     }
 }
 
