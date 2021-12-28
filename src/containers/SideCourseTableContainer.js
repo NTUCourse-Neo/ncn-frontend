@@ -32,10 +32,10 @@ import {
 } from 'react-icons/fa';
 import CourseTableContainer from './CourseTableContainer';
 import { fetchCourseTableCoursesByIds, createCourseTable, fetchCourseTable } from '../actions/index';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 
-const LOCAL_STORAGE_KEY = 'course_tables_key';
+const LOCAL_STORAGE_KEY = 'NTU_CourseNeo_Course_Table_Key';
 
 function SideCourseTableContainer(props) {
     const dispatch = useDispatch();
@@ -48,6 +48,7 @@ function SideCourseTableContainer(props) {
 
     const [loading, setLoading] = useState(false);
     const [courseTableName, setCourseTableName] = useState("我的課表");
+    const [expired, setExpired] = useState(false);
 
     // will set courseTimes in this function
     const extract_course_info = (courses) => {
@@ -93,16 +94,20 @@ function SideCourseTableContainer(props) {
 
     // trigger when mounting, fetch local storage course_id
     useEffect(()=>{
-      const fetchTable = async(uuid)=>{
+      const courseTableInit = async (uuid)=>{
         const course_table = await dispatch(fetchCourseTable(uuid));
-        setCourseTable(course_table);
+        // console.log("FETCH_COURSE_TABLE_SUCCESS: ",course_table);
+        if (course_table!==null){
+          setCourseTable(course_table);
+        } else {
+          setExpired(true);
+        }
       };
 
-      // TODO: check this uuid is valid by asking backend
       const uuid = localStorage.getItem(LOCAL_STORAGE_KEY);
-      console.log("UUID: ",uuid);
+      // console.log("UUID in localStorage now: ",uuid);
       if (uuid){
-        fetchTable(uuid);
+        courseTableInit(uuid);
       }
     },[])
 
@@ -196,7 +201,7 @@ function SideCourseTableContainer(props) {
               <FaRegMeh size="3vh" style={{color:"gray"}}/>
               <FaRegHandPointDown size="3vh" style={{color:"gray"}}/>
             </Flex>
-            <Text fontSize="2xl" fontWeight="bold" color="gray">尚無課表</Text>
+            <Text fontSize="2xl" fontWeight="bold" color="gray">{expired?"您的課表已過期":"尚無課表"}</Text>
             <Button colorScheme="teal" leftIcon={<FaPlusSquare />} onClick={ async()=>{
                 // generate a new uuid and store into local storage
                 let new_uuid = uuidv4();

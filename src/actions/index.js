@@ -101,7 +101,9 @@ const fetchCourseTable = (course_table_id) => async (dispatch)=>{
         return course_table
     }
     catch (e){
-        throw new Error("Error in createCourseTable: "+e);
+        // throw new Error("Error in fetchCourseTable: "+e);
+        // if fetch expired course_table, return null and handle it by frontend logic
+        return null
     }
 }
 
