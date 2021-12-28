@@ -24,7 +24,11 @@ import {
 } from '@chakra-ui/react';
 import {
     FaRegEdit,
-    FaAngleRight
+    FaAngleRight,
+    FaRegHandPointDown,
+    FaRegHandPointUp,
+    FaRegMeh,
+    FaPlusSquare
 } from 'react-icons/fa';
 import CourseTableContainer from './CourseTableContainer';
 import { fetchCourseTableCoursesByIds } from '../actions/index';
@@ -32,6 +36,7 @@ import { useDispatch } from 'react-redux';
 
 function SideCourseTableContainer(props) {
   const dispatch = useDispatch();
+    const [mountedCourseTable, setMountedCourseTable] = useState([]);
     const [courseTableName, setCourseTableName] = useState("我的課表");
     // arr of course ids
     const [courseIds, setCourseIds] = useState(["1101_74030", "1101_27674", "1101_30859", "1101_75633"]);
@@ -163,22 +168,43 @@ function SideCourseTableContainer(props) {
             </Popover>
         );
     };
-    return (
-      <Flex flexDirection="row" h="100%">
+    const renderSideCourseTableContent = () => {
+      if(mountedCourseTable.length === 0){
+        return(
+          <Flex flexDirection="column" justifyContent="center" alignItems="center" h="100%" w="100%">
+            <Flex flexDirection="row" justifyContent="center" alignItems="center">
+              <FaRegHandPointUp size="3vh" style={{color:"gray"}}/>
+              <FaRegMeh size="3vh" style={{color:"gray"}}/>
+              <FaRegHandPointDown size="3vh" style={{color:"gray"}}/>
+            </Flex>
+            <Text fontSize="2xl" fontWeight="bold" color="gray">尚無課表</Text>
+            {
+              // TODO: add button on click action to add a new course table
+            }
+            <Button colorScheme="teal" leftIcon={<FaPlusSquare />}>新增課表</Button>
+          </Flex>
+        );
+      }
+      return(
+        <Box overflow="auto">
+          <Flex flexDirection="column" m="4" ml="0">
+            <Flex flexDirection="row" justifyContent="space-between" alignItems="center" mb="4" position="fixed" zIndex={100}>
+                <Text fontWeight="700" fontSize="3xl" color="gray.600" mr="4">{courseTableName}</Text>
+                {renderEditName()}
+            </Flex>
+            <Flex flexDirection="row" justifyContent="center" alignItems="center" my="5vh" >
+              <CourseTableContainer courseTimes={courseTimes} courses={courses} loading={loading}/>  
+            </Flex>
+          </Flex>
+        </Box>
+      );
+    };
+    return(
+      <Flex h="100%">
         <Flex justifyContent="center" alignItems="center">
           <IconButton h="100%" icon={<FaAngleRight size={24}/>} onClick={()=>{props.setIsOpen(!props.isOpen)}} size="sm" variant="ghost"/>
         </Flex>
-        <Box overflow="auto">
-            <Flex flexDirection="column" m="4" ml="0">
-                <Flex flexDirection="row" justifyContent="space-between" alignItems="center" mb="4" position="fixed" zIndex={100}>
-                    <Text fontWeight="700" fontSize="3xl" color="gray.600" mr="4">{courseTableName}</Text>
-                    {renderEditName()}
-                </Flex>
-                <Flex flexDirection="row" justifyContent="center" alignItems="center" my="5vh" >
-                  <CourseTableContainer courseTimes={courseTimes} courses={courses} loading={loading}/>  
-                </Flex>
-            </Flex>
-        </Box>
+        {renderSideCourseTableContent()}
       </Flex>
     );
 }
