@@ -30,6 +30,9 @@ jobs:
           app_location: "/" # App source code path
           api_location: "" # Api source code path - optional
           output_location: "build" # Built app content directory - optional
+        env:
+          REACT_APP_API_ENDPOINT: ${{ secrets.AZURE_API_ENDPOINT }}
+          REACT_APP_API_VERSION: "v1"
           ###### End of Repository/Build Configurations ######
 
   close_pull_request_job:
