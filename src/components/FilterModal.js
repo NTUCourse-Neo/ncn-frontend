@@ -17,8 +17,39 @@ import { college_map } from '../data/college';
 import { dept_list } from '../data/department';
 import { type_list, code_map } from '../data/course_type';
 import TimetableSelector from "./TimetableSelector";
+import {useSelector, useDispatch} from 'react-redux';
+import {setFilter} from '../actions';
+import { mapStateToTimeTable } from "../utils/timeTableConverter";
 
 function FilterModal(props){
+  const dispatch = useDispatch();
+  const time_state = useSelector(state => state.search_filters.time);
+  const department_state = useSelector(state => state.search_filters.department);
+  const category_state = useSelector(state => state.search_filters.category);
+
+  const handleSet = (type) => {
+    if (type==='department'){
+      dispatch(setFilter('department', props.selectedDept));
+    }
+    else if (type==='time'){
+      // turn 15x7 2D array (selectedTime) to 7x15 array
+      let timeTable = [[],[],[],[],[],[],[]];
+      const intervals = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "A", "B", "C", "D"];
+      for (let i=0;i<intervals.length;i++){
+        let interval = intervals[i]
+        for (let j=0;j<7;j++){
+          if (props.selectedTime[i][j] === true){
+            timeTable[j].push(interval)
+          }
+        }
+      }
+      dispatch(setFilter('time', timeTable));      
+    }
+    else if (type==='category'){
+      dispatch(setFilter('category', props.selectedType));
+    }
+  }
+
   const renderSelectedHeader = () => {
     if (props.type === "department"){
       return(
@@ -40,6 +71,8 @@ function FilterModal(props){
     }
     return (<></>);
   };
+
+  // for dept and category
   const handleSelect = (value, selected, setSelected) => {
     let index = selected.indexOf(value);
         if (index === -1) {
@@ -49,6 +82,7 @@ function FilterModal(props){
           setSelected([...selected]);
         }
   };
+  // for dept and category
   const renderButton = (type, data, selected, setSelected, renderSelected) => {
     let key;
     switch(type){
@@ -72,7 +106,7 @@ function FilterModal(props){
                 m="1"
                 onClick={()=>handleSelect(key, selected, setSelected)}
                 _hover={index === -1 ? { bg: "teal.100" }:{ bg: "red.700" }}>
-          <Badge mx="2" colorScheme="blue">{data.code}</Badge>
+          <Badge mx="2" colorScheme="blue" key={key}>{data.code}</Badge>
           {data.full_name}
         </Button>
       );
@@ -90,11 +124,49 @@ function FilterModal(props){
       case "category":
         setSelected = props.setSelectedType;
         break;
+      case "time":
+        // used when reset
+        setSelected = ()=>{props.setSelectedTime([
+          [false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false],
+        ])};
+        break;
+      default:
+        setSelected = ()=>{console.log('setSelected undefined!')};
+        break;
     }
     return (
     <>
-    <Button isDisabled={!filterOn} onClick={onOpen}>{title}</Button>
-    <Modal isOpen={isOpen} onClose={onClose} size="xl" scrollBehavior="inside">
+    <Button isDisabled={!filterOn} onClick={()=>{
+      onOpen();
+      // because this modal will not re-render, so manually reload from redux state 
+      if (props.type==='time'){
+        props.setSelectedTime(mapStateToTimeTable(time_state));
+      }
+    }}>{title}</Button>
+    <Modal isOpen={isOpen} onClose={()=>{
+      // when click "X", overwrite local state from redux state
+      if (type==="department"){
+        setSelected(department_state);
+      }
+      else if (type==="category"){
+        setSelected(category_state);
+      }
+      onClose();
+    }} size="xl" scrollBehavior="inside">
       <ModalOverlay />
       <ModalContent maxW="50vw">
         <ModalHeader>
@@ -108,7 +180,10 @@ function FilterModal(props){
           {FilterModalBody(type)}
         </ModalBody>
         <ModalFooter>
-          <Button colorScheme='blue' mr={3} onClick={onClose}>
+          <Button colorScheme='blue' mr={3} onClick={()=>{
+            onClose();
+            handleSet(props.type);
+          }}>
             套用
           </Button>
           <Button variant='ghost' onClick={()=> setSelected([])}>重設</Button>
@@ -133,9 +208,9 @@ const FilterModalBody = (type) => {
               let college_code = dept.code.substr(0, 1);
               return(
                 <>
-                <Flex px="2" h="40px" flexDirection="column" justifyContent="center" position="sticky" top="0" mt={index === 0 ? "0":"6"} bgColor="white" zIndex="50">
-                  <Heading fontSize="2xl" color="gray.600">{college_code+" "+college_map[college_code].name}</Heading>
-                  <Divider/>
+                <Flex key={dept.code} px="2" h="40px" flexDirection="column" justifyContent="center" position="sticky" top="0" mt={index === 0 ? "0":"6"} bgColor="white" zIndex="50">
+                  <Heading key={dept.code} fontSize="2xl" color="gray.600">{college_code+" "+college_map[college_code].name}</Heading>
+                  <Divider key={dept.code}/>
                 </Flex>
                 {renderButton("department", dept, props.selectedDept, props.setSelectedDept, false)}
                 </>
@@ -155,9 +230,9 @@ const FilterModalBody = (type) => {
             if (index === 0 || type.code.substr(0,1) !== type_list[index-1].code.substr(0,1)){
               return(
                 <>
-                <Flex px="2" h="40px" flexDirection="column" justifyContent="center" position="sticky" top="0" mt={index === 0 ? "0":"6"} bgColor="white" zIndex="50">
-                  <Heading fontSize="2xl" color="gray.600">{code_map[type.code.substr(0,1)].name}</Heading>
-                  <Divider/>
+                <Flex key={type.id} px="2" h="40px" flexDirection="column" justifyContent="center" position="sticky" top="0" mt={index === 0 ? "0":"6"} bgColor="white" zIndex="50">
+                  <Heading key={type.id} fontSize="2xl" color="gray.600">{code_map[type.code.substr(0,1)].name}</Heading>
+                  <Divider key={type.id}/>
                 </Flex>
                 {renderButton("category", type, props.selectedType, props.setSelectedType, false)}
                 </>
