@@ -31,20 +31,23 @@ import {
     FaPlusSquare
 } from 'react-icons/fa';
 import CourseTableContainer from './CourseTableContainer';
-import { fetchCourseTableCoursesByIds } from '../actions/index';
-import { useDispatch } from 'react-redux';
+import { fetchCourseTableCoursesByIds, createCourseTable, fetchCourseTable } from '../actions/index';
+import { useDispatch, useSelector } from 'react-redux';
+import { v4 as uuidv4 } from 'uuid';
+
+const LOCAL_STORAGE_KEY = 'course_tables_key';
 
 function SideCourseTableContainer(props) {
-  const dispatch = useDispatch();
-    const [mountedCourseTable, setMountedCourseTable] = useState([]);
-    const [courseTableName, setCourseTableName] = useState("我的課表");
-    // arr of course ids
-    const [courseIds, setCourseIds] = useState(["1101_74030", "1101_27674", "1101_30859", "1101_75633"]);
-    // dictionary of Course objects using courseId as key
-    const [courses, setCourses] = useState({});
-    // coursesTime is a dictionary of courseIds and their corresponding time in time table
-    const [courseTimes, setCourseTimes] = useState({});
+    const dispatch = useDispatch();
+    const [courseTable, setCourseTable] = useState(null);
+
+    // some local states for handling course data
+    const [courseIds, setCourseIds] = useState([]); // arr of course ids
+    const [courses, setCourses] = useState({}); // dictionary of Course objects using courseId as key
+    const [courseTimes, setCourseTimes] = useState({}); // coursesTime is a dictionary of courseIds and their corresponding time in time table
+
     const [loading, setLoading] = useState(false);
+    const [courseTableName, setCourseTableName] = useState("我的課表");
 
     // will set courseTimes in this function
     const extract_course_info = (courses) => {
@@ -76,7 +79,6 @@ function SideCourseTableContainer(props) {
           course_time_tmp.parsed.push(courses[key]._id);
         })
         setCourseTimes(course_time_tmp);
-        //console.log('Course Times: ',course_time_tmp);
     };
 
     const convertArrayToObject = (array, key) => {
@@ -89,21 +91,38 @@ function SideCourseTableContainer(props) {
         }, initialValue);
     };
 
-    // fetch data from server based on courseIds(arr of ids)
-    // execute when every reload
-    useEffect(() => {
-      const fetchData = async (_callback) =>{
-        setLoading(true);
-        const courseResult = await dispatch(fetchCourseTableCoursesByIds(courseIds));
-        // set courseTimes
-        extract_course_info(convertArrayToObject(courseResult, "_id"));
-        // set courses
-        setCourses(convertArrayToObject(courseResult, "_id"));
-        _callback();
+    // trigger when mounting, fetch local storage course_id
+    useEffect(()=>{
+      const fetchTable = async(uuid)=>{
+        const course_table = await dispatch(fetchCourseTable(uuid));
+        setCourseTable(course_table);
       };
-      fetchData(() => setLoading(false));
-      // console.log(courseTimes);
-    }, []);
+
+      // TODO: check this uuid is valid by asking backend
+      const uuid = localStorage.getItem(LOCAL_STORAGE_KEY);
+      console.log("UUID: ",uuid);
+      if (uuid){
+        fetchTable(uuid);
+      }
+    },[])
+
+    // fetch course objects data from server based on array of IDs
+    useEffect(() => {
+      const fetchCoursesDataById = async (_callback) =>{
+        setLoading(true);
+        if (courseTable){
+          console.log("course_table: ",courseTable);
+          const courseResult = await dispatch(fetchCourseTableCoursesByIds(courseTable.courses));
+          // set states: coursesIds, courseTimes, courses
+          setCourseIds(courseTable.courses);
+          extract_course_info(convertArrayToObject(courseResult, "_id"));
+          setCourses(convertArrayToObject(courseResult, "_id"));
+        } 
+        _callback();
+      }
+      
+      fetchCoursesDataById(() => setLoading(false));
+    }, [courseTable]);
     
     // debugger
     useEffect(() => console.log('courseTimes: ',courseTimes), [courseTimes]);
@@ -169,7 +188,7 @@ function SideCourseTableContainer(props) {
         );
     };
     const renderSideCourseTableContent = () => {
-      if(mountedCourseTable.length === 0){
+      if(courseTable===null){
         return(
           <Flex flexDirection="column" justifyContent="center" alignItems="center" h="100%" w="100%">
             <Flex flexDirection="row" justifyContent="center" alignItems="center">
@@ -178,10 +197,21 @@ function SideCourseTableContainer(props) {
               <FaRegHandPointDown size="3vh" style={{color:"gray"}}/>
             </Flex>
             <Text fontSize="2xl" fontWeight="bold" color="gray">尚無課表</Text>
-            {
-              // TODO: add button on click action to add a new course table
-            }
-            <Button colorScheme="teal" leftIcon={<FaPlusSquare />}>新增課表</Button>
+            <Button colorScheme="teal" leftIcon={<FaPlusSquare />} onClick={ async()=>{
+                // generate a new uuid and store into local storage
+                let new_uuid = uuidv4();
+                console.log("New UUID is generated: ",new_uuid);
+
+                // TODO: finish catch error
+                try {
+                  const new_course_table = await dispatch(createCourseTable(new_uuid, "我的課表", null, "1101"));
+                  localStorage.setItem(LOCAL_STORAGE_KEY, new_course_table._id);
+                  setCourseTable(new_course_table)
+                } catch (error) {
+                  console.log('TODO: use toast to show error');
+                }
+              }
+            }>新增課表</Button>
           </Flex>
         );
       }

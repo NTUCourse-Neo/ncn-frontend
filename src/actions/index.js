@@ -1,5 +1,5 @@
 // write all function that generate actions here
-import {FETCH_SEARCH_RESULTS_FAILURE, FETCH_SEARCH_RESULTS_SUCCESS,FETCH_SEARCH_RESULTS_REQUEST,FETCH_SEARCH_IDS_FAILURE,FETCH_SEARCH_IDS_REQUEST,FETCH_SEARCH_IDS_SUCCESS,SET_SEARCH_COLUMN, SET_SEARCH_SETTINGS, SET_FILTERS, INCREMENT_OFFSET, UPDATE_TOTAL_COUNT, SET_FILTERS_ENABLE, COURSETABLE_FETCH_COURSES_BY_IDS_SUCCESS} from '../constants/action-types';
+import {FETCH_SEARCH_RESULTS_FAILURE, FETCH_SEARCH_RESULTS_SUCCESS,FETCH_SEARCH_RESULTS_REQUEST,FETCH_SEARCH_IDS_FAILURE,FETCH_SEARCH_IDS_REQUEST,FETCH_SEARCH_IDS_SUCCESS,SET_SEARCH_COLUMN, SET_SEARCH_SETTINGS, SET_FILTERS, INCREMENT_OFFSET, UPDATE_TOTAL_COUNT, SET_FILTERS_ENABLE, CREATE_COURSE_TABLE_SUCCESS} from '../constants/action-types';
 import instance from '../api/axios'
 
 // normal actions
@@ -78,7 +78,6 @@ const fetchCourseTableCoursesByIds = (ids_arr) => async (dispatch)=>{
         let batch_size=15000; // max batch size
         let offset=0;
         const {data: {courses}} = await instance.post(`/courses/ids`, {ids: ids_arr, filter: search_filter, batch_size: batch_size, offset: offset});
-        dispatch({type: COURSETABLE_FETCH_COURSES_BY_IDS_SUCCESS, payload: courses});
         return courses
     }
     catch (e){
@@ -86,4 +85,24 @@ const fetchCourseTableCoursesByIds = (ids_arr) => async (dispatch)=>{
     }
 };
 
-export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable, fetchCourseTableCoursesByIds}
+const createCourseTable = (course_table_id, course_table_name, user_id, semester) => async (dispatch)=>{
+    try {
+        const {data: {course_table, message}} = await instance.post(`/course_tables/`, {id: course_table_id, name: course_table_name, user_id: user_id, semester: semester});
+        return course_table
+    }
+    catch (e){
+        throw new Error("Error in createCourseTable: "+e);
+    }
+}
+
+const fetchCourseTable = (course_table_id) => async (dispatch)=>{
+    try {
+        const {data: {course_table}} = await instance.get(`/course_tables/${course_table_id}`);
+        return course_table
+    }
+    catch (e){
+        throw new Error("Error in createCourseTable: "+e);
+    }
+}
+
+export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, createCourseTable, fetchCourseTable}
