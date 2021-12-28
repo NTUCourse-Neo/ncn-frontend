@@ -13,7 +13,6 @@
         "array-move": "^4.0.0",
         "axios": "^0.24.0",
         "color-hash": "^2.0.1",
-        "dotenv": "^10.0.0",
         "dotenv-defaults": "^3.0.0",
         "focus-visible": "^5.2.0",
         "framer-motion": "^4.0.0",
@@ -30,6 +29,7 @@
         "react-table-drag-select": "^0.3.1",
         "redux": "^4.1.2",
         "redux-thunk": "^2.4.1",
+        "uuid": "^8.3.2",
         "web-vitals": "^0.2.2"
     },
     "prettier": ".prettierrc",
