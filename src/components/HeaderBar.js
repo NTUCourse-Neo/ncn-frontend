@@ -17,7 +17,7 @@ import {
 
 } from '@chakra-ui/react';
 import {ChevronRightIcon, Search2Icon} from "@chakra-ui/icons"
-import { FaCheck, FaExclamation } from 'react-icons/fa';
+import { FaCheck, FaExclamation,FaFolderOpen, FaBook } from 'react-icons/fa';
 import { ColorModeSwitcher } from '../ColorModeSwitcher';
 import { Link } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -33,7 +33,7 @@ function HeaderBar() {
     if(isAuthenticated) {
       return (
         <>
-          <Button colorScheme="blue" variant="ghost" size="md" mx="2" mr="4">我的</Button>
+          <Link to="/user/my"><Button colorScheme="blue" variant="ghost" size="md" mx="2" mr="4" leftIcon={<FaFolderOpen/>}>我的</Button></Link>
           <Menu>
             <MenuButton as={Avatar} name={user.name} src={user.picture} _hover={{cursor:"pointer"}}>
               {
@@ -51,6 +51,7 @@ function HeaderBar() {
                 <MenuItem>常見問題</MenuItem>
                 <MenuItem>關於</MenuItem>
               </MenuGroup>
+              <MenuDivider />
               <Flex justifyContent="end" alignItems="center">
                 <Flex flexDirection="column" justifyContent="center" alignItems="start" m="2" ml="4">
                   <Badge colorScheme={user.email_verified ? "blue":"yellow"} mb="1">{user.email_verified ? "臺大學生":"未驗證"}</Badge>
@@ -74,7 +75,7 @@ function HeaderBar() {
     <Flex position="fixed" w="100%" h="64px" bg="teal.300" flexDirection="row" justifyContent="start" alignItems="center" zIndex="1000">
       <Flex justifyContent="center" alignItems="center" ml="60px">
         <Link to="/"><Heading fontSize="2xl" fontWeight="700" mr="auto" color="gray.700" minW="200px">NTUCourse Neo</Heading></Link>
-        <Link to="/course"><Button colorScheme="blue" variant="ghost" size="md" ml="30px">課程</Button></Link>
+        <Link to="/course"><Button colorScheme="blue" variant="ghost" size="md" ml="30px" leftIcon={<FaBook />}>課程</Button></Link>
       </Flex>
       <Spacer />
       <Flex justifyContent="center" alignItems="center" mr="60px">
