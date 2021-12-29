@@ -268,7 +268,7 @@ function CourseResultViewContainer() {
             </Fade>
             <Collapse in={displayTable} animateOpacity>
                 <Flex justifyContent="end" mr="2">
-                    <Box position="absolute" top="8vh" zIndex="1" w="30vw" h="70vh" bg="gray.200" mt="128px" borderRadius="lg" boxShadow="xl">
+                    <Box position="absolute" top="8vh" zIndex="1" w="35vw" h="70vh" bg="gray.200" mt="128px" borderRadius="lg" boxShadow="xl">
                         <SideCourseTableContainer isOpen={displayTable} setIsOpen={setDisplayTable} hoveredCourse={hoveredCourse}/>
                     </Box>
                 </Flex>

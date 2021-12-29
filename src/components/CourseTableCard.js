@@ -88,7 +88,14 @@ function CourseTableCard(props){
     // debugger
     // useEffect(()=>{console.log('CourseTableCard--courseOrder: ', courseOrder);},[courseOrder])
     // useEffect(()=>{console.log('CourseTableCard--courseList: ', courseList);},[courseList])
-
+    if(props.isHover){
+        const course = props.courseData;
+        return(
+            <Button borderRadius="lg" boxShadow="lg" p="2" w="4vw" h="3vh" mb="1" border="4px" borderColor={hash_to_color_hex(course._id, 0.5)}>
+                <Text fontSize="xs" isTruncated> {course.course_name} </Text>
+            </Button>
+        );
+    }
     return(
     <>
         <Popover onOpen={onOpen} onClose={onClose} isOpen={isOpen} closeOnBlur={false} placement="left">
