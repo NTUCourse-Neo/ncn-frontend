@@ -72,15 +72,17 @@ function CourseTableCard(props){
     };
     const renderCourseBox = (courseId, courseData) => {
         const course = courseData[courseId];
-        return (
-        <>
-            <Tooltip label={course.course_name} placement="top" hasArrow >
-                <Button onClick={() => {setCourseList(courseOrder)}} bg={hash_to_color_hex(course._id, isOpen ? 0.7:0.8)} borderRadius="lg" boxShadow="lg" p="2" w="4vw" mb="1">
-                    <Text fontSize="xs" isTruncated> {course.course_name} </Text>
-                </Button>
-            </Tooltip>
-        </>
-        );
+        if(course){
+            return (
+            <>
+                <Tooltip label={course.course_name} placement="top" hasArrow >
+                    <Button onClick={() => {setCourseList(courseOrder)}} bg={hash_to_color_hex(course._id, isOpen ? 0.7:0.8)} borderRadius="lg" boxShadow="lg" p="2" w="4vw" mb="1">
+                        <Text fontSize="xs" isTruncated> {course.course_name} </Text>
+                    </Button>
+                </Tooltip>
+            </>
+            );
+        }
     };
 
     // debugger

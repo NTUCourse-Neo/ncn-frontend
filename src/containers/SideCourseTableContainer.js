@@ -45,10 +45,28 @@ function SideCourseTableContainer(props) {
     const [courseIds, setCourseIds] = useState([]); // arr of course ids
     const [courses, setCourses] = useState({}); // dictionary of Course objects using courseId as key
     const [courseTimes, setCourseTimes] = useState({}); // coursesTime is a dictionary of courseIds and their corresponding time in time table
+    const [hoveredCourseTime, setHoveredCourseTime]  = useState({}); // courseTime is a dictionary of courseIds and their corresponding time in time table
 
     const [loading, setLoading] = useState(false);
     const [courseTableName, setCourseTableName] = useState("我的課表");
     const [expired, setExpired] = useState(false);
+
+    const parseCourseDateTime = (course, course_time_tmp) => {
+      course.time_loc_pair.map(time_loc_pair => {
+        Object.keys(time_loc_pair.time).forEach(day => {
+          time_loc_pair.time[day].map(time => {
+            if (!(day in course_time_tmp.time_map)) {
+              course_time_tmp.time_map[day] = {};
+            }
+            if (! (time in course_time_tmp.time_map[day])){
+              course_time_tmp.time_map[day][time] = [course._id];
+            }else{
+              course_time_tmp.time_map[day][time].push(course._id);
+            }
+          })
+        })
+      })
+    };
 
     // will set courseTimes in this function
     const extract_course_info = (courses) => {
@@ -63,23 +81,11 @@ function SideCourseTableContainer(props) {
           if (course_time_tmp.parsed.includes(courses[key]._id)){
             return;
           }
-          courses[key].time_loc_pair.map(time_loc_pair => {
-            Object.keys(time_loc_pair.time).forEach(day => {
-              time_loc_pair.time[day].map(time => {
-                if (!(day in course_time_tmp.time_map)) {
-                  course_time_tmp.time_map[day] = {};
-                }
-                if (! (time in course_time_tmp.time_map[day])){
-                  course_time_tmp.time_map[day][time] = [courses[key]._id];
-                }else{
-                  course_time_tmp.time_map[day][time].push(courses[key]._id);
-                }
-              })
-            })
-          })
+          parseCourseDateTime(courses[key], course_time_tmp);
           course_time_tmp.parsed.push(courses[key]._id);
         })
-        setCourseTimes(course_time_tmp);
+        console.log(course_time_tmp);
+        return course_time_tmp;
     };
 
     const convertArrayToObject = (array, key) => {
@@ -120,7 +126,7 @@ function SideCourseTableContainer(props) {
           const courseResult = await dispatch(fetchCourseTableCoursesByIds(courseTable.courses));
           // set states: coursesIds, courseTimes, courses
           setCourseIds(courseTable.courses);
-          extract_course_info(convertArrayToObject(courseResult, "_id"));
+          setCourseTimes(extract_course_info(convertArrayToObject(courseResult, "_id")));
           setCourses(convertArrayToObject(courseResult, "_id"));
         } 
         _callback();
@@ -128,6 +134,20 @@ function SideCourseTableContainer(props) {
       
       fetchCoursesDataById(() => setLoading(false));
     }, [courseTable]);
+
+    useEffect(() => {
+      if (props.hoveredCourse){
+        let tmp = {
+          time_map:{},
+          parsed:[],
+          course_data:props.hoveredCourse
+        }
+        parseCourseDateTime(props.hoveredCourse, tmp);
+        setHoveredCourseTime(tmp);
+      }else{
+        setHoveredCourseTime(null);
+      }
+    } , [props.hoveredCourse]);
     
     // debugger
     useEffect(() => console.log('courseTimes: ',courseTimes), [courseTimes]);
@@ -221,14 +241,14 @@ function SideCourseTableContainer(props) {
         );
       }
       return(
-        <Box overflow="auto">
+        <Box overflow="auto" w="100%">
           <Flex flexDirection="column" m="4" ml="0">
             <Flex flexDirection="row" justifyContent="space-between" alignItems="center" mb="4" position="fixed" zIndex={100}>
                 <Text fontWeight="700" fontSize="3xl" color="gray.600" mr="4">{courseTableName}</Text>
                 {renderEditName()}
             </Flex>
             <Flex flexDirection="row" justifyContent="center" alignItems="center" my="5vh" >
-              <CourseTableContainer courseTimes={courseTimes} courses={courses} loading={loading}/>  
+              <CourseTableContainer courseTimes={courseTimes} courses={courses} loading={loading} hoveredCourseTime={hoveredCourseTime} hoveredCourse={props.hoveredCourse}/>  
             </Flex>
           </Flex>
         </Box>

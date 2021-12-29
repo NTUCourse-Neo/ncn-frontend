@@ -68,6 +68,8 @@ function CourseResultViewContainer() {
   const [ displayFilter, setDisplayFilter ] = useState(false);
   const [ displayTable, setDisplayTable ] = useState(false);
 
+  // State for the course result row that is been hovered now.
+  const [ hoveredCourse, setHoveredCourse ] = useState(null);
   // search_settings local states
   const [show_selected_courses, set_show_selected_courses] = useState(search_settings.show_selected_courses);
   const [only_show_not_conflicted_courses, set_only_show_not_conflicted_courses] = useState(search_settings.only_show_not_conflicted_courses);
@@ -247,9 +249,9 @@ function CourseResultViewContainer() {
                     <Box ml={displayTable ? "2vw":"15vw"} w={displayTable ? "55vw":"70vw"} transition="all 500ms ease-in-out">
                         <Flex flexDirection="row" alignItems="center" justifyContent="start">
                             {search_loading ? <BeatLoader size={8} color='teal'/>:<></>}
-                            <Text fontSize="md" fontWeight="medium" color="gray.400" my="2" ml="1">共找到 {total_count} 筆結果</Text>
+                            <Text fontSize="md" fontWeight="medium" color="gray.400" my="2" ml="1">{search_loading ? "載入中" : `共找到 ${total_count} 筆結果`}</Text>
                         </Flex>
-                        <CourseInfoRowContainer courseInfo={search_results} />
+                        <CourseInfoRowContainer courseInfo={search_results} setHoveredCourse={setHoveredCourse}/>
                     </Box>
                     <Box ml={displayTable ? "24vw":"48vw"} transition="all 500ms ease-in-out">
                         <SkeletonRow loading={search_loading} error={search_error}/>
@@ -266,8 +268,8 @@ function CourseResultViewContainer() {
             </Fade>
             <Collapse in={displayTable} animateOpacity>
                 <Flex justifyContent="end" mr="2">
-                    <Box position="absolute" top="8vh" zIndex="1" w="40vw" h="70vh" bg="gray.200" mt="128px" borderRadius="lg" boxShadow="xl">
-                        <SideCourseTableContainer isOpen={displayTable} setIsOpen={setDisplayTable}/>
+                    <Box position="absolute" top="8vh" zIndex="1" w="30vw" h="70vh" bg="gray.200" mt="128px" borderRadius="lg" boxShadow="xl">
+                        <SideCourseTableContainer isOpen={displayTable} setIsOpen={setDisplayTable} hoveredCourse={hoveredCourse}/>
                     </Box>
                 </Flex>
             </Collapse>

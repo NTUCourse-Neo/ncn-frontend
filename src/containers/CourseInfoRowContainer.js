@@ -17,7 +17,7 @@ function CourseInfoRowContainer(props) {
         return(
             props.courseInfo.map((info, index) => {
                 return(
-                    <Accordion allowToggle w="100%" key={index}>
+                    <Accordion allowToggle w="100%" key={index} onMouseEnter={() => props.setHoveredCourse(info)} onMouseLeave={() => {props.setHoveredCourse(null)}}>
                         <CourseInfoRow id={info["id"]} index={index} courseInfo={info}/>
                         <Spacer my="1" />
                     </Accordion>
