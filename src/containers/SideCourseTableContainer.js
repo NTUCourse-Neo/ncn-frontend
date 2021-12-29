@@ -32,14 +32,16 @@ import {
 } from 'react-icons/fa';
 import CourseTableContainer from './CourseTableContainer';
 import { fetchCourseTableCoursesByIds, createCourseTable, fetchCourseTable } from '../actions/index';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
+// TODO: add auth0 function, get user info first and load course_table_id from user instead of localStorage
+import { useAuth0 } from "@auth0/auth0-react";
 
 const LOCAL_STORAGE_KEY = 'NTU_CourseNeo_Course_Table_Key';
 
 function SideCourseTableContainer(props) {
     const dispatch = useDispatch();
-    const [courseTable, setCourseTable] = useState(null);
+    const courseTable = useSelector(state => state.course_table);
 
     // some local states for handling course data
     const [courseIds, setCourseIds] = useState([]); // arr of course ids
@@ -103,9 +105,7 @@ function SideCourseTableContainer(props) {
       const courseTableInit = async (uuid)=>{
         const course_table = await dispatch(fetchCourseTable(uuid));
         // console.log("FETCH_COURSE_TABLE_SUCCESS: ",course_table);
-        if (course_table!==null){
-          setCourseTable(course_table);
-        } else {
+        if (course_table===null){
           setExpired(true);
         }
       };
@@ -231,7 +231,6 @@ function SideCourseTableContainer(props) {
                 try {
                   const new_course_table = await dispatch(createCourseTable(new_uuid, "我的課表", null, "1101"));
                   localStorage.setItem(LOCAL_STORAGE_KEY, new_course_table._id);
-                  setCourseTable(new_course_table)
                 } catch (error) {
                   console.log('TODO: use toast to show error');
                 }

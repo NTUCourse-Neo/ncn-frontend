@@ -36,7 +36,7 @@ function CourseTableContainer(props) {
           {
             days.map((day, j) => {
               return(
-                <Th key={j}><Center>{weekdays_map[day]}</Center></Th>
+                <Th key={day+"_Th"}><Center key={day+"_Center"}>{weekdays_map[day]}</Center></Th>
               );
             })
           }
@@ -46,7 +46,7 @@ function CourseTableContainer(props) {
         {
           interval.map((interval, i) => {
             return(
-              <Tr key={i}>
+              <Tr key={i+"_Tr"}>
                 {
                   days.map((day, j) => {
                     if (props.courseTimes.time_map && day in props.courseTimes.time_map && interval in props.courseTimes.time_map[day]){
@@ -59,21 +59,21 @@ function CourseTableContainer(props) {
                         );
                       }
                       return(
-                        <Td>
+                        <Td key={i+"_"+j}>
                           <CourseTableCard isHover={false} courseTime={props.courseTimes.time_map[day][interval]} courseData={props.courses} interval={interval} day={weekdays_map[day]}/>
                         </Td>
                       );
                     }
                     if(props.hoveredCourseTime && day in props.hoveredCourseTime.time_map && interval in props.hoveredCourseTime.time_map[day]){
                       return(
-                        <Td>
+                        <Td key={i+"_"+j}>
                           <CourseTableCard isHover={true} courseTime={[]} courseData={props.hoveredCourseTime.course_data} interval={interval} day={weekdays_map[day]}/>
                         </Td>
                       );
                     }
                     return(
-                      <Td><Flex w="4vw" h="3vh" mb="1" justifyContent="center" alignItems="center">
-                        <Text color="gray.300" fontSize="5xl" fontWeight="700">{interval}</Text>
+                      <Td key={i+"_"+j}><Flex w="4vw" h="3vh" mb="1" justifyContent="center" alignItems="center">
+                        <Text color="gray.300" fontSize="5xl" fontWeight="700" key={i+"_"+j}>{interval}</Text>
                       </Flex></Td>
                     );
                   })

@@ -1,5 +1,5 @@
 // store initial states and reducers
-import {FETCH_SEARCH_RESULTS_FAILURE, FETCH_SEARCH_RESULTS_SUCCESS,FETCH_SEARCH_RESULTS_REQUEST,FETCH_SEARCH_IDS_FAILURE,FETCH_SEARCH_IDS_REQUEST,FETCH_SEARCH_IDS_SUCCESS,SET_SEARCH_COLUMN, SET_SEARCH_SETTINGS, SET_FILTERS, INCREMENT_OFFSET, UPDATE_TOTAL_COUNT, SET_FILTERS_ENABLE} from '../constants/action-types'
+import {FETCH_SEARCH_RESULTS_FAILURE, FETCH_SEARCH_RESULTS_SUCCESS,FETCH_SEARCH_RESULTS_REQUEST,FETCH_SEARCH_IDS_FAILURE,FETCH_SEARCH_IDS_REQUEST,FETCH_SEARCH_IDS_SUCCESS,SET_SEARCH_COLUMN, SET_SEARCH_SETTINGS, SET_FILTERS, INCREMENT_OFFSET, UPDATE_TOTAL_COUNT, SET_FILTERS_ENABLE, UPDATE_COURSE_TABLE} from '../constants/action-types'
 
 const initState = {
     search_ids: [], // array of course_id
@@ -13,6 +13,7 @@ const initState = {
     search_settings: {show_selected_courses: true, only_show_not_conflicted_courses: false, sync_add_to_nol: false, strict_search_mode: false}, // object of settings
     search_filters_enable: {time: false, department: false, category: false, enroll_method: false}, // object of boolean, enable/disable filters
     search_filters: {time: [[],[],[],[],[],[],[]], department: [], category: [], enroll_method: ['1','2','3']}, // default value of filters
+    course_table: null, // only one course table for now
 }
 
 const reducer = (state = initState, action) => {
@@ -80,6 +81,8 @@ const reducer = (state = initState, action) => {
             else {
                 return {...state}
             }
+        case UPDATE_COURSE_TABLE:
+            return {...state, course_table: action.payload}
         default:
             return state 
     }

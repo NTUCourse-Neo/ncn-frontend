@@ -145,7 +145,7 @@ function FilterModal(props){
         ])};
         break;
       default:
-        setSelected = ()=>{console.log('setSelected defined!')};
+        setSelected = ()=>{console.log('setSelected undefined!')};
         break;
     }
     return (
