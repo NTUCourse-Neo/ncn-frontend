@@ -35,7 +35,7 @@ function CourseTableContainer(props) {
           {
             days.map((day, j) => {
               return(
-                <Th key={j}><Center>{weekdays_map[day]}</Center></Th>
+                <Th key={day+"_Th"}><Center key={day+"_Center"}>{weekdays_map[day]}</Center></Th>
               );
             })
           }
@@ -45,19 +45,19 @@ function CourseTableContainer(props) {
         {
           interval.map((interval, i) => {
             return(
-              <Tr key={i}>
+              <Tr key={i+"_Tr"}>
                 {
                   days.map((day, j) => {
                     if (props.courseTimes.time_map && day in props.courseTimes.time_map && interval in props.courseTimes.time_map[day]){
                       return(
-                        <Td>
-                          <CourseTableCard courseTime={props.courseTimes.time_map[day][interval]} courseData={props.courses} interval={interval} day={weekdays_map[day]}/>
+                        <Td key={i+"_"+j}>
+                          <CourseTableCard courseTime={props.courseTimes.time_map[day][interval]} courseData={props.courses} interval={interval} day={weekdays_map[day]} key={i+"_"+j+"_CourseTableCard"}/>
                         </Td>
                       );
                     }
                     return(
-                      <Td><Flex w="3vw" justifyContent="center" alignItems="center">
-                        <Text color="gray.300" fontSize="5xl" fontWeight="700">{interval}</Text>
+                      <Td key={i+"_"+j}><Flex w="3vw" justifyContent="center" alignItems="center" key={i+"_"+j+"_Flex"}>
+                        <Text color="gray.300" fontSize="5xl" fontWeight="700" key={i+"_"+j+"_Text"}>{interval}</Text>
                       </Flex></Td>
                     );
                   })

@@ -40,14 +40,14 @@ function CourseTableCard(props){
     const [ courseOrder, setCourseOrder ] = useState(props.courseTime);
     const [ courseList, setCourseList ] = useState([]);
     const DragHandle = sortableHandle(() => <FaBars />);
-    const SortableElement = sortableElement(({course}) => (
-      <Flex className="sortableHelper" alignItems="center" my="1">
-        <DragHandle/>
-        <Badge ml="4" mr="1" variant="solid" bg={hash_to_color_hex(course._id, 0.9)} color="gray.600">{course.id}</Badge>
-        <Text fontSize="lg" color="gray.500" mx="1" fontWeight="700" isTruncated>{course.course_name}</Text>
-            {RenderNolContentBtn(course, "")}
-        <Spacer/>
-        <IconButton aria-label='Delete' icon={<FaTrashAlt />} size="sm" colorScheme="red"/>
+    const SortableElement = sortableElement(({key, course}) => (
+      <Flex className="sortableHelper" alignItems="center" my="1" key={"Sortable_"+key+"_Flex"}>
+        <DragHandle key={"Sortable_"+key+"_DragHandle"}/>
+        <Badge ml="4" mr="1" variant="solid" bg={hash_to_color_hex(course._id, 0.9)} color="gray.600" key={"Sortable_"+key+"_Badge"}>{course.id}</Badge>
+        <Text fontSize="lg" color="gray.500" mx="1" fontWeight="700" isTruncated key={"Sortable_"+key+"_Text"}>{course.course_name}</Text>
+            {RenderNolContentBtn(course, "", key)}
+        <Spacer key={"Sortable_"+key+"_Spacer"}/>
+        <IconButton aria-label='Delete' icon={<FaTrashAlt />} size="sm" colorScheme="red" key={"Sortable_"+key+"_IconButton"}/>
       </Flex>
     ));
     const SortableContainer = sortableContainer(({children}) => {
@@ -74,9 +74,9 @@ function CourseTableCard(props){
         const course = courseData[courseId];
         return (
         <>
-            <Tooltip label={course.course_name} placement="top" hasArrow >
-                <Button onClick={() => {setCourseList(courseOrder)}} bg={hash_to_color_hex(course._id, isOpen ? 0.7:0.8)} borderRadius="lg" boxShadow="lg" p="2" w="4vw" mb="1">
-                    <Text fontSize="xs" isTruncated> {course.course_name} </Text>
+            <Tooltip label={course.course_name} placement="top" hasArrow key={courseId+"_Tooltip"}>
+                <Button onClick={() => {setCourseList(courseOrder)}} bg={hash_to_color_hex(course._id, isOpen ? 0.7:0.8)} borderRadius="lg" boxShadow="lg" p="2" w="4vw" mb="1" key={courseId+"_Button"}>
+                    <Text fontSize="xs" isTruncated key={courseId+"_Text"}> {course.course_name} </Text>
                 </Button>
             </Tooltip>
         </>

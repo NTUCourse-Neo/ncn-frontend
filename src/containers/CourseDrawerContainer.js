@@ -27,24 +27,24 @@ import {
   import { FaPlus, FaInfoCircle } from 'react-icons/fa';
   import { IoMdOpen } from 'react-icons/io';
 
-function RenderNolContentBtn(course, title){
+function RenderNolContentBtn(course, title, key){
     const { isOpen, onOpen, onClose } = useDisclosure();
     return (
         <>
-            <Button variant="ghost" colorScheme="blue" leftIcon={<FaInfoCircle/>} size="sm" onClick={onOpen}>{title}</Button>
+            <Button variant="ghost" colorScheme="blue" leftIcon={<FaInfoCircle/>} size="sm" onClick={onOpen} key={"NolContent_"+key}>{title}</Button>
 
-            <Modal size="xl" isOpen={isOpen} onClose={onClose} motionPreset='slideInBottom' scrollBehavior="outside">
-            <ModalOverlay />
-            <ModalContent maxW="850px" height="90vh">
-                <ModalHeader>課程詳細資訊</ModalHeader>
-                <ModalCloseButton />
-                <ModalBody>
-                <iframe title={course.id} sandbox="allow-scripts" src={genNolUrl(course)} height="100%" width="100%"/>   
+            <Modal size="xl" isOpen={isOpen} onClose={onClose} motionPreset='slideInBottom' scrollBehavior="outside" key={"NolContent_Modal_"+key}>
+            <ModalOverlay key={"NolContent_ModalOverlay_"+key}/>
+            <ModalContent maxW="850px" height="90vh" key={"NolContent_Modal_"+key}>
+                <ModalHeader key={"NolContent_Header_"+key}>課程詳細資訊</ModalHeader>
+                <ModalCloseButton key={"NolContent_ModalCloseButton_"+key}/>
+                <ModalBody key={"NolContent_ModalBody_"+key}>
+                <iframe title={course.id} sandbox="allow-scripts" src={genNolUrl(course)} height="100%" width="100%" key={"NolContent_iframe_"+key}/>   
                 </ModalBody>
-                <ModalFooter>
+                <ModalFooter key={"NolContent_ModalFooter_"+key}>
                 <Text fontWeight="500" fontSize="sm" color="gray.300">資料來自 台大課程網</Text>
-                <Spacer/>
-                <Button size="sm" mr="-px" rightIcon={<IoMdOpen />} onClick={() => openPage(genNolUrl(course), false)}>在新分頁中打開</Button>
+                <Spacer key={"NolContent_Spacer_"+key}/>
+                <Button key={"NolContent_Button_"+key} size="sm" mr="-px" rightIcon={<IoMdOpen />} onClick={() => openPage(genNolUrl(course), false)}>在新分頁中打開</Button>
                 </ModalFooter>
             </ModalContent>
             </Modal>
@@ -120,7 +120,7 @@ function CourseDrawerContainer(props) {
                 </ButtonGroup>
                 <Spacer/>
                 <Button variant="ghost" colorScheme="blue" leftIcon={<FaPlus/>} size="sm" onClick={() => openPage(genNolAddUrl(props.courseInfo), true)}>加入課程網</Button>
-                {RenderNolContentBtn(props.courseInfo, "課程詳細資訊")}
+                {RenderNolContentBtn(props.courseInfo, "課程詳細資訊", props.courseInfo.course_id)}
             </Flex>
         </Flex>
     );
