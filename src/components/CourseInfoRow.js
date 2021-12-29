@@ -1,7 +1,7 @@
 // Props
 // | courseInfo: Obj
 //
-import { React } from 'react';
+import { React, useState } from 'react';
 import {
     Box,
     Flex,
@@ -24,15 +24,16 @@ import { info_view_map } from '../data/mapping_table';
 import {useDispatch} from 'react-redux';
 import { fetchCourseTable, patchCourseTable } from '../actions';
 import { hash_to_color_hex } from '../utils/colorAgent';
-import { RotateLoader } from 'react-spinners';
 
 const LOCAL_STORAGE_KEY = 'NTU_CourseNeo_Course_Table_Key';
 
 function CourseInfoRow(props) {
+    const [addingCourse, setAddingCourse] = useState(false);
     const dispatch = useDispatch();
     const toast = useToast();
 
     const handleButtonClick = async (course)=>{
+        setAddingCourse(true);
         // console.log('course: ', course);
         const uuid = localStorage.getItem(LOCAL_STORAGE_KEY);
         if (uuid){
@@ -94,6 +95,7 @@ function CourseInfoRow(props) {
                 isClosable: true
             });
         }
+        setAddingCourse(false);
     };
 
     const renderDeptBadge = (course) => {
@@ -139,7 +141,7 @@ function CourseInfoRow(props) {
                         }
                     </Flex>
                 </AccordionButton>
-                <Button size="sm" ml="20px" colorScheme={props.selected? "red":"blue"} onClick={() => handleButtonClick(props.courseInfo)} transition="all ease-in-out 200ms">
+                <Button size="sm" ml="20px" colorScheme={props.selected? "red":"blue"} onClick={() => handleButtonClick(props.courseInfo)} isLoading={addingCourse}>
                     <Box transform={props.selected ? "rotate(45deg)":""} transition="all ease-in-out 200ms">
                         <FaPlus />
                     </Box>
