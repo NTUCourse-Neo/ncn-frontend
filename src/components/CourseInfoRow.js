@@ -49,7 +49,6 @@ function CourseInfoRow(props) {
                     duration: 3000,
                     isClosable: true
                 });
-                return;
             } 
             else {
                 // fetch course table success
@@ -71,15 +70,6 @@ function CourseInfoRow(props) {
                         title: `已${operation_str} ${course.course_name}`,
                         description: `新增至 ${course_table.name}`,
                         status: 'success',
-                        duration: 3000,
-                        isClosable: true
-                    });
-                }
-                else {
-                    toast({
-                        title: `${operation_str} ${course.course_name} 失敗`,
-                        description: `您的課表已過期，請重新建立課表`,
-                        status: 'error',
                         duration: 3000,
                         isClosable: true
                     });
