@@ -73,7 +73,7 @@ function SideCourseTableContainer(props) {
 
     // will set courseTimes in this function
     const extract_course_info = (courses) => {
-        let course_time_tmp = Object.assign({}, courseTimes);
+        let course_time_tmp = {}
         if (!course_time_tmp.parsed){
           course_time_tmp.parsed = [];
         }
