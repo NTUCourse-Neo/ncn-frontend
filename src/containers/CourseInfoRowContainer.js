@@ -16,17 +16,9 @@ function CourseInfoRowContainer(props) {
     const renderCourseInfoRow = () => {
         return(
             props.courseInfo.map((info, index) => {
-                if(props.selectedCourses.includes(info._id)){
-                    return(
-                        <Accordion allowToggle w="100%" key={index}>
-                            <CourseInfoRow id={info["id"]} index={index} courseInfo={info} selected={true}/>
-                            <Spacer my="1" />
-                        </Accordion>
-                    );
-                }
                 return(
                     <Accordion allowToggle w="100%" key={index} onMouseEnter={() => props.setHoveredCourse(info)} onMouseLeave={() => {props.setHoveredCourse(null)}}>
-                        <CourseInfoRow id={info["id"]} index={index} courseInfo={info} selected={false}/>
+                        <CourseInfoRow id={info["id"]} index={index} courseInfo={info} selected={props.selectedCourses.includes(info._id)} setHoveredCourse={props.setHoveredCourse}/>
                         <Spacer my="1" />
                     </Accordion>
                 );

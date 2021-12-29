@@ -20,7 +20,19 @@ import { weekdays_map } from '../data/mapping_table';
 function CourseTableContainer(props) {
   const days = ["1", "2", "3", "4", "5"];
   const interval = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "A", "B", "C", "D"];
-
+  const renderCourseBox = (course, hover, day, interval) => {
+    if (course.time_map[day][interval].includes(hover.time_map[day][interval][0])){
+      return(
+        <CourseTableCard hoverId={hover.time_map[day][interval][0]} courseTime={course.time_map[day][interval]} courseData={props.courses} interval={interval} day={weekdays_map[day]}/>
+      );
+    }
+    return(
+      <>
+        <CourseTableCard isHover courseTime={[]} courseData={hover.course_data} interval={interval} day={weekdays_map[day]}/>
+        <CourseTableCard courseTime={course.time_map[day][interval]} courseData={props.courses} interval={interval} day={weekdays_map[day]}/>
+      </>
+    );
+  };
   const renderTable = () => {
     return(
         <Table variant='simple' size='md' colorScheme='blue' borderRadius="lg">
@@ -46,8 +58,7 @@ function CourseTableContainer(props) {
                         if(props.hoveredCourse && props.hoveredCourseTime && day in props.hoveredCourseTime.time_map && interval in props.hoveredCourseTime.time_map[day]){
                           return(
                             <Td>
-                              <CourseTableCard isHover={true} courseTime={[]} courseData={props.hoveredCourseTime.course_data} interval={interval} day={weekdays_map[day]}/>
-                              <CourseTableCard isHover={false} courseTime={props.courseTimes.time_map[day][interval]} courseData={props.courses} interval={interval} day={weekdays_map[day]}/>
+                              {renderCourseBox(props.courseTimes, props.hoveredCourseTime, day, interval)}
                             </Td>
                           );
                         }

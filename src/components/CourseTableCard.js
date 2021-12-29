@@ -76,7 +76,12 @@ function CourseTableCard(props){
             return (
             <>
                 <Tooltip label={course.course_name} placement="top" hasArrow >
-                    <Button onClick={() => {setCourseList(courseOrder)}} bg={hash_to_color_hex(course._id, isOpen ? 0.7:0.8)} borderRadius="lg" boxShadow="lg" p="2" w="4vw" mb="1">
+                    <Button onClick={() => {setCourseList(courseOrder)}} 
+                            bg={hash_to_color_hex(course._id, isOpen ? 0.7:0.8)} 
+                            borderRadius="lg" boxShadow="lg" 
+                            mb="1" p="2" w="4vw" h="3vh"
+                            border={props.hoverId === courseId  ? "2px":""}
+                            borderColor={hash_to_color_hex(course._id, 0.5)}>
                         <Text fontSize="xs" isTruncated> {course.course_name} </Text>
                     </Button>
                 </Tooltip>
@@ -91,7 +96,7 @@ function CourseTableCard(props){
     if(props.isHover){
         const course = props.courseData;
         return(
-            <Button borderRadius="lg" boxShadow="lg" p="2" w="4vw" h="3vh" mb="1" border="4px" borderColor={hash_to_color_hex(course._id, 0.7)} borderStyle="dashed">
+            <Button borderRadius="lg" boxShadow="lg" p="2" w="4vw" h="3vh" mb="1" border="2px" borderColor={hash_to_color_hex(course._id, 0.7)} borderStyle="dashed">
                 <Text fontSize="xs" isTruncated> {course.course_name} </Text>
             </Button>
         );

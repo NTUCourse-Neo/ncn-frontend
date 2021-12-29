@@ -270,7 +270,7 @@ function CourseResultViewContainer() {
             <Collapse in={displayTable} animateOpacity>
                 <Flex justifyContent="end" mr="2">
                     <Box position="absolute" top="8vh" zIndex="1" w="35vw" h="70vh" bg="gray.200" mt="128px" borderRadius="lg" boxShadow="xl">
-                        <SideCourseTableContainer isOpen={displayTable} setIsOpen={setDisplayTable} hoveredCourse={hoveredCourse} courseIds={coursesInTable} setCourseIds={setCoursesInTable}/>
+                        <SideCourseTableContainer isOpen={displayTable} setIsOpen={setDisplayTable} hoveredCourse={hoveredCourse} setHoveredCourse={setHoveredCourse} courseIds={coursesInTable} setCourseIds={setCoursesInTable}/>
                     </Box>
                 </Flex>
             </Collapse>
