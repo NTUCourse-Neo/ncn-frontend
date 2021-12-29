@@ -72,6 +72,7 @@ function CourseTableCard(props){
     };
     const renderCourseBox = (courseId, courseData) => {
         const course = courseData[courseId];
+        console.log(courseId);
         if(course){
             return (
             <>

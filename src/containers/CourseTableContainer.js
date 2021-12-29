@@ -28,7 +28,7 @@ function CourseTableContainer(props) {
     }
     return(
       <>
-        <CourseTableCard isHover courseTime={[]} courseData={hover.course_data} interval={interval} day={weekdays_map[day]}/>
+        <CourseTableCard isHover courseTime={course.time_map[day][interval]} courseData={hover.course_data} interval={interval} day={weekdays_map[day]}/>
         <CourseTableCard courseTime={course.time_map[day][interval]} courseData={props.courses} interval={interval} day={weekdays_map[day]}/>
       </>
     );
@@ -64,14 +64,14 @@ function CourseTableContainer(props) {
                         }
                         return(
                           <Td key={i+"_"+j}>
-                            <CourseTableCard isHover={false} courseTime={props.courseTimes.time_map[day][interval]} courseData={props.courses} interval={interval} day={weekdays_map[day]}/>
+                            <CourseTableCard courseTime={props.courseTimes.time_map[day][interval]} courseData={props.courses} interval={interval} day={weekdays_map[day]}/>
                           </Td>
                         );
                       }
                       if(props.hoveredCourse && props.hoveredCourseTime && day in props.hoveredCourseTime.time_map && interval in props.hoveredCourseTime.time_map[day]){
                         return(
                           <Td key={i+"_"+j}>
-                            <CourseTableCard isHover={true} courseTime={[]} courseData={props.hoveredCourseTime.course_data} interval={interval} day={weekdays_map[day]}/>
+                            <CourseTableCard isHover courseTime={[]} courseData={props.hoveredCourseTime.course_data} interval={interval} day={weekdays_map[day]}/>
                           </Td>
                         );
                       }
