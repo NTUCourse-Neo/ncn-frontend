@@ -76,6 +76,8 @@ function CourseResultViewContainer() {
   const [sync_add_to_nol, set_sync_add_to_nol] = useState(search_settings.sync_add_to_nol);
   const [strict_search_mode, set_strict_search_mode] = useState(search_settings.strict_search_mode);
 
+  const [coursesInTable, setCoursesInTable] = useState([]);
+
   const renderSettingSwitch = (label, default_checked) => {
 
         const handleChangeSettings = (e)=>{
@@ -250,7 +252,7 @@ function CourseResultViewContainer() {
                             {search_loading ? <BeatLoader size={8} color='teal'/>:<></>}
                             <Text fontSize="md" fontWeight="medium" color="gray.400" my="2" ml="1">{search_loading ? "載入中" : `共找到 ${total_count} 筆結果`}</Text>
                         </Flex>
-                        <CourseInfoRowContainer courseInfo={search_results} setHoveredCourse={setHoveredCourse}/>
+                        <CourseInfoRowContainer courseInfo={search_results} setHoveredCourse={setHoveredCourse} selectedCourses={coursesInTable}/>
                     </Box>
                     <Box ml={displayTable ? "24vw":"48vw"} transition="all 500ms ease-in-out">
                         <SkeletonRow loading={search_loading} error={search_error}/>
@@ -268,7 +270,7 @@ function CourseResultViewContainer() {
             <Collapse in={displayTable} animateOpacity>
                 <Flex justifyContent="end" mr="2">
                     <Box position="absolute" top="8vh" zIndex="1" w="35vw" h="70vh" bg="gray.200" mt="128px" borderRadius="lg" boxShadow="xl">
-                        <SideCourseTableContainer isOpen={displayTable} setIsOpen={setDisplayTable} hoveredCourse={hoveredCourse}/>
+                        <SideCourseTableContainer isOpen={displayTable} setIsOpen={setDisplayTable} hoveredCourse={hoveredCourse} courseIds={coursesInTable} setCourseIds={setCoursesInTable}/>
                     </Box>
                 </Flex>
             </Collapse>

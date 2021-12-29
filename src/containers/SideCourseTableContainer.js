@@ -44,7 +44,8 @@ function SideCourseTableContainer(props) {
     const courseTable = useSelector(state => state.course_table);
 
     // some local states for handling course data
-    const [courseIds, setCourseIds] = useState([]); // arr of course ids
+    const courseIds = props.courseIds;
+    const setCourseIds = props.setCourseIds;
     const [courses, setCourses] = useState({}); // dictionary of Course objects using courseId as key
     const [courseTimes, setCourseTimes] = useState({}); // coursesTime is a dictionary of courseIds and their corresponding time in time table
     const [hoveredCourseTime, setHoveredCourseTime]  = useState({}); // courseTime is a dictionary of courseIds and their corresponding time in time table
