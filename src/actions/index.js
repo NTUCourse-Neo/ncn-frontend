@@ -100,10 +100,36 @@ const fetchCourseTable = (course_table_id) => async (dispatch)=>{
         return course_table
     }
     catch (e){
-        // throw new Error("Error in fetchCourseTable: "+e);
-        // if fetch expired course_table, return null and handle it by frontend logic
-        return null
+        if (e.response) {
+            if (e.response.status===403) {
+                // expired course_table
+                // if fetch expired course_table, return null and handle it by frontend logic
+                return null
+            }
+        } else {
+            throw new Error("Error in fetchCourseTable: "+e);
+        }
     }
 }
 
-export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, createCourseTable, fetchCourseTable}
+const patchCourseTable = (course_table_id, course_table_name, user_id, expire_ts, courses) => async (dispatch)=>{
+    try {
+        const {data: {course_table}} = await instance.patch(`/course_tables/${course_table_id}`, {name: course_table_name, user_id: user_id, expire_ts: expire_ts, courses: courses});
+        return course_table
+    }
+    catch (e){
+        if (e.response) {
+            let data = e.response.data;
+            if (e.response.status===403 && data.message==='expire_ts is earlier than current time') {
+                // expired course_table
+                return null
+            } else {
+                throw new Error("Error in patchCourseTable: "+e);
+            }
+        } else {
+            throw new Error("Error in patchCourseTable: "+e);
+        }
+    }
+}
+
+export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, createCourseTable, fetchCourseTable, patchCourseTable}

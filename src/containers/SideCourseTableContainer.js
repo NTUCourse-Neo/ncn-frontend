@@ -34,6 +34,8 @@ import CourseTableContainer from './CourseTableContainer';
 import { fetchCourseTableCoursesByIds, createCourseTable, fetchCourseTable } from '../actions/index';
 import { useDispatch } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
+// TODO: add auth0 function, get user info first and load course_table_id from user instead of localStorage
+import { useAuth0 } from "@auth0/auth0-react";
 
 const LOCAL_STORAGE_KEY = 'NTU_CourseNeo_Course_Table_Key';
 

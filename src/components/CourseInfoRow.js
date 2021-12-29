@@ -21,18 +21,68 @@ import {
 import {CourseDrawerContainer} from '../containers/CourseDrawerContainer';
 import { FaUserPlus, FaPuzzlePiece, FaPlus} from 'react-icons/fa';
 import { info_view_map } from '../data/mapping_table';
+import {useDispatch} from 'react-redux';
+import { fetchCourseTable, patchCourseTable } from '../actions';
+
+const LOCAL_STORAGE_KEY = 'NTU_CourseNeo_Course_Table_Key';
+
 function CourseInfoRow(props) {
+    const dispatch = useDispatch();
     const toast = useToast();
-    function addCourse(course){
-        let coursetable_name = "我的課表"
-        toast({
-            title: `已新增 ${course.course_name}`,
-            description: `新增至 ${coursetable_name}`,
-            status: 'success',
-            duration: 3000,
-            isClosable: true
-        });
+
+    const addCourse = async (course)=>{
+        // console.log('course: ', course);
+        const uuid = localStorage.getItem(LOCAL_STORAGE_KEY);
+        if (uuid){
+            // fetch course table from server
+            const course_table = await dispatch(fetchCourseTable(uuid));
+            if (course_table===null){
+                // get course_tables/:id return null (expired)
+                // show error and break the function
+                toast({
+                    title: `新增 ${course.course_name} 失敗`,
+                    description: `您的課表已過期，請重新建立課表`,
+                    status: 'error',
+                    duration: 3000,
+                    isClosable: true
+                });
+                return;
+            } 
+            else {
+                // fetch course table success
+                const new_courses = [...course_table.courses, course._id];
+                const res_table = await dispatch(patchCourseTable(uuid, course_table.name, course_table.user_id, course_table.expire_ts, new_courses));
+                if (res_table){
+                    toast({
+                        title: `已新增 ${course.course_name}`,
+                        description: `新增至 ${course_table.name}`,
+                        status: 'success',
+                        duration: 3000,
+                        isClosable: true
+                    });
+                }
+                else {
+                    toast({
+                        title: `新增 ${course.course_name} 失敗`,
+                        description: `您的課表已過期，請重新建立課表`,
+                        status: 'error',
+                        duration: 3000,
+                        isClosable: true
+                    });
+                }
+            }    
+        } else {
+            // do not have course table id in local storage
+            toast({
+                title: `新增 ${course.course_name} 失敗`,
+                description: `尚未建立課表`,
+                status: 'error',
+                duration: 3000,
+                isClosable: true
+            });
+        }
     };
+
     const renderDeptBadge = (course) => {
         if(course.department.length > 1){
             let dept_str = course.department.join(", ");
@@ -47,7 +97,7 @@ function CourseInfoRow(props) {
         );
     }
 
-    // later will implement tags checklist for user to customize which tags to show
+    // TODO: later will implement tags checklist for user to customize which tags to show
     const tags = ["required", "total_slot"];
     return(
         <AccordionItem bg="gray.100" borderRadius="md">
