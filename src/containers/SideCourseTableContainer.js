@@ -36,6 +36,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 // TODO: add auth0 function, get user info first and load course_table_id from user instead of localStorage
 import { useAuth0 } from "@auth0/auth0-react";
+import LoadingOverlay from 'react-loading-overlay';
 
 const LOCAL_STORAGE_KEY = 'NTU_CourseNeo_Course_Table_Key';
 
@@ -259,7 +260,9 @@ function SideCourseTableContainer(props) {
         <Flex justifyContent="center" alignItems="center">
           <IconButton h="100%" icon={<FaAngleRight size={24}/>} onClick={()=>{props.setIsOpen(!props.isOpen)}} size="sm" variant="ghost"/>
         </Flex>
+        <LoadingOverlay active={loading} spinner styles={{wrapper: {overflow: "auto"}, overlay: (base)=>({...base, borderRadius:"10px"})}}>
         {renderSideCourseTableContent()}
+        </LoadingOverlay>
       </Flex>
     );
 }
