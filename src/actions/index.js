@@ -1,5 +1,5 @@
 // write all function that generate actions here
-import {FETCH_SEARCH_RESULTS_FAILURE, FETCH_SEARCH_RESULTS_SUCCESS,FETCH_SEARCH_RESULTS_REQUEST,FETCH_SEARCH_IDS_FAILURE,FETCH_SEARCH_IDS_REQUEST,FETCH_SEARCH_IDS_SUCCESS,SET_SEARCH_COLUMN, SET_SEARCH_SETTINGS, SET_FILTERS, INCREMENT_OFFSET, UPDATE_TOTAL_COUNT, SET_FILTERS_ENABLE} from '../constants/action-types';
+import {FETCH_SEARCH_RESULTS_FAILURE, FETCH_SEARCH_RESULTS_SUCCESS,FETCH_SEARCH_RESULTS_REQUEST,FETCH_SEARCH_IDS_FAILURE,FETCH_SEARCH_IDS_REQUEST,FETCH_SEARCH_IDS_SUCCESS,SET_SEARCH_COLUMN, SET_SEARCH_SETTINGS, SET_FILTERS, INCREMENT_OFFSET, UPDATE_TOTAL_COUNT, SET_FILTERS_ENABLE, UPDATE_COURSE_TABLE} from '../constants/action-types';
 import instance from '../api/axios'
 
 // normal actions
@@ -86,10 +86,15 @@ const fetchCourseTableCoursesByIds = (ids_arr) => async (dispatch)=>{
 
 const createCourseTable = (course_table_id, course_table_name, user_id, semester) => async (dispatch)=>{
     try {
-        const {data: {course_table, message}} = await instance.post(`/course_tables/`, {id: course_table_id, name: course_table_name, user_id: user_id, semester: semester});
+        const {data: {course_table}} = await instance.post(`/course_tables/`, {id: course_table_id, name: course_table_name, user_id: user_id, semester: semester});
+        dispatch({type: UPDATE_COURSE_TABLE, payload: course_table});
         return course_table
     }
     catch (e){
+        if (e.response){
+            console.log('ERROR MESSAGE: ',e.response.data.message);
+            console.log('ERROR STATUS CODE: ',e.response.status);
+        }
         throw new Error("Error in createCourseTable: "+e);
     }
 }
@@ -97,6 +102,7 @@ const createCourseTable = (course_table_id, course_table_name, user_id, semester
 const fetchCourseTable = (course_table_id) => async (dispatch)=>{
     try {
         const {data: {course_table}} = await instance.get(`/course_tables/${course_table_id}`);
+        dispatch({type: UPDATE_COURSE_TABLE, payload: course_table});
         return course_table
     }
     catch (e){
@@ -104,6 +110,7 @@ const fetchCourseTable = (course_table_id) => async (dispatch)=>{
             if (e.response.status===403) {
                 // expired course_table
                 // if fetch expired course_table, return null and handle it by frontend logic
+                dispatch({type: UPDATE_COURSE_TABLE, payload: null});
                 return null
             }
         } else {
@@ -115,6 +122,7 @@ const fetchCourseTable = (course_table_id) => async (dispatch)=>{
 const patchCourseTable = (course_table_id, course_table_name, user_id, expire_ts, courses) => async (dispatch)=>{
     try {
         const {data: {course_table}} = await instance.patch(`/course_tables/${course_table_id}`, {name: course_table_name, user_id: user_id, expire_ts: expire_ts, courses: courses});
+        dispatch({type: UPDATE_COURSE_TABLE, payload: course_table});
         return course_table
     }
     catch (e){
@@ -122,6 +130,7 @@ const patchCourseTable = (course_table_id, course_table_name, user_id, expire_ts
             let data = e.response.data;
             if (e.response.status===403 && data.message==='expire_ts is earlier than current time') {
                 // expired course_table
+                dispatch({type: UPDATE_COURSE_TABLE, payload: null});
                 return null
             } else {
                 throw new Error("Error in patchCourseTable: "+e);
