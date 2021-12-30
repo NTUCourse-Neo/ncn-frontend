@@ -127,7 +127,7 @@ function CourseInfoRow(props) {
                     <Spacer />
                     <Flex alignItems="center" justifyContent="end">
                         {
-                            tags.map((tag, index) => {
+                            props.displayTags.map((tag, index) => {
                                 if (tag === "area"){
                                     let display_str = "";
                                     let tooltip_str = "";
