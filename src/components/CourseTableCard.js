@@ -6,13 +6,6 @@ import {
     Text,
     Box,
     Button,
-    Drawer,
-    DrawerOverlay,
-    DrawerContent,
-    DrawerCloseButton,
-    DrawerHeader,
-    DrawerBody,
-    DrawerFooter,
     useDisclosure,
     Tooltip,
     Popover,
@@ -23,14 +16,16 @@ import {
     PopoverHeader,
     PopoverBody,
     Badge,
-    ButtonGroup,
     PopoverFooter,
     Spacer,
-    IconButton
+    IconButton,
+    Tag,
+    TagLeftIcon,
+    ScaleFade
 } from '@chakra-ui/react';
 import { hash_to_color_hex, random_color_hex } from '../utils/colorAgent';
 import {sortableContainer, sortableElement, sortableHandle} from 'react-sortable-hoc';
-import { FaBars, FaTrashAlt, FaInfoCircle } from 'react-icons/fa';
+import { FaBars, FaTrashAlt, FaInfoCircle, FaExclamationTriangle } from 'react-icons/fa';
 import {RenderNolContentBtn} from '../containers/CourseDrawerContainer';
 
 
@@ -46,11 +41,17 @@ function CourseTableCard(props){
     // TODO: when press "save", dispatch to server to update new course table courses order in DB
     const handleDelete = (courseId) => {
         if (prepareToRemoveCourseId.includes(courseId)){
+            // If the course is in the prepareToRemoveCourseId, remove it from the list.
             setPrepareToRemoveCourseId(prepareToRemoveCourseId.filter(id => id!==courseId));
         }else{
+            // If the course is not in the prepareToRemoveCourseId, add it to the list.
             setPrepareToRemoveCourseId([...prepareToRemoveCourseId, courseId])
         }
     };
+    const isEdited = () => {
+        // return true if the popup data is different from the original data.
+        return !(courseOrder.every((course, index) => course===courseList[index])) || prepareToRemoveCourseId.length > 0;
+    }
     const DragHandle = sortableHandle(() => <FaBars />);
     const SortableElement = sortableElement(({key, course}) => (
       <Flex className="sortableHelper" alignItems="center" my="1" key={"Sortable_"+key+"_Flex"}>
@@ -143,9 +144,16 @@ function CourseTableCard(props){
                     </Flex>
                     </PopoverBody>
                     <PopoverFooter>
-                        <Flex justifyContent="end">
+                        <Flex justifyContent="end" alignItems="center">
+                            <ScaleFade initialScale={0.9} in={isEdited()}>
+                                <Tag colorScheme="yellow" variant="solid" >
+                                    <TagLeftIcon boxSize='12px' as={FaExclamationTriangle} />
+                                    變更未儲存
+                                </Tag>
+                            </ScaleFade>
+                            <Spacer />
                             <Button colorScheme='gray' variant="ghost" onClick={() => {onClose(); setPrepareToRemoveCourseId([])}}>取消</Button>
-                            <Button colorScheme='teal' onClick={() => {onClose(); setCourseOrder(courseList)}} disabled={courseOrder===courseList && prepareToRemoveCourseId.length === 0}>儲存</Button>
+                            <Button colorScheme='teal' onClick={() => {onClose(); setCourseOrder(courseList)}} disabled={!isEdited()}>儲存</Button>
                         </Flex>
                     </PopoverFooter>
                 </PopoverContent>
