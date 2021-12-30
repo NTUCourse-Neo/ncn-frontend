@@ -42,17 +42,24 @@ function CourseTableCard(props){
     const [ courseOrder, setCourseOrder ] = useState(props.courseTime);
     // temp state (buffer), used for decide the NEW course order / dispatch to server, when press "save"
     const [ courseList, setCourseList ] = useState([]);
+    const [ prepareToRemoveCourseId, setPrepareToRemoveCourseId ] = useState([]);
     // TODO: when press "save", dispatch to server to update new course table courses order in DB
-
+    const handleDelete = (courseId) => {
+        if (prepareToRemoveCourseId.includes(courseId)){
+            setPrepareToRemoveCourseId(prepareToRemoveCourseId.filter(id => id!==courseId));
+        }else{
+            setPrepareToRemoveCourseId([...prepareToRemoveCourseId, courseId])
+        }
+    };
     const DragHandle = sortableHandle(() => <FaBars />);
     const SortableElement = sortableElement(({key, course}) => (
       <Flex className="sortableHelper" alignItems="center" my="1" key={"Sortable_"+key+"_Flex"}>
         <DragHandle key={"Sortable_"+key+"_DragHandle"}/>
         <Badge ml="4" mr="1" variant="solid" bg={hash_to_color_hex(course._id, 0.9)} color="gray.600" key={"Sortable_"+key+"_Badge"}>{course.id}</Badge>
-        <Text fontSize="lg" color="gray.500" mx="1" fontWeight="700" isTruncated key={"Sortable_"+key+"_Text"}>{course.course_name}</Text>
+        <Text as={prepareToRemoveCourseId.includes(course._id) ? "del":""}fontSize="lg" color={prepareToRemoveCourseId.includes(course._id) ? "red.700":"gray.500"} mx="1" fontWeight="700" isTruncated key={"Sortable_"+key+"_Text"}>{course.course_name}</Text>
             {RenderNolContentBtn(course, "", key)}
         <Spacer key={"Sortable_"+key+"_Spacer"}/>
-        <IconButton aria-label='Delete' icon={<FaTrashAlt />} size="sm" colorScheme="red" key={"Sortable_"+key+"_IconButton"}/>
+        <IconButton aria-label='Delete' variant={prepareToRemoveCourseId.includes(course._id) ? "solid":"outline"} icon={<FaTrashAlt />} size="sm" colorScheme="red" key={"Sortable_"+key+"_IconButton"} onClick={() => {handleDelete(course._id)}}/>
       </Flex>
     ));
     const SortableContainer = sortableContainer(({children}) => {
@@ -83,7 +90,7 @@ function CourseTableCard(props){
             return (
             <>
                 <Tooltip label={course.course_name} placement="top" hasArrow >
-                    <Button onClick={() => {setCourseList(courseOrder)}} 
+                    <Button onClick={() => {setCourseList(courseOrder); setPrepareToRemoveCourseId([]);}} 
                             bg={hash_to_color_hex(course._id, isOpen ? 0.7:0.8)} 
                             borderRadius="lg" boxShadow="lg" 
                             mb="1" p="2" w="4vw" h="3vh"
@@ -137,8 +144,8 @@ function CourseTableCard(props){
                     </PopoverBody>
                     <PopoverFooter>
                         <Flex justifyContent="end">
-                            <Button colorScheme='gray' variant="ghost" onClick={onClose}>取消</Button>
-                            <Button colorScheme='teal' onClick={() => {onClose(); setCourseOrder(courseList)}} disabled={courseOrder===courseList}>儲存</Button>
+                            <Button colorScheme='gray' variant="ghost" onClick={() => {onClose(); setPrepareToRemoveCourseId([])}}>取消</Button>
+                            <Button colorScheme='teal' onClick={() => {onClose(); setCourseOrder(courseList)}} disabled={courseOrder===courseList && prepareToRemoveCourseId.length === 0}>儲存</Button>
                         </Flex>
                     </PopoverFooter>
                 </PopoverContent>
