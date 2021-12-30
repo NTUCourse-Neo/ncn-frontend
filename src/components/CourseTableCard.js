@@ -37,8 +37,13 @@ import {RenderNolContentBtn} from '../containers/CourseDrawerContainer';
 
 function CourseTableCard(props){
     const { isOpen, onOpen, onClose } = useDisclosure()
+
+    // intial state or sorting result
     const [ courseOrder, setCourseOrder ] = useState(props.courseTime);
+    // temp state (buffer), used for decide the NEW course order / dispatch to server, when press "save"
     const [ courseList, setCourseList ] = useState([]);
+    // TODO: when press "save", dispatch to server to update new course table courses order in DB
+
     const DragHandle = sortableHandle(() => <FaBars />);
     const SortableElement = sortableElement(({key, course}) => (
       <Flex className="sortableHelper" alignItems="center" my="1" key={"Sortable_"+key+"_Flex"}>
@@ -56,6 +61,7 @@ function CourseTableCard(props){
     const onSortEnd = ({oldIndex, newIndex}) => {
         setCourseList(arrayMove(courseList, oldIndex, newIndex));
     };
+
     // when open Popover, overwrite the courseList by courseOrder
     // when click save, overwrite the courseOrder by courseList
     const renderPopoverBody = (courseData) => {
@@ -94,6 +100,7 @@ function CourseTableCard(props){
     // debugger
     // useEffect(()=>{console.log('CourseTableCard--courseOrder: ', courseOrder);},[courseOrder])
     // useEffect(()=>{console.log('CourseTableCard--courseList: ', courseList);},[courseList])
+
     if(props.isHover){
         const course = props.courseData;
         return(
@@ -102,6 +109,7 @@ function CourseTableCard(props){
             </Button>
         );
     }
+
     return(
     <>
         <Popover onOpen={onOpen} onClose={onClose} isOpen={isOpen} closeOnBlur={false} placement="left">
@@ -130,7 +138,7 @@ function CourseTableCard(props){
                     <PopoverFooter>
                         <Flex justifyContent="end">
                             <Button colorScheme='gray' variant="ghost" onClick={onClose}>取消</Button>
-                            <Button colorScheme='teal' onClick={() => {onClose(); setCourseOrder(courseList)}}>儲存</Button>
+                            <Button colorScheme='teal' onClick={() => {onClose(); setCourseOrder(courseList)}} disabled={courseOrder===courseList}>儲存</Button>
                         </Flex>
                     </PopoverFooter>
                 </PopoverContent>
