@@ -68,7 +68,7 @@ function CourseInfoRow(props) {
                 if (res_table){
                     toast({
                         title: `已${operation_str} ${course.course_name}`,
-                        description: `新增至 ${course_table.name}`,
+                        description: `課表: ${course_table.name}`,
                         status: 'success',
                         duration: 3000,
                         isClosable: true
@@ -89,43 +89,77 @@ function CourseInfoRow(props) {
     };
 
     const renderDeptBadge = (course) => {
+        if(!course.department || course.department.length === 0 || (course.department.length === 1  && course.department[0].length === 0)){
+            return <></>;
+        }
         if(course.department.length > 1){
             let dept_str = course.department.join(", ");
             return (
-                <Tooltip hasArrow placement="top" label={dept_str} bg='gray.300' color='black'>
-                    <Badge colorScheme="teal" variant='solid' mx="4px">多個系所</Badge>
+                <Tooltip hasArrow placement="top" label={dept_str} bg='gray.600' color='white'>
+                    <Badge colorScheme="teal" variant='solid' mr="4px">多個系所</Badge>
                 </Tooltip>
             );
         }
         return (
-            <Badge colorScheme="blue" variant='solid' mx="4px">{props.courseInfo.department[0]}</Badge>
+            <Badge colorScheme="blue" variant='solid' mr="4px">{props.courseInfo.department[0]}</Badge>
         );
     }
 
     // TODO: later will implement tags checklist for user to customize which tags to show
-    const tags = ["required", "total_slot"];
+    const tags = ["required", "total_slot", "enroll_method", "area"];
     return(
         <AccordionItem bg={props.selected? hash_to_color_hex(props.courseInfo._id, 0.95):"gray.100"} borderRadius="md" transition="all ease-in-out 500ms">
             <Flex alignItems="center" justifyContent="start" flexDirection="row" w="100%" pr="2" pl="2" py="1">
                 <AccordionButton>
                     <Flex alignItems="center" justifyContent="start">
-                        <Tooltip hasArrow placement="top" label='課程流水號' bg='gray.300' color='black'>
-                            <Badge variant='outline' mr="4px">{props.courseInfo.id}</Badge>
+                        <Flex w="8vw" alignItems="center" justifyContent="start">
+                            <Tooltip hasArrow placement="top" label='課程流水號' bg='gray.600' color='white'>
+                                <Badge variant='outline' mr="4px">{props.courseInfo.id}</Badge>
+                            </Tooltip>
+                            {renderDeptBadge(props.courseInfo)}
+                        </Flex>
+                        <Heading as="h3" size="md" ml="10px" mr="8px" color="gray.600">{props.courseInfo.course_name}</Heading>
+                        <Tooltip hasArrow placement="top" label={props.courseInfo.credit+' 學分'} bg='gray.600' color='white'>
+                            <Badge variant='outline' mr="4">{props.courseInfo.credit}</Badge>
                         </Tooltip>
-                        {renderDeptBadge(props.courseInfo)}
-                        <Heading as="h3" size="md" ml="10px" mr="5px" color="gray.600">{props.courseInfo.course_name}</Heading>
-                        <Badge variant='outline' colorScheme="gray">{props.courseInfo.credit[0]}</Badge>
                         <Heading as="h3" size="sm" ml="20px" mr="5px" color="gray.500" fontWeight="500">{props.courseInfo.teacher}</Heading>
                     </Flex>
                     <Spacer />
                     <Flex alignItems="center" justifyContent="end">
                         {
                             tags.map((tag, index) => {
+                                if (tag === "area"){
+                                    let display_str = "";
+                                    let tooltip_str = "";
+                                    if (props.courseInfo.area.length === 0){
+                                        display_str = "無";
+                                        tooltip_str = info_view_map[tag].name +": 無";
+                                    }else if(props.courseInfo.area.length > 1){
+                                        display_str = "多個領域";
+                                        tooltip_str = props.courseInfo.area.map(area => info_view_map[tag].map[area].full_name).join(", ");
+                                    }else if (props.courseInfo[tag][0] === "g"){
+                                        display_str = "通識 "+ info_view_map[tag].map[props.courseInfo[tag][0]].code;
+                                        tooltip_str = info_view_map[tag].name +": "+info_view_map[tag].map[props.courseInfo[tag][0]].full_name;
+                                    }else{
+                                        display_str = info_view_map[tag].map[props.courseInfo[tag][0]].full_name;
+                                        tooltip_str = info_view_map[tag].name +":"+info_view_map[tag].map[props.courseInfo[tag][0]].full_name;
+                                    }
+                                    return(
+                                        <Tooltip hasArrow placement="top" label={tooltip_str} bg='gray.600' color='white'>
+                                            <Tag mx="2px" variant='subtle' colorScheme={info_view_map[tag].color} hidden={props.courseInfo[tag]===-1}>
+                                                <TagLeftIcon boxSize='12px' as={info_view_map[tag].logo} />
+                                                <TagLabel>{ display_str }</TagLabel>
+                                            </Tag>
+                                         </Tooltip>
+                                    );
+                                }
                                 return(
-                                    <Tag mx="2px" variant='subtle' colorScheme={info_view_map[tag].color} hidden={props.courseInfo[tag]===-1}>
-                                        <TagLeftIcon boxSize='12px' as={info_view_map[tag].logo} />
-                                        <TagLabel>{ "map" in info_view_map[tag] ? info_view_map[tag].map[props.courseInfo[tag]] : props.courseInfo[tag]}</TagLabel>
-                                    </Tag>
+                                    <Tooltip hasArrow placement="top" label={info_view_map[tag].name} bg='gray.600' color='white'>
+                                        <Tag mx="2px" variant='subtle' colorScheme={info_view_map[tag].color} hidden={props.courseInfo[tag]===-1}>
+                                            <TagLeftIcon boxSize='12px' as={info_view_map[tag].logo} />
+                                            <TagLabel>{ "map" in info_view_map[tag] ? info_view_map[tag].map[props.courseInfo[tag]] : props.courseInfo[tag]}</TagLabel>
+                                        </Tag>
+                                    </Tooltip>
                                 );
                             })
                         }

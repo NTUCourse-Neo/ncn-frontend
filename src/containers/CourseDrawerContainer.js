@@ -26,6 +26,7 @@ import {
   } from '@chakra-ui/react';
   import { FaPlus, FaInfoCircle } from 'react-icons/fa';
   import { IoMdOpen } from 'react-icons/io';
+import { info_view_map } from '../data/mapping_table';
 
 function RenderNolContentBtn(course, title, key){
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -79,7 +80,7 @@ function CourseDrawerContainer(props) {
             return (<></>);
         }
         return(
-            <Flex flexDirection="row" alignItems="center" justifyContent="start" mr="4">
+            <Flex flexDirection="row" alignItems="center" justifyContent="start" mr="4" minW="10vw">
                 <Badge variant='solid' colorScheme="gray" >{fieldName}</Badge>
                 <Heading as="h3" color="gray.600" fontSize="sm" ml="4px">{data}</Heading>
             </Flex>
@@ -95,10 +96,12 @@ function CourseDrawerContainer(props) {
     };
     return(
         <Flex px="1" flexDirection="column" width="100%" alignItems="start" justifyContent="space-between">
-            <Flex ml="2px" flexDirection="row" alignItems="center" justifyContent="start">
+            <Flex ml="2px" flexDirection="row" alignItems="center" justifyContent="start" flexWrap="wrap">
                 {renderDataElement("課程識別碼", props.courseInfo.course_id)}
                 {renderDataElement("課號", props.courseInfo.course_code)}
                 {renderDataElement("班次", props.courseInfo.class_id)}
+                {renderDataElement(info_view_map.enroll_method.name, info_view_map.enroll_method.map[props.courseInfo.enroll_method])}
+                {renderDataElement(info_view_map.language.name, info_view_map.language.map[props.courseInfo.language])}
                 {renderDataElement("開課單位", props.courseInfo.provider.toUpperCase())}
             </Flex>
             <Spacer my="2" />
