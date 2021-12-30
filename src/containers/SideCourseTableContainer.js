@@ -20,7 +20,8 @@ import {
     useDisclosure,
     Collapse,
     IconButton,
-    Spacer
+    Spacer,
+    useToast
 } from '@chakra-ui/react';
 import {
     FaRegEdit,
@@ -41,6 +42,7 @@ import LoadingOverlay from 'react-loading-overlay';
 const LOCAL_STORAGE_KEY = 'NTU_CourseNeo_Course_Table_Key';
 
 function SideCourseTableContainer(props) {
+    const toast = useToast();
     const dispatch = useDispatch();
     const courseTable = useSelector(state => state.course_table);
 
@@ -88,7 +90,7 @@ function SideCourseTableContainer(props) {
           parseCourseDateTime(courses[key], course_time_tmp);
           course_time_tmp.parsed.push(courses[key]._id);
         })
-        console.log(course_time_tmp);
+        // console.log(course_time_tmp);
         return course_time_tmp;
     };
 
@@ -124,7 +126,7 @@ function SideCourseTableContainer(props) {
       const fetchCoursesDataById = async (_callback) =>{
         setLoading(true);
         if (courseTable){
-          console.log("course_table: ",courseTable);
+          // console.log("course_table: ",courseTable);
           const courseResult = await dispatch(fetchCourseTableCoursesByIds(courseTable.courses));
           // set states: coursesIds, courseTimes, courses
           setCourseIds(courseTable.courses);
@@ -234,7 +236,13 @@ function SideCourseTableContainer(props) {
                   const new_course_table = await dispatch(createCourseTable(new_uuid, "我的課表", null, "1101"));
                   localStorage.setItem(LOCAL_STORAGE_KEY, new_course_table._id);
                 } catch (error) {
-                  console.log('TODO: use toast to show error');
+                    toast({
+                      title: `新增課表失敗`,
+                      description: `請聯繫客服(?)`,
+                      status: 'error',
+                      duration: 3000,
+                      isClosable: true
+                  });
                 }
               }
             }>新增課表</Button>
