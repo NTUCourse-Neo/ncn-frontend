@@ -126,18 +126,7 @@ const patchCourseTable = (course_table_id, course_table_name, user_id, expire_ts
         return course_table
     }
     catch (e){
-        if (e.response) {
-            let data = e.response.data;
-            if (e.response.status===403 && data.message==='expire_ts is earlier than current time') {
-                // expired course_table
-                dispatch({type: UPDATE_COURSE_TABLE, payload: null});
-                return null
-            } else {
-                throw new Error("Error in patchCourseTable: "+e);
-            }
-        } else {
-            throw new Error("Error in patchCourseTable: "+e);
-        }
+        throw new Error("Error in patchCourseTable: "+e);
     }
 }
 

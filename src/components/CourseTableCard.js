@@ -72,21 +72,36 @@ function CourseTableCard(props){
     };
     const renderCourseBox = (courseId, courseData) => {
         const course = courseData[courseId];
-        return (
-        <>
-            <Tooltip label={course.course_name} placement="top" hasArrow key={courseId+"_Tooltip"}>
-                <Button onClick={() => {setCourseList(courseOrder)}} bg={hash_to_color_hex(course._id, isOpen ? 0.7:0.8)} borderRadius="lg" boxShadow="lg" p="2" w="4vw" mb="1" key={courseId+"_Button"}>
-                    <Text fontSize="xs" isTruncated key={courseId+"_Text"}> {course.course_name} </Text>
-                </Button>
-            </Tooltip>
-        </>
-        );
+        // console.log(courseId);
+        if(course){
+            return (
+            <>
+                <Tooltip label={course.course_name} placement="top" hasArrow >
+                    <Button onClick={() => {setCourseList(courseOrder)}} 
+                            bg={hash_to_color_hex(course._id, isOpen ? 0.7:0.8)} 
+                            borderRadius="lg" boxShadow="lg" 
+                            mb="1" p="2" w="4vw" h="3vh"
+                            border={props.hoverId === courseId  ? "2px":""}
+                            borderColor={hash_to_color_hex(course._id, 0.5)}>
+                        <Text fontSize="xs" isTruncated> {course.course_name} </Text>
+                    </Button>
+                </Tooltip>
+            </>
+            );
+        }
     };
 
     // debugger
     // useEffect(()=>{console.log('CourseTableCard--courseOrder: ', courseOrder);},[courseOrder])
     // useEffect(()=>{console.log('CourseTableCard--courseList: ', courseList);},[courseList])
-
+    if(props.isHover){
+        const course = props.courseData;
+        return(
+            <Button borderRadius="lg" boxShadow="lg" p="2" w="4vw" h="3vh" mb="1" border="2px" borderColor={hash_to_color_hex(course._id, 0.7)} borderStyle="dashed">
+                <Text fontSize="xs" isTruncated> {course.course_name} </Text>
+            </Button>
+        );
+    }
     return(
     <>
         <Popover onOpen={onOpen} onClose={onClose} isOpen={isOpen} closeOnBlur={false} placement="left">

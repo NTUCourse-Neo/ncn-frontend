@@ -1,7 +1,7 @@
 // Props
 // | courseInfo: Obj
 //
-import { React } from 'react';
+import { React, useState } from 'react';
 import {
     Box,
     Flex,
@@ -14,7 +14,7 @@ import {
     Tag,
     TagLeftIcon,
     TagLabel,
-    IconButton,
+    Button,
     Tooltip,
     useToast
   } from '@chakra-ui/react';
@@ -23,14 +23,17 @@ import { FaUserPlus, FaPuzzlePiece, FaPlus} from 'react-icons/fa';
 import { info_view_map } from '../data/mapping_table';
 import {useDispatch} from 'react-redux';
 import { fetchCourseTable, patchCourseTable } from '../actions';
+import { hash_to_color_hex } from '../utils/colorAgent';
 
 const LOCAL_STORAGE_KEY = 'NTU_CourseNeo_Course_Table_Key';
 
 function CourseInfoRow(props) {
+    const [addingCourse, setAddingCourse] = useState(false);
     const dispatch = useDispatch();
     const toast = useToast();
 
-    const addCourse = async (course)=>{
+    const handleButtonClick = async (course)=>{
+        setAddingCourse(true);
         // console.log('course: ', course);
         const uuid = localStorage.getItem(LOCAL_STORAGE_KEY);
         if (uuid){
@@ -46,26 +49,27 @@ function CourseInfoRow(props) {
                     duration: 3000,
                     isClosable: true
                 });
-                return;
             } 
             else {
                 // fetch course table success
-                const new_courses = [...course_table.courses, course._id];
-                const res_table = await dispatch(patchCourseTable(uuid, course_table.name, course_table.user_id, course_table.expire_ts, new_courses));
+                let res_table;
+                let operation_str;
+                if(course_table.courses.includes(course._id)){
+                    // course is already in course table, remove it.
+                    operation_str = "刪除";
+                    const new_courses = course_table.courses.filter(id => id!==course._id);
+                    res_table =  await dispatch(patchCourseTable(uuid, course_table.name, course_table.user_id, course_table.expire_ts, new_courses));
+                }else{
+                    // course is not in course table, add it.
+                    operation_str = "新增";
+                    const new_courses = [...course_table.courses, course._id];
+                    res_table = await dispatch(patchCourseTable(uuid, course_table.name, course_table.user_id, course_table.expire_ts, new_courses));
+                }
                 if (res_table){
                     toast({
-                        title: `已新增 ${course.course_name}`,
+                        title: `已${operation_str} ${course.course_name}`,
                         description: `新增至 ${course_table.name}`,
                         status: 'success',
-                        duration: 3000,
-                        isClosable: true
-                    });
-                }
-                else {
-                    toast({
-                        title: `新增 ${course.course_name} 失敗`,
-                        description: `您的課表已過期，請重新建立課表`,
-                        status: 'error',
                         duration: 3000,
                         isClosable: true
                     });
@@ -81,6 +85,7 @@ function CourseInfoRow(props) {
                 isClosable: true
             });
         }
+        setAddingCourse(false);
     };
 
     const renderDeptBadge = (course) => {
@@ -100,7 +105,7 @@ function CourseInfoRow(props) {
     // TODO: later will implement tags checklist for user to customize which tags to show
     const tags = ["required", "total_slot"];
     return(
-        <AccordionItem bg="gray.100" borderRadius="md">
+        <AccordionItem bg={props.selected? hash_to_color_hex(props.courseInfo._id, 0.95):"gray.100"} borderRadius="md" transition="all ease-in-out 500ms">
             <Flex alignItems="center" justifyContent="start" flexDirection="row" w="100%" pr="2" pl="2" py="1">
                 <AccordionButton>
                     <Flex alignItems="center" justifyContent="start">
@@ -126,7 +131,11 @@ function CourseInfoRow(props) {
                         }
                     </Flex>
                 </AccordionButton>
-                <IconButton ml="20px" colorScheme='blue' icon={<FaPlus />} onClick={() => addCourse(props.courseInfo)}/>
+                <Button size="sm" ml="20px" colorScheme={props.selected? "red":"blue"} onClick={() => handleButtonClick(props.courseInfo)} isLoading={addingCourse}>
+                    <Box transform={props.selected ? "rotate(45deg)":""} transition="all ease-in-out 200ms">
+                        <FaPlus />
+                    </Box>
+                </Button>
             </Flex>
             <AccordionPanel>
                 <CourseDrawerContainer courseInfo={props.courseInfo}/>
