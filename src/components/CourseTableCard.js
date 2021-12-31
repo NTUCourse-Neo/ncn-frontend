@@ -158,12 +158,7 @@ function CourseTableCard(props){
                 duration: 3000,
                 isClosable: true
             });
-            leavePopover();
-            return;
         }
-
-        const new_order = courseList.filter((course_id)=>(!prepareToRemoveCourseId.includes(course_id)));
-        setCourseOrder(new_order)
         leavePopover();
     };
 
