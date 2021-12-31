@@ -33,12 +33,13 @@ import {RenderNolContentBtn} from '../containers/CourseDrawerContainer';
 function CourseTableCard(props){
     const { isOpen, onOpen, onClose } = useDisclosure()
 
-    // intial state or sorting result
+    // initial state or sorting result
     const [ courseOrder, setCourseOrder ] = useState(props.courseTime);
     // temp state (buffer), used for decide the NEW course order / dispatch to server, when press "save"
     const [ courseList, setCourseList ] = useState([]);
     const [ prepareToRemoveCourseId, setPrepareToRemoveCourseId ] = useState([]);
     // TODO: when press "save", dispatch to server to update new course table courses order in DB
+    
     const handleDelete = (courseId) => {
         if (prepareToRemoveCourseId.includes(courseId)){
             // If the course is in the prepareToRemoveCourseId, remove it from the list.
@@ -48,10 +49,12 @@ function CourseTableCard(props){
             setPrepareToRemoveCourseId([...prepareToRemoveCourseId, courseId])
         }
     };
+
     const isEdited = () => {
         // return true if the popup data is different from the original data.
         return !(courseOrder.every((course, index) => course===courseList[index])) || prepareToRemoveCourseId.length > 0;
     }
+
     const DragHandle = sortableHandle(() => <FaBars />);
     const SortableElement = sortableElement(({key, course}) => (
       <Flex className="sortableHelper" alignItems="center" my="1" key={"Sortable_"+key+"_Flex"}>
@@ -84,6 +87,7 @@ function CourseTableCard(props){
             </SortableContainer>
         );
     };
+    
     const renderCourseBox = (courseId, courseData) => {
         const course = courseData[courseId];
         // console.log(courseId);
@@ -105,9 +109,24 @@ function CourseTableCard(props){
         }
     };
 
+    const saveChanges = () => {
+        // TODO: dispatch to server to update new course table courses order in DB (use try catch)
+        const new_order = courseList.filter((course_id)=>(!prepareToRemoveCourseId.includes(course_id)));
+        setCourseOrder(new_order)
+        leavePopover();
+    };
+
+    const leavePopover = () => {
+        onClose(); 
+        // set buffer states to initial state
+        setPrepareToRemoveCourseId([]);
+        setCourseList([]);
+    }
+
     // debugger
-    // useEffect(()=>{console.log('CourseTableCard--courseOrder: ', courseOrder);},[courseOrder])
-    // useEffect(()=>{console.log('CourseTableCard--courseList: ', courseList);},[courseList])
+    useEffect(()=>{console.log('CourseTableCard--courseOrder: ', courseOrder);},[courseOrder])
+    useEffect(()=>{console.log('CourseTableCard--courseList: ', courseList);},[courseList])
+    useEffect(()=>{console.log('CourseTableCard--prepareToRemoveCourseId: ', prepareToRemoveCourseId);},[prepareToRemoveCourseId])
 
     if(props.isHover){
         const course = props.courseData;
@@ -120,7 +139,7 @@ function CourseTableCard(props){
 
     return(
     <>
-        <Popover onOpen={onOpen} onClose={onClose} isOpen={isOpen} closeOnBlur={false} placement="left">
+        <Popover onOpen={onOpen} onClose={()=>{leavePopover()}} isOpen={isOpen} closeOnBlur={false} placement="left">
             <PopoverTrigger>
                 <Box>
                     {courseOrder.map(courseId => {
@@ -152,8 +171,12 @@ function CourseTableCard(props){
                                 </Tag>
                             </ScaleFade>
                             <Spacer />
-                            <Button colorScheme='gray' variant="ghost" onClick={() => {onClose(); setPrepareToRemoveCourseId([])}}>取消</Button>
-                            <Button colorScheme='teal' onClick={() => {onClose(); setCourseOrder(courseList)}} disabled={!isEdited()}>儲存</Button>
+                            <Button colorScheme='gray' variant="ghost" onClick={() => {
+                                leavePopover();
+                            }}>取消</Button>
+                            <Button colorScheme='teal' onClick={() => {
+                                saveChanges();
+                            }} disabled={!isEdited()}>儲存</Button>
                         </Flex>
                     </PopoverFooter>
                 </PopoverContent>
