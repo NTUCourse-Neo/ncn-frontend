@@ -150,11 +150,9 @@ function CourseTableCard(props){
                 isClosable: true
             });
         } else {
-            // patch failed 
-            // Don't know which senario wil trigger this (maybe patch a expired table?),
-            // Incase there are bugs, run this code to notify us
+            // patch failed, because expired
             toast({
-                title: `Error!`,
+                title: `課表已過期!`,
                 description: `更改志願序失敗`,
                 status: 'error',
                 duration: 3000,

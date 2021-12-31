@@ -129,7 +129,15 @@ const patchCourseTable = (course_table_id, course_table_name, user_id, expire_ts
     }
     catch (e){
         // need to let frontend handle error, so change to return null
-        return null
+        if (e.response) {
+            if (e.response.status===403 && e.response.data.message==="Course table is expired") {
+                // expired course_table
+                // if fetch expired course_table, return null and handle it by frontend logic
+                dispatch({type: UPDATE_COURSE_TABLE, payload: null});
+                return null
+            }
+        }
+        throw new Error("Error in patchCourseTable: "+e);
     }
 }
 

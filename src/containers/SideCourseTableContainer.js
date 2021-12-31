@@ -185,11 +185,12 @@ function SideCourseTableContainer(props) {
             } else {
               toast({
                 title: `變更課表名稱失敗`,
-                description: `Course table not found.`,
+                description: `課表已過期`,
                 status: 'error',
                 duration: 3000,
                 isClosable: true
-            });
+              });
+              setExpired(true)
             }
           } catch (e){
             toast({
