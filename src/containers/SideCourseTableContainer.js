@@ -170,7 +170,7 @@ function SideCourseTableContainer(props) {
     const Form = ({ firstFieldRef, onClose, onSet }) => {
         const handleSave = async () => {
           onClose();
-          
+
           const new_table_name = firstFieldRef.current.value
           try {
             const res_table = await dispatch(patchCourseTable(courseTable._id, new_table_name, courseTable.user_id, courseTable.expire_ts, courseTable.courses));
@@ -245,7 +245,7 @@ function SideCourseTableContainer(props) {
         );
     };
     const renderSideCourseTableContent = () => {
-      if(courseTable===null){
+      if(courseTable===null || expired===true){
         return(
           <Flex flexDirection="column" justifyContent="center" alignItems="center" h="100%" w="100%">
             <Flex flexDirection="row" justifyContent="center" alignItems="center">

@@ -21,17 +21,23 @@ import {
     IconButton,
     Tag,
     TagLeftIcon,
-    ScaleFade
+    ScaleFade,
+    useToast
 } from '@chakra-ui/react';
 import { hash_to_color_hex, random_color_hex } from '../utils/colorAgent';
 import {sortableContainer, sortableElement, sortableHandle} from 'react-sortable-hoc';
 import { FaBars, FaTrashAlt, FaInfoCircle, FaExclamationTriangle } from 'react-icons/fa';
 import {RenderNolContentBtn} from '../containers/CourseDrawerContainer';
+import {useSelector, useDispatch} from 'react-redux';
+import {patchCourseTable} from '../actions';
 
 
 
 function CourseTableCard(props){
+    const dispatch = useDispatch();
+    const course_table = useSelector(state => state.course_table);
     const { isOpen, onOpen, onClose } = useDisclosure()
+    const toast = useToast();
 
     // initial state or sorting result
     const [ courseOrder, setCourseOrder ] = useState(props.courseTime);
@@ -109,8 +115,55 @@ function CourseTableCard(props){
         }
     };
 
-    const saveChanges = () => {
-        // TODO: dispatch to server to update new course table courses order in DB (use try catch)
+    // fetch original order from courseOrder (ids_array), return the indices need to reorder
+    const fetchIndexByIds = (ids_array) => {
+        const index_arr = [];
+        ids_array.forEach(id => {
+            index_arr.push(course_table.courses.indexOf(id));
+        })
+        return index_arr
+    }
+
+    const saveChanges = async () => {
+        // get indice need to reorder from courseOrder
+        let index_arr = fetchIndexByIds(courseOrder);
+        // do reorder, generate new course_table.courses to be patched
+        const new_courses = [...course_table.courses];
+        for (let i=0;i<courseList.length;i++){
+            let target_index = index_arr[i];
+            let target_id = courseList[i];
+            if (!prepareToRemoveCourseId.includes(target_id)){
+                new_courses[target_index] = target_id;
+            } else {
+                // deleted
+                new_courses[target_index] = "";
+            }
+        }
+        const res_table = await dispatch(patchCourseTable(course_table._id, course_table.name, course_table.user_id, course_table.expire_ts, new_courses));
+        if (res_table){
+            // patch success
+            toast({
+                title: `Saved!`,
+                description: `更改志願序成功`,
+                status: 'success',
+                duration: 3000,
+                isClosable: true
+            });
+        } else {
+            // patch failed 
+            // Don't know which senario wil trigger this (maybe patch a expired table?),
+            // Incase there are bugs, run this code to notify us
+            toast({
+                title: `Error!`,
+                description: `更改志願序失敗`,
+                status: 'error',
+                duration: 3000,
+                isClosable: true
+            });
+            leavePopover();
+            return;
+        }
+
         const new_order = courseList.filter((course_id)=>(!prepareToRemoveCourseId.includes(course_id)));
         setCourseOrder(new_order)
         leavePopover();
@@ -123,10 +176,15 @@ function CourseTableCard(props){
         setCourseList([]);
     }
 
+    // set state and force re-render
+    useEffect(()=>{
+        setCourseOrder(props.courseTime)
+    },[props])
+
     // debugger
-    useEffect(()=>{console.log('CourseTableCard--courseOrder: ', courseOrder);},[courseOrder])
-    useEffect(()=>{console.log('CourseTableCard--courseList: ', courseList);},[courseList])
-    useEffect(()=>{console.log('CourseTableCard--prepareToRemoveCourseId: ', prepareToRemoveCourseId);},[prepareToRemoveCourseId])
+    // useEffect(()=>{console.log('CourseTableCard--courseOrder: ', courseOrder);},[courseOrder])
+    // useEffect(()=>{console.log('CourseTableCard--courseList: ', courseList);},[courseList])
+    // useEffect(()=>{console.log('CourseTableCard--prepareToRemoveCourseId: ', prepareToRemoveCourseId);},[prepareToRemoveCourseId])
 
     if(props.isHover){
         const course = props.courseData;
