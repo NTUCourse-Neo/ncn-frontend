@@ -44,7 +44,7 @@ function HeaderBar() {
             </MenuButton>
             <MenuList>
               <MenuGroup title='帳戶'>
-                <MenuItem>個人資料</MenuItem>
+                <Link to="/user/info"><MenuItem>個人資料</MenuItem></Link>
               </MenuGroup>
               <MenuDivider />
               <MenuGroup title='更多'>
@@ -54,7 +54,7 @@ function HeaderBar() {
               <MenuDivider />
               <Flex justifyContent="end" alignItems="center">
                 <Flex flexDirection="column" justifyContent="center" alignItems="start" m="2" ml="4">
-                  <Badge colorScheme={user.email_verified ? "blue":"yellow"} mb="1">{user.email_verified ? "臺大學生":"未驗證"}</Badge>
+                  <Badge colorScheme={user.email_verified ? "green":"yellow"} mb="1">{user.email_verified ? "已驗證":"未驗證"}</Badge>
                   <Text fontSize="sm" color="gray.600" fontWeight="700">{user.name}</Text>
                   <Text fontSize="xs" color="gray.500" fontWeight="500">{user.email}</Text>
                 </Flex>

@@ -10,6 +10,7 @@ import HomeViewContainer from './containers/HomeViewContainer';
 import CourseResultViewContainer from './containers/CourseResultViewContainer';
 import { Auth0Provider } from "@auth0/auth0-react";
 import dotenv from 'dotenv-defaults';
+import UserInfoContainer from './containers/UserInfoContainer';
 dotenv.config();
 
 function App(props) {
@@ -19,6 +20,8 @@ function App(props) {
         return <HomeViewContainer />
       case "course":
         return <CourseResultViewContainer />
+      case "user/info":
+        return <UserInfoContainer />
       default:
         return <HomeViewContainer />
     }
