@@ -1,4 +1,4 @@
-import { React, useState } from 'react';
+import { React, useState, useEffect } from 'react';
 import {
   ChakraProvider,
   useColorModeValue,
@@ -10,12 +10,13 @@ import Footer from './components/Footer';
 import HomeViewContainer from './containers/HomeViewContainer';
 import CourseResultViewContainer from './containers/CourseResultViewContainer';
 import SideCourseTableContainer from './containers/SideCourseTableContainer';
-import { Auth0Provider } from "@auth0/auth0-react";
+import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
 import dotenv from 'dotenv-defaults';
 import UserInfoContainer from './containers/UserInfoContainer';
 dotenv.config();
 
 function App(props) {
+
   const content = (route)=>{
     switch(route){
       case "home":

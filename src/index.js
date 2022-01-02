@@ -10,6 +10,7 @@ import store from "./store/index";
 import 'focus-visible/dist/focus-visible';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
+
 ReactDOM.render(
     <Provider store={store}>
       <BrowserRouter>

@@ -48,8 +48,8 @@ function HeaderBar() {
               </MenuGroup>
               <MenuDivider />
               <MenuGroup title='更多'>
-                <MenuItem>常見問題</MenuItem>
-                <MenuItem>關於</MenuItem>
+                <Link to="/faq"><MenuItem>常見問題</MenuItem></Link>
+                <Link to="/about"><MenuItem>關於</MenuItem></Link>
               </MenuGroup>
               <MenuDivider />
               <Flex justifyContent="end" alignItems="center">

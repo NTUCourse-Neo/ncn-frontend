@@ -1,4 +1,4 @@
-import { React } from 'react';
+import { React, useEffect, useState } from 'react';
 import {
     Box,
     Flex,
@@ -6,18 +6,98 @@ import {
     Image,
     Spacer,
     Button,
-    Divider
+    Text,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalFooter,
+    ModalBody,
+    useDisclosure,
+
   } from '@chakra-ui/react';
 import homeMainSvg from '../img/home_main.svg';
 import HomeCard from '../components/HomeCard';
-
-import { FaArrowDown } from "react-icons/fa";
+import { useAuth0 } from '@auth0/auth0-react';
+import { FaArrowDown, FaArrowRight } from "react-icons/fa";
 import { animateScroll as scroll } from 'react-scroll'
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { get_user_by_id, register_user } from '../api/users';
+import { BeatLoader } from 'react-spinners';
 
-function HomeViewContainer() {
+
+function HomeViewContainer(props) {
+  const { user, isLoading, isAuthenticated } = useAuth0();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [ isRegistering, setIsRegistering ] = useState(false);
+  const navigate = useNavigate();
+  const handleGoToUserInfoPage = () => {
+    onClose();
+    navigate("user/info");
+  }
+  useEffect(async() => {
+    if (!isLoading && isAuthenticated) {
+      const db_user = await (await get_user_by_id(user.sub)).data.db;
+      console.log(db_user);
+      if(!db_user){
+        // do register in background and display a modal.
+        console.log("DO register");
+        setIsRegistering(true);
+        if(!isOpen){
+          onOpen();
+        }
+        try{
+          await register_user(user.email);
+          setIsRegistering(false);
+        }catch{
+          console.log("register failed");
+        }
+      }
+    }
+  }, [user, isLoading, isAuthenticated]);
+  const renderNewRegisterModal = () => {
+    return(
+      <>
+        <Modal isOpen={isOpen} onClose={onClose} size="lg" closeOnOverlayClick={false} closeOnEsc={false}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>🎉 歡迎新朋友</ModalHeader>
+            <ModalBody>
+              <Flex justifyContent="center" alignItems="center" flexDirection="column" h="100%">
+                { isRegistering ?
+                  <Flex flexDirection="row" justifyContent="center" alignItems="center">
+                    <BeatLoader color='teal' size={10} />
+                    <Text fontSize="3xl" fontWeight="800" color="gray.600" ml={4}>資料同步中...</Text>
+                  </Flex>
+                  :
+                  <Text fontSize="3xl" fontWeight="800" color="gray.600">
+                    哈囉 {user? user.name:""} !
+                  </Text>
+                }
+                <Spacer my="2" />
+                <Text fontSize="xl">
+                  感謝您註冊 NTUCourse-Neo 🥰 <br/> 為了讓我們更認識你，請完成你的個人資料。
+                </Text>
+                <Spacer my="4" />
+                <Text fontSize="sm" color="gray.400">
+                  或點選稍後再說，可至個人資料頁面編輯資料。
+                </Text>
+              </Flex>
+            </ModalBody>
+            <ModalFooter>
+              <Button variant='ghost' mr={3} onClick={onClose} isLoading={isRegistering} spinner={<BeatLoader size={8} color='gray'/>}>稍後再說</Button>
+              <Button colorScheme='blue' rightIcon={<FaArrowRight />} isLoading={isRegistering} spinner={<BeatLoader size={8} color='white'/>} onClick={() => {handleGoToUserInfoPage()}}>
+                前往設定
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      </>
+    );
+  };
     return (
         <Box maxW="screen-md" mx="auto" overflow="visible" p="64px">
+          {renderNewRegisterModal()}
         <Flex justifyContent="space-between" mb={4} grow="1" flexDirection="column" alignItems="center">
           <Spacer/>
           <Flex justifyContent="space-between" flexDirection="row" alignItems="center" w="90vw">
