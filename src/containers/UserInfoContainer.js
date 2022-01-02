@@ -13,16 +13,27 @@ function UserInfoContainer(props) {
   const [userInfo, setUserInfo] = useState(null);
   const { user, isLoading }  = useAuth0();
   const userLoading = isLoading || !userInfo;
-  useEffect(async() => {
-    if(!isLoading && user) {
-      console.log(user);
-      await get_user_by_id(user.sub).then(res => {
-        setUserInfo(res.data);
-      }).catch(err => {
-        console.log(err);
-      });
-      console.log(userInfo);
+  
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      if(!isLoading && user) {
+        console.log("User: ",user);
+        // await get_user_by_id(user.sub).then(res => {
+        //   setUserInfo(res.data);
+        // }).catch(err => {
+        //   console.log(err);
+        // });
+        try {
+          const resp = await get_user_by_id(user.sub)
+          console.log("UserInfo: ",resp.data);
+          setUserInfo(resp.data);
+        } catch (e) {
+          console.log(e);
+        }
+      }
     }
+
+    fetchUserInfo();
   }, [user]);
 
   if(userLoading) {
