@@ -27,34 +27,43 @@ import { BeatLoader } from 'react-spinners';
 
 
 function HomeViewContainer(props) {
+  const navigate = useNavigate();
   const { user, isLoading, isAuthenticated } = useAuth0();
   const { isOpen, onOpen, onClose } = useDisclosure();
+
   const [ isRegistering, setIsRegistering ] = useState(false);
-  const navigate = useNavigate();
+
   const handleGoToUserInfoPage = () => {
     onClose();
     navigate("user/info");
   }
-  useEffect(async() => {
-    if (!isLoading && isAuthenticated) {
-      const db_user = await (await get_user_by_id(user.sub)).data.db;
-      console.log(db_user);
-      if(!db_user){
-        // do register in background and display a modal.
-        console.log("DO register");
-        setIsRegistering(true);
-        if(!isOpen){
-          onOpen();
-        }
-        try{
-          await register_user(user.email);
-          setIsRegistering(false);
-        }catch{
-          console.log("register failed");
+
+  // refactor API call to redux action later
+  useEffect(() => {
+    const registerNewUserToDB = async () => {
+      if (!isLoading && isAuthenticated) {
+        const db_user = await (await get_user_by_id(user.sub)).data.db;
+        console.log(db_user);
+        if(!db_user){
+          // do register in background and display a modal.
+          console.log("DO register");
+          setIsRegistering(true);
+          if(!isOpen){
+            onOpen();
+          }
+          try{
+            await register_user(user.email);
+            setIsRegistering(false);
+          }catch{
+            console.log("register failed");
+          }
         }
       }
     }
+
+    registerNewUserToDB();
   }, [user, isLoading, isAuthenticated]);
+
   const renderNewRegisterModal = () => {
     return(
       <>
@@ -95,6 +104,7 @@ function HomeViewContainer(props) {
       </>
     );
   };
+
     return (
         <Box maxW="screen-md" mx="auto" overflow="visible" p="64px">
           {renderNewRegisterModal()}
