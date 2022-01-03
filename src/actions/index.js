@@ -141,4 +141,24 @@ const patchCourseTable = (course_table_id, course_table_name, user_id, expire_ts
     }
 }
 
-export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, createCourseTable, fetchCourseTable, patchCourseTable}
+const fetchUserById = (user_id) => async (dispatch)=>{
+    try {
+        const {data: {user}} = await instance.get(`/users/${user_id}`);
+        // user contains user in db & auth0, either null (not found) or an object.
+        return user
+    } catch (e) {
+        throw new Error("Error in fetchUserById: "+e);
+    }
+}
+
+const registerNewUser = (email) => async (dispatch)=>{
+    try {
+        const {data: {user}} = await instance.post(`/users/`, {user: {email: email}})
+        // either null (not found) or an object.
+        return user
+    } catch (e) {
+        throw new Error("Error in registerNewUser: "+e);
+    }
+}
+
+export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, createCourseTable, fetchCourseTable, patchCourseTable, fetchUserById, registerNewUser};

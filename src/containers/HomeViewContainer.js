@@ -22,14 +22,16 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { FaArrowDown, FaArrowRight } from "react-icons/fa";
 import { animateScroll as scroll } from 'react-scroll'
 import { Link, useNavigate } from "react-router-dom";
-import { get_user_by_id, register_user } from '../api/users';
 import { BeatLoader } from 'react-spinners';
+import { fetchUserById, registerNewUser } from '../actions/';
+import { useDispatch, useSelector } from 'react-redux';
 
 
 function HomeViewContainer(props) {
   const navigate = useNavigate();
   const { user, isLoading, isAuthenticated } = useAuth0();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const dispatch = useDispatch();
 
   const [ isRegistering, setIsRegistering ] = useState(false);
 
@@ -42,19 +44,19 @@ function HomeViewContainer(props) {
   useEffect(() => {
     const registerNewUserToDB = async () => {
       if (!isLoading && isAuthenticated) {
-        const db_user = await (await get_user_by_id(user.sub)).data.db;
-        console.log(db_user);
-        if(!db_user){
+        const user_data = await dispatch(fetchUserById(user.sub));
+        if(!user_data){
+          // if user is null (not found in db)
           // do register in background and display a modal.
-          console.log("DO register");
           setIsRegistering(true);
           if(!isOpen){
             onOpen();
           }
           try{
-            await register_user(user.email);
+            await dispatch(registerNewUser(user.email));
             setIsRegistering(false);
-          }catch{
+          } catch (e) {
+            // refactor: use toast?
             console.log("register failed");
           }
         }

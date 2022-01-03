@@ -6,28 +6,31 @@ import {
     Spacer,
     Text
 } from '@chakra-ui/react';
-import { get_user_by_id } from '../api/users';
 import LoadingOverlay from 'react-loading-overlay';
 import { HashLoader } from 'react-spinners';
+import { fetchUserById } from '../actions/';
+import { useDispatch, useSelector } from 'react-redux';
+
 function UserInfoContainer(props) {
-  const [userInfo, setUserInfo] = useState(null);
+  const dispatch = useDispatch();
+  // store user object in db, refactor to redux?
+  const [userInfo, setUserInfo] = useState(null); 
   const { user, isLoading }  = useAuth0();
   const userLoading = isLoading || !userInfo;
   
   useEffect(() => {
     const fetchUserInfo = async () => {
       if(!isLoading && user) {
-        console.log("User: ",user);
-        // await get_user_by_id(user.sub).then(res => {
-        //   setUserInfo(res.data);
-        // }).catch(err => {
-        //   console.log(err);
-        // });
+        // console.log("User: ",user);
         try {
-          const resp = await get_user_by_id(user.sub)
-          console.log("UserInfo: ",resp.data);
-          setUserInfo(resp.data);
+          const user_data = await dispatch(fetchUserById(user.sub));
+          if (user_data){
+            const db_user = user_data.db;
+            // console.log("UserInfo: ",db_user);
+            setUserInfo(db_user);
+          }
         } catch (e) {
+          // refactor: use toast?
           console.log(e);
         }
       }
@@ -48,7 +51,7 @@ function UserInfoContainer(props) {
   return(
     <Box maxW="screen-md" h="95vh" mx="auto" overflow="visible" p="64px">
       <Flex justifyContent="space-between" mb={4} grow="1" flexDirection="column" alignItems="center">
-        <Text fontSize="3xl" fontWeight="700" color="gray.600" my="4">✌️ 歡迎回來，{userInfo.db.name}</Text>
+        <Text fontSize="3xl" fontWeight="700" color="gray.600" my="4">✌️ 歡迎回來，{userInfo.name}</Text>
         <Flex h="80vh" w="100%" flexDirection="column" justifyContent="start" alignItems="center" p="4" bg="gray.100" borderRadius="xl" boxShadow="lg">
 
         </Flex>
