@@ -9,6 +9,7 @@ import {
     Avatar,
     Input,
     Button,
+    useToast
 } from '@chakra-ui/react';
 import LoadingOverlay from 'react-loading-overlay';
 import { HashLoader } from 'react-spinners';
@@ -16,6 +17,7 @@ import { fetchUserById } from '../actions/';
 import { useDispatch, useSelector } from 'react-redux';
 
 function UserInfoContainer(props) {
+  const toast = useToast();
   const dispatch = useDispatch();
   // store user object in db, refactor to redux?
   const [userInfo, setUserInfo] = useState(null); 
@@ -32,8 +34,14 @@ function UserInfoContainer(props) {
             setUserInfo(user_data);
           }
         } catch (e) {
-          // refactor: use toast?
-          console.log(e);
+          toast({
+            title: '取得用戶資料失敗.',
+            description: "請聯繫客服(?)",
+            status: 'error',
+            duration: 9000,
+            isClosable: true,
+          })
+          // Other subsequent actions?
         }
       }
     }

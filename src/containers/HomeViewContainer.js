@@ -14,7 +14,7 @@ import {
     ModalFooter,
     ModalBody,
     useDisclosure,
-
+    useToast
   } from '@chakra-ui/react';
 import homeMainSvg from '../img/home_main.svg';
 import HomeCard from '../components/HomeCard';
@@ -28,6 +28,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 
 function HomeViewContainer(props) {
+  const toast = useToast();
   const navigate = useNavigate();
   const { user, isLoading, isAuthenticated } = useAuth0();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -56,8 +57,14 @@ function HomeViewContainer(props) {
             await dispatch(registerNewUser(user.email));
             setIsRegistering(false);
           } catch (e) {
-            // refactor: use toast?
-            console.log("register failed");
+            toast({
+              title: '註冊失敗.',
+              description: "請聯繫客服(?)",
+              status: 'error',
+              duration: 3000,
+              isClosable: true,
+            })
+            // setIsRegistering(false)? or other actions?
           }
         }
       }
