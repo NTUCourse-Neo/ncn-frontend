@@ -29,9 +29,7 @@ function UserInfoContainer(props) {
         try {
           const user_data = await dispatch(fetchUserById(user.sub));
           if (user_data){
-            const db_user = user_data.db;
-            // console.log("UserInfo: ",db_user);
-            setUserInfo(db_user);
+            setUserInfo(user_data);
           }
         } catch (e) {
           // refactor: use toast?
@@ -55,27 +53,27 @@ function UserInfoContainer(props) {
   return(
     <Box maxW="screen-md" mx="auto" overflow="visible" p="64px">
       <Flex justifyContent="space-between" mb={4} grow="1" flexDirection="column" alignItems="center">
-        <Text fontSize="3xl" fontWeight="700" color="gray.600" my="4">✌️ 歡迎回來，{userInfo.name}</Text>
+        <Text fontSize="3xl" fontWeight="700" color="gray.600" my="4">✌️ 歡迎回來，{userInfo.db.name}</Text>
         <Flex w="100%" h="100%" flexDirection="column" justifyContent="start" alignItems="start" p="4" borderRadius="lg" border='1px' borderColor='gray.200'>
           <Text fontSize="2xl" fontWeight="700" color="gray.600">個人資料</Text>
           <Divider mt="1" mb="4"/>
           <Flex w="100%" flexDirection="row" justifyContent="start" alignItems="center" p="2">
             <Flex w="100%" flexDirection="column" justifyContent="start" alignItems="start" px="4">
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">姓名</Text>
-              <Input w="50%" fontSize="lg" fontWeight="500" color="gray.600" defaultValue={userInfo.name}/>
+              <Input w="50%" fontSize="lg" fontWeight="500" color="gray.600" defaultValue={userInfo.db.name}/>
               <Spacer my="1" />
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">Email</Text>
-              <Input w="50%" fontSize="lg" fontWeight="500" color="gray.600" defaultValue={userInfo.email} disabled/>
+              <Input w="50%" fontSize="lg" fontWeight="500" color="gray.600" defaultValue={userInfo.db.email} disabled/>
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">已綁定帳號</Text>
             </Flex>
-            <Avatar name={userInfo.name} size="2xl" src={user.picture}/>
+            <Avatar name={userInfo.db.name} size="2xl" src={user.picture}/>
           </Flex>
           <Text fontSize="2xl" fontWeight="700" color="gray.600">學業</Text>
           <Divider mt="1" mb="4"/>
           <Flex w="100%" flexDirection="column" justifyContent="start" alignItems="start" px="4">
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">學號</Text>
               <Flex w="30%" alignItems="center">
-                <Input w="50%" fontSize="lg" fontWeight="500" color="gray.600" defaultValue={userInfo.student_id}/>
+                <Input w="50%" fontSize="lg" fontWeight="500" color="gray.600" defaultValue={userInfo.db.student_id}/>
                 <Button colorScheme="teal" mx="4">傳送驗證碼</Button>
               </Flex>
               <Spacer my="1" />
