@@ -30,9 +30,7 @@ function UserInfoContainer(props) {
         // console.log("User: ",user);
         try {
           const user_data = await dispatch(fetchUserById(user.sub));
-          if (user_data){
-            setUserInfo(user_data);
-          }
+          setUserInfo(user_data);
         } catch (e) {
           toast({
             title: '取得用戶資料失敗.',
