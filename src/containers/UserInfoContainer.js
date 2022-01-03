@@ -4,7 +4,11 @@ import {
     Box,
     Flex,
     Spacer,
-    Text
+    Text,
+    Divider,
+    Avatar,
+    Input,
+    Button,
 } from '@chakra-ui/react';
 import { get_user_by_id } from '../api/users';
 import LoadingOverlay from 'react-loading-overlay';
@@ -25,8 +29,8 @@ function UserInfoContainer(props) {
         // });
         try {
           const resp = await get_user_by_id(user.sub)
-          console.log("UserInfo: ",resp.data);
-          setUserInfo(resp.data);
+          console.log("UserInfo: ",resp.data.user);
+          setUserInfo(resp.data.user);
         } catch (e) {
           console.log(e);
         }
@@ -46,11 +50,43 @@ function UserInfoContainer(props) {
     );
   }
   return(
-    <Box maxW="screen-md" h="95vh" mx="auto" overflow="visible" p="64px">
+    <Box maxW="screen-md" mx="auto" overflow="visible" p="64px">
       <Flex justifyContent="space-between" mb={4} grow="1" flexDirection="column" alignItems="center">
         <Text fontSize="3xl" fontWeight="700" color="gray.600" my="4">✌️ 歡迎回來，{userInfo.db.name}</Text>
-        <Flex h="80vh" w="100%" flexDirection="column" justifyContent="start" alignItems="center" p="4" bg="gray.100" borderRadius="xl" boxShadow="lg">
-
+        <Flex w="100%" h="100%" flexDirection="column" justifyContent="start" alignItems="start" p="4" borderRadius="lg" border='1px' borderColor='gray.200'>
+          <Text fontSize="2xl" fontWeight="700" color="gray.600">個人資料</Text>
+          <Divider mt="1" mb="4"/>
+          <Flex w="100%" flexDirection="row" justifyContent="start" alignItems="center" p="2">
+            <Flex w="100%" flexDirection="column" justifyContent="start" alignItems="start" px="4">
+              <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">姓名</Text>
+              <Input w="50%" fontSize="lg" fontWeight="500" color="gray.600" defaultValue={userInfo.db.name}/>
+              <Spacer my="1" />
+              <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">Email</Text>
+              <Input w="50%" fontSize="lg" fontWeight="500" color="gray.600" defaultValue={userInfo.db.email} disabled/>
+              <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">已綁定帳號</Text>
+            </Flex>
+            <Avatar name={userInfo.db.name} size="2xl" src={user.picture}/>
+          </Flex>
+          <Text fontSize="2xl" fontWeight="700" color="gray.600">學業</Text>
+          <Divider mt="1" mb="4"/>
+          <Flex w="100%" flexDirection="column" justifyContent="start" alignItems="start" px="4">
+              <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">學號</Text>
+              <Flex w="30%" alignItems="center">
+                <Input w="50%" fontSize="lg" fontWeight="500" color="gray.600" defaultValue={userInfo.db.student_id}/>
+                <Button colorScheme="teal" mx="4">傳送驗證碼</Button>
+              </Flex>
+              <Spacer my="1" />
+              <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">主修</Text>
+              <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">輔系</Text>
+            </Flex>
+          <Text fontSize="2xl" fontWeight="700" color="gray.600">課程</Text>
+          <Divider mt="1" mb="4"/>
+          <Text fontSize="2xl" fontWeight="700" color="red.600">危險區域</Text>
+          <Divider mt="1" mb="4"/>
+          <Flex flexDirection="column" justifyContent="start" alignItems="center" p="2">
+            <Button colorScheme="red" variant="outline" size="md" w="100%" my="4">清除個人資料</Button>
+            <Button colorScheme="red" variant="outline" size="md" w="100%" my="4">徹底刪除帳號</Button>
+          </Flex>
         </Flex>
       </Flex>
     </Box>
