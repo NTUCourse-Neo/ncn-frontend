@@ -9,12 +9,16 @@ import {
     Avatar,
     Input,
     Button,
-    useToast
+    useToast,
+    Select,
+    Icon,
+
 } from '@chakra-ui/react';
 import LoadingOverlay from 'react-loading-overlay';
 import { HashLoader } from 'react-spinners';
 import { fetchUserById } from '../actions/';
 import { useDispatch, useSelector } from 'react-redux';
+import { FaFacebook, FaGithub, FaGoogle } from 'react-icons/fa';
 
 function UserInfoContainer(props) {
   const toast = useToast();
@@ -47,6 +51,43 @@ function UserInfoContainer(props) {
     fetchUserInfo();
   }, [user]);
 
+  const renderConnectedSocialAccounts = () => {
+    console.log("userInfo: ", userInfo.auth0);
+    const connected_accounts = userInfo.auth0.identities;
+    return(
+      connected_accounts.map((account, index) => {
+        console.log("account: ",account);
+        if(account.provider.includes("google")){
+          const user_name = account.profileData ? account.profileData.name : userInfo.auth0.email;
+          return(
+            <Flex key={index} alignItems="center" justifyContent="center" borderRadius="lg" border="2px" borderColor="gray.300" p="2" px="4" mr="2">
+              <Icon as={FaGoogle} w={6} h={6} color="gray.500" />
+              <Text ml="2" fontWeight="800" color="gray.600">{user_name}</Text>
+            </Flex>
+          );
+        }
+        if(account.provider.includes("github")){
+          const user_name = account.profileData.name ? account.profileData.name : userInfo.auth0.name;
+          return(
+            <Flex key={index} alignItems="center" justifyContent="center" borderRadius="lg" border="2px" borderColor="gray.300" p="2" px="4" mr="2">
+              <Icon as={FaGithub} w={6} h={6} color="gray.500" />
+              <Text ml="2" fontWeight="800" color="gray.600">{user_name}</Text>
+            </Flex>
+          );
+        }
+        if(account.provider.includes("facebook")){
+          const user_name = account.profileData.name ? account.profileData.name : userInfo.auth0.name;
+          return(
+            <Flex key={index} alignItems="center" justifyContent="center" borderRadius="lg" border="2px" borderColor="gray.300" p="2" px="4">
+              <Icon as={FaFacebook} w={6} h={6} color="gray.500" />
+              <Text ml="2" fontWeight="800" color="gray.600">{user_name}</Text>
+            </Flex>
+          );
+        }
+      }
+    ));
+  }
+
   if(userLoading) {
     return(
       <Box maxW="screen-md" h="95vh" mx="auto" overflow="visible" p="64px">
@@ -57,9 +98,9 @@ function UserInfoContainer(props) {
     );
   }
   return(
-    <Box maxW="screen-md" mx="auto" overflow="visible" p="64px">
+    <Box maxW="60vw" mx="auto" overflow="visible" p="64px">
       <Flex justifyContent="space-between" mb={4} grow="1" flexDirection="column" alignItems="center">
-        <Text fontSize="3xl" fontWeight="700" color="gray.600" my="4">✌️ 歡迎回來，{userInfo.db.name}</Text>
+        <Text fontSize="3xl" fontWeight="700" color="gray.600" my="8">✌️ 歡迎回來，{userInfo.db.name}</Text>
         <Flex w="100%" h="100%" flexDirection="column" justifyContent="start" alignItems="start" p="4" borderRadius="lg" border='1px' borderColor='gray.200'>
           <Text fontSize="2xl" fontWeight="700" color="gray.600">個人資料</Text>
           <Divider mt="1" mb="4"/>
@@ -71,6 +112,9 @@ function UserInfoContainer(props) {
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">Email</Text>
               <Input w="50%" fontSize="lg" fontWeight="500" color="gray.600" defaultValue={userInfo.db.email} disabled/>
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">已綁定帳號</Text>
+              <Flex w="100%" flexDirection="row" justifyContent="start" alignItems="start" flexWrap="wrap">
+                {renderConnectedSocialAccounts()}
+              </Flex>
             </Flex>
             <Avatar name={userInfo.db.name} size="2xl" src={user.picture}/>
           </Flex>
@@ -78,13 +122,21 @@ function UserInfoContainer(props) {
           <Divider mt="1" mb="4"/>
           <Flex w="100%" flexDirection="column" justifyContent="start" alignItems="start" px="4">
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">學號</Text>
-              <Flex w="30%" alignItems="center">
+              <Flex w="50%" alignItems="center">
                 <Input w="50%" fontSize="lg" fontWeight="500" color="gray.600" defaultValue={userInfo.db.student_id}/>
                 <Button colorScheme="teal" mx="4">傳送驗證碼</Button>
               </Flex>
               <Spacer my="1" />
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">主修</Text>
+                <Flex w="50%" alignItems="center">
+                  <Select w="50%" variant='filled' placeholder='主修學系' />
+                  <Button variant="ghost" colorScheme="blue" mx="4">新增雙主修</Button>
+                </Flex>
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">輔系</Text>
+                <Flex w="50%" alignItems="center">
+                  <Select w="50%" variant='filled' placeholder='輔系' />
+                  <Button variant="ghost" colorScheme="blue" mx="4">新增輔系</Button>
+                </Flex>
             </Flex>
           <Text fontSize="2xl" fontWeight="700" color="gray.600">課程</Text>
           <Divider mt="1" mb="4"/>
