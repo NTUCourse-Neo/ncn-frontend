@@ -16,25 +16,24 @@ import {
 } from '@chakra-ui/react';
 import LoadingOverlay from 'react-loading-overlay';
 import { HashLoader } from 'react-spinners';
-import { fetchUserById } from '../actions/';
+import { fetchUserById, logIn } from '../actions/';
 import { useDispatch, useSelector } from 'react-redux';
 import { FaFacebook, FaGithub, FaGoogle } from 'react-icons/fa';
 
 function UserInfoContainer(props) {
   const toast = useToast();
   const dispatch = useDispatch();
-  // store user object in db, refactor to redux?
-  const [userInfo, setUserInfo] = useState(null); 
+  const userInfo = useSelector(state => state.user);
+ 
   const { user, isLoading }  = useAuth0();
   const userLoading = isLoading || !userInfo;
   
   useEffect(() => {
     const fetchUserInfo = async () => {
       if(!isLoading && user) {
-        // console.log("User: ",user);
         try {
           const user_data = await dispatch(fetchUserById(user.sub));
-          setUserInfo(user_data);
+          await dispatch(logIn(user_data));
         } catch (e) {
           toast({
             title: '取得用戶資料失敗.',
@@ -52,11 +51,11 @@ function UserInfoContainer(props) {
   }, [user]);
 
   const renderConnectedSocialAccounts = () => {
-    console.log("userInfo: ", userInfo.auth0);
+    // console.log("userInfo: ", userInfo.auth0);
     const connected_accounts = userInfo.auth0.identities;
     return(
       connected_accounts.map((account, index) => {
-        console.log("account: ",account);
+        // console.log("account: ",account);
         if(account.provider.includes("google")){
           const user_name = account.profileData ? account.profileData.name : userInfo.auth0.email;
           return(
