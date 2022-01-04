@@ -248,34 +248,37 @@ function SideCourseTableContainer(props) {
     const renderSideCourseTableContent = () => {
       if(courseTable===null || expired===true){
         return(
-          <Flex flexDirection="column" justifyContent="center" alignItems="center" h="100%" w="100%">
-            <Flex flexDirection="row" justifyContent="center" alignItems="center">
-              <FaRegHandPointUp size="3vh" style={{color:"gray"}}/>
-              <FaRegMeh size="3vh" style={{color:"gray"}}/>
-              <FaRegHandPointDown size="3vh" style={{color:"gray"}}/>
-            </Flex>
-            <Text fontSize="2xl" fontWeight="bold" color="gray">{expired?"您的課表已過期":"尚無課表"}</Text>
-            <Button colorScheme="teal" leftIcon={<FaPlusSquare />} onClick={ async()=>{
-                // generate a new uuid and store into local storage
-                let new_uuid = uuidv4();
-                console.log("New UUID is generated: ",new_uuid);
+          <>
+            <Spacer mx="20vw"/>
+            <Flex flexDirection="column" justifyContent="center" alignItems="center" h="100%">
+              <Flex flexDirection="row" justifyContent="center" alignItems="center">
+                <FaRegHandPointUp size="3vh" style={{color:"gray"}}/>
+                <FaRegMeh size="3vh" style={{color:"gray"}}/>
+                <FaRegHandPointDown size="3vh" style={{color:"gray"}}/>
+              </Flex>
+              <Text fontSize="2xl" fontWeight="bold" color="gray">{expired?"您的課表已過期":"尚無課表"}</Text>
+              <Button colorScheme="teal" leftIcon={<FaPlusSquare />} onClick={ async()=>{
+                  // generate a new uuid and store into local storage
+                  let new_uuid = uuidv4();
+                  console.log("New UUID is generated: ",new_uuid);
 
-                // TODO: finish catch error
-                try {
-                  const new_course_table = await dispatch(createCourseTable(new_uuid, "我的課表", null, "1101"));
-                  localStorage.setItem(LOCAL_STORAGE_KEY, new_course_table._id);
-                } catch (error) {
-                    toast({
-                      title: `新增課表失敗`,
-                      description: `請聯繫客服(?)`,
-                      status: 'error',
-                      duration: 3000,
-                      isClosable: true
-                  });
+                  // TODO: finish catch error
+                  try {
+                    const new_course_table = await dispatch(createCourseTable(new_uuid, "我的課表", null, "1101"));
+                    localStorage.setItem(LOCAL_STORAGE_KEY, new_course_table._id);
+                  } catch (error) {
+                      toast({
+                        title: `新增課表失敗`,
+                        description: `請聯繫客服(?)`,
+                        status: 'error',
+                        duration: 3000,
+                        isClosable: true
+                    });
+                  }
                 }
-              }
-            }>新增課表</Button>
-          </Flex>
+              }>新增課表</Button>
+            </Flex>
+          </>
         );
       }
       return(
@@ -298,7 +301,7 @@ function SideCourseTableContainer(props) {
           <IconButton h="100%" icon={<FaAngleRight size={24}/>} onClick={()=>{props.setIsOpen(!props.isOpen)}} size="sm" variant="ghost"/>
         </Flex>
         <LoadingOverlay active={loading} spinner styles={{wrapper: {overflow: "auto"}, overlay: (base)=>({...base, borderRadius:"10px"})}}>
-        {renderSideCourseTableContent()}
+            {renderSideCourseTableContent()}
         </LoadingOverlay>
       </Flex>
     );
