@@ -35,7 +35,6 @@ import CourseTableContainer from './CourseTableContainer';
 import { fetchCourseTableCoursesByIds, createCourseTable, fetchCourseTable, patchCourseTable, fetchUserById, logIn, updateCourseTable } from '../actions/index';
 import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
-// TODO: add auth0 function, get user info first and load course_table_id from user instead of localStorage
 import { useAuth0 } from "@auth0/auth0-react";
 import LoadingOverlay from 'react-loading-overlay';
 
@@ -147,6 +146,7 @@ function SideCourseTableContainer(props) {
         callback();
       }
 
+      setLoading(true);
       // run after useAuth0 finish loading.
       console.log('isLoading: ', isLoading);
       if (!isLoading) {
@@ -163,9 +163,6 @@ function SideCourseTableContainer(props) {
           }
         }
       } 
-      else {
-        setLoading(true);
-      }
     },[user, isLoading])
 
     // fetch course objects data from server based on array of IDs
@@ -364,7 +361,7 @@ function SideCourseTableContainer(props) {
         <Flex justifyContent="center" alignItems="center">
           <IconButton h="100%" icon={<FaAngleRight size={24}/>} onClick={()=>{props.setIsOpen(!props.isOpen)}} size="sm" variant="ghost"/>
         </Flex>
-        <LoadingOverlay active={loading} spinner styles={{wrapper: {overflow: "auto"}, overlay: (base)=>({...base, borderRadius:"10px"})}}>
+        <LoadingOverlay active={loading || isLoading} spinner styles={{wrapper: {overflow: "auto"}, overlay: (base)=>({...base, borderRadius:"10px"})}}>
         {renderSideCourseTableContent()}
         </LoadingOverlay>
       </Flex>
