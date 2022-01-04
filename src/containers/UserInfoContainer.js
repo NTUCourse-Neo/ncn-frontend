@@ -1,5 +1,5 @@
 import { React, useState, useEffect } from 'react';
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import {
     Box,
     Flex,
@@ -151,4 +151,7 @@ function UserInfoContainer(props) {
   );
 }
 
-export default UserInfoContainer;
+export default withAuthenticationRequired(UserInfoContainer, {
+  onRedirecting: () => <h1>Redirect...</h1>,
+  returnTo: '/',
+});
