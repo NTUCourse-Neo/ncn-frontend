@@ -21,71 +21,91 @@ import {
 import {CourseDrawerContainer} from '../containers/CourseDrawerContainer';
 import { FaUserPlus, FaPuzzlePiece, FaPlus} from 'react-icons/fa';
 import { info_view_map } from '../data/mapping_table';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import { fetchCourseTable, patchCourseTable } from '../actions';
 import { hash_to_color_hex } from '../utils/colorAgent';
+import { useAuth0 } from '@auth0/auth0-react';
 
 const LOCAL_STORAGE_KEY = 'NTU_CourseNeo_Course_Table_Key';
 
 function CourseInfoRow(props) {
     const [addingCourse, setAddingCourse] = useState(false);
+    const userInfo = useSelector(state => state.user);
     const dispatch = useDispatch();
     const toast = useToast();
+    const {user, isLoading} = useAuth0();
 
     const handleButtonClick = async (course)=>{
-        setAddingCourse(true);
-        // console.log('course: ', course);
-        const uuid = localStorage.getItem(LOCAL_STORAGE_KEY);
-        if (uuid){
-            // fetch course table from server
-            const course_table = await dispatch(fetchCourseTable(uuid));
-            if (course_table===null){
-                // get course_tables/:id return null (expired)
-                // show error and break the function
+        if (!isLoading){
+            setAddingCourse(true);
+            
+            let uuid;
+            if (user){
+                // user mode
+                if (userInfo.db.course_tables.length === 0){
+                    uuid = null
+                } else {
+                    // use the first one
+                    uuid = userInfo.db.course_tables[0];
+                }
+            }
+            else {
+                // guest mode
+                uuid = localStorage.getItem(LOCAL_STORAGE_KEY);
+            }
+
+            if (uuid){
+                // fetch course table from server
+                const course_table = await dispatch(fetchCourseTable(uuid));
+                if (course_table===null){
+                    // get course_tables/:id return null (expired)
+                    // show error and break the function
+                    toast({
+                        title: `新增 ${course.course_name} 失敗`,
+                        description: `您的課表已過期，請重新建立課表`,
+                        status: 'error',
+                        duration: 3000,
+                        isClosable: true
+                    });
+                } 
+                else {
+                    // fetch course table success
+                    let res_table;
+                    let operation_str;
+                    if(course_table.courses.includes(course._id)){
+                        // course is already in course table, remove it.
+                        operation_str = "刪除";
+                        const new_courses = course_table.courses.filter(id => id!==course._id);
+                        res_table =  await dispatch(patchCourseTable(uuid, course_table.name, course_table.user_id, course_table.expire_ts, new_courses));
+                    }else{
+                        // course is not in course table, add it.
+                        operation_str = "新增";
+                        const new_courses = [...course_table.courses, course._id];
+                        res_table = await dispatch(patchCourseTable(uuid, course_table.name, course_table.user_id, course_table.expire_ts, new_courses));
+                    }
+                    if (res_table){
+                        toast({
+                            title: `已${operation_str} ${course.course_name}`,
+                            description: `新增至 ${course_table.name}`,
+                            status: 'success',
+                            duration: 3000,
+                            isClosable: true
+                        });
+                    }
+                    // ELSE TOAST?
+                }    
+            } else {
+                // do not have course table id in local storage
                 toast({
                     title: `新增 ${course.course_name} 失敗`,
-                    description: `您的課表已過期，請重新建立課表`,
+                    description: `尚未建立課表`,
                     status: 'error',
                     duration: 3000,
                     isClosable: true
                 });
-            } 
-            else {
-                // fetch course table success
-                let res_table;
-                let operation_str;
-                if(course_table.courses.includes(course._id)){
-                    // course is already in course table, remove it.
-                    operation_str = "刪除";
-                    const new_courses = course_table.courses.filter(id => id!==course._id);
-                    res_table =  await dispatch(patchCourseTable(uuid, course_table.name, course_table.user_id, course_table.expire_ts, new_courses));
-                }else{
-                    // course is not in course table, add it.
-                    operation_str = "新增";
-                    const new_courses = [...course_table.courses, course._id];
-                    res_table = await dispatch(patchCourseTable(uuid, course_table.name, course_table.user_id, course_table.expire_ts, new_courses));
-                }
-                if (res_table){
-                    toast({
-                        title: `已${operation_str} ${course.course_name}`,
-                        description: `新增至 ${course_table.name}`,
-                        status: 'success',
-                        duration: 3000,
-                        isClosable: true
-                    });
-                }
-            }    
-        } else {
-            // do not have course table id in local storage
-            toast({
-                title: `新增 ${course.course_name} 失敗`,
-                description: `尚未建立課表`,
-                status: 'error',
-                duration: 3000,
-                isClosable: true
-            });
+            }
+            setAddingCourse(false);
         }
-        setAddingCourse(false);
     };
 
     const renderDeptBadge = (course) => {

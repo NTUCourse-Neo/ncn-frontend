@@ -6,6 +6,7 @@ import instance from '../api/axios'
 const setSearchColumn = (col_name) => ({ type: SET_SEARCH_COLUMN, payload: col_name });
 const setSearchSettings = (setting_obj)=>({type: SET_SEARCH_SETTINGS, payload: setting_obj});
 const setFilterEnable = (filter_name, enable) => ({type: SET_FILTERS_ENABLE, filter_name: filter_name, payload: enable});
+const updateCourseTable = (course_table) => ({type: UPDATE_COURSE_TABLE, payload: course_table});
 const logOut = () => ({type: LOG_OUT_SUCCESS});
 const logIn = (user_data) => ({type: LOG_IN_SUCCESS, payload: user_data});
 
@@ -163,4 +164,4 @@ const registerNewUser = (email) => async (dispatch)=>{
     }
 }
 
-export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, createCourseTable, fetchCourseTable, patchCourseTable, fetchUserById, registerNewUser, logOut, logIn};
+export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, createCourseTable, fetchCourseTable, patchCourseTable, fetchUserById, registerNewUser, logOut, logIn, updateCourseTable};
