@@ -3,7 +3,7 @@ import { Flex, Box, Heading, Spacer, Text, Button } from '@chakra-ui/react';
 import { FaGithub } from 'react-icons/fa';
 function Footer() {
     return (
-        <Flex h="5vh" flexDirection="row" justifyContent="start" alignItems="center" px="4" py={2} borderTop="1px solid" borderColor="gray.200" >
+        <Flex h="5vh" flexDirection="row" justifyContent="start" alignItems="center" px="4" py={2} borderTop="1px solid" borderColor="gray.200" zIndex="10000">
             <Heading size="sm" color="gray.500">NTUCourse Neo</Heading>
             <Spacer />
             <Text fontSize="sm" color="gray.300">

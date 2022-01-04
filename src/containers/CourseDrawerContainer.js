@@ -24,53 +24,56 @@ import {
     ModalBody,
     ModalCloseButton,
   } from '@chakra-ui/react';
-  import { FaPlus, FaInfo } from 'react-icons/fa';
+  import { FaPlus, FaInfoCircle } from 'react-icons/fa';
   import { IoMdOpen } from 'react-icons/io';
-function CourseDrawerContainer(props) {
+
+function RenderNolContentBtn(course, title, key){
     const { isOpen, onOpen, onClose } = useDisclosure();
-    function openPage(url, doClose){
-        let wnd = window.open(url, '_blank');
-        if(doClose){
-            // console.log("closing");
-            setTimeout(() => {
-                wnd.close();
-            }, 1000);
-        }
+    return (
+        <>
+            <Button variant="ghost" colorScheme="blue" leftIcon={<FaInfoCircle/>} size="sm" onClick={onOpen} key={"NolContent_"+key}>{title}</Button>
+
+            <Modal size="xl" isOpen={isOpen} onClose={onClose} motionPreset='slideInBottom' scrollBehavior="outside" key={"NolContent_Modal_"+key}>
+            <ModalOverlay key={"NolContent_ModalOverlay_"+key}/>
+            <ModalContent maxW="850px" height="90vh" key={"NolContent_Modal_"+key}>
+                <ModalHeader key={"NolContent_Header_"+key}>課程詳細資訊</ModalHeader>
+                <ModalCloseButton key={"NolContent_ModalCloseButton_"+key}/>
+                <ModalBody key={"NolContent_ModalBody_"+key}>
+                <iframe title={course.id} sandbox="allow-scripts" src={genNolUrl(course)} height="100%" width="100%" key={"NolContent_iframe_"+key}/>   
+                </ModalBody>
+                <ModalFooter key={"NolContent_ModalFooter_"+key}>
+                <Text fontWeight="500" fontSize="sm" color="gray.300">資料來自 台大課程網</Text>
+                <Spacer key={"NolContent_Spacer_"+key}/>
+                <Button key={"NolContent_Button_"+key} size="sm" mr="-px" rightIcon={<IoMdOpen />} onClick={() => openPage(genNolUrl(course), false)}>在新分頁中打開</Button>
+                </ModalFooter>
+            </ModalContent>
+            </Modal>
+        </>
+    );
+}
+
+function openPage(url, doClose){
+    let wnd = window.open(url, '_blank');
+    if(doClose){
+        console.log("closing");
+        setTimeout(() => {
+            wnd.close();
+        }, 1000);
     }
-    const genNolAddUrl = (course) => {
-        let d_id = "T010"
-        return `https://nol.ntu.edu.tw/nol/coursesearch/myschedule.php?add=${course.id}&ddd=${d_id}`;
-        
-    };
-    const genNolUrl = (course) => {
-        let lang="CH";
-        let base_url = "https://nol.ntu.edu.tw/nol/coursesearch/print_table.php?";
-        let params = `course_id=${course.course_id.substr(0,3)}%20${course.course_id.substr(3)}&class=${course.class_id}&ser_no=${course.id}&semester=${course.semester.substr(0,3)}-${course.semester.substr(3,1)}&lang=${lang}`;
-        return base_url+params;
-    }
-    function renderNolContentBtn(course){
-        return (
-            <>
-              <Button variant="ghost" colorScheme="blue" leftIcon={<FaInfo/>} size="sm" onClick={onOpen}>課程詳細資訊</Button>
-        
-              <Modal size="xl" isOpen={isOpen} onClose={onClose} motionPreset='slideInBottom' scrollBehavior="outside">
-                <ModalOverlay />
-                <ModalContent maxW="850px" height="90vh">
-                  <ModalHeader>課程詳細資訊</ModalHeader>
-                  <ModalCloseButton />
-                  <ModalBody>
-                    <iframe sandbox="allow-scripts" src={genNolUrl(course)} height="100%" width="100%"/>   
-                  </ModalBody>
-                  <ModalFooter>
-                    <Text fontWeight="500" fontSize="sm" color="gray.300">資料來自 台大課程網</Text>
-                    <Spacer/>
-                    <Button size="sm" mr="-px" rightIcon={<IoMdOpen />} onClick={() => openPage(genNolUrl(course), false)}>在新分頁中打開</Button>
-                  </ModalFooter>
-                </ModalContent>
-              </Modal>
-            </>
-        );
-    }
+}
+const genNolAddUrl = (course) => {
+    let d_id = "T010"
+    return `https://nol.ntu.edu.tw/nol/coursesearch/myschedule.php?add=${course.id}&ddd=${d_id}`;
+    
+};
+const genNolUrl = (course) => {
+    let lang="CH";
+    let base_url = "https://nol.ntu.edu.tw/nol/coursesearch/print_table.php?";
+    let params = `course_id=${course.course_id.substr(0,3)}%20${course.course_id.substr(3)}&class=${course.class_id}&ser_no=${course.id}&semester=${course.semester.substr(0,3)}-${course.semester.substr(3,1)}&lang=${lang}`;
+    return base_url+params;
+}
+
+function CourseDrawerContainer(props) {
     const renderDataElement = (fieldName, data) => {
         if (data === "") {
             return (<></>);
@@ -117,10 +120,10 @@ function CourseDrawerContainer(props) {
                 </ButtonGroup>
                 <Spacer/>
                 <Button variant="ghost" colorScheme="blue" leftIcon={<FaPlus/>} size="sm" onClick={() => openPage(genNolAddUrl(props.courseInfo), true)}>加入課程網</Button>
-                {renderNolContentBtn(props.courseInfo)}
+                {RenderNolContentBtn(props.courseInfo, "課程詳細資訊", props.courseInfo.course_id)}
             </Flex>
         </Flex>
     );
 }
 
-export default CourseDrawerContainer;
+export { CourseDrawerContainer, RenderNolContentBtn };

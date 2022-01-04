@@ -1,5 +1,5 @@
 // write all function that generate actions here
-import {FETCH_SEARCH_RESULTS_FAILURE, FETCH_SEARCH_RESULTS_SUCCESS,FETCH_SEARCH_RESULTS_REQUEST,FETCH_SEARCH_IDS_FAILURE,FETCH_SEARCH_IDS_REQUEST,FETCH_SEARCH_IDS_SUCCESS,SET_SEARCH_COLUMN, SET_SEARCH_SETTINGS, SET_FILTERS, INCREMENT_OFFSET, UPDATE_TOTAL_COUNT, SET_FILTERS_ENABLE} from '../constants/action-types';
+import {FETCH_SEARCH_RESULTS_FAILURE, FETCH_SEARCH_RESULTS_SUCCESS,FETCH_SEARCH_RESULTS_REQUEST,FETCH_SEARCH_IDS_FAILURE,FETCH_SEARCH_IDS_REQUEST,FETCH_SEARCH_IDS_SUCCESS,SET_SEARCH_COLUMN, SET_SEARCH_SETTINGS, SET_FILTERS, INCREMENT_OFFSET, UPDATE_TOTAL_COUNT, SET_FILTERS_ENABLE, UPDATE_COURSE_TABLE} from '../constants/action-types';
 import instance from '../api/axios'
 
 // normal actions
@@ -15,7 +15,7 @@ const setFilterEnable = (filter_name, enable) => ({type: SET_FILTERS_ENABLE, fil
 const setFilter = (filter_name, data)=>({type: SET_FILTERS, filter_name: filter_name, payload: data});
 
 // async actions (used redux-thunk template)
-const fetchSearchIDs = (searchString, paths, filters_enable, filter_obj, batch_size, strict_match) => async (dispatch)=>{
+const fetchSearchIDs = (searchString, paths, filters_enable, filter_obj, batch_size, strict_match_bool) => async (dispatch)=>{
     dispatch({type: FETCH_SEARCH_IDS_REQUEST});
 
     try {
@@ -26,12 +26,12 @@ const fetchSearchIDs = (searchString, paths, filters_enable, filter_obj, batch_s
         // fetch batch 0 first
         dispatch({type: FETCH_SEARCH_RESULTS_REQUEST});
         try {
-            let search_filter={...filter_obj};
+            let search_filter={...filter_obj, strict_match: strict_match_bool};
             if (filters_enable.time===false){search_filter.time=null;}
             if (filters_enable.department===false){search_filter.department=null;}
             if (filters_enable.category===false){search_filter.category=null;}
             if (filters_enable.enroll_method===false){search_filter.enroll_method=null;}
-            const {data: {courses, total_count}} = await instance.post(`/courses/ids`, {ids: ids, filter: search_filter, batch_size: batch_size, offset: 0, strict_match: strict_match});
+            const {data: {courses, total_count}} = await instance.post(`/courses/ids`, {ids: ids, filter: search_filter, batch_size: batch_size, offset: 0});
             dispatch({type: FETCH_SEARCH_RESULTS_SUCCESS, payload: courses});
             // increment offset
             dispatch({type: INCREMENT_OFFSET});
@@ -49,11 +49,11 @@ const fetchSearchIDs = (searchString, paths, filters_enable, filter_obj, batch_s
     }
 }
 
-const fetchSearchResults = (ids_arr, filters_enable, filter_obj, batch_size, offset) =>async (dispatch)=>{
+const fetchSearchResults = (ids_arr, filters_enable, filter_obj, batch_size, offset, strict_match_bool) =>async (dispatch)=>{
     dispatch({type: FETCH_SEARCH_RESULTS_REQUEST});
 
     try {
-        let search_filter={...filter_obj};
+        let search_filter={...filter_obj, strict_match: strict_match_bool};
         if (filters_enable.time===false){search_filter.time=null;}
         if (filters_enable.department===false){search_filter.department=null;}
         if (filters_enable.category===false){search_filter.category=null;}
@@ -70,4 +70,75 @@ const fetchSearchResults = (ids_arr, filters_enable, filter_obj, batch_size, off
     }
 }
 
-export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable}
+// used in SideCourseTableContainer initialization, to fetch all course objects by ids
+const fetchCourseTableCoursesByIds = (ids_arr) => async (dispatch)=>{
+    try {
+        let search_filter={strict_match:false, time: null, department: null, category: null, enroll_method: null};
+        let batch_size=15000; // max batch size
+        let offset=0;
+        const {data: {courses}} = await instance.post(`/courses/ids`, {ids: ids_arr, filter: search_filter, batch_size: batch_size, offset: offset});
+        return courses
+    }
+    catch (e){
+        throw new Error("Error in fetchCoursesByIds: "+e);
+    }
+};
+
+const createCourseTable = (course_table_id, course_table_name, user_id, semester) => async (dispatch)=>{
+    try {
+        const {data: {course_table}} = await instance.post(`/course_tables/`, {id: course_table_id, name: course_table_name, user_id: user_id, semester: semester});
+        dispatch({type: UPDATE_COURSE_TABLE, payload: course_table});
+        return course_table
+    }
+    catch (e){
+        if (e.response){
+            console.log('ERROR MESSAGE: ',e.response.data.message);
+            console.log('ERROR STATUS CODE: ',e.response.status);
+        }
+        throw new Error("Error in createCourseTable: "+e);
+    }
+}
+
+const fetchCourseTable = (course_table_id) => async (dispatch)=>{
+    try {
+        const {data: {course_table}} = await instance.get(`/course_tables/${course_table_id}`);
+        dispatch({type: UPDATE_COURSE_TABLE, payload: course_table});
+        return course_table
+    }
+    catch (e){
+        if (e.response) {
+            if (e.response.status===403) {
+                // expired course_table
+                // if fetch expired course_table, return null and handle it by frontend logic
+                dispatch({type: UPDATE_COURSE_TABLE, payload: null});
+                return null
+            }
+        } else {
+            throw new Error("Error in fetchCourseTable: "+e);
+        }
+    }
+}
+
+const patchCourseTable = (course_table_id, course_table_name, user_id, expire_ts, courses) => async (dispatch)=>{
+    // filter out "" in courses
+    const new_courses = courses.filter(course=>course!=="");
+    try {
+        const {data: {course_table}} = await instance.patch(`/course_tables/${course_table_id}`, {name: course_table_name, user_id: user_id, expire_ts: expire_ts, courses: new_courses});
+        dispatch({type: UPDATE_COURSE_TABLE, payload: course_table});
+        return course_table
+    }
+    catch (e){
+        // need to let frontend handle error, so change to return null
+        if (e.response) {
+            if (e.response.status===403 && e.response.data.message==="Course table is expired") {
+                // expired course_table
+                // if fetch expired course_table, return null and handle it by frontend logic
+                dispatch({type: UPDATE_COURSE_TABLE, payload: null});
+                return null
+            }
+        }
+        throw new Error("Error in patchCourseTable: "+e);
+    }
+}
+
+export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, createCourseTable, fetchCourseTable, patchCourseTable}

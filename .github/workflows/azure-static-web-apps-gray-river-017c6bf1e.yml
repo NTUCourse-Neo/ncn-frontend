@@ -33,6 +33,8 @@ jobs:
         env:
           REACT_APP_API_ENDPOINT: ${{ secrets.AZURE_API_ENDPOINT }}
           REACT_APP_API_VERSION: "v1"
+          REACT_APP_AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
+          REACT_APP_AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID }}
           ###### End of Repository/Build Configurations ######
 
   close_pull_request_job:
