@@ -23,7 +23,7 @@ import { FaArrowDown, FaArrowRight } from "react-icons/fa";
 import { animateScroll as scroll } from 'react-scroll'
 import { Link, useNavigate } from "react-router-dom";
 import { BeatLoader } from 'react-spinners';
-import { fetchUserById, registerNewUser } from '../actions/';
+import { fetchUserById, registerNewUser, logIn } from '../actions/';
 import { useDispatch, useSelector } from 'react-redux';
 
 
@@ -66,6 +66,11 @@ function HomeViewContainer(props) {
             })
             // setIsRegistering(false)? or other actions?
           }
+          // Re-fetch user data from server
+          let new_user_data = await dispatch(fetchUserById(user.sub));
+          dispatch(logIn(new_user_data));
+        } else {
+          dispatch(logIn(user_data))
         }
       }
     }

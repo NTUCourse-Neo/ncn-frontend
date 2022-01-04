@@ -1,11 +1,13 @@
 // write all function that generate actions here
-import {FETCH_SEARCH_RESULTS_FAILURE, FETCH_SEARCH_RESULTS_SUCCESS,FETCH_SEARCH_RESULTS_REQUEST,FETCH_SEARCH_IDS_FAILURE,FETCH_SEARCH_IDS_REQUEST,FETCH_SEARCH_IDS_SUCCESS,SET_SEARCH_COLUMN, SET_SEARCH_SETTINGS, SET_FILTERS, INCREMENT_OFFSET, UPDATE_TOTAL_COUNT, SET_FILTERS_ENABLE, UPDATE_COURSE_TABLE} from '../constants/action-types';
+import {FETCH_SEARCH_RESULTS_FAILURE, FETCH_SEARCH_RESULTS_SUCCESS,FETCH_SEARCH_RESULTS_REQUEST,FETCH_SEARCH_IDS_FAILURE,FETCH_SEARCH_IDS_REQUEST,FETCH_SEARCH_IDS_SUCCESS,SET_SEARCH_COLUMN, SET_SEARCH_SETTINGS, SET_FILTERS, INCREMENT_OFFSET, UPDATE_TOTAL_COUNT, SET_FILTERS_ENABLE, UPDATE_COURSE_TABLE, LOG_IN_SUCCESS, LOG_OUT_SUCCESS} from '../constants/action-types';
 import instance from '../api/axios'
 
 // normal actions
 const setSearchColumn = (col_name) => ({ type: SET_SEARCH_COLUMN, payload: col_name });
 const setSearchSettings = (setting_obj)=>({type: SET_SEARCH_SETTINGS, payload: setting_obj});
 const setFilterEnable = (filter_name, enable) => ({type: SET_FILTERS_ENABLE, filter_name: filter_name, payload: enable});
+const logOut = () => ({type: LOG_OUT_SUCCESS});
+const logIn = (user_data) => ({type: LOG_IN_SUCCESS, payload: user_data});
 
 // data = 
 // when filter_name == 'department', arr of dept_code (4-digits),
@@ -161,4 +163,4 @@ const registerNewUser = (email) => async (dispatch)=>{
     }
 }
 
-export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, createCourseTable, fetchCourseTable, patchCourseTable, fetchUserById, registerNewUser};
+export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, createCourseTable, fetchCourseTable, patchCourseTable, fetchUserById, registerNewUser, logOut, logIn};

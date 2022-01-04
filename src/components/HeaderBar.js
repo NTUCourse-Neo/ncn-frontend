@@ -22,9 +22,11 @@ import { ColorModeSwitcher } from '../ColorModeSwitcher';
 import { Link } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import BeatLoader from 'react-spinners/BeatLoader';
-
+import { logOut } from "../actions/"; 
+import { useDispatch } from "react-redux"; 
 
 function HeaderBar() {
+  const dispatch = useDispatch();
   const { loginWithRedirect, user, isAuthenticated, isLoading, logout  }  = useAuth0();
   const renderSignInButton = () => {
     if(isLoading) {
@@ -58,7 +60,10 @@ function HeaderBar() {
                   <Text fontSize="sm" color="gray.600" fontWeight="700">{user.name}</Text>
                   <Text fontSize="xs" color="gray.500" fontWeight="500">{user.email}</Text>
                 </Flex>
-                <Button colorScheme="red" variant="outline" size="md" m="2" mr="4" onClick={() => logout()}>登出</Button>
+                <Button colorScheme="red" variant="outline" size="md" m="2" mr="4" onClick={() => {
+                  dispatch(logOut());
+                  logout();
+                }}>登出</Button>
               </Flex>
             </MenuList>
           </Menu>
