@@ -54,7 +54,7 @@ function CourseInfoRow(props) {
                 uuid = localStorage.getItem(LOCAL_STORAGE_KEY);
             }
 
-            if (uuid){
+            if (uuid || userInfo.db.course_tables.length > 0){
                 // fetch course table from server
                 const course_table = await dispatch(fetchCourseTable(uuid));
                 if (course_table===null){
