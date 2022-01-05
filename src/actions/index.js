@@ -111,7 +111,7 @@ const linkCoursetableToUser = (course_table_id, user_id) => async (dispatch)=>{
             console.log('ERROR MESSAGE: ',e.response.data.message);
             console.log('ERROR STATUS CODE: ',e.response.status);
         }
-        throw new Error("Error in createCourseTable: "+e);
+        throw new Error("Error in linkCoursetableToUser: "+e);
     }
 };
 
