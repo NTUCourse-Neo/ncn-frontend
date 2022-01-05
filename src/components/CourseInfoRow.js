@@ -38,7 +38,7 @@ function CourseInfoRow(props) {
     const handleButtonClick = async (course)=>{
         if (!isLoading){
             setAddingCourse(true);
-            
+
             let uuid;
             if (user){
                 // user mode
@@ -54,7 +54,7 @@ function CourseInfoRow(props) {
                 uuid = localStorage.getItem(LOCAL_STORAGE_KEY);
             }
 
-            if (uuid || userInfo.db.course_tables.length > 0){
+            if (uuid){
                 // fetch course table from server
                 const course_table = await dispatch(fetchCourseTable(uuid));
                 if (course_table===null){
