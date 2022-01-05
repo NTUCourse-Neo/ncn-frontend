@@ -32,7 +32,7 @@ import {
     FaPlusSquare
 } from 'react-icons/fa';
 import CourseTableContainer from './CourseTableContainer';
-import { fetchCourseTableCoursesByIds, createCourseTable, fetchCourseTable, patchCourseTable, fetchUserById, logIn, updateCourseTable } from '../actions/index';
+import { fetchCourseTableCoursesByIds, createCourseTable, linkCoursetableToUser, fetchCourseTable, patchCourseTable, fetchUserById, logIn, updateCourseTable } from '../actions/index';
 import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import { useAuth0 } from "@auth0/auth0-react";
@@ -206,7 +206,7 @@ function SideCourseTableContainer(props) {
           try {
             const new_course_table = await dispatch(createCourseTable(new_uuid, "我的課表", userInfo.db._id, "1101"));
             console.log("New UUID is generated: ",new_uuid);
-            // link the user and the new course table by post API (not implement yet)
+            await dispatch(linkCoursetableToUser(new_uuid, userInfo.db._id));
           } catch (e) {
             toast({
               title: `新增課表失敗`,

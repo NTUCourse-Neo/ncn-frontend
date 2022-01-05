@@ -102,6 +102,18 @@ const createCourseTable = (course_table_id, course_table_name, user_id, semester
     }
 }
 
+const linkCoursetableToUser = (course_table_id, user_id) => async (dispatch)=>{
+    try{
+        const {data: {course_table}} = await instance.post(`/users/${user_id}/course_table`, {course_table_id: course_table_id});
+    }catch(e){
+        if (e.response){
+            console.log('ERROR MESSAGE: ',e.response.data.message);
+            console.log('ERROR STATUS CODE: ',e.response.status);
+        }
+        throw new Error("Error in createCourseTable: "+e);
+    }
+};
+
 const fetchCourseTable = (course_table_id) => async (dispatch)=>{
     try {
         const {data: {course_table}} = await instance.get(`/course_tables/${course_table_id}`);
@@ -164,4 +176,4 @@ const registerNewUser = (email) => async (dispatch)=>{
     }
 }
 
-export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, createCourseTable, fetchCourseTable, patchCourseTable, fetchUserById, registerNewUser, logOut, logIn, updateCourseTable};
+export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, createCourseTable, linkCoursetableToUser, fetchCourseTable, patchCourseTable, fetchUserById, registerNewUser, logOut, logIn, updateCourseTable};
