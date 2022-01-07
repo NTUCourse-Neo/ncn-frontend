@@ -66,7 +66,7 @@ function UserInfoContainer(props) {
           );
         }
         if(account.provider.includes("github")){
-          const user_name = account.profileData.name ? account.profileData.name : userInfo.auth0.name;
+          const user_name = account.profileData ? account.profileData.name : userInfo.auth0.name;
           return(
             <Flex key={index} alignItems="center" justifyContent="center" borderRadius="lg" border="2px" borderColor="gray.300" p="2" px="4" mr="2">
               <Icon as={FaGithub} w={6} h={6} color="gray.500" />
@@ -75,7 +75,7 @@ function UserInfoContainer(props) {
           );
         }
         if(account.provider.includes("facebook")){
-          const user_name = account.profileData.name ? account.profileData.name : userInfo.auth0.name;
+          const user_name = account.profileData ? account.profileData.name : userInfo.auth0.name;
           return(
             <Flex key={index} alignItems="center" justifyContent="center" borderRadius="lg" border="2px" borderColor="gray.300" p="2" px="4">
               <Icon as={FaFacebook} w={6} h={6} color="gray.500" />
