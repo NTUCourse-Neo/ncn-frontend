@@ -19,7 +19,7 @@ import {
     useToast
   } from '@chakra-ui/react';
 import {CourseDrawerContainer} from '../containers/CourseDrawerContainer';
-import { FaUserPlus, FaPuzzlePiece, FaPlus} from 'react-icons/fa';
+import { FaUserPlus, FaPuzzlePiece, FaPlus, FaHeart} from 'react-icons/fa';
 import { info_view_map } from '../data/mapping_table';
 import {useDispatch} from 'react-redux';
 import { fetchCourseTable, patchCourseTable } from '../actions';
@@ -29,6 +29,7 @@ const LOCAL_STORAGE_KEY = 'NTU_CourseNeo_Course_Table_Key';
 
 function CourseInfoRow(props) {
     const [addingCourse, setAddingCourse] = useState(false);
+    const [addFavoriteCourse, setAddFavoriteCourse] = useState(false);
     const dispatch = useDispatch();
     const toast = useToast();
 
@@ -88,6 +89,12 @@ function CourseInfoRow(props) {
         setAddingCourse(false);
     };
 
+    const handleAddFavorite = async (course_id) => {
+        setAddFavoriteCourse(true);
+
+
+    }
+
     const renderDeptBadge = (course) => {
         if(course.department.length > 1){
             let dept_str = course.department.join(", ");
@@ -131,6 +138,11 @@ function CourseInfoRow(props) {
                         }
                     </Flex>
                 </AccordionButton>
+            <Button size="sm" ml="20px" colorScheme={props.isfavorite? "red":"blue"} onClick={() => handleAddFavorite(props.courseInfo._id)} isLoading={addFavoriteCourse}>
+                    <Box>
+                        <FaHeart/>
+                    </Box>
+                </Button>
                 <Button size="sm" ml="20px" colorScheme={props.selected? "red":"blue"} onClick={() => handleButtonClick(props.courseInfo)} isLoading={addingCourse}>
                     <Box transform={props.selected ? "rotate(45deg)":""} transition="all ease-in-out 200ms">
                         <FaPlus />
