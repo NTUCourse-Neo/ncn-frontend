@@ -27,6 +27,28 @@ function UserInfoContainer(props) {
  
   const { user, isLoading }  = useAuth0();
   const userLoading = isLoading || !userInfo;
+
+  const [name, setName] = useState(null);
+  const [studentId, setStudentId] = useState(null);
+
+  // useEffect(()=>{
+  //   console.log('name: ', name);
+  //   console.log('studentId: ', studentId);
+  // },[name, studentId]);
+
+  const generateUpdateObject = () => {
+    let updateObject = {};
+    if (name!==null && name!==userInfo.db.name){
+      updateObject.name = name;
+    }
+    if (studentId!==null && studentId!==userInfo.db.student_id){
+      updateObject.student_id = studentId;
+    }
+    console.log(updateObject);
+    return updateObject;
+  }
+
+  const updateUserInfo = () => {}
   
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -106,7 +128,7 @@ function UserInfoContainer(props) {
           <Flex w="100%" flexDirection="row" justifyContent="start" alignItems="center" p="2">
             <Flex w="100%" flexDirection="column" justifyContent="start" alignItems="start" px="4">
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">姓名</Text>
-              <Input w="50%" fontSize="lg" fontWeight="500" color="gray.600" defaultValue={userInfo.db.name}/>
+              <Input w="50%" fontSize="lg" fontWeight="500" color="gray.600" defaultValue={userInfo.db.name} onChange={(e)=>{setName(e.currentTarget.value)}}/>
               <Spacer my="1" />
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">Email</Text>
               <Input w="50%" fontSize="lg" fontWeight="500" color="gray.600" defaultValue={userInfo.db.email} disabled/>
@@ -117,12 +139,12 @@ function UserInfoContainer(props) {
             </Flex>
             <Avatar name={userInfo.db.name} size="2xl" src={user.picture}/>
           </Flex>
-          <Text fontSize="2xl" fontWeight="700" color="gray.600">學業</Text>
+          <Text fontSize="2xl" fontWeight="700" color="gray.600" mt="5">學業</Text>
           <Divider mt="1" mb="4"/>
           <Flex w="100%" flexDirection="column" justifyContent="start" alignItems="start" px="4">
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">學號</Text>
               <Flex w="50%" alignItems="center">
-                <Input w="50%" fontSize="lg" fontWeight="500" color="gray.600" defaultValue={userInfo.db.student_id}/>
+                <Input w="50%" fontSize="lg" fontWeight="500" color="gray.600" defaultValue={userInfo.db.student_id} onChange={(e)=>{setStudentId(e.currentTarget.value)}}/>
                 <Button colorScheme="teal" mx="4">傳送驗證碼</Button>
               </Flex>
               <Spacer my="1" />
@@ -137,14 +159,15 @@ function UserInfoContainer(props) {
                   <Button variant="ghost" colorScheme="blue" mx="4">新增輔系</Button>
                 </Flex>
             </Flex>
-          <Text fontSize="2xl" fontWeight="700" color="gray.600">課程</Text>
+          <Text fontSize="2xl" fontWeight="700" color="gray.600" mt="5">課程</Text>
           <Divider mt="1" mb="4"/>
-          <Text fontSize="2xl" fontWeight="700" color="red.600">危險區域</Text>
+          <Text fontSize="2xl" fontWeight="700" color="red.600" mt="5">危險區域</Text>
           <Divider mt="1" mb="4"/>
           <Flex flexDirection="column" justifyContent="start" alignItems="center" p="2">
             <Button colorScheme="red" variant="outline" size="md" w="100%" my="4">清除個人資料</Button>
             <Button colorScheme="red" variant="outline" size="md" w="100%" my="4">徹底刪除帳號</Button>
           </Flex>
+          < Button colorScheme="teal" size="md" w="100%" my="4" onClick={()=>{updateUserInfo()}}>Save</Button>
         </Flex>
       </Flex>
     </Box>
