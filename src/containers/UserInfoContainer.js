@@ -28,6 +28,7 @@ function UserInfoContainer(props) {
   const { user, isLoading }  = useAuth0();
   const userLoading = isLoading || !userInfo;
 
+  // states for updating userInfo 
   const [name, setName] = useState(null);
   const [studentId, setStudentId] = useState(null);
 
@@ -44,11 +45,19 @@ function UserInfoContainer(props) {
     if (studentId!==null && studentId!==userInfo.db.student_id){
       updateObject.student_id = studentId;
     }
-    console.log(updateObject);
+    // todo
+    console.log('updateObject: ', updateObject);
     return updateObject;
   }
 
-  const updateUserInfo = () => {}
+  const updateUserInfo = async () => {
+    const updateObject = generateUpdateObject();
+    try {
+      // await dispatch(patchUserInfo(updateObject, userInfo.db._id));
+    } catch (e) {
+      // use toast
+    }
+  }
   
   useEffect(() => {
     const fetchUserInfo = async () => {
