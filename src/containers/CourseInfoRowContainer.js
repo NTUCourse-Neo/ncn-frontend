@@ -1,4 +1,4 @@
-import { React, useEffect } from 'react';
+import { React } from 'react';
 import CourseInfoRow from '../components/CourseInfoRow';
 import {
     Box,
@@ -10,10 +10,6 @@ import {useSelector} from 'react-redux';
 
 function CourseInfoRowContainer(props) {
     const userInfo = useSelector(state => state.user);
-    
-    useEffect(()=>{
-        console.log('userInfo: ', userInfo);
-    },[userInfo]);
 
     const hide_scroll_bar = {
         '::-webkit-scrollbar': {
