@@ -112,40 +112,52 @@ function CourseInfoRow(props) {
     };
 
     const handleAddFavorite = async (course_id) => {
-        setAddingFavoriteCourse(true);
-        const favorite_list = [...userInfo.db.favorites];
-        let new_favorite_list;
-        let op_name;
-        if (favorite_list.includes(course_id)){
-            // remove course from favorite list
-            new_favorite_list = favorite_list.filter(id => id!==course_id);
-            op_name = "刪除";
-        } else {
-            // add course to favorite list
-            new_favorite_list = [...favorite_list, course_id];
-            op_name = "新增";
-        }
-        // API call
-        try {
-            await dispatch(addFavoriteCourse(new_favorite_list, userInfo.db._id));
-            toast({
-                title: `${op_name}最愛課程成功`,
-                //description: `請稍後再試`,
-                status: 'success',
-                duration: 3000,
-                isClosable: true
-            });
-            setAddingFavoriteCourse(false);
-        } catch (e){
-            // toast error
-            toast({
-                title: `${op_name}最愛課程失敗`,
-                description: `請稍後再試`,
-                status: 'error',
-                duration: 3000,
-                isClosable: true
-            });
-            setAddingFavoriteCourse(false);
+        if (!isLoading){
+            if (user){
+                setAddingFavoriteCourse(true);
+                const favorite_list = [...userInfo.db.favorites];
+                let new_favorite_list;
+                let op_name;
+                if (favorite_list.includes(course_id)){
+                    // remove course from favorite list
+                    new_favorite_list = favorite_list.filter(id => id!==course_id);
+                    op_name = "刪除";
+                } else {
+                    // add course to favorite list
+                    new_favorite_list = [...favorite_list, course_id];
+                    op_name = "新增";
+                }
+                // API call
+                try {
+                    await dispatch(addFavoriteCourse(new_favorite_list, userInfo.db._id));
+                    toast({
+                        title: `${op_name}最愛課程成功`,
+                        //description: `請稍後再試`,
+                        status: 'success',
+                        duration: 3000,
+                        isClosable: true
+                    });
+                    setAddingFavoriteCourse(false);
+                } catch (e){
+                    // toast error
+                    toast({
+                        title: `${op_name}最愛課程失敗`,
+                        description: `請稍後再試`,
+                        status: 'error',
+                        duration: 3000,
+                        isClosable: true
+                    });
+                    setAddingFavoriteCourse(false);
+                }
+            } else {
+                toast({
+                    title: `請先登入`,
+                    // description: `請先登入`,
+                    status: 'error',
+                    duration: 3000,
+                    isClosable: true
+                });
+            }
         }
     }
 
