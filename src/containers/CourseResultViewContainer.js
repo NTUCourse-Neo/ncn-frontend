@@ -77,7 +77,6 @@ function CourseResultViewContainer() {
   const [strict_search_mode, set_strict_search_mode] = useState(search_settings.strict_search_mode);
 
   const [coursesInTable, setCoursesInTable] = useState([]);
-  const [favoriteCourses, setAddFavoriteCourses] = useState([]);
 
   const renderSettingSwitch = (label, default_checked) => {
 
@@ -253,7 +252,7 @@ function CourseResultViewContainer() {
                             {search_loading ? <BeatLoader size={8} color='teal'/>:<></>}
                             <Text fontSize="md" fontWeight="medium" color="gray.400" my="2" ml="1">{search_loading ? "載入中" : `共找到 ${total_count} 筆結果`}</Text>
                         </Flex>
-                        <CourseInfoRowContainer courseInfo={search_results} setHoveredCourse={setHoveredCourse} selectedCourses={coursesInTable} favoriteCourses={favoriteCourses}/>
+                        <CourseInfoRowContainer courseInfo={search_results} setHoveredCourse={setHoveredCourse} selectedCourses={coursesInTable}/>
                     </Box>
                     <Box ml={displayTable ? "24vw":"48vw"} transition="all 500ms ease-in-out">
                         <SkeletonRow loading={search_loading} error={search_error}/>

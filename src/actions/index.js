@@ -177,4 +177,17 @@ const registerNewUser = (email) => async (dispatch)=>{
     }
 }
 
-export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, createCourseTable, linkCoursetableToUser, fetchCourseTable, patchCourseTable, fetchUserById, registerNewUser, logOut, logIn, updateCourseTable};
+const addFavoriteCourse = (new_favorite_list, user_id) => async (dispatch)=>{
+    try{
+        const {data: { user }} = await instance.patch(`/users/${user_id}`, {user: {favorites: new_favorite_list}});
+        dispatch({type: UPDATE_USER, payload: user});
+    }catch(e){
+        if (e.response){
+            console.log('ERROR MESSAGE: ',e.response.data.message);
+            console.log('ERROR STATUS CODE: ',e.response.status);
+        }
+        throw new Error("Error in linkCoursetableToUser: "+e);
+    }
+};
+
+export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, createCourseTable, linkCoursetableToUser, fetchCourseTable, patchCourseTable, fetchUserById, registerNewUser, logOut, logIn, updateCourseTable, addFavoriteCourse};
