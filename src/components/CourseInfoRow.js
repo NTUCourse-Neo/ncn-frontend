@@ -204,7 +204,7 @@ function CourseInfoRow(props) {
                         }
                     </Flex>
                 </AccordionButton>
-                <Button size="sm" ml="20px" colorScheme={props.isfavorite? "red":"blue"} onClick={() => handleAddFavorite(props.courseInfo._id)} isLoading={addingFavoriteCourse}>
+                <Button size="sm" ml="20px" variant={props.isfavorite? "solid":"outline"} colorScheme={"red"} onClick={() => handleAddFavorite(props.courseInfo._id)} isLoading={addingFavoriteCourse}>
                     <Box>
                         <FaHeart/>
                     </Box>
