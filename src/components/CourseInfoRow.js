@@ -19,19 +19,22 @@ import {
     useToast
   } from '@chakra-ui/react';
 import {CourseDrawerContainer} from '../containers/CourseDrawerContainer';
-import { FaUserPlus, FaPuzzlePiece, FaPlus} from 'react-icons/fa';
+import { FaUserPlus, FaPuzzlePiece, FaPlus, FaHeart} from 'react-icons/fa';
 import { info_view_map } from '../data/mapping_table';
 import {useDispatch, useSelector} from 'react-redux';
-import { fetchCourseTable, patchCourseTable } from '../actions';
+import { fetchCourseTable, patchCourseTable, addFavoriteCourse } from '../actions';
 import { hash_to_color_hex } from '../utils/colorAgent';
 import { useAuth0 } from '@auth0/auth0-react';
 
 const LOCAL_STORAGE_KEY = 'NTU_CourseNeo_Course_Table_Key';
 
 function CourseInfoRow(props) {
-    const [addingCourse, setAddingCourse] = useState(false);
-    const userInfo = useSelector(state => state.user);
     const dispatch = useDispatch();
+    const userInfo = useSelector(state => state.user);
+
+    const [addingCourse, setAddingCourse] = useState(false);
+    const [addingFavoriteCourse, setAddingFavoriteCourse] = useState(false);
+    
     const toast = useToast();
     const {user, isLoading} = useAuth0();
 
@@ -108,6 +111,56 @@ function CourseInfoRow(props) {
         }
     };
 
+    const handleAddFavorite = async (course_id) => {
+        if (!isLoading){
+            if (user){
+                setAddingFavoriteCourse(true);
+                const favorite_list = [...userInfo.db.favorites];
+                let new_favorite_list;
+                let op_name;
+                if (favorite_list.includes(course_id)){
+                    // remove course from favorite list
+                    new_favorite_list = favorite_list.filter(id => id!==course_id);
+                    op_name = "刪除";
+                } else {
+                    // add course to favorite list
+                    new_favorite_list = [...favorite_list, course_id];
+                    op_name = "新增";
+                }
+                // API call
+                try {
+                    await dispatch(addFavoriteCourse(new_favorite_list, userInfo.db._id));
+                    toast({
+                        title: `${op_name}最愛課程成功`,
+                        //description: `請稍後再試`,
+                        status: 'success',
+                        duration: 3000,
+                        isClosable: true
+                    });
+                    setAddingFavoriteCourse(false);
+                } catch (e){
+                    // toast error
+                    toast({
+                        title: `${op_name}最愛課程失敗`,
+                        description: `請稍後再試`,
+                        status: 'error',
+                        duration: 3000,
+                        isClosable: true
+                    });
+                    setAddingFavoriteCourse(false);
+                }
+            } else {
+                toast({
+                    title: `請先登入`,
+                    // description: `請先登入`,
+                    status: 'error',
+                    duration: 3000,
+                    isClosable: true
+                });
+            }
+        }
+    }
+
     const renderDeptBadge = (course) => {
         if(course.department.length > 1){
             let dept_str = course.department.join(", ");
@@ -151,6 +204,11 @@ function CourseInfoRow(props) {
                         }
                     </Flex>
                 </AccordionButton>
+                <Button size="sm" ml="20px" variant={props.isfavorite? "solid":"outline"} colorScheme={"red"} onClick={() => handleAddFavorite(props.courseInfo._id)} isLoading={addingFavoriteCourse}>
+                    <Box>
+                        <FaHeart/>
+                    </Box>
+                </Button>
                 <Button size="sm" ml="20px" colorScheme={props.selected? "red":"blue"} onClick={() => handleButtonClick(props.courseInfo)} isLoading={addingCourse}>
                     <Box transform={props.selected ? "rotate(45deg)":""} transition="all ease-in-out 200ms">
                         <FaPlus />
