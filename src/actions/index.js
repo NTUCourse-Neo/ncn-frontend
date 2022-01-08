@@ -190,4 +190,29 @@ const addFavoriteCourse = (new_favorite_list, user_id) => async (dispatch)=>{
     }
 };
 
-export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, createCourseTable, linkCoursetableToUser, fetchCourseTable, patchCourseTable, fetchUserById, registerNewUser, logOut, logIn, updateCourseTable, addFavoriteCourse};
+const deleteUserProfile = (user_id) => async (dispatch)=>{
+    try {
+        await instance.delete(`/users/${user_id}/profile`);
+    } catch(e) {
+        if (e.response){
+            console.log('ERROR MESSAGE: ',e.response.data.message);
+            console.log('ERROR STATUS CODE: ',e.response.status);
+        }
+        throw new Error("Error in deleteUserProfile: "+e);
+    }
+}
+
+const deleteUserAccount = (user_id) => async (dispatch)=>{
+    try {
+        await instance.delete(`/users/${user_id}/account`);
+        dispatch({type: LOG_OUT_SUCCESS});
+    } catch(e) {
+        if (e.response){
+            console.log('ERROR MESSAGE: ',e.response.data.message);
+            console.log('ERROR STATUS CODE: ',e.response.status);
+        }
+        throw new Error("Error in deleteUserProfile: "+e);
+    }
+}
+
+export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, createCourseTable, linkCoursetableToUser, fetchCourseTable, patchCourseTable, fetchUserById, registerNewUser, logOut, logIn, updateCourseTable, addFavoriteCourse, deleteUserProfile, deleteUserAccount};

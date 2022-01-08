@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from 'react';
+import { React, useState, useEffect, useRef } from 'react';
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import {
     Box,
@@ -13,32 +13,50 @@ import {
     Select,
     Icon,
     Stack,
-    HStack
-
+    HStack,
+    AlertDialog,
+    AlertDialogBody,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogContent,
+    AlertDialogOverlay,
+    Alert,
+    AlertIcon
 } from '@chakra-ui/react';
 import LoadingOverlay from 'react-loading-overlay';
 import { HashLoader } from 'react-spinners';
 import { fetchUserById, logIn } from '../actions/';
 import { useDispatch, useSelector } from 'react-redux';
-import { FaFacebook, FaGithub, FaGoogle } from 'react-icons/fa';
+import { FaFacebook, FaGithub, FaGoogle, FaExclamationTriangle } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { deleteUserAccount, deleteUserProfile, registerNewUser } from '../actions/';
 
 function UserInfoContainer(props) {
+  const navigate = useNavigate();
   const toast = useToast();
   const dispatch = useDispatch();
   const userInfo = useSelector(state => state.user);
  
-  const { user, isLoading }  = useAuth0();
+  const { user, isLoading, logout }  = useAuth0();
   const userLoading = isLoading || !userInfo;
 
   // states for updating userInfo 
   const [name, setName] = useState(null);
   const [studentId, setStudentId] = useState(null);
 
+  // alert dialog states
+  const cancelRef = useRef();
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [ deleteMode, setDeleteMode] = useState(null);
+  const [ confirm, setConfirm ] = useState('');
+  const [ isDeleting, setIsDeleting ] = useState(false);
+
   // useEffect(()=>{
   //   console.log('name: ', name);
   //   console.log('studentId: ', studentId);
   // },[name, studentId]);
 
+  // TODO
   const generateUpdateObject = () => {
     let updateObject = {};
     if (name!==null && name!==userInfo.db.name){
@@ -47,11 +65,11 @@ function UserInfoContainer(props) {
     if (studentId!==null && studentId!==userInfo.db.student_id){
       updateObject.student_id = studentId;
     }
-    // todo
     console.log('updateObject: ', updateObject);
     return updateObject;
   }
 
+  // TODO
   const updateUserInfo = async () => {
     const updateObject = generateUpdateObject();
     try {
@@ -60,7 +78,7 @@ function UserInfoContainer(props) {
       // use toast
     }
   }
-  
+
   useEffect(() => {
     const fetchUserInfo = async () => {
       if(!isLoading && user) {
@@ -82,6 +100,98 @@ function UserInfoContainer(props) {
 
     fetchUserInfo();
   }, [user]);
+
+  const clearUserProfile = async () => {
+    try {
+      await dispatch(deleteUserProfile(userInfo.db._id));
+      await dispatch(registerNewUser(user.email))
+    } catch (e) {
+      toast({
+        title: '刪除用戶資料失敗.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      })
+    }
+  }
+
+  const clearUserAccount = async () => {
+    try {
+      await dispatch(deleteUserAccount(userInfo.db._id));
+    } catch (e) {
+      toast({
+        title: '刪除用戶帳號失敗.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      })
+    }
+  }
+  
+
+  const renderAlertDialog = () => {
+    //console.log('deleteMode: ', deleteMode);
+
+    const onClose = () => {
+      setIsAlertOpen(false);
+      setDeleteMode(null);
+      setConfirm('');
+    }
+
+    const onDelete = async () => {
+      // do API calling...
+      setIsDeleting(true);
+      if (deleteMode==='User Profile'){
+        await clearUserProfile();
+        onClose();
+      }
+      else if (deleteMode==='User Account'){
+        await clearUserAccount();
+        onClose();
+        logout();
+      } else {
+        onClose();
+      }
+      setIsDeleting(false);
+    }
+
+    const confirmMessage = `The quick brown fox jumps over the lazy dog`;
+
+    return (
+      <AlertDialog
+      isOpen={isAlertOpen}
+      leastDestructiveRef={cancelRef}
+      onClose={onClose}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize='lg' fontWeight='bold'>
+              Delete {deleteMode}
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              <Alert status='warning' >
+                <AlertIcon boxSize='24px' as={FaExclamationTriangle}/>
+                Are you sure? You can't undo this action afterwards.
+              </Alert>
+              <Divider mt='3'/>
+              <Text fontSize='md' mt='2' color='gray.500' fontWeight='bold'>Please type "{confirmMessage}" to confirm.</Text>
+              <Input mt='2' variant='filled' placeholder='' onChange={(e)=>{setConfirm(e.currentTarget.value)}} />
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={onClose}>
+                Cancel
+              </Button>
+              <Button colorScheme='red' onClick={onDelete} ml={3} disabled={confirm!==confirmMessage} isLoading={isDeleting}>
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+    )
+  }
 
   const renderConnectedSocialAccounts = () => {
     // console.log("userInfo: ", userInfo.auth0);
@@ -181,13 +291,14 @@ function UserInfoContainer(props) {
           <Divider mt="1" mb="4"/>
           <Flex flexDirection="column" justifyContent="start" alignItems="start" p="2">
             <HStack spacing={8}>
-              <Button colorScheme="red" variant="outline" size="md" my="4">清除個人資料</Button>
+              <Button colorScheme="red" variant="outline" size="md" my="4" onClick={()=>{setIsAlertOpen(true); setDeleteMode('User Profile')}}>清除個人資料</Button>
               <Text color="red.600" fontWeight="500">將會刪除您的使用者個人資料，包含課表、最愛課程與修課紀錄等，且資料無法回復。<br />您的帳號將不會被刪除，未來不需重新註冊即可繼續使用此服務。</Text>
             </HStack>
             <HStack spacing={8} justify="start">
-              <Button colorScheme="red" variant="outline" size="md" my="4">徹底刪除帳號</Button>
+              <Button colorScheme="red" variant="outline" size="md" my="4" onClick={()=>{setIsAlertOpen(true); setDeleteMode('User Account')}}>徹底刪除帳號</Button>
               <Text color="red.600" fontWeight="500">注意：此動作將會徹底刪除您的帳號與個人資料，且資料無法回復。<br/>未來如需使用此服務需重新註冊。</Text>
             </HStack>
+            {renderAlertDialog()}
           </Flex>
         </Flex>
       </Flex>
