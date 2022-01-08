@@ -13,9 +13,12 @@ import SideCourseTableContainer from './containers/SideCourseTableContainer';
 import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
 import dotenv from 'dotenv-defaults';
 import UserInfoContainer from './containers/UserInfoContainer';
+import ErrorContainer from './containers/ErrorContainer';
+import { useParams } from 'react-router-dom';
 dotenv.config();
 
 function App(props) {
+  let { code } = useParams();
 
   const content = (route)=>{
     switch(route){
@@ -25,6 +28,8 @@ function App(props) {
         return <CourseResultViewContainer />
       case "user/info":
         return <UserInfoContainer />
+      case "error":
+        return <ErrorContainer code={code}/>
       default:
         return <HomeViewContainer />
     }
