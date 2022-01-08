@@ -12,6 +12,8 @@ import {
     useToast,
     Select,
     Icon,
+    Stack,
+    HStack
 
 } from '@chakra-ui/react';
 import LoadingOverlay from 'react-loading-overlay';
@@ -153,8 +155,8 @@ function UserInfoContainer(props) {
           <Flex w="100%" flexDirection="column" justifyContent="start" alignItems="start" px="4">
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">學號</Text>
               <Flex w="50%" alignItems="center">
-                <Input w="50%" fontSize="lg" fontWeight="500" color="gray.600" defaultValue={userInfo.db.student_id} onChange={(e)=>{setStudentId(e.currentTarget.value)}}/>
-                <Button colorScheme="teal" mx="4">傳送驗證碼</Button>
+                <Input w="50%" fontSize="lg" fontWeight="500" color="gray.600" defaultValue={userInfo.db.student_id} onChange={(e)=>{setStudentId(e.currentTarget.value)}} disabled={userInfo.db.student_id !== ""}/>
+                <Button colorScheme="teal" mx="4" disabled={userInfo.db.student_id !== ""}>{userInfo.db.student_id === "" ? "傳送驗證碼":"已綁定臺大學號"}</Button>
               </Flex>
               <Spacer my="1" />
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">主修</Text>
@@ -170,13 +172,23 @@ function UserInfoContainer(props) {
             </Flex>
           <Text fontSize="2xl" fontWeight="700" color="gray.600" mt="5">課程</Text>
           <Divider mt="1" mb="4"/>
-          <Text fontSize="2xl" fontWeight="700" color="red.600" mt="5">危險區域</Text>
+          <Button colorScheme="teal" size="md" w="20%" my="4" variant="outline">匯入修課紀錄</Button>
           <Divider mt="1" mb="4"/>
-          <Flex flexDirection="column" justifyContent="start" alignItems="center" p="2">
-            <Button colorScheme="red" variant="outline" size="md" w="100%" my="4">清除個人資料</Button>
-            <Button colorScheme="red" variant="outline" size="md" w="100%" my="4">徹底刪除帳號</Button>
+          <Button colorScheme="teal" size="md" w="20%" my="4" onClick={()=>{updateUserInfo()}}>儲存</Button>
+        </Flex>
+        <Flex w="100%" h="100%" mt="8" flexDirection="column" justifyContent="start" alignItems="start" p="4" borderRadius="lg" border='1px' borderColor='red.600'>
+          <Text fontSize="2xl" fontWeight="700" color="red.600" mt="2">危險區域</Text>
+          <Divider mt="1" mb="4"/>
+          <Flex flexDirection="column" justifyContent="start" alignItems="start" p="2">
+            <HStack spacing={8}>
+              <Button colorScheme="red" variant="outline" size="md" my="4">清除個人資料</Button>
+              <Text color="red.600" fontWeight="500">將會刪除您的使用者個人資料，包含課表、最愛課程與修課紀錄等，且資料無法回復。<br />您的帳號將不會被刪除，未來不需重新註冊即可繼續使用此服務。</Text>
+            </HStack>
+            <HStack spacing={8} justify="start">
+              <Button colorScheme="red" variant="outline" size="md" my="4">徹底刪除帳號</Button>
+              <Text color="red.600" fontWeight="500">注意：此動作將會徹底刪除您的帳號與個人資料，且資料無法回復。<br/>未來如需使用此服務需重新註冊。</Text>
+            </HStack>
           </Flex>
-          < Button colorScheme="teal" size="md" w="100%" my="4" onClick={()=>{updateUserInfo()}}>Save</Button>
         </Flex>
       </Flex>
     </Box>
