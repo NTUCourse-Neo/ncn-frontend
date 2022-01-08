@@ -163,7 +163,8 @@ const fetchUserById = (user_id) => async (dispatch)=>{
         // user contains user in db & auth0, either null (not found) or an object.
         return user
     } catch (e) {
-        throw new Error("Error in fetchUserById: "+e);
+        console.log(Error("fetchUserById "+e));
+        throw e.response.status;
     }
 }
 
