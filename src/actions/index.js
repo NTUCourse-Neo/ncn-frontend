@@ -120,12 +120,23 @@ const fetchCourseTable = (course_table_id) => async (dispatch)=>{
 }
 
 const patchCourseTable = (course_table_id, course_table_name, user_id, expire_ts, courses) => async (dispatch)=>{
+    // filter out "" in courses
+    const new_courses = courses.filter(course=>course!=="");
     try {
-        const {data: {course_table}} = await instance.patch(`/course_tables/${course_table_id}`, {name: course_table_name, user_id: user_id, expire_ts: expire_ts, courses: courses});
+        const {data: {course_table}} = await instance.patch(`/course_tables/${course_table_id}`, {name: course_table_name, user_id: user_id, expire_ts: expire_ts, courses: new_courses});
         dispatch({type: UPDATE_COURSE_TABLE, payload: course_table});
         return course_table
     }
     catch (e){
+        // need to let frontend handle error, so change to return null
+        if (e.response) {
+            if (e.response.status===403 && e.response.data.message==="Course table is expired") {
+                // expired course_table
+                // if fetch expired course_table, return null and handle it by frontend logic
+                dispatch({type: UPDATE_COURSE_TABLE, payload: null});
+                return null
+            }
+        }
         throw new Error("Error in patchCourseTable: "+e);
     }
 }

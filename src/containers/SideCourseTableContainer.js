@@ -32,7 +32,7 @@ import {
     FaPlusSquare
 } from 'react-icons/fa';
 import CourseTableContainer from './CourseTableContainer';
-import { fetchCourseTableCoursesByIds, createCourseTable, fetchCourseTable } from '../actions/index';
+import { fetchCourseTableCoursesByIds, createCourseTable, fetchCourseTable, patchCourseTable } from '../actions/index';
 import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 // TODO: add auth0 function, get user info first and load course_table_id from user instead of localStorage
@@ -54,7 +54,6 @@ function SideCourseTableContainer(props) {
     const [hoveredCourseTime, setHoveredCourseTime]  = useState({}); // courseTime is a dictionary of courseIds and their corresponding time in time table
 
     const [loading, setLoading] = useState(false);
-    const [courseTableName, setCourseTableName] = useState("我的課表");
     const [expired, setExpired] = useState(false);
 
     const parseCourseDateTime = (course, course_time_tmp) => {
@@ -169,9 +168,39 @@ function SideCourseTableContainer(props) {
         )
       })
     const Form = ({ firstFieldRef, onClose, onSet }) => {
-        const handleSave = () => {
+        const handleSave = async () => {
           onClose();
-          setCourseTableName(firstFieldRef.current.value);
+
+          const new_table_name = firstFieldRef.current.value
+          try {
+            const res_table = await dispatch(patchCourseTable(courseTable._id, new_table_name, courseTable.user_id, courseTable.expire_ts, courseTable.courses));
+            if (res_table){
+              toast({
+                title: `變更課表名稱成功`,
+                description: `課表名稱已更新為 ${new_table_name}`,
+                status: 'success',
+                duration: 3000,
+                isClosable: true
+            });
+            } else {
+              toast({
+                title: `變更課表名稱失敗`,
+                description: `課表已過期`,
+                status: 'error',
+                duration: 3000,
+                isClosable: true
+              });
+              setExpired(true)
+            }
+          } catch (e){
+            toast({
+              title: `變更課表名稱失敗`,
+              description: `請聯繫客服(?)`,
+              status: 'error',
+              duration: 3000,
+              isClosable: true
+          });
+          }
         }
         return (
             <Stack spacing={4}>
@@ -179,7 +208,7 @@ function SideCourseTableContainer(props) {
                 label='課表名稱'
                 id='table_name'
                 ref={firstFieldRef}
-                defaultValue={courseTableName}
+                defaultValue={courseTable.name}
                 onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                         handleSave();
@@ -217,43 +246,46 @@ function SideCourseTableContainer(props) {
         );
     };
     const renderSideCourseTableContent = () => {
-      if(courseTable===null){
+      if(courseTable===null || expired===true){
         return(
-          <Flex flexDirection="column" justifyContent="center" alignItems="center" h="100%" w="100%">
-            <Flex flexDirection="row" justifyContent="center" alignItems="center">
-              <FaRegHandPointUp size="3vh" style={{color:"gray"}}/>
-              <FaRegMeh size="3vh" style={{color:"gray"}}/>
-              <FaRegHandPointDown size="3vh" style={{color:"gray"}}/>
-            </Flex>
-            <Text fontSize="2xl" fontWeight="bold" color="gray">{expired?"您的課表已過期":"尚無課表"}</Text>
-            <Button colorScheme="teal" leftIcon={<FaPlusSquare />} onClick={ async()=>{
-                // generate a new uuid and store into local storage
-                let new_uuid = uuidv4();
-                console.log("New UUID is generated: ",new_uuid);
+          <>
+            <Spacer mx="20vw"/>
+            <Flex flexDirection="column" justifyContent="center" alignItems="center" h="100%">
+              <Flex flexDirection="row" justifyContent="center" alignItems="center">
+                <FaRegHandPointUp size="3vh" style={{color:"gray"}}/>
+                <FaRegMeh size="3vh" style={{color:"gray"}}/>
+                <FaRegHandPointDown size="3vh" style={{color:"gray"}}/>
+              </Flex>
+              <Text fontSize="2xl" fontWeight="bold" color="gray">{expired?"您的課表已過期":"尚無課表"}</Text>
+              <Button colorScheme="teal" leftIcon={<FaPlusSquare />} onClick={ async()=>{
+                  // generate a new uuid and store into local storage
+                  let new_uuid = uuidv4();
+                  console.log("New UUID is generated: ",new_uuid);
 
-                // TODO: finish catch error
-                try {
-                  const new_course_table = await dispatch(createCourseTable(new_uuid, "我的課表", null, "1101"));
-                  localStorage.setItem(LOCAL_STORAGE_KEY, new_course_table._id);
-                } catch (error) {
-                    toast({
-                      title: `新增課表失敗`,
-                      description: `請聯繫客服(?)`,
-                      status: 'error',
-                      duration: 3000,
-                      isClosable: true
-                  });
+                  // TODO: finish catch error
+                  try {
+                    const new_course_table = await dispatch(createCourseTable(new_uuid, "我的課表", null, "1101"));
+                    localStorage.setItem(LOCAL_STORAGE_KEY, new_course_table._id);
+                  } catch (error) {
+                      toast({
+                        title: `新增課表失敗`,
+                        description: `請聯繫客服(?)`,
+                        status: 'error',
+                        duration: 3000,
+                        isClosable: true
+                    });
+                  }
                 }
-              }
-            }>新增課表</Button>
-          </Flex>
+              }>新增課表</Button>
+            </Flex>
+          </>
         );
       }
       return(
         <Box overflow="auto" w="100%">
           <Flex flexDirection="column" m="4" ml="0">
             <Flex flexDirection="row" justifyContent="space-between" alignItems="center" mb="4" position="fixed" zIndex={100}>
-                <Text fontWeight="700" fontSize="3xl" color="gray.600" mr="4">{courseTableName}</Text>
+                <Text fontWeight="700" fontSize="3xl" color="gray.600" mr="4">{courseTable.name}</Text>
                 {renderEditName()}
             </Flex>
             <Flex flexDirection="row" justifyContent="center" alignItems="center" my="5vh" >
