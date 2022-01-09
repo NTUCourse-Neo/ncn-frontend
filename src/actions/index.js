@@ -190,9 +190,9 @@ const registerNewUser = (token, email) => async (dispatch)=>{
     }
 }
 
-const addFavoriteCourse = (token, new_favorite_list, user_id) => async (dispatch)=>{
+const addFavoriteCourse = (token, new_favorite_list) => async (dispatch)=>{
     try{
-        const {data: { user }} = await instance.patch(`/users/${user_id}`, {user: {favorites: new_favorite_list}},{
+        const {data: { user }} = await instance.patch(`/users/`, {user: {favorites: new_favorite_list}},{
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -207,9 +207,9 @@ const addFavoriteCourse = (token, new_favorite_list, user_id) => async (dispatch
     }
 };
 
-const deleteUserProfile = (token, user_id) => async (dispatch)=>{
+const deleteUserProfile = (token) => async (dispatch)=>{
     try {
-        await instance.delete(`/users/${user_id}/profile`, {
+        await instance.delete(`/users/profile`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -223,9 +223,9 @@ const deleteUserProfile = (token, user_id) => async (dispatch)=>{
     }
 }
 
-const deleteUserAccount = (token, user_id) => async (dispatch)=>{
+const deleteUserAccount = (token) => async (dispatch)=>{
     try {
-        await instance.delete(`/users/${user_id}/account`, {
+        await instance.delete(`/users/account`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
