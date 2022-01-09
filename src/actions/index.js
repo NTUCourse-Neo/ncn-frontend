@@ -10,6 +10,7 @@ const updateCourseTable = (course_table) => ({type: UPDATE_COURSE_TABLE, payload
 const logOut = () => ({type: LOG_OUT_SUCCESS});
 const logIn = (user_data) => ({type: LOG_IN_SUCCESS, payload: user_data});
 
+
 // data = 
 // when filter_name == 'department', arr of dept_code (4-digits),
 // when filter_name == 'time', 2D array, each subarray have length == 15
@@ -102,9 +103,13 @@ const createCourseTable = (course_table_id, course_table_name, user_id, semester
     }
 }
 
-const linkCoursetableToUser = (course_table_id, user_id) => async (dispatch)=>{
+const linkCoursetableToUser = (token, course_table_id, user_id) => async (dispatch)=>{
     try{
-        const {data: { user }} = await instance.post(`/users/${user_id}/course_table`, {course_table_id: course_table_id});
+        const {data: { user }} = await instance.post(`/users/${user_id}/course_table`, {course_table_id: course_table_id}, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
         dispatch({type: UPDATE_USER, payload: user});
     }catch(e){
         if (e.response){
@@ -157,9 +162,13 @@ const patchCourseTable = (course_table_id, course_table_name, user_id, expire_ts
     }
 }
 
-const fetchUserById = (user_id) => async (dispatch)=>{
+const fetchUserById = (token, user_id) => async (dispatch)=>{
     try {
-        const {data: {user}} = await instance.get(`/users/${user_id}`);
+        const {data: {user}} = await instance.get(`/users/${user_id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
         // user contains user in db & auth0, either null (not found) or an object.
         return user
     } catch (e) {
@@ -167,9 +176,13 @@ const fetchUserById = (user_id) => async (dispatch)=>{
     }
 }
 
-const registerNewUser = (email) => async (dispatch)=>{
+const registerNewUser = (token, email) => async (dispatch)=>{
     try {
-        const {data: {user}} = await instance.post(`/users/`, {user: {email: email}})
+        const {data: {user}} = await instance.post(`/users/`, {user: {email: email}}, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
         // either null (not found) or an object.
         return user
     } catch (e) {
@@ -177,9 +190,13 @@ const registerNewUser = (email) => async (dispatch)=>{
     }
 }
 
-const addFavoriteCourse = (new_favorite_list, user_id) => async (dispatch)=>{
+const addFavoriteCourse = (token, new_favorite_list, user_id) => async (dispatch)=>{
     try{
-        const {data: { user }} = await instance.patch(`/users/${user_id}`, {user: {favorites: new_favorite_list}});
+        const {data: { user }} = await instance.patch(`/users/${user_id}`, {user: {favorites: new_favorite_list}},{
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
         dispatch({type: UPDATE_USER, payload: user});
     }catch(e){
         if (e.response){
@@ -190,9 +207,13 @@ const addFavoriteCourse = (new_favorite_list, user_id) => async (dispatch)=>{
     }
 };
 
-const deleteUserProfile = (user_id) => async (dispatch)=>{
+const deleteUserProfile = (token, user_id) => async (dispatch)=>{
     try {
-        await instance.delete(`/users/${user_id}/profile`);
+        await instance.delete(`/users/${user_id}/profile`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
     } catch(e) {
         if (e.response){
             console.log('ERROR MESSAGE: ',e.response.data.message);
@@ -202,9 +223,13 @@ const deleteUserProfile = (user_id) => async (dispatch)=>{
     }
 }
 
-const deleteUserAccount = (user_id) => async (dispatch)=>{
+const deleteUserAccount = (token, user_id) => async (dispatch)=>{
     try {
-        await instance.delete(`/users/${user_id}/account`);
+        await instance.delete(`/users/${user_id}/account`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
         dispatch({type: LOG_OUT_SUCCESS});
     } catch(e) {
         if (e.response){

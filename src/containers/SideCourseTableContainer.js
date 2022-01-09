@@ -41,7 +41,7 @@ import LoadingOverlay from 'react-loading-overlay';
 const LOCAL_STORAGE_KEY = 'NTU_CourseNeo_Course_Table_Key';
 
 function SideCourseTableContainer(props) {
-    const {user, isLoading} = useAuth0();
+    const {user, isLoading, getAccessTokenSilently} = useAuth0();
     const toast = useToast();
     const dispatch = useDispatch();
     const courseTable = useSelector(state => state.course_table);
@@ -117,7 +117,8 @@ function SideCourseTableContainer(props) {
       const fetchCourseTableFromUser = async (callback) => {
         if(!isLoading && user) {
           try {
-            const user_data = await dispatch(fetchUserById(user.sub));
+            const token = await getAccessTokenSilently();
+            const user_data = await dispatch(fetchUserById(token, user.sub));
             await dispatch(logIn(user_data));
             const course_tables = user_data.db.course_tables;
             if (course_tables.length === 0) {
@@ -206,7 +207,8 @@ function SideCourseTableContainer(props) {
           try {
             const new_course_table = await dispatch(createCourseTable(new_uuid, "我的課表", userInfo.db._id, "1101"));
             console.log("New UUID is generated: ",new_uuid);
-            await dispatch(linkCoursetableToUser(new_uuid, userInfo.db._id));
+            const token = await getAccessTokenSilently();
+            await dispatch(linkCoursetableToUser(token, new_uuid, userInfo.db._id));
           } catch (e) {
             toast({
               title: `新增課表失敗`,

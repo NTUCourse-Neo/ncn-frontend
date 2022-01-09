@@ -30,7 +30,7 @@ import { useDispatch, useSelector } from 'react-redux';
 function HomeViewContainer(props) {
   const toast = useToast();
   const navigate = useNavigate();
-  const { user, isLoading, isAuthenticated } = useAuth0();
+  const { user, isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const dispatch = useDispatch();
 
@@ -45,7 +45,8 @@ function HomeViewContainer(props) {
   useEffect(() => {
     const registerNewUserToDB = async () => {
       if (!isLoading && isAuthenticated) {
-        const user_data = await dispatch(fetchUserById(user.sub));
+        const token = await getAccessTokenSilently();
+        const user_data = await dispatch(fetchUserById(token, user.sub));
         if(!user_data){
           // if user is null (not found in db)
           // do register in background and display a modal.
@@ -54,7 +55,8 @@ function HomeViewContainer(props) {
             onOpen();
           }
           try{
-            await dispatch(registerNewUser(user.email));
+            const token = await getAccessTokenSilently();
+            await dispatch(registerNewUser(token, user.email));
             setIsRegistering(false);
           } catch (e) {
             toast({
@@ -67,7 +69,7 @@ function HomeViewContainer(props) {
             // setIsRegistering(false)? or other actions?
           }
           // Re-fetch user data from server
-          let new_user_data = await dispatch(fetchUserById(user.sub));
+          let new_user_data = await dispatch(fetchUserById(token, user.sub));
           dispatch(logIn(new_user_data));
         } else {
           dispatch(logIn(user_data))

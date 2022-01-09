@@ -36,7 +36,7 @@ function CourseInfoRow(props) {
     const [addingFavoriteCourse, setAddingFavoriteCourse] = useState(false);
     
     const toast = useToast();
-    const {user, isLoading} = useAuth0();
+    const {user, isLoading, getAccessTokenSilently} = useAuth0();
 
     const handleButtonClick = async (course)=>{
         if (!isLoading){
@@ -129,7 +129,8 @@ function CourseInfoRow(props) {
                 }
                 // API call
                 try {
-                    await dispatch(addFavoriteCourse(new_favorite_list, userInfo.db._id));
+                    const token = await getAccessTokenSilently();
+                    await dispatch(addFavoriteCourse(token, new_favorite_list, userInfo.db._id));
                     toast({
                         title: `${op_name}最愛課程成功`,
                         //description: `請稍後再試`,

@@ -37,7 +37,7 @@ function UserInfoContainer(props) {
   const dispatch = useDispatch();
   const userInfo = useSelector(state => state.user);
  
-  const { user, isLoading, logout }  = useAuth0();
+  const { user, isLoading, logout, getAccessTokenSilently }  = useAuth0();
   const userLoading = isLoading || !userInfo;
 
   // states for updating userInfo 
@@ -83,7 +83,8 @@ function UserInfoContainer(props) {
     const fetchUserInfo = async () => {
       if(!isLoading && user) {
         try {
-          const user_data = await dispatch(fetchUserById(user.sub));
+          const token = await getAccessTokenSilently();
+          const user_data = await dispatch(fetchUserById(token, user.sub));
           await dispatch(logIn(user_data));
         } catch (e) {
           toast({
@@ -103,8 +104,9 @@ function UserInfoContainer(props) {
 
   const clearUserProfile = async () => {
     try {
-      await dispatch(deleteUserProfile(userInfo.db._id));
-      await dispatch(registerNewUser(user.email))
+      const token = await getAccessTokenSilently();
+      await dispatch(deleteUserProfile(token, userInfo.db._id));
+      await dispatch(registerNewUser(token, user.email))
     } catch (e) {
       toast({
         title: '刪除用戶資料失敗.',
@@ -117,7 +119,8 @@ function UserInfoContainer(props) {
 
   const clearUserAccount = async () => {
     try {
-      await dispatch(deleteUserAccount(userInfo.db._id));
+      const token = await getAccessTokenSilently();
+      await dispatch(deleteUserAccount(token, userInfo.db._id));
     } catch (e) {
       toast({
         title: '刪除用戶帳號失敗.',
