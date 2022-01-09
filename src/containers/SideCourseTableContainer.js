@@ -247,10 +247,9 @@ function SideCourseTableContainer(props) {
     };
     const renderSideCourseTableContent = () => {
       if(courseTable===null || expired===true){
+        console.log("courseTable is null");
         return(
-          <>
-            <Spacer mx="20vw"/>
-            <Flex flexDirection="column" justifyContent="center" alignItems="center" h="100%">
+            <Flex flexDirection="column" justifyContent="center" alignItems="center" h="100%" w="100%">
               <Flex flexDirection="row" justifyContent="center" alignItems="center">
                 <FaRegHandPointUp size="3vh" style={{color:"gray"}}/>
                 <FaRegMeh size="3vh" style={{color:"gray"}}/>
@@ -278,7 +277,6 @@ function SideCourseTableContainer(props) {
                 }
               }>新增課表</Button>
             </Flex>
-          </>
         );
       }
       return(
