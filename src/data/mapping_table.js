@@ -106,7 +106,7 @@ const info_view_map = {
                 "code": "基",
                 "full_name": "基本能力課程"
             },
-            "millitary": {
+            "military": {
                 "id": "millitary",
                 "code": "軍",
                 "full_name": "軍訓課程"
