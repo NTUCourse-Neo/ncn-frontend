@@ -264,13 +264,11 @@ function SideCourseTableContainer(props) {
       );
     };
     return(
-      <Flex h="100%">
+      <Flex h="100%" w="100%">
         <Flex justifyContent="center" alignItems="center">
           <IconButton h="100%" icon={<FaAngleRight size={24}/>} onClick={()=>{props.setIsOpen(!props.isOpen)}} size="sm" variant="ghost"/>
         </Flex>
-        <LoadingOverlay active={loading} spinner styles={{wrapper: {overflow: "auto"}, overlay: (base)=>({...base, borderRadius:"10px"})}}>
         {renderSideCourseTableContent()}
-        </LoadingOverlay>
       </Flex>
     );
 }

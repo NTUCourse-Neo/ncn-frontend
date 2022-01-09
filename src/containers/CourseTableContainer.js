@@ -12,6 +12,7 @@ import {
   Center,
   Box,
   Text,
+  Skeleton,
 } from '@chakra-ui/react'
 import { useState, useEffect } from 'react';
 import CourseTableCard from '../components/CourseTableCard';
@@ -35,7 +36,7 @@ function CourseTableContainer(props) {
   };
   const renderTable = () => {
     return(
-        <Table variant='simple' size='md' colorScheme='blue' borderRadius="lg">
+        <Table variant='simple' colorScheme='blue' borderRadius="lg" w="100%">
         <Thead>
           <Tr>
             {
@@ -54,6 +55,15 @@ function CourseTableContainer(props) {
                 <Tr key={i+"_Tr"}>
                   {
                     days.map((day, j) => {
+                      if(props.loading){
+                        return(
+                          <Td>
+                            <Skeleton borderRadius="lg" speed={1+(i+j)*0.1}>
+                              <Box h="12"/>
+                            </Skeleton>
+                          </Td>
+                        );
+                      }
                       if (props.courseTimes.time_map && day in props.courseTimes.time_map && interval in props.courseTimes.time_map[day]){
                         if(props.hoveredCourse && props.hoveredCourseTime && day in props.hoveredCourseTime.time_map && interval in props.hoveredCourseTime.time_map[day]){
                           return(

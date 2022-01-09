@@ -106,11 +106,11 @@ function CourseTableCard(props){
     <>
         <Popover onOpen={onOpen} onClose={onClose} isOpen={isOpen} closeOnBlur={false} placement="left">
             <PopoverTrigger>
-                <Box>
+                <Flex w="20" justifyContent="center" alignItems="center" flexDirection="column">
                     {courseOrder.map(courseId => {
                         return renderCourseBox(courseId, props.courseData);
                     })}
-                </Box>
+                </Flex>
             </PopoverTrigger>
                 <PopoverContent>
                     <PopoverArrow />
