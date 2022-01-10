@@ -254,7 +254,7 @@ function CourseResultViewContainer() {
                                                         <Flex w="100%" flexDirection="row" alignItems="center" flexWrap="wrap">
                                                             {
                                                                 available_tags.map((tag, index) => {
-                                                                    console.log(displayTags)
+                                                                    // console.log(displayTags)
                                                                     const selected = displayTags.includes(tag);
                                                                     return(
                                                                         <Tag as="Button" m="2" ml="0" variant={selected ? "solid":"subtle"}

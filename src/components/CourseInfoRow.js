@@ -106,8 +106,6 @@ function CourseInfoRow(props) {
         );
     }
 
-    // TODO: later will implement tags checklist for user to customize which tags to show
-    const tags = ["required", "total_slot", "enroll_method", "area"];
     return(
         <AccordionItem bg={props.selected? hash_to_color_hex(props.courseInfo._id, 0.95):"gray.100"} borderRadius="md" transition="all ease-in-out 500ms">
             <Flex alignItems="center" justifyContent="start" flexDirection="row" w="100%" pr="2" pl="2" py="1">
