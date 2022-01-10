@@ -240,4 +240,13 @@ const deleteUserAccount = (token) => async (dispatch)=>{
     }
 }
 
-export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, createCourseTable, linkCoursetableToUser, fetchCourseTable, patchCourseTable, fetchUserById, registerNewUser, logOut, logIn, updateCourseTable, addFavoriteCourse, deleteUserProfile, deleteUserAccount};
+const verify_recaptcha = (token, captcha_token) => async (dispatch)=>{
+    const resp = await instance.post(`/recaptcha`, { captcha_token: captcha_token }, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return resp.data;
+}
+
+export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, createCourseTable, linkCoursetableToUser, fetchCourseTable, patchCourseTable, fetchUserById, registerNewUser, logOut, logIn, updateCourseTable, addFavoriteCourse, deleteUserProfile, deleteUserAccount, verify_recaptcha};

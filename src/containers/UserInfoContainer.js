@@ -29,8 +29,9 @@ import { fetchUserById, logIn } from '../actions/';
 import { useDispatch, useSelector } from 'react-redux';
 import { FaFacebook, FaGithub, FaGoogle, FaExclamationTriangle } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import { deleteUserAccount, deleteUserProfile, registerNewUser } from '../actions/';
+import { deleteUserAccount, deleteUserProfile, registerNewUser, verify_recaptcha } from '../actions/';
 import { dept_list } from '../data/department';
+import ReCAPTCHA from "react-google-recaptcha";
 
 function UserInfoContainer(props) {
   const navigate = useNavigate();
@@ -54,10 +55,34 @@ function UserInfoContainer(props) {
   const [ confirm, setConfirm ] = useState('');
   const [ isDeleting, setIsDeleting ] = useState(false);
 
+  const [allowSendOTP, setAllowSendOTP] = useState(false);
+
+  const recaptchaRef = useRef();
+
   // useEffect(()=>{
   //   console.log('name: ', name);
   //   console.log('studentId: ', studentId);
   // },[name, studentId]);
+
+  const recOnChange = async(value) => {
+    let resp
+    console.log('Captcha value:', value);
+    if(value){
+      try{
+        const token = await getAccessTokenSilently();
+        resp = await dispatch(verify_recaptcha(token, value));
+      }catch(err){
+        console.log(err);
+        recaptchaRef.current.reset();
+      }
+      if(resp.data.success){
+        setAllowSendOTP(true);
+      }else{
+        setAllowSendOTP(false);
+        recaptchaRef.current.reset();
+      }
+    }
+  };
 
   // TODO
   const generateUpdateObject = () => {
@@ -271,9 +296,12 @@ function UserInfoContainer(props) {
           <Divider mt="1" mb="4"/>
           <Flex w="100%" flexDirection="column" justifyContent="start" alignItems="start" px="4">
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">學號</Text>
-              <Flex w="50%" alignItems="center">
+              <Flex w="80%" alignItems="start" flexDirection="column">
                 <Input w="50%" fontSize="lg" fontWeight="500" color="gray.600" defaultValue={userInfo.db.student_id} onChange={(e)=>{setStudentId(e.currentTarget.value)}} disabled={userInfo.db.student_id !== ""}/>
-                <Button colorScheme="teal" mx="4" disabled={userInfo.db.student_id !== ""}>{userInfo.db.student_id === "" ? "傳送驗證碼":"已綁定臺大學號"}</Button>
+                <Flex w="100%" flexDirection="row" justifyContent="start" alignItems="center" mt="2">
+                  <ReCAPTCHA sitekey={process.env.REACT_APP_RECAPTCHA_CLIENT_KEY} onChange={recOnChange} ref={recaptchaRef}/>
+                  <Button colorScheme="teal" mx="4" disabled={userInfo.db.student_id !== "" || !allowSendOTP}>{userInfo.db.student_id === "" ? "傳送驗證碼":"已綁定臺大學號"}</Button>
+                </Flex>
               </Flex>
               <Spacer my="1" />
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">主修</Text>
