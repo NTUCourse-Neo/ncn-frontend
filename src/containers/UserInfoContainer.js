@@ -30,6 +30,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { FaFacebook, FaGithub, FaGoogle, FaExclamationTriangle } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { deleteUserAccount, deleteUserProfile, registerNewUser } from '../actions/';
+import { dept_list } from '../data/department';
 
 function UserInfoContainer(props) {
   const navigate = useNavigate();
@@ -43,6 +44,8 @@ function UserInfoContainer(props) {
   // states for updating userInfo 
   const [name, setName] = useState(null);
   const [studentId, setStudentId] = useState(null);
+  const [major, setMajor] = useState(null);
+  const [minor, setMinor] = useState(null);
 
   // alert dialog states
   const cancelRef = useRef();
@@ -65,6 +68,7 @@ function UserInfoContainer(props) {
     if (studentId!==null && studentId!==userInfo.db.student_id){
       updateObject.student_id = studentId;
     }
+    // TODO: major and minor
     console.log('updateObject: ', updateObject);
     return updateObject;
   }
@@ -274,12 +278,20 @@ function UserInfoContainer(props) {
               <Spacer my="1" />
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">主修</Text>
                 <Flex w="50%" alignItems="center">
-                  <Select w="50%" variant='filled' placeholder='主修學系' />
+                  <Select w="50%" variant='filled' placeholder='選擇主修學系' onChange={(e)=>{setMajor(e.currentTarget.value)}} defaultValue={userInfo.db.department.length>0?userInfo.db.department[0]:''}>
+                    {dept_list.map((dept) => {
+                      return (<option id={dept.code} value={dept.full_name}>{dept.full_name}</option>)
+                    })}
+                  </Select>
                   <Button variant="ghost" colorScheme="blue" mx="4">新增雙主修</Button>
                 </Flex>
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">輔系</Text>
                 <Flex w="50%" alignItems="center">
-                  <Select w="50%" variant='filled' placeholder='輔系' />
+                  <Select w="50%" variant='filled' placeholder='選擇輔系' onChange={(e)=>{setMinor(e.currentTarget.value)}} defaultValue={userInfo.db.minor}>
+                    {dept_list.map((dept) => {
+                        return (<option id={dept.code} value={dept.full_name}>{dept.full_name}</option>)
+                      })}
+                  </Select>
                   <Button variant="ghost" colorScheme="blue" mx="4">新增輔系</Button>
                 </Flex>
             </Flex>
