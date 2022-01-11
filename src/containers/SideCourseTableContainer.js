@@ -110,6 +110,7 @@ function SideCourseTableContainer(props) {
         const course_table = await dispatch(fetchCourseTable(uuid));
         if (course_table===null){
           setExpired(true);
+          setLoading(false);
         }
         callback();
       };
@@ -146,13 +147,12 @@ function SideCourseTableContainer(props) {
         }
         callback();
       };
-      
-      setLoading(true);
       // run after useAuth0 finish loading.
       console.log('isLoading: ', isLoading);
       if (!isLoading) {
         // user mode
         if (user) {
+          setLoading(true);
           fetchCourseTableFromUser(()=>{});
         }
         // guest mode
@@ -160,6 +160,7 @@ function SideCourseTableContainer(props) {
           const uuid = localStorage.getItem(LOCAL_STORAGE_KEY);
           // console.log("UUID in localStorage now: ",uuid);
           if (uuid){
+            setLoading(true);
             courseTableInit(uuid, ()=>{});
           }
         }
@@ -182,6 +183,9 @@ function SideCourseTableContainer(props) {
       if(courseTable){
         setLoading(true);
         fetchCoursesDataById(() => setLoading(false));
+      }
+      if(!localStorage.getItem(LOCAL_STORAGE_KEY)){
+        setLoading(false);
       }
     }, [courseTable]);
 
@@ -225,6 +229,7 @@ function SideCourseTableContainer(props) {
             const new_course_table = await dispatch(createCourseTable(new_uuid, "我的課表", null, "1101"));
             console.log("New UUID is generated: ",new_uuid);
             localStorage.setItem(LOCAL_STORAGE_KEY, new_course_table._id);
+            setExpired(false);
           } catch (error) {
               toast({
                 title: `新增課表失敗`,
