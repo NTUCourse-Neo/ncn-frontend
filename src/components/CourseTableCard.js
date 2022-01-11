@@ -192,11 +192,11 @@ function CourseTableCard(props){
     <>
         <Popover onOpen={onOpen} onClose={()=>{leavePopover()}} isOpen={isOpen} closeOnBlur={false} placement="left">
             <PopoverTrigger>
-                <Box as="Button" onClick={() => {setCourseList(courseOrder); setPrepareToRemoveCourseId([]);}}>
+                <Flex w="4vw" justifyContent="center" alignItems="center" flexDirection="column" onClick={()=>{setCourseList(courseOrder); setPrepareToRemoveCourseId([]);}}>
                     {courseOrder.map(courseId => {
                         return renderCourseBox(courseId, props.courseData);
                     })}
-                </Box>
+                </Flex>
             </PopoverTrigger>
                 <PopoverContent>
                     <PopoverArrow />
