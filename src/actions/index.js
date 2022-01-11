@@ -249,4 +249,22 @@ const verify_recaptcha = (token, captcha_token) => async (dispatch)=>{
     return resp.data;
 }
 
-export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, createCourseTable, linkCoursetableToUser, fetchCourseTable, patchCourseTable, fetchUserById, registerNewUser, logOut, logIn, updateCourseTable, addFavoriteCourse, deleteUserProfile, deleteUserAccount, verify_recaptcha};
+const request_otp_code = (token, student_id) => async (dispatch)=>{
+    const resp = await instance.post(`/users/student_id/link`, { student_id: student_id }, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return resp.data;
+}
+
+const use_otp_link_student_id = (token, student_id, otp_code) => async (dispatch)=>{
+    const resp = await instance.post(`/users/student_id/link`, { student_id: student_id, otp_code: otp_code }, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return resp.data;
+};
+
+export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, createCourseTable, linkCoursetableToUser, fetchCourseTable, patchCourseTable, fetchUserById, registerNewUser, logOut, logIn, updateCourseTable, addFavoriteCourse, deleteUserProfile, deleteUserAccount, verify_recaptcha, request_otp_code, use_otp_link_student_id };

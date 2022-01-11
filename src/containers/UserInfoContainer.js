@@ -21,17 +21,22 @@ import {
     AlertDialogContent,
     AlertDialogOverlay,
     Alert,
-    AlertIcon
+    AlertIcon,
+    Collapse,
+    PinInput,
+    PinInputContext,
+    PinInputField
 } from '@chakra-ui/react';
 import LoadingOverlay from 'react-loading-overlay';
 import { HashLoader } from 'react-spinners';
-import { fetchUserById, logIn } from '../actions/';
+import { fetchUserById, logIn, request_otp_code, use_otp_link_student_id } from '../actions/';
 import { useDispatch, useSelector } from 'react-redux';
 import { FaFacebook, FaGithub, FaGoogle, FaExclamationTriangle } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { deleteUserAccount, deleteUserProfile, registerNewUser, verify_recaptcha } from '../actions/';
 import { dept_list } from '../data/department';
 import ReCAPTCHA from "react-google-recaptcha";
+import useCountDown from 'react-countdown-hook';
 
 function UserInfoContainer(props) {
   const navigate = useNavigate();
@@ -44,7 +49,7 @@ function UserInfoContainer(props) {
 
   // states for updating userInfo 
   const [name, setName] = useState(null);
-  const [studentId, setStudentId] = useState(null);
+  const [studentId, setStudentId] = useState("");
   const [major, setMajor] = useState(null);
   const [minor, setMinor] = useState(null);
 
@@ -56,6 +61,9 @@ function UserInfoContainer(props) {
   const [ isDeleting, setIsDeleting ] = useState(false);
 
   const [allowSendOTP, setAllowSendOTP] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
+  const [timeLeft, actions] = useCountDown(0, 1000);
+  const [otpInputStatus, setOtpInputStatus] = useState(0);
 
   const recaptchaRef = useRef();
 
@@ -83,6 +91,31 @@ function UserInfoContainer(props) {
       }
     }
   };
+
+  const handleSendOTP = async() => {
+    if(studentId === ""){
+      console.log("Please input student id");
+      // TODO: show error message
+    }
+    const token = await getAccessTokenSilently();
+    const resp = await dispatch(request_otp_code(token, studentId));
+    setOtpSent(true);
+    setOtpInputStatus(1);
+    actions.start(300*1000);
+  };
+
+  const handleVerifyOTP = async(otp) => {
+    try{
+      const token = await getAccessTokenSilently();
+      const resp = await dispatch(use_otp_link_student_id(token, studentId, otp));
+      // refresh page or data
+      setOtpInputStatus(0);
+      window.location.reload();
+    }catch(err){
+      console.log(err);
+      setOtpInputStatus(-1);
+    }
+  }
 
   // TODO
   const generateUpdateObject = () => {
@@ -261,6 +294,53 @@ function UserInfoContainer(props) {
       }
     ));
   }
+  const renderStudentIdLinkSection = () => {
+    if(otpSent){
+      return(
+        <Flex w="80%" alignItems="start" flexDirection="column">
+          <Flex w="100%" flexDirection="row" justifyContent="start" alignItems="center" mb="2">
+            <Input w="50%" fontSize="lg" fontWeight="500" color="gray.600" defaultValue={userInfo.db.student_id} disabled/>
+            <Button colorScheme="teal" mx="4" disabled>{"已送出驗證碼"}</Button>
+          </Flex>
+          <Text color="gray.500" fontWeight="600">已寄送一組 6 位數驗證碼至您的台大信箱: {studentId}@ntu.edu.tw</Text>
+          <Flex w="100%" flexDirection="row" justifyContent="start" alignItems="center" mt="2">
+            <HStack mr="4">
+              <PinInput otp autoFocus onComplete={handleVerifyOTP} isInvalid={otpInputStatus === -1} isDisabled={otpInputStatus===0}>
+                <PinInputField />
+                <PinInputField />
+                <PinInputField />
+                <PinInputField />
+                <PinInputField />
+                <PinInputField />
+              </PinInput>
+            </HStack>
+            <Text color="gray.500" fontWeight="600">{"驗證碼即將在 "+timeLeft/1000+" 秒後失效。"}</Text>
+          </Flex>
+        </Flex>
+      );
+    }
+    if(userInfo.db.student_id){
+      return(
+        <Flex w="80%" alignItems="start" flexDirection="column">
+          <Input w="50%" fontSize="lg" fontWeight="500" color="gray.600" defaultValue={userInfo.db.student_id} disabled/>
+          <Flex w="100%" flexDirection="row" justifyContent="start" alignItems="center" mt="2">
+            <Button colorScheme="teal" mx="4" disabled>{"已綁定臺大學號"}</Button>
+          </Flex>
+        </Flex>
+      );
+    }
+    return(
+      <Flex w="80%" alignItems="start" flexDirection="column">
+        <Flex w="100%" flexDirection="row" justifyContent="start" alignItems="center" mb="2">
+          <Input w="50%" fontSize="lg" fontWeight="500" color="gray.600" defaultValue={userInfo.db.student_id} onChange={(e)=>{setStudentId(e.currentTarget.value)}} disabled={userInfo.db.student_id !== ""}/>
+          <Button colorScheme="teal" mx="4" disabled={studentId==="" || !allowSendOTP} onClick={() => handleSendOTP()}>{"傳送驗證碼"}</Button>
+        </Flex>
+        <Collapse in={studentId !== ""}>
+          <ReCAPTCHA sitekey={process.env.REACT_APP_RECAPTCHA_CLIENT_KEY} onChange={recOnChange} ref={recaptchaRef}/>
+        </Collapse>
+      </Flex>
+    );
+  }
 
   if(userLoading) {
     return(
@@ -296,13 +376,7 @@ function UserInfoContainer(props) {
           <Divider mt="1" mb="4"/>
           <Flex w="100%" flexDirection="column" justifyContent="start" alignItems="start" px="4">
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">學號</Text>
-              <Flex w="80%" alignItems="start" flexDirection="column">
-                <Input w="50%" fontSize="lg" fontWeight="500" color="gray.600" defaultValue={userInfo.db.student_id} onChange={(e)=>{setStudentId(e.currentTarget.value)}} disabled={userInfo.db.student_id !== ""}/>
-                <Flex w="100%" flexDirection="row" justifyContent="start" alignItems="center" mt="2">
-                  <ReCAPTCHA sitekey={process.env.REACT_APP_RECAPTCHA_CLIENT_KEY} onChange={recOnChange} ref={recaptchaRef}/>
-                  <Button colorScheme="teal" mx="4" disabled={userInfo.db.student_id !== "" || !allowSendOTP}>{userInfo.db.student_id === "" ? "傳送驗證碼":"已綁定臺大學號"}</Button>
-                </Flex>
-              </Flex>
+              {renderStudentIdLinkSection()}
               <Spacer my="1" />
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">主修</Text>
                 <Flex w="50%" alignItems="center">

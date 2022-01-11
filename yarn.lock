@@ -10181,6 +10181,11 @@ react-clientside-effect@^1.2.5:
   dependencies:
     "@babel/runtime" "^7.12.13"
 
+react-countdown-hook@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/react-countdown-hook/-/react-countdown-hook-1.1.1.tgz#2536209b0d9243f75275844ae575d696f2ffbc5d"
+  integrity sha512-+/vH6zK2H0yM9dPWJOa3hnLsBWWjwwi/6KOXDBc6F65lrc8vmuMozjTOlLhG4AtyyOTJAd2bvJhlph8IPqrXxg==
+
 react-dev-utils@^11.0.3:
   version "11.0.4"
   resolved "https://registry.yarnpkg.com/react-dev-utils/-/react-dev-utils-11.0.4.tgz#a7ccb60257a1ca2e0efe7a83e38e6700d17aa37a"
