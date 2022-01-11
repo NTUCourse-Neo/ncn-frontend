@@ -59,7 +59,7 @@ function CourseTableContainer(props) {
                         return(
                           <Td>
                             <Skeleton borderRadius="lg" speed={1+(i+j)*0.1}>
-                              <Box h="12"/>
+                              <Box h="12" w="4vw"/>
                             </Skeleton>
                           </Td>
                         );
