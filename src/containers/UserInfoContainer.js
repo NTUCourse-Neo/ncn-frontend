@@ -322,9 +322,9 @@ function UserInfoContainer(props) {
     if(userInfo.db.student_id){
       return(
         <Flex w="80%" alignItems="start" flexDirection="column">
-          <Input w="50%" fontSize="lg" fontWeight="500" color="gray.600" defaultValue={userInfo.db.student_id} disabled/>
           <Flex w="100%" flexDirection="row" justifyContent="start" alignItems="center" mt="2">
-            <Button colorScheme="teal" mx="4" disabled>{"已綁定臺大學號"}</Button>
+            <Input w="50%" fontSize="lg" fontWeight="500" color="gray.600" defaultValue={userInfo.db.student_id} disabled/>
+            <Button colorScheme="teal" mx="4" disabled>{"已綁定學號"}</Button>
           </Flex>
         </Flex>
       );
