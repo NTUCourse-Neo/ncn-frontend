@@ -30,7 +30,7 @@ import { useDispatch, useSelector } from 'react-redux';
 function HomeViewContainer(props) {
   const toast = useToast();
   const navigate = useNavigate();
-  const { user, isLoading, isAuthenticated } = useAuth0();
+  const { user, isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const dispatch = useDispatch();
 
@@ -45,9 +45,10 @@ function HomeViewContainer(props) {
   useEffect(() => {
     const registerNewUserToDB = async () => {
       if (!isLoading && isAuthenticated) {
+        const token = await getAccessTokenSilently();
         let user_data;
         try {
-          user_data = await dispatch(fetchUserById(user.sub));
+          user_data = await dispatch(fetchUserById(token, user.sub));
         } catch (error) {
           navigate(`/error/${error}`);
         }
@@ -59,7 +60,8 @@ function HomeViewContainer(props) {
             onOpen();
           }
           try{
-            await dispatch(registerNewUser(user.email));
+            const token = await getAccessTokenSilently();
+            await dispatch(registerNewUser(token, user.email));
             setIsRegistering(false);
           } catch (e) {
             toast({
@@ -74,7 +76,7 @@ function HomeViewContainer(props) {
           // Re-fetch user data from server
           let new_user_data;
           try{
-            new_user_data = await dispatch(fetchUserById(user.sub));
+            new_user_data = await dispatch(fetchUserById(token, user.sub));
           }
           catch (e) {
             navigate(`/error/${e}`);

@@ -39,7 +39,10 @@ function App(props) {
     <Auth0Provider
     domain={process.env.REACT_APP_AUTH0_DOMAIN}
     clientId={process.env.REACT_APP_AUTH0_CLIENT_ID}
+    audience={process.env.REACT_APP_SELF_API_AUDIENCE}
     redirectUri={window.location.origin}
+    useRefreshTokens={true}
+    cacheLocation={"localstorage"}
     >
       <ChakraProvider theme={theme}>
         <HeaderBar useColorModeValue={useColorModeValue}/>

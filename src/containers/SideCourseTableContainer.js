@@ -41,7 +41,7 @@ import LoadingOverlay from 'react-loading-overlay';
 const LOCAL_STORAGE_KEY = 'NTU_CourseNeo_Course_Table_Key';
 
 function SideCourseTableContainer(props) {
-    const {user, isLoading} = useAuth0();
+    const {user, isLoading, getAccessTokenSilently} = useAuth0();
     const toast = useToast();
     const dispatch = useDispatch();
     const courseTable = useSelector(state => state.course_table);
@@ -54,7 +54,7 @@ function SideCourseTableContainer(props) {
     const [courseTimes, setCourseTimes] = useState({}); // coursesTime is a dictionary of courseIds and their corresponding time in time table
     const [hoveredCourseTime, setHoveredCourseTime]  = useState({}); // courseTime is a dictionary of courseIds and their corresponding time in time table
 
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [expired, setExpired] = useState(false);
 
     const parseCourseDateTime = (course, course_time_tmp) => {
@@ -117,7 +117,8 @@ function SideCourseTableContainer(props) {
       const fetchCourseTableFromUser = async (callback) => {
         if(!isLoading && user) {
           try {
-            const user_data = await dispatch(fetchUserById(user.sub));
+            const token = await getAccessTokenSilently();
+            const user_data = await dispatch(fetchUserById(token, user.sub));
             await dispatch(logIn(user_data));
             const course_tables = user_data.db.course_tables;
             if (course_tables.length === 0) {
@@ -144,8 +145,8 @@ function SideCourseTableContainer(props) {
           }
         }
         callback();
-      }
-
+      };
+      
       setLoading(true);
       // run after useAuth0 finish loading.
       console.log('isLoading: ', isLoading);
@@ -179,8 +180,9 @@ function SideCourseTableContainer(props) {
         } 
         _callback();
       }
-      
-      fetchCoursesDataById(() => setLoading(false));
+      if(courseTable){
+        fetchCoursesDataById(() => setLoading(false));
+      }
     }, [courseTable]);
 
     useEffect(() => {
@@ -206,7 +208,8 @@ function SideCourseTableContainer(props) {
           try {
             const new_course_table = await dispatch(createCourseTable(new_uuid, "我的課表", userInfo.db._id, "1101"));
             console.log("New UUID is generated: ",new_uuid);
-            await dispatch(linkCoursetableToUser(new_uuid, userInfo.db._id));
+            const token = await getAccessTokenSilently();
+            await dispatch(linkCoursetableToUser(token, new_uuid, userInfo.db._id));
           } catch (e) {
             toast({
               title: `新增課表失敗`,
@@ -329,7 +332,8 @@ function SideCourseTableContainer(props) {
         );
     };
     const renderSideCourseTableContent = () => {
-      if(courseTable===null || expired===true){
+      if((courseTable===null || expired===true) && !(loading || isLoading)){
+        console.log("courseTable is null");
         return(
           <Flex flexDirection="column" justifyContent="center" alignItems="center" h="100%" w="100%">
             <Flex flexDirection="row" justifyContent="center" alignItems="center">
@@ -346,24 +350,29 @@ function SideCourseTableContainer(props) {
         <Box overflow="auto" w="100%">
           <Flex flexDirection="column" m="4" ml="0">
             <Flex flexDirection="row" justifyContent="space-between" alignItems="center" mb="4" position="fixed" zIndex={100}>
-                <Text fontWeight="700" fontSize="3xl" color="gray.600" mr="4">{courseTable.name}</Text>
-                {renderEditName()}
+                {
+                  courseTable?
+                  <>
+                    <Text fontWeight="700" fontSize="3xl" color="gray.600" mr="4">{courseTable.name}</Text>
+                    {renderEditName()}
+                  </>:
+                  <></>
+                }
+                
             </Flex>
             <Flex flexDirection="row" justifyContent="center" alignItems="center" my="5vh" >
-              <CourseTableContainer courseTimes={courseTimes} courses={courses} loading={loading} hoveredCourseTime={hoveredCourseTime} hoveredCourse={props.hoveredCourse}/>  
+              <CourseTableContainer courseTimes={courseTimes} courses={courses} loading={loading || isLoading} hoveredCourseTime={hoveredCourseTime} hoveredCourse={props.hoveredCourse}/>  
             </Flex>
           </Flex>
         </Box>
       );
     };
     return(
-      <Flex h="100%">
+      <Flex h="100%" w="100%">
         <Flex justifyContent="center" alignItems="center">
           <IconButton h="100%" icon={<FaAngleRight size={24}/>} onClick={()=>{props.setIsOpen(!props.isOpen)}} size="sm" variant="ghost"/>
         </Flex>
-        <LoadingOverlay active={loading || isLoading} spinner styles={{wrapper: {overflow: "auto"}, overlay: (base)=>({...base, borderRadius:"10px"})}}>
         {renderSideCourseTableContent()}
-        </LoadingOverlay>
       </Flex>
     );
 }

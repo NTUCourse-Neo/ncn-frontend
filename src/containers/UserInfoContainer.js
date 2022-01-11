@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from 'react';
+import { React, useState, useEffect, useRef } from 'react';
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import {
     Box,
@@ -10,60 +10,192 @@ import {
     Input,
     Button,
     useToast,
-    Select,
     Icon,
-
+    Stack,
+    HStack,
+    AlertDialog,
+    AlertDialogBody,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogContent,
+    AlertDialogOverlay,
+    Alert,
+    AlertIcon,
+    Collapse,
+    PinInput,
+    PinInputContext,
+    PinInputField
 } from '@chakra-ui/react';
+import Select from 'react-select';
 import LoadingOverlay from 'react-loading-overlay';
 import { HashLoader } from 'react-spinners';
-import { fetchUserById, logIn } from '../actions/';
+import { fetchUserById, logIn, request_otp_code, use_otp_link_student_id } from '../actions/';
 import { useDispatch, useSelector } from 'react-redux';
-import { FaFacebook, FaGithub, FaGoogle } from 'react-icons/fa';
+import { FaFacebook, FaGithub, FaGoogle, FaExclamationTriangle } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { deleteUserAccount, deleteUserProfile, registerNewUser, patchUserInfo, verify_recaptcha } from '../actions/';
+import { dept_list } from '../data/department';
+import ReCAPTCHA from "react-google-recaptcha";
+import useCountDown from 'react-countdown-hook';
 
 function UserInfoContainer(props) {
+  const navigate = useNavigate();
   const toast = useToast();
   const dispatch = useDispatch();
   const userInfo = useSelector(state => state.user);
  
-  const { user, isLoading }  = useAuth0();
+  const { user, isLoading, logout, getAccessTokenSilently }  = useAuth0();
   const userLoading = isLoading || !userInfo;
 
   // states for updating userInfo 
-  const [name, setName] = useState(null);
-  const [studentId, setStudentId] = useState(null);
+  const [name, setName] = useState(userInfo?userInfo.db.name:null);
+  const [studentId, setStudentId] = useState(userInfo?userInfo.db.student_id:null);
+  const [major, setMajor] = useState(userInfo?userInfo.db.department.major:null);
+  const [doubleMajor, setDoubleMajor] = useState(userInfo?userInfo.db.department.d_major:null);
+  const [minor, setMinor] = useState(userInfo?userInfo.db.department.minors:[]); // arr
+
+  // alert dialog states
+  const cancelRef = useRef();
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [ deleteMode, setDeleteMode] = useState(null);
+  const [ confirm, setConfirm ] = useState('');
+  const [ isDeleting, setIsDeleting ] = useState(false);
+
+  const [allowSendOTP, setAllowSendOTP] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
+  const [timeLeft, actions] = useCountDown(0, 1000);
+  const [otpInputStatus, setOtpInputStatus] = useState(0);
+
+  const recaptchaRef = useRef();
 
   // useEffect(()=>{
   //   console.log('name: ', name);
   //   console.log('studentId: ', studentId);
-  // },[name, studentId]);
+  //   console.log('major: ', major);
+  //   console.log('doubleMajor: ', doubleMajor);
+  //   console.log('minor: ', minor);
+  // },[name, studentId, major, doubleMajor, minor]);
 
+  const recOnChange = async(value) => {
+    let resp
+    console.log('Captcha value:', value);
+    if(value){
+      try{
+        const token = await getAccessTokenSilently();
+        resp = await dispatch(verify_recaptcha(token, value));
+      }catch(err){
+        console.log(err);
+        recaptchaRef.current.reset();
+      }
+      if(resp.data.success){
+        setAllowSendOTP(true);
+      }else{
+        setAllowSendOTP(false);
+        recaptchaRef.current.reset();
+      }
+    }
+  };
+
+  const handleSendOTP = async() => {
+    if(studentId === ""){
+      console.log("Please input student id");
+      // TODO: show error message
+    }
+    const token = await getAccessTokenSilently();
+    const resp = await dispatch(request_otp_code(token, studentId));
+    setOtpSent(true);
+    setOtpInputStatus(1);
+    actions.start(300*1000);
+  };
+
+  const handleVerifyOTP = async(otp) => {
+    try{
+      setOtpInputStatus(0);
+      const token = await getAccessTokenSilently();
+      const resp = await dispatch(use_otp_link_student_id(token, studentId, otp));
+      // refresh page or data
+      window.location.reload();
+    }catch(err){
+      console.log(err);
+      setOtpInputStatus(-1);
+    }
+  }
+
+  // TODO
   const generateUpdateObject = () => {
     let updateObject = {};
-    if (name!==null && name!==userInfo.db.name){
+    if (name!==userInfo.db.name){
       updateObject.name = name;
     }
-    if (studentId!==null && studentId!==userInfo.db.student_id){
-      updateObject.student_id = studentId;
+    // if (studentId!==userInfo.db.student_id){
+    //   updateObject.student_id = studentId;
+    // }
+    //major, doubleMajor, minor
+    let new_department = {};
+    if (major !== userInfo.db.department.major){
+      new_department.major = major;
+    } else {
+      new_department.major = userInfo.db.department.major;
     }
-    // todo
+    if (doubleMajor !== userInfo.db.department.d_major){
+      new_department.d_major = doubleMajor;
+    } else {
+      new_department.d_major = userInfo.db.department.d_major;
+    }
+    if (minor !==userInfo.db.department.minors){
+      new_department.minors = minor;
+    } else {
+      new_department.minors = userInfo.db.department.minors;
+    }
+
+    if (new_department!==userInfo.db.department){
+      updateObject.department = new_department;
+    }
+
     console.log('updateObject: ', updateObject);
     return updateObject;
   }
 
+  // TODO
   const updateUserInfo = async () => {
     const updateObject = generateUpdateObject();
+    if (updateObject.department.major === updateObject.department.d_major || updateObject.department.minors.includes(updateObject.department.major)){
+      toast({
+        title: '更改用戶資料失敗.',
+        status: '主修不能跟雙主修或輔系一樣',
+        duration: 3000,
+        isClosable: true,
+      })
+      return;
+    }
+    if (updateObject.department.minors.includes(updateObject.department.d_major)){
+      toast({
+        title: '更改用戶資料失敗.',
+        status: '雙主修不能出現在輔系',
+        duration: 3000,
+        isClosable: true,
+      })
+      return;
+    }
     try {
-      // await dispatch(patchUserInfo(updateObject, userInfo.db._id));
+      const token = await getAccessTokenSilently();
+      await dispatch(patchUserInfo(token, updateObject));
     } catch (e) {
-      // use toast
+      toast({
+        title: '更改用戶資料失敗.',
+        status: '請晚點再試',
+        duration: 3000,
+        isClosable: true,
+      })
     }
   }
-  
+
   useEffect(() => {
     const fetchUserInfo = async () => {
       if(!isLoading && user) {
         try {
-          const user_data = await dispatch(fetchUserById(user.sub));
+          const token = await getAccessTokenSilently();
+          const user_data = await dispatch(fetchUserById(token, user.sub));
           await dispatch(logIn(user_data));
         } catch (e) {
           toast({
@@ -80,6 +212,110 @@ function UserInfoContainer(props) {
 
     fetchUserInfo();
   }, [user]);
+
+  useEffect(()=>{
+    if (userInfo){
+      setName(userInfo.db.name);
+      setStudentId(userInfo.db.student_id);
+      setMajor(userInfo.db.department.major);
+      setDoubleMajor(userInfo.db.department.d_major);
+      setMinor(userInfo.db.department.minors);
+    }
+  }, [userInfo]);
+
+  const clearUserProfile = async () => {
+    try {
+      const token = await getAccessTokenSilently();
+      await dispatch(deleteUserProfile(token, userInfo.db._id));
+      await dispatch(registerNewUser(token, user.email))
+    } catch (e) {
+      toast({
+        title: '刪除用戶資料失敗.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      })
+    }
+  }
+
+  const clearUserAccount = async () => {
+    try {
+      const token = await getAccessTokenSilently();
+      await dispatch(deleteUserAccount(token, userInfo.db._id));
+    } catch (e) {
+      toast({
+        title: '刪除用戶帳號失敗.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      })
+    }
+  }
+  
+
+  const renderAlertDialog = () => {
+    //console.log('deleteMode: ', deleteMode);
+
+    const onClose = () => {
+      setIsAlertOpen(false);
+      setDeleteMode(null);
+      setConfirm('');
+    }
+
+    const onDelete = async () => {
+      // do API calling...
+      setIsDeleting(true);
+      if (deleteMode==='User Profile'){
+        await clearUserProfile();
+        onClose();
+      }
+      else if (deleteMode==='User Account'){
+        await clearUserAccount();
+        onClose();
+        logout();
+      } else {
+        onClose();
+      }
+      setIsDeleting(false);
+    }
+
+    const confirmMessage = `The quick brown fox jumps over the lazy dog`;
+
+    return (
+      <AlertDialog
+      isOpen={isAlertOpen}
+      leastDestructiveRef={cancelRef}
+      onClose={onClose}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize='lg' fontWeight='bold'>
+              Delete {deleteMode}
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              <Alert status='warning' >
+                <AlertIcon boxSize='24px' as={FaExclamationTriangle}/>
+                Are you sure? You can't undo this action afterwards.
+              </Alert>
+              <Divider mt='3'/>
+              <Text fontSize='md' mt='2' color='gray.500' fontWeight='bold'>Please type "{confirmMessage}" to confirm.</Text>
+              <Input mt='2' variant='filled' placeholder='' onChange={(e)=>{setConfirm(e.currentTarget.value)}} />
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={onClose}>
+                Cancel
+              </Button>
+              <Button colorScheme='red' onClick={onDelete} ml={3} disabled={confirm!==confirmMessage} isLoading={isDeleting}>
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+    )
+  }
 
   const renderConnectedSocialAccounts = () => {
     // console.log("userInfo: ", userInfo.auth0);
@@ -117,6 +353,58 @@ function UserInfoContainer(props) {
       }
     ));
   }
+  const renderStudentIdLinkSection = () => {
+    if(otpSent){
+      return(
+        <Flex w="80%" alignItems="start" flexDirection="column">
+          <Flex w="100%" flexDirection="row" justifyContent="start" alignItems="center" mb="2">
+            <Input w="50%" fontSize="lg" fontWeight="500" color="gray.600" defaultValue={userInfo.db.student_id} disabled/>
+            <Button colorScheme="teal" mx="4" disabled>{"已送出驗證碼"}</Button>
+          </Flex>
+          <Text color="gray.500" fontWeight="600">已寄送一組 6 位數驗證碼至您的台大信箱: {studentId}@ntu.edu.tw</Text>
+          <Flex w="100%" flexDirection="row" justifyContent="start" alignItems="center" mt="2">
+            <HStack mr="4">
+              <PinInput otp autoFocus onComplete={handleVerifyOTP} isInvalid={otpInputStatus === -1} isDisabled={otpInputStatus===0} onChange={() => setOtpInputStatus(1)}>
+                <PinInputField />
+                <PinInputField />
+                <PinInputField />
+                <PinInputField />
+                <PinInputField />
+                <PinInputField />
+              </PinInput>
+            </HStack>
+            <Text color="gray.500" fontWeight="600">{"驗證碼即將在 "+timeLeft/1000+" 秒後失效。"}</Text>
+          </Flex>
+        </Flex>
+      );
+    }
+    if(userInfo.db.student_id){
+      return(
+        <Flex w="80%" alignItems="start" flexDirection="column">
+          <Flex w="100%" flexDirection="row" justifyContent="start" alignItems="center" mt="2">
+            <Input w="50%" fontSize="lg" fontWeight="500" color="gray.600" defaultValue={userInfo.db.student_id} disabled/>
+            <Button colorScheme="teal" mx="4" disabled>{"已綁定學號"}</Button>
+          </Flex>
+        </Flex>
+      );
+    }
+    return(
+      <Flex w="80%" alignItems="start" flexDirection="column">
+        <Flex w="100%" flexDirection="row" justifyContent="start" alignItems="center" mb="2">
+          <Input w="50%" fontSize="lg" fontWeight="500" color="gray.600" defaultValue={userInfo.db.student_id} onChange={(e)=>{setStudentId(e.currentTarget.value)}} disabled={userInfo.db.student_id !== ""}/>
+          <Collapse in={studentId !== ""}>
+            <Button colorScheme="teal" mx="4" disabled={studentId==="" || !allowSendOTP} onClick={() => handleSendOTP()}>{"傳送驗證碼"}</Button>
+          </Collapse>
+        </Flex>
+        <Collapse in={studentId !== ""}>
+          <ReCAPTCHA sitekey={process.env.REACT_APP_RECAPTCHA_CLIENT_KEY} onChange={recOnChange} ref={recaptchaRef}/>
+        </Collapse>
+      </Flex>
+    );
+  }
+
+  // TODO: only bachelor degree
+  const deptOptions = dept_list.map(dept=>({value: dept.full_name, label: dept.full_name}));
 
   if(userLoading) {
     return(
@@ -152,31 +440,70 @@ function UserInfoContainer(props) {
           <Divider mt="1" mb="4"/>
           <Flex w="100%" flexDirection="column" justifyContent="start" alignItems="start" px="4">
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">學號</Text>
-              <Flex w="50%" alignItems="center">
-                <Input w="50%" fontSize="lg" fontWeight="500" color="gray.600" defaultValue={userInfo.db.student_id} onChange={(e)=>{setStudentId(e.currentTarget.value)}}/>
-                <Button colorScheme="teal" mx="4">傳送驗證碼</Button>
-              </Flex>
+              {renderStudentIdLinkSection()}
               <Spacer my="1" />
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">主修</Text>
-                <Flex w="50%" alignItems="center">
-                  <Select w="50%" variant='filled' placeholder='主修學系' />
-                  <Button variant="ghost" colorScheme="blue" mx="4">新增雙主修</Button>
+                <Flex w="100%" alignItems="center">
+                  {/* react selector */}
+                  <Select
+                    className="basic-single"
+                    classNamePrefix="select"
+                    defaultValue={major?{value: major, label: major}:{value: "", label: "請選擇"}}
+                    isSearchable={TextTrackCue}
+                    name="color"
+                    options={deptOptions}
+                    onChange={(e)=>{setMajor(e.value)}}
+                  />
+                </Flex>
+              <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">雙主修</Text>
+                <Flex w="100%" alignItems="center">
+                  {/* react selector */}
+                  <Select
+                    className="basic-single"
+                    classNamePrefix="select"
+                    defaultValue={doubleMajor?{value: doubleMajor, label: doubleMajor}:{value: "", label: "請選擇"}}
+                    isSearchable={TextTrackCue}
+                    name="color"
+                    options={deptOptions}
+                    onChange={(e)=>{setDoubleMajor(e.value)}}
+                  />
                 </Flex>
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">輔系</Text>
-                <Flex w="50%" alignItems="center">
-                  <Select w="50%" variant='filled' placeholder='輔系' />
-                  <Button variant="ghost" colorScheme="blue" mx="4">新增輔系</Button>
+                <Flex w="100%" alignItems="center">
+                  {/* react selector */}
+                  <Select
+                    isMulti
+                    w='100%'
+                    className="basic-single"
+                    classNamePrefix="select"
+                    defaultValue={minor.map(dept=>({value: dept, label: dept}))}
+                    isSearchable={TextTrackCue}
+                    name="color"
+                    options={deptOptions}
+                    onChange={(e)=>{setMinor(e.map(dept=>dept.value))}}
+                  />
                 </Flex>
             </Flex>
           <Text fontSize="2xl" fontWeight="700" color="gray.600" mt="5">課程</Text>
           <Divider mt="1" mb="4"/>
-          <Text fontSize="2xl" fontWeight="700" color="red.600" mt="5">危險區域</Text>
+          <Button colorScheme="teal" size="md" w="20%" my="4" variant="outline">匯入修課紀錄</Button>
           <Divider mt="1" mb="4"/>
-          <Flex flexDirection="column" justifyContent="start" alignItems="center" p="2">
-            <Button colorScheme="red" variant="outline" size="md" w="100%" my="4">清除個人資料</Button>
-            <Button colorScheme="red" variant="outline" size="md" w="100%" my="4">徹底刪除帳號</Button>
+          <Button colorScheme="teal" size="md" w="20%" my="4" onClick={()=>{updateUserInfo()}}>儲存</Button>
+        </Flex>
+        <Flex w="100%" h="100%" mt="8" flexDirection="column" justifyContent="start" alignItems="start" p="4" borderRadius="lg" border='1px' borderColor='red.600'>
+          <Text fontSize="2xl" fontWeight="700" color="red.600" mt="2">危險區域</Text>
+          <Divider mt="1" mb="4"/>
+          <Flex flexDirection="column" justifyContent="start" alignItems="start" p="2">
+            <HStack spacing={8}>
+              <Button colorScheme="red" variant="outline" size="md" my="4" onClick={()=>{setIsAlertOpen(true); setDeleteMode('User Profile')}}>清除個人資料</Button>
+              <Text color="red.600" fontWeight="500">將會刪除您的使用者個人資料，包含課表、最愛課程與修課紀錄等，且資料無法回復。<br />您的帳號將不會被刪除，未來不需重新註冊即可繼續使用此服務。</Text>
+            </HStack>
+            <HStack spacing={8} justify="start">
+              <Button colorScheme="red" variant="outline" size="md" my="4" onClick={()=>{setIsAlertOpen(true); setDeleteMode('User Account')}}>徹底刪除帳號</Button>
+              <Text color="red.600" fontWeight="500">注意：此動作將會徹底刪除您的帳號與個人資料，且資料無法回復。<br/>未來如需使用此服務需重新註冊。</Text>
+            </HStack>
+            {renderAlertDialog()}
           </Flex>
-          < Button colorScheme="teal" size="md" w="100%" my="4" onClick={()=>{updateUserInfo()}}>Save</Button>
         </Flex>
       </Flex>
     </Box>

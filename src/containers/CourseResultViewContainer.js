@@ -23,9 +23,12 @@ import {
     Badge,
     MenuDivider,
     Fade,
+    Spacer,
+    Tag,
+    TagLeftIcon
 } from '@chakra-ui/react';
 import { BeatLoader } from 'react-spinners';
-import { FaAngleLeft, FaAngleRight, FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { FaAngleLeft, FaAngleRight, FaChevronDown, FaChevronUp, FaPlus, FaMinus } from 'react-icons/fa';
 import CourseInfoRowContainer from './CourseInfoRowContainer';
 import FilterModal from '../components/FilterModal';
 import CourseSearchInput from '../components/CourseSearchInput';
@@ -35,6 +38,7 @@ import { setSearchSettings, fetchSearchResults, setFilter, setFilterEnable} from
 import {useSelector, useDispatch} from 'react-redux';
 import useOnScreen from '../hooks/useOnScreen';
 import {mapStateToTimeTable, mapStateToIntervals} from '../utils/timeTableConverter';
+import { info_view_map } from '../data/mapping_table';
 
 
 function CourseResultViewContainer() {
@@ -66,7 +70,7 @@ function CourseResultViewContainer() {
   const [ enrollFilterOn, setEnrollFilterOn ] = useState(search_filters_enable.enroll_method);
 
   const [ displayFilter, setDisplayFilter ] = useState(false);
-  const [ displayTable, setDisplayTable ] = useState(false);
+  const [ displayTable, setDisplayTable ] = useState(true);
 
   // State for the course result row that is been hovered now.
   const [ hoveredCourse, setHoveredCourse ] = useState(null);
@@ -77,6 +81,8 @@ function CourseResultViewContainer() {
   const [strict_search_mode, set_strict_search_mode] = useState(search_settings.strict_search_mode);
 
   const [coursesInTable, setCoursesInTable] = useState([]);
+  const [displayTags, setDisplayTags] = useState([]);
+  const available_tags = ["required", "total_slot", "enroll_method", "area"];
 
   const renderSettingSwitch = (label, default_checked) => {
 
@@ -96,12 +102,12 @@ function CourseResultViewContainer() {
         }
 
         return(
-            <FormControl display='flex' alignItems='center' my="2">
-                <Switch id='add-nol' defaultChecked={default_checked} mr="2" onChange={(e)=>{handleChangeSettings(e)}}/>
-                <FormLabel htmlFor='add-nol' mb='0' fontWeight="500" color="gray.600">
+            <Flex alignItems="center">
+                <Switch id={label} defaultChecked={default_checked} mr="2" onChange={(e)=>{handleChangeSettings(e)}}/>
+                <FormLabel htmlFor={label} mb='0' fontWeight="500" color="gray.600">
                     {label}
                 </FormLabel>
-            </FormControl>
+            </Flex>
         );
     };
 
@@ -163,7 +169,7 @@ function CourseResultViewContainer() {
                                         <TabPanels>
                                             <TabPanel>
                                                 {/* Filters: time, department, type of courses */}
-                                                <Flex flexDirection="row">
+                                                <Flex flexDirection="row" flexWrap="wrap">
                                                     <Flex flexDirection="column" px="4">
                                                         <Flex flexDirection="row" alignItems="center" justifyContent="center">
                                                         <Switch size="lg" mr="2" isChecked={timeFilterOn} onChange={ (e) => {
@@ -217,28 +223,57 @@ function CourseResultViewContainer() {
                                             </TabPanel>
                                             <TabPanel>
                                                 {/* Settings */}
-                                                <Flex flexDirection="column" alignItems="center">
-                                                    {renderSettingSwitch('顯示已選課程', show_selected_courses)}
-                                                    {renderSettingSwitch('只顯示未衝堂課程', only_show_not_conflicted_courses)}
-                                                    {renderSettingSwitch('同步新增至課程網', sync_add_to_nol)}
-                                                    {renderSettingSwitch('篩選條件嚴格搜尋', strict_search_mode)}
+                                                <Flex flexDirection="row" flexWrap="wrap">
+                                                    <Flex flexDirection="column" p="4" mr="4" borderWidth="2px" borderRadius="lg">
+                                                        <Text fontSize="lg" color="gray.500" fontWeight="700" mb="4">課表設定</Text>
+                                                        <Flex w="100%" flexDirection="row" alignItems="center" flexWrap="wrap">
+                                                            {renderSettingSwitch('顯示已選課程', show_selected_courses)}
+                                                            {renderSettingSwitch('只顯示未衝堂課程', only_show_not_conflicted_courses)}
+                                                            {renderSettingSwitch('同步新增至課程網', sync_add_to_nol)}
+                                                            {renderSettingSwitch('篩選條件嚴格搜尋', strict_search_mode)}
+                                                        </Flex>
+                                                        <Button mt={2} colorScheme='teal' size='md' onClick={()=>{
+                                                            dispatch(setSearchSettings({
+                                                                show_selected_courses: show_selected_courses,
+                                                                only_show_not_conflicted_courses: only_show_not_conflicted_courses,
+                                                                sync_add_to_nol: sync_add_to_nol,
+                                                                strict_search_mode: strict_search_mode}
+                                                            ));
+                                                            toast({
+                                                                title: '設定已儲存',
+                                                                description: '讚啦',
+                                                                status: 'success',
+                                                                duration: 1000,
+                                                                isClosable: true
+                                                            })
+                                                        }
+                                                        }>套用</Button>
+                                                    </Flex>
+                                                    <Flex flexDirection="column" p="4" borderWidth="2px" borderRadius="lg">
+                                                        <Text fontSize="lg" color="gray.500" fontWeight="700" mb="4">自訂顯示欄位</Text>
+                                                        <Flex w="100%" flexDirection="row" alignItems="center" flexWrap="wrap">
+                                                            {
+                                                                available_tags.map((tag, index) => {
+                                                                    // console.log(displayTags)
+                                                                    const selected = displayTags.includes(tag);
+                                                                    return(
+                                                                        <Tag as="Button" m="2" ml="0" variant={selected ? "solid":"subtle"}
+                                                                            onClick={
+                                                                                selected ? 
+                                                                                () => {setDisplayTags([...displayTags.filter(t => t !== tag)])}:
+                                                                                () => {setDisplayTags([...displayTags, tag])}
+                                                                            }
+                                                                            transition="all 200ms ease-in-out"
+                                                                        >
+                                                                            <TagLeftIcon boxSize='12px' as={selected ? FaMinus : FaPlus} />
+                                                                            {info_view_map[tag].name}
+                                                                        </Tag>
+                                                                    );
+                                                                })
+                                                            }
+                                                        </Flex>
+                                                    </Flex>
                                                 </Flex>
-                                                <Button mt={5} colorScheme='teal' size='md' onClick={()=>{
-                                                    dispatch(setSearchSettings({
-                                                        show_selected_courses: show_selected_courses,
-                                                        only_show_not_conflicted_courses: only_show_not_conflicted_courses,
-                                                        sync_add_to_nol: sync_add_to_nol,
-                                                        strict_search_mode: strict_search_mode}
-                                                    ));
-                                                    toast({
-                                                        title: '設定已儲存',
-                                                        description: '讚啦',
-                                                        status: 'success',
-                                                        duration: 1000,
-                                                        isClosable: true
-                                                    })
-                                                }
-                                                }>套用</Button>
                                             </TabPanel>
                                         </TabPanels>
                                     </Tabs>
@@ -252,7 +287,7 @@ function CourseResultViewContainer() {
                             {search_loading ? <BeatLoader size={8} color='teal'/>:<></>}
                             <Text fontSize="md" fontWeight="medium" color="gray.400" my="2" ml="1">{search_loading ? "載入中" : `共找到 ${total_count} 筆結果`}</Text>
                         </Flex>
-                        <CourseInfoRowContainer courseInfo={search_results} setHoveredCourse={setHoveredCourse} selectedCourses={coursesInTable}/>
+                        <CourseInfoRowContainer courseInfo={search_results} setHoveredCourse={setHoveredCourse} selectedCourses={coursesInTable} displayTags={displayTags} displayTable={displayTable}/>
                     </Box>
                     <Box ml={displayTable ? "24vw":"48vw"} transition="all 500ms ease-in-out">
                         <SkeletonRow loading={search_loading} error={search_error}/>
@@ -269,7 +304,7 @@ function CourseResultViewContainer() {
             </Fade>
             <Collapse in={displayTable} animateOpacity>
                 <Flex justifyContent="end" mr="2">
-                    <Box position="absolute" top="8vh" zIndex="1" w="35vw" h="70vh" bg="gray.200" mt="128px" borderRadius="lg" boxShadow="xl">
+                    <Box position="absolute" top="8vh" zIndex="1" w="40vw" h="70vh" bg="gray.200" mt="128px" borderRadius="lg" boxShadow="xl">
                         <SideCourseTableContainer isOpen={displayTable} setIsOpen={setDisplayTable} hoveredCourse={hoveredCourse} setHoveredCourse={setHoveredCourse} courseIds={coursesInTable} setCourseIds={setCoursesInTable}/>
                     </Box>
                 </Flex>
