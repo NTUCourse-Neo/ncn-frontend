@@ -107,16 +107,15 @@ function SideCourseTableContainer(props) {
 
     // trigger when mounting, fetch local storage course_id
     useEffect(()=>{
-      const courseTableInit = async (uuid, callback)=>{
+      const courseTableInit = async (uuid)=>{
         const course_table = await dispatch(fetchCourseTable(uuid));
         if (course_table===null){
           setExpired(true);
           setLoading(false);
         }
-        callback();
       };
 
-      const fetchCourseTableFromUser = async (callback) => {
+      const fetchCourseTableFromUser = async () => {
         if(!isLoading && user) {
           try {
             const token = await getAccessTokenSilently();
@@ -126,6 +125,7 @@ function SideCourseTableContainer(props) {
             if (course_tables.length === 0) {
               // user has no course table, set courseTable in redux null
               dispatch(updateCourseTable(null));
+              setLoading(false);
             }
             else {
               // pick the first table
@@ -143,10 +143,10 @@ function SideCourseTableContainer(props) {
               duration: 9000,
               isClosable: true,
             })
+            setLoading(false);
             // Other subsequent actions?
           }
         }
-        callback();
       };
       // run after useAuth0 finish loading.
       console.log('isLoading: ', isLoading);
@@ -154,7 +154,7 @@ function SideCourseTableContainer(props) {
         // user mode
         if (user) {
           setLoading(true);
-          fetchCourseTableFromUser(()=>{});
+          fetchCourseTableFromUser();
         }
         // guest mode
         else {
@@ -162,7 +162,7 @@ function SideCourseTableContainer(props) {
           // console.log("UUID in localStorage now: ",uuid);
           if (uuid){
             setLoading(true);
-            courseTableInit(uuid, ()=>{});
+            courseTableInit(uuid);
           }
         }
       } 
@@ -185,6 +185,7 @@ function SideCourseTableContainer(props) {
         setLoading(true);
         fetchCoursesDataById(() => setLoading(false));
       }
+      // guest mode & do not have uuid on localstorage
       if(!localStorage.getItem(LOCAL_STORAGE_KEY)){
         setLoading(false);
       }
