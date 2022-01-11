@@ -153,14 +153,14 @@ function SideCourseTableContainer(props) {
       if (!isLoading) {
         // user mode
         if (user) {
-          fetchCourseTableFromUser(()=>{setLoading(false)});
+          fetchCourseTableFromUser(()=>{});
         }
         // guest mode
         else {
           const uuid = localStorage.getItem(LOCAL_STORAGE_KEY);
           // console.log("UUID in localStorage now: ",uuid);
           if (uuid){
-            courseTableInit(uuid, ()=>{setLoading(false)});
+            courseTableInit(uuid, ()=>{});
           }
         }
       } 
@@ -169,7 +169,6 @@ function SideCourseTableContainer(props) {
     // fetch course objects data from server based on array of IDs
     useEffect(() => {
       const fetchCoursesDataById = async (_callback) =>{
-        setLoading(true);
         if (courseTable){
           // console.log("course_table: ",courseTable);
           const courseResult = await dispatch(fetchCourseTableCoursesByIds(courseTable.courses));
@@ -181,6 +180,7 @@ function SideCourseTableContainer(props) {
         _callback();
       }
       if(courseTable){
+        setLoading(true);
         fetchCoursesDataById(() => setLoading(false));
       }
     }, [courseTable]);
