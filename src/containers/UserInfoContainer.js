@@ -106,10 +106,10 @@ function UserInfoContainer(props) {
 
   const handleVerifyOTP = async(otp) => {
     try{
+      setOtpInputStatus(0);
       const token = await getAccessTokenSilently();
       const resp = await dispatch(use_otp_link_student_id(token, studentId, otp));
       // refresh page or data
-      setOtpInputStatus(0);
       window.location.reload();
     }catch(err){
       console.log(err);
@@ -305,7 +305,7 @@ function UserInfoContainer(props) {
           <Text color="gray.500" fontWeight="600">已寄送一組 6 位數驗證碼至您的台大信箱: {studentId}@ntu.edu.tw</Text>
           <Flex w="100%" flexDirection="row" justifyContent="start" alignItems="center" mt="2">
             <HStack mr="4">
-              <PinInput otp autoFocus onComplete={handleVerifyOTP} isInvalid={otpInputStatus === -1} isDisabled={otpInputStatus===0}>
+              <PinInput otp autoFocus onComplete={handleVerifyOTP} isInvalid={otpInputStatus === -1} isDisabled={otpInputStatus===0} onChange={() => setOtpInputStatus(1)}>
                 <PinInputField />
                 <PinInputField />
                 <PinInputField />
@@ -333,7 +333,9 @@ function UserInfoContainer(props) {
       <Flex w="80%" alignItems="start" flexDirection="column">
         <Flex w="100%" flexDirection="row" justifyContent="start" alignItems="center" mb="2">
           <Input w="50%" fontSize="lg" fontWeight="500" color="gray.600" defaultValue={userInfo.db.student_id} onChange={(e)=>{setStudentId(e.currentTarget.value)}} disabled={userInfo.db.student_id !== ""}/>
-          <Button colorScheme="teal" mx="4" disabled={studentId==="" || !allowSendOTP} onClick={() => handleSendOTP()}>{"傳送驗證碼"}</Button>
+          <Collapse in={studentId !== ""}>
+            <Button colorScheme="teal" mx="4" disabled={studentId==="" || !allowSendOTP} onClick={() => handleSendOTP()}>{"傳送驗證碼"}</Button>
+          </Collapse>
         </Flex>
         <Collapse in={studentId !== ""}>
           <ReCAPTCHA sitekey={process.env.REACT_APP_RECAPTCHA_CLIENT_KEY} onChange={recOnChange} ref={recaptchaRef}/>
