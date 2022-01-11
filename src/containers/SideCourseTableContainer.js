@@ -331,7 +331,8 @@ function SideCourseTableContainer(props) {
         );
     };
     const renderSideCourseTableContent = () => {
-      if(courseTable===null || expired===true){
+      if((courseTable===null || expired===true) && !(loading || isLoading)){
+        console.log("courseTable is null");
         return(
           <Flex flexDirection="column" justifyContent="center" alignItems="center" h="100%" w="100%">
             <Flex flexDirection="row" justifyContent="center" alignItems="center">
@@ -348,24 +349,29 @@ function SideCourseTableContainer(props) {
         <Box overflow="auto" w="100%">
           <Flex flexDirection="column" m="4" ml="0">
             <Flex flexDirection="row" justifyContent="space-between" alignItems="center" mb="4" position="fixed" zIndex={100}>
-                <Text fontWeight="700" fontSize="3xl" color="gray.600" mr="4">{courseTable.name}</Text>
-                {renderEditName()}
+                {
+                  courseTable?
+                  <>
+                    <Text fontWeight="700" fontSize="3xl" color="gray.600" mr="4">{courseTable.name}</Text>
+                    {renderEditName()}
+                  </>:
+                  <></>
+                }
+                
             </Flex>
             <Flex flexDirection="row" justifyContent="center" alignItems="center" my="5vh" >
-              <CourseTableContainer courseTimes={courseTimes} courses={courses} loading={loading} hoveredCourseTime={hoveredCourseTime} hoveredCourse={props.hoveredCourse}/>  
+              <CourseTableContainer courseTimes={courseTimes} courses={courses} loading={loading || isLoading} hoveredCourseTime={hoveredCourseTime} hoveredCourse={props.hoveredCourse}/>  
             </Flex>
           </Flex>
         </Box>
       );
     };
     return(
-      <Flex h="100%">
+      <Flex h="100%" w="100%">
         <Flex justifyContent="center" alignItems="center">
           <IconButton h="100%" icon={<FaAngleRight size={24}/>} onClick={()=>{props.setIsOpen(!props.isOpen)}} size="sm" variant="ghost"/>
         </Flex>
-        <LoadingOverlay active={loading || isLoading} spinner styles={{wrapper: {overflow: "auto"}, overlay: (base)=>({...base, borderRadius:"10px"})}}>
         {renderSideCourseTableContent()}
-        </LoadingOverlay>
       </Flex>
     );
 }
