@@ -332,6 +332,7 @@ function SideCourseTableContainer(props) {
     };
     const renderSideCourseTableContent = () => {
       if(courseTable===null || expired===true){
+        console.log("courseTable is null");
         return(
           <Flex flexDirection="column" justifyContent="center" alignItems="center" h="100%" w="100%">
             <Flex flexDirection="row" justifyContent="center" alignItems="center">
@@ -359,13 +360,11 @@ function SideCourseTableContainer(props) {
       );
     };
     return(
-      <Flex h="100%">
+      <Flex h="100%" w="100%">
         <Flex justifyContent="center" alignItems="center">
           <IconButton h="100%" icon={<FaAngleRight size={24}/>} onClick={()=>{props.setIsOpen(!props.isOpen)}} size="sm" variant="ghost"/>
         </Flex>
-        <LoadingOverlay active={loading || isLoading} spinner styles={{wrapper: {overflow: "auto"}, overlay: (base)=>({...base, borderRadius:"10px"})}}>
         {renderSideCourseTableContent()}
-        </LoadingOverlay>
       </Flex>
     );
 }
