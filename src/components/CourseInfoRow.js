@@ -17,8 +17,8 @@ import {
     Button,
     Tooltip,
     useToast,
-    ScaleFade
-  } from '@chakra-ui/react';
+    Collapse
+} from '@chakra-ui/react';
 import {CourseDrawerContainer} from '../containers/CourseDrawerContainer';
 import { FaUserPlus, FaPuzzlePiece, FaPlus} from 'react-icons/fa';
 import { info_view_map } from '../data/mapping_table';
@@ -122,9 +122,9 @@ function CourseInfoRow(props) {
                             <Badge variant='outline' mr="4">{props.courseInfo.credit}</Badge>
                         </Tooltip>
                         <Heading as="h3" size="sm" ml="20px" mr="5px" color="gray.500" fontWeight="500">{props.courseInfo.teacher}</Heading>
-                        <ScaleFade in={!props.displayTable}>
-                            <Badge variant='outline' ml="8" size="lg">{props.courseInfo.time_loc}</Badge>
-                        </ScaleFade>
+                        <Collapse in={!props.displayTable}>
+                            <Badge variant='outline' ml="8" size="lg" maxW="20vw" isTruncated>{props.courseInfo.time_loc}</Badge>
+                        </Collapse>
                     </Flex>
                     <Spacer />
                     <Flex alignItems="center" justifyContent="end">
