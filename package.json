@@ -26,6 +26,7 @@
         "react-router-dom": "6",
         "react-scripts": "4.0.3",
         "react-scroll": "^1.8.4",
+        "react-select": "^5.2.1",
         "react-sortable-hoc": "^2.0.0",
         "react-spinners": "^0.11.0",
         "react-table-drag-select": "^0.3.1",

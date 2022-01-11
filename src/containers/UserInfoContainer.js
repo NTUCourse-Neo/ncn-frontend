@@ -10,7 +10,6 @@ import {
     Input,
     Button,
     useToast,
-    Select,
     Icon,
     Stack,
     HStack,
@@ -23,13 +22,14 @@ import {
     Alert,
     AlertIcon
 } from '@chakra-ui/react';
+import Select from 'react-select';
 import LoadingOverlay from 'react-loading-overlay';
 import { HashLoader } from 'react-spinners';
 import { fetchUserById, logIn } from '../actions/';
 import { useDispatch, useSelector } from 'react-redux';
 import { FaFacebook, FaGithub, FaGoogle, FaExclamationTriangle } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import { deleteUserAccount, deleteUserProfile, registerNewUser } from '../actions/';
+import { deleteUserAccount, deleteUserProfile, registerNewUser, patchUserInfo } from '../actions/';
 import { dept_list } from '../data/department';
 
 function UserInfoContainer(props) {
@@ -42,10 +42,11 @@ function UserInfoContainer(props) {
   const userLoading = isLoading || !userInfo;
 
   // states for updating userInfo 
-  const [name, setName] = useState(null);
-  const [studentId, setStudentId] = useState(null);
-  const [major, setMajor] = useState(null);
-  const [minor, setMinor] = useState(null);
+  const [name, setName] = useState(userInfo?userInfo.db.name:null);
+  const [studentId, setStudentId] = useState(userInfo?userInfo.db.student_id:null);
+  const [major, setMajor] = useState(userInfo?userInfo.db.department.major:null);
+  const [doubleMajor, setDoubleMajor] = useState(userInfo?userInfo.db.department.d_major:null);
+  const [minor, setMinor] = useState(userInfo?userInfo.db.department.minors:[]); // arr
 
   // alert dialog states
   const cancelRef = useRef();
@@ -57,18 +58,41 @@ function UserInfoContainer(props) {
   // useEffect(()=>{
   //   console.log('name: ', name);
   //   console.log('studentId: ', studentId);
-  // },[name, studentId]);
+  //   console.log('major: ', major);
+  //   console.log('doubleMajor: ', doubleMajor);
+  //   console.log('minor: ', minor);
+  // },[name, studentId, major, doubleMajor, minor]);
 
-  // TODO
   const generateUpdateObject = () => {
     let updateObject = {};
-    if (name!==null && name!==userInfo.db.name){
+    if (name!==userInfo.db.name){
       updateObject.name = name;
     }
-    if (studentId!==null && studentId!==userInfo.db.student_id){
-      updateObject.student_id = studentId;
+    // if (studentId!==userInfo.db.student_id){
+    //   updateObject.student_id = studentId;
+    // }
+    //major, doubleMajor, minor
+    let new_department = {};
+    if (major !== userInfo.db.department.major){
+      new_department.major = major;
+    } else {
+      new_department.major = userInfo.db.department.major;
     }
-    // TODO: major and minor
+    if (doubleMajor !== userInfo.db.department.d_major){
+      new_department.d_major = doubleMajor;
+    } else {
+      new_department.d_major = userInfo.db.department.d_major;
+    }
+    if (minor !==userInfo.db.department.minors){
+      new_department.minors = minor;
+    } else {
+      new_department.minors = userInfo.db.department.minors;
+    }
+
+    if (new_department!==userInfo.db.department){
+      updateObject.department = new_department;
+    }
+
     console.log('updateObject: ', updateObject);
     return updateObject;
   }
@@ -76,10 +100,34 @@ function UserInfoContainer(props) {
   // TODO
   const updateUserInfo = async () => {
     const updateObject = generateUpdateObject();
+    if (updateObject.department.major === updateObject.department.d_major || updateObject.department.minors.includes(updateObject.department.major)){
+      toast({
+        title: '更改用戶資料失敗.',
+        status: '主修不能跟雙主修或輔系一樣',
+        duration: 3000,
+        isClosable: true,
+      })
+      return;
+    }
+    if (updateObject.department.minors.includes(updateObject.department.d_major)){
+      toast({
+        title: '更改用戶資料失敗.',
+        status: '雙主修不能出現在輔系',
+        duration: 3000,
+        isClosable: true,
+      })
+      return;
+    }
     try {
-      // await dispatch(patchUserInfo(updateObject, userInfo.db._id));
+      const token = await getAccessTokenSilently();
+      await dispatch(patchUserInfo(token, updateObject));
     } catch (e) {
-      // use toast
+      toast({
+        title: '更改用戶資料失敗.',
+        status: '請晚點再試',
+        duration: 3000,
+        isClosable: true,
+      })
     }
   }
 
@@ -105,6 +153,16 @@ function UserInfoContainer(props) {
 
     fetchUserInfo();
   }, [user]);
+
+  useEffect(()=>{
+    if (userInfo){
+      setName(userInfo.db.name);
+      setStudentId(userInfo.db.student_id);
+      setMajor(userInfo.db.department.major);
+      setDoubleMajor(userInfo.db.department.d_major);
+      setMinor(userInfo.db.department.minors);
+    }
+  }, [userInfo]);
 
   const clearUserProfile = async () => {
     try {
@@ -237,6 +295,9 @@ function UserInfoContainer(props) {
     ));
   }
 
+  // TODO: only bachelor degree
+  const deptOptions = dept_list.map(dept=>({value: dept.full_name, label: dept.full_name}));
+
   if(userLoading) {
     return(
       <Box maxW="screen-md" h="95vh" mx="auto" overflow="visible" p="64px">
@@ -277,22 +338,45 @@ function UserInfoContainer(props) {
               </Flex>
               <Spacer my="1" />
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">主修</Text>
-                <Flex w="50%" alignItems="center">
-                  <Select w="50%" variant='filled' placeholder='選擇主修學系' onChange={(e)=>{setMajor(e.currentTarget.value)}} defaultValue={userInfo.db.department.length>0?userInfo.db.department[0]:''}>
-                    {dept_list.map((dept) => {
-                      return (<option id={dept.code} value={dept.full_name}>{dept.full_name}</option>)
-                    })}
-                  </Select>
-                  <Button variant="ghost" colorScheme="blue" mx="4">新增雙主修</Button>
+                <Flex w="100%" alignItems="center">
+                  {/* react selector */}
+                  <Select
+                    className="basic-single"
+                    classNamePrefix="select"
+                    defaultValue={major?{value: major, label: major}:{value: "", label: "請選擇"}}
+                    isSearchable={TextTrackCue}
+                    name="color"
+                    options={deptOptions}
+                    onChange={(e)=>{setMajor(e.value)}}
+                  />
+                </Flex>
+              <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">雙主修</Text>
+                <Flex w="100%" alignItems="center">
+                  {/* react selector */}
+                  <Select
+                    className="basic-single"
+                    classNamePrefix="select"
+                    defaultValue={doubleMajor?{value: doubleMajor, label: doubleMajor}:{value: "", label: "請選擇"}}
+                    isSearchable={TextTrackCue}
+                    name="color"
+                    options={deptOptions}
+                    onChange={(e)=>{setDoubleMajor(e.value)}}
+                  />
                 </Flex>
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">輔系</Text>
-                <Flex w="50%" alignItems="center">
-                  <Select w="50%" variant='filled' placeholder='選擇輔系' onChange={(e)=>{setMinor(e.currentTarget.value)}} defaultValue={userInfo.db.minor}>
-                    {dept_list.map((dept) => {
-                        return (<option id={dept.code} value={dept.full_name}>{dept.full_name}</option>)
-                      })}
-                  </Select>
-                  <Button variant="ghost" colorScheme="blue" mx="4">新增輔系</Button>
+                <Flex w="100%" alignItems="center">
+                  {/* react selector */}
+                  <Select
+                    isMulti
+                    w='100%'
+                    className="basic-single"
+                    classNamePrefix="select"
+                    defaultValue={minor.map(dept=>({value: dept, label: dept}))}
+                    isSearchable={TextTrackCue}
+                    name="color"
+                    options={deptOptions}
+                    onChange={(e)=>{setMinor(e.map(dept=>dept.value))}}
+                  />
                 </Flex>
             </Flex>
           <Text fontSize="2xl" fontWeight="700" color="gray.600" mt="5">課程</Text>
