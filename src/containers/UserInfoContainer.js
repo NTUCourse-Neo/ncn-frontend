@@ -34,7 +34,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { FaFacebook, FaGithub, FaGoogle, FaExclamationTriangle } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { deleteUserAccount, deleteUserProfile, registerNewUser, patchUserInfo, verify_recaptcha } from '../actions/';
-import { dept_list } from '../data/department';
+import { dept_list_bachelor_only } from '../data/department';
 import ReCAPTCHA from "react-google-recaptcha";
 import useCountDown from 'react-countdown-hook';
 
@@ -43,6 +43,7 @@ function UserInfoContainer(props) {
   const toast = useToast();
   const dispatch = useDispatch();
   const userInfo = useSelector(state => state.user);
+  const deptOptions = dept_list_bachelor_only.map(dept=>({value: dept.full_name, label: dept.full_name}));
  
   const { user, isLoading, logout, getAccessTokenSilently }  = useAuth0();
   const userLoading = isLoading || !userInfo;
@@ -52,7 +53,7 @@ function UserInfoContainer(props) {
   const [studentId, setStudentId] = useState(userInfo?userInfo.db.student_id:null);
   const [major, setMajor] = useState(userInfo?userInfo.db.department.major:null);
   const [doubleMajor, setDoubleMajor] = useState(userInfo?userInfo.db.department.d_major:null);
-  const [minor, setMinor] = useState(userInfo?userInfo.db.department.minors:[]); // arr
+  const [minor, setMinor] = useState(userInfo?userInfo.db.department.minors:null); // arr
 
   // alert dialog states
   const cancelRef = useRef();
@@ -403,9 +404,6 @@ function UserInfoContainer(props) {
     );
   }
 
-  // TODO: only bachelor degree
-  const deptOptions = dept_list.map(dept=>({value: dept.full_name, label: dept.full_name}));
-
   if(userLoading) {
     return(
       <Box maxW="screen-md" h="95vh" mx="auto" overflow="visible" p="64px">
@@ -445,32 +443,35 @@ function UserInfoContainer(props) {
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">主修</Text>
                 <Flex w="100%" alignItems="center">
                   {/* react selector */}
+                  {!major?<></>:
                   <Select
                     className="basic-single"
                     classNamePrefix="select"
-                    defaultValue={major?{value: major, label: major}:{value: "", label: "請選擇"}}
+                    defaultValue={{value: major, label: major}}
                     isSearchable={TextTrackCue}
                     name="color"
                     options={deptOptions}
                     onChange={(e)=>{setMajor(e.value)}}
-                  />
+                  />}
                 </Flex>
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">雙主修</Text>
                 <Flex w="100%" alignItems="center">
                   {/* react selector */}
+                  {!doubleMajor?<></>:
                   <Select
                     className="basic-single"
                     classNamePrefix="select"
-                    defaultValue={doubleMajor?{value: doubleMajor, label: doubleMajor}:{value: "", label: "請選擇"}}
+                    defaultValue={{value: doubleMajor, label: doubleMajor}}
                     isSearchable={TextTrackCue}
                     name="color"
                     options={deptOptions}
                     onChange={(e)=>{setDoubleMajor(e.value)}}
-                  />
+                  />}
                 </Flex>
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">輔系</Text>
                 <Flex w="100%" alignItems="center">
                   {/* react selector */}
+                  {!minor?<></>:
                   <Select
                     isMulti
                     w='100%'
@@ -481,7 +482,7 @@ function UserInfoContainer(props) {
                     name="color"
                     options={deptOptions}
                     onChange={(e)=>{setMinor(e.map(dept=>dept.value))}}
-                  />
+                  />}
                 </Flex>
             </Flex>
           <Text fontSize="2xl" fontWeight="700" color="gray.600" mt="5">課程</Text>
