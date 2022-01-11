@@ -115,9 +115,19 @@ function CourseResultViewContainer() {
       if(reachedBottom && search_results.length !== 0){
           // fetch next batch of search results
           if (search_results.length < total_count){
-            dispatch(fetchSearchResults(search_ids, search_filters_enable, search_filters, batch_size, offset, search_settings.strict_search_mode));
-          }
+            try{
+                dispatch(fetchSearchResults(search_ids, search_filters_enable, search_filters, batch_size, offset, search_settings.strict_search_mode));
+            } catch(error){
+              toast({
+                  title: '獲取課程資訊失敗',
+                  description: '請檢查網路連線',
+                  status: 'error',
+                  duration: 3000,
+                  isClosable: true
+              });
+            }
         }
+      }
     }
 
     const set_enroll_method = (e)=>{

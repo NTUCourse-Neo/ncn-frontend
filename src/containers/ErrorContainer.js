@@ -9,6 +9,8 @@ import {
 function ErrorContainer(props){
 
     const error_img_src = `https://http.cat/${props.code}`
+    // can random pick one msg from the list
+    const error_msgs = [`太無情了你真的太無情了`, `出事了阿北`, `==?`] 
     const error_message = `太無情了你真的太無情了`
 
     return (

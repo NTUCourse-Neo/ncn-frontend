@@ -184,7 +184,7 @@ function UserInfoContainer(props) {
     } catch (e) {
       toast({
         title: '更改用戶資料失敗.',
-        status: '請晚點再試',
+        status: '請檢查網路連線，或聯絡系統管理員',
         duration: 3000,
         isClosable: true,
       })
@@ -198,7 +198,7 @@ function UserInfoContainer(props) {
           const token = await getAccessTokenSilently();
           const user_data = await dispatch(fetchUserById(token, user.sub));
           await dispatch(logIn(user_data));
-        } catch (e) {
+        } catch (error) {
           toast({
             title: '取得用戶資料失敗.',
             description: "請聯繫客服(?)",
@@ -206,6 +206,7 @@ function UserInfoContainer(props) {
             duration: 9000,
             isClosable: true,
           })
+          navigate(`/error/${error}`);
           // Other subsequent actions?
         }
       }

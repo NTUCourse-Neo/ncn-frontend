@@ -43,13 +43,27 @@ const fetchSearchIDs = (searchString, paths, filters_enable, filter_obj, batch_s
             dispatch({type: UPDATE_TOTAL_COUNT, payload: total_count})
         } catch (error) {
             dispatch({type: FETCH_SEARCH_RESULTS_FAILURE, payload: error});
-            throw new Error("FETCH_SEARCH_RESULTS_FAILURE: "+error)
+            console.log(Error("FETCH_SEARCH_RESULTS_FAILURE: "+error));
+            throw error;
         }
 
         return ids
     } catch (error) {
         dispatch({type: FETCH_SEARCH_IDS_FAILURE, payload: error});
-        throw new Error("FETCH_SEARCH_IDS_FAILURE: "+error)
+        console.log(Error("FETCH_SEARCH_IDS_FAILURE: "+error))
+
+        if (error.response) {
+            // server did response, used for handle custom error msg
+            throw error.response.status;
+        } else if (error.request) {
+            // The request was made but no response was received (server is downed)
+            let status = 521; // Server is down
+            throw status;
+        } else {
+            // Something happened in setting up the request that triggered an Error
+            let status = 400; // Bad request
+            throw status;
+        }
     }
 }
 
@@ -70,7 +84,20 @@ const fetchSearchResults = (ids_arr, filters_enable, filter_obj, batch_size, off
         return courses
     } catch (error) {
         dispatch({type: FETCH_SEARCH_RESULTS_FAILURE, payload: error});
-        throw new Error("FETCH_SEARCH_RESULTS_FAILURE: "+error)
+        console.log(Error("FETCH_SEARCH_RESULTS_FAILURE: "+error))
+
+        if (error.response) {
+            // server did response, used for handle custom error msg
+            throw error.response.status;
+        } else if (error.request) {
+            // The request was made but no response was received (server is downed)
+            let status = 521; // Server is down
+            throw status;
+        } else {
+            // Something happened in setting up the request that triggered an Error
+            let status = 400; // Bad request
+            throw status;
+        }
     }
 }
 
@@ -83,8 +110,21 @@ const fetchCourseTableCoursesByIds = (ids_arr) => async (dispatch)=>{
         const {data: {courses}} = await instance.post(`/courses/ids`, {ids: ids_arr, filter: search_filter, batch_size: batch_size, offset: offset});
         return courses
     }
-    catch (e){
-        throw new Error("Error in fetchCoursesByIds: "+e);
+    catch (error){
+        console.log(Error("Error in fetchCoursesByIds: "+error));
+
+        if (error.response) {
+            // server did response, used for handle custom error msg
+            throw error.response.status;
+        } else if (error.request) {
+            // The request was made but no response was received (server is downed)
+            let status = 521; // Server is down
+            throw status;
+        } else {
+            // Something happened in setting up the request that triggered an Error
+            let status = 400; // Bad request
+            throw status;
+        }
     }
 };
 
@@ -94,12 +134,21 @@ const createCourseTable = (course_table_id, course_table_name, user_id, semester
         dispatch({type: UPDATE_COURSE_TABLE, payload: course_table});
         return course_table
     }
-    catch (e){
-        if (e.response){
-            console.log('ERROR MESSAGE: ',e.response.data.message);
-            console.log('ERROR STATUS CODE: ',e.response.status);
+    catch (error){
+        console.log(Error("Error in createCourseTable: "+error));
+
+        if (error.response) {
+            // server did response, used for handle custom error msg
+            throw error.response.status;
+        } else if (error.request) {
+            // The request was made but no response was received (server is downed)
+            let status = 521; // Server is down
+            throw status;
+        } else {
+            // Something happened in setting up the request that triggered an Error
+            let status = 400; // Bad request
+            throw status;
         }
-        throw new Error("Error in createCourseTable: "+e);
     }
 }
 
@@ -111,12 +160,21 @@ const linkCoursetableToUser = (token, course_table_id, user_id) => async (dispat
             }
         });
         dispatch({type: UPDATE_USER, payload: user});
-    }catch(e){
-        if (e.response){
-            console.log('ERROR MESSAGE: ',e.response.data.message);
-            console.log('ERROR STATUS CODE: ',e.response.status);
+    }catch(error){
+        console.log(Error("Error in linkCoursetableToUser: "+error))
+
+        if (error.response) {
+            // server did response, used for handle custom error msg
+            throw error.response.status;
+        } else if (error.request) {
+            // The request was made but no response was received (server is downed)
+            let status = 521; // Server is down
+            throw status;
+        } else {
+            // Something happened in setting up the request that triggered an Error
+            let status = 400; // Bad request
+            throw status;
         }
-        throw new Error("Error in linkCoursetableToUser: "+e);
     }
 };
 
@@ -126,16 +184,30 @@ const fetchCourseTable = (course_table_id) => async (dispatch)=>{
         dispatch({type: UPDATE_COURSE_TABLE, payload: course_table});
         return course_table
     }
-    catch (e){
-        if (e.response) {
-            if (e.response.status===403) {
+    catch (error){
+        console.log(Error("Error in fetchCourseTable: "+error));
+
+        if (error.response) {
+            if (error.response.status===403) {
                 // expired course_table
                 // if fetch expired course_table, return null and handle it by frontend logic
                 dispatch({type: UPDATE_COURSE_TABLE, payload: null});
                 return null
             }
-        } else {
-            throw new Error("Error in fetchCourseTable: "+e);
+        } 
+        else {
+            if (error.response) {
+                // server did response, used for handle custom error msg
+                throw error.response.status;
+            } else if (error.request) {
+                // The request was made but no response was received (server is downed)
+                let status = 521; // Server is down
+                throw status;
+            } else {
+                // Something happened in setting up the request that triggered an Error
+                let status = 400; // Bad request
+                throw status;
+            }
         }
     }
 }
@@ -148,17 +220,31 @@ const patchCourseTable = (course_table_id, course_table_name, user_id, expire_ts
         dispatch({type: UPDATE_COURSE_TABLE, payload: course_table});
         return course_table
     }
-    catch (e){
+    catch (error){
+        console.log(Error("Error in patchCourseTable: "+error));
+
         // need to let frontend handle error, so change to return null
-        if (e.response) {
-            if (e.response.status===403 && e.response.data.message==="Course table is expired") {
+        if (error.response) {
+            if (error.response.status===403 && error.response.data.message==="Course table is expired") {
                 // expired course_table
                 // if fetch expired course_table, return null and handle it by frontend logic
                 dispatch({type: UPDATE_COURSE_TABLE, payload: null});
                 return null
             }
+        } else {
+            if (error.response) {
+                // server did response, used for handle custom error msg
+                throw error.response.status;
+            } else if (error.request) {
+                // The request was made but no response was received (server is downed)
+                let status = 521; // Server is down
+                throw status;
+            } else {
+                // Something happened in setting up the request that triggered an Error
+                let status = 400; // Bad request
+                throw status;
+            }
         }
-        throw new Error("Error in patchCourseTable: "+e);
     }
 }
 
@@ -171,9 +257,21 @@ const fetchUserById = (token, user_id) => async (dispatch)=>{
         });
         // user contains user in db & auth0, either null (not found) or an object.
         return user
-    } catch (e) {
-        console.log(Error("fetchUserById "+e));
-        throw e.response.status;
+    } catch (error) {
+        console.log(Error("fetchUserById "+error));
+
+        if (error.response) {
+            // server did response, used for handle custom error msg
+            throw error.response.status;
+        } else if (error.request) {
+            // The request was made but no response was received (server is downed)
+            let status = 521; // Server is down
+            throw status;
+        } else {
+            // Something happened in setting up the request that triggered an Error
+            let status = 400; // Bad request
+            throw status;
+        }
     }
 }
 
@@ -186,8 +284,21 @@ const registerNewUser = (token, email) => async (dispatch)=>{
         })
         // either null (not found) or an object.
         return user
-    } catch (e) {
-        throw new Error("Error in registerNewUser: "+e);
+    } catch (error) {
+        console.log(Error("Error in registerNewUser: "+error))
+
+        if (error.response) {
+            // server did response, used for handle custom error msg
+            throw error.response.status;
+        } else if (error.request) {
+            // The request was made but no response was received (server is downed)
+            let status = 521; // Server is down
+            throw status;
+        } else {
+            // Something happened in setting up the request that triggered an Error
+            let status = 400; // Bad request
+            throw status;
+        }
     }
 }
 
@@ -199,12 +310,21 @@ const addFavoriteCourse = (token, new_favorite_list) => async (dispatch)=>{
             }
         });
         dispatch({type: UPDATE_USER, payload: user});
-    }catch(e){
-        if (e.response){
-            console.log('ERROR MESSAGE: ',e.response.data.message);
-            console.log('ERROR STATUS CODE: ',e.response.status);
+    }catch(error){
+        console.log(Error("Error in addFavoriteCourse: "+error))
+
+        if (error.response) {
+            // server did response, used for handle custom error msg
+            throw error.response.status;
+        } else if (error.request) {
+            // The request was made but no response was received (server is downed)
+            let status = 521; // Server is down
+            throw status;
+        } else {
+            // Something happened in setting up the request that triggered an Error
+            let status = 400; // Bad request
+            throw status;
         }
-        throw new Error("Error in linkCoursetableToUser: "+e);
     }
 };
 
@@ -216,12 +336,21 @@ const patchUserInfo = (token, updateObject) => async (dispatch)=>{
             }
         });
         dispatch({type: UPDATE_USER, payload: user});
-    }catch(e){
-        if (e.response){
-            console.log('ERROR MESSAGE: ',e.response.data.message);
-            console.log('ERROR STATUS CODE: ',e.response.status);
+    }catch(error){
+        console.log(Error("Error in patchUserInfo: "+error))
+
+        if (error.response) {
+            // server did response, used for handle custom error msg
+            throw error.response.status;
+        } else if (error.request) {
+            // The request was made but no response was received (server is downed)
+            let status = 521; // Server is down
+            throw status;
+        } else {
+            // Something happened in setting up the request that triggered an Error
+            let status = 400; // Bad request
+            throw status;
         }
-        throw new Error("Error in linkCoursetableToUser: "+e);
     }
 }
 
@@ -232,12 +361,21 @@ const deleteUserProfile = (token) => async (dispatch)=>{
                 Authorization: `Bearer ${token}`
             }
         });
-    } catch(e) {
-        if (e.response){
-            console.log('ERROR MESSAGE: ',e.response.data.message);
-            console.log('ERROR STATUS CODE: ',e.response.status);
+    } catch(error) {
+        console.log(Error("Error in deleteUserProfile: "+error))
+
+        if (error.response) {
+            // server did response, used for handle custom error msg
+            throw error.response.status;
+        } else if (error.request) {
+            // The request was made but no response was received (server is downed)
+            let status = 521; // Server is down
+            throw status;
+        } else {
+            // Something happened in setting up the request that triggered an Error
+            let status = 400; // Bad request
+            throw status;
         }
-        throw new Error("Error in deleteUserProfile: "+e);
     }
 }
 
@@ -249,12 +387,21 @@ const deleteUserAccount = (token) => async (dispatch)=>{
             }
         });
         dispatch({type: LOG_OUT_SUCCESS});
-    } catch(e) {
-        if (e.response){
-            console.log('ERROR MESSAGE: ',e.response.data.message);
-            console.log('ERROR STATUS CODE: ',e.response.status);
+    } catch(error) {
+        console.log(Error("Error in deleteUserAccount: "+error))
+
+        if (error.response) {
+            // server did response, used for handle custom error msg
+            throw error.response.status;
+        } else if (error.request) {
+            // The request was made but no response was received (server is downed)
+            let status = 521; // Server is down
+            throw status;
+        } else {
+            // Something happened in setting up the request that triggered an Error
+            let status = 400; // Bad request
+            throw status;
         }
-        throw new Error("Error in deleteUserProfile: "+e);
     }
 }
 

@@ -22,8 +22,10 @@ import { FaArrowRight } from 'react-icons/fa';
 
 import {setSearchColumn,fetchSearchIDs} from '../actions/index'
 import {useDispatch, useSelector} from 'react-redux'
+import { useNavigate } from "react-router-dom";
 
 function CourseSearchInput() {
+    const navigate = useNavigate();
 
     const search_columns = useSelector(state => state.search_columns)
     const search_filters = useSelector(state => state.search_filters)
@@ -64,12 +66,20 @@ function CourseSearchInput() {
                     <Input variant="flushed" size="md" focusBorderColor="teal.500" placeholder="直接搜尋可顯示全部課程" value={search} 
                         onChange={(e)=>{setSearch(e.target.value)}} 
                         onKeyPress={(e)=>{if (e.key === 'Enter') {
-                            dispatch(fetchSearchIDs(search, search_columns, search_filters_enable, search_filters, batch_size, strict_match))
+                            try {
+                                dispatch(fetchSearchIDs(search, search_columns, search_filters_enable, search_filters, batch_size, strict_match))
+                            } catch (error) {
+                                navigate(`/error/${error}`);
+                            }
                         }}}
                     />
                 </InputGroup>
                 <Button colorScheme="blue" variant="solid" rightIcon={<FaArrowRight/>} onClick={()=>{
-                    dispatch(fetchSearchIDs(search, search_columns, search_filters_enable, search_filters, batch_size, strict_match))
+                    try {
+                        dispatch(fetchSearchIDs(search, search_columns, search_filters_enable, search_filters, batch_size, strict_match))
+                    } catch (error) {
+                        navigate(`/error/${error}`);
+                    }
                 }
                 }>搜尋</Button>
             </Flex>
