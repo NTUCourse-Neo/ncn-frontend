@@ -90,7 +90,7 @@ function CourseInfoRow(props) {
                     if (res_table){
                         toast({
                             title: `已${operation_str} ${course.course_name}`,
-                            description: `新增至 ${course_table.name}`,
+                            description: `課表: ${course_table.name}`,
                             status: 'success',
                             duration: 3000,
                             isClosable: true
