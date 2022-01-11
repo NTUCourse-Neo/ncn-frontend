@@ -96,7 +96,7 @@ function CourseDrawerContainer(props) {
     };
     return(
         <Flex px="1" flexDirection="column" width="100%" alignItems="start" justifyContent="space-between">
-            <Flex ml="2px" flexDirection="row" alignItems="center" justifyContent="start" flexWrap="wrap">
+            <Flex ml="2px" flexDirection="row" alignItems="center" justifyContent="start" flexWrap="wrap" css={{ gap: '.5rem' }}>
                 {renderDataElement("課程識別碼", props.courseInfo.course_id)}
                 {renderDataElement("課號", props.courseInfo.course_code)}
                 {renderDataElement("班次", props.courseInfo.class_id)}

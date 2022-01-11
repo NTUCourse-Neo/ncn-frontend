@@ -123,7 +123,9 @@ function CourseInfoRow(props) {
                         </Tooltip>
                         <Heading as="h3" size="sm" ml="20px" mr="5px" color="gray.500" fontWeight="500">{props.courseInfo.teacher}</Heading>
                         <Collapse in={!props.displayTable}>
-                            <Badge variant='outline' ml="8" size="lg" maxW="20vw" isTruncated>{props.courseInfo.time_loc}</Badge>
+                            <Tooltip hasArrow placement="top" label={props.courseInfo.time_loc} bg='gray.600' color='white'>
+                                <Badge variant='outline' ml="8" size="lg" maxW="10vw" isTruncated>{props.courseInfo.time_loc}</Badge>
+                            </Tooltip>
                         </Collapse>
                     </Flex>
                     <Spacer />
