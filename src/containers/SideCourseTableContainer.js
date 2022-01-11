@@ -149,7 +149,7 @@ function SideCourseTableContainer(props) {
         }
       };
       // run after useAuth0 finish loading.
-      console.log('isLoading: ', isLoading);
+      // console.log('isLoading: ', isLoading);
       if (!isLoading) {
         // user mode
         if (user) {
@@ -213,7 +213,7 @@ function SideCourseTableContainer(props) {
           // hasLogIn
           try {
             const new_course_table = await dispatch(createCourseTable(new_uuid, "我的課表", userInfo.db._id, "1101"));
-            console.log("New UUID is generated: ",new_uuid);
+            // console.log("New UUID is generated: ",new_uuid);
             const token = await getAccessTokenSilently();
             await dispatch(linkCoursetableToUser(token, new_uuid, userInfo.db._id));
           } catch (e) {
@@ -229,7 +229,7 @@ function SideCourseTableContainer(props) {
           // Guest mode
           try {
             const new_course_table = await dispatch(createCourseTable(new_uuid, "我的課表", null, "1101"));
-            console.log("New UUID is generated: ",new_uuid);
+            // console.log("New UUID is generated: ",new_uuid);
             localStorage.setItem(LOCAL_STORAGE_KEY, new_course_table._id);
             setExpired(false);
           } catch (error) {
@@ -246,9 +246,9 @@ function SideCourseTableContainer(props) {
     }
     
     // debugger
-    useEffect(() => console.log('courseTimes: ',courseTimes), [courseTimes]);
-    useEffect(() => console.log('courses: ',courses), [courses]);
-    useEffect(() => console.log('courseIds: ',courseIds), [courseIds]);
+    // useEffect(() => console.log('courseTimes: ',courseTimes), [courseTimes]);
+    // useEffect(() => console.log('courses: ',courses), [courses]);
+    // useEffect(() => console.log('courseIds: ',courseIds), [courseIds]);
 
     const { onOpen, onClose, isOpen } = useDisclosure()
     const firstFieldRef = useRef(null)
@@ -340,7 +340,7 @@ function SideCourseTableContainer(props) {
     };
     const renderSideCourseTableContent = () => {
       if((courseTable===null || expired===true) && !(loading || isLoading)){
-        console.log("courseTable is null");
+        // console.log("courseTable is null");
         return(
           <Flex flexDirection="column" justifyContent="center" alignItems="center" h="100%" w="100%">
             <Flex flexDirection="row" justifyContent="center" alignItems="center">
