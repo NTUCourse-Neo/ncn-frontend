@@ -54,7 +54,7 @@ function SideCourseTableContainer(props) {
     const [courseTimes, setCourseTimes] = useState({}); // coursesTime is a dictionary of courseIds and their corresponding time in time table
     const [hoveredCourseTime, setHoveredCourseTime]  = useState({}); // courseTime is a dictionary of courseIds and their corresponding time in time table
 
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [expired, setExpired] = useState(false);
 
     const parseCourseDateTime = (course, course_time_tmp) => {
@@ -145,8 +145,8 @@ function SideCourseTableContainer(props) {
           }
         }
         callback();
-      }
-
+      };
+      
       setLoading(true);
       // run after useAuth0 finish loading.
       console.log('isLoading: ', isLoading);
@@ -180,8 +180,9 @@ function SideCourseTableContainer(props) {
         } 
         _callback();
       }
-      
-      fetchCoursesDataById(() => setLoading(false));
+      if(courseTable){
+        fetchCoursesDataById(() => setLoading(false));
+      }
     }, [courseTable]);
 
     useEffect(() => {
