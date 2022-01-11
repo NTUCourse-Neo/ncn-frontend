@@ -37,6 +37,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import { useAuth0 } from "@auth0/auth0-react";
 import LoadingOverlay from 'react-loading-overlay';
+import { BeatLoader } from 'react-spinners';
 
 const LOCAL_STORAGE_KEY = 'NTU_CourseNeo_Course_Table_Key';
 
@@ -354,14 +355,16 @@ function SideCourseTableContainer(props) {
       return(
         <Box overflow="auto" w="100%">
           <Flex flexDirection="column" m="4" ml="0">
-            <Flex flexDirection="row" justifyContent="space-between" alignItems="center" mb="4" position="fixed" zIndex={100}>
+            <Flex flexDirection="row" justifyContent="space-between" alignItems="center" my="2" position="fixed" zIndex={100}>
                 {
                   courseTable?
                   <>
                     <Text fontWeight="700" fontSize="3xl" color="gray.600" mr="4">{courseTable.name}</Text>
                     {renderEditName()}
                   </>:
-                  <></>
+                  <Flex mt="4" ml="4" alignItems="center" justifyContent="center">
+                    <BeatLoader size={10} color='gray'/>
+                  </Flex>
                 }
                 
             </Flex>
