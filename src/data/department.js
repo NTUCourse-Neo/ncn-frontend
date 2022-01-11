@@ -204,12 +204,6 @@ const dept_list = [
       "third_name": ""
     },
     {
-      "code": "2050",
-      "short_name": "",
-      "full_name": "動物學系",
-      "third_name": ""
-    },
-    {
       "code": "2051",
       "short_name": "",
       "full_name": "動物生物組",
@@ -1891,4 +1885,355 @@ const dept_list = [
     }
 ];
 
-export {dept_list};
+const dept_list_bachelor_only = [
+  {
+    "code": "1010",
+    "short_name": "中文系",
+    "full_name": "中國文學系",
+    "third_name": ""
+  },
+  {
+    "code": "1011",
+    "short_name": "中文系國際生",
+    "full_name": "中國文學系國際學生學士班",
+    "third_name": ""
+  },
+  {
+    "code": "1020",
+    "short_name": "外文系",
+    "full_name": "外國語文學系",
+    "third_name": ""
+  },
+  {
+    "code": "1030",
+    "short_name": "歷史系",
+    "full_name": "歷史學系",
+    "third_name": ""
+  },
+  {
+    "code": "1040",
+    "short_name": "哲學系",
+    "full_name": "哲學系",
+    "third_name": ""
+  },
+  {
+    "code": "1050",
+    "short_name": "人類系",
+    "full_name": "人類學系",
+    "third_name": ""
+  },
+  {
+    "code": "1060",
+    "short_name": "圖資系",
+    "full_name": "圖書資訊學系",
+    "third_name": ""
+  },
+  {
+    "code": "1070",
+    "short_name": "日文系",
+    "full_name": "日本語文學系",
+    "third_name": ""
+  },
+  {
+    "code": "1090",
+    "short_name": "戲劇系",
+    "full_name": "戲劇學系",
+    "third_name": ""
+  },
+  {
+    "code": "2010",
+    "short_name": "數學系",
+    "full_name": "數學系",
+    "third_name": ""
+  },
+  {
+    "code": "2020",
+    "short_name": "物理系",
+    "full_name": "物理學系",
+    "third_name": ""
+  },
+  {
+    "code": "2030",
+    "short_name": "化學系",
+    "full_name": "化學系",
+    "third_name": ""
+  },
+  {
+    "code": "2040",
+    "short_name": "地質系",
+    "full_name": "地質科學系",
+    "third_name": ""
+  },
+  {
+    "code": "2070",
+    "short_name": "心理系",
+    "full_name": "心理學系",
+    "third_name": ""
+  },
+  {
+    "code": "2080",
+    "short_name": "地理系",
+    "full_name": "地理環境資源學系",
+    "third_name": ""
+  },
+  {
+    "code": "2090",
+    "short_name": "大氣系",
+    "full_name": "大氣科學系",
+    "third_name": ""
+  },
+  {
+    "code": "3020",
+    "short_name": "政治系",
+    "full_name": "政治學系",
+    "third_name": ""
+  },
+  {
+    "code": "3030",
+    "short_name": "經濟系",
+    "full_name": "經濟學系",
+    "third_name": ""
+  },
+  {
+    "code": "3050",
+    "short_name": "社會系",
+    "full_name": "社會學系",
+    "third_name": ""
+  },
+  {
+    "code": "3100",
+    "short_name": "社工系",
+    "full_name": "社會工作學系",
+    "third_name": ""
+  },
+  {
+    "code": "4010",
+    "short_name": "醫學系",
+    "full_name": "醫學系",
+    "third_name": ""
+  },
+  {
+    "code": "4020",
+    "short_name": "牙醫系",
+    "full_name": "牙醫學系",
+    "third_name": ""
+  },
+  {
+    "code": "4030",
+    "short_name": "藥學系",
+    "full_name": "藥學系",
+    "third_name": ""
+  },
+  {
+    "code": "4040",
+    "short_name": "醫技系",
+    "full_name": "醫學檢驗暨生物技術學系",
+    "third_name": ""
+  },
+  {
+    "code": "4060",
+    "short_name": "護理系",
+    "full_name": "護理學系",
+    "third_name": ""
+  },
+  {
+    "code": "4080",
+    "short_name": "物治系",
+    "full_name": "物理治療學系(四年制)",
+    "third_name": ""
+  },
+  {
+    "code": "4081",
+    "short_name": "",
+    "full_name": "物治系六年制",
+    "third_name": ""
+  },
+  {
+    "code": "4090",
+    "short_name": "職治系",
+    "full_name": "職能治療學系",
+    "third_name": ""
+  },
+  {
+    "code": "4120",
+    "short_name": "",
+    "full_name": "學士後護理學系",
+    "third_name": ""
+  },
+  {
+    "code": "5010",
+    "short_name": "土木系",
+    "full_name": "土木工程學系",
+    "third_name": ""
+  },
+  {
+    "code": "5020",
+    "short_name": "機械系",
+    "full_name": "機械工程學系",
+    "third_name": ""
+  },
+  {
+    "code": "5040",
+    "short_name": "化工系",
+    "full_name": "化學工程學系",
+    "third_name": ""
+  },
+  {
+    "code": "5050",
+    "short_name": "工科海洋系",
+    "full_name": "工程科學及海洋工程學系",
+    "third_name": ""
+  },
+  {
+    "code": "5070",
+    "short_name": "材料系",
+    "full_name": "材料科學與工程學系",
+    "third_name": ""
+  },
+  {
+    "code": "5080",
+    "short_name": "醫工系",
+    "full_name": "醫學工程學系",
+    "third_name": ""
+  },
+  {
+    "code": "6010",
+    "short_name": "農藝系",
+    "full_name": "農藝學系",
+    "third_name": ""
+  },
+  {
+    "code": "6020",
+    "short_name": "生工系",
+    "full_name": "生物環境系統工程學系",
+    "third_name": ""
+  },
+  {
+    "code": "6030",
+    "short_name": "農化系",
+    "full_name": "農業化學系",
+    "third_name": ""
+  },
+  {
+    "code": "6050",
+    "short_name": "森林環資系",
+    "full_name": "森林環境暨資源學系",
+    "third_name": ""
+  },
+  {
+    "code": "6060",
+    "short_name": "動科系",
+    "full_name": "動物科學技術學系",
+    "third_name": "動物科技系"
+  },
+  {
+    "code": "6070",
+    "short_name": "農經系",
+    "full_name": "農業經濟學系",
+    "third_name": ""
+  },
+  {
+    "code": "6080",
+    "short_name": "園藝系",
+    "full_name": "園藝暨景觀學系",
+    "third_name": ""
+  },
+  {
+    "code": "6090",
+    "short_name": "獸醫系",
+    "full_name": "獸醫學系",
+    "third_name": ""
+  },
+  {
+    "code": "6100",
+    "short_name": "生傳系",
+    "full_name": "生物產業傳播暨發展學系",
+    "third_name": "生傳發展系"
+  },
+  {
+    "code": "6110",
+    "short_name": "生物機電系",
+    "full_name": "生物機電工程學系",
+    "third_name": ""
+  },
+  {
+    "code": "6120",
+    "short_name": "昆蟲系",
+    "full_name": "昆蟲學系",
+    "third_name": ""
+  },
+  {
+    "code": "6130",
+    "short_name": "植微系",
+    "full_name": "植物病理與微生物學系",
+    "third_name": ""
+  },
+  {
+    "code": "7010",
+    "short_name": "工管系",
+    "full_name": "工商管理學系",
+    "third_name": ""
+  },
+  {
+    "code": "7020",
+    "short_name": "會計系",
+    "full_name": "會計學系",
+    "third_name": ""
+  },
+  {
+    "code": "7030",
+    "short_name": "財金系",
+    "full_name": "財務金融學系",
+    "third_name": ""
+  },
+  {
+    "code": "7040",
+    "short_name": "國企系",
+    "full_name": "國際企業學系",
+    "third_name": ""
+  },
+  {
+    "code": "7050",
+    "short_name": "資管系",
+    "full_name": "資訊管理學系",
+    "third_name": ""
+  },
+  {
+    "code": "8010",
+    "short_name": "公衛系",
+    "full_name": "公共衛生學系",
+    "third_name": ""
+  },
+  {
+    "code": "9010",
+    "short_name": "電機系",
+    "full_name": "電機工程學系",
+    "third_name": ""
+  },
+  {
+    "code": "9020",
+    "short_name": "資工系",
+    "full_name": "資訊工程學系",
+    "third_name": ""
+  },
+  {
+    "code": "A010",
+    "short_name": "法律系",
+    "full_name": "法律學系",
+    "third_name": ""
+  },
+  {
+    "code": "B010",
+    "short_name": "生科系",
+    "full_name": "生命科學系",
+    "third_name": ""
+  },
+  {
+    "code": "B020",
+    "short_name": "生技系",
+    "full_name": "生化科技學系",
+    "third_name": ""
+  }
+]
+
+export {dept_list, dept_list_bachelor_only};
