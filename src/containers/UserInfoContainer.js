@@ -42,7 +42,7 @@ function UserInfoContainer(props) {
   const toast = useToast();
   const dispatch = useDispatch();
   const userInfo = useSelector(state => state.user);
-  const deptOptions = dept_list_bachelor_only.map(dept=>({value: dept.full_name, label: dept.full_name}));
+  const deptOptions = dept_list_bachelor_only.map(dept=>({value: dept.full_name, label: dept.code+" "+dept.full_name}));
  
   const { user, isLoading, logout, getAccessTokenSilently }  = useAuth0();
   const userLoading = isLoading || !userInfo;
