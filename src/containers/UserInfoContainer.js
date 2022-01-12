@@ -53,6 +53,7 @@ function UserInfoContainer(props) {
   const [major, setMajor] = useState(userInfo?userInfo.db.department.major:null);
   const [doubleMajor, setDoubleMajor] = useState(userInfo?userInfo.db.department.d_major:null);
   const [minor, setMinor] = useState(userInfo?userInfo.db.department.minors:null); // arr
+  const [saveLoading, setSaveLoading] = useState(false);
 
   // alert dialog states
   const cancelRef = useRef();
@@ -167,7 +168,7 @@ function UserInfoContainer(props) {
         duration: 3000,
         isClosable: true,
       })
-      // return;
+      return;
     }
     if (updateObject.department.minors.includes(updateObject.department.d_major)){
       toast({
@@ -177,7 +178,7 @@ function UserInfoContainer(props) {
         duration: 3000,
         isClosable: true,
       })
-      // return;
+      return;
     }
     try {
       const token = await getAccessTokenSilently();
@@ -503,7 +504,11 @@ function UserInfoContainer(props) {
           <Divider mt="1" mb="4"/>
           <Button colorScheme="teal" size="md" w="20%" my="4" variant="outline">匯入修課紀錄</Button>
           <Divider mt="1" mb="4"/>
-          <Button colorScheme="teal" size="md" w="20%" my="4" onClick={()=>{updateUserInfo()}}>儲存</Button>
+          <Button colorScheme="teal" size="md" w="20%" my="4" isLoading={saveLoading} onClick={async()=>{
+            setSaveLoading(true); 
+            await updateUserInfo(); 
+            setSaveLoading(false);}
+          }>儲存</Button>
         </Flex>
         <Flex w="100%" h="100%" mt="8" flexDirection="column" justifyContent="start" alignItems="start" p="4" borderRadius="lg" border='1px' borderColor='red.600'>
           <Text fontSize="2xl" fontWeight="700" color="red.600" mt="2">危險區域</Text>
