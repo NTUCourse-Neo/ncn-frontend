@@ -88,6 +88,20 @@ const fetchCourseTableCoursesByIds = (ids_arr) => async (dispatch)=>{
     }
 };
 
+// used in userMyPage initialization, to fetch all favorite courses object by user's favorite courses ids
+const fetchFavoriteCourses = (ids_arr) => async (dispatch) => {
+    try {
+        let search_filter = {strict_match:false, time: null, department: null, category: null, enroll_method: null};
+        let batch_size = 15000;
+        let offset = 0;
+        const {data: {courses}} = await instance.post(`/courses/ids`, {ids: ids_arr, filter: search_filter, batch_size: batch_size, offset: offset});        
+        return courses;
+    }
+    catch (err) {
+        throw new Error("Error in fetchFavoriteCourses: " + err);
+    }
+}
+
 const createCourseTable = (course_table_id, course_table_name, user_id, semester) => async (dispatch)=>{
     try {
         const {data: {course_table}} = await instance.post(`/course_tables/`, {id: course_table_id, name: course_table_name, user_id: user_id, semester: semester});
@@ -267,4 +281,4 @@ const use_otp_link_student_id = (token, student_id, otp_code) => async (dispatch
     return resp.data;
 };
 
-export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, createCourseTable, linkCoursetableToUser, fetchCourseTable, patchCourseTable, fetchUserById, registerNewUser, logOut, logIn, updateCourseTable, addFavoriteCourse, deleteUserProfile, deleteUserAccount, verify_recaptcha, request_otp_code, use_otp_link_student_id };
+export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, fetchFavoriteCourses, createCourseTable, linkCoursetableToUser, fetchCourseTable, patchCourseTable, fetchUserById, registerNewUser, logOut, logIn, updateCourseTable, addFavoriteCourse, deleteUserProfile, deleteUserAccount, verify_recaptcha, request_otp_code, use_otp_link_student_id };
