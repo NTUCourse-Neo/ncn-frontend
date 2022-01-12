@@ -29,11 +29,10 @@ import {
 import Select from 'react-select';
 import LoadingOverlay from 'react-loading-overlay';
 import { HashLoader } from 'react-spinners';
-import { fetchUserById, logIn, request_otp_code, use_otp_link_student_id } from '../actions/';
 import { useDispatch, useSelector } from 'react-redux';
 import { FaFacebook, FaGithub, FaGoogle, FaExclamationTriangle } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import { deleteUserAccount, deleteUserProfile, registerNewUser, patchUserInfo, verify_recaptcha } from '../actions/';
+import { deleteUserAccount, deleteUserProfile, registerNewUser, patchUserInfo, verify_recaptcha, fetchUserById, logIn, request_otp_code, use_otp_link_student_id } from '../actions/';
 import { dept_list_bachelor_only } from '../data/department';
 import ReCAPTCHA from "react-google-recaptcha";
 import useCountDown from 'react-countdown-hook';
