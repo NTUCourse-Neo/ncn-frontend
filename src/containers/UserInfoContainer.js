@@ -443,45 +443,52 @@ function UserInfoContainer(props) {
                 <Flex w="100%" alignItems="center">
                   {/* react selector */}
                   {major===null?<></>:
-                  <Select
-                    className="basic-single"
-                    classNamePrefix="select"
-                    defaultValue={major===''?{value: "", label: "請選擇"}:{value: major, label: major}}
-                    isSearchable={TextTrackCue}
-                    name="color"
-                    options={deptOptions}
-                    onChange={(e)=>{setMajor(e.value)}}
-                  />}
+                  <Box w="20vw">
+                    <Select
+                      className="basic-single"
+                      classNamePrefix="select"
+                      defaultValue={major===''?{value: "", label: "請選擇"}:{value: major, label: major}}
+                      isSearchable={TextTrackCue}
+                      name="color"
+                      options={deptOptions}
+                      onChange={(e)=>{setMajor(e.value)}}
+                    />
+                  </Box>
+                  }
                 </Flex>
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">雙主修</Text>
                 <Flex w="100%" alignItems="center">
                   {/* react selector */}
                   {doubleMajor===null?<></>:
-                  <Select
-                    className="basic-single"
-                    classNamePrefix="select"
-                    defaultValue={doubleMajor===''?{value: "", label: " 請選擇 "}:{value: doubleMajor, label: doubleMajor}}
-                    isSearchable={TextTrackCue}
-                    name="color"
-                    options={deptOptions}
-                    onChange={(e)=>{setDoubleMajor(e.value)}}
-                  />}
+                  <Box w="20vw">
+                    <Select
+                      className="basic-single"
+                      classNamePrefix="select"
+                      defaultValue={doubleMajor===''?{value: "", label: " 請選擇 "}:{value: doubleMajor, label: doubleMajor}}
+                      isSearchable={TextTrackCue}
+                      name="color"
+                      options={deptOptions}
+                      onChange={(e)=>{setDoubleMajor(e.value)}}
+                    />
+                  </Box>}
                 </Flex>
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">輔系</Text>
                 <Flex w="100%" alignItems="center">
                   {/* react selector */}
                   {minor===null?<></>:
-                  <Select
-                    isMulti
-                    w='100%'
-                    className="basic-single"
-                    classNamePrefix="select"
-                    defaultValue={minor.map(dept=>({value: dept, label: dept}))}
-                    isSearchable={TextTrackCue}
-                    name="color"
-                    options={deptOptions}
-                    onChange={(e)=>{setMinor(e.map(dept=>dept.value))}}
-                  />}
+                  <Box w="20vw">
+                    <Select
+                      isMulti
+                      w='100%'
+                      className="basic-single"
+                      classNamePrefix="select"
+                      defaultValue={minor.map(dept=>({value: dept, label: dept}))}
+                      isSearchable={TextTrackCue}
+                      name="color"
+                      options={deptOptions}
+                      onChange={(e)=>{setMinor(e.map(dept=>dept.value))}}
+                    />
+                    </Box>}
                 </Flex>
             </Flex>
           <Text fontSize="2xl" fontWeight="700" color="gray.600" mt="5">課程</Text>
