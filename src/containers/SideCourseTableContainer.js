@@ -29,7 +29,10 @@ import {
     TabPanel,
     Divider,
     Badge,
-    Tag
+    Tag,
+    Spinner,
+    Skeleton,
+    SkeletonText
 
 } from '@chakra-ui/react';
 import {
@@ -421,25 +424,23 @@ function SideCourseTableContainer(props) {
         );
       };
       return(
-        <Box overflow="auto" w="100%">
-          <Flex flexDirection="column" m="4" ml="0">
+        <Box overflow="auto" w="100%" mt="4">
+          <Flex flexDirection="column">
             <Tabs>
-            <Flex flexDirection="row" justifyContent="start" alignItems="center" my="2" position="fixed" zIndex="100">
+            <Flex flexDirection="row" justifyContent="start" alignItems="center" my="2" position="fixed" zIndex="100" ml="4">
                 {
                   courseTable?
-                  <>
+                  <Flex alignItems="center">
                     <Text fontWeight="700" fontSize="3xl" color="gray.600" mr="4">{courseTable.name}</Text>
                     {renderEditName()}
-                  </>:
-                  <Flex mt="4" ml="4" alignItems="center" justifyContent="center">
-                    <BeatLoader size={10} color='gray'/>
-                  </Flex>
+                    <Spacer mx="8" />
+                    <TabList>
+                      <Tab>時間表</Tab>
+                      <Tab>清單</Tab>
+                    </TabList>
+                  </Flex>:
+                    <SkeletonText width="15vw" mt="2" h="2" noOfLines={3}/>
                 }
-                <Spacer mx="8" />
-                <TabList>
-                  <Tab>時間表</Tab>
-                  <Tab>清單</Tab>
-                </TabList>
             </Flex>
               <TabPanels>
                 <TabPanel>
