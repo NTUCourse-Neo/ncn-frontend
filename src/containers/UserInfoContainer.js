@@ -162,24 +162,32 @@ function UserInfoContainer(props) {
     if (updateObject.department.major === updateObject.department.d_major || updateObject.department.minors.includes(updateObject.department.major)){
       toast({
         title: '更改用戶資料失敗.',
-        status: '主修不能跟雙主修或輔系一樣',
+        description: '主修不能跟雙主修或輔系一樣',
+        status: "error",
         duration: 3000,
         isClosable: true,
       })
-      return;
+      // return;
     }
     if (updateObject.department.minors.includes(updateObject.department.d_major)){
       toast({
         title: '更改用戶資料失敗.',
-        status: '雙主修不能出現在輔系',
+        description: '雙主修不能出現在輔系',
+        status: "error",
         duration: 3000,
         isClosable: true,
       })
-      return;
+      // return;
     }
     try {
       const token = await getAccessTokenSilently();
       await dispatch(patchUserInfo(token, updateObject));
+      toast({
+        title: '更改用戶資料成功.',
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      })
     } catch (e) {
       toast({
         title: '更改用戶資料失敗.',
