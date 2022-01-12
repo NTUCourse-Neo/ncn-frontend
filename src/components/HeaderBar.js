@@ -17,7 +17,7 @@ import {
 
 } from '@chakra-ui/react';
 import {ChevronRightIcon, Search2Icon} from "@chakra-ui/icons"
-import { FaCheck, FaExclamation,FaFolderOpen, FaBook } from 'react-icons/fa';
+import { FaCheck, FaExclamation,FaFolderOpen, FaBook, FaInfo, FaInfoCircle } from 'react-icons/fa';
 import { ColorModeSwitcher } from '../ColorModeSwitcher';
 import { Link } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -50,7 +50,6 @@ function HeaderBar() {
               </MenuGroup>
               <MenuDivider />
               <MenuGroup title='更多'>
-                <Link to="/faq"><MenuItem>常見問題</MenuItem></Link>
                 <Link to="/about"><MenuItem>關於</MenuItem></Link>
               </MenuGroup>
               <MenuDivider />
@@ -81,6 +80,7 @@ function HeaderBar() {
       <Flex justifyContent="center" alignItems="center" ml="60px">
         <Link to="/"><Heading fontSize="2xl" fontWeight="700" mr="auto" color="gray.700" minW="200px">NTUCourse Neo</Heading></Link>
         <Link to="/course"><Button colorScheme="blue" variant="ghost" size="md" ml="30px" leftIcon={<FaBook />}>課程</Button></Link>
+        <Link to="/about"><Button colorScheme="blue" variant="ghost" leftIcon={<FaInfoCircle/>} size="md" ml="10px" mr="10px">關於</Button></Link>
       </Flex>
       <Spacer />
       <Flex justifyContent="center" alignItems="center" mr="60px">

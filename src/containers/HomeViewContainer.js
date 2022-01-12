@@ -134,17 +134,13 @@ function HomeViewContainer(props) {
               <Spacer my={8}/>
               <Flex justifyContent="start" alignItems="center" flexDirection="row">
                 <Link to="/course"><Button colorScheme="teal" variant="solid" size="lg" mr={4}>開始使用</Button></Link>
-                <Button colorScheme="teal" variant="outline" size="lg" mr={4}>了解更多</Button>
+                <Link to="/about"><Button colorScheme="teal" variant="outline" size="lg" mr={4}>了解更多</Button></Link>
               </Flex> 
             </Box>
             <Spacer/>
             <Image src={homeMainSvg} alt="home_main" w="50vw"/>
           </Flex>
-          <Spacer my={10}/>
-          <Button variant="ghost" size="lg" onClick={() => scroll.scrollTo(750)}><FaArrowDown/></Button>
-          <Spacer my={5}/>
-          <HomeCard title="Section 1" bg="gray.100" img=""/>
-          <Spacer mt="10" mb="10"/>
+          <Box h="10vh" />
         </Flex>
       </Box>
     );
