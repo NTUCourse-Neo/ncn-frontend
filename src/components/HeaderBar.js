@@ -71,6 +71,7 @@ function HeaderBar() {
     }
     return(
       <>
+        <Link to="/about"><Button colorScheme="blue" variant="ghost" leftIcon={<FaInfoCircle/>} size="md" ml="10px" mr="10px">關於</Button></Link>
         <Button colorScheme="yellow" rightIcon={<ChevronRightIcon/>} size="md" ml="10px" mr="10px" onClick={() => loginWithRedirect()}>登入 / 註冊</Button>
       </>
     );
@@ -80,7 +81,6 @@ function HeaderBar() {
       <Flex justifyContent="center" alignItems="center" ml="60px">
         <Link to="/"><Heading fontSize="2xl" fontWeight="700" mr="auto" color="gray.700" minW="200px">NTUCourse Neo</Heading></Link>
         <Link to="/course"><Button colorScheme="blue" variant="ghost" size="md" ml="30px" leftIcon={<FaBook />}>課程</Button></Link>
-        <Link to="/about"><Button colorScheme="blue" variant="ghost" leftIcon={<FaInfoCircle/>} size="md" ml="10px" mr="10px">關於</Button></Link>
       </Flex>
       <Spacer />
       <Flex justifyContent="center" alignItems="center" mr="60px">
