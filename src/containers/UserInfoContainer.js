@@ -442,11 +442,11 @@ function UserInfoContainer(props) {
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">主修</Text>
                 <Flex w="100%" alignItems="center">
                   {/* react selector */}
-                  {!major?<></>:
+                  {major===null?<></>:
                   <Select
                     className="basic-single"
                     classNamePrefix="select"
-                    defaultValue={{value: major, label: major}}
+                    defaultValue={major===''?{value: "", label: "請選擇"}:{value: major, label: major}}
                     isSearchable={TextTrackCue}
                     name="color"
                     options={deptOptions}
@@ -456,11 +456,11 @@ function UserInfoContainer(props) {
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">雙主修</Text>
                 <Flex w="100%" alignItems="center">
                   {/* react selector */}
-                  {!doubleMajor?<></>:
+                  {doubleMajor===null?<></>:
                   <Select
                     className="basic-single"
                     classNamePrefix="select"
-                    defaultValue={{value: doubleMajor, label: doubleMajor}}
+                    defaultValue={doubleMajor===''?{value: "", label: " 請選擇 "}:{value: doubleMajor, label: doubleMajor}}
                     isSearchable={TextTrackCue}
                     name="color"
                     options={deptOptions}
@@ -470,7 +470,7 @@ function UserInfoContainer(props) {
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">輔系</Text>
                 <Flex w="100%" alignItems="center">
                   {/* react selector */}
-                  {!minor?<></>:
+                  {minor===null?<></>:
                   <Select
                     isMulti
                     w='100%'
