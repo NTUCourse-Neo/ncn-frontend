@@ -18,7 +18,7 @@ function Footer() {
             <Spacer/>
             <Flex>
                 <SlideFade in={hover===true} offsetY='5px'>
-                    <a href="https://www.surveycake.com/s/LzWd6" target="_blank" rel="noreferrer noopener"><Tag fontSize="xs" mr='4' color="gray.300" align-self="end">問題回報</Tag></a>
+                    <a href="https://www.surveycake.com/s/LzWd6" target="_blank" rel="noreferrer noopener"><Tag fontSize="xs" mr='4' color="gray.400" align-self="end" colorScheme='teal'>問題回報</Tag></a>
                 </SlideFade>
                 <Text fontSize="xs" color="gray.300" align-self="end" position={'relative'}>Alpha V0.1</Text>
             </Flex>
