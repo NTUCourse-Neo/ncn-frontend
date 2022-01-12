@@ -50,7 +50,7 @@ function InfoPageContainer(props){
   }
   const renderTeamCard = (person) => {
     return (
-      <Box w="20vw" p="8" bg="white" boxShadow="xl" borderRadius="xl">
+      <Box w="20vw" minW="400" p="8" bg="white" boxShadow="xl" borderRadius="xl">
         <VStack spacing="4">
           <HStack align="center" justify="center" spacing="4">
             <Avatar src={person.img} name={person.name} size="2xl"/>
@@ -78,7 +78,7 @@ function InfoPageContainer(props){
         </Flex>
         <Text fontSize="5xl" fontWeight="800" color="gray.700">團隊</Text>
         <Divider />
-        <HStack spacing="8" p="16">
+        <HStack justifyContent="center" p="16" wrap="wrap" css={{ gap: '2rem' }}>
           {teams.map (person => renderTeamCard(person))}
         </HStack>
         <Text fontSize="5xl" fontWeight="800" color="gray.700">操作影片</Text>
@@ -104,13 +104,16 @@ function InfoPageContainer(props){
           <Icon as={FaGithub} w="8" h="8" color="gray.700"/>
           <Icon as={SiDiscord} w="8" h="8" color="gray.700"/>
           <Icon as={SiNotion} w="8" h="8" color="gray.700"/>
-        <Text fontSize="2xl" fontWeight="500" color="gray.700">and our 🔥 and 💖 ! ... and don't forget our</Text>
-        <Tooltip hasArrow placement="top" label="肝 ㄍㄢ Liver" bg='gray.600' color='white'>
-          <span>
-            <Icon as={GiLiver} w="8" h="8" color="red.500" pt="2"/>
-          </span>
-        </Tooltip>
+        <Text fontSize="2xl" fontWeight="500" color="gray.700">+ our 🔥 and 💖 ! </Text>
         </HStack>
+        <HStack spacing={2} mb="4">
+          <Text fontSize="2xl" fontWeight="500" color="gray.700">... and don't forget our</Text>
+          <Tooltip hasArrow placement="top" label="肝 ㄍㄢ Liver" bg='gray.600' color='white'>
+            <span>
+              <Icon as={GiLiver} w="8" h="8" color="red.500" pt="2"/>
+            </span>
+          </Tooltip>
+          </HStack>
       </Flex>
     </>
   );
