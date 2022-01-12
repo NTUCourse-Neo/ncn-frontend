@@ -19,8 +19,7 @@ function ErrorContainer(props){
                 <a href="https://youtu.be/yKrR5IHwT0k" target="_blank" rel="noreferrer noopener">
                     <Text fontSize='4xl' color='gray.500' mt='2vh'>{error_message}</Text>
                 </a>
-                {/* replace by link of bug report form ? */}
-                <Text fontSize='xl' color='gray.500' mt='0.5vh'>(For dev only) Open your console to see error &#11015; &#128064;</Text>
+                <a href="https://www.surveycake.com/s/LzWd6" target="_blank" rel="noreferrer noopener"><Text fontSize='xl' color='gray.500' mt='0.5vh'>點我回報問題 🥺</Text></a>
         </Center>
     )
 }
