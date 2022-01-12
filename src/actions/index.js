@@ -1,11 +1,15 @@
 // write all function that generate actions here
-import {FETCH_SEARCH_RESULTS_FAILURE, FETCH_SEARCH_RESULTS_SUCCESS,FETCH_SEARCH_RESULTS_REQUEST,FETCH_SEARCH_IDS_FAILURE,FETCH_SEARCH_IDS_REQUEST,FETCH_SEARCH_IDS_SUCCESS,SET_SEARCH_COLUMN, SET_SEARCH_SETTINGS, SET_FILTERS, INCREMENT_OFFSET, UPDATE_TOTAL_COUNT, SET_FILTERS_ENABLE, UPDATE_COURSE_TABLE} from '../constants/action-types';
+import {FETCH_SEARCH_RESULTS_FAILURE, FETCH_SEARCH_RESULTS_SUCCESS,FETCH_SEARCH_RESULTS_REQUEST,FETCH_SEARCH_IDS_FAILURE,FETCH_SEARCH_IDS_REQUEST,FETCH_SEARCH_IDS_SUCCESS,SET_SEARCH_COLUMN, SET_SEARCH_SETTINGS, SET_FILTERS, INCREMENT_OFFSET, UPDATE_TOTAL_COUNT, SET_FILTERS_ENABLE, UPDATE_COURSE_TABLE, LOG_IN_SUCCESS, LOG_OUT_SUCCESS, UPDATE_USER} from '../constants/action-types';
 import instance from '../api/axios'
 
 // normal actions
 const setSearchColumn = (col_name) => ({ type: SET_SEARCH_COLUMN, payload: col_name });
 const setSearchSettings = (setting_obj)=>({type: SET_SEARCH_SETTINGS, payload: setting_obj});
 const setFilterEnable = (filter_name, enable) => ({type: SET_FILTERS_ENABLE, filter_name: filter_name, payload: enable});
+const updateCourseTable = (course_table) => ({type: UPDATE_COURSE_TABLE, payload: course_table});
+const logOut = () => ({type: LOG_OUT_SUCCESS});
+const logIn = (user_data) => ({type: LOG_IN_SUCCESS, payload: user_data});
+
 
 // data = 
 // when filter_name == 'department', arr of dept_code (4-digits),
@@ -99,6 +103,23 @@ const createCourseTable = (course_table_id, course_table_name, user_id, semester
     }
 }
 
+const linkCoursetableToUser = (token, course_table_id, user_id) => async (dispatch)=>{
+    try{
+        const {data: { user }} = await instance.post(`/users/${user_id}/course_table`, {course_table_id: course_table_id}, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        dispatch({type: UPDATE_USER, payload: user});
+    }catch(e){
+        if (e.response){
+            console.log('ERROR MESSAGE: ',e.response.data.message);
+            console.log('ERROR STATUS CODE: ',e.response.status);
+        }
+        throw new Error("Error in linkCoursetableToUser: "+e);
+    }
+};
+
 const fetchCourseTable = (course_table_id) => async (dispatch)=>{
     try {
         const {data: {course_table}} = await instance.get(`/course_tables/${course_table_id}`);
@@ -141,4 +162,126 @@ const patchCourseTable = (course_table_id, course_table_name, user_id, expire_ts
     }
 }
 
-export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, createCourseTable, fetchCourseTable, patchCourseTable}
+const fetchUserById = (token, user_id) => async (dispatch)=>{
+    try {
+        const {data: {user}} = await instance.get(`/users/${user_id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        // user contains user in db & auth0, either null (not found) or an object.
+        return user
+    } catch (e) {
+        throw new Error("Error in fetchUserById: "+e);
+    }
+}
+
+const registerNewUser = (token, email) => async (dispatch)=>{
+    try {
+        const {data: {user}} = await instance.post(`/users/`, {user: {email: email}}, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+        // either null (not found) or an object.
+        return user
+    } catch (e) {
+        throw new Error("Error in registerNewUser: "+e);
+    }
+}
+
+const addFavoriteCourse = (token, new_favorite_list) => async (dispatch)=>{
+    try{
+        const {data: { user }} = await instance.patch(`/users/`, {user: {favorites: new_favorite_list}},{
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        dispatch({type: UPDATE_USER, payload: user});
+    }catch(e){
+        if (e.response){
+            console.log('ERROR MESSAGE: ',e.response.data.message);
+            console.log('ERROR STATUS CODE: ',e.response.status);
+        }
+        throw new Error("Error in linkCoursetableToUser: "+e);
+    }
+};
+
+const patchUserInfo = (token, updateObject) => async (dispatch)=>{
+    try{
+        const {data: { user }} = await instance.patch(`/users/`, {user: updateObject},{
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        dispatch({type: UPDATE_USER, payload: user});
+    }catch(e){
+        if (e.response){
+            console.log('ERROR MESSAGE: ',e.response.data.message);
+            console.log('ERROR STATUS CODE: ',e.response.status);
+        }
+        throw new Error("Error in linkCoursetableToUser: "+e);
+    }
+}
+
+const deleteUserProfile = (token) => async (dispatch)=>{
+    try {
+        await instance.delete(`/users/profile`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+    } catch(e) {
+        if (e.response){
+            console.log('ERROR MESSAGE: ',e.response.data.message);
+            console.log('ERROR STATUS CODE: ',e.response.status);
+        }
+        throw new Error("Error in deleteUserProfile: "+e);
+    }
+}
+
+const deleteUserAccount = (token) => async (dispatch)=>{
+    try {
+        await instance.delete(`/users/account`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        dispatch({type: LOG_OUT_SUCCESS});
+    } catch(e) {
+        if (e.response){
+            console.log('ERROR MESSAGE: ',e.response.data.message);
+            console.log('ERROR STATUS CODE: ',e.response.status);
+        }
+        throw new Error("Error in deleteUserProfile: "+e);
+    }
+}
+
+const verify_recaptcha = (token, captcha_token) => async (dispatch)=>{
+    const resp = await instance.post(`/recaptcha`, { captcha_token: captcha_token }, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return resp.data;
+}
+
+const request_otp_code = (token, student_id) => async (dispatch)=>{
+    const resp = await instance.post(`/users/student_id/link`, { student_id: student_id }, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return resp.data;
+}
+
+const use_otp_link_student_id = (token, student_id, otp_code) => async (dispatch)=>{
+    const resp = await instance.post(`/users/student_id/link`, { student_id: student_id, otp_code: otp_code }, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return resp.data;
+};
+
+export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, createCourseTable, linkCoursetableToUser, fetchCourseTable, patchCourseTable, fetchUserById, registerNewUser, logOut, logIn, updateCourseTable, addFavoriteCourse, deleteUserProfile, deleteUserAccount, patchUserInfo, verify_recaptcha, request_otp_code, use_otp_link_student_id };

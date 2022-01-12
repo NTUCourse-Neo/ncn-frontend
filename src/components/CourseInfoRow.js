@@ -20,74 +20,148 @@ import {
     Collapse
 } from '@chakra-ui/react';
 import {CourseDrawerContainer} from '../containers/CourseDrawerContainer';
-import { FaUserPlus, FaPuzzlePiece, FaPlus} from 'react-icons/fa';
+import { FaUserPlus, FaPuzzlePiece, FaPlus, FaHeart} from 'react-icons/fa';
 import { info_view_map } from '../data/mapping_table';
-import {useDispatch} from 'react-redux';
-import { fetchCourseTable, patchCourseTable } from '../actions';
+import {useDispatch, useSelector} from 'react-redux';
+import { fetchCourseTable, patchCourseTable, addFavoriteCourse } from '../actions';
 import { hash_to_color_hex } from '../utils/colorAgent';
+import { useAuth0 } from '@auth0/auth0-react';
 
 const LOCAL_STORAGE_KEY = 'NTU_CourseNeo_Course_Table_Key';
 
 function CourseInfoRow(props) {
-    const [addingCourse, setAddingCourse] = useState(false);
     const dispatch = useDispatch();
+    const userInfo = useSelector(state => state.user);
+
+    const [addingCourse, setAddingCourse] = useState(false);
+    const [addingFavoriteCourse, setAddingFavoriteCourse] = useState(false);
+    
     const toast = useToast();
+    const {user, isLoading, getAccessTokenSilently} = useAuth0();
 
     const handleButtonClick = async (course)=>{
-        setAddingCourse(true);
-        // console.log('course: ', course);
-        const uuid = localStorage.getItem(LOCAL_STORAGE_KEY);
-        if (uuid){
-            // fetch course table from server
-            const course_table = await dispatch(fetchCourseTable(uuid));
-            if (course_table===null){
-                // get course_tables/:id return null (expired)
-                // show error and break the function
+        if (!isLoading){
+            setAddingCourse(true);
+
+            let uuid;
+            if (user){
+                // user mode
+                if (userInfo.db.course_tables.length === 0){
+                    uuid = null
+                } else {
+                    // use the first one
+                    uuid = userInfo.db.course_tables[0];
+                }
+            }
+            else {
+                // guest mode
+                uuid = localStorage.getItem(LOCAL_STORAGE_KEY);
+            }
+
+            if (uuid){
+                // fetch course table from server
+                const course_table = await dispatch(fetchCourseTable(uuid));
+                if (course_table===null){
+                    // get course_tables/:id return null (expired)
+                    // show error and break the function
+                    toast({
+                        title: `新增 ${course.course_name} 失敗`,
+                        description: `您的課表已過期，請重新建立課表`,
+                        status: 'error',
+                        duration: 3000,
+                        isClosable: true
+                    });
+                } 
+                else {
+                    // fetch course table success
+                    let res_table;
+                    let operation_str;
+                    if(course_table.courses.includes(course._id)){
+                        // course is already in course table, remove it.
+                        operation_str = "刪除";
+                        const new_courses = course_table.courses.filter(id => id!==course._id);
+                        res_table =  await dispatch(patchCourseTable(uuid, course_table.name, course_table.user_id, course_table.expire_ts, new_courses));
+                    }else{
+                        // course is not in course table, add it.
+                        operation_str = "新增";
+                        const new_courses = [...course_table.courses, course._id];
+                        res_table = await dispatch(patchCourseTable(uuid, course_table.name, course_table.user_id, course_table.expire_ts, new_courses));
+                    }
+                    if (res_table){
+                        toast({
+                            title: `已${operation_str} ${course.course_name}`,
+                            description: `課表: ${course_table.name}`,
+                            status: 'success',
+                            duration: 3000,
+                            isClosable: true
+                        });
+                    }
+                    // ELSE TOAST?
+                }    
+            } else {
+                // do not have course table id in local storage
                 toast({
                     title: `新增 ${course.course_name} 失敗`,
-                    description: `您的課表已過期，請重新建立課表`,
+                    description: `尚未建立課表`,
                     status: 'error',
                     duration: 3000,
                     isClosable: true
                 });
-            } 
-            else {
-                // fetch course table success
-                let res_table;
-                let operation_str;
-                if(course_table.courses.includes(course._id)){
-                    // course is already in course table, remove it.
-                    operation_str = "刪除";
-                    const new_courses = course_table.courses.filter(id => id!==course._id);
-                    res_table =  await dispatch(patchCourseTable(uuid, course_table.name, course_table.user_id, course_table.expire_ts, new_courses));
-                }else{
-                    // course is not in course table, add it.
-                    operation_str = "新增";
-                    const new_courses = [...course_table.courses, course._id];
-                    res_table = await dispatch(patchCourseTable(uuid, course_table.name, course_table.user_id, course_table.expire_ts, new_courses));
+            }
+            setAddingCourse(false);
+        }
+    };
+
+    const handleAddFavorite = async (course_id) => {
+        if (!isLoading){
+            if (user){
+                setAddingFavoriteCourse(true);
+                const favorite_list = [...userInfo.db.favorites];
+                let new_favorite_list;
+                let op_name;
+                if (favorite_list.includes(course_id)){
+                    // remove course from favorite list
+                    new_favorite_list = favorite_list.filter(id => id!==course_id);
+                    op_name = "刪除";
+                } else {
+                    // add course to favorite list
+                    new_favorite_list = [...favorite_list, course_id];
+                    op_name = "新增";
                 }
-                if (res_table){
+                // API call
+                try {
+                    const token = await getAccessTokenSilently();
+                    await dispatch(addFavoriteCourse(token, new_favorite_list, userInfo.db._id));
                     toast({
-                        title: `已${operation_str} ${course.course_name}`,
-                        description: `課表: ${course_table.name}`,
+                        title: `${op_name}最愛課程成功`,
+                        //description: `請稍後再試`,
                         status: 'success',
                         duration: 3000,
                         isClosable: true
                     });
+                    setAddingFavoriteCourse(false);
+                } catch (e){
+                    // toast error
+                    toast({
+                        title: `${op_name}最愛課程失敗`,
+                        description: `請稍後再試`,
+                        status: 'error',
+                        duration: 3000,
+                        isClosable: true
+                    });
+                    setAddingFavoriteCourse(false);
                 }
-            }    
-        } else {
-            // do not have course table id in local storage
-            toast({
-                title: `新增 ${course.course_name} 失敗`,
-                description: `尚未建立課表`,
-                status: 'error',
-                duration: 3000,
-                isClosable: true
-            });
+            } else {
+                toast({
+                    title: `請先登入`,
+                    // description: `請先登入`,
+                    status: 'error',
+                    duration: 3000,
+                    isClosable: true
+                });
+            }
         }
-        setAddingCourse(false);
-    };
+    }
 
     const renderDeptBadge = (course) => {
         if(!course.department || course.department.length === 0 || (course.department.length === 1  && course.department[0].length === 0)){
@@ -169,6 +243,11 @@ function CourseInfoRow(props) {
                         }
                     </Flex>
                 </AccordionButton>
+                <Button size="sm" ml="20px" variant={props.isfavorite? "solid":"outline"} colorScheme={"red"} onClick={() => handleAddFavorite(props.courseInfo._id)} isLoading={addingFavoriteCourse}>
+                    <Box>
+                        <FaHeart/>
+                    </Box>
+                </Button>
                 <Button size="sm" ml="20px" colorScheme={props.selected? "red":"blue"} onClick={() => handleButtonClick(props.courseInfo)} isLoading={addingCourse}>
                     <Box transform={props.selected ? "rotate(45deg)":""} transition="all ease-in-out 200ms">
                         <FaPlus />
