@@ -102,10 +102,20 @@ function UserInfoContainer(props) {
       // TODO: show error message
     }
     const token = await getAccessTokenSilently();
-    const resp = await dispatch(request_otp_code(token, studentId));
-    setOtpSent(true);
-    setOtpInputStatus(1);
-    actions.start(300*1000);
+    try {
+      const resp = await dispatch(request_otp_code(token, studentId));
+      setOtpSent(true);
+      setOtpInputStatus(1);
+      actions.start(300*1000);
+    } catch (err) {
+      toast({
+        title: 'request otp code failed',
+        description: '請聯繫管理員><',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      })
+    }
   };
 
   const handleVerifyOTP = async(otp) => {
@@ -162,7 +172,8 @@ function UserInfoContainer(props) {
     if (updateObject.department.major === updateObject.department.d_major || updateObject.department.minors.includes(updateObject.department.major)){
       toast({
         title: '更改用戶資料失敗.',
-        status: '主修不能跟雙主修或輔系一樣',
+        description: '主修不能跟雙主修或輔系一樣',
+        status: 'error',
         duration: 3000,
         isClosable: true,
       })
@@ -171,7 +182,8 @@ function UserInfoContainer(props) {
     if (updateObject.department.minors.includes(updateObject.department.d_major)){
       toast({
         title: '更改用戶資料失敗.',
-        status: '雙主修不能出現在輔系',
+        description: '雙主修不能出現在輔系',
+        status: 'error',
         duration: 3000,
         isClosable: true,
       })
@@ -180,10 +192,17 @@ function UserInfoContainer(props) {
     try {
       const token = await getAccessTokenSilently();
       await dispatch(patchUserInfo(token, updateObject));
+      toast({
+        title: '更改用戶資料成功.',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      })
     } catch (e) {
       toast({
         title: '更改用戶資料失敗.',
-        status: '請檢查網路連線，或聯絡系統管理員',
+        description: '請檢查網路連線，或聯絡系統管理員',
+        status: 'error',
         duration: 3000,
         isClosable: true,
       })
