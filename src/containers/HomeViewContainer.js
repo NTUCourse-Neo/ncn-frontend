@@ -46,7 +46,12 @@ function HomeViewContainer(props) {
     const registerNewUserToDB = async () => {
       if (!isLoading && isAuthenticated) {
         const token = await getAccessTokenSilently();
-        const user_data = await dispatch(fetchUserById(token, user.sub));
+        let user_data;
+        try {
+          user_data = await dispatch(fetchUserById(token, user.sub));
+        } catch (error) {
+          navigate(`/error/${error}`);
+        }
         if(!user_data){
           // if user is null (not found in db)
           // do register in background and display a modal.
@@ -69,7 +74,13 @@ function HomeViewContainer(props) {
             // setIsRegistering(false)? or other actions?
           }
           // Re-fetch user data from server
-          let new_user_data = await dispatch(fetchUserById(token, user.sub));
+          let new_user_data;
+          try{
+            new_user_data = await dispatch(fetchUserById(token, user.sub));
+          }
+          catch (e) {
+            navigate(`/error/${e}`);
+          }
           dispatch(logIn(new_user_data));
         } else {
           dispatch(logIn(user_data))
