@@ -60,7 +60,18 @@ function CourseInfoRow(props) {
 
             if (uuid){
                 // fetch course table from server
-                const course_table = await dispatch(fetchCourseTable(uuid));
+                let course_table;
+                try {
+                    course_table = await dispatch(fetchCourseTable(uuid));
+                } catch (error) {
+                    toast({
+                        title: '取得課表資料失敗',
+                        status: 'error',
+                        duration: 3000,
+                        isClosable: true
+                    });
+                    return;
+                }
                 if (course_table===null){
                     // get course_tables/:id return null (expired)
                     // show error and break the function
@@ -80,12 +91,32 @@ function CourseInfoRow(props) {
                         // course is already in course table, remove it.
                         operation_str = "刪除";
                         const new_courses = course_table.courses.filter(id => id!==course._id);
-                        res_table =  await dispatch(patchCourseTable(uuid, course_table.name, course_table.user_id, course_table.expire_ts, new_courses));
+                        try {
+                            res_table =  await dispatch(patchCourseTable(uuid, course_table.name, course_table.user_id, course_table.expire_ts, new_courses));
+                        } catch (error) {
+                            toast({
+                                title: `刪除 ${course.course_name} 失敗`,
+                                status: 'error',
+                                duration: 3000,
+                                isClosable: true
+                            });
+                            return;
+                        }
                     }else{
                         // course is not in course table, add it.
                         operation_str = "新增";
                         const new_courses = [...course_table.courses, course._id];
-                        res_table = await dispatch(patchCourseTable(uuid, course_table.name, course_table.user_id, course_table.expire_ts, new_courses));
+                        try {
+                            res_table = await dispatch(patchCourseTable(uuid, course_table.name, course_table.user_id, course_table.expire_ts, new_courses));
+                        } catch (error) {
+                            toast({
+                                title: `新增 ${course.course_name} 失敗`,
+                                status: 'error',
+                                duration: 3000,
+                                isClosable: true
+                            });
+                            return;
+                        }
                     }
                     if (res_table){
                         toast({

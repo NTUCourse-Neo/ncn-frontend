@@ -40,10 +40,12 @@ import { v4 as uuidv4 } from 'uuid';
 import { useAuth0 } from "@auth0/auth0-react";
 import LoadingOverlay from 'react-loading-overlay';
 import { BeatLoader } from 'react-spinners';
+import { useNavigate } from 'react-router-dom';
 
 const LOCAL_STORAGE_KEY = 'NTU_CourseNeo_Course_Table_Key';
 
 function SideCourseTableContainer(props) {
+    const navigate = useNavigate();
     const {user, isLoading, getAccessTokenSilently} = useAuth0();
     const toast = useToast();
     const dispatch = useDispatch();
@@ -110,7 +112,13 @@ function SideCourseTableContainer(props) {
     // trigger when mounting, fetch local storage course_id
     useEffect(()=>{
       const courseTableInit = async (uuid)=>{
-        const course_table = await dispatch(fetchCourseTable(uuid));
+        let course_table;
+        try{
+          course_table = await dispatch(fetchCourseTable(uuid));
+        } catch(error){
+          // navigate to error page
+          navigate(`/error/${error}`);
+        }
         if (course_table===null){
           setExpired(true);
           setLoading(false);
@@ -133,8 +141,8 @@ function SideCourseTableContainer(props) {
               // pick the first table
               try {
                 await dispatch(fetchCourseTable(course_tables[0]));
-              } catch (e) {
-                console.log(e);
+              } catch (error) {
+                navigate(`/error/${error}`);
               }
             }
           } catch (e) {
@@ -175,11 +183,21 @@ function SideCourseTableContainer(props) {
       const fetchCoursesDataById = async (_callback) =>{
         if (courseTable){
           // console.log("course_table: ",courseTable);
-          const courseResult = await dispatch(fetchCourseTableCoursesByIds(courseTable.courses));
-          // set states: coursesIds, courseTimes, courses
-          setCourseIds(courseTable.courses);
-          setCourseTimes(extract_course_info(convertArrayToObject(courseResult, "_id")));
-          setCourses(convertArrayToObject(courseResult, "_id"));
+          try {
+            const courseResult = await dispatch(fetchCourseTableCoursesByIds(courseTable.courses));
+            // set states: coursesIds, courseTimes, courses
+            setCourseIds(courseTable.courses);
+            setCourseTimes(extract_course_info(convertArrayToObject(courseResult, "_id")));
+            setCourses(convertArrayToObject(courseResult, "_id"));
+          } catch (e) {
+            toast({
+              title: '取得課表課程資料失敗.',
+              description: "請聯繫客服(?)",
+              status: 'error',
+              duration: 3000,
+              isClosable: true,
+            })
+          }
         } 
         _callback();
       }

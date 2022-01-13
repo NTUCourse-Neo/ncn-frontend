@@ -138,7 +138,19 @@ function CourseTableCard(props){
                 new_courses[target_index] = "";
             }
         }
-        const res_table = await dispatch(patchCourseTable(course_table._id, course_table.name, course_table.user_id, course_table.expire_ts, new_courses));
+        let res_table;
+        try {
+            res_table = await dispatch(patchCourseTable(course_table._id, course_table.name, course_table.user_id, course_table.expire_ts, new_courses));
+        } catch (error) {
+            toast({
+                title: "更改志願序失敗!",
+                description: "請檢查網路連線，或聯絡系統管理員。",
+                status: "error",
+                duration: 9000,
+                isClosable: true,
+            });
+            return;
+        }
         if (res_table){
             // patch success
             toast({

@@ -104,10 +104,20 @@ function UserInfoContainer(props) {
       // TODO: show error message
     }
     const token = await getAccessTokenSilently();
-    const resp = await dispatch(request_otp_code(token, studentId));
-    setOtpSent(true);
-    setOtpInputStatus(1);
-    actions.start(300*1000);
+    try {
+      const resp = await dispatch(request_otp_code(token, studentId));
+      setOtpSent(true);
+      setOtpInputStatus(1);
+      actions.start(300*1000);
+    } catch (err) {
+      toast({
+        title: 'request otp code failed',
+        description: '請聯繫管理員><',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      })
+    }
   };
 
   const handleVerifyOTP = async(otp) => {
@@ -193,7 +203,8 @@ function UserInfoContainer(props) {
     } catch (e) {
       toast({
         title: '更改用戶資料失敗.',
-        status: '請晚點再試',
+        description: '請檢查網路連線，或聯絡系統管理員',
+        status: 'error',
         duration: 3000,
         isClosable: true,
       })
@@ -207,7 +218,7 @@ function UserInfoContainer(props) {
           const token = await getAccessTokenSilently();
           const user_data = await dispatch(fetchUserById(token, user.sub));
           await dispatch(logIn(user_data));
-        } catch (e) {
+        } catch (error) {
           toast({
             title: '取得用戶資料失敗.',
             description: "請聯繫客服(?)",
@@ -215,6 +226,7 @@ function UserInfoContainer(props) {
             duration: 9000,
             isClosable: true,
           })
+          navigate(`/error/${error}`);
           // Other subsequent actions?
         }
       }
