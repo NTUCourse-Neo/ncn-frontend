@@ -21,7 +21,7 @@ const teams = [
   {
     name: "張博皓",
     img: "https://avatars.githubusercontent.com/u/38657003?v=4",
-    dept: "工科海洋系大四",
+    dept: "工科海洋系 B07",
     quote: "WP 讚啦",
     github: "jc-hiroto",
     desc:""
@@ -29,7 +29,7 @@ const teams = [
   {
     name: "許書維",
     img: "https://avatars.githubusercontent.com/u/71842426?v=4",
-    dept: "電機系大四",
+    dept: "電機系 B07",
     quote: "WP 讚啦",
     github: "swh00tw",
     desc:""
@@ -37,7 +37,7 @@ const teams = [
   {
     name: "謝維勝",
     img: "https://avatars.githubusercontent.com/u/87405718?v=4",
-    dept: "電機系大四",
+    dept: "電機系 B07",
     quote: "WP 讚啦",
     github: "Wil0408",
     desc:""
