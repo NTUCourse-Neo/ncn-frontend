@@ -17,7 +17,7 @@ import {
 
 } from '@chakra-ui/react';
 import {ChevronRightIcon, Search2Icon} from "@chakra-ui/icons"
-import { FaCheck, FaExclamation,FaFolderOpen, FaBook } from 'react-icons/fa';
+import { FaCheck, FaExclamation,FaFolderOpen, FaBook, FaBookmark } from 'react-icons/fa';
 import { ColorModeSwitcher } from '../ColorModeSwitcher';
 import { Link } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -35,7 +35,7 @@ function HeaderBar() {
     if(isAuthenticated) {
       return (
         <>
-          <Link to="/user/my"><Button colorScheme="blue" variant="ghost" size="md" mx="2" mr="4" leftIcon={<FaFolderOpen/>}>我的</Button></Link>
+          <Link to="/user/my"><Button colorScheme="blue" variant="ghost" size="md" mx="2" mr="4" leftIcon={<FaBookmark/>}>最愛</Button></Link>
           <Menu>
             <MenuButton as={Avatar} name={user.name} src={user.picture} _hover={{cursor:"pointer"}}>
               {
