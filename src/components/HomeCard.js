@@ -21,7 +21,7 @@ function HomeCard(props) {
                   );
                 })}
               </Flex>
-              <Image src={props.img} alt={props.title} h="60%" borderRadius="xl" boxShadow="xl" _hover={{ transform: "Scale(1.5)", boxShadow: "2xl"}} transition="all ease-out 0.2s"/>
+              <Image src={props.img} alt={props.title} w="30%" borderRadius="xl" boxShadow="xl" _hover={{ transform: "Scale(1.8)", boxShadow: "2xl"}} transition="all ease-out 0.2s"/>
             </Flex>
             {props.children}
           </Box>
