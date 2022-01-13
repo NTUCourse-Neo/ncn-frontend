@@ -30,10 +30,7 @@ import {
     Divider,
     Badge,
     Tag,
-    Spinner,
-    Skeleton,
     SkeletonText
-
 } from '@chakra-ui/react';
 import {
     FaRegEdit,
