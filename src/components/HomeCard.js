@@ -15,7 +15,11 @@ function HomeCard(props) {
               <Flex w="60%" justifyContent="start" alignItems="start" flexDirection="column" mr="16">
                 <Heading as="h1" fontSize="5xl" fontWeight="800" color="gray.700">{props.title}</Heading>
                 <Spacer my="4"/>
-                <Text fontSize="3xl" fontWeight="400" color="gray.600" mb={4}>{props.desc}</Text>
+                {props.desc.map((item,index) => {
+                  return (
+                    <Text fontSize="3xl" fontWeight="400" color="gray.600" mb={4}>{item}</Text>
+                  );
+                })}
               </Flex>
               <Image src={props.img} alt={props.title} h="60%" borderRadius="xl" boxShadow="xl" _hover={{ transform: "Scale(1.5)", boxShadow: "2xl"}} transition="all ease-out 0.2s"/>
             </Flex>
