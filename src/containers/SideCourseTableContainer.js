@@ -21,7 +21,9 @@ import {
     Collapse,
     IconButton,
     Spacer,
-    useToast
+    useToast,
+    Skeleton,
+    SkeletonText
 } from '@chakra-ui/react';
 import {
     FaRegEdit,
@@ -385,7 +387,6 @@ function SideCourseTableContainer(props) {
                     <BeatLoader size={10} color='gray'/>
                   </Flex>
                 }
-                
             </Flex>
             <Flex flexDirection="row" justifyContent="center" alignItems="center" my="5vh" >
               <CourseTableContainer courseTimes={courseTimes} courses={courses} loading={loading || isLoading} hoveredCourseTime={hoveredCourseTime} hoveredCourse={props.hoveredCourse}/>  
