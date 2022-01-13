@@ -24,7 +24,8 @@ import {
     Collapse,
     PinInput,
     PinInputContext,
-    PinInputField
+    PinInputField,
+    Badge
 } from '@chakra-ui/react';
 import Select from 'react-select';
 import LoadingOverlay from 'react-loading-overlay';
@@ -42,7 +43,7 @@ function UserInfoContainer(props) {
   const toast = useToast();
   const dispatch = useDispatch();
   const userInfo = useSelector(state => state.user);
-  const deptOptions = dept_list_bachelor_only.map(dept=>({value: dept.full_name, label: dept.full_name}));
+  const deptOptions = dept_list_bachelor_only.map(dept=>({value: dept.full_name, label: dept.code+" "+dept.full_name}));
  
   const { user, isLoading, logout, getAccessTokenSilently }  = useAuth0();
   const userLoading = isLoading || !userInfo;
@@ -53,6 +54,7 @@ function UserInfoContainer(props) {
   const [major, setMajor] = useState(userInfo?userInfo.db.department.major:null);
   const [doubleMajor, setDoubleMajor] = useState(userInfo?userInfo.db.department.d_major:null);
   const [minor, setMinor] = useState(userInfo?userInfo.db.department.minors:null); // arr
+  const [saveLoading, setSaveLoading] = useState(false);
 
   // alert dialog states
   const cancelRef = useRef();
@@ -162,7 +164,8 @@ function UserInfoContainer(props) {
     if (updateObject.department.major === updateObject.department.d_major || updateObject.department.minors.includes(updateObject.department.major)){
       toast({
         title: '更改用戶資料失敗.',
-        status: '主修不能跟雙主修或輔系一樣',
+        description: '主修不能跟雙主修或輔系一樣',
+        status: "error",
         duration: 3000,
         isClosable: true,
       })
@@ -171,7 +174,8 @@ function UserInfoContainer(props) {
     if (updateObject.department.minors.includes(updateObject.department.d_major)){
       toast({
         title: '更改用戶資料失敗.',
-        status: '雙主修不能出現在輔系',
+        description: '雙主修不能出現在輔系',
+        status: "error",
         duration: 3000,
         isClosable: true,
       })
@@ -180,6 +184,12 @@ function UserInfoContainer(props) {
     try {
       const token = await getAccessTokenSilently();
       await dispatch(patchUserInfo(token, updateObject));
+      toast({
+        title: '更改用戶資料成功.',
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      })
     } catch (e) {
       toast({
         title: '更改用戶資料失敗.',
@@ -279,7 +289,7 @@ function UserInfoContainer(props) {
       setIsDeleting(false);
     }
 
-    const confirmMessage = `The quick brown fox jumps over the lazy dog`;
+    const confirmMessage = `我確定`;
 
     return (
       <AlertDialog
@@ -290,17 +300,17 @@ function UserInfoContainer(props) {
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize='lg' fontWeight='bold'>
-              Delete {deleteMode}
+              {deleteMode==='User Profile'? '重設個人資料' : '徹底刪除帳號'}
             </AlertDialogHeader>
 
             <AlertDialogBody>
               <Alert status='warning' >
                 <AlertIcon boxSize='24px' as={FaExclamationTriangle}/>
-                Are you sure? You can't undo this action afterwards.
+                但咧，你確定嗎？此動作將無法回復！
               </Alert>
               <Divider mt='3'/>
-              <Text fontSize='md' mt='2' color='gray.500' fontWeight='bold'>Please type "{confirmMessage}" to confirm.</Text>
-              <Input mt='2' variant='filled' placeholder='' onChange={(e)=>{setConfirm(e.currentTarget.value)}} />
+              <Text fontSize='md' mt='2' color='gray.500' fontWeight='bold'>請輸入 "{confirmMessage}"</Text>
+              <Input mt='2' variant='filled' placeholder='' onChange={(e)=>{setConfirm(e.currentTarget.value)}} isInvalid={confirm !== confirmMessage && confirm !== ""} />
             </AlertDialogBody>
 
             <AlertDialogFooter>
@@ -442,60 +452,74 @@ function UserInfoContainer(props) {
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">主修</Text>
                 <Flex w="100%" alignItems="center">
                   {/* react selector */}
-                  {!major?<></>:
-                  <Select
-                    className="basic-single"
-                    classNamePrefix="select"
-                    defaultValue={{value: major, label: major}}
-                    isSearchable={TextTrackCue}
-                    name="color"
-                    options={deptOptions}
-                    onChange={(e)=>{setMajor(e.value)}}
-                  />}
+                  {major===null?<></>:
+                  <Box w="20vw">
+                    <Select
+                      className="basic-single"
+                      classNamePrefix="select"
+                      defaultValue={major===''?{value: "", label: "請選擇"}:{value: major, label: major}}
+                      isSearchable={TextTrackCue}
+                      name="color"
+                      options={deptOptions}
+                      onChange={(e)=>{setMajor(e.value)}}
+                    />
+                  </Box>
+                  }
                 </Flex>
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">雙主修</Text>
                 <Flex w="100%" alignItems="center">
                   {/* react selector */}
-                  {!doubleMajor?<></>:
-                  <Select
-                    className="basic-single"
-                    classNamePrefix="select"
-                    defaultValue={{value: doubleMajor, label: doubleMajor}}
-                    isSearchable={TextTrackCue}
-                    name="color"
-                    options={deptOptions}
-                    onChange={(e)=>{setDoubleMajor(e.value)}}
-                  />}
+                  {doubleMajor===null?<></>:
+                  <Box w="20vw">
+                    <Select
+                      className="basic-single"
+                      classNamePrefix="select"
+                      defaultValue={doubleMajor===''?{value: "", label: " 請選擇 "}:{value: doubleMajor, label: doubleMajor}}
+                      isSearchable={TextTrackCue}
+                      name="color"
+                      options={deptOptions}
+                      onChange={(e)=>{setDoubleMajor(e.value)}}
+                    />
+                  </Box>}
                 </Flex>
               <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">輔系</Text>
                 <Flex w="100%" alignItems="center">
                   {/* react selector */}
-                  {!minor?<></>:
-                  <Select
-                    isMulti
-                    w='100%'
-                    className="basic-single"
-                    classNamePrefix="select"
-                    defaultValue={minor.map(dept=>({value: dept, label: dept}))}
-                    isSearchable={TextTrackCue}
-                    name="color"
-                    options={deptOptions}
-                    onChange={(e)=>{setMinor(e.map(dept=>dept.value))}}
-                  />}
+                  {minor===null?<></>:
+                  <Box w="20vw">
+                    <Select
+                      isMulti
+                      w='100%'
+                      className="basic-single"
+                      classNamePrefix="select"
+                      defaultValue={minor.map(dept=>({value: dept, label: dept}))}
+                      isSearchable={TextTrackCue}
+                      name="color"
+                      options={deptOptions}
+                      onChange={(e)=>{setMinor(e.map(dept=>dept.value))}}
+                    />
+                    </Box>}
                 </Flex>
             </Flex>
-          <Text fontSize="2xl" fontWeight="700" color="gray.600" mt="5">課程</Text>
+          <HStack spacing={4} alignItems="center" mt="5">
+            <Text fontSize="2xl" fontWeight="700" color="gray.600">課程</Text>
+            <Badge colorScheme="blue" variant="subtle" fontSize="sm" mx="2">Coming soon</Badge>
+          </HStack>
           <Divider mt="1" mb="4"/>
-          <Button colorScheme="teal" size="md" w="20%" my="4" variant="outline">匯入修課紀錄</Button>
-          <Divider mt="1" mb="4"/>
-          <Button colorScheme="teal" size="md" w="20%" my="4" onClick={()=>{updateUserInfo()}}>儲存</Button>
+          <Button colorScheme="teal" size="md" w="20%" my="4" variant="outline" disabled>匯入修課紀錄</Button>
+          <Divider mt="1" m="8"/>
+          <Button colorScheme="teal" size="md" w="20%" my="4" isLoading={saveLoading} onClick={async()=>{
+            setSaveLoading(true); 
+            await updateUserInfo(); 
+            setSaveLoading(false);}
+          }>儲存</Button>
         </Flex>
         <Flex w="100%" h="100%" mt="8" flexDirection="column" justifyContent="start" alignItems="start" p="4" borderRadius="lg" border='1px' borderColor='red.600'>
           <Text fontSize="2xl" fontWeight="700" color="red.600" mt="2">危險區域</Text>
           <Divider mt="1" mb="4"/>
           <Flex flexDirection="column" justifyContent="start" alignItems="start" p="2">
             <HStack spacing={8}>
-              <Button colorScheme="red" variant="outline" size="md" my="4" onClick={()=>{setIsAlertOpen(true); setDeleteMode('User Profile')}}>清除個人資料</Button>
+              <Button colorScheme="red" variant="outline" size="md" my="4" onClick={()=>{setIsAlertOpen(true); setDeleteMode('User Profile')}}>重設個人資料</Button>
               <Text color="red.600" fontWeight="500">將會刪除您的使用者個人資料，包含課表、最愛課程與修課紀錄等，且資料無法回復。<br />您的帳號將不會被刪除，未來不需重新註冊即可繼續使用此服務。</Text>
             </HStack>
             <HStack spacing={8} justify="start">

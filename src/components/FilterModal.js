@@ -14,7 +14,7 @@ import {
   Flex,
 } from "@chakra-ui/react";
 import { college_map } from '../data/college';
-import { dept_list } from '../data/department';
+import { dept_list, dept_list_bachelor_only } from '../data/department';
 import { type_list, code_map } from '../data/course_type';
 import TimetableSelector from "./TimetableSelector";
 import {useSelector, useDispatch} from 'react-redux';
@@ -55,7 +55,7 @@ function FilterModal(props){
       return(
         <Flex flexDirection="column" justifyContent="start" alignItems="start" mx="8" mb="4">
         <Flex w="100%" flexWrap="wrap" flexDirection="row" justifyContent="start" alignItems="start">
-          {dept_list.map(dept => renderButton("department", dept, props.selectedDept, props.setSelectedDept, true))} 
+          {dept_list_bachelor_only.map(dept => renderButton("department", dept, props.selectedDept, props.setSelectedDept, true))} 
         </Flex>
       </Flex>
       );
@@ -203,8 +203,8 @@ const FilterModalBody = (type) => {
     if (type === "department"){
       return(
         <>
-          {dept_list.map((dept, index) => {
-            if (index === 0 || dept.code.substr(1,3) === "000"){
+          {dept_list_bachelor_only.map((dept, index) => {
+            if (index === 0 || dept.code.substr(0,1) !== dept_list_bachelor_only[index-1].code.substr(0,1)){
               let college_code = dept.code.substr(0, 1);
               return(
                 <>
