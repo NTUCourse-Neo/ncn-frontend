@@ -14,6 +14,7 @@ import InfoPageContainer from './containers/InfoPageContainer';
 import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
 import dotenv from 'dotenv-defaults';
 import UserInfoContainer from './containers/UserInfoContainer';
+import UserMyPage from './containers/userMyPage';
 dotenv.config();
 
 function App(props) {
@@ -28,6 +29,8 @@ function App(props) {
         return <UserInfoContainer />
       case "about":
         return <InfoPageContainer />
+      case "user/my":
+        return <UserMyPage />
       default:
         return <HomeViewContainer />
     }
