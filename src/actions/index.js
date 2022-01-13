@@ -221,6 +221,23 @@ const addFavoriteCourse = (token, new_favorite_list) => async (dispatch)=>{
     }
 };
 
+const patchUserInfo = (token, updateObject) => async (dispatch)=>{
+    try{
+        const {data: { user }} = await instance.patch(`/users/`, {user: updateObject},{
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        dispatch({type: UPDATE_USER, payload: user});
+    }catch(e){
+        if (e.response){
+            console.log('ERROR MESSAGE: ',e.response.data.message);
+            console.log('ERROR STATUS CODE: ',e.response.status);
+        }
+        throw new Error("Error in linkCoursetableToUser: "+e);
+    }
+}
+
 const deleteUserProfile = (token) => async (dispatch)=>{
     try {
         await instance.delete(`/users/profile`, {
@@ -281,4 +298,4 @@ const use_otp_link_student_id = (token, student_id, otp_code) => async (dispatch
     return resp.data;
 };
 
-export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, fetchFavoriteCourses, createCourseTable, linkCoursetableToUser, fetchCourseTable, patchCourseTable, fetchUserById, registerNewUser, logOut, logIn, updateCourseTable, addFavoriteCourse, deleteUserProfile, deleteUserAccount, verify_recaptcha, request_otp_code, use_otp_link_student_id };
+export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, fetchFavoriteCourses, createCourseTable, linkCoursetableToUser, fetchCourseTable, patchCourseTable, fetchUserById, registerNewUser, logOut, logIn, updateCourseTable, addFavoriteCourse, deleteUserProfile, deleteUserAccount, patchUserInfo, verify_recaptcha, request_otp_code, use_otp_link_student_id };

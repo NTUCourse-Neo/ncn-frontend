@@ -39,6 +39,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import { useAuth0 } from "@auth0/auth0-react";
 import LoadingOverlay from 'react-loading-overlay';
+import { BeatLoader } from 'react-spinners';
 
 const LOCAL_STORAGE_KEY = 'NTU_CourseNeo_Course_Table_Key';
 
@@ -56,7 +57,7 @@ function SideCourseTableContainer(props) {
     const [courseTimes, setCourseTimes] = useState({}); // coursesTime is a dictionary of courseIds and their corresponding time in time table
     const [hoveredCourseTime, setHoveredCourseTime]  = useState({}); // courseTime is a dictionary of courseIds and their corresponding time in time table
 
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [expired, setExpired] = useState(false);
 
     const parseCourseDateTime = (course, course_time_tmp) => {
@@ -108,15 +109,15 @@ function SideCourseTableContainer(props) {
 
     // trigger when mounting, fetch local storage course_id
     useEffect(()=>{
-      const courseTableInit = async (uuid, callback)=>{
+      const courseTableInit = async (uuid)=>{
         const course_table = await dispatch(fetchCourseTable(uuid));
         if (course_table===null){
           setExpired(true);
+          setLoading(false);
         }
-        callback();
       };
 
-      const fetchCourseTableFromUser = async (callback) => {
+      const fetchCourseTableFromUser = async () => {
         if(!isLoading && user) {
           try {
             const token = await getAccessTokenSilently();
@@ -126,6 +127,7 @@ function SideCourseTableContainer(props) {
             if (course_tables.length === 0) {
               // user has no course table, set courseTable in redux null
               dispatch(updateCourseTable(null));
+              setLoading(false);
             }
             else {
               // pick the first table
@@ -143,26 +145,26 @@ function SideCourseTableContainer(props) {
               duration: 9000,
               isClosable: true,
             })
+            setLoading(false);
             // Other subsequent actions?
           }
         }
-        callback();
-      }
-
-      setLoading(true);
+      };
       // run after useAuth0 finish loading.
-      console.log('isLoading: ', isLoading);
+      // console.log('isLoading: ', isLoading);
       if (!isLoading) {
         // user mode
         if (user) {
-          fetchCourseTableFromUser(()=>{setLoading(false)});
+          setLoading(true);
+          fetchCourseTableFromUser();
         }
         // guest mode
         else {
           const uuid = localStorage.getItem(LOCAL_STORAGE_KEY);
           // console.log("UUID in localStorage now: ",uuid);
           if (uuid){
-            courseTableInit(uuid, ()=>{setLoading(false)});
+            setLoading(true);
+            courseTableInit(uuid);
           }
         }
       } 
@@ -171,7 +173,6 @@ function SideCourseTableContainer(props) {
     // fetch course objects data from server based on array of IDs
     useEffect(() => {
       const fetchCoursesDataById = async (_callback) =>{
-        setLoading(true);
         if (courseTable){
           // console.log("course_table: ",courseTable);
           const courseResult = await dispatch(fetchCourseTableCoursesByIds(courseTable.courses));
@@ -182,8 +183,14 @@ function SideCourseTableContainer(props) {
         } 
         _callback();
       }
-      
-      fetchCoursesDataById(() => setLoading(false));
+      if(courseTable){
+        setLoading(true);
+        fetchCoursesDataById(() => setLoading(false));
+      }
+      // guest mode & do not have uuid on localstorage
+      if(!localStorage.getItem(LOCAL_STORAGE_KEY)){
+        setLoading(false);
+      }
     }, [courseTable]);
 
     useEffect(() => {
@@ -208,7 +215,7 @@ function SideCourseTableContainer(props) {
           // hasLogIn
           try {
             const new_course_table = await dispatch(createCourseTable(new_uuid, "我的課表", userInfo.db._id, "1101"));
-            console.log("New UUID is generated: ",new_uuid);
+            // console.log("New UUID is generated: ",new_uuid);
             const token = await getAccessTokenSilently();
             await dispatch(linkCoursetableToUser(token, new_uuid, userInfo.db._id));
           } catch (e) {
@@ -224,8 +231,9 @@ function SideCourseTableContainer(props) {
           // Guest mode
           try {
             const new_course_table = await dispatch(createCourseTable(new_uuid, "我的課表", null, "1101"));
-            console.log("New UUID is generated: ",new_uuid);
+            // console.log("New UUID is generated: ",new_uuid);
             localStorage.setItem(LOCAL_STORAGE_KEY, new_course_table._id);
+            setExpired(false);
           } catch (error) {
               toast({
                 title: `新增課表失敗`,
@@ -240,9 +248,9 @@ function SideCourseTableContainer(props) {
     }
     
     // debugger
-    useEffect(() => console.log('courseTimes: ',courseTimes), [courseTimes]);
-    useEffect(() => console.log('courses: ',courses), [courses]);
-    useEffect(() => console.log('courseIds: ',courseIds), [courseIds]);
+    // useEffect(() => console.log('courseTimes: ',courseTimes), [courseTimes]);
+    // useEffect(() => console.log('courses: ',courses), [courses]);
+    // useEffect(() => console.log('courseIds: ',courseIds), [courseIds]);
 
     const { onOpen, onClose, isOpen } = useDisclosure()
     const firstFieldRef = useRef(null)
@@ -334,7 +342,7 @@ function SideCourseTableContainer(props) {
     };
     const renderSideCourseTableContent = () => {
       if((courseTable===null || expired===true) && !(loading || isLoading)){
-        console.log("courseTable is null");
+        // console.log("courseTable is null");
         return(
           <Flex flexDirection="column" justifyContent="center" alignItems="center" h="100%" w="100%">
             <Flex flexDirection="row" justifyContent="center" alignItems="center">
@@ -350,14 +358,16 @@ function SideCourseTableContainer(props) {
       return(
         <Box overflow="auto" w="100%">
           <Flex flexDirection="column" m="4" ml="0">
-            <Flex flexDirection="row" justifyContent="space-between" alignItems="center" mb="4" position="fixed" zIndex={100}>
+            <Flex flexDirection="row" justifyContent="space-between" alignItems="center" my="2" position="fixed" zIndex={100}>
                 {
-                  courseTable ?
+                  courseTable?
                   <>
                     <Text fontWeight="700" fontSize="3xl" color="gray.600" mr="4">{courseTable.name}</Text>
                     {renderEditName()}
                   </>:
-                  <></>
+                  <Flex mt="4" ml="4" alignItems="center" justifyContent="center">
+                    <BeatLoader size={10} color='gray'/>
+                  </Flex>
                 }
             </Flex>
             <Flex flexDirection="row" justifyContent="center" alignItems="center" my="5vh" >

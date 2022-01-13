@@ -44,7 +44,6 @@ function CourseTableCard(props){
     // temp state (buffer), used for decide the NEW course order / dispatch to server, when press "save"
     const [ courseList, setCourseList ] = useState([]);
     const [ prepareToRemoveCourseId, setPrepareToRemoveCourseId ] = useState([]);
-    // TODO: when press "save", dispatch to server to update new course table courses order in DB
     
     const handleDelete = (courseId) => {
         if (prepareToRemoveCourseId.includes(courseId)){
