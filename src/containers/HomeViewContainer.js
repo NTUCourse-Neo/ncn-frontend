@@ -152,9 +152,31 @@ function HomeViewContainer(props) {
             <Image src={homeMainSvg} alt="home_main" w="50vw"/>
           </Flex>
           <Spacer my={10}/>
-          <Button variant="ghost" size="lg" onClick={() => scroll.scrollTo(750)}><FaArrowDown/></Button>
+          <Button variant="ghost" size="lg" onClick={() => scroll.scrollTo(770)}><FaArrowDown/></Button>
           <Spacer my={5}/>
-          <HomeCard title="Section 1" bg="gray.100" img=""/>
+          <HomeCard title="搜尋篩選功能，快速找到你要的課程 🚀" bg="gray.100">
+              <Flex w="100%" flexDirection="row" justifyContent="start" alignItems="center" mb="2">
+
+              </Flex>
+          </HomeCard>
+          <Spacer my={10}/>
+          <Button variant="ghost" size="lg" onClick={() => scroll.scrollTo(1540)}><FaArrowDown/></Button>
+          <Spacer my={5}/>
+          <HomeCard title="使用課表，讓使用更直覺 😉" bg="gray.100">
+              <Flex w="100%" flexDirection="row" justifyContent="start" alignItems="center" mb="2">
+                
+              </Flex>
+          </HomeCard>
+          <Spacer my={10}/>
+          <Button variant="ghost" size="lg" onClick={() => scroll.scrollTo(2310)}><FaArrowDown/></Button>
+          <Spacer my={5}/>
+          <HomeCard title="一鍵加入課程至台大課程網 🥰" bg="gray.100">
+          </HomeCard>
+          <Spacer my={10}/>
+          <Button variant="ghost" size="lg" onClick={() => scroll.scrollTo(3080)}><FaArrowDown/></Button>
+          <Spacer my={5}/>
+          <HomeCard title="加入最愛，收藏喜歡的課程 💕" bg="gray.100">
+          </HomeCard>
           <Spacer mt="10" mb="10"/>
         </Flex>
       </Box>
