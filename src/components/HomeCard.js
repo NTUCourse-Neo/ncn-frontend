@@ -4,15 +4,20 @@ import {
     Flex,
     Heading,
     Spacer,
+    Text,
+    Image,
+    transform,
   } from '@chakra-ui/react';
 function HomeCard(props) {
     return (
         <Box className="initialBox" boxSize="xl" w="80vw" bg={props.bg} borderRadius="3xl" p={4} boxShadow='xl'>
-            <Flex justifyContent="space-between" alignItems="center" flexDirection="row">
-              <Flex justifyContent="end" alignItems="center" flexDirection="column" m="40px">
-                <Spacer/>
+            <Flex w="100%" h="100%" justifyContent="center" alignItems="center" flexDirection="row">
+              <Flex w="60%" justifyContent="start" alignItems="start" flexDirection="column" mr="16">
                 <Heading as="h1" fontSize="5xl" fontWeight="800" color="gray.700">{props.title}</Heading>
+                <Spacer my="4"/>
+                <Text fontSize="3xl" fontWeight="400" color="gray.600" mb={4}>{props.desc}</Text>
               </Flex>
+              <Image src={props.img} alt={props.title} h="60%" borderRadius="xl" boxShadow="xl" _hover={{ transform: "Scale(1.5)", boxShadow: "2xl"}} transition="all ease-out 0.2s"/>
             </Flex>
             {props.children}
           </Box>

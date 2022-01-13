@@ -19,7 +19,7 @@ import {
 import homeMainSvg from '../img/home_main.svg';
 import HomeCard from '../components/HomeCard';
 import { useAuth0 } from '@auth0/auth0-react';
-import { FaArrowDown, FaArrowRight } from "react-icons/fa";
+import { FaArrowDown, FaArrowRight, FaArrowUp } from "react-icons/fa";
 import { animateScroll as scroll } from 'react-scroll'
 import { Link, useNavigate } from "react-router-dom";
 import { BeatLoader } from 'react-spinners';
@@ -152,32 +152,49 @@ function HomeViewContainer(props) {
             <Image src={homeMainSvg} alt="home_main" w="50vw"/>
           </Flex>
           <Spacer my={10}/>
-          <Button variant="ghost" size="lg" onClick={() => scroll.scrollTo(770)}><FaArrowDown/></Button>
+          <Button variant="ghost" size="lg" onClick={() => scroll.scrollTo(770)} leftIcon={<FaArrowDown/>}>我們有...</Button>
           <Spacer my={5}/>
-          <HomeCard title="搜尋篩選功能，快速找到你要的課程 🚀" bg="gray.100">
+          <HomeCard title="搜尋篩選功能，快速找到你要的課程 🚀" desc="" bg="gray.100">
               <Flex w="100%" flexDirection="row" justifyContent="start" alignItems="center" mb="2">
 
               </Flex>
           </HomeCard>
           <Spacer my={10}/>
-          <Button variant="ghost" size="lg" onClick={() => scroll.scrollTo(1540)}><FaArrowDown/></Button>
+          <Button variant="ghost" size="lg" onClick={() => scroll.scrollTo(1540)} leftIcon={<FaArrowDown/>}>受夠一直切分頁看課表了嗎？</Button>
           <Spacer my={5}/>
-          <HomeCard title="使用課表，讓使用更直覺 😉" bg="gray.100">
-              <Flex w="100%" flexDirection="row" justifyContent="start" alignItems="center" mb="2">
-                
-              </Flex>
+          <HomeCard 
+            title="並列互動式課表，讓使用更直覺 😉" 
+            desc="👀 這堂課到底是第幾節上課？會不會卡到我的必修？ 互動式課表讓課程時間不再只是簡單的數字，而是在課表中顯示，讓你更直覺地看到課程時間與你的規劃。" 
+            img="https://i.imgur.com/CJhqamD.png"
+            bg="gray.100"
+          >
           </HomeCard>
           <Spacer my={10}/>
-          <Button variant="ghost" size="lg" onClick={() => scroll.scrollTo(2310)}><FaArrowDown/></Button>
-          <Spacer my={5}/>
-          <HomeCard title="一鍵加入課程至台大課程網 🥰" bg="gray.100">
+          <Button variant="ghost" size="lg" onClick={() => scroll.scrollTo(2310)} leftIcon={<FaArrowDown/>}>小孩子才做選擇</Button>
+          <Spacer my={10}/>
+          <HomeCard 
+            title="我全都要。不怕選課衝堂，順序輕鬆排 🥰" 
+            desc="體育通識好難選，通通加進課表後都長得落落長。  我們顛覆以往的線上課表模式，不只可衝堂加課，還能決定優先順序！ 你只需要好好挑選適合的課程，剩下的交給我們。👌"
+            img="https://i.imgur.com/oA2qanv.png"
+            bg="gray.100" 
+          >
           </HomeCard>
           <Spacer my={10}/>
-          <Button variant="ghost" size="lg" onClick={() => scroll.scrollTo(3080)}><FaArrowDown/></Button>
+          <Button variant="ghost" size="lg" onClick={() => scroll.scrollTo(3080)} leftIcon={<FaArrowDown/>}>填志願好麻煩？</Button>
           <Spacer my={5}/>
-          <HomeCard title="加入最愛，收藏喜歡的課程 💕" bg="gray.100">
+          <HomeCard 
+            title="一鍵加入課程網，填寫志願一目瞭然 🧐" 
+            desc="還在埋頭研究課程志願的先後順序嗎？只要決定好衝堂課程的順序偏好，就能在清單中一鍵加入課程網，同時參考我們的志願序數字直接填入選課系統。就是這樣，一塊蛋糕 🍰"
+            img="https://i.imgur.com/nxjAycJ.png"
+            bg="gray.100" 
+          ></HomeCard>
+          <Spacer my={10}/>
+          <Button variant="ghost" size="lg" onClick={() => scroll.scrollTo(3700)} leftIcon={<FaArrowDown/>}>網服真的太讚啦，先存</Button>
+          <Spacer my={5}/>
+          <HomeCard title="加入最愛，收藏喜歡的課程 💕" desc="" bg="gray.100">
           </HomeCard>
           <Spacer mt="10" mb="10"/>
+          <Button variant="ghost" size="lg" onClick={() => scroll.scrollTo(0)} leftIcon={<FaArrowUp/>}>返回頂端</Button>
         </Flex>
       </Box>
     );
