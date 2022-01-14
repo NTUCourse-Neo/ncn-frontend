@@ -37,6 +37,7 @@ function CourseTableCard(props){
     const course_table = useSelector(state => state.course_table);
     const { isOpen, onOpen, onClose } = useDisclosure()
     const toast = useToast();
+    console.error = () => {};
 
     // initial state or sorting result
     const [ courseOrder, setCourseOrder ] = useState(props.courseTime);

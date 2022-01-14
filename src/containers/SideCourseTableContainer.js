@@ -73,7 +73,7 @@ function SideCourseTableContainer(props) {
     // state for delete function in the side course table list.
     // TODO: Move this part to a new dedicated component.
     const [isDeletingCourse, setIsDeletingCourse] = useState("");
-
+    console.error = () => {};
 
     const parseCourseDateTime = (course, course_time_tmp) => {
       course.time_loc_pair.map(time_loc_pair => { // eslint-disable-line array-callback-return

@@ -26,6 +26,7 @@ function FilterModal(props){
   const time_state = useSelector(state => state.search_filters.time);
   const department_state = useSelector(state => state.search_filters.department);
   const category_state = useSelector(state => state.search_filters.category);
+  console.error = () => {};
 
   const handleSet = (type) => {
     if (type==='department'){
