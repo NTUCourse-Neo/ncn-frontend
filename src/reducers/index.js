@@ -9,7 +9,7 @@ const initState = {
     total_count: 0, // total number of results
     batch_size: 20,
     offset: 0,
-    search_columns: ['course_name', 'teacher', 'id', 'course_code', 'course_id'], // array of column names, default is all columns
+    search_columns: ['course_name', 'teacher' ], // array of column names, default is all columns
     search_settings: {show_selected_courses: false, only_show_not_conflicted_courses: false, sync_add_to_nol: false, strict_search_mode: false}, // object of settings
     search_filters_enable: {time: false, department: false, category: false, enroll_method: false}, // object of boolean, enable/disable filters
     search_filters: {time: [[],[],[],[],[],[],[]], department: [], category: [], enroll_method: ['1','2','3']}, // default value of filters
