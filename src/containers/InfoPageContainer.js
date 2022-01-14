@@ -20,7 +20,7 @@ import {GiLiver} from 'react-icons/gi';
 const teams = [
   {
     name: "張博皓",
-    img: "https://avatars.githubusercontent.com/u/38657003?v=4",
+    img: "https://i.imgur.com/2krBPBl.png",
     dept: "工科海洋系 B07",
     quote: "WP 讚啦",
     github: "jc-hiroto",
@@ -28,7 +28,7 @@ const teams = [
   },
   {
     name: "許書維",
-    img: "https://avatars.githubusercontent.com/u/71842426?v=4",
+    img: "https://i.imgur.com/sr8jrVT.jpg",
     dept: "電機系 B07",
     quote: "WP 讚啦",
     github: "swh00tw",
@@ -36,7 +36,7 @@ const teams = [
   },
   {
     name: "謝維勝",
-    img: "https://avatars.githubusercontent.com/u/87405718?v=4",
+    img: "https://i.imgur.com/aoJ6god.jpg",
     dept: "電機系 B07",
     quote: "WP 讚啦",
     github: "Wil0408",
