@@ -11,7 +11,6 @@ import {
     Button,
     useToast,
     Icon,
-    Stack,
     HStack,
     AlertDialog,
     AlertDialogBody,
@@ -23,12 +22,10 @@ import {
     AlertIcon,
     Collapse,
     PinInput,
-    PinInputContext,
     PinInputField,
     Badge
 } from '@chakra-ui/react';
 import Select from 'react-select';
-import LoadingOverlay from 'react-loading-overlay';
 import { HashLoader } from 'react-spinners';
 import { useDispatch, useSelector } from 'react-redux';
 import { FaFacebook, FaGithub, FaGoogle, FaExclamationTriangle } from 'react-icons/fa';
@@ -111,7 +108,7 @@ function UserInfoContainer(props) {
     }
     const token = await getAccessTokenSilently();
     try {
-      const resp = await dispatch(request_otp_code(token, studentId));
+      await dispatch(request_otp_code(token, studentId));
       setOtpSent(true);
       setOtpInputStatus(1);
       actions.start(300*1000);
@@ -130,7 +127,7 @@ function UserInfoContainer(props) {
     try{
       setOtpInputStatus(0);
       const token = await getAccessTokenSilently();
-      const resp = await dispatch(use_otp_link_student_id(token, studentId, otp));
+      await dispatch(use_otp_link_student_id(token, studentId, otp));
       // refresh page or data
       window.location.reload();
     }catch(err){
@@ -239,7 +236,7 @@ function UserInfoContainer(props) {
     }
 
     fetchUserInfo();
-  }, [user]);
+  }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(()=>{
     if (userInfo){
@@ -378,6 +375,7 @@ function UserInfoContainer(props) {
             </Flex>
           );
         }
+        return (<></>)
       }
     ));
   }

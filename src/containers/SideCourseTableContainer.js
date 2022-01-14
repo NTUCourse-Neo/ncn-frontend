@@ -18,7 +18,6 @@ import {
     FormLabel,
     Input,
     useDisclosure,
-    Collapse,
     IconButton,
     Spacer,
     useToast,
@@ -27,7 +26,6 @@ import {
     TabList,
     TabPanels,
     TabPanel,
-    Divider,
     Badge,
     Tag,
     SkeletonText
@@ -47,9 +45,9 @@ import { fetchCourseTableCoursesByIds, createCourseTable, linkCoursetableToUser,
 import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import { useAuth0 } from "@auth0/auth0-react";
-import { BeatLoader } from 'react-spinners';
+// import { BeatLoader } from 'react-spinners';
 import { hash_to_color_hex } from '../utils/colorAgent';
-import { genNolAddUrl, openPage, RenderNolContentBtn } from './CourseDrawerContainer';
+import { genNolAddUrl, openPage } from './CourseDrawerContainer';
 import { useNavigate } from 'react-router-dom';
 
 const LOCAL_STORAGE_KEY = 'NTU_CourseNeo_Course_Table_Key';
@@ -63,7 +61,7 @@ function SideCourseTableContainer(props) {
     const userInfo = useSelector(state => state.user);
 
     // some local states for handling course data
-    const courseIds = props.courseIds;
+    // const courseIds = props.courseIds;
     const setCourseIds = props.setCourseIds;
     const [courses, setCourses] = useState({}); // dictionary of Course objects using courseId as key
     const [courseTimes, setCourseTimes] = useState({}); // coursesTime is a dictionary of courseIds and their corresponding time in time table
@@ -78,9 +76,9 @@ function SideCourseTableContainer(props) {
 
 
     const parseCourseDateTime = (course, course_time_tmp) => {
-      course.time_loc_pair.map(time_loc_pair => {
+      course.time_loc_pair.map(time_loc_pair => { // eslint-disable-line array-callback-return
         Object.keys(time_loc_pair.time).forEach(day => {
-          time_loc_pair.time[day].map(time => {
+          time_loc_pair.time[day].map(time => { // eslint-disable-line array-callback-return
             if (!(day in course_time_tmp.time_map)) {
               course_time_tmp.time_map[day] = {};
             }
@@ -92,7 +90,7 @@ function SideCourseTableContainer(props) {
           })
         })
       })
-    };
+    }; 
 
     // will set courseTimes in this function
     const extract_course_info = (courses) => {
@@ -191,7 +189,7 @@ function SideCourseTableContainer(props) {
           }
         }
       } 
-    },[user, isLoading])
+    },[user, isLoading]) // eslint-disable-line react-hooks/exhaustive-deps
 
     // fetch course objects data from server based on array of IDs
     useEffect(() => {
@@ -224,7 +222,7 @@ function SideCourseTableContainer(props) {
       if(!localStorage.getItem(LOCAL_STORAGE_KEY)){
         setLoading(false);
       }
-    }, [courseTable]);
+    }, [courseTable]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
       if (props.hoveredCourse){
@@ -247,7 +245,7 @@ function SideCourseTableContainer(props) {
         if (user){
           // hasLogIn
           try {
-            const new_course_table = await dispatch(createCourseTable(new_uuid, "我的課表", userInfo.db._id, "1101"));
+            await dispatch(createCourseTable(new_uuid, "我的課表", userInfo.db._id, "1101"));
             // console.log("New UUID is generated: ",new_uuid);
             const token = await getAccessTokenSilently();
             await dispatch(linkCoursetableToUser(token, new_uuid, userInfo.db._id));

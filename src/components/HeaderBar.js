@@ -16,14 +16,14 @@ import {
   Badge
 
 } from '@chakra-ui/react';
-import {ChevronRightIcon, Search2Icon} from "@chakra-ui/icons"
-import { FaCheck, FaExclamation,FaFolderOpen, FaBook, FaInfo, FaInfoCircle, FaBookmark } from 'react-icons/fa';
-import { ColorModeSwitcher } from '../ColorModeSwitcher';
+import {ChevronRightIcon} from "@chakra-ui/icons"
+import { FaCheck, FaExclamation, FaBook, FaInfoCircle, FaBookmark } from 'react-icons/fa';
 import { Link } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import BeatLoader from 'react-spinners/BeatLoader';
 import { logOut } from "../actions/"; 
 import { useDispatch } from "react-redux"; 
+// import { ColorModeSwitcher } from '../ColorModeSwitcher';
 
 function HeaderBar() {
   const dispatch = useDispatch();

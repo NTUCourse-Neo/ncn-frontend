@@ -1,31 +1,9 @@
-import { React, useRef, forwardRef, useEffect,useState } from 'react';
+import { React, useEffect,useState } from 'react';
 import {
     Box,
     Flex,
     Text,
-    Tabs,
-    TabList,
-    Tab,
-    TabPanels,
-    TabPanel,
-    Switch,
-    FormControl,
-    FormLabel,
-    Collapse,
-    IconButton,
-    Button,
     useToast,
-    Menu,
-    MenuButton,
-    MenuList,
-    MenuOptionGroup,
-    MenuItemOption,
-    Badge,
-    MenuDivider,
-    Fade,
-    Spacer,
-    Tag,
-    TagLeftIcon
 } from '@chakra-ui/react';
 import {useSelector, useDispatch} from 'react-redux';
 import CourseInfoRowContainer from './CourseInfoRowContainer';
@@ -33,7 +11,7 @@ import SkeletonRow from '../components/SkeletonRow';
 import { HashLoader } from 'react-spinners';
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import { BeatLoader } from 'react-spinners';
-import { fetchFavoriteCourses, fetchUserById, logIn, updateCourseTable, fetchCourseTable, fetchCourseTableCoursesByIds } from '../actions/index';
+import { fetchFavoriteCourses, fetchUserById, logIn, updateCourseTable, fetchCourseTable } from '../actions/index';
 
 
 function UserMyPage() {
@@ -44,10 +22,10 @@ function UserMyPage() {
     const search_error = useSelector(state => state.search_error);    
     const courseTable = useSelector(state => state.course_table);
     const userInfo = useSelector(state => state.user);
-    const [ hoveredCourse, setHoveredCourse ] = useState(null);
+    const [ hoveredCourse, setHoveredCourse ] = useState(null); // eslint-disable-line no-unused-vars
     const [ favorite_list, setFavorite_list ] = useState([]);
     const [ coursesInTable, setCoursesInTable] = useState([]);
-    const [ displayTags, setDisplayTags ] = useState(["required", "total_slot", "enroll_method", "area"]);
+    const [ displayTags, setDisplayTags ] = useState(["required", "total_slot", "enroll_method", "area"]); // eslint-disable-line no-unused-vars
     const [ Loading, setLoading ] = useState(true);
     const userLoading = isLoading || !userInfo;
 
@@ -92,7 +70,7 @@ function UserMyPage() {
         }
     
         fetchUserInfo();
-      }, [user]);
+      }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
       
 
     useEffect(() => {
@@ -122,7 +100,7 @@ function UserMyPage() {
             fetchFavoriteCoursesById();
             setLoading(false);
         }
-    }, [userInfo]);
+    }, [userInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         if(courseTable) {

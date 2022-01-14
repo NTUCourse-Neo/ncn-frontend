@@ -1,18 +1,10 @@
 import { React } from 'react';
 import {
-    Box,
     Flex,
     Heading,
     Badge,
     Text,
     Spacer,
-    AccordionItem,
-    AccordionButton,
-    AccordionPanel,
-    Tag,
-    TagLeftIcon,
-    TagLabel,
-    IconButton,
     Button,
     ButtonGroup,
     useDisclosure,

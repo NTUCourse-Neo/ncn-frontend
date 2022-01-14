@@ -14,7 +14,7 @@ import {
   Flex,
 } from "@chakra-ui/react";
 import { college_map } from '../data/college';
-import { dept_list, dept_list_bachelor_only } from '../data/department';
+import { dept_list_bachelor_only } from '../data/department';
 import { type_list, code_map } from '../data/course_type';
 import TimetableSelector from "./TimetableSelector";
 import {useSelector, useDispatch} from 'react-redux';

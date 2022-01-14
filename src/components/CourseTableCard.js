@@ -1,10 +1,9 @@
-import { React, useRef, forwardRef, useEffect,useState } from 'react';
+import { React, useEffect,useState } from 'react';
 import {arrayMoveImmutable as arrayMove} from 'array-move';
 import "./CourseTableCard.css";
 import {
     Flex,
     Text,
-    Box,
     Button,
     useDisclosure,
     Tooltip,
@@ -24,9 +23,9 @@ import {
     ScaleFade,
     useToast
 } from '@chakra-ui/react';
-import { hash_to_color_hex, random_color_hex } from '../utils/colorAgent';
+import { hash_to_color_hex } from '../utils/colorAgent';
 import {sortableContainer, sortableElement, sortableHandle} from 'react-sortable-hoc';
-import { FaBars, FaTrashAlt, FaInfoCircle, FaExclamationTriangle } from 'react-icons/fa';
+import { FaBars, FaTrashAlt, FaExclamationTriangle } from 'react-icons/fa';
 import {RenderNolContentBtn} from '../containers/CourseDrawerContainer';
 import {useSelector, useDispatch} from 'react-redux';
 import {patchCourseTable} from '../actions';

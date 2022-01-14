@@ -20,7 +20,7 @@ import {
     Collapse
 } from '@chakra-ui/react';
 import {CourseDrawerContainer} from '../containers/CourseDrawerContainer';
-import { FaUserPlus, FaPuzzlePiece, FaPlus, FaHeart} from 'react-icons/fa';
+import { FaPlus, FaHeart} from 'react-icons/fa';
 import { info_view_map } from '../data/mapping_table';
 import {useDispatch, useSelector} from 'react-redux';
 import { fetchCourseTable, patchCourseTable, addFavoriteCourse } from '../actions';

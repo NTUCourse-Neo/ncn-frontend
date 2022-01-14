@@ -1,5 +1,5 @@
 import React from 'react';
-import {Flex, Spinner, useToast, Text, VisuallyHidden} from '@chakra-ui/react';
+import {Flex, useToast, Text, VisuallyHidden} from '@chakra-ui/react';
 import {HashLoader} from 'react-spinners';
 import { FaSadTear } from 'react-icons/fa';
 

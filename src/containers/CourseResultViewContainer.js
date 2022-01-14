@@ -9,7 +9,6 @@ import {
     TabPanels,
     TabPanel,
     Switch,
-    FormControl,
     FormLabel,
     Collapse,
     IconButton,
@@ -23,12 +22,11 @@ import {
     Badge,
     MenuDivider,
     Fade,
-    Spacer,
     Tag,
     TagLeftIcon
 } from '@chakra-ui/react';
 import { BeatLoader } from 'react-spinners';
-import { FaAngleLeft, FaAngleRight, FaChevronDown, FaChevronUp, FaPlus, FaMinus } from 'react-icons/fa';
+import { FaAngleLeft, FaChevronDown, FaChevronUp, FaPlus, FaMinus } from 'react-icons/fa';
 import CourseInfoRowContainer from './CourseInfoRowContainer';
 import FilterModal from '../components/FilterModal';
 import CourseSearchInput from '../components/CourseSearchInput';
@@ -146,7 +144,7 @@ function CourseResultViewContainer() {
     useEffect(()=>{
         // console.log(selectedEnrollMethod);
         dispatch(setFilter('enroll_method', selectedEnrollMethod));
-    },[selectedEnrollMethod]);
+    },[selectedEnrollMethod]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(()=>{
         topRef.current.focus();
@@ -155,11 +153,11 @@ function CourseResultViewContainer() {
     useEffect(()=>{
         // console.log('reachedBottom: ',reachedBottom);
         handleScrollToBottom();
-    },[reachedBottom])
+    },[reachedBottom]) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(()=>{
       setSelectedTime(mapStateToTimeTable(search_filters.time));
-    },[])
+    },[]) // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <>
