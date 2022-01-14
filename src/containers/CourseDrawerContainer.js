@@ -112,7 +112,7 @@ function CourseDrawerContainer(props) {
                     <Heading as="h3" color="gray.600" fontSize="lg" ml="4px" mb="1">修課限制</Heading>
                     <Text fontSize="sm" color="gray.800" mx="4px">{props.courseInfo.limit === "" ? "無" : props.courseInfo.limit}</Text>
                 </Flex>
-                <Flex w={isMobile? "100%":"70%"} flexDirection="column" alignItems="start" justifyContent="start" p="2">
+                <Flex w={isMobile? "100%":"60%"} flexDirection="column" alignItems="start" justifyContent="start" p="2">
                     <Heading as="h3" color="gray.600" fontSize="lg" ml="4px" mb="1">備註</Heading>
                     <Text fontSize="sm" color="gray.800" mx="4px">{props.courseInfo.note === "" ? "無" : props.courseInfo.note}</Text>
                 </Flex>
