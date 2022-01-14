@@ -173,24 +173,35 @@ function FilterModal(props){
       <ModalOverlay />
       <ModalContent maxW={isMobile? "":"50vw"}>
         <ModalHeader>
-          <Flex flexDirection="row" justifyContent="start" alignItems="center">
-            {title}
-          </Flex>
+          {title}
+          {
+            isMobile?
+            <Flex flexDirection="row" justifyContent="start" alignItems="center" mt="2">
+              <Button size="sm" colorScheme='blue' mr={3} onClick={()=>{onClose();handleSet(props.type);}}>
+                套用
+              </Button>
+              <Button size="sm" variant='ghost' onClick={()=> setSelected([])}>重設</Button>
+            </Flex>:<></>
+          }
         </ModalHeader>
         <ModalCloseButton />
         {renderSelectedHeader()}
         <ModalBody overflow="auto" pt="0">
           {FilterModalBody(type)}
         </ModalBody>
-        <ModalFooter>
-          <Button colorScheme='blue' mr={3} onClick={()=>{
-            onClose();
-            handleSet(props.type);
-          }}>
-            套用
-          </Button>
-          <Button variant='ghost' onClick={()=> setSelected([])}>重設</Button>
-        </ModalFooter>
+        {
+          isMobile?
+          <></>:
+          <ModalFooter>
+            <Button colorScheme='blue' mr={3} onClick={()=>{
+              onClose();
+              handleSet(props.type);
+            }}>
+              套用
+            </Button>
+            <Button variant='ghost' onClick={()=> setSelected([])}>重設</Button>
+          </ModalFooter>
+        }
       </ModalContent>
     </Modal>
     </>
