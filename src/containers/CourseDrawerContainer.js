@@ -129,4 +129,4 @@ function CourseDrawerContainer(props) {
     );
 }
 
-export { CourseDrawerContainer, RenderNolContentBtn };
+export { CourseDrawerContainer, RenderNolContentBtn, genNolAddUrl, genNolUrl, openPage };
