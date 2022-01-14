@@ -10,7 +10,8 @@ import {
     MenuList,
     useToast,
     MenuItemOption,
-    MenuOptionGroup
+    MenuOptionGroup,
+    Badge
 } from '@chakra-ui/react';
 import { Search2Icon, ChevronDownIcon } from "@chakra-ui/icons"
 import { FaArrowRight } from 'react-icons/fa';
@@ -48,12 +49,12 @@ function CourseSearchInput() {
                 <Menu closeOnSelect={false} mx="2">
                     <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>搜尋欄位</MenuButton>
                     <MenuList>
-                        <MenuOptionGroup defaultValue={['course_name', 'teacher', 'id', 'course_code', 'course_id']} type='checkbox'>
-                            <MenuItemOption value='course_name'  onClick={(e)=>{toggle_search_column(e)}}>課程名稱</MenuItemOption>
+                        <MenuOptionGroup defaultValue={['course_name', 'teacher']} type='checkbox'>
+                            <MenuItemOption value='course_name'  onClick={(e)=>{toggle_search_column(e)}}>課程名稱 <Badge>預設</Badge></MenuItemOption>
                             <MenuItemOption value='teacher' onClick={(e)=>{toggle_search_column(e)}}>教師</MenuItemOption>
-                            <MenuItemOption value='id' onClick={(e)=>{toggle_search_column(e)}}>流水號</MenuItemOption>
-                            <MenuItemOption value='course_code' onClick={(e)=>{toggle_search_column(e)}}>課號</MenuItemOption>
-                            <MenuItemOption value='course_id' onClick={(e)=>{toggle_search_column(e)}}>課程識別碼</MenuItemOption>
+                            <MenuItemOption value='id' onClick={(e)=>{toggle_search_column(e)}} isDisabled>流水號 <Badge colorScheme="blue">即將推出</Badge></MenuItemOption>
+                            <MenuItemOption value='course_code' onClick={(e)=>{toggle_search_column(e)}} isDisabled>課號 <Badge colorScheme="blue">即將推出</Badge></MenuItemOption>
+                            <MenuItemOption value='course_id' onClick={(e)=>{toggle_search_column(e)}} isDisabled>課程識別碼 <Badge colorScheme="blue">即將推出</Badge></MenuItemOption>
                         </MenuOptionGroup>
                     </MenuList>
                 </Menu>
