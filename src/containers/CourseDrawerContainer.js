@@ -56,7 +56,7 @@ function RenderNolContentBtn(course, title, key){
 function openPage(url, doClose){
     let wnd = window.open(url, '_blank');
     if(doClose){
-        console.log("closing");
+        // console.log("closing");
         setTimeout(() => {
             wnd.close();
         }, 1000);

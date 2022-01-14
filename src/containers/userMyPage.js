@@ -60,7 +60,7 @@ function UserMyPage() {
               const user_data = await dispatch(fetchUserById(token, user.sub));
               await dispatch(logIn(user_data));
               const course_tables = user_data.db.course_tables;
-              console.log(course_tables);
+              // console.log(course_tables);
               if (course_tables.length === 0) {
                 // user has no course table, set courseTable in redux null
                 dispatch(updateCourseTable(null));
@@ -70,7 +70,12 @@ function UserMyPage() {
                 try {
                   await dispatch(fetchCourseTable(course_tables[0]));
                 } catch (e) {
-                    console.log(e);
+                    toast({
+                      title: '取得課表資料失敗.',
+                      status: 'error',
+                      duration: 9000,
+                      isClosable: true,
+                    })
                 }
               }
             } catch (e) {
@@ -93,15 +98,15 @@ function UserMyPage() {
     useEffect(() => {
         const fetchFavoriteCoursesById = async () => {
             setLoading(true);
-            console.log(userInfo);
+            // console.log(userInfo);
             if(userInfo.db.favorites.length > 0) {
                 try {
                     const courses = await dispatch(fetchFavoriteCourses(userInfo.db.favorites));
-                    console.log(courses);
+                    // console.log(courses);
                     setFavorite_list(courses);
                 }
                 catch (e) {
-                    console.log(e);
+                    // console.log(e);
                     toast({
                         title: '載入最愛課程失敗.',
                         description: "請聯繫客服(?)",

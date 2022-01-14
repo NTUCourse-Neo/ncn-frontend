@@ -390,9 +390,9 @@ function SideCourseTableContainer(props) {
       }
       const renderCourseList = () => {
         const handleDeleteCourse = async (course_id) => {
-          console.log("course_id: ",course_id);
+          // console.log("course_id: ",course_id);
           const new_courses = courseTable.courses.filter(course => course !== course_id);
-          console.log("new_courses: ",new_courses);
+          // console.log("new_courses: ",new_courses);
           setIsDeletingCourse(course_id);
           try {
             await dispatch(patchCourseTable(courseTable._id, courseTable.name, courseTable.user_id, courseTable.expire_ts, new_courses));

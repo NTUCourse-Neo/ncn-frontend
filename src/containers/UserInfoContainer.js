@@ -80,13 +80,13 @@ function UserInfoContainer(props) {
 
   const recOnChange = async(value) => {
     let resp
-    console.log('Captcha value:', value);
+    // console.log('Captcha value:', value);
     if(value){
       try{
         const token = await getAccessTokenSilently();
         resp = await dispatch(verify_recaptcha(token, value));
       }catch(err){
-        console.log(err);
+        // console.log(err);
         recaptchaRef.current.reset();
       }
       if(resp.data.success){
@@ -100,8 +100,14 @@ function UserInfoContainer(props) {
 
   const handleSendOTP = async() => {
     if(studentId === ""){
-      console.log("Please input student id");
-      // TODO: show error message
+      // console.log("Please input student id");
+      toast({
+        title: 'Please input student id',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      })
+      return;
     }
     const token = await getAccessTokenSilently();
     try {
@@ -128,7 +134,7 @@ function UserInfoContainer(props) {
       // refresh page or data
       window.location.reload();
     }catch(err){
-      console.log(err);
+      // console.log(err);
       setOtpInputStatus(-1);
     }
   }
@@ -164,7 +170,7 @@ function UserInfoContainer(props) {
       updateObject.department = new_department;
     }
 
-    console.log('updateObject: ', updateObject);
+    // console.log('updateObject: ', updateObject);
     return updateObject;
   }
 

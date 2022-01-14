@@ -14,7 +14,7 @@ function SkeletonRow(props) {
             )
         }
         else if (props.error){
-            console.log(props.error);
+            // console.log(props.error);
             return (
                 <>
                     <Text color="gray.300" pt="10"> <FaSadTear size={32}/> </Text>
