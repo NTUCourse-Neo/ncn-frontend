@@ -1,4 +1,4 @@
-import { React } from 'react';
+import { React, useEffect } from 'react';
 import {
   Avatar,
     Box,
@@ -48,12 +48,15 @@ const teams = [
 ]
 
 function InfoPageContainer(props){
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  } , [])
   const handleOpenGithub = (github) => {
     window.open(`https://www.github.com/${github}`, '_blank');
   }
   const renderTeamCard = (person) => {
     return (
-      <Box w="20vw" minW="400" p="8" bg="white" boxShadow="xl" borderRadius="xl">
+      <Box w="400" p="8" bg="white" boxShadow="xl" borderRadius="xl">
         <VStack spacing="4">
           <HStack align="center" justify="center" spacing="4">
             <Avatar src={person.img} name={person.name} size="2xl"/>
@@ -73,25 +76,25 @@ function InfoPageContainer(props){
   };
   return(
     <>
-      <Flex direction="column" alignItems="center" px="200" pt="100px">
-        <Text fontSize="5xl" fontWeight="800" color="gray.700">關於</Text>
+      <Flex direction="column" alignItems="center" px={["10", "20", "100","200"]} pt="100px">
+        <Text fontSize={["3xl","4xl","5xl"]} fontWeight="800" color="gray.700">關於</Text>
         <Divider />
-        <Flex direction="column" alignItems="center" p="16">
-          <Text fontSize="2xl" fontWeight="400" color="gray.500">課程網真的好難用，所以我們自己做了一個！ 🥰<br /> 希望 NTUCourse Neo 可以讓你我的選課都更加直覺，好用。</Text>
+        <Flex direction="column" alignItems="center" px={["4","8","16"]} py="16">
+          <Text fontSize={["lg","xl","2xl"]}fontWeight="400" color="gray.500">課程網真的好難用，所以我們自己做了一個！ 🥰<br /> 希望 NTUCourse Neo 可以讓你我的選課都更加直覺，好用。</Text>
         </Flex>
-        <Text fontSize="5xl" fontWeight="800" color="gray.700">團隊</Text>
+        <Text fontSize={["3xl","4xl","5xl"]} fontWeight="800" color="gray.700">團隊</Text>
         <Divider />
-        <HStack justifyContent="center" p="16" wrap="wrap" css={{ gap: '2rem' }}>
+        <HStack justifyContent="center" px={["4","8","16"]} wrap="wrap" css={{ gap: '2rem' }} py="16">
           {teams.map (person => renderTeamCard(person))}
         </HStack>
-        <Text fontSize="5xl" fontWeight="800" color="gray.700">操作影片</Text>
+        <Text fontSize={["3xl","4xl","5xl"]} fontWeight="800" color="gray.700">操作影片</Text>
         <Divider />
-        <Flex direction="column" alignItems="center" p="16">
-          <iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <Flex direction="column" alignItems="center" py="16">
+          <iframe width="320" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </Flex>
-        <Text fontSize="5xl" fontWeight="800" color="gray.700">Powered by...</Text>
+        <Text fontSize={["3xl","4xl","5xl"]} fontWeight="800" color="gray.700">Powered by...</Text>
         <Divider />
-        <HStack alignItems="center" justifyContent="center" p="16" spacing="8" wrap="wrap" w="90vw" css={{ gap: '2em' }}>
+        <Flex alignItems="center" justifyContent="center" p="16" spacing="8" wrap="wrap" w="90vw" css={{ gap: '2em' }}>
           <Image src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Microsoft_Azure_Logo.svg/1200px-Microsoft_Azure_Logo.svg.png" height="50px" />
           <Image src="https://res.cloudinary.com/citiar/image/upload/v1611373461/ucamc/common/react_icon.png" height="50px" />
           <Image src="https://cg2010studio.files.wordpress.com/2016/07/nodejs.png?w=584" height="50px" />
@@ -101,8 +104,8 @@ function InfoPageContainer(props){
           <Image src="https://segmentfault.com/img/bVtSeK" height="50px" />
           <Image src="https://miro.medium.com/max/1200/0*4L-GqAxAp7KsObMj.png" height="50px" />
           <Image src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/RecaptchaLogo.svg/1200px-RecaptchaLogo.svg.png" height="50px" />
-        </HStack>
-        <HStack spacing={4} mb="4">
+        </Flex>
+        <HStack spacing={4} mb="4" wrap="wrap">
           <Text fontSize="2xl" fontWeight="500" color="gray.700">with the help of...</Text>
           <Icon as={FaGithub} w="8" h="8" color="gray.700"/>
           <Icon as={SiDiscord} w="8" h="8" color="gray.700"/>

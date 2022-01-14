@@ -82,11 +82,14 @@ function CourseResultViewContainer() {
   const [displayTags, setDisplayTags] = useState([]);
   const available_tags = ["required", "total_slot", "enroll_method", "area"];
 
-  const renderSettingSwitch = (label, default_checked) => {
+  useEffect(() => {
+      setDisplayFilter(false);
+  },[search_ids])
 
+  const renderSettingSwitch = (label, default_checked, isDisabled) => {
         const handleChangeSettings = (e)=>{
             // console.log(e.currentTarget.checked);
-            if (label==='顯示已選課程'){
+            if (label==='ˋ只顯示未選課程'){
                 set_show_selected_courses(e.currentTarget.checked);
             }
             else if (label==='只顯示未衝堂課程'){
@@ -101,9 +104,14 @@ function CourseResultViewContainer() {
 
         return(
             <Flex alignItems="center">
-                <Switch id={label} defaultChecked={default_checked} mr="2" onChange={(e)=>{handleChangeSettings(e)}}/>
+                <Switch id={label} defaultChecked={default_checked} mr="2" onChange={(e)=>{handleChangeSettings(e)}} isDisabled={isDisabled}/>
                 <FormLabel htmlFor={label} mb='0' fontWeight="500" color="gray.600">
                     {label}
+                    {
+                        isDisabled ?
+                        <Badge ml="2" colorScheme="blue">即將推出</Badge>:
+                        <></>
+                    }
                 </FormLabel>
             </Flex>
         );
@@ -177,7 +185,7 @@ function CourseResultViewContainer() {
                                         <TabPanels>
                                             <TabPanel>
                                                 {/* Filters: time, department, type of courses */}
-                                                <Flex flexDirection="row" flexWrap="wrap">
+                                                <Flex flexDirection="row" flexWrap="wrap" css={{gap: "10px"}}>
                                                     <Flex flexDirection="column" px="4">
                                                         <Flex flexDirection="row" alignItems="center" justifyContent="center">
                                                         <Switch size="lg" mr="2" isChecked={timeFilterOn} onChange={ (e) => {
@@ -231,14 +239,14 @@ function CourseResultViewContainer() {
                                             </TabPanel>
                                             <TabPanel>
                                                 {/* Settings */}
-                                                <Flex flexDirection="row" flexWrap="wrap">
+                                                <Flex flexDirection="row" flexWrap="wrap" css={{gap: "10px"}}>
                                                     <Flex flexDirection="column" p="4" mr="4" borderWidth="2px" borderRadius="lg">
                                                         <Text fontSize="lg" color="gray.500" fontWeight="700" mb="4">課表設定</Text>
-                                                        <Flex w="100%" flexDirection="row" alignItems="center" flexWrap="wrap">
-                                                            {renderSettingSwitch('顯示已選課程', show_selected_courses)}
-                                                            {renderSettingSwitch('只顯示未衝堂課程', only_show_not_conflicted_courses)}
-                                                            {renderSettingSwitch('同步新增至課程網', sync_add_to_nol)}
-                                                            {renderSettingSwitch('篩選條件嚴格搜尋', strict_search_mode)}
+                                                        <Flex w="100%" flexDirection="row" alignItems="center" flexWrap="wrap" css={{gap: "6px"}}>
+                                                            {renderSettingSwitch('篩選條件嚴格搜尋', strict_search_mode, false)}
+                                                            {renderSettingSwitch('只顯示未選課程', show_selected_courses, true)}
+                                                            {renderSettingSwitch('只顯示未衝堂課程', only_show_not_conflicted_courses, true)}
+                                                            {renderSettingSwitch('同步新增至課程網', sync_add_to_nol, true)}
                                                         </Flex>
                                                         <Button mt={2} colorScheme='teal' size='md' onClick={()=>{
                                                             dispatch(setSearchSettings({
@@ -259,7 +267,7 @@ function CourseResultViewContainer() {
                                                     </Flex>
                                                     <Flex flexDirection="column" p="4" borderWidth="2px" borderRadius="lg">
                                                         <Text fontSize="lg" color="gray.500" fontWeight="700" mb="4">自訂顯示欄位</Text>
-                                                        <Flex w="100%" flexDirection="row" alignItems="center" flexWrap="wrap">
+                                                        <Flex w="100%" flexDirection="row" alignItems="center" flexWrap="wrap" css={{gap: "4px"}}>
                                                             {
                                                                 available_tags.map((tag, index) => {
                                                                     // console.log(displayTags)
