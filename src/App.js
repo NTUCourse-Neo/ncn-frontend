@@ -15,11 +15,15 @@ import UserInfoContainer from './containers/UserInfoContainer';
 import ErrorContainer from './containers/ErrorContainer';
 import UserMyPage from './containers/userMyPage';
 import { useParams } from 'react-router-dom';
+import ReactGA from 'react-ga';
+
 dotenv.config();
+ReactGA.initialize(process.env.REACT_APP_GA_TRACKING_ID);
+ReactGA.pageview(window.location.pathname + window.location.search);
 
 function App(props) {
   let { code } = useParams();
-
+  
   const content = (route)=>{
     switch(route){
       case "home":

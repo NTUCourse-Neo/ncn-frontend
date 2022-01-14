@@ -20,7 +20,7 @@ import homeMainSvg from '../img/home_main.svg';
 import HomeCard from '../components/HomeCard';
 import { useAuth0 } from '@auth0/auth0-react';
 import { FaArrowDown, FaArrowRight, FaArrowUp } from "react-icons/fa";
-import { animateScroll as scroll } from 'react-scroll'
+import { animateScroll as scroll, scroller } from 'react-scroll'
 import { Link, useNavigate } from "react-router-dom";
 import { BeatLoader } from 'react-spinners';
 import { fetchUserById, registerNewUser, logIn } from '../actions/';
@@ -35,6 +35,8 @@ function HomeViewContainer(props) {
   const dispatch = useDispatch();
 
   const [ isRegistering, setIsRegistering ] = useState(false);
+
+  const scroll_config = {duration: 1000,delay: 50,smooth: true, offset: -60};
 
   const handleGoToUserInfoPage = () => {
     onClose();
@@ -137,31 +139,31 @@ function HomeViewContainer(props) {
           {renderNewRegisterModal()}
         <Flex justifyContent="space-between" mb={4} grow="1" flexDirection="column" alignItems="center">
           <Spacer/>
-          <Flex justifyContent="space-between" flexDirection="row" alignItems="center" w="90vw">
+          <Flex justifyContent={["center","space-between" ]}flexDirection="row" alignItems="center" w="90vw" flexWrap="wrap-reverse">
             <Box>
-              <Heading as="h1" fontSize="6xl" fontWeight="800" color="gray.700">Course Schedule</Heading>
-              <Heading as="h1" fontSize="6xl" fontWeight="extrabold" color="gray.700" mb={4}>Re-imagined.</Heading>
+              <Heading as="h1" fontSize={["4xl","6xl"]} fontWeight="800" color="gray.700">Course Schedule</Heading>
+              <Heading as="h1" fontSize={["4xl","6xl"]} fontWeight="extrabold" color="gray.700" mb={4}>Re-imagined.</Heading>
               <Heading as="h1" fontSize="3xl" fontWeight="500" color="gray.500" mb={4}>修課安排不再是難事。</Heading>
               <Spacer my={8}/>
-              <Flex justifyContent="start" alignItems="center" flexDirection="row">
+              <Flex justifyContent={["center","start" ]} alignItems="center" flexDirection="row">
                 <Link to="/course"><Button colorScheme="teal" variant="solid" size="lg" mr={4}>開始使用</Button></Link>
                 <Link to="/about"><Button colorScheme="teal" variant="outline" size="lg" mr={4}>了解更多</Button></Link>
               </Flex> 
             </Box>
             <Spacer/>
-            <Image src={homeMainSvg} alt="home_main" w="50vw"/>
+            <Image src={homeMainSvg} alt="home_main" w={["80vw","50vw"]}/>
           </Flex>
           <Spacer my={10}/>
-          <Button variant="ghost" size="lg" onClick={() => scroll.scrollTo(770)} leftIcon={<FaArrowDown/>}>我們有...</Button>
-          <Spacer my={5}/>
+          <Button variant="ghost" size="lg" onClick={() => scroller.scrollTo("card1", scroll_config)} leftIcon={<FaArrowDown/>}>我們有...</Button>
+          <Spacer my={5} name="card1"/>
           <HomeCard title="搜尋篩選功能，快速找到你要的課程 🚀"
            desc={["試著在空堂塞入課程，想看看禮拜一下午究竟還有哪些課？", "還是距離畢業還缺 A8 通識，想知道有哪些可以修呢 🤔", "讓我們的篩選功能，快速滿足你各式各樣的需求！"]} 
            img='https://imgur.com/jC8IUuw.gif' 
            bg="gray.100">
           </HomeCard>
           <Spacer my={10}/>
-          <Button variant="ghost" size="lg" onClick={() => scroll.scrollTo(1540)} leftIcon={<FaArrowDown/>}>受夠一直切分頁看課表了嗎？</Button>
-          <Spacer my={5}/>
+          <Button variant="ghost" size="lg" onClick={() => scroller.scrollTo("card2", scroll_config)} leftIcon={<FaArrowDown/>}>受夠一直切分頁看課表了嗎？</Button>
+          <Spacer my={5} name="card2"/>
           <HomeCard 
             title="並列互動式課表，讓使用更直覺 😉" 
             desc={["👀 這堂課到底是第幾節上課？會不會卡到我的必修？","互動式課表讓課程時間不再只是簡單的數字，而是在課表中即時顯示。讓你更直覺地看到課程時間與你的規劃。", "提醒您，一般課表有儲存期限，若要永久保存，請先註冊登入喔 😘"]} 
@@ -170,8 +172,8 @@ function HomeViewContainer(props) {
           >
           </HomeCard>
           <Spacer my={10}/>
-          <Button variant="ghost" size="lg" onClick={() => scroll.scrollTo(2310)} leftIcon={<FaArrowDown/>}>小孩子才做選擇</Button>
-          <Spacer my={10}/>
+          <Button variant="ghost" size="lg" onClick={() => scroller.scrollTo("card3", scroll_config)} leftIcon={<FaArrowDown/>}>小孩子才做選擇</Button>
+          <Spacer my={5} name="card3"/>
           <HomeCard 
             title="我全都要。不怕選課衝堂，順序輕鬆排 🥰" 
             desc={["體育通識好難選，通通加進課表後都長得落落長。 我們顛覆以往的線上課表模式，不只可衝堂加課，還能決定優先順序！","你只需要好好挑選適合的課程，剩下的交給我們。👌"]}
@@ -180,8 +182,8 @@ function HomeViewContainer(props) {
           >
           </HomeCard>
           <Spacer my={10}/>
-          <Button variant="ghost" size="lg" onClick={() => scroll.scrollTo(3080)} leftIcon={<FaArrowDown/>}>填志願好麻煩？</Button>
-          <Spacer my={5}/>
+          <Button variant="ghost" size="lg" onClick={() => scroller.scrollTo("card4", scroll_config)} leftIcon={<FaArrowDown/>}>填志願好麻煩？</Button>
+          <Spacer my={5} name="card4"/>
           <HomeCard 
             title="一鍵加入課程網，填寫志願一目瞭然 🧐" 
             desc={["還在埋頭研究課程志願的先後順序嗎？只要決定好衝堂課程的順序偏好，就能將課程快速加入課程網，同時告別加入時瘋狂彈出的課表。別忘了，你還能參考我們顯示的志願序數字直接填入選課系統。", "就是這麼簡單，一塊蛋糕 🍰"]}
@@ -189,8 +191,8 @@ function HomeViewContainer(props) {
             bg="gray.100" 
           ></HomeCard>
           <Spacer my={10}/>
-          <Button variant="ghost" size="lg" onClick={() => scroll.scrollTo(3870)} leftIcon={<FaArrowDown/>}>網服真的太讚啦，先存</Button>
-          <Spacer my={5}/>
+          <Button variant="ghost" size="lg" onClick={() => scroller.scrollTo("card5", scroll_config)} leftIcon={<FaArrowDown/>}>網服真的太讚啦，先存</Button>
+          <Spacer my={5} name="card5"/>
           <HomeCard title="加入最愛，收藏喜歡的課程 💕" 
             desc={["這堂課好有趣，但這學期學分要爆了，等下學期或下下學期吧 🥵", "除了記在腦袋佔記憶體外，你還可以利用最愛功能收藏喜歡的課程，建立你的畢業前必修課程清單，讓你不再錯過任何一堂課！"]} 
             img="https://imgur.com/IHw3FG1.gif"

@@ -16,11 +16,14 @@ import {
 import { FaGithub } from 'react-icons/fa';
 import { SiNotion, SiDiscord } from 'react-icons/si';
 import {GiLiver} from 'react-icons/gi';
+import jchiroto from "../img/team_avatar/jc-hiroto.png";
+import swh00tw from "../img/team_avatar/swh00tw.png";
+import wil0408 from "../img/team_avatar/wil0408.png";
 
 const teams = [
   {
     name: "張博皓",
-    img: "https://i.imgur.com/2krBPBl.png",
+    img: jchiroto,
     dept: "工科海洋系 B07",
     quote: "WP 讚啦",
     github: "jc-hiroto",
@@ -28,7 +31,7 @@ const teams = [
   },
   {
     name: "許書維",
-    img: "https://i.imgur.com/sr8jrVT.jpg",
+    img: swh00tw,
     dept: "電機系 B07",
     quote: "WP 讚啦",
     github: "swh00tw",
@@ -36,7 +39,7 @@ const teams = [
   },
   {
     name: "謝維勝",
-    img: "https://i.imgur.com/aoJ6god.jpg",
+    img: wil0408,
     dept: "電機系 B07",
     quote: "WP 讚啦",
     github: "Wil0408",

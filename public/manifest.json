@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "NTUCourse Neo",
+  "name": "NTUCourse Neo",
   "icons": [
     {
       "src": "favicon.ico",
@@ -8,14 +8,14 @@
       "type": "image/x-icon"
     },
     {
-      "src": "logo192.png",
+      "src": "apple-touch-icon.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "180x180"
     },
     {
-      "src": "logo512.png",
+      "src": "og.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "1200x630"
     }
   ],
   "start_url": ".",
