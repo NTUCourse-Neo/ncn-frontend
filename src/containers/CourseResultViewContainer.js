@@ -84,8 +84,11 @@ function CourseResultViewContainer() {
   const [displayTags, setDisplayTags] = useState([]);
   const available_tags = ["required", "total_slot", "enroll_method", "area"];
 
-  const renderSettingSwitch = (label, default_checked, isDisabled) => {
+  useEffect(() => {
+      setDisplayFilter(false);
+  },[search_ids])
 
+  const renderSettingSwitch = (label, default_checked, isDisabled) => {
         const handleChangeSettings = (e)=>{
             // console.log(e.currentTarget.checked);
             if (label==='ˋ只顯示未選課程'){
