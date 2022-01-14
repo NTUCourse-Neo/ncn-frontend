@@ -34,7 +34,7 @@ import FilterModal from '../components/FilterModal';
 import CourseSearchInput from '../components/CourseSearchInput';
 import SkeletonRow from '../components/SkeletonRow';
 import SideCourseTableContainer from './SideCourseTableContainer';
-import { setSearchSettings, fetchSearchResults, setFilter, setFilterEnable} from '../actions/index';
+import { setSearchSettings, fetchSearchResults, setFilter, setFilterEnable, setNewDisplayTags} from '../actions/index';
 import {useSelector, useDispatch} from 'react-redux';
 import useOnScreen from '../hooks/useOnScreen';
 import {mapStateToTimeTable, mapStateToIntervals} from '../utils/timeTableConverter';
@@ -58,6 +58,7 @@ function CourseResultViewContainer() {
   const offset = useSelector(state => state.offset);
   const batch_size = useSelector(state => state.batch_size);
   const total_count = useSelector(state => state.total_count);
+  const display_tags = useSelector(state => state.display_tags);
 
   const [selectedTime, setSelectedTime] = useState(mapStateToTimeTable(search_filters.time));
   const [selectedDept, setSelectedDept] = useState(search_filters.department);
@@ -81,8 +82,12 @@ function CourseResultViewContainer() {
   const [strict_search_mode, set_strict_search_mode] = useState(search_settings.strict_search_mode);
 
   const [coursesInTable, setCoursesInTable] = useState([]);
-  const [displayTags, setDisplayTags] = useState([]);
+  const [displayTags, setDisplayTags] = useState(display_tags);
   const available_tags = ["required", "total_slot", "enroll_method", "area"];
+
+  useEffect(() => {
+      dispatch(setNewDisplayTags(displayTags))
+  },[displayTags]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
       setDisplayFilter(false);
