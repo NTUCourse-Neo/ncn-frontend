@@ -11,10 +11,12 @@ import {
     useToast,
     MenuItemOption,
     MenuOptionGroup,
-    Badge
+    Badge,
+    useMediaQuery,
+    Spacer
 } from '@chakra-ui/react';
 import { Search2Icon, ChevronDownIcon } from "@chakra-ui/icons"
-import { FaArrowRight } from 'react-icons/fa';
+import { FaSearch } from 'react-icons/fa';
 
 import {setSearchColumn,fetchSearchIDs} from '../actions/index'
 import {useDispatch, useSelector} from 'react-redux'
@@ -29,6 +31,7 @@ function CourseSearchInput() {
     const batch_size = useSelector(state => state.batch_size)
     const strict_match = useSelector(state => state.search_settings.strict_search_mode)
     const search_filters_enable = useSelector(state => state.search_filters_enable)
+    const [isMobile] = useMediaQuery("(max-width: 760px)")
 
     const [search, setSearch]=useState('')
     
@@ -45,7 +48,7 @@ function CourseSearchInput() {
 
     return(
         <Flex flexDirection="column">
-            <Flex flexDirection="row" alignItems="center" justifyContent="center">
+            <Flex flexDirection="row" alignItems="center" justifyContent={["start","start","center","center"]} flexWrap="wrap" css={{gap: "10px"}}>
                 <Menu closeOnSelect={false} mx="2">
                     <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>搜尋欄位</MenuButton>
                     <MenuList>
@@ -58,7 +61,7 @@ function CourseSearchInput() {
                         </MenuOptionGroup>
                     </MenuList>
                 </Menu>
-                <InputGroup w="80%">
+                <InputGroup w={["70%", "60%", "60%","60%"]}>
                     <InputLeftElement children={<Search2Icon color="gray.500"/>} />
                     <Input variant="flushed" size="md" focusBorderColor="teal.500" placeholder="直接搜尋可顯示全部課程" value={search} 
                         onChange={(e)=>{setSearch(e.target.value)}} 
@@ -81,7 +84,8 @@ function CourseSearchInput() {
                         }}}
                     />
                 </InputGroup>
-                <Button colorScheme="blue" variant="solid" rightIcon={<FaArrowRight/>} onClick={()=>{
+                {isMobile? <Spacer />:<></>}
+                <Button colorScheme="blue" variant="solid" leftIcon={<FaSearch/>} onClick={()=>{
                     try {
                         dispatch(fetchSearchIDs(search, search_columns, search_filters_enable, search_filters, batch_size, strict_match))
                     } catch (error) {
@@ -98,7 +102,7 @@ function CourseSearchInput() {
                         }
                     }
                 }
-                }>搜尋</Button>
+                }>{isMobile? "":"搜尋"}</Button>
             </Flex>
         </Flex>
     );
