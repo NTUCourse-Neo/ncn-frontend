@@ -43,6 +43,35 @@ function CourseSearchInput() {
         setSearch('')
     },[])
 
+    const startSearch = () => {
+        // console.log(search_columns);
+        if (search_columns.length===0){
+            toast({
+                title: '搜尋失敗',
+                description: '您必須指定至少一個搜尋欄位',
+                status: 'error',
+                duration: 3000,
+                isClosable: true
+            });
+            return;
+        }
+        try {
+            dispatch(fetchSearchIDs(search, search_columns, search_filters_enable, search_filters, batch_size, strict_match))
+        } catch (error) {
+            if (error>=500){
+                navigate(`/error/${error}`);
+            } else {
+                toast({
+                    title: '搜尋失敗',
+                    description: '請檢查網路連線，或聯絡系統管理員',
+                    status: 'error',
+                    duration: 3000,
+                    isClosable: true
+                });
+            }
+        }
+    }
+
     return(
         <Flex flexDirection="column">
             <Flex flexDirection="row" alignItems="center" justifyContent="center">
@@ -63,40 +92,12 @@ function CourseSearchInput() {
                     <Input variant="flushed" size="md" focusBorderColor="teal.500" placeholder="直接搜尋可顯示全部課程" value={search} 
                         onChange={(e)=>{setSearch(e.target.value)}} 
                         onKeyPress={(e)=>{if (e.key === 'Enter') {
-                            try {
-                                dispatch(fetchSearchIDs(search, search_columns, search_filters_enable, search_filters, batch_size, strict_match))
-                            } catch (error) {
-                                if (error>=500){
-                                    navigate(`/error/${error}`);
-                                } else {
-                                    toast({
-                                        title: '搜尋失敗',
-                                        description: '請檢查網路連線，或聯絡系統管理員',
-                                        status: 'error',
-                                        duration: 3000,
-                                        isClosable: true
-                                    });
-                                }
-                            }
+                            startSearch();
                         }}}
                     />
                 </InputGroup>
                 <Button colorScheme="blue" variant="solid" rightIcon={<FaArrowRight/>} onClick={()=>{
-                    try {
-                        dispatch(fetchSearchIDs(search, search_columns, search_filters_enable, search_filters, batch_size, strict_match))
-                    } catch (error) {
-                        if (error>=500){
-                            navigate(`/error/${error}`);
-                        } else {
-                            toast({
-                                title: '搜尋失敗',
-                                description: '請檢查網路連線，或聯絡系統管理員',
-                                status: 'error',
-                                duration: 3000,
-                                isClosable: true
-                            });
-                        }
-                    }
+                    startSearch();
                 }
                 }>搜尋</Button>
             </Flex>
