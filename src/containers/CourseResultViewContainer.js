@@ -212,7 +212,7 @@ function CourseResultViewContainer() {
                                                         dispatch(setFilterEnable('enroll_method', e.currentTarget.checked))
                                                         } }/>
                                                         <Menu closeOnSelect={false} mx="2">
-                                                            <MenuButton as={Button} rightIcon={<FaChevronDown />} disabled={!enrollFilterOn}>加選方式</MenuButton>
+                                                            <MenuButton as={'button'} rightIcon={<FaChevronDown />} disabled={!enrollFilterOn}>加選方式</MenuButton>
                                                             <MenuList>
                                                                 <MenuOptionGroup value={selectedEnrollMethod} type='checkbox'>
                                                                     <MenuItemOption key='1' value='1' onClick={(e) => {set_enroll_method(e)}}><Badge mr="2" colorScheme="blue" >1</Badge>直接加選</MenuItemOption>
@@ -265,7 +265,7 @@ function CourseResultViewContainer() {
                                                                     // console.log(displayTags)
                                                                     const selected = displayTags.includes(tag);
                                                                     return(
-                                                                        <Tag key={tag} as="Button" m="2" ml="0" variant={selected ? "solid":"subtle"}
+                                                                        <Tag key={tag} as="button" m="2" ml="0" variant={selected ? "solid":"subtle"}
                                                                             onClick={
                                                                                 selected ? 
                                                                                 () => {setDisplayTags([...displayTags.filter(t => t !== tag)])}:

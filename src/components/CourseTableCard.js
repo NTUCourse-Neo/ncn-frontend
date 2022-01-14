@@ -98,14 +98,15 @@ function CourseTableCard(props){
         if(course){
             return (
             <>
-                <Tooltip label={course.course_name} placement="top" hasArrow >
+                <Tooltip label={course.course_name} placement="top" hasArrow key={courseId}>
                     <Button  
                             bg={hash_to_color_hex(course._id, isOpen ? 0.7:0.8)} 
                             borderRadius="md" boxShadow="lg" 
                             mb="1" p="2" w="4vw" h="3vh"
                             border={props.hoverId === courseId  ? "2px":""}
-                            borderColor={hash_to_color_hex(course._id, 0.5)}>
-                        <Text fontSize="xs" isTruncated> {course.course_name} </Text>
+                            borderColor={hash_to_color_hex(course._id, 0.5)}
+                            key={courseId+"_Button"}>
+                        <Text key={courseId+"_Text"} fontSize="xs" isTruncated> {course.course_name} </Text>
                     </Button>
                 </Tooltip>
             </>
@@ -214,8 +215,8 @@ function CourseTableCard(props){
                     <PopoverHeader>
                         <Flex flexDirection="row" alignItems="center" justifyContent="start" mb="2">
                             節次資訊
-                            <Badge ml="2" size="sm">週{props.day}</Badge>
-                            <Badge ml="2" size="sm">第{props.interval}節</Badge>
+                            <Badge key={props.day} ml="2" size="sm">週{props.day}</Badge>
+                            <Badge key={props.interval} ml="2" size="sm">第{props.interval}節</Badge>
                         </Flex>
                     </PopoverHeader>
                     <PopoverBody>
