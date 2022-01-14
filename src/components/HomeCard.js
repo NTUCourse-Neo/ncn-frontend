@@ -3,7 +3,6 @@ import {
     Box,
     Flex,
     Heading,
-    Spacer,
     Text,
     Image,
   } from '@chakra-ui/react';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconButton, useMediaQuery } from "@chakra-ui/react"
+import { useMediaQuery } from "@chakra-ui/react"
 import {
   Flex,
   Heading,
@@ -24,7 +24,6 @@ import { useAuth0 } from "@auth0/auth0-react";
 import BeatLoader from 'react-spinners/BeatLoader';
 import { logOut } from "../actions/"; 
 import { useDispatch } from "react-redux"; 
-import { GiHamburgerMenu } from 'react-icons/gi';
 
 function HeaderBar() {
   const [isMobile] = useMediaQuery("(max-width: 760px)") 
