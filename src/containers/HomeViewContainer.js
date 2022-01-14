@@ -14,7 +14,15 @@ import {
     ModalFooter,
     ModalBody,
     useDisclosure,
-    useToast
+    useToast,
+    useMediaQuery,
+    AlertDialog,
+    AlertDialogBody,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogContent,
+    AlertDialogOverlay,
+    Center,
   } from '@chakra-ui/react';
 import homeMainSvg from '../img/home_main.svg';
 import HomeCard from '../components/HomeCard';
@@ -32,9 +40,11 @@ function HomeViewContainer(props) {
   const navigate = useNavigate();
   const { user, isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isWarningOpen, onOpen: onWarningOpen, onClose: onWarningClose } = useDisclosure();
   const dispatch = useDispatch();
 
   const [ isRegistering, setIsRegistering ] = useState(false);
+  const [isMobile] = useMediaQuery("(max-width: 760px)") 
 
   const scroll_config = {duration: 1000,delay: 50,smooth: true, offset: -60};
 
@@ -42,6 +52,46 @@ function HomeViewContainer(props) {
     onClose();
     navigate("user/info");
   }
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    if(isMobile && !localStorage.getItem("NCN_NO_MOBILE_WARNING")) {
+      onWarningOpen();
+    }
+  } , [])
+
+  const renderMobileWarning = () => {
+    return(
+      <AlertDialog
+        motionPreset='slideInBottom'
+        onClose={onWarningClose}
+        isOpen={isWarningOpen}
+        size="sm"
+        isCentered
+      >
+        <AlertDialogOverlay />
+        <AlertDialogContent>
+          <AlertDialogHeader>溫馨提醒</AlertDialogHeader>
+          <AlertDialogBody>
+            <Center mb="4">
+              <Image src="https://media.giphy.com/media/7NoNw4pMNTvgc/giphy.gif" alt="" width="100px"/>
+            </Center>
+            <Text fontWeight="500" color="gray.600">
+              行動裝置介面仍在最佳化中，使用手機瀏覽課表與課程將影響到您的體驗。建議使用電腦瀏覽，讓您能獲得更好的選課時光。<br/>請再給我們一些時間 🙏
+            </Text>
+          </AlertDialogBody>
+          <AlertDialogFooter>
+            <Button onClick={() => {onWarningClose(); localStorage.setItem("NCN_NO_MOBILE_WARNING", true)}} variant="ghost">
+              不要再提醒我
+            </Button>
+            <Button colorScheme='blue' ml={3} onClick={() => {onWarningClose();}}>
+              好
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    );
+  };
 
   // refactor API call to redux action later
   useEffect(() => {
@@ -137,6 +187,7 @@ function HomeViewContainer(props) {
     return (
         <Box maxW="screen-md" mx="auto" overflow="visible" p="64px">
           {renderNewRegisterModal()}
+          {renderMobileWarning()}
         <Flex justifyContent="space-between" mb={4} grow="1" flexDirection="column" alignItems="center">
           <Spacer/>
           <Flex justifyContent={["center","space-between" ]}flexDirection="row" alignItems="center" w="90vw" flexWrap="wrap-reverse">
