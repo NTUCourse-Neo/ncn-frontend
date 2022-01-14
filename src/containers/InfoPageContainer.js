@@ -1,4 +1,4 @@
-import { React } from 'react';
+import { React, useEffect } from 'react';
 import {
   Avatar,
     Box,
@@ -48,6 +48,9 @@ const teams = [
 ]
 
 function InfoPageContainer(props){
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  } , [])
   const handleOpenGithub = (github) => {
     window.open(`https://www.github.com/${github}`, '_blank');
   }
