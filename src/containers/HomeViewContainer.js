@@ -139,19 +139,19 @@ function HomeViewContainer(props) {
           {renderNewRegisterModal()}
         <Flex justifyContent="space-between" mb={4} grow="1" flexDirection="column" alignItems="center">
           <Spacer/>
-          <Flex justifyContent="space-between" flexDirection="row" alignItems="center" w="90vw">
+          <Flex justifyContent={["center","space-between" ]}flexDirection="row" alignItems="center" w="90vw" flexWrap="wrap-reverse">
             <Box>
-              <Heading as="h1" fontSize="6xl" fontWeight="800" color="gray.700">Course Schedule</Heading>
-              <Heading as="h1" fontSize="6xl" fontWeight="extrabold" color="gray.700" mb={4}>Re-imagined.</Heading>
+              <Heading as="h1" fontSize={["4xl","6xl"]} fontWeight="800" color="gray.700">Course Schedule</Heading>
+              <Heading as="h1" fontSize={["4xl","6xl"]} fontWeight="extrabold" color="gray.700" mb={4}>Re-imagined.</Heading>
               <Heading as="h1" fontSize="3xl" fontWeight="500" color="gray.500" mb={4}>修課安排不再是難事。</Heading>
               <Spacer my={8}/>
-              <Flex justifyContent="start" alignItems="center" flexDirection="row">
+              <Flex justifyContent={["center","start" ]} alignItems="center" flexDirection="row">
                 <Link to="/course"><Button colorScheme="teal" variant="solid" size="lg" mr={4}>開始使用</Button></Link>
                 <Link to="/about"><Button colorScheme="teal" variant="outline" size="lg" mr={4}>了解更多</Button></Link>
               </Flex> 
             </Box>
             <Spacer/>
-            <Image src={homeMainSvg} alt="home_main" w="50vw"/>
+            <Image src={homeMainSvg} alt="home_main" w={["80vw","50vw"]}/>
           </Flex>
           <Spacer my={10}/>
           <Button variant="ghost" size="lg" onClick={() => scroller.scrollTo("card1", scroll_config)} leftIcon={<FaArrowDown/>}>我們有...</Button>
