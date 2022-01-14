@@ -58,7 +58,7 @@ function HomeViewContainer(props) {
     if(isMobile && !localStorage.getItem("NCN_NO_MOBILE_WARNING")) {
       onWarningOpen();
     }
-  } , [])
+  } , []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const renderMobileWarning = () => {
     return(
