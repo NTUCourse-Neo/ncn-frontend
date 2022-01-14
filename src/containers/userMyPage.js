@@ -25,7 +25,8 @@ import {
     Fade,
     Spacer,
     Tag,
-    TagLeftIcon
+    TagLeftIcon,
+    useMediaQuery
 } from '@chakra-ui/react';
 import {useSelector, useDispatch} from 'react-redux';
 import CourseInfoRowContainer from './CourseInfoRowContainer';
@@ -50,6 +51,8 @@ function UserMyPage() {
     const [ displayTags, setDisplayTags ] = useState(["required", "total_slot", "enroll_method", "area"]);
     const [ Loading, setLoading ] = useState(true);
     const userLoading = isLoading || !userInfo;
+
+    const [isMobile]  = useMediaQuery("(max-width: 760px)");
 
     // fetch userInfo
     useEffect(() => {
@@ -138,20 +141,16 @@ function UserMyPage() {
 
     return(
         <>       
-             <Flex w="100vw" direction="row" justifyContent="center" alignItems="center" overflow="hidden">
-                <Box display="flex" flexBasis="100vw" flexDirection="column" alignItems="start" h="95vh" overflow="auto" maxW="screen-md" mx="auto" pt="64px" pb="40px">
-                    <Box ml="15vw" w="70vw" transition="all 500ms ease-in-out">
-                        <Flex flexDirection="row" alignItems="center" justifyContent="start">
-                            {Loading ? <BeatLoader size={8} color='teal'/>:<></>}
-                            <Text fontSize="md" fontWeight="medium" color="gray.400" my="2" ml="1">{Loading ? "載入中" : `我的最愛課程 共有 ${favorite_list.length} 筆結果`}</Text>
-                        </Flex>
-                        <CourseInfoRowContainer courseInfo={favorite_list} setHoveredCourse={setHoveredCourse} selectedCourses={coursesInTable} displayTags={displayTags} displayTable={false}/>
-                    </Box>
-                    <Box ml="48vw" transition="all 500ms ease-in-out">
-                        <SkeletonRow loading={Loading} error={search_error}/>
-                    </Box>
-                </Box>
+          <Flex w="100vw" direction="column" justifyContent="center" alignItems="center" overflow="hidden" transition="all 500ms ease-in-out" pt="64px">
+            <Flex flexDirection="row" alignItems="center" justifyContent="start">
+              {Loading ? <BeatLoader size={8} color='teal'/>:<></>}
+              <Text fontSize="md" fontWeight="medium" color="gray.400" my="2" ml="1">{Loading ? "載入中" : `我的最愛課程 共有 ${favorite_list.length} 筆結果`}</Text>
             </Flex>
+            <CourseInfoRowContainer courseInfo={favorite_list} setHoveredCourse={setHoveredCourse} selectedCourses={coursesInTable} displayTags={displayTags} displayTable={false}/>
+            <Box ml="48vw" transition="all 500ms ease-in-out">
+              <SkeletonRow loading={Loading} error={search_error}/>
+            </Box>
+        </Flex> 
         </>
     );
 };
