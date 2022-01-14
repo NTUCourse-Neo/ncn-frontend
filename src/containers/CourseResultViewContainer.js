@@ -84,6 +84,10 @@ function CourseResultViewContainer() {
   const [displayTags, setDisplayTags] = useState([]);
   const available_tags = ["required", "total_slot", "enroll_method", "area"];
 
+  useEffect(() => {
+      setDisplayFilter(false);
+  },[search_ids])
+
   const renderSettingSwitch = (label, default_checked) => {
 
         const handleChangeSettings = (e)=>{
