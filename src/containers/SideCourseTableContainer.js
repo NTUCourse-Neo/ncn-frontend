@@ -442,11 +442,11 @@ function SideCourseTableContainer(props) {
         <Box overflow="auto" w="100%" mt="4">
           <Flex flexDirection="column">
             <Tabs>
-            <Flex flexDirection="row" justifyContent="start" alignItems="center" my="2" position="fixed" zIndex="100" ml="4">
+            <Flex flexDirection="row" justifyContent="start" alignItems="center" my="2" ml="4">
                 {
                   courseTable?
-                  <Flex alignItems="center">
-                    <Text fontWeight="700" fontSize="3xl" color="gray.600" mr="4">{courseTable.name}</Text>
+                  <Flex alignItems="center" flexWrap="wrap">
+                    <Text fontWeight="700" fontSize={["xl","2xl","3xl"]} color="gray.600" mr="4">{courseTable.name}</Text>
                     {renderEditName()}
                     <Spacer mx="8" />
                     <TabList>
@@ -459,7 +459,7 @@ function SideCourseTableContainer(props) {
             </Flex>
               <TabPanels>
                 <TabPanel>
-                  <Flex flexDirection="row" justifyContent="center" alignItems="center" mt="16">
+                  <Flex flexDirection="row" justifyContent="center" alignItems="center">
                     <CourseTableContainer courseTimes={courseTimes} courses={courses} loading={loading || isLoading} hoveredCourseTime={hoveredCourseTime} hoveredCourse={props.hoveredCourse}/>  
                   </Flex>
                 </TabPanel>

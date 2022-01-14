@@ -25,10 +25,11 @@ import {
     Fade,
     Spacer,
     Tag,
-    TagLeftIcon
+    TagLeftIcon,
+    useMediaQuery,
 } from '@chakra-ui/react';
 import { BeatLoader } from 'react-spinners';
-import { FaAngleLeft, FaAngleRight, FaChevronDown, FaChevronUp, FaPlus, FaMinus } from 'react-icons/fa';
+import { FaAngleLeft, FaAngleRight, FaAngleUp, FaChevronDown, FaChevronUp, FaPlus, FaMinus } from 'react-icons/fa';
 import CourseInfoRowContainer from './CourseInfoRowContainer';
 import FilterModal from '../components/FilterModal';
 import CourseSearchInput from '../components/CourseSearchInput';
@@ -59,6 +60,8 @@ function CourseResultViewContainer() {
   const batch_size = useSelector(state => state.batch_size);
   const total_count = useSelector(state => state.total_count);
 
+  const [isMobile] = useMediaQuery("(max-width: 760px)");
+
   const [selectedTime, setSelectedTime] = useState(mapStateToTimeTable(search_filters.time));
   const [selectedDept, setSelectedDept] = useState(search_filters.department);
   const [selectedType, setSelectedType] = useState(search_filters.category);
@@ -70,7 +73,7 @@ function CourseResultViewContainer() {
   const [ enrollFilterOn, setEnrollFilterOn ] = useState(search_filters_enable.enroll_method);
 
   const [ displayFilter, setDisplayFilter ] = useState(false);
-  const [ displayTable, setDisplayTable ] = useState(true);
+  const [ displayTable, setDisplayTable ] = useState(!isMobile);
 
   // State for the course result row that is been hovered now.
   const [ hoveredCourse, setHoveredCourse ] = useState(null);
@@ -87,7 +90,7 @@ function CourseResultViewContainer() {
   useEffect(() => {
       setDisplayFilter(false);
   },[search_ids])
-
+  
   const renderSettingSwitch = (label, default_checked, isDisabled) => {
         const handleChangeSettings = (e)=>{
             // console.log(e.currentTarget.checked);
@@ -110,9 +113,9 @@ function CourseResultViewContainer() {
                 <FormLabel htmlFor={label} mb='0' fontWeight="500" color="gray.600">
                     {label}
                     {
-                        isDisabled ?
-                        <Badge ml="2" colorScheme="blue">即將推出</Badge>:
-                        <></>
+                      isDisabled ?
+                      <Badge ml="2" colorScheme="blue">即將推出</Badge>:
+                      <></>
                     }
                 </FormLabel>
             </Flex>
@@ -314,15 +317,15 @@ function CourseResultViewContainer() {
                 </Box>
             </Flex>
             <Fade in={!displayTable}>
-                <Flex as="button" flexDirection="column" alignItems="center" justifyContent="center" position="absolute" top="80vh" left="90vw" bg="gray.100" boxShadow="md" py="4" px="2" borderRadius="xl"
+                <Flex as="button" flexDirection={isMobile? "row":"column"} alignItems="center" justifyContent="center" position="absolute" top={isMobile? "85vh":"80vh"} left={isMobile? "70vw":"90vw"} bg="gray.100" boxShadow="md" py={isMobile?"1":"4"} px="2" borderRadius="xl"
                 onClick={() => setDisplayTable(!displayTable)} _hover={{boxShadow:"lg", transform:"translateY(-2px) scale(1.02)"}} transition="all 200ms">
-                    <FaAngleLeft size={24}/>
-                    <Text my="2" fontWeight={800} fontSize="lg" color="gray.600" style={{writingMode: "vertical-rl"}}>課表</Text>
+                  <FaAngleLeft size={24}/>
+                    <Text my="2" fontWeight={800} fontSize={isMobile? "md":"lg"} color="gray.600" style={isMobile?{}:{writingMode: "vertical-rl"}}>課表</Text>
                 </Flex>
             </Fade>
             <Collapse in={displayTable} animateOpacity>
                 <Flex justifyContent="end" mr="2">
-                    <Box position="absolute" top="8vh" zIndex="1" w="40vw" h="70vh" bg="gray.200" mt="128px" borderRadius="lg" boxShadow="xl">
+                    <Box position="absolute" top={isMobile?"12vh":"8vh"} zIndex={isMobile? "10000":"1"} w={isMobile? "90vw":"40vw"} h={isMobile? "70vh":"70vh"} bg="gray.200" mt="128px" borderRadius="lg" boxShadow="xl">
                         <SideCourseTableContainer isOpen={displayTable} setIsOpen={setDisplayTable} hoveredCourse={hoveredCourse} setHoveredCourse={setHoveredCourse} courseIds={coursesInTable} setCourseIds={setCoursesInTable}/>
                     </Box>
                 </Flex>
