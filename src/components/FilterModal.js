@@ -12,6 +12,7 @@ import {
   Heading,
   Divider,
   Flex,
+  useMediaQuery
 } from "@chakra-ui/react";
 import { college_map } from '../data/college';
 import { dept_list, dept_list_bachelor_only } from '../data/department';
@@ -26,6 +27,8 @@ function FilterModal(props){
   const time_state = useSelector(state => state.search_filters.time);
   const department_state = useSelector(state => state.search_filters.department);
   const category_state = useSelector(state => state.search_filters.category);
+
+  const [isMobile] = useMediaQuery("(max-width: 760px)");
 
   const handleSet = (type) => {
     if (type==='department'){
@@ -150,7 +153,7 @@ function FilterModal(props){
     }
     return (
     <>
-    <Button isDisabled={!filterOn} onClick={()=>{
+    <Button size={isMobile? "sm":"md"} isDisabled={!filterOn} onClick={()=>{
       onOpen();
       // because this modal will not re-render, so manually reload from redux state 
       if (props.type==='time'){
@@ -166,9 +169,9 @@ function FilterModal(props){
         setSelected(category_state);
       }
       onClose();
-    }} size="xl" scrollBehavior="inside">
+    }} size={isMobile? "full":"xl"} scrollBehavior="inside">
       <ModalOverlay />
-      <ModalContent maxW="50vw">
+      <ModalContent maxW={isMobile? "":"50vw"}>
         <ModalHeader>
           <Flex flexDirection="row" justifyContent="start" alignItems="center">
             {title}

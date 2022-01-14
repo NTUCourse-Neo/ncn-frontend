@@ -50,7 +50,7 @@ function CourseSearchInput() {
         <Flex flexDirection="column">
             <Flex flexDirection="row" alignItems="center" justifyContent={["start","start","center","center"]} flexWrap="wrap" css={{gap: "10px"}}>
                 <Menu closeOnSelect={false} mx="2">
-                    <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>搜尋欄位</MenuButton>
+                    <MenuButton as={Button} size={isMobile? "sm":"md"} rightIcon={<ChevronDownIcon />}>搜尋欄位</MenuButton>
                     <MenuList>
                         <MenuOptionGroup defaultValue={['course_name', 'teacher']} type='checkbox'>
                             <MenuItemOption value='course_name'  onClick={(e)=>{toggle_search_column(e)}}>課程名稱 <Badge>預設</Badge></MenuItemOption>
@@ -85,7 +85,7 @@ function CourseSearchInput() {
                     />
                 </InputGroup>
                 {isMobile? <Spacer />:<></>}
-                <Button colorScheme="blue" variant="solid" leftIcon={<FaSearch/>} onClick={()=>{
+                <Button colorScheme="blue" size={isMobile? "sm":"md"} variant="solid" leftIcon={<FaSearch/>} onClick={()=>{
                     try {
                         dispatch(fetchSearchIDs(search, search_columns, search_filters_enable, search_filters, batch_size, strict_match))
                     } catch (error) {

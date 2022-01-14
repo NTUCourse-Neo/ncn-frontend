@@ -90,6 +90,10 @@ function CourseResultViewContainer() {
   useEffect(() => {
       setDisplayFilter(false);
   },[search_ids])
+
+  useEffect(() => {
+      window.scrollTo(0, 0);
+  } ,[]);
   
   const renderSettingSwitch = (label, default_checked, isDisabled) => {
         const handleChangeSettings = (e)=>{
@@ -105,6 +109,11 @@ function CourseResultViewContainer() {
             } else if (label==='篩選條件嚴格搜尋'){
                 set_strict_search_mode(e.currentTarget.checked);
             }
+        }
+        if(isMobile && isDisabled){
+            return(
+                <></>
+            );
         }
 
         return(
@@ -184,8 +193,8 @@ function CourseResultViewContainer() {
                                 <Box w="100%" py="8px" mt="4">
                                     <Tabs>
                                         <TabList>
-                                            <Tab><Text color="gray.700" fontSize="xl" fontWeight="700">篩選</Text></Tab>
-                                            <Tab><Text color="gray.700" fontSize="xl" fontWeight="700">設定</Text></Tab>
+                                            <Tab><Text color="gray.700" fontSize={isMobile? "md":"xl"} fontWeight="700">篩選</Text></Tab>
+                                            <Tab><Text color="gray.700" fontSize={isMobile? "md":"xl"} fontWeight="700">設定</Text></Tab>
                                         </TabList>
                                         <TabPanels>
                                             <TabPanel>
@@ -193,7 +202,7 @@ function CourseResultViewContainer() {
                                                 <Flex flexDirection="row" flexWrap="wrap" css={{gap: "10px"}}>
                                                     <Flex flexDirection="column" px="4">
                                                         <Flex flexDirection="row" alignItems="center" justifyContent="center">
-                                                        <Switch size="lg" mr="2" isChecked={timeFilterOn} onChange={ (e) => {
+                                                        <Switch size={isMobile? "md":"lg"} mr="2" isChecked={timeFilterOn} onChange={ (e) => {
                                                         setTimeFilterOn(e.currentTarget.checked);
                                                         dispatch(setFilterEnable('time', e.currentTarget.checked))
                                                         } }/>
@@ -202,7 +211,7 @@ function CourseResultViewContainer() {
                                                     </Flex>
                                                     <Flex flexDirection="column" px="4">
                                                         <Flex flexDirection="row" alignItems="center" justifyContent="center">
-                                                        <Switch size="lg" mr="2" isChecked={deptFilterOn} onChange={ (e) => {
+                                                        <Switch size={isMobile? "md":"lg"} mr="2" isChecked={deptFilterOn} onChange={ (e) => {
                                                             setDeptFilterOn(e.currentTarget.checked);
                                                             dispatch(setFilterEnable('department', e.currentTarget.checked))
                                                         } }/>
@@ -211,7 +220,7 @@ function CourseResultViewContainer() {
                                                     </Flex>
                                                     <Flex flexDirection="column" px="4">
                                                         <Flex flexDirection="row" alignItems="center" justifyContent="center">
-                                                        <Switch size="lg" mr="2" isChecked={catFilterOn} onChange={ (e) => {
+                                                        <Switch size={isMobile? "md":"lg"} mr="2" isChecked={catFilterOn} onChange={ (e) => {
                                                             setCatFilterOn(e.currentTarget.checked);
                                                             dispatch(setFilterEnable('category', e.currentTarget.checked))
                                                         }}/>
@@ -220,12 +229,12 @@ function CourseResultViewContainer() {
                                                     </Flex>
                                                     <Flex flexDirection="column" px="4">
                                                         <Flex flexDirection="row" alignItems="center" justifyContent="center">
-                                                        <Switch size="lg" mr="2" isChecked={enrollFilterOn} onChange={ (e) => {
+                                                        <Switch size={isMobile? "md":"lg"} mr="2" isChecked={enrollFilterOn} onChange={ (e) => {
                                                         setEnrollFilterOn(e.currentTarget.checked);
                                                         dispatch(setFilterEnable('enroll_method', e.currentTarget.checked))
                                                         } }/>
                                                         <Menu closeOnSelect={false} mx="2">
-                                                            <MenuButton as={Button} rightIcon={<FaChevronDown />} disabled={!enrollFilterOn}>加選方式</MenuButton>
+                                                            <MenuButton size={isMobile? "sm":"md"} as={Button} rightIcon={<FaChevronDown />} disabled={!enrollFilterOn}>加選方式</MenuButton>
                                                             <MenuList>
                                                                 <MenuOptionGroup value={selectedEnrollMethod} type='checkbox'>
                                                                     <MenuItemOption value='1' onClick={(e) => {set_enroll_method(e)}}><Badge mr="2" colorScheme="blue" >1</Badge>直接加選</MenuItemOption>
@@ -245,7 +254,7 @@ function CourseResultViewContainer() {
                                             <TabPanel>
                                                 {/* Settings */}
                                                 <Flex flexDirection="row" flexWrap="wrap" css={{gap: "10px"}}>
-                                                    <Flex flexDirection="column" p="4" mr="4" borderWidth="2px" borderRadius="lg">
+                                                    <Flex w={isMobile? "100%":"50%"} flexDirection="column" p="4" mr={isMobile? "0":"4"} borderWidth="2px" borderRadius="lg">
                                                         <Text fontSize="lg" color="gray.500" fontWeight="700" mb="4">課表設定</Text>
                                                         <Flex w="100%" flexDirection="row" alignItems="center" flexWrap="wrap" css={{gap: "6px"}}>
                                                             {renderSettingSwitch('篩選條件嚴格搜尋', strict_search_mode, false)}
@@ -253,7 +262,7 @@ function CourseResultViewContainer() {
                                                             {renderSettingSwitch('只顯示未衝堂課程', only_show_not_conflicted_courses, true)}
                                                             {renderSettingSwitch('同步新增至課程網', sync_add_to_nol, true)}
                                                         </Flex>
-                                                        <Button mt={2} colorScheme='teal' size='md' onClick={()=>{
+                                                        <Button mt={2} colorScheme='teal' size={isMobile? "sm":"md"} onClick={()=>{
                                                             dispatch(setSearchSettings({
                                                                 show_selected_courses: show_selected_courses,
                                                                 only_show_not_conflicted_courses: only_show_not_conflicted_courses,
@@ -303,16 +312,34 @@ function CourseResultViewContainer() {
                         </Flex>
                         <IconButton size="xs" variant='ghost' icon={displayFilter? <FaChevronUp />:<FaChevronDown />} onClick={() => setDisplayFilter(!displayFilter)} />
                     </Flex>
-                    <Box ml={displayTable ? "2vw":"15vw"} w={displayTable ? "55vw":"70vw"} transition="all 500ms ease-in-out">
-                        <Flex flexDirection="row" alignItems="center" justifyContent="start">
-                            {search_loading ? <BeatLoader size={8} color='teal'/>:<></>}
-                            <Text fontSize="md" fontWeight="medium" color="gray.400" my="2" ml="1">{search_loading ? "載入中" : `共找到 ${total_count} 筆結果`}</Text>
-                        </Flex>
-                        <CourseInfoRowContainer courseInfo={search_results} setHoveredCourse={setHoveredCourse} selectedCourses={coursesInTable} displayTags={displayTags} displayTable={displayTable}/>
-                    </Box>
-                    <Box ml={displayTable ? "24vw":"48vw"} transition="all 500ms ease-in-out">
-                        <SkeletonRow loading={search_loading} error={search_error}/>
-                    </Box>
+                    {
+                        isMobile ?
+                        <>
+                            <Flex flexDirection="column" alignItems="center" justifyContent="start" w="100%">
+                                <Flex flexDirection="row" alignItems="center" justifyContent="start">
+                                    {search_loading ? <BeatLoader size={8} color='teal'/>:<></>}
+                                    <Text fontSize="md" fontWeight="medium" color="gray.400" my="2" ml="1">{search_loading ? "載入中" : `共找到 ${total_count} 筆結果`}</Text>
+                                </Flex>
+                                <CourseInfoRowContainer courseInfo={search_results} setHoveredCourse={setHoveredCourse} selectedCourses={coursesInTable} displayTags={displayTags} displayTable={displayTable}/>
+                            </Flex>
+                            <Flex w="100%" alignItems="center" justifyContent="center">
+                                <SkeletonRow loading={search_loading} error={search_error}/>
+                            </Flex>
+                        </>
+                        :
+                        <>
+                            <Box ml={displayTable ? "2vw":"15vw"} w={displayTable ? "55vw":"70vw"} transition="all 500ms ease-in-out">
+                                <Flex flexDirection="row" alignItems="center" justifyContent="start">
+                                    {search_loading ? <BeatLoader size={8} color='teal'/>:<></>}
+                                    <Text fontSize="md" fontWeight="medium" color="gray.400" my="2" ml="1">{search_loading ? "載入中" : `共找到 ${total_count} 筆結果`}</Text>
+                                </Flex>
+                                <CourseInfoRowContainer courseInfo={search_results} setHoveredCourse={setHoveredCourse} selectedCourses={coursesInTable} displayTags={displayTags} displayTable={displayTable}/>
+                            </Box>
+                            <Box ml={displayTable ? "24vw":"48vw"} transition="all 500ms ease-in-out">
+                                <SkeletonRow loading={search_loading} error={search_error}/>
+                            </Box>
+                        </>
+                    }
                     <div ref={bottomRef}/>
                 </Box>
             </Flex>

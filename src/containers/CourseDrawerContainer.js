@@ -23,6 +23,7 @@ import {
     ModalFooter,
     ModalBody,
     ModalCloseButton,
+    useMediaQuery
   } from '@chakra-ui/react';
   import { FaPlus, FaInfoCircle } from 'react-icons/fa';
   import { IoMdOpen } from 'react-icons/io';
@@ -75,6 +76,7 @@ const genNolUrl = (course) => {
 }
 
 function CourseDrawerContainer(props) {
+    const [isMobile] = useMediaQuery('(max-width: 760px)');
     const renderDataElement = (fieldName, data) => {
         if (data === "") {
             return (<></>);
@@ -105,25 +107,27 @@ function CourseDrawerContainer(props) {
                 {renderDataElement("開課單位", props.courseInfo.provider.toUpperCase())}
             </Flex>
             <Spacer my="2" />
-            <Flex w="100%" flexDirection="row" alignItems="start" justifyContent="start" borderRadius="md" border="2px" borderColor="gray.200">
-                <Flex w="30%" flexDirection="column" alignItems="start" justifyContent="start" p="2">
+            <Flex w="100%" flexDirection="row" alignItems="start" justifyContent="start" borderRadius="md" border="2px" borderColor="gray.200" flexWrap="wrap" css={{gap: "4px"}}>
+                <Flex w={isMobile? "100%":"30%"} flexDirection="column" alignItems="start" justifyContent="start" p="2">
                     <Heading as="h3" color="gray.600" fontSize="lg" ml="4px" mb="1">修課限制</Heading>
                     <Text fontSize="sm" color="gray.800" mx="4px">{props.courseInfo.limit === "" ? "無" : props.courseInfo.limit}</Text>
                 </Flex>
-                <Flex w="70%" flexDirection="column" alignItems="start" justifyContent="start" p="2">
+                <Flex w={isMobile? "100%":"70%"} flexDirection="column" alignItems="start" justifyContent="start" p="2">
                     <Heading as="h3" color="gray.600" fontSize="lg" ml="4px" mb="1">備註</Heading>
                     <Text fontSize="sm" color="gray.800" mx="4px">{props.courseInfo.note === "" ? "無" : props.courseInfo.note}</Text>
                 </Flex>
             </Flex>
             <Spacer my="2" />
-            <Flex w="100%" flexDirection="row" alignItems="center" justifyContent="start">
+            <Flex w="100%" flexDirection={isMobile? "column":"row"} alignItems={isMobile? "start":"center"} justifyContent="start" flexWrap="wrap" css={{gap: "2px"}}>
                 <ButtonGroup size="sm" isAttached variant='outline' colorScheme="blue">
                     {renderHyperButton("CEIBA", props.courseInfo.url["ceiba"])}
                     {renderHyperButton("COOL", props.courseInfo.url["cool"])}
                 </ButtonGroup>
-                <Spacer/>
-                <Button variant="ghost" colorScheme="blue" leftIcon={<FaPlus/>} size="sm" onClick={() => openPage(genNolAddUrl(props.courseInfo), true)}>加入課程網</Button>
-                {RenderNolContentBtn(props.courseInfo, "課程詳細資訊", props.courseInfo.course_id)}
+                {isMobile? <></>:<Spacer/>}
+                <ButtonGroup>
+                    <Button variant="ghost" colorScheme="blue" leftIcon={<FaPlus/>} size="sm" onClick={() => openPage(genNolAddUrl(props.courseInfo), true)}>加入課程網</Button>
+                    {RenderNolContentBtn(props.courseInfo, "課程詳細資訊", props.courseInfo.course_id)}
+                </ButtonGroup>
             </Flex>
         </Flex>
     );
