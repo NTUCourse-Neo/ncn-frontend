@@ -174,7 +174,7 @@ function UserInfoContainer(props) {
   // TODO
   const updateUserInfo = async () => {
     const updateObject = generateUpdateObject();
-    if (updateObject.department.major === updateObject.department.d_major || updateObject.department.minors.includes(updateObject.department.major)){
+    if (((updateObject.department.major === updateObject.department.d_major) && (updateObject.department.major!=='')) || updateObject.department.minors.includes(updateObject.department.major)){
       toast({
         title: '更改用戶資料失敗.',
         description: '主修不能跟雙主修或輔系一樣',
