@@ -25,7 +25,8 @@ The frontend of NTUCourse Neo.
     ```bash
     cp .env.defaults .env
     ```
-    Then paste your keys into the file. Please refer to the guide below.    
+    Then paste your keys into the file. Please refer to the table below.  
+    *Reminder: Make sure you follow the [environment variable file format](https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e---env---env-file) of Docker.*  
     | KEY                            | Description                                       | Default Value              |
     | ------------------------------ | ------------------------------------------------- | -------------------------- |
     | REACT_APP_API_ENDPOINT         | Backend API Endpoint URL                          | http://localhost:5000/api/ |
@@ -48,11 +49,10 @@ The frontend of NTUCourse Neo.
 
 3. Run the built image in container
     ```bash
-    docker run -d --env-file .env -p 3000:3000 ncn-frontend
+    docker run --env-file .env -p 3000:3000 ncn-frontend
     ```
 
-5. Open the browser and go to `http://localhost:3000/`
-   
+5. Open the browser and go to http://localhost:3000/
   and you should see the website running.
 6. Have fun! 🎉
 ### 💻 Run in local
@@ -67,7 +67,8 @@ The frontend of NTUCourse Neo.
     ```bash
     cp .env.defaults .env
     ```
-    Then paste your keys into the file. Please refer to the guide below.    
+    Then paste your keys into the file. Please refer to the table below.    
+    
     | KEY                            | Description                                       | Default Value              |
     | ------------------------------ | ------------------------------------------------- | -------------------------- |
     | REACT_APP_API_ENDPOINT         | Backend API Endpoint URL                          | http://localhost:5000/api/ |
@@ -88,7 +89,7 @@ The frontend of NTUCourse Neo.
     ```bash
     yarn start
     ```
-5. Open the browser and go to `http://localhost:3000/`
+5. Open the browser and go to http://localhost:3000/
    
    and you should see the website running.
 6. Have fun! 🎉
