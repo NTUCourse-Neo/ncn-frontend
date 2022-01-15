@@ -48,7 +48,7 @@ function UserMyPage() {
     const [ hoveredCourse, setHoveredCourse ] = useState(null);
     const [ favorite_list, setFavorite_list ] = useState([]);
     const [ coursesInTable, setCoursesInTable] = useState([]);
-    const [ displayTags, setDisplayTags ] = useState(["required", "total_slot", "enroll_method", "area"]);
+    const displayTags = useSelector(state => state.display_tags);
     const [ Loading, setLoading ] = useState(true);
     const userLoading = isLoading || !userInfo;
 
