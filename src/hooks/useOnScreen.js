@@ -12,7 +12,7 @@ export default function useOnScreen(ref) {
       observer.observe(ref.current)
       // Remove the observer as soon as the component is unmounted
       return () => { observer.disconnect() }
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
   
     return isIntersecting
 }

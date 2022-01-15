@@ -1,10 +1,9 @@
-import { React, useRef, forwardRef, useEffect,useState } from 'react';
+import { React, useEffect,useState } from 'react';
 import {arrayMoveImmutable as arrayMove} from 'array-move';
 import "./CourseTableCard.css";
 import {
     Flex,
     Text,
-    Box,
     Button,
     useDisclosure,
     Tooltip,
@@ -24,9 +23,9 @@ import {
     ScaleFade,
     useToast
 } from '@chakra-ui/react';
-import { hash_to_color_hex, random_color_hex } from '../utils/colorAgent';
+import { hash_to_color_hex } from '../utils/colorAgent';
 import {sortableContainer, sortableElement, sortableHandle} from 'react-sortable-hoc';
-import { FaBars, FaTrashAlt, FaInfoCircle, FaExclamationTriangle } from 'react-icons/fa';
+import { FaBars, FaTrashAlt, FaExclamationTriangle } from 'react-icons/fa';
 import {RenderNolContentBtn} from '../containers/CourseDrawerContainer';
 import {useSelector, useDispatch} from 'react-redux';
 import {patchCourseTable} from '../actions';
@@ -38,6 +37,7 @@ function CourseTableCard(props){
     const course_table = useSelector(state => state.course_table);
     const { isOpen, onOpen, onClose } = useDisclosure()
     const toast = useToast();
+    console.error = () => {};
 
     // initial state or sorting result
     const [ courseOrder, setCourseOrder ] = useState(props.courseTime);
@@ -99,14 +99,15 @@ function CourseTableCard(props){
         if(course){
             return (
             <>
-                <Tooltip label={course.course_name} placement="top" hasArrow >
+                <Tooltip label={course.course_name} placement="top" hasArrow key={courseId}>
                     <Button  
                             bg={hash_to_color_hex(course._id, isOpen ? 0.7:0.8)} 
                             borderRadius="md" boxShadow="lg" 
                             mb="1" p="2" w="4vw" h="3vh"
                             border={props.hoverId === courseId  ? "2px":""}
-                            borderColor={hash_to_color_hex(course._id, 0.5)}>
-                        <Text fontSize="xs" isTruncated> {course.course_name} </Text>
+                            borderColor={hash_to_color_hex(course._id, 0.5)}
+                            key={courseId+"_Button"}>
+                        <Text key={courseId+"_Text"} fontSize="xs" isTruncated> {course.course_name} </Text>
                     </Button>
                 </Tooltip>
             </>
@@ -215,8 +216,8 @@ function CourseTableCard(props){
                     <PopoverHeader>
                         <Flex flexDirection="row" alignItems="center" justifyContent="start" mb="2">
                             節次資訊
-                            <Badge ml="2" size="sm">週{props.day}</Badge>
-                            <Badge ml="2" size="sm">第{props.interval}節</Badge>
+                            <Badge key={props.day} ml="2" size="sm">週{props.day}</Badge>
+                            <Badge key={props.interval} ml="2" size="sm">第{props.interval}節</Badge>
                         </Flex>
                     </PopoverHeader>
                     <PopoverBody>

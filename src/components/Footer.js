@@ -1,9 +1,7 @@
-import {useState} from 'react';
-import { Flex, Tag, Heading, Spacer, Text, Button, SlideFade, ButtonGroup, useMediaQuery } from '@chakra-ui/react';
+import { Flex, Spacer, Text, Button, ButtonGroup, useMediaQuery } from '@chakra-ui/react';
 import { FaExclamationTriangle, FaGithub, FaHeartbeat } from 'react-icons/fa';
 
 function Footer() {
-    const [hover, setHover] = useState(false);
     const handleOpenPage = (page) => {
         window.open(page, '_blank');
     };

@@ -32,7 +32,7 @@ import { animateScroll as scroll, scroller } from 'react-scroll'
 import { Link, useNavigate } from "react-router-dom";
 import { BeatLoader } from 'react-spinners';
 import { fetchUserById, registerNewUser, logIn } from '../actions/';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 
 function HomeViewContainer(props) {
@@ -58,7 +58,7 @@ function HomeViewContainer(props) {
     if(isMobile && !localStorage.getItem("NCN_NO_MOBILE_WARNING")) {
       onWarningOpen();
     }
-  } , [])
+  } , []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const renderMobileWarning = () => {
     return(
@@ -141,7 +141,7 @@ function HomeViewContainer(props) {
     }
 
     registerNewUserToDB();
-  }, [user, isLoading, isAuthenticated]);
+  }, [user, isLoading, isAuthenticated]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const renderNewRegisterModal = () => {
     return(

@@ -2,19 +2,15 @@ import {
   Table,
   Thead,
   Tbody,
-  Tfoot,
   Tr,
   Th,
   Td,
-  TableCaption,
   Flex,
-  Spinner,
   Center,
   Box,
   Text,
   Skeleton,
 } from '@chakra-ui/react'
-import { useState, useEffect } from 'react';
 import CourseTableCard from '../components/CourseTableCard';
 import { weekdays_map } from '../data/mapping_table';
 

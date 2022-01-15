@@ -1,5 +1,5 @@
 import React from 'react';
-import {Flex, Spinner, useToast, Text, VisuallyHidden} from '@chakra-ui/react';
+import {Flex, useToast, Text, VisuallyHidden} from '@chakra-ui/react';
 import {HashLoader} from 'react-spinners';
 import { FaSadTear } from 'react-icons/fa';
 
@@ -14,7 +14,7 @@ function SkeletonRow(props) {
             )
         }
         else if (props.error){
-            console.log(props.error);
+            // console.log(props.error);
             return (
                 <>
                     <Text color="gray.300" pt="10"> <FaSadTear size={32}/> </Text>

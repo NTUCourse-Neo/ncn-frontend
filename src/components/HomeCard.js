@@ -3,10 +3,8 @@ import {
     Box,
     Flex,
     Heading,
-    Spacer,
     Text,
     Image,
-    transform,
   } from '@chakra-ui/react';
 function HomeCard(props) {
     return (

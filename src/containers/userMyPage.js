@@ -1,31 +1,9 @@
-import { React, useRef, forwardRef, useEffect,useState } from 'react';
+import { React, useEffect,useState } from 'react';
 import {
     Box,
     Flex,
     Text,
-    Tabs,
-    TabList,
-    Tab,
-    TabPanels,
-    TabPanel,
-    Switch,
-    FormControl,
-    FormLabel,
-    Collapse,
-    IconButton,
-    Button,
     useToast,
-    Menu,
-    MenuButton,
-    MenuList,
-    MenuOptionGroup,
-    MenuItemOption,
-    Badge,
-    MenuDivider,
-    Fade,
-    Spacer,
-    Tag,
-    TagLeftIcon,
     useMediaQuery
 } from '@chakra-ui/react';
 import {useSelector, useDispatch} from 'react-redux';
@@ -34,7 +12,7 @@ import SkeletonRow from '../components/SkeletonRow';
 import { HashLoader } from 'react-spinners';
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import { BeatLoader } from 'react-spinners';
-import { fetchFavoriteCourses, fetchUserById, logIn, updateCourseTable, fetchCourseTable, fetchCourseTableCoursesByIds } from '../actions/index';
+import { fetchFavoriteCourses, fetchUserById, logIn, updateCourseTable, fetchCourseTable } from '../actions/index';
 
 
 function UserMyPage() {
@@ -45,7 +23,7 @@ function UserMyPage() {
     const search_error = useSelector(state => state.search_error);    
     const courseTable = useSelector(state => state.course_table);
     const userInfo = useSelector(state => state.user);
-    const [ hoveredCourse, setHoveredCourse ] = useState(null);
+    const [ hoveredCourse, setHoveredCourse ] = useState(null); // eslint-disable-line no-unused-vars
     const [ favorite_list, setFavorite_list ] = useState([]);
     const [ coursesInTable, setCoursesInTable] = useState([]);
     const displayTags = useSelector(state => state.display_tags);
@@ -63,7 +41,7 @@ function UserMyPage() {
               const user_data = await dispatch(fetchUserById(token, user.sub));
               await dispatch(logIn(user_data));
               const course_tables = user_data.db.course_tables;
-              console.log(course_tables);
+              // console.log(course_tables);
               if (course_tables.length === 0) {
                 // user has no course table, set courseTable in redux null
                 dispatch(updateCourseTable(null));
@@ -73,7 +51,12 @@ function UserMyPage() {
                 try {
                   await dispatch(fetchCourseTable(course_tables[0]));
                 } catch (e) {
-                    console.log(e);
+                    toast({
+                      title: '取得課表資料失敗.',
+                      status: 'error',
+                      duration: 9000,
+                      isClosable: true,
+                    })
                 }
               }
             } catch (e) {
@@ -90,21 +73,21 @@ function UserMyPage() {
         }
     
         fetchUserInfo();
-      }, [user]);
+      }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
       
 
     useEffect(() => {
         const fetchFavoriteCoursesById = async () => {
             setLoading(true);
-            console.log(userInfo);
+            // console.log(userInfo);
             if(userInfo.db.favorites.length > 0) {
                 try {
                     const courses = await dispatch(fetchFavoriteCourses(userInfo.db.favorites));
-                    console.log(courses);
+                    // console.log(courses);
                     setFavorite_list(courses);
                 }
                 catch (e) {
-                    console.log(e);
+                    // console.log(e);
                     toast({
                         title: '載入最愛課程失敗.',
                         description: "請聯繫客服(?)",
@@ -120,7 +103,7 @@ function UserMyPage() {
             fetchFavoriteCoursesById();
             setLoading(false);
         }
-    }, [userInfo]);
+    }, [userInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         if(courseTable) {

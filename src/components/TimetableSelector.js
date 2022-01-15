@@ -1,4 +1,4 @@
-import { React, useEffect, useState, useRef } from 'react';
+import { React } from 'react';
 import TableDragSelect from "react-table-drag-select";
 import "react-table-drag-select/style.css";
 import { Flex, Text, useMediaQuery } from '@chakra-ui/react';

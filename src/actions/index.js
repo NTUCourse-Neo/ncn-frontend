@@ -43,14 +43,14 @@ const fetchSearchIDs = (searchString, paths, filters_enable, filter_obj, batch_s
             dispatch({type: UPDATE_TOTAL_COUNT, payload: total_count})
         } catch (error) {
             dispatch({type: FETCH_SEARCH_RESULTS_FAILURE, payload: error});
-            console.log(Error("FETCH_SEARCH_RESULTS_FAILURE: "+error));
+            // console.log(Error("FETCH_SEARCH_RESULTS_FAILURE: "+error));
             throw error;
         }
 
         return ids
     } catch (error) {
         dispatch({type: FETCH_SEARCH_IDS_FAILURE, payload: error});
-        console.log(Error("FETCH_SEARCH_IDS_FAILURE: "+error))
+        // console.log(Error("FETCH_SEARCH_IDS_FAILURE: "+error))
 
         if (error.response) {
             // server did response, used for handle custom error msg
@@ -84,7 +84,7 @@ const fetchSearchResults = (ids_arr, filters_enable, filter_obj, batch_size, off
         return courses
     } catch (error) {
         dispatch({type: FETCH_SEARCH_RESULTS_FAILURE, payload: error});
-        console.log(Error("FETCH_SEARCH_RESULTS_FAILURE: "+error))
+        // console.log(Error("FETCH_SEARCH_RESULTS_FAILURE: "+error))
 
         if (error.response) {
             // server did response, used for handle custom error msg
@@ -111,7 +111,7 @@ const fetchCourseTableCoursesByIds = (ids_arr) => async (dispatch)=>{
         return courses
     }
     catch (error){
-        console.log(Error("Error in fetchCoursesByIds: "+error));
+        // console.log(Error("Error in fetchCoursesByIds: "+error));
 
         if (error.response) {
             // server did response, used for handle custom error msg
@@ -149,7 +149,7 @@ const createCourseTable = (course_table_id, course_table_name, user_id, semester
         return course_table
     }
     catch (error){
-        console.log(Error("Error in createCourseTable: "+error));
+        // console.log(Error("Error in createCourseTable: "+error));
 
         if (error.response) {
             // server did response, used for handle custom error msg
@@ -175,7 +175,7 @@ const linkCoursetableToUser = (token, course_table_id, user_id) => async (dispat
         });
         dispatch({type: UPDATE_USER, payload: user});
     }catch(error){
-        console.log(Error("Error in linkCoursetableToUser: "+error))
+        // console.log(Error("Error in linkCoursetableToUser: "+error))
 
         if (error.response) {
             // server did response, used for handle custom error msg
@@ -199,7 +199,7 @@ const fetchCourseTable = (course_table_id) => async (dispatch)=>{
         return course_table
     }
     catch (error){
-        console.log(Error("Error in fetchCourseTable: "+error));
+        // console.log(Error("Error in fetchCourseTable: "+error));
 
         if (error.response) {
             if (error.response.status===403) {
@@ -235,7 +235,7 @@ const patchCourseTable = (course_table_id, course_table_name, user_id, expire_ts
         return course_table
     }
     catch (error){
-        console.log(Error("Error in patchCourseTable: "+error));
+        // console.log(Error("Error in patchCourseTable: "+error));
 
         // need to let frontend handle error, so change to return null
         if (error.response) {
@@ -272,7 +272,7 @@ const fetchUserById = (token, user_id) => async (dispatch)=>{
         // user contains user in db & auth0, either null (not found) or an object.
         return user
     } catch (error) {
-        console.log(Error("fetchUserById "+error));
+        // console.log(Error("fetchUserById "+error));
 
         if (error.response) {
             // server did response, used for handle custom error msg
@@ -299,7 +299,7 @@ const registerNewUser = (token, email) => async (dispatch)=>{
         // either null (not found) or an object.
         return user
     } catch (error) {
-        console.log(Error("Error in registerNewUser: "+error))
+        // console.log(Error("Error in registerNewUser: "+error))
 
         if (error.response) {
             // server did response, used for handle custom error msg
@@ -325,7 +325,7 @@ const addFavoriteCourse = (token, new_favorite_list) => async (dispatch)=>{
         });
         dispatch({type: UPDATE_USER, payload: user});
     }catch(error){
-        console.log(Error("Error in addFavoriteCourse: "+error))
+        // console.log(Error("Error in addFavoriteCourse: "+error))
 
         if (error.response) {
             // server did response, used for handle custom error msg
@@ -351,7 +351,7 @@ const patchUserInfo = (token, updateObject) => async (dispatch)=>{
         });
         dispatch({type: UPDATE_USER, payload: user});
     }catch(error){
-        console.log(Error("Error in patchUserInfo: "+error))
+        // console.log(Error("Error in patchUserInfo: "+error))
 
         if (error.response) {
             // server did response, used for handle custom error msg
@@ -376,7 +376,7 @@ const deleteUserProfile = (token) => async (dispatch)=>{
             }
         });
     } catch(error) {
-        console.log(Error("Error in deleteUserProfile: "+error))
+        // console.log(Error("Error in deleteUserProfile: "+error))
 
         if (error.response) {
             // server did response, used for handle custom error msg
@@ -402,7 +402,7 @@ const deleteUserAccount = (token) => async (dispatch)=>{
         });
         dispatch({type: LOG_OUT_SUCCESS});
     } catch(error) {
-        console.log(Error("Error in deleteUserAccount: "+error))
+        // console.log(Error("Error in deleteUserAccount: "+error))
 
         if (error.response) {
             // server did response, used for handle custom error msg

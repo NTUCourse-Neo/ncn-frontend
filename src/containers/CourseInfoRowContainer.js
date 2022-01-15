@@ -11,12 +11,14 @@ import {useSelector} from 'react-redux';
 
 function CourseInfoRowContainer(props) {
     const userInfo = useSelector(state => state.user);
+
+    // const hide_scroll_bar = {
+    //     '::-webkit-scrollbar': {
+    //         display: "none"
+    //     },
+    // }
+    
     const [isMobile] = useMediaQuery('(max-width: 760px)');
-    const hide_scroll_bar = {
-        '::-webkit-scrollbar': {
-            display: "none"
-        },
-    }
 
     const renderCourseInfoRow = () => {
         return(

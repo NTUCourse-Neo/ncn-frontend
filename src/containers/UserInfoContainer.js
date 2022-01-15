@@ -11,7 +11,6 @@ import {
     Button,
     useToast,
     Icon,
-    Stack,
     HStack,
     AlertDialog,
     AlertDialogBody,
@@ -23,13 +22,11 @@ import {
     AlertIcon,
     Collapse,
     PinInput,
-    PinInputContext,
     PinInputField,
     Badge,
     useMediaQuery
 } from '@chakra-ui/react';
 import Select from 'react-select';
-import LoadingOverlay from 'react-loading-overlay';
 import { HashLoader } from 'react-spinners';
 import { useDispatch, useSelector } from 'react-redux';
 import { FaFacebook, FaGithub, FaGoogle, FaExclamationTriangle } from 'react-icons/fa';
@@ -83,13 +80,13 @@ function UserInfoContainer(props) {
 
   const recOnChange = async(value) => {
     let resp
-    console.log('Captcha value:', value);
+    // console.log('Captcha value:', value);
     if(value){
       try{
         const token = await getAccessTokenSilently();
         resp = await dispatch(verify_recaptcha(token, value));
       }catch(err){
-        console.log(err);
+        // console.log(err);
         recaptchaRef.current.reset();
       }
       if(resp.data.success){
@@ -103,12 +100,18 @@ function UserInfoContainer(props) {
 
   const handleSendOTP = async() => {
     if(studentId === ""){
-      console.log("Please input student id");
-      // TODO: show error message
+      // console.log("Please input student id");
+      toast({
+        title: 'Please input student id',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      })
+      return;
     }
     const token = await getAccessTokenSilently();
     try {
-      const resp = await dispatch(request_otp_code(token, studentId));
+      await dispatch(request_otp_code(token, studentId));
       setOtpSent(true);
       setOtpInputStatus(1);
       actions.start(300*1000);
@@ -127,11 +130,11 @@ function UserInfoContainer(props) {
     try{
       setOtpInputStatus(0);
       const token = await getAccessTokenSilently();
-      const resp = await dispatch(use_otp_link_student_id(token, studentId, otp));
+      await dispatch(use_otp_link_student_id(token, studentId, otp));
       // refresh page or data
       window.location.reload();
     }catch(err){
-      console.log(err);
+      // console.log(err);
       setOtpInputStatus(-1);
     }
   }
@@ -167,14 +170,14 @@ function UserInfoContainer(props) {
       updateObject.department = new_department;
     }
 
-    console.log('updateObject: ', updateObject);
+    // console.log('updateObject: ', updateObject);
     return updateObject;
   }
 
   // TODO
   const updateUserInfo = async () => {
     const updateObject = generateUpdateObject();
-    if (updateObject.department.major === updateObject.department.d_major || updateObject.department.minors.includes(updateObject.department.major)){
+    if (((updateObject.department.major === updateObject.department.d_major) && (updateObject.department.major!=='')) || updateObject.department.minors.includes(updateObject.department.major)){
       toast({
         title: '更改用戶資料失敗.',
         description: '主修不能跟雙主修或輔系一樣',
@@ -236,7 +239,7 @@ function UserInfoContainer(props) {
     }
 
     fetchUserInfo();
-  }, [user]);
+  }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(()=>{
     if (userInfo){
@@ -375,6 +378,7 @@ function UserInfoContainer(props) {
             </Flex>
           );
         }
+        return (<></>)
       }
     ));
   }

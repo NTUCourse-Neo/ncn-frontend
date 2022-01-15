@@ -9,7 +9,6 @@ import {
     TabPanels,
     TabPanel,
     Switch,
-    FormControl,
     FormLabel,
     Collapse,
     IconButton,
@@ -23,13 +22,12 @@ import {
     Badge,
     MenuDivider,
     Fade,
-    Spacer,
     Tag,
     TagLeftIcon,
     useMediaQuery,
 } from '@chakra-ui/react';
 import { BeatLoader } from 'react-spinners';
-import { FaAngleLeft, FaAngleRight, FaAngleUp, FaChevronDown, FaChevronUp, FaPlus, FaMinus } from 'react-icons/fa';
+import { FaAngleLeft, FaChevronDown, FaChevronUp, FaPlus, FaMinus } from 'react-icons/fa';
 import CourseInfoRowContainer from './CourseInfoRowContainer';
 import FilterModal from '../components/FilterModal';
 import CourseSearchInput from '../components/CourseSearchInput';
@@ -171,7 +169,7 @@ function CourseResultViewContainer() {
     useEffect(()=>{
         // console.log(selectedEnrollMethod);
         dispatch(setFilter('enroll_method', selectedEnrollMethod));
-    },[selectedEnrollMethod]);
+    },[selectedEnrollMethod]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(()=>{
         topRef.current.focus();
@@ -180,11 +178,11 @@ function CourseResultViewContainer() {
     useEffect(()=>{
         // console.log('reachedBottom: ',reachedBottom);
         handleScrollToBottom();
-    },[reachedBottom])
+    },[reachedBottom]) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(()=>{
       setSelectedTime(mapStateToTimeTable(search_filters.time));
-    },[])
+    },[]) // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <>
@@ -242,9 +240,9 @@ function CourseResultViewContainer() {
                                                             <MenuButton size={isMobile? "sm":"md"} as={Button} rightIcon={<FaChevronDown />} disabled={!enrollFilterOn}>加選方式</MenuButton>
                                                             <MenuList>
                                                                 <MenuOptionGroup value={selectedEnrollMethod} type='checkbox'>
-                                                                    <MenuItemOption value='1' onClick={(e) => {set_enroll_method(e)}}><Badge mr="2" colorScheme="blue" >1</Badge>直接加選</MenuItemOption>
-                                                                    <MenuItemOption value='2' onClick={(e) => {set_enroll_method(e)}}><Badge mr="2" colorScheme="blue" >2</Badge>授權碼加選</MenuItemOption>
-                                                                    <MenuItemOption value='3' onClick={(e) => {set_enroll_method(e)}}><Badge mr="2" colorScheme="blue" >3</Badge>登記後加選</MenuItemOption>
+                                                                    <MenuItemOption key='1' value='1' onClick={(e) => {set_enroll_method(e)}}><Badge mr="2" colorScheme="blue" >1</Badge>直接加選</MenuItemOption>
+                                                                    <MenuItemOption key='2' value='2' onClick={(e) => {set_enroll_method(e)}}><Badge mr="2" colorScheme="blue" >2</Badge>授權碼加選</MenuItemOption>
+                                                                    <MenuItemOption key='3' value='3' onClick={(e) => {set_enroll_method(e)}}><Badge mr="2" colorScheme="blue" >3</Badge>登記後加選</MenuItemOption>
                                                                 </MenuOptionGroup>
                                                                 <MenuDivider />
                                                                 <Flex flexDirection="row" justifyContent="center"><Text fontSize="sm" color="gray.500">加退選規定詳洽教務處</Text></Flex>
@@ -292,7 +290,7 @@ function CourseResultViewContainer() {
                                                                     // console.log(displayTags)
                                                                     const selected = displayTags.includes(tag);
                                                                     return(
-                                                                        <Tag as="Button" m="2" ml="0" variant={selected ? "solid":"subtle"}
+                                                                        <Tag key={tag} as="button" m="2" ml="0" variant={selected ? "solid":"subtle"}
                                                                             onClick={
                                                                                 selected ? 
                                                                                 () => {setDisplayTags([...displayTags.filter(t => t !== tag)])}:
@@ -300,7 +298,7 @@ function CourseResultViewContainer() {
                                                                             }
                                                                             transition="all 200ms ease-in-out"
                                                                         >
-                                                                            <TagLeftIcon boxSize='12px' as={selected ? FaMinus : FaPlus} />
+                                                                            <TagLeftIcon key={tag+"-Icon"} boxSize='12px' as={selected ? FaMinus : FaPlus} />
                                                                             {info_view_map[tag].name}
                                                                         </Tag>
                                                                     );

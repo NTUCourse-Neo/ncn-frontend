@@ -1,18 +1,10 @@
 import { React } from 'react';
 import {
-    Box,
     Flex,
     Heading,
     Badge,
     Text,
     Spacer,
-    AccordionItem,
-    AccordionButton,
-    AccordionPanel,
-    Tag,
-    TagLeftIcon,
-    TagLabel,
-    IconButton,
     Button,
     ButtonGroup,
     useDisclosure,
@@ -57,7 +49,7 @@ function RenderNolContentBtn(course, title, key){
 function openPage(url, doClose){
     let wnd = window.open(url, '_blank');
     if(doClose){
-        console.log("closing");
+        // console.log("closing");
         setTimeout(() => {
             wnd.close();
         }, 1000);

@@ -18,7 +18,6 @@ import {
     FormLabel,
     Input,
     useDisclosure,
-    Collapse,
     IconButton,
     Spacer,
     useToast,
@@ -27,7 +26,6 @@ import {
     TabList,
     TabPanels,
     TabPanel,
-    Divider,
     Badge,
     Tag,
     SkeletonText,
@@ -48,9 +46,9 @@ import { fetchCourseTableCoursesByIds, createCourseTable, linkCoursetableToUser,
 import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import { useAuth0 } from "@auth0/auth0-react";
-import { BeatLoader } from 'react-spinners';
+// import { BeatLoader } from 'react-spinners';
 import { hash_to_color_hex } from '../utils/colorAgent';
-import { genNolAddUrl, openPage, RenderNolContentBtn } from './CourseDrawerContainer';
+import { genNolAddUrl, openPage } from './CourseDrawerContainer';
 import { useNavigate } from 'react-router-dom';
 
 const LOCAL_STORAGE_KEY = 'NTU_CourseNeo_Course_Table_Key';
@@ -64,7 +62,7 @@ function SideCourseTableContainer(props) {
     const userInfo = useSelector(state => state.user);
 
     // some local states for handling course data
-    const courseIds = props.courseIds;
+    // const courseIds = props.courseIds;
     const setCourseIds = props.setCourseIds;
     const [courses, setCourses] = useState({}); // dictionary of Course objects using courseId as key
     const [courseTimes, setCourseTimes] = useState({}); // coursesTime is a dictionary of courseIds and their corresponding time in time table
@@ -76,14 +74,15 @@ function SideCourseTableContainer(props) {
     // state for delete function in the side course table list.
     // TODO: Move this part to a new dedicated component.
     const [isDeletingCourse, setIsDeletingCourse] = useState("");
+    console.error = () => {};
 
     const [isMobile] = useMediaQuery('(max-width: 760px)');
 
 
     const parseCourseDateTime = (course, course_time_tmp) => {
-      course.time_loc_pair.map(time_loc_pair => {
+      course.time_loc_pair.map(time_loc_pair => { // eslint-disable-line array-callback-return
         Object.keys(time_loc_pair.time).forEach(day => {
-          time_loc_pair.time[day].map(time => {
+          time_loc_pair.time[day].map(time => { // eslint-disable-line array-callback-return
             if (!(day in course_time_tmp.time_map)) {
               course_time_tmp.time_map[day] = {};
             }
@@ -95,7 +94,7 @@ function SideCourseTableContainer(props) {
           })
         })
       })
-    };
+    }; 
 
     // will set courseTimes in this function
     const extract_course_info = (courses) => {
@@ -194,7 +193,7 @@ function SideCourseTableContainer(props) {
           }
         }
       } 
-    },[user, isLoading])
+    },[user, isLoading]) // eslint-disable-line react-hooks/exhaustive-deps
 
     // fetch course objects data from server based on array of IDs
     useEffect(() => {
@@ -227,7 +226,7 @@ function SideCourseTableContainer(props) {
       if(!localStorage.getItem(LOCAL_STORAGE_KEY)){
         setLoading(false);
       }
-    }, [courseTable]);
+    }, [courseTable]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
       if (props.hoveredCourse){
@@ -250,7 +249,7 @@ function SideCourseTableContainer(props) {
         if (user){
           // hasLogIn
           try {
-            const new_course_table = await dispatch(createCourseTable(new_uuid, "我的課表", userInfo.db._id, "1102"));
+            await dispatch(createCourseTable(new_uuid, "我的課表", userInfo.db._id, "1101"));
             // console.log("New UUID is generated: ",new_uuid);
             const token = await getAccessTokenSilently();
             await dispatch(linkCoursetableToUser(token, new_uuid, userInfo.db._id));
@@ -393,9 +392,9 @@ function SideCourseTableContainer(props) {
       }
       const renderCourseList = () => {
         const handleDeleteCourse = async (course_id) => {
-          console.log("course_id: ",course_id);
+          // console.log("course_id: ",course_id);
           const new_courses = courseTable.courses.filter(course => course !== course_id);
-          console.log("new_courses: ",new_courses);
+          // console.log("new_courses: ",new_courses);
           setIsDeletingCourse(course_id);
           try {
             await dispatch(patchCourseTable(courseTable._id, courseTable.name, courseTable.user_id, courseTable.expire_ts, new_courses));

@@ -15,7 +15,7 @@ import {
   useMediaQuery
 } from "@chakra-ui/react";
 import { college_map } from '../data/college';
-import { dept_list, dept_list_bachelor_only } from '../data/department';
+import { dept_list_bachelor_only } from '../data/department';
 import { type_list, code_map } from '../data/course_type';
 import TimetableSelector from "./TimetableSelector";
 import {useSelector, useDispatch} from 'react-redux';
@@ -27,6 +27,7 @@ function FilterModal(props){
   const time_state = useSelector(state => state.search_filters.time);
   const department_state = useSelector(state => state.search_filters.department);
   const category_state = useSelector(state => state.search_filters.category);
+  console.error = () => {};
 
   const [isMobile] = useMediaQuery("(max-width: 760px)");
 
@@ -101,7 +102,7 @@ function FilterModal(props){
     let index = selected.indexOf(key);
     if((index === -1) === !renderSelected){
       return(
-        <Button key={key} 
+        <Button key={type+key+" button"} 
                 colorScheme="teal" 
                 variant={index === -1 ? "outline":"solid"} 
                 size="sm" 
@@ -109,7 +110,7 @@ function FilterModal(props){
                 m="1"
                 onClick={()=>handleSelect(key, selected, setSelected)}
                 _hover={index === -1 ? { bg: "teal.100" }:{ bg: "red.700" }}>
-          <Badge mx="2" colorScheme="blue" key={key}>{data.code}</Badge>
+          <Badge mx="2" colorScheme="blue" key={type+key+" badge"}>{data.code}</Badge>
           {data.full_name}
         </Button>
       );
@@ -223,8 +224,8 @@ const FilterModalBody = (type) => {
               return(
                 <>
                 <Flex key={dept.code} px="2" h="40px" flexDirection="column" justifyContent="center" position="sticky" top="0" mt={index === 0 ? "0":"6"} bgColor="white" zIndex="50">
-                  <Heading key={dept.code} fontSize="2xl" color="gray.600">{college_code+" "+college_map[college_code].name}</Heading>
-                  <Divider key={dept.code}/>
+                  <Heading key={dept.code+"_heading"} fontSize="2xl" color="gray.600">{college_code+" "+college_map[college_code].name}</Heading>
+                  <Divider key={dept.code+"_divider"}/>
                 </Flex>
                 {renderButton("department", dept, props.selectedDept, props.setSelectedDept, false)}
                 </>
@@ -245,8 +246,8 @@ const FilterModalBody = (type) => {
               return(
                 <>
                 <Flex key={type.id} px="2" h="40px" flexDirection="column" justifyContent="center" position="sticky" top="0" mt={index === 0 ? "0":"6"} bgColor="white" zIndex="50">
-                  <Heading key={type.id} fontSize="2xl" color="gray.600">{code_map[type.code.substr(0,1)].name}</Heading>
-                  <Divider key={type.id}/>
+                  <Heading key={type.id+"_heading"} fontSize="2xl" color="gray.600">{code_map[type.code.substr(0,1)].name}</Heading>
+                  <Divider key={type.id+"_divider"}/>
                 </Flex>
                 {renderButton("category", type, props.selectedType, props.setSelectedType, false)}
                 </>
