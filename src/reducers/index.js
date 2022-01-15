@@ -1,5 +1,5 @@
 // store initial states and reducers
-import {FETCH_SEARCH_RESULTS_FAILURE, FETCH_SEARCH_RESULTS_SUCCESS,FETCH_SEARCH_RESULTS_REQUEST,FETCH_SEARCH_IDS_FAILURE,FETCH_SEARCH_IDS_REQUEST,FETCH_SEARCH_IDS_SUCCESS,SET_SEARCH_COLUMN, SET_SEARCH_SETTINGS, SET_FILTERS, INCREMENT_OFFSET, UPDATE_TOTAL_COUNT, SET_FILTERS_ENABLE, UPDATE_COURSE_TABLE, LOG_IN_SUCCESS, LOG_OUT_SUCCESS, UPDATE_USER} from '../constants/action-types'
+import {FETCH_SEARCH_RESULTS_FAILURE, FETCH_SEARCH_RESULTS_SUCCESS,FETCH_SEARCH_RESULTS_REQUEST,FETCH_SEARCH_IDS_FAILURE,FETCH_SEARCH_IDS_REQUEST,FETCH_SEARCH_IDS_SUCCESS,SET_SEARCH_COLUMN, SET_SEARCH_SETTINGS, SET_FILTERS, INCREMENT_OFFSET, UPDATE_TOTAL_COUNT, SET_FILTERS_ENABLE, UPDATE_COURSE_TABLE, LOG_IN_SUCCESS, LOG_OUT_SUCCESS, UPDATE_USER, SET_DISPLAY_TAGS} from '../constants/action-types'
 
 const initState = {
     search_ids: [], // array of course_id
@@ -9,6 +9,7 @@ const initState = {
     total_count: 0, // total number of results
     batch_size: 20,
     offset: 0,
+    display_tags: [],
     search_columns: ['course_name', 'teacher' ], // array of column names, default is all columns
     search_settings: {show_selected_courses: false, only_show_not_conflicted_courses: false, sync_add_to_nol: false, strict_search_mode: false}, // object of settings
     search_filters_enable: {time: false, department: false, category: false, enroll_method: false}, // object of boolean, enable/disable filters
@@ -90,6 +91,8 @@ const reducer = (state = initState, action) => {
             return {...state, user: null}
         case UPDATE_USER:
             return {...state, user: action.payload}
+        case SET_DISPLAY_TAGS:
+            return {...state, display_tags: action.payload}
         default:
             return state 
     }

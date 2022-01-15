@@ -1,5 +1,5 @@
 // write all function that generate actions here
-import {FETCH_SEARCH_RESULTS_FAILURE, FETCH_SEARCH_RESULTS_SUCCESS,FETCH_SEARCH_RESULTS_REQUEST,FETCH_SEARCH_IDS_FAILURE,FETCH_SEARCH_IDS_REQUEST,FETCH_SEARCH_IDS_SUCCESS,SET_SEARCH_COLUMN, SET_SEARCH_SETTINGS, SET_FILTERS, INCREMENT_OFFSET, UPDATE_TOTAL_COUNT, SET_FILTERS_ENABLE, UPDATE_COURSE_TABLE, LOG_IN_SUCCESS, LOG_OUT_SUCCESS, UPDATE_USER} from '../constants/action-types';
+import {FETCH_SEARCH_RESULTS_FAILURE, FETCH_SEARCH_RESULTS_SUCCESS,FETCH_SEARCH_RESULTS_REQUEST,FETCH_SEARCH_IDS_FAILURE,FETCH_SEARCH_IDS_REQUEST,FETCH_SEARCH_IDS_SUCCESS,SET_SEARCH_COLUMN, SET_SEARCH_SETTINGS, SET_FILTERS, INCREMENT_OFFSET, UPDATE_TOTAL_COUNT, SET_FILTERS_ENABLE, UPDATE_COURSE_TABLE, LOG_IN_SUCCESS, LOG_OUT_SUCCESS, UPDATE_USER, SET_DISPLAY_TAGS} from '../constants/action-types';
 import instance from '../api/axios'
 
 // normal actions
@@ -9,7 +9,7 @@ const setFilterEnable = (filter_name, enable) => ({type: SET_FILTERS_ENABLE, fil
 const updateCourseTable = (course_table) => ({type: UPDATE_COURSE_TABLE, payload: course_table});
 const logOut = () => ({type: LOG_OUT_SUCCESS});
 const logIn = (user_data) => ({type: LOG_IN_SUCCESS, payload: user_data});
-
+const setNewDisplayTags = (new_display_tags) => ({type: SET_DISPLAY_TAGS, payload: new_display_tags});
 
 // data = 
 // when filter_name == 'department', arr of dept_code (4-digits),
@@ -446,4 +446,4 @@ const use_otp_link_student_id = (token, student_id, otp_code) => async (dispatch
     return resp.data;
 };
 
-export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, fetchFavoriteCourses, createCourseTable, linkCoursetableToUser, fetchCourseTable, patchCourseTable, fetchUserById, registerNewUser, logOut, logIn, updateCourseTable, addFavoriteCourse, deleteUserProfile, deleteUserAccount, patchUserInfo, verify_recaptcha, request_otp_code, use_otp_link_student_id };
+export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, fetchFavoriteCourses, createCourseTable, linkCoursetableToUser, fetchCourseTable, patchCourseTable, fetchUserById, registerNewUser, logOut, logIn, updateCourseTable, addFavoriteCourse, deleteUserProfile, deleteUserAccount, patchUserInfo, verify_recaptcha, request_otp_code, use_otp_link_student_id, setNewDisplayTags };

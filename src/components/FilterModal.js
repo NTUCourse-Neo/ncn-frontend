@@ -12,6 +12,7 @@ import {
   Heading,
   Divider,
   Flex,
+  useMediaQuery
 } from "@chakra-ui/react";
 import { college_map } from '../data/college';
 import { dept_list_bachelor_only } from '../data/department';
@@ -27,6 +28,8 @@ function FilterModal(props){
   const department_state = useSelector(state => state.search_filters.department);
   const category_state = useSelector(state => state.search_filters.category);
   console.error = () => {};
+
+  const [isMobile] = useMediaQuery("(max-width: 760px)");
 
   const handleSet = (type) => {
     if (type==='department'){
@@ -151,7 +154,7 @@ function FilterModal(props){
     }
     return (
     <>
-    <Button isDisabled={!filterOn} onClick={()=>{
+    <Button size={isMobile? "sm":"md"} isDisabled={!filterOn} onClick={()=>{
       onOpen();
       // because this modal will not re-render, so manually reload from redux state 
       if (props.type==='time'){
@@ -167,28 +170,39 @@ function FilterModal(props){
         setSelected(category_state);
       }
       onClose();
-    }} size="xl" scrollBehavior="inside">
+    }} size={isMobile? "full":"xl"} scrollBehavior="inside">
       <ModalOverlay />
-      <ModalContent maxW="50vw">
+      <ModalContent maxW={isMobile? "":"50vw"}>
         <ModalHeader>
-          <Flex flexDirection="row" justifyContent="start" alignItems="center">
-            {title}
-          </Flex>
+          {title}
+          {
+            isMobile?
+            <Flex flexDirection="row" justifyContent="start" alignItems="center" mt="2">
+              <Button size="sm" colorScheme='blue' mr={3} onClick={()=>{onClose();handleSet(props.type);}}>
+                套用
+              </Button>
+              <Button size="sm" variant='ghost' onClick={()=> setSelected([])}>重設</Button>
+            </Flex>:<></>
+          }
         </ModalHeader>
         <ModalCloseButton />
         {renderSelectedHeader()}
         <ModalBody overflow="auto" pt="0">
           {FilterModalBody(type)}
         </ModalBody>
-        <ModalFooter>
-          <Button colorScheme='blue' mr={3} onClick={()=>{
-            onClose();
-            handleSet(props.type);
-          }}>
-            套用
-          </Button>
-          <Button variant='ghost' onClick={()=> setSelected([])}>重設</Button>
-        </ModalFooter>
+        {
+          isMobile?
+          <></>:
+          <ModalFooter>
+            <Button colorScheme='blue' mr={3} onClick={()=>{
+              onClose();
+              handleSet(props.type);
+            }}>
+              套用
+            </Button>
+            <Button variant='ghost' onClick={()=> setSelected([])}>重設</Button>
+          </ModalFooter>
+        }
       </ModalContent>
     </Modal>
     </>

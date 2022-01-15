@@ -28,7 +28,8 @@ import {
     TabPanel,
     Badge,
     Tag,
-    SkeletonText
+    SkeletonText,
+    useMediaQuery
 } from '@chakra-ui/react';
 import {
     FaRegEdit,
@@ -74,6 +75,9 @@ function SideCourseTableContainer(props) {
     // TODO: Move this part to a new dedicated component.
     const [isDeletingCourse, setIsDeletingCourse] = useState("");
     console.error = () => {};
+
+    const [isMobile] = useMediaQuery('(max-width: 760px)');
+
 
     const parseCourseDateTime = (course, course_time_tmp) => {
       course.time_loc_pair.map(time_loc_pair => { // eslint-disable-line array-callback-return
@@ -261,7 +265,7 @@ function SideCourseTableContainer(props) {
         } else {
           // Guest mode
           try {
-            const new_course_table = await dispatch(createCourseTable(new_uuid, "我的課表", null, "1101"));
+            const new_course_table = await dispatch(createCourseTable(new_uuid, "我的課表", null, "1102"));
             // console.log("New UUID is generated: ",new_uuid);
             localStorage.setItem(LOCAL_STORAGE_KEY, new_course_table._id);
             setExpired(false);
@@ -413,10 +417,30 @@ function SideCourseTableContainer(props) {
             setIsDeletingCourse("");
           };
         return(
-          <Flex flexDirection="column" justifyContent="center" alignItems="center" h="100%" w="100%" mt="16">
+          <Flex flexDirection="column" justifyContent={isMobile? "start":"center"} alignItems={isMobile? "start":"center"} h="100%" w="100%">
             {
                 Object.keys(courses).map((key, index) => {
                 const course = courses[key];
+                if(isMobile){
+                  return(
+                    <Flex key={index} flexDirection="row" justifyContent="start" alignItems="center" h="100%" w="100%" py="1" px="2" bg="gray.100" my="1" borderRadius="lg" as="button">
+                      <Tag size="md" key={index} variant='solid' bg={hash_to_color_hex(course._id, 0.8)} color="gray.800" mr="2">{index + 1}</Tag>
+                    <Flex key={index} flexDirection="column" justifyContent="start" alignItems="start" h="100%" w="100%">
+                        <Flex flexDirection="row" justifyContent="start" alignItems="center" h="100%" w="100%" mb="1">
+                          <Text fontSize="xl" fontWeight="bold" color="gray">{course.course_name}</Text>
+                        </Flex>
+                        <Flex flexDirection="row" justifyContent="start" alignItems="center" mb="1">
+                          <Badge colorScheme="blue" size="lg" mr="2">{course.id}</Badge>
+                          <Badge variant="outline" isTruncated>{course.time_loc}</Badge>
+                        </Flex>
+                        <Flex flexDirection="row" justifyContent="start" alignItems="center">
+                          <Button mr="2" size="xs" variant="outline" colorScheme="blue" leftIcon={<FaPlus/>} onClick={() => openPage(genNolAddUrl(course), true)}>課程網</Button>
+                          <IconButton size="xs" variant="outline" colorScheme="red" icon={<FaTrash />} onClick={() => handleDeleteCourse(course._id)} isLoading={isDeletingCourse === course._id}/>
+                        </Flex>
+                      </Flex>
+                  </Flex>
+                  );
+                }
                 return(
                   <Flex key={index} flexDirection="row" justifyContent="center" alignItems="center" h="100%" w="100%" py="2" px="2" bg="gray.100" my="1" borderRadius="lg" as="button">
                     <Flex flexDirection="row" justifyContent="start" alignItems="center" h="100%" w="100%">
@@ -426,7 +450,7 @@ function SideCourseTableContainer(props) {
                       <Badge ml="4" variant="outline" isTruncated>{course.time_loc}</Badge>
                     </Flex>
                     <Flex ml="4" flexDirection="row" justifyContent="end" alignItems="center">
-                      <Button mx="2" size="sm" variant="outline" colorScheme="blue" leftIcon={<FaPlus/>} onClick={() => openPage(genNolAddUrl(course), true)}>加入課程網</Button>
+                      <Button mx="2" size="sm" variant="outline" colorScheme="blue" leftIcon={<FaPlus/>} onClick={() => openPage(genNolAddUrl(course), true)}>課程網</Button>
                       <IconButton mx="2" size="sm" variant="outline" colorScheme="red" icon={<FaTrash />} onClick={() => handleDeleteCourse(course._id)} isLoading={isDeletingCourse === course._id}/>
                     </Flex>
                   </Flex>
@@ -440,11 +464,11 @@ function SideCourseTableContainer(props) {
         <Box overflow="auto" w="100%" mt="4">
           <Flex flexDirection="column">
             <Tabs>
-            <Flex flexDirection="row" justifyContent="start" alignItems="center" my="2" position="fixed" zIndex="100" ml="4">
+            <Flex flexDirection="row" justifyContent="start" alignItems="center" my="2" ml="4">
                 {
                   courseTable?
-                  <Flex alignItems="center">
-                    <Text fontWeight="700" fontSize="3xl" color="gray.600" mr="4">{courseTable.name}</Text>
+                  <Flex alignItems="center" flexWrap="wrap">
+                    <Text fontWeight="700" fontSize={["xl","2xl","3xl"]} color="gray.600" mr="4">{courseTable.name}</Text>
                     {renderEditName()}
                     <Spacer mx="8" />
                     <TabList>
@@ -457,7 +481,7 @@ function SideCourseTableContainer(props) {
             </Flex>
               <TabPanels>
                 <TabPanel>
-                  <Flex flexDirection="row" justifyContent="center" alignItems="center" mt="16">
+                  <Flex flexDirection="row" justifyContent="center" alignItems="center">
                     <CourseTableContainer courseTimes={courseTimes} courses={courses} loading={loading || isLoading} hoveredCourseTime={hoveredCourseTime} hoveredCourse={props.hoveredCourse}/>  
                   </Flex>
                 </TabPanel>
