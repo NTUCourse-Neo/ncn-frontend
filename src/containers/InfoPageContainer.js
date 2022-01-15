@@ -79,8 +79,10 @@ function InfoPageContainer(props){
       <Flex direction="column" alignItems="center" px={["10", "20", "100","200"]} pt="100px">
         <Text fontSize={["3xl","4xl","5xl"]} fontWeight="800" color="gray.700">關於</Text>
         <Divider />
-        <Flex direction="column" alignItems="center" px={["4","8","16"]} py="16">
-          <Text fontSize={["lg","xl","2xl"]}fontWeight="400" color="gray.500">課程網真的好難用，所以我們自己做了一個！ 🥰<br /> 希望 NTUCourse Neo 可以讓你我的選課都更加直覺，好用。</Text>
+        <Flex direction="column" alignItems="start" px={["4","8","32"]} py="16">
+          <Text fontSize={["lg","xl","2xl"]}fontWeight="400" color="gray.500" mb="4">NTUCourse Neo是一個專屬於台大學生的選課工具，您是否曾經覺得台大課程網搜尋課程篩選不好用，或是介面不夠精簡令人眼花撩亂，抑或是加入課表時瘋狂彈出的視窗很煩呢？</Text>
+          <Text fontSize={["lg","xl","2xl"]}fontWeight="400" color="gray.500" mb="4">We are here to help! 我們提供多樣篩選條件，讓用戶可以更快速的找到想要的課程，也提供了互動式課表，讓同學們安排下學期的課程時不用再狂切視窗了！ 🥴 除此之外，還能更方便的排序選課優先順序、一鍵匯入台大課程網，大幅減少同學們花費在找課選課排志願序的時間！</Text>
+          <Text fontSize={["lg","xl","2xl"]}fontWeight="400" color="gray.500">希望 NTUCourse Neo 可以讓你我的選課都更加直覺，好用。</Text>
         </Flex>
         <Text fontSize={["3xl","4xl","5xl"]} fontWeight="800" color="gray.700">團隊</Text>
         <Divider />

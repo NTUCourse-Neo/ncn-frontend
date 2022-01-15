@@ -140,8 +140,9 @@ function UserMyPage() {
     }
 
     return(
-        <>       
-          <Flex w="100vw" direction="column" justifyContent="center" alignItems="center" overflow="hidden" transition="all 500ms ease-in-out" pt="64px">
+        <>
+        <Flex h={isMobile? "90vh":"95vh"} w="100vw">       
+          <Flex w="100vw" direction="column" justifyContent="start" alignItems="center" overflow="auto" transition="all 500ms ease-in-out" pt="64px">
             <Flex flexDirection="row" alignItems="center" justifyContent="start">
               {Loading ? <BeatLoader size={8} color='teal'/>:<></>}
               <Text fontSize="md" fontWeight="medium" color="gray.400" my="2" ml="1">{Loading ? "載入中" : `我的最愛課程 共有 ${favorite_list.length} 筆結果`}</Text>
@@ -150,7 +151,8 @@ function UserMyPage() {
             <Box ml="48vw" transition="all 500ms ease-in-out">
               <SkeletonRow loading={Loading} error={search_error}/>
             </Box>
-        </Flex> 
+          </Flex> 
+        </Flex>
         </>
     );
 };

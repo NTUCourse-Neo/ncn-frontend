@@ -202,8 +202,8 @@ function HomeViewContainer(props) {
                   <Link to="/about"><Button colorScheme="teal" variant="outline" size="lg" mr={4}>了解更多</Button></Link>
                 </Flex> 
                 <Flex justifyContent={["center","start" ]} alignItems="start" flexDirection="column" bg="teal.200" borderRadius="xl" boxShadow="xl" p="4" mt="8">
-                  <Text fontSize="xl" fontWeight="800" color="gray.700" mb="2">👨‍💻 臺大 110-2 課表更新中</Text>
-                  <Text fontSize="md" fontWeight="500" color="gray.600">因應新學期課程上線，我們正在更新台大課程網的 110 學年度第二學期的課程。<br/>現在加入課程網功能可能會造成加入課程錯誤等問題，敬請見諒 🙏</Text>
+                  <Text fontSize="xl" fontWeight="800" color="gray.700" mb="2">🎉 已更新臺大 110-2 課表</Text>
+                  <Text fontSize="md" fontWeight="500" color="gray.600">讚啦！我們已更新台大課程網的 110 學年度第二學期的課程囉！<br/>現在就開始規劃課程吧！ 🥰</Text>
                   <Text fontSize="sm" fontWeight="400" color="gray.500" mt="4">Team NTUCourse Neo - 20210115</Text>
                 </Flex>
               </Flex>

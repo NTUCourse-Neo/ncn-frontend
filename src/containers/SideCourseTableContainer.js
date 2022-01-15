@@ -250,7 +250,7 @@ function SideCourseTableContainer(props) {
         if (user){
           // hasLogIn
           try {
-            const new_course_table = await dispatch(createCourseTable(new_uuid, "我的課表", userInfo.db._id, "1101"));
+            const new_course_table = await dispatch(createCourseTable(new_uuid, "我的課表", userInfo.db._id, "1102"));
             // console.log("New UUID is generated: ",new_uuid);
             const token = await getAccessTokenSilently();
             await dispatch(linkCoursetableToUser(token, new_uuid, userInfo.db._id));
@@ -266,7 +266,7 @@ function SideCourseTableContainer(props) {
         } else {
           // Guest mode
           try {
-            const new_course_table = await dispatch(createCourseTable(new_uuid, "我的課表", null, "1101"));
+            const new_course_table = await dispatch(createCourseTable(new_uuid, "我的課表", null, "1102"));
             // console.log("New UUID is generated: ",new_uuid);
             localStorage.setItem(LOCAL_STORAGE_KEY, new_course_table._id);
             setExpired(false);
