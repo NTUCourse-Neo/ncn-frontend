@@ -249,7 +249,7 @@ function SideCourseTableContainer(props) {
         if (user){
           // hasLogIn
           try {
-            await dispatch(createCourseTable(new_uuid, "我的課表", userInfo.db._id, "1101"));
+            await dispatch(createCourseTable(new_uuid, "我的課表", userInfo.db._id, "1102"));
             // console.log("New UUID is generated: ",new_uuid);
             const token = await getAccessTokenSilently();
             await dispatch(linkCoursetableToUser(token, new_uuid, userInfo.db._id));
