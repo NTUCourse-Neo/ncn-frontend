@@ -130,7 +130,7 @@ function UserMyPage() {
               {Loading ? <BeatLoader size={8} color='teal'/>:<></>}
               <Text fontSize="md" fontWeight="medium" color="gray.400" my="2" ml="1">{Loading ? "載入中" : `我的最愛課程 共有 ${favorite_list.length} 筆結果`}</Text>
             </Flex>
-            <CourseInfoRowContainer courseInfo={favorite_list} setHoveredCourse={setHoveredCourse} selectedCourses={coursesInTable} displayTags={displayTags} displayTable={false}/>
+              <CourseInfoRowContainer w="70vw" courseInfo={favorite_list} setHoveredCourse={setHoveredCourse} selectedCourses={coursesInTable} displayTags={displayTags} displayTable={false}/>
             <Box ml="48vw" transition="all 500ms ease-in-out">
               <SkeletonRow loading={Loading} error={search_error}/>
             </Box>

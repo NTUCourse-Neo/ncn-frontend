@@ -496,7 +496,7 @@ function UserInfoContainer(props) {
                       defaultValue={doubleMajor===''?{value: "", label: " 請選擇 "}:{value: doubleMajor, label: doubleMajor}}
                       isSearchable={TextTrackCue}
                       name="color"
-                      options={deptOptions}
+                      options={[{value: "", label: " 請選擇 "}, ...deptOptions]}
                       onChange={(e)=>{setDoubleMajor(e.value)}}
                     />
                   </Box>}
