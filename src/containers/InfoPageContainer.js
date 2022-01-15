@@ -89,10 +89,10 @@ function InfoPageContainer(props){
         <HStack justifyContent="center" px={["4","8","16"]} wrap="wrap" css={{ gap: '2rem' }} py="16">
           {teams.map (person => renderTeamCard(person))}
         </HStack>
-        <Text fontSize={["3xl","4xl","5xl"]} fontWeight="800" color="gray.700">操作影片</Text>
+        <Text fontSize={["3xl","4xl","5xl"]} fontWeight="800" color="gray.700">簡報影片</Text>
         <Divider />
         <Flex direction="column" alignItems="center" py="16">
-          <iframe width="320" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          <iframe width="320" src="https://www.youtube.com/embed/r98m09bb4pU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </Flex>
         <Text fontSize={["3xl","4xl","5xl"]} fontWeight="800" color="gray.700">Powered by...</Text>
         <Divider />
