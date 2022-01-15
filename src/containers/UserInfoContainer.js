@@ -70,13 +70,13 @@ function UserInfoContainer(props) {
 
   const recaptchaRef = useRef();
 
-  // useEffect(()=>{
-  //   console.log('name: ', name);
-  //   console.log('studentId: ', studentId);
-  //   console.log('major: ', major);
-  //   console.log('doubleMajor: ', doubleMajor);
-  //   console.log('minor: ', minor);
-  // },[name, studentId, major, doubleMajor, minor]);
+  useEffect(()=>{
+    console.log('name: ', name);
+    console.log('studentId: ', studentId);
+    console.log('major: ', major);
+    console.log('doubleMajor: ', doubleMajor);
+    console.log('minor: ', minor);
+  },[name, studentId, major, doubleMajor, minor]);
 
   const recOnChange = async(value) => {
     let resp
@@ -496,7 +496,7 @@ function UserInfoContainer(props) {
                       defaultValue={doubleMajor===''?{value: "", label: " 請選擇 "}:{value: doubleMajor, label: doubleMajor}}
                       isSearchable={TextTrackCue}
                       name="color"
-                      options={deptOptions}
+                      options={[{value: "", label: " 請選擇 "}, ...deptOptions]}
                       onChange={(e)=>{setDoubleMajor(e.value)}}
                     />
                   </Box>}
