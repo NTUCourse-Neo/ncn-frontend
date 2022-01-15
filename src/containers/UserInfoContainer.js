@@ -70,13 +70,13 @@ function UserInfoContainer(props) {
 
   const recaptchaRef = useRef();
 
-  useEffect(()=>{
-    console.log('name: ', name);
-    console.log('studentId: ', studentId);
-    console.log('major: ', major);
-    console.log('doubleMajor: ', doubleMajor);
-    console.log('minor: ', minor);
-  },[name, studentId, major, doubleMajor, minor]);
+  // useEffect(()=>{
+  //   console.log('name: ', name);
+  //   console.log('studentId: ', studentId);
+  //   console.log('major: ', major);
+  //   console.log('doubleMajor: ', doubleMajor);
+  //   console.log('minor: ', minor);
+  // },[name, studentId, major, doubleMajor, minor]);
 
   const recOnChange = async(value) => {
     let resp
