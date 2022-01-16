@@ -15,7 +15,7 @@ function HomeCard(props) {
                 <Flex w={["100%", "100%","100%", "60%"]} justifyContent="start" alignItems="start" flexDirection="column" mr="4">
                   {props.desc.map((item,index) => {
                     return (
-                      <Text fontSize={["md", "lg","lg", "3xl"]} fontWeight="400" color="gray.600" mb={4}>{item}</Text>
+                      <Text key={index} fontSize={["md", "lg","lg", "3xl"]} fontWeight="400" color="gray.600" mb={4}>{item}</Text>
                     );
                   })}
                 </Flex>
