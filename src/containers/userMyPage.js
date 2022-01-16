@@ -80,7 +80,7 @@ function UserMyPage() {
         const fetchFavoriteCoursesById = async () => {
             setLoading(true);
             // console.log(userInfo);
-            if(userInfo.db.favorites.length > 0) {
+            if(userInfo.db.favorites.length >= 0) {
                 try {
                     const courses = await dispatch(fetchFavoriteCourses(userInfo.db.favorites));
                     // console.log(courses);
@@ -110,7 +110,6 @@ function UserMyPage() {
             setCoursesInTable(courseTable.courses);
         }
     }, [courseTable]);
-    
 
     if(userLoading) {
         return(
