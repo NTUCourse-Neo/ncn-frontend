@@ -202,7 +202,7 @@ const fetchCourseTable = (course_table_id) => async (dispatch)=>{
         // console.log(Error("Error in fetchCourseTable: "+error));
 
         if (error.response) {
-            if (error.response.status===403) {
+            if (error.response.status===403 || error.response.status===404){
                 // expired course_table
                 // if fetch expired course_table, return null and handle it by frontend logic
                 dispatch({type: UPDATE_COURSE_TABLE, payload: null});
