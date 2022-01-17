@@ -84,7 +84,6 @@ const identify_course_select_schedule = (timestamp) => {
 
 function CourseDeadlineCountdown(props){
     const ts = new Date().getTime()/1000;
-    console.log("ts",ts);
     const { status_idx, schedule_idx } = identify_course_select_schedule(ts);
     if (status_idx === -1) {
         return (
@@ -95,7 +94,6 @@ function CourseDeadlineCountdown(props){
     const elapsed_hours = status_idx===0 ? Math.floor((course_select_schedule[schedule_idx].start - ts) / 3600) % 24 : Math.floor((course_select_schedule[schedule_idx].end - ts) / 3600) % 24;
     const time_percent = status_idx===0 ? 0:(ts - course_select_schedule[schedule_idx].start) / (course_select_schedule[schedule_idx].end - course_select_schedule[schedule_idx].start);
     const process_percent = ((time_percent + schedule_idx)/(course_select_schedule.length-1) * 100);
-    console.log(process_percent);
     return(
         <>
             <Flex w={["80vw","80vw","50vw","25vw"]} justifyContent={["center","start" ]} alignItems="start" flexDirection="column" bg={status_map[status_idx].color} borderRadius="xl" boxShadow="xl" p="4" mt="8">
