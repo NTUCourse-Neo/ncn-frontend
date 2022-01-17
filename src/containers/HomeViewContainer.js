@@ -102,7 +102,7 @@ function HomeViewContainer(props) {
         try {
           user_data = await dispatch(fetchUserById(token, user.sub));
         } catch (error) {
-          navigate(`/error/${error}`);
+          navigate(`/error/${error}`, { state: { valid: true }});
         }
         if(!user_data){
           // if user is null (not found in db)
