@@ -5,7 +5,6 @@ import {
     Progress,
     HStack,
     Button,
-    ButtonGroup,
 } from '@chakra-ui/react';
 import { FaClock } from 'react-icons/fa';
 
@@ -87,7 +86,7 @@ function CourseDeadlineCountdown(props){
     const ts = new Date().getTime()/1000;
     console.log("ts",ts);
     const { status_idx, schedule_idx } = identify_course_select_schedule(ts);
-    if (status_idx == -1) {
+    if (status_idx === -1) {
         return (
             <></>
         );
