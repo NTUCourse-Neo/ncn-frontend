@@ -26,25 +26,22 @@ function ErrorContainer(props){
     const error_msgs = [`太無情了你真的太無情了`, `出事了阿北`, `==?`, `哭啊`] 
     const error_message = error_msgs[Math.floor(Math.random() * error_msgs.length)];
     const [ isReportingError, setIsReportingError ] = useState(false);
-    const {loading, user} = useAuth0();
-    const [uuid , setUuid] = useState("");
+    const {loading, user, isAuthenticated} = useAuth0();
+    const [uuid , setUuid] = useState(uuidv4());
 
     // console.log(error_page_states);
     useEffect(() => {
         async function redirect_and_send_logs(){
             if (!error_page_states){
-                setUuid("");
                 navigate(`/`);
-            }else if(!loading && user){
-                setUuid(uuidv4());
-                console.log(uuid);
+            }else if((!loading && user) || !isAuthenticated){
                 setIsReportingError(true);
                 const error_obj = {
                     uuid: uuid,
                     component: "ncn-frontend",
                     log: JSON.stringify(error_page_states),
                     code: props.code,
-                    user_id: user.sub,
+                    user_id: isAuthenticated? user.sub : "guest",
                     agent: navigator.userAgent,
                 }
                 await dispatch(send_logs("error", error_obj));
@@ -52,7 +49,7 @@ function ErrorContainer(props){
             }
         }
         redirect_and_send_logs();
-    } , [user]); // eslint-disable-line react-hooks/exhaustive-deps
+    } , [user, loading]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <Center flexDirection='column' justifyItems="center" maxW="60vw" mx="auto" overflow="visible" p="64px" h='95vh' >
