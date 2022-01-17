@@ -54,15 +54,33 @@ const fetchSearchIDs = (searchString, paths, filters_enable, filter_obj, batch_s
 
         if (error.response) {
             // server did response, used for handle custom error msg
-            throw error.response.status;
+            let error_obj = {
+                status_code: error.response.status, 
+                backend_msg: error.response.data.message, 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
         } else if (error.request) {
             // The request was made but no response was received (server is downed)
             let status = 521; // Server is down
-            throw status;
+            let error_obj = {
+                status_code: status, 
+                backend_msg: "no", 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
         } else {
             // Something happened in setting up the request that triggered an Error
             let status = 400; // Bad request
-            throw status;
+            let error_obj = {
+                status_code: status, 
+                backend_msg: "no", 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
         }
     }
 }
@@ -88,15 +106,33 @@ const fetchSearchResults = (ids_arr, filters_enable, filter_obj, batch_size, off
 
         if (error.response) {
             // server did response, used for handle custom error msg
-            throw error.response.status;
+            let error_obj = {
+                status_code: error.response.status, 
+                backend_msg: error.response.data.message, 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
         } else if (error.request) {
             // The request was made but no response was received (server is downed)
             let status = 521; // Server is down
-            throw status;
+            let error_obj = {
+                status_code: status, 
+                backend_msg: "no", 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
         } else {
             // Something happened in setting up the request that triggered an Error
             let status = 400; // Bad request
-            throw status;
+            let error_obj = {
+                status_code: status, 
+                backend_msg: "no", 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
         }
     }
 }
@@ -115,15 +151,33 @@ const fetchCourseTableCoursesByIds = (ids_arr) => async (dispatch)=>{
 
         if (error.response) {
             // server did response, used for handle custom error msg
-            throw error.response.status;
+            let error_obj = {
+                status_code: error.response.status, 
+                backend_msg: error.response.data.message, 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
         } else if (error.request) {
             // The request was made but no response was received (server is downed)
             let status = 521; // Server is down
-            throw status;
+            let error_obj = {
+                status_code: status, 
+                backend_msg: "no", 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
         } else {
             // Something happened in setting up the request that triggered an Error
             let status = 400; // Bad request
-            throw status;
+            let error_obj = {
+                status_code: status, 
+                backend_msg: "no", 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
         }
     }
 };
@@ -137,8 +191,38 @@ const fetchFavoriteCourses = (ids_arr) => async (dispatch) => {
         const {data: {courses}} = await instance.post(`/courses/ids`, {ids: ids_arr, filter: search_filter, batch_size: batch_size, offset: offset});        
         return courses;
     }
-    catch (err) {
-        throw new Error("Error in fetchFavoriteCourses: " + err);
+    catch (error) {
+
+        if (error.response) {
+            // server did response, used for handle custom error msg
+            let error_obj = {
+                status_code: error.response.status, 
+                backend_msg: error.response.data.message, 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
+        } else if (error.request) {
+            // The request was made but no response was received (server is downed)
+            let status = 521; // Server is down
+            let error_obj = {
+                status_code: status, 
+                backend_msg: "no", 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
+        } else {
+            // Something happened in setting up the request that triggered an Error
+            let status = 400; // Bad request
+            let error_obj = {
+                status_code: status, 
+                backend_msg: "no", 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
+        }
     }
 }
 
@@ -153,15 +237,33 @@ const createCourseTable = (course_table_id, course_table_name, user_id, semester
 
         if (error.response) {
             // server did response, used for handle custom error msg
-            throw error.response.status;
+            let error_obj = {
+                status_code: error.response.status, 
+                backend_msg: error.response.data.message, 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
         } else if (error.request) {
             // The request was made but no response was received (server is downed)
             let status = 521; // Server is down
-            throw status;
+            let error_obj = {
+                status_code: status, 
+                backend_msg: "no", 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
         } else {
             // Something happened in setting up the request that triggered an Error
             let status = 400; // Bad request
-            throw status;
+            let error_obj = {
+                status_code: status, 
+                backend_msg: "no", 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
         }
     }
 }
@@ -179,15 +281,33 @@ const linkCoursetableToUser = (token, course_table_id, user_id) => async (dispat
 
         if (error.response) {
             // server did response, used for handle custom error msg
-            throw error.response.status;
+            let error_obj = {
+                status_code: error.response.status, 
+                backend_msg: error.response.data.message, 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
         } else if (error.request) {
             // The request was made but no response was received (server is downed)
             let status = 521; // Server is down
-            throw status;
+            let error_obj = {
+                status_code: status, 
+                backend_msg: "no", 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
         } else {
             // Something happened in setting up the request that triggered an Error
             let status = 400; // Bad request
-            throw status;
+            let error_obj = {
+                status_code: status, 
+                backend_msg: "no", 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
         }
     }
 };
@@ -212,15 +332,33 @@ const fetchCourseTable = (course_table_id) => async (dispatch)=>{
         else {
             if (error.response) {
                 // server did response, used for handle custom error msg
-                throw error.response.status;
+                let error_obj = {
+                    status_code: error.response.status, 
+                    backend_msg: error.response.data.message, 
+                    error_info: error.message, 
+                    error_detail: Error(error).stack
+                };
+                throw error_obj;
             } else if (error.request) {
                 // The request was made but no response was received (server is downed)
                 let status = 521; // Server is down
-                throw status;
+                let error_obj = {
+                    status_code: status, 
+                    backend_msg: "no", 
+                    error_info: error.message, 
+                    error_detail: Error(error).stack
+                };
+                throw error_obj;
             } else {
                 // Something happened in setting up the request that triggered an Error
                 let status = 400; // Bad request
-                throw status;
+                let error_obj = {
+                    status_code: status, 
+                    backend_msg: "no", 
+                    error_info: error.message, 
+                    error_detail: Error(error).stack
+                };
+                throw error_obj;
             }
         }
     }
@@ -248,15 +386,33 @@ const patchCourseTable = (course_table_id, course_table_name, user_id, expire_ts
         } else {
             if (error.response) {
                 // server did response, used for handle custom error msg
-                throw error.response.status;
+                let error_obj = {
+                    status_code: error.response.status, 
+                    backend_msg: error.response.data.message, 
+                    error_info: error.message, 
+                    error_detail: Error(error).stack
+                };
+                throw error_obj;
             } else if (error.request) {
                 // The request was made but no response was received (server is downed)
                 let status = 521; // Server is down
-                throw status;
+                let error_obj = {
+                    status_code: status, 
+                    backend_msg: "no", 
+                    error_info: error.message, 
+                    error_detail: Error(error).stack
+                };
+                throw error_obj;
             } else {
                 // Something happened in setting up the request that triggered an Error
                 let status = 400; // Bad request
-                throw status;
+                let error_obj = {
+                    status_code: status, 
+                    backend_msg: "no", 
+                    error_info: error.message, 
+                    error_detail: Error(error).stack
+                };
+                throw error_obj;
             }
         }
     }
@@ -272,19 +428,36 @@ const fetchUserById = (token, user_id) => async (dispatch)=>{
         // user contains user in db & auth0, either null (not found) or an object.
         return user
     } catch (error) {
-        // console.log(Error("fetchUserById "+error));
 
         if (error.response) {
             // server did response, used for handle custom error msg
-            throw error.response.status;
+            let error_obj = {
+                status_code: error.response.status, 
+                backend_msg: error.response.data.message, 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
         } else if (error.request) {
             // The request was made but no response was received (server is downed)
             let status = 521; // Server is down
-            throw status;
+            let error_obj = {
+                status_code: status, 
+                backend_msg: "no", 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
         } else {
             // Something happened in setting up the request that triggered an Error
             let status = 400; // Bad request
-            throw status;
+            let error_obj = {
+                status_code: status, 
+                backend_msg: "no", 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
         }
     }
 }
@@ -303,15 +476,33 @@ const registerNewUser = (token, email) => async (dispatch)=>{
 
         if (error.response) {
             // server did response, used for handle custom error msg
-            throw error.response.status;
+            let error_obj = {
+                status_code: error.response.status, 
+                backend_msg: error.response.data.message, 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
         } else if (error.request) {
             // The request was made but no response was received (server is downed)
             let status = 521; // Server is down
-            throw status;
+            let error_obj = {
+                status_code: status, 
+                backend_msg: "no", 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
         } else {
             // Something happened in setting up the request that triggered an Error
             let status = 400; // Bad request
-            throw status;
+            let error_obj = {
+                status_code: status, 
+                backend_msg: "no", 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
         }
     }
 }
@@ -329,15 +520,33 @@ const addFavoriteCourse = (token, new_favorite_list) => async (dispatch)=>{
 
         if (error.response) {
             // server did response, used for handle custom error msg
-            throw error.response.status;
+            let error_obj = {
+                status_code: error.response.status, 
+                backend_msg: error.response.data.message, 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
         } else if (error.request) {
             // The request was made but no response was received (server is downed)
             let status = 521; // Server is down
-            throw status;
+            let error_obj = {
+                status_code: status, 
+                backend_msg: "no", 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
         } else {
             // Something happened in setting up the request that triggered an Error
             let status = 400; // Bad request
-            throw status;
+            let error_obj = {
+                status_code: status, 
+                backend_msg: "no", 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
         }
     }
 };
@@ -355,15 +564,33 @@ const patchUserInfo = (token, updateObject) => async (dispatch)=>{
 
         if (error.response) {
             // server did response, used for handle custom error msg
-            throw error.response.status;
+            let error_obj = {
+                status_code: error.response.status, 
+                backend_msg: error.response.data.message, 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
         } else if (error.request) {
             // The request was made but no response was received (server is downed)
             let status = 521; // Server is down
-            throw status;
+            let error_obj = {
+                status_code: status, 
+                backend_msg: "no", 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
         } else {
             // Something happened in setting up the request that triggered an Error
             let status = 400; // Bad request
-            throw status;
+            let error_obj = {
+                status_code: status, 
+                backend_msg: "no", 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
         }
     }
 }
@@ -380,15 +607,33 @@ const deleteUserProfile = (token) => async (dispatch)=>{
 
         if (error.response) {
             // server did response, used for handle custom error msg
-            throw error.response.status;
+            let error_obj = {
+                status_code: error.response.status, 
+                backend_msg: error.response.data.message, 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
         } else if (error.request) {
             // The request was made but no response was received (server is downed)
             let status = 521; // Server is down
-            throw status;
+            let error_obj = {
+                status_code: status, 
+                backend_msg: "no", 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
         } else {
             // Something happened in setting up the request that triggered an Error
             let status = 400; // Bad request
-            throw status;
+            let error_obj = {
+                status_code: status, 
+                backend_msg: "no", 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
         }
     }
 }
@@ -406,15 +651,33 @@ const deleteUserAccount = (token) => async (dispatch)=>{
 
         if (error.response) {
             // server did response, used for handle custom error msg
-            throw error.response.status;
+            let error_obj = {
+                status_code: error.response.status, 
+                backend_msg: error.response.data.message, 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
         } else if (error.request) {
             // The request was made but no response was received (server is downed)
             let status = 521; // Server is down
-            throw status;
+            let error_obj = {
+                status_code: status, 
+                backend_msg: "no", 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
         } else {
             // Something happened in setting up the request that triggered an Error
             let status = 400; // Bad request
-            throw status;
+            let error_obj = {
+                status_code: status, 
+                backend_msg: "no", 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
         }
     }
 }
@@ -446,6 +709,7 @@ const use_otp_link_student_id = (token, student_id, otp_code) => async (dispatch
     return resp.data;
 };
 
+// add try catch block to handle timeout.
 const send_logs = (type, obj) => async (dispatch)=>{
     const resp = await instance.post(`/logs/${type}`, obj);
     return resp.data;

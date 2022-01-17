@@ -27,9 +27,9 @@ function ErrorContainer(props){
     const error_message = error_msgs[Math.floor(Math.random() * error_msgs.length)];
     const [ isReportingError, setIsReportingError ] = useState(false);
     const {loading, user, isAuthenticated} = useAuth0();
-    const [uuid , setUuid] = useState(uuidv4());
+    const [uuid , setUuid] = useState(uuidv4()); // eslint-disable-line no-unused-vars
 
-    // console.log(error_page_states);
+    console.log('states: ', error_page_states);
     useEffect(() => {
         async function redirect_and_send_logs(){
             if (!error_page_states){
@@ -39,7 +39,7 @@ function ErrorContainer(props){
                 const error_obj = {
                     uuid: uuid,
                     component: "ncn-frontend",
-                    log: JSON.stringify(error_page_states),
+                    log: '```'+JSON.stringify(error_page_states, null, " ")+'```',
                     code: props.code,
                     user_id: isAuthenticated? user.sub : "guest",
                     agent: navigator.userAgent,
@@ -64,7 +64,7 @@ function ErrorContainer(props){
                 <HStack spacing={2} mt="4">
                     {
                         isReportingError || loading ?
-                        <BounceLoader size="20" color="teal" />:
+                        <BounceLoader size="20px" color="teal" />:
                         <FaCheckCircle color="teal" />
                     }
                     <Text fontSize='lg' color='gray.500' mt='2vh' fontWeight="800">{isReportingError || loading ? "正在回報錯誤" : "已回報錯誤"}</Text>
