@@ -3,11 +3,10 @@ import {
     Image,
     Text,
     Button,
-    HStack,
-    Spinner
+    HStack
 } from '@chakra-ui/react';
 import { FaHeartbeat, FaCheckCircle } from 'react-icons/fa';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import {useAuth0} from '@auth0/auth0-react';

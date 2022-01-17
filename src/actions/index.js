@@ -263,7 +263,6 @@ const patchCourseTable = (course_table_id, course_table_name, user_id, expire_ts
 }
 
 const fetchUserById = (token, user_id) => async (dispatch)=>{
-    throw new Error(400);
     try {
         const {data: {user}} = await instance.get(`/users/${user_id}`, {
             headers: {
