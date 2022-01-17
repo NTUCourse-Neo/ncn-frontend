@@ -263,6 +263,7 @@ const patchCourseTable = (course_table_id, course_table_name, user_id, expire_ts
 }
 
 const fetchUserById = (token, user_id) => async (dispatch)=>{
+    throw new Error(400);
     try {
         const {data: {user}} = await instance.get(`/users/${user_id}`, {
             headers: {
@@ -446,4 +447,9 @@ const use_otp_link_student_id = (token, student_id, otp_code) => async (dispatch
     return resp.data;
 };
 
-export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, fetchFavoriteCourses, createCourseTable, linkCoursetableToUser, fetchCourseTable, patchCourseTable, fetchUserById, registerNewUser, logOut, logIn, updateCourseTable, addFavoriteCourse, deleteUserProfile, deleteUserAccount, patchUserInfo, verify_recaptcha, request_otp_code, use_otp_link_student_id, setNewDisplayTags };
+const send_logs = (type, obj) => async (dispatch)=>{
+    const resp = await instance.post(`/logs/${type}`, obj);
+    return resp.data;
+};
+
+export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, fetchFavoriteCourses, createCourseTable, linkCoursetableToUser, fetchCourseTable, patchCourseTable, fetchUserById, registerNewUser, logOut, logIn, updateCourseTable, addFavoriteCourse, deleteUserProfile, deleteUserAccount, patchUserInfo, verify_recaptcha, request_otp_code, use_otp_link_student_id, setNewDisplayTags, send_logs };
