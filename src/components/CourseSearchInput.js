@@ -62,7 +62,7 @@ function CourseSearchInput() {
             dispatch(fetchSearchIDs(search, search_columns, search_filters_enable, search_filters, batch_size, strict_match))
         } catch (error) {
             if (error>=500){
-                navigate(`/error/${error}`);
+                navigate(`/error/${error}`, { state: { valid: true }});
             } else {
                 toast({
                     title: '搜尋失敗',

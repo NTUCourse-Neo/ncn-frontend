@@ -131,7 +131,7 @@ function HomeViewContainer(props) {
             new_user_data = await dispatch(fetchUserById(token, user.sub));
           }
           catch (e) {
-            navigate(`/error/${e}`);
+            navigate(`/error/${e}`, { state: { valid: true }});
           }
           dispatch(logIn(new_user_data));
         } else {

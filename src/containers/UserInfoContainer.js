@@ -232,7 +232,7 @@ function UserInfoContainer(props) {
             duration: 9000,
             isClosable: true,
           })
-          navigate(`/error/${error}`);
+          navigate(`/error/${error}`, { state: { valid: true }});
           // Other subsequent actions?
         }
       }

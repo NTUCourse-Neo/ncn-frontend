@@ -263,30 +263,32 @@ const patchCourseTable = (course_table_id, course_table_name, user_id, expire_ts
 }
 
 const fetchUserById = (token, user_id) => async (dispatch)=>{
-    try {
-        const {data: {user}} = await instance.get(`/users/${user_id}`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-        // user contains user in db & auth0, either null (not found) or an object.
-        return user
-    } catch (error) {
-        // console.log(Error("fetchUserById "+error));
+    let code = 404;
+    throw code;
+    // try {
+    //     const {data: {user}} = await instance.get(`/users/${user_id}`, {
+    //         headers: {
+    //             Authorization: `Bearer ${token}`
+    //         }
+    //     });
+    //     // user contains user in db & auth0, either null (not found) or an object.
+    //     return user
+    // } catch (error) {
+    //     // console.log(Error("fetchUserById "+error));
 
-        if (error.response) {
-            // server did response, used for handle custom error msg
-            throw error.response.status;
-        } else if (error.request) {
-            // The request was made but no response was received (server is downed)
-            let status = 521; // Server is down
-            throw status;
-        } else {
-            // Something happened in setting up the request that triggered an Error
-            let status = 400; // Bad request
-            throw status;
-        }
-    }
+    //     if (error.response) {
+    //         // server did response, used for handle custom error msg
+    //         throw error.response.status;
+    //     } else if (error.request) {
+    //         // The request was made but no response was received (server is downed)
+    //         let status = 521; // Server is down
+    //         throw status;
+    //     } else {
+    //         // Something happened in setting up the request that triggered an Error
+    //         let status = 400; // Bad request
+    //         throw status;
+    //     }
+    // }
 }
 
 const registerNewUser = (token, email) => async (dispatch)=>{
