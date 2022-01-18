@@ -134,7 +134,7 @@ function SideCourseTableContainer(props) {
           course_table = await dispatch(fetchCourseTable(uuid));
         } catch(error){
           // navigate to error page
-          navigate(`/error/${error}`);
+          navigate(`/error/${error.status_code}`, { state: error });
         }
         if (course_table===null){
           setExpired(true);
@@ -159,7 +159,7 @@ function SideCourseTableContainer(props) {
               try {
                 await dispatch(fetchCourseTable(course_tables[0]));
               } catch (error) {
-                navigate(`/error/${error}`);
+                navigate(`/error/${error.status_code}`, { state: error });
               }
             }
           } catch (e) {

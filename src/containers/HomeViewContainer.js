@@ -103,7 +103,8 @@ function HomeViewContainer(props) {
         try {
           user_data = await dispatch(fetchUserById(token, user.sub));
         } catch (error) {
-          navigate(`/error/${error}`);
+          navigate(`/error/${error.status_code}`, { state: error });
+          return;
         }
         if(!user_data){
           // if user is null (not found in db)
@@ -131,8 +132,8 @@ function HomeViewContainer(props) {
           try{
             new_user_data = await dispatch(fetchUserById(token, user.sub));
           }
-          catch (e) {
-            navigate(`/error/${e}`);
+          catch (error) {
+            navigate(`/error/${error.status_code}`, { state: error });
           }
           dispatch(logIn(new_user_data));
         } else {
