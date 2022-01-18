@@ -15,11 +15,11 @@ import UserInfoContainer from './containers/UserInfoContainer';
 import ErrorContainer from './containers/ErrorContainer';
 import UserMyPage from './containers/userMyPage';
 import { useParams } from 'react-router-dom';
+import ReactGA from 'react-ga';
 
 dotenv.config();
 
 if(process.env.REACT_APP_ENV === 'prod'){
-  import ReactGA from 'react-ga';
   ReactGA.initialize(process.env.REACT_APP_GA_TRACKING_ID);
   ReactGA.pageview(window.location.pathname + window.location.search);
 }
