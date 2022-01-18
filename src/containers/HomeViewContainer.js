@@ -23,11 +23,13 @@ import {
     AlertDialogContent,
     AlertDialogOverlay,
     Center,
+    Collapse,
+    IconButton
   } from '@chakra-ui/react';
 import homeMainSvg from '../img/home_main.svg';
 import HomeCard from '../components/HomeCard';
 import { useAuth0 } from '@auth0/auth0-react';
-import { FaArrowDown, FaArrowRight, FaArrowUp } from "react-icons/fa";
+import { FaArrowDown, FaArrowRight, FaArrowUp, FaSync } from "react-icons/fa";
 import { animateScroll as scroll, scroller } from 'react-scroll'
 import { Link, useNavigate } from "react-router-dom";
 import { BeatLoader } from 'react-spinners';
@@ -46,6 +48,7 @@ function HomeViewContainer(props) {
 
   const [ isRegistering, setIsRegistering ] = useState(false);
   const [isMobile] = useMediaQuery("(max-width: 760px)") 
+  const [ displayingCard, setDisplayingCard ] = useState(0);
 
   const scroll_config = {duration: 1000,delay: 50,smooth: true, offset: -60};
 
@@ -192,25 +195,36 @@ function HomeViewContainer(props) {
           {renderMobileWarning()}
         <Flex justifyContent="space-between" mb={4} grow="1" flexDirection="column" alignItems="center">
           <Spacer/>
-          <Flex justifyContent={["center","space-between" ]}flexDirection="row" alignItems="center" w="90vw" flexWrap="wrap-reverse">
-            <Box>
-              <Heading as="h1" fontSize={["4xl","6xl"]} fontWeight="800" color="gray.700">Course Schedule</Heading>
-              <Heading as="h1" fontSize={["4xl","6xl"]} fontWeight="extrabold" color="gray.700" mb={4}>Re-imagined.</Heading>
-              <Heading as="h1" fontSize="3xl" fontWeight="500" color="gray.500" mb={4}>修課安排不再是難事。</Heading>
-              <Spacer my={8}/>
-              <Flex flexDirection="column" alignItems="start">
-                <Flex justifyContent={["center","start" ]} alignItems="center" flexDirection="row">
-                  <Link to="/course"><Button colorScheme="teal" variant="solid" size="lg" mr={4}>開始使用</Button></Link>
-                  <Link to="/about"><Button colorScheme="teal" variant="outline" size="lg" mr={4}>了解更多</Button></Link>
-                </Flex> 
-                <CourseDeadlineCountdown />
-                <Flex w={["80vw","80vw","50vw","25vw"]} justifyContent={["center","start" ]} alignItems="start" flexDirection="column" bg="teal.200" borderRadius="xl" boxShadow="xl" p="4" mt="8">
-                  <Text fontSize="xl" fontWeight="800" color="gray.700" mb="2">🎉 已更新臺大 110-2 課表</Text>
-                  <Text fontSize="md" fontWeight="500" color="gray.600">讚啦！我們已更新台大課程網的 110 學年度第二學期的課程囉！<br/>現在就開始規劃課程吧！ 🥰</Text>
-                  <Text fontSize="sm" fontWeight="400" color="gray.500" mt="4">Team NTUCourse Neo - 20210115</Text>
+          <Flex justifyContent={["center","space-between" ]}flexDirection="row" alignItems="start" w="90vw" flexWrap="wrap-reverse">
+            <Flex flexDirection="column" mt={["5","5","5","40"]}>
+              <Heading as="h1" fontSize={["2xl","4xl","6xl"]} fontWeight="800" color="gray.700">Course Schedule</Heading>
+              <Heading as="h1" fontSize={["2xl","4xl","6xl"]} fontWeight="extrabold" color="gray.700" mb={4}>Re-imagined.</Heading>
+              <Heading as="h1" fontSize="3xl" fontWeight="500" color="gray.500">修課安排不再是難事。</Heading>
+              <Spacer my={4}/>
+              <Flex justifyContent={["center","start" ]} alignItems="center" flexDirection="row">
+                <Link to="/course"><Button colorScheme="teal" variant="solid" size="lg" mr={4}>開始使用</Button></Link>
+                <Link to="/about"><Button colorScheme="teal" variant="outline" size="lg" mr={4}>了解更多</Button></Link>
+              </Flex> 
+              <Flex alignItems="start">
+                <Flex flexDirection="column" alignItems="start" overflow="auto">
+                  <Collapse in={displayingCard === 0}>
+                    <Spacer my="10" />
+                    <CourseDeadlineCountdown />
+                    <Spacer my="10" />
+                  </Collapse>
+                  <Collapse in={displayingCard === 1}>
+                    <Spacer my="10"/>
+                    <Flex w={["80vw","80vw","50vw","25vw"]} justifyContent={["center","start" ]} alignItems="start" flexDirection="column" bg="teal.200" borderRadius="xl" boxShadow="xl" p="4" mt="4">
+                      <Text fontSize="xl" fontWeight="800" color="gray.700" mb="2">🎉 已更新臺大 110-2 課表</Text>
+                      <Text fontSize="md" fontWeight="500" color="gray.600">讚啦！我們已更新 110 學年度第二學期的課程囉！<br/>現在就開始規劃課程吧！ 🥰</Text>
+                      <Text fontSize="sm" fontWeight="400" color="gray.500" mt="4">Team NTUCourse Neo - 20210115</Text>
+                    </Flex>
+                    <Spacer my="10" />
+                  </Collapse>
                 </Flex>
+                <IconButton ml="2" mt="10" icon={<FaSync color="gray.500"/>} variant="ghost" size="sm" onClick={() => setDisplayingCard((displayingCard + 1)%2)} />
               </Flex>
-            </Box>
+            </Flex>
             <Spacer/>
             <Image src={homeMainSvg} alt="home_main" w={["80vw","50vw"]}/>
           </Flex>
