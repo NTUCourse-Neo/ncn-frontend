@@ -197,11 +197,11 @@ function HomeViewContainer(props) {
           <Spacer/>
           <Flex justifyContent={["center","space-between" ]}flexDirection="row" alignItems="start" w="90vw" flexWrap="wrap-reverse">
             <Flex flexDirection="column" mt={["5","5","5","40"]}>
-              <Heading as="h1" fontSize={["2xl","4xl","6xl"]} fontWeight="800" color="gray.700">Course Schedule</Heading>
-              <Heading as="h1" fontSize={["2xl","4xl","6xl"]} fontWeight="extrabold" color="gray.700" mb={4}>Re-imagined.</Heading>
+              <Heading as="h1" fontSize={["4xl","6xl"]} fontWeight="800" color="gray.700">Course Schedule</Heading>
+              <Heading as="h1" fontSize={["4xl","6xl"]} fontWeight="extrabold" color="gray.700" mb={4}>Re-imagined.</Heading>
               <Heading as="h1" fontSize="3xl" fontWeight="500" color="gray.500">修課安排不再是難事。</Heading>
               <Spacer my={4}/>
-              <Flex justifyContent={["center","start" ]} alignItems="center" flexDirection="row">
+              <Flex justifyContent="start" alignItems="center" flexDirection="row">
                 <Link to="/course"><Button colorScheme="teal" variant="solid" size="lg" mr={4}>開始使用</Button></Link>
                 <Link to="/about"><Button colorScheme="teal" variant="outline" size="lg" mr={4}>了解更多</Button></Link>
               </Flex> 
