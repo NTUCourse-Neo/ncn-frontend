@@ -126,9 +126,23 @@ function CourseResultViewContainer() {
   } ,[]);
 
   useEffect(() => {
-      async function fetchData() {
+      async function fetchCourseEnrollData() {
         setIsFetchingCourseStatus(true);
-        const data = await dispatch(getCourseEnrollInfo(isCourseStatusModalOpen));
+        let data;
+        try {
+            data = await dispatch(getCourseEnrollInfo(isCourseStatusModalOpen));
+        } catch (error) {
+            setIsFetchingCourseStatus(false);
+            setIsCourseStatusModalOpen(null);
+            toast({
+                title: "錯誤",
+                description: "無法取得課程即時資訊",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            });
+            return;
+        }
         if(!data){
           setIsFetchingCourseStatus(false);
           setIsCourseStatusModalOpen(null);
@@ -141,6 +155,7 @@ function CourseResultViewContainer() {
           });
           return;
         }
+        
         setCourseEnrollStatus(data);
         setIsFetchingCourseStatus(false);
       }
@@ -155,7 +170,7 @@ function CourseResultViewContainer() {
             isClosable: true,
           });
         }
-        fetchData();
+        fetchCourseEnrollData();
       }
 
       // console.log(isFetchingCourseStatus);
