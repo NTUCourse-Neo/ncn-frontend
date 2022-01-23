@@ -26,10 +26,7 @@ import {
     TabList,
     TabPanels,
     TabPanel,
-    Badge,
-    Tag,
     SkeletonText,
-    useMediaQuery
 } from '@chakra-ui/react';
 import {
     FaRegEdit,
@@ -38,18 +35,14 @@ import {
     FaRegHandPointUp,
     FaRegMeh,
     FaPlusSquare,
-    FaPlus,
-    FaTrash
 } from 'react-icons/fa';
 import CourseTableContainer from './CourseTableContainer';
 import { fetchCourseTableCoursesByIds, createCourseTable, linkCoursetableToUser, fetchCourseTable, patchCourseTable, fetchUserById, logIn, updateCourseTable } from '../actions/index';
 import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import { useAuth0 } from "@auth0/auth0-react";
-// import { BeatLoader } from 'react-spinners';
-import { hash_to_color_hex } from '../utils/colorAgent';
-import { genNolAddUrl, openPage } from './CourseDrawerContainer';
 import { useNavigate } from 'react-router-dom';
+import CourseListContainer from './CourseListContainer';
 
 const LOCAL_STORAGE_KEY = 'NTU_CourseNeo_Course_Table_Key';
 
@@ -73,10 +66,7 @@ function SideCourseTableContainer(props) {
 
     // state for delete function in the side course table list.
     // TODO: Move this part to a new dedicated component.
-    const [isDeletingCourse, setIsDeletingCourse] = useState("");
     console.error = () => {};
-
-    const [isMobile] = useMediaQuery('(max-width: 760px)');
 
 
     const parseCourseDateTime = (course, course_time_tmp) => {
@@ -390,81 +380,11 @@ function SideCourseTableContainer(props) {
           </Flex>
         );
       }
-      const renderCourseList = () => {
-        const handleDeleteCourse = async (course_id) => {
-          // console.log("course_id: ",course_id);
-          const new_courses = courseTable.courses.filter(course => course !== course_id);
-          // console.log("new_courses: ",new_courses);
-          setIsDeletingCourse(course_id);
-          try {
-            await dispatch(patchCourseTable(courseTable._id, courseTable.name, courseTable.user_id, courseTable.expire_ts, new_courses));
-              toast({
-                title: `刪除課程成功`,
-                description: `課程已刪除`,
-                status: 'success',
-                duration: 3000,
-                isClosable: true
-              });
-            }catch (e){
-              toast({
-                title: `刪除課程失敗`,
-                description: `請稍後再試`,
-                status: 'error',
-                duration: 3000,
-                isClosable: true
-              });
-            }
-            setIsDeletingCourse("");
-          };
-        return(
-          <Flex flexDirection="column" justifyContent={isMobile? "start":"center"} alignItems={isMobile? "start":"center"} h="100%" w="100%">
-            {
-                Object.keys(courses).map((key, index) => {
-                const course = courses[key];
-                if(isMobile){
-                  return(
-                    <Flex key={index} flexDirection="row" justifyContent="start" alignItems="center" h="100%" w="100%" py="1" px="2" bg="gray.100" my="1" borderRadius="lg" as="button">
-                      <Tag size="md" key={index} variant='solid' bg={hash_to_color_hex(course._id, 0.8)} color="gray.800" mr="2">{index + 1}</Tag>
-                    <Flex key={index} flexDirection="column" justifyContent="start" alignItems="start" h="100%" w="100%">
-                        <Flex flexDirection="row" justifyContent="start" alignItems="center" h="100%" w="100%" mb="1">
-                          <Text fontSize="xl" fontWeight="bold" color="gray">{course.course_name}</Text>
-                        </Flex>
-                        <Flex flexDirection="row" justifyContent="start" alignItems="center" mb="1">
-                          <Badge colorScheme="blue" size="lg" mr="2">{course.id}</Badge>
-                          <Badge variant="outline" isTruncated>{course.time_loc}</Badge>
-                        </Flex>
-                        <Flex flexDirection="row" justifyContent="start" alignItems="center">
-                          <Button mr="2" size="xs" variant="outline" colorScheme="blue" leftIcon={<FaPlus/>} onClick={() => openPage(genNolAddUrl(course), true)}>課程網</Button>
-                          <IconButton size="xs" variant="outline" colorScheme="red" icon={<FaTrash />} onClick={() => handleDeleteCourse(course._id)} isLoading={isDeletingCourse === course._id}/>
-                        </Flex>
-                      </Flex>
-                  </Flex>
-                  );
-                }
-                return(
-                  <Flex key={index} flexDirection="row" justifyContent="center" alignItems="center" h="100%" w="100%" py="2" px="2" bg="gray.100" my="1" borderRadius="lg" as="button">
-                    <Flex flexDirection="row" justifyContent="start" alignItems="center" h="100%" w="100%">
-                      <Tag size="lg" key={index} variant='solid' bg={hash_to_color_hex(course._id, 0.8)} color="gray.800" mr="4">{index + 1}</Tag>
-                      <Badge colorScheme="blue" size="lg" mx="2">{course.id}</Badge>
-                      <Text fontSize="xl" fontWeight="bold" color="gray">{course.course_name}</Text>
-                      <Badge ml="4" variant="outline" isTruncated>{course.time_loc}</Badge>
-                    </Flex>
-                    <Flex ml="4" flexDirection="row" justifyContent="end" alignItems="center">
-                      <Button mx="2" size="sm" variant="outline" colorScheme="blue" leftIcon={<FaPlus/>} onClick={() => openPage(genNolAddUrl(course), true)}>課程網</Button>
-                      <IconButton mx="2" size="sm" variant="outline" colorScheme="red" icon={<FaTrash />} onClick={() => handleDeleteCourse(course._id)} isLoading={isDeletingCourse === course._id}/>
-                    </Flex>
-                  </Flex>
-                );
-              })
-            }
-          </Flex>
-        );
-      };
       return(
         <Box overflow="auto" w="100%" mt="4">
           <Flex flexDirection="column">
             <Tabs>
-            <Flex flexDirection="row" justifyContent="start" alignItems="center" my="2" ml="4">
+            <Flex flexDirection="row" justifyContent="start" alignItems="center" mt="2" ml="4">
                 {
                   courseTable?
                   <Flex alignItems="center" flexWrap="wrap">
@@ -486,7 +406,7 @@ function SideCourseTableContainer(props) {
                   </Flex>
                 </TabPanel>
                 <TabPanel>
-                  {renderCourseList()}
+                  <CourseListContainer courses={courses} courseTable={courseTable}/>
                 </TabPanel>
               </TabPanels>
             </Tabs>
