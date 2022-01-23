@@ -247,6 +247,7 @@ function CourseResultViewContainer() {
             </Modal>
           </>
       );
+  };
 
   const renderNoLoginWarning = () => {
     const onClose = () => setIsLoginWarningOpen(false);
@@ -541,7 +542,7 @@ function CourseResultViewContainer() {
             <Collapse in={displayTable} animateOpacity>
                 <Flex justifyContent="end" mr="2">
                     <Box position="absolute" top={isMobile?"12vh":"8vh"} zIndex={isMobile? "10000":"1"} w={isMobile? "90vw":"40vw"} h={isMobile? "70vh":"70vh"} bg="gray.200" mt="128px" borderRadius="lg" boxShadow="xl">
-                        <SideCourseTableContainer isOpen={displayTable} setIsOpen={setDisplayTable} hoveredCourse={hoveredCourse} setHoveredCourse={setHoveredCourse} courseIds={coursesInTable} setCourseIds={setCoursesInTable} setIsLoginWarningOpen={setIsLoginWarningOpen} agreeToCreateTableWithoutLogin={agreeToCreateTableWithoutLogin}/>
+                        <SideCourseTableContainer isOpen={displayTable} setIsOpen={setDisplayTable} hoveredCourse={hoveredCourse} setHoveredCourse={setHoveredCourse} courseIds={coursesInTable} setCourseIds={setCoursesInTable} setIsLoginWarningOpen={setIsLoginWarningOpen} agreeToCreateTableWithoutLogin={agreeToCreateTableWithoutLogin} setIsCourseStatusModalOpen={setIsCourseStatusModalOpen}/>
                     </Box>
                 </Flex>
             </Collapse>
