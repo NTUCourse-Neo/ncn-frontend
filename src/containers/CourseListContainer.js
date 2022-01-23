@@ -106,8 +106,8 @@ function CourseListContainer({ courseTable, courses }) {
     <>
       <Flex flexDirection="row" justifyContent="start" alignItems="center" w="100%" py="2" px="2">
         <Text fontSize="md" fontWeight="bold" color="gray.600">已選 {courseListForSort.length} 課程</Text>
-        <Button ml="4" size="xs" variant="ghost" colorScheme="blue" leftIcon={<FaPlus/>}>
-          批次加入課程網 <Text ml="1" as='sup' color="gray.400" fontWeight="500" style={{fontStyle: "italic"}}>beta</Text>
+        <Button ml="4" size="xs" variant="ghost" colorScheme="blue" leftIcon={<FaPlus/>} disabled>
+          批次加入課程網 <Text ml="1" as='sup' color="gray.500" fontWeight="500" style={{fontStyle: "italic"}}>coming soon</Text>
         </Button>
         <Spacer />
         <ScaleFade initialScale={0.9} in={isEdited()}>

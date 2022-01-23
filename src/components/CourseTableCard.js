@@ -25,7 +25,8 @@ import {
 } from '@chakra-ui/react';
 import { hash_to_color_hex } from '../utils/colorAgent';
 import {sortableContainer, sortableElement, sortableHandle} from 'react-sortable-hoc';
-import { FaBars, FaTrashAlt, FaExclamationTriangle } from 'react-icons/fa';
+import { FaTrashAlt, FaExclamationTriangle } from 'react-icons/fa';
+import { MdDragHandle } from 'react-icons/md';
 import {RenderNolContentBtn} from '../containers/CourseDrawerContainer';
 import {useSelector, useDispatch} from 'react-redux';
 import {patchCourseTable} from '../actions';
@@ -60,7 +61,7 @@ function CourseTableCard(props){
         return !(courseOrder.every((course, index) => course===courseList[index])) || prepareToRemoveCourseId.length > 0;
     }
 
-    const DragHandle = sortableHandle(() => <FaBars />);
+    const DragHandle = sortableHandle(() => <MdDragHandle cursor="row-resize" size="20" color="gray"/>);
     const SortableElement = sortableElement(({key, course}) => (
       <Flex className="sortableHelper" alignItems="center" my="1" key={"Sortable_"+key+"_Flex"}>
         <DragHandle key={"Sortable_"+key+"_DragHandle"}/>
