@@ -51,6 +51,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import useOnScreen from '../hooks/useOnScreen';
 import {mapStateToTimeTable, mapStateToIntervals} from '../utils/timeTableConverter';
 import { info_view_map } from '../data/mapping_table';
+import { useAuth0 } from '@auth0/auth0-react';
 import BetaBadge from '../components/BetaBadge';
 
 
@@ -109,6 +110,8 @@ function CourseResultViewContainer() {
     remain: "",
   });
 
+  const { isAuthenticated } = useAuth0();
+
   useEffect(() => {
       dispatch(setNewDisplayTags(displayTags))
   },[displayTags]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -125,11 +128,32 @@ function CourseResultViewContainer() {
       async function fetchData() {
         setIsFetchingCourseStatus(true);
         const data = await dispatch(getCourseEnrollInfo(isCourseStatusModalOpen));
+        if(!data){
+          setIsFetchingCourseStatus(false);
+          setIsCourseStatusModalOpen(null);
+          toast({
+            title: "錯誤",
+            description: "無法取得課程即時資訊",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+          return;
+        }
         setCourseEnrollStatus(data);
         setIsFetchingCourseStatus(false);
       }
       if(isCourseStatusModalOpen){
-          fetchData();
+        if(!isAuthenticated){
+          toast({
+            title: "請先登入",
+            description: "課程即時資訊功能尚為 Beta 階段，僅供會員搶先試用",
+            status: "info",
+            duration: 3000,
+            isClosable: true,
+          });
+        }
+        fetchData();
       }
       console.log(isFetchingCourseStatus);
   } ,[isCourseStatusModalOpen]);
@@ -142,7 +166,7 @@ function CourseResultViewContainer() {
     };
       return(
           <>
-            <Modal isOpen={isCourseStatusModalOpen} onClose={() => {setIsCourseStatusModalOpen(null)}} size="xl">
+            <Modal isOpen={isCourseStatusModalOpen && isAuthenticated} onClose={() => {setIsCourseStatusModalOpen(null)}} size="xl">
                 <ModalOverlay />
                 <ModalContent>
                 <ModalHeader>課程即時資訊<BetaBadge content="beta" /></ModalHeader>

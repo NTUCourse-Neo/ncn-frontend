@@ -140,7 +140,6 @@ const fetchSearchResults = (ids_arr, filters_enable, filter_obj, batch_size, off
 const getCourseEnrollInfo = (course_id) => async (dispatch)=>{
     try {
         const {data: {course_status}} = await instance.get(`/courses/${course_id}/enrollinfo`);
-        console.log(course_status); // checking receive array of courses 
         return course_status
     } catch (error) {
         if (error.response) {
