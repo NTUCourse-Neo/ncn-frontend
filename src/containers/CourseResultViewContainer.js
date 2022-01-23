@@ -101,6 +101,7 @@ function CourseResultViewContainer() {
   const [displayTags, setDisplayTags] = useState(display_tags);
   const available_tags = ["required", "total_slot", "enroll_method", "area"];
 
+  // states for course enroll status
   const [isCourseStatusModalOpen, setIsCourseStatusModalOpen] = useState(null);
   const [isFetchingCourseStatus, setIsFetchingCourseStatus] = useState(false);
   const [courseEnrollStatus, setCourseEnrollStatus] = useState({
@@ -143,6 +144,7 @@ function CourseResultViewContainer() {
         setCourseEnrollStatus(data);
         setIsFetchingCourseStatus(false);
       }
+
       if(isCourseStatusModalOpen){
         if(!isAuthenticated){
           toast({
@@ -155,8 +157,9 @@ function CourseResultViewContainer() {
         }
         fetchData();
       }
-      console.log(isFetchingCourseStatus);
-  } ,[isCourseStatusModalOpen]);
+
+      // console.log(isFetchingCourseStatus);
+  } ,[isCourseStatusModalOpen]); // eslint-disable-line react-hooks/exhaustive-deps
   
   const renderCourseStatusModal = () => {
     const renderFormattedTime = () => {
