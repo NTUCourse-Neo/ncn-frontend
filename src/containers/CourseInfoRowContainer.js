@@ -25,7 +25,7 @@ function CourseInfoRowContainer(props) {
             props.courseInfo.map((info, index) => {
                 return(
                     <Accordion allowToggle w={isMobile? "90vw":props.w} key={index} onMouseEnter={() => props.setHoveredCourse(info)} onMouseLeave={() => {props.setHoveredCourse(null)}}>
-                        <CourseInfoRow id={info["id"]} index={index} courseInfo={info} selected={props.selectedCourses.includes(info._id)} setHoveredCourse={props.setHoveredCourse} displayTags={props.displayTags} displayTable={props.displayTable} isfavorite={userInfo===null?false:userInfo.db.favorites.includes(info._id)}/>
+                        <CourseInfoRow id={info["id"]} index={index} courseInfo={info} selected={props.selectedCourses.includes(info._id)} setHoveredCourse={props.setHoveredCourse} displayTags={props.displayTags} displayTable={props.displayTable} isfavorite={userInfo===null?false:userInfo.db.favorites.includes(info._id)} isCourseStatusModalOpen={props.isCourseStatusModalOpen} setIsCourseStatusModalOpen={props.setIsCourseStatusModalOpen} />
                         <Spacer my={isMobile? "2":"1"} />
                     </Accordion>
                 );

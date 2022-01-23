@@ -34,7 +34,7 @@ import {
     FaRegHandPointDown,
     FaRegHandPointUp,
     FaRegMeh,
-    FaPlusSquare,
+    FaPlusSquare
 } from 'react-icons/fa';
 import CourseTableContainer from './CourseTableContainer';
 import { fetchCourseTableCoursesByIds, createCourseTable, linkCoursetableToUser, fetchCourseTable, patchCourseTable, fetchUserById, logIn, updateCourseTable } from '../actions/index';
@@ -48,7 +48,7 @@ const LOCAL_STORAGE_KEY = 'NTU_CourseNeo_Course_Table_Key';
 
 function SideCourseTableContainer(props) {
     const navigate = useNavigate();
-    const {user, isLoading, getAccessTokenSilently} = useAuth0();
+    const {user, isLoading, isAuthenticated, getAccessTokenSilently} = useAuth0();
     const toast = useToast();
     const dispatch = useDispatch();
     const courseTable = useSelector(state => state.course_table);
@@ -64,10 +64,7 @@ function SideCourseTableContainer(props) {
     const [loading, setLoading] = useState(true);
     const [expired, setExpired] = useState(false);
 
-    // state for delete function in the side course table list.
-    // TODO: Move this part to a new dedicated component.
     console.error = () => {};
-
 
     const parseCourseDateTime = (course, course_time_tmp) => {
       course.time_loc_pair.map(time_loc_pair => { // eslint-disable-line array-callback-return
@@ -367,7 +364,6 @@ function SideCourseTableContainer(props) {
     };
     const renderSideCourseTableContent = () => {
       if((courseTable===null || expired===true) && !(loading || isLoading)){
-        // console.log("courseTable is null");
         return(
           <Flex flexDirection="column" justifyContent="center" alignItems="center" h="100%" w="100%">
             <Flex flexDirection="row" justifyContent="center" alignItems="center">
@@ -376,7 +372,13 @@ function SideCourseTableContainer(props) {
               <FaRegHandPointDown size="3vh" style={{color:"gray"}}/>
             </Flex>
             <Text fontSize="2xl" fontWeight="bold" color="gray">{expired?"您的課表已過期":"尚無課表"}</Text>
-            <Button colorScheme="teal" leftIcon={<FaPlusSquare />} onClick={()=>{handleCreateTable()}}>新增課表</Button>
+            <Button colorScheme="teal" leftIcon={<FaPlusSquare />} onClick={()=>{
+              if(isAuthenticated || props.agreeToCreateTableWithoutLogin){
+                handleCreateTable();
+              }else{
+                props.setIsLoginWarningOpen(true);
+              }
+            }}>新增課表</Button>
           </Flex>
         );
       }
@@ -397,7 +399,7 @@ function SideCourseTableContainer(props) {
                     </TabList>
                   </Flex>:
                     <SkeletonText width="15vw" mt="2" h="2" noOfLines={3}/>
-                }
+                  }
             </Flex>
               <TabPanels>
                 <TabPanel>
