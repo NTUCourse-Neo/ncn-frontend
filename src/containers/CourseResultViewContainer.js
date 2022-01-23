@@ -115,7 +115,7 @@ function CourseResultViewContainer() {
   
   const renderNoLoginWarning = () => {
     const onClose = () => setIsLoginWarningOpen(false);
-    console.log("renderNoLoginWarning");
+    // console.log("renderNoLoginWarning");
     return(
       <>
         <AlertDialog isOpen={isLoginWarningOpen} onClose={onClose} motionPreset='slideInBottom' isCentered>
