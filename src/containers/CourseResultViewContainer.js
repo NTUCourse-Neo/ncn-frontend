@@ -25,9 +25,17 @@ import {
     Tag,
     TagLeftIcon,
     useMediaQuery,
+    AlertDialog,
+    AlertDialogOverlay,
+    AlertDialogContent,
+    AlertDialogHeader,
+    AlertDialogBody,
+    AlertDialogFooter,
+    Alert,
+    AlertIcon,
 } from '@chakra-ui/react';
 import { BeatLoader } from 'react-spinners';
-import { FaAngleLeft, FaChevronDown, FaChevronUp, FaPlus, FaMinus } from 'react-icons/fa';
+import { FaAngleLeft, FaChevronDown, FaChevronUp, FaPlus, FaMinus, FaArrowRight } from 'react-icons/fa';
 import CourseInfoRowContainer from './CourseInfoRowContainer';
 import FilterModal from '../components/FilterModal';
 import CourseSearchInput from '../components/CourseSearchInput';
@@ -38,6 +46,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import useOnScreen from '../hooks/useOnScreen';
 import {mapStateToTimeTable, mapStateToIntervals} from '../utils/timeTableConverter';
 import { info_view_map } from '../data/mapping_table';
+import { useAuth0 } from '@auth0/auth0-react';
 
 
 function CourseResultViewContainer() {
@@ -59,6 +68,8 @@ function CourseResultViewContainer() {
   const total_count = useSelector(state => state.total_count);
   const display_tags = useSelector(state => state.display_tags);
 
+  const { loginWithPopup } = useAuth0();
+
   const [isMobile] = useMediaQuery("(max-width: 760px)");
 
   const [selectedTime, setSelectedTime] = useState(mapStateToTimeTable(search_filters.time));
@@ -73,6 +84,10 @@ function CourseResultViewContainer() {
 
   const [ displayFilter, setDisplayFilter ] = useState(false);
   const [ displayTable, setDisplayTable ] = useState(!isMobile);
+
+  // state for no login warning when creating a course table.
+  const [isLoginWarningOpen, setIsLoginWarningOpen] = useState(false);
+  const [agreeToCreateTableWithoutLogin, setAgreeToCreateTableWithoutLogin] = useState(false);
 
   // State for the course result row that is been hovered now.
   const [ hoveredCourse, setHoveredCourse ] = useState(null);
@@ -98,6 +113,41 @@ function CourseResultViewContainer() {
       window.scrollTo(0, 0);
   } ,[]);
   
+  const renderNoLoginWarning = () => {
+    const onClose = () => setIsLoginWarningOpen(false);
+    // console.log("renderNoLoginWarning");
+    return(
+      <>
+        <AlertDialog isOpen={isLoginWarningOpen} onClose={onClose} motionPreset='slideInBottom' isCentered>
+          <AlertDialogOverlay>
+            <AlertDialogContent>
+              <AlertDialogHeader fontSize='lg' fontWeight='bold'>
+                等等，你還沒登入啊！
+              </AlertDialogHeader>
+              <AlertDialogBody>
+              <Alert status='warning'>
+                <AlertIcon />
+                訪客課表將於一天後過期，屆時您將無法存取此課表。
+              </Alert>
+              <Text mt={4} color="gray.600" fontWeight="700" fontSize="lg">
+                真的啦！相信我。<br/>註冊跟登入非常迅速，而且課表還能永久保存喔！
+              </Text>
+              </AlertDialogBody>
+              <AlertDialogFooter>
+                <Button onClick={() => {setIsLoginWarningOpen(false); setAgreeToCreateTableWithoutLogin(true);}}>
+                  等等再說
+                </Button>
+                <Button colorScheme='teal' rightIcon={<FaArrowRight />} onClick={() => {setIsLoginWarningOpen(false); loginWithPopup();}} ml={3}>
+                  去登入
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialogOverlay>
+        </AlertDialog>
+      </>
+    );
+  };
+
   const renderSettingSwitch = (label, default_checked, isDisabled) => {
         const handleChangeSettings = (e)=>{
             // console.log(e.currentTarget.checked);
@@ -186,6 +236,7 @@ function CourseResultViewContainer() {
 
     return (
         <>
+          {renderNoLoginWarning()}
             <Flex w="100vw" direction="row" justifyContent="center" alignItems="center" overflow="hidden">
                 <Box display="flex" flexBasis="100vw" flexDirection="column" alignItems="start" h="95vh" overflow="auto" maxW="screen-md" mx="auto" pt="64px" pb="40px">
                     <div ref={topRef}/>
@@ -250,8 +301,6 @@ function CourseResultViewContainer() {
                                                         </Menu>
                                                         </Flex>
                                                     </Flex>
-                                                    
-                                                    
                                                 </Flex>
                                             </TabPanel>
                                             <TabPanel>
@@ -356,7 +405,7 @@ function CourseResultViewContainer() {
             <Collapse in={displayTable} animateOpacity>
                 <Flex justifyContent="end" mr="2">
                     <Box position="absolute" top={isMobile?"12vh":"8vh"} zIndex={isMobile? "10000":"1"} w={isMobile? "90vw":"40vw"} h={isMobile? "70vh":"70vh"} bg="gray.200" mt="128px" borderRadius="lg" boxShadow="xl">
-                        <SideCourseTableContainer isOpen={displayTable} setIsOpen={setDisplayTable} hoveredCourse={hoveredCourse} setHoveredCourse={setHoveredCourse} courseIds={coursesInTable} setCourseIds={setCoursesInTable}/>
+                        <SideCourseTableContainer isOpen={displayTable} setIsOpen={setDisplayTable} hoveredCourse={hoveredCourse} setHoveredCourse={setHoveredCourse} courseIds={coursesInTable} setCourseIds={setCoursesInTable} setIsLoginWarningOpen={setIsLoginWarningOpen} agreeToCreateTableWithoutLogin={agreeToCreateTableWithoutLogin}/>
                     </Box>
                 </Flex>
             </Collapse>
