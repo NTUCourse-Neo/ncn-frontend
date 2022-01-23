@@ -18,10 +18,11 @@ import {
     Tooltip,
     useToast,
     Collapse,
-    useMediaQuery
+    useMediaQuery,
+    IconButton
 } from '@chakra-ui/react';
 import {CourseDrawerContainer} from '../containers/CourseDrawerContainer';
-import { FaPlus, FaHeart} from 'react-icons/fa';
+import { FaPlus, FaHeart, FaRss} from 'react-icons/fa';
 import { info_view_map } from '../data/mapping_table';
 import {useDispatch, useSelector} from 'react-redux';
 import { fetchCourseTable, patchCourseTable, addFavoriteCourse } from '../actions';
@@ -361,6 +362,7 @@ function CourseInfoRow(props) {
                     </Flex>
                 </AccordionButton>
                 <Flex alignItems="center" justifyContent="end" flexDirection={isMobile? "column":"row"}>
+                    <IconButton size="sm" colorScheme="blue" icon={<FaRss />} variant="ghost" onClick={() => {props.setIsCourseStatusModalOpen(props.courseInfo.id)}}/>
                     <Button size="sm" ml="20px" variant={props.isfavorite? "solid":"outline"} colorScheme={"red"} onClick={() => handleAddFavorite(props.courseInfo._id)} isLoading={addingFavoriteCourse}>
                         <Box>
                             <FaHeart/>
