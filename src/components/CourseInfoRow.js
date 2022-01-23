@@ -279,12 +279,13 @@ function CourseInfoRow(props) {
                     <Spacer />
                 </AccordionButton>
                 <Flex alignItems="center" justifyContent="end" flexDirection={isMobile? "column":"row"}>
-                    <Button size="sm" ml="20px" variant={props.isfavorite? "solid":"outline"} colorScheme={"red"} onClick={() => handleAddFavorite(props.courseInfo._id)} isLoading={addingFavoriteCourse}>
+                    <IconButton size="sm" colorScheme="blue" icon={<FaRss />} variant="ghost" onClick={() => {props.setIsCourseStatusModalOpen(props.courseInfo.id)}}/>
+                    <Button size="sm" variant={props.isfavorite? "solid":"outline"} colorScheme={"red"} onClick={() => handleAddFavorite(props.courseInfo._id)} isLoading={addingFavoriteCourse}>
                         <Box>
                             <FaHeart/>
                         </Box>
                     </Button>
-                    <Button size="sm" ml="20px" colorScheme={props.selected? "red":"blue"} onClick={() => handleButtonClick(props.courseInfo)} isLoading={addingCourse}>
+                    <Button size="sm" colorScheme={props.selected? "red":"blue"} onClick={() => handleButtonClick(props.courseInfo)} isLoading={addingCourse}>
                         <Box transform={props.selected ? "rotate(45deg)":""} transition="all ease-in-out 200ms">
                             <FaPlus />
                         </Box>
