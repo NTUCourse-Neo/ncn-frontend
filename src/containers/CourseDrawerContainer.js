@@ -15,7 +15,8 @@ import {
     ModalFooter,
     ModalBody,
     ModalCloseButton,
-    useMediaQuery
+    useMediaQuery,
+    Box
   } from '@chakra-ui/react';
   import { FaPlus, FaInfoCircle } from 'react-icons/fa';
   import { IoMdOpen } from 'react-icons/io';
@@ -27,18 +28,33 @@ function RenderNolContentBtn(course, title, key){
         <>
             <Button variant="ghost" colorScheme="blue" leftIcon={<FaInfoCircle/>} size="sm" onClick={onOpen} key={"NolContent_"+key}>{title}</Button>
 
-            <Modal size="xl" isOpen={isOpen} onClose={onClose} motionPreset='slideInBottom' scrollBehavior="outside" key={"NolContent_Modal_"+key}>
+            <Modal size="full" isOpen={isOpen} onClose={onClose} motionPreset='slideInBottom' scrollBehavior="outside" key={"NolContent_Modal_"+key}>
             <ModalOverlay key={"NolContent_ModalOverlay_"+key}/>
-            <ModalContent maxW="850px" height="90vh" key={"NolContent_Modal_"+key}>
+            <ModalContent height="90vh" key={"NolContent_Modal_"+key}>
                 <ModalHeader key={"NolContent_Header_"+key}>課程詳細資訊</ModalHeader>
                 <ModalCloseButton key={"NolContent_ModalCloseButton_"+key}/>
+
                 <ModalBody key={"NolContent_ModalBody_"+key}>
-                <iframe title={course.id} sandbox="allow-scripts" src={genNolUrl(course)} height="100%" width="100%" key={"NolContent_iframe_"+key}/>   
+                    {/* <iframe title={course.id} sandbox="allow-scripts" src={genNolUrl(course)} height="100%" width="100%" key={"NolContent_iframe_"+key}/>    */}
+                    <Flex w='100%' h='100%' borderRadius='2xl' flexDirection={{base: 'column', md: 'row'}} justify='space-around'>
+                        <Flex w={{base: '100%', md: '30%'}} flexDirection='column' justify='start'>
+                            <Box bg='teal.300' h='75%' borderRadius='2xl' fontSize='3xl' mb={5}>課程基本資訊</Box>
+                            <Box bg='teal.300' h='25%' borderRadius='2xl' fontSize='3xl' mb={5}>加簽資訊( StatusModal / History data )</Box>
+                        </Flex>
+                        <Flex w={{base: '100%', md: '30%'}} flexDirection='column' justify='start'>
+                            <Box bg='teal.300' h='55%' borderRadius='2xl' fontSize='3xl' mb={5}>Little Time Table (show time-loc info)</Box>
+                            <Box bg='teal.300' h='45%' borderRadius='2xl' fontSize='3xl' mb={5}>Rating from ptt or other source</Box>
+                        </Flex>
+                        <Flex w={{base: '100%', md: '30%'}} flexDirection='column' justify='start'>
+                            <Box bg='teal.300' h='100%' borderRadius='2xl' fontSize='3xl' mb={5}>課程大綱</Box>
+                        </Flex>
+                    </Flex>
                 </ModalBody>
+
                 <ModalFooter key={"NolContent_ModalFooter_"+key}>
-                <Text fontWeight="500" fontSize="sm" color="gray.300">資料來自 台大課程網</Text>
-                <Spacer key={"NolContent_Spacer_"+key}/>
-                <Button key={"NolContent_Button_"+key} size="sm" mr="-px" rightIcon={<IoMdOpen />} onClick={() => openPage(genNolUrl(course), false)}>在新分頁中打開</Button>
+                    <Text fontWeight="500" fontSize="sm" color="gray.300">資料來自 台大課程網</Text>
+                    <Spacer key={"NolContent_Spacer_"+key}/>
+                    <Button key={"NolContent_Button_"+key} size="sm" mr="-px" rightIcon={<IoMdOpen />} onClick={() => openPage(genNolUrl(course), false)}>在新分頁中打開</Button>
                 </ModalFooter>
             </ModalContent>
             </Modal>
