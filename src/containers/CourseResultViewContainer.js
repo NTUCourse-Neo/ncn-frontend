@@ -183,8 +183,10 @@ function CourseResultViewContainer() {
             duration: 3000,
             isClosable: true,
           });
+          setIsCourseStatusModalOpen(null)
+        } else {
+          fetchCourseEnrollData();
         }
-        fetchCourseEnrollData();
       }
 
       // console.log(isFetchingCourseStatus);
