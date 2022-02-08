@@ -37,7 +37,6 @@ function RenderNolContentBtn(course, title, key){
             <ModalContent height="90vh" key={"NolContent_Modal_"+key}>
                 <ModalHeader key={"NolContent_Header_"+key}>
                   <HStack spacing="4">
-                    <IconButton key={"close_btn"+key} size="lg" icon={<ImCross />} variant="ghost" onClick={() => onClose()}/>
                     <Tag size="md" colorScheme="blue"><Text fontWeight="800" fontSize="lg">{course.id}</Text></Tag>
                     <Text fontSize="3xl" fontWeight="800" color="gray.700">{course.course_name}</Text>
                     <Text fontSize="2xl" fontWeight="500" color="gray.500">{course.teacher}</Text>
@@ -45,9 +44,10 @@ function RenderNolContentBtn(course, title, key){
                     <Button key={"NolContent_Button_"+key} size="md" colorScheme="blue" variant="outline" leftIcon={<FaPlus />}>加入課表</Button>
                     <Button key={"NolContent_Button_"+key} size="md" colorScheme="red" variant="outline" leftIcon={<FaHeart />}>加入最愛</Button>
                     <Button key={"NolContent_Button_"+key} size="md" rightIcon={<IoMdOpen />} onClick={() => openPage(genNolUrl(course), false)}>課程網資訊</Button>
+                    <IconButton key={"close_btn"+key} size="md" icon={<ImCross/>} variant="ghost" onClick={() => onClose()}/>
                   </HStack>
                 </ModalHeader>
-                <ModalBody key={"NolContent_ModalBody_"+key}>
+                <ModalBody key={"NolContent_ModalBody_"+key} h="80%">
                     <CourseDetailInfoContainer course={course}/>
                 </ModalBody>
 
