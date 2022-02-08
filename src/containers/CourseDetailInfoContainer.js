@@ -14,46 +14,27 @@ import{
   useMediaQuery,
   Box,
   Button,
+  Tag,
 } from '@chakra-ui/react';
-import {
-  Chart as ChartJS,
-  RadialLinearScale,
-  PointElement,
-  LineElement,
-  Filler,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-import { Radar } from 'react-chartjs-2';
 import { PieChart } from 'react-minimal-pie-chart';
 import { FaCircle, FaRss } from 'react-icons/fa';
 import React from 'react';
 import { IoMdOpen } from 'react-icons/io';
 import BetaBadge from '../components/BetaBadge';
+import { info_view_map } from '../data/mapping_table';
 
-ChartJS.register(
-  RadialLinearScale,
-  PointElement,
-  LineElement,
-  Filler,
-  Tooltip
-);
 const pieMock = [
   { title: '作業', value: 40, color: '#E38627' },
   { title: '期中考', value: 30, color: '#C13C37' },
   { title: '期末考', value: 30, color: '#6A2135' },
 ]
-const radarMock = {
-  labels: ["甜", "涼", "紮實", "品質"],
-  datasets: [
-    {
-      label: "評分",
-      data: [4.2, 3.6, 3.5, 4],
-      backgroundColor: "rgba(179,181,198,0.2)",
-      borderColor: "rgba(179,181,198,1)",
-      borderWidth: 1,
-    },
-  ],
+const ratingMock = {
+  "sweety": 4.75,
+  "breeze": 1.5,
+  "workload": 3.75,
+  "quality": 5,
+  "count": 2,
+  "url": "https://rating.myntu.me/course-overview?_id=611654f61ca507248a5ca342&instructor=呂宛蓁&courseName=桌球初級"
 }
 const syllabusMock = {
   intro: "土木系大一必修課程，會從最基礎的內容教起。",
@@ -63,8 +44,29 @@ const syllabusMock = {
   material: "待補",
   specify: ""
 }
+const syllabusTitle = {
+  intro: "概述",
+  objective: "目標",
+  requirement: "要求",
+  office_hour: "Office Hour",
+  material: "參考書目",
+  specify: "指定閱讀"
+}
+
 function CourseDetailInfoContainer({ course }){
   const [isMobile] = React.useState(useMediaQuery('(max-width: 760px)'));
+  const course_codes_1 = [
+    {title: "流水號", value: course.id},
+    {title: "課號", value: course.course_code},
+    {title: "課程識別碼", value: course.course_id},
+    {title: "班次", value: course.class_id ? course.class_id : "無"},
+  ];
+  const course_codes_2 = [
+    {title: "人數上限", value: course.total_slot},
+    {title: "必選修", value: info_view_map.required.map[course.required]},
+    {title: "開課學期", value: course.semester},
+    {title: "授課語言", value: info_view_map.language.map[course.language]},
+  ];
   const renderDataSource = (dataSource) => {
     return(
       <HStack spacing="2">
@@ -75,8 +77,68 @@ function CourseDetailInfoContainer({ course }){
   }
   return(
     <Flex w="100%" h="100%" flexDirection="column" flexWrap="wrap">
-      <Flex bg='gray.100' m='2' px="6" py="4" borderRadius='xl' flexDirection="column">
+      <Flex bg='gray.100' h="60%" m='2' px="6" py="4" borderRadius='xl' flexDirection="column">
         <Text fontSize="2xl" fontWeight="800" color="gray.700">課程詳細資料</Text>
+        <Flex mt="4" justifyContent="start" alignItems="start">
+          <Flex mr="16" flexDirection="column" flexWrap="wrap">
+            {
+              course_codes_1.map((item, index) => {
+                return(
+                  <Stat key={"code_stats_"+index}>
+                    <StatLabel>{item.title}</StatLabel>
+                    <StatNumber>{item.value}</StatNumber>
+                  </Stat>
+                );
+              })
+            }
+          </Flex>
+          <Flex mr="16" flexDirection="column" flexWrap="wrap">
+            {
+              course_codes_2.map((item, index) => {
+                return(
+                  <Stat key={"code_stats_"+index}>
+                    <StatLabel>{item.title}</StatLabel>
+                    <StatNumber>{item.value}</StatNumber>
+                  </Stat>
+                );
+              })
+            }
+          </Flex>
+          <Flex flexDirection="column" flexWrap="wrap">
+            <Stat>
+              <StatLabel>系所</StatLabel>
+              <StatNumber>
+                <HStack spacing="2">
+                  {
+                    course.department === "" ? "無":
+                    course.department.map((item, index) => {
+                      return(
+                        <Tag key={"department_"+index} colorScheme="blue" size="lg">{item}</Tag>
+                        );
+                      })
+                  }
+                </HStack>
+              </StatNumber>
+            </Stat>
+            <Stat>
+              <StatLabel>學分</StatLabel>
+              <StatNumber>{course.credit}</StatNumber>
+            </Stat>
+            <Stat>
+              <StatLabel>加簽方式</StatLabel>
+              <StatNumber>
+                <HStack spacing="2">
+                  <Tag colorScheme="blue" size="lg" fontWeight="800" fontSize="xl">{course.enroll_method}</Tag>
+                  <Text>{info_view_map.enroll_method.map[course.enroll_method]}</Text>
+                </HStack>
+              </StatNumber>
+            </Stat>
+            <Stat>
+              <StatLabel>開課單位</StatLabel>
+              <StatNumber>{course.provider.toUpperCase()}</StatNumber>
+            </Stat>
+          </Flex>
+        </Flex>
       </Flex>
       <Flex  bg='gray.100' m='2' px="6" py="4" borderRadius='xl' flexDirection="column">
         <Tabs variant='soft-rounded' size="sm">
@@ -115,10 +177,10 @@ function CourseDetailInfoContainer({ course }){
         </Tabs>        
           {renderDataSource("臺大選課系統")}
       </Flex>
-      <Flex  h="20%" bg='gray.100' m='2' px="6" py="4" borderRadius='xl' flexDirection="column">
+      <Flex h="20%" bg='gray.100' m='2' px="6" py="4" borderRadius='xl' flexDirection="column">
         <Text fontSize="2xl" fontWeight="800" color="gray.700">加簽資訊<BetaBadge content="coming soon" size="sm"/></Text>
       </Flex>
-      <Flex  h="400px" bg='gray.100' m='2' px="6" py="4" borderRadius='xl' flexDirection="column" justifyContent="space-between">
+      <Flex bg='gray.100' m='2' px="6" py="4" borderRadius='xl' flexDirection="column" justifyContent="space-between">
         <Tabs variant='soft-rounded' size="sm">
           <HStack spacing="4">
             <Text fontSize="2xl" fontWeight="800" color="gray.700">課程評價</Text>
@@ -129,16 +191,31 @@ function CourseDetailInfoContainer({ course }){
           </HStack>
           <TabPanels>
             <TabPanel>
-              <p>one!</p>
+              <p>PTT</p>
             </TabPanel>
             <TabPanel>
               <Flex h="100%" my="4" flexDirection="row" justifyContent="space-between" alignItems="center">
-                <Box w="220px" h="220px">
-                  <Radar data={radarMock}/>
-                </Box>
                 <Flex flexDirection="column" justifyContent="center" alignItems="center">
-                  <Text fontSize="lg" fontWeight="600" color="gray.700">NTURating 上<br/>共有 2 筆評價</Text>
-                  <Button my="2" colorScheme="blue" variant="outline" size="sm" rightIcon={<IoMdOpen/>} >前往 NTURating</Button>
+                  <HStack w="100%" spacing={2} justify="start">
+                    <Text fontSize="lg" fontWeight="600" color="gray.700">甜</Text>
+                    <Text fontSize="lg" fontWeight="600" color="gray.700">{ratingMock.sweety}</Text>
+                  </HStack>
+                  <HStack w="100%" spacing={2} justify="start">
+                    <Text fontSize="lg" fontWeight="600" color="gray.700">涼</Text>
+                    <Text fontSize="lg" fontWeight="600" color="gray.700">{ratingMock.breeze}</Text>
+                  </HStack>
+                  <HStack w="100%" spacing={2} justify="start">
+                    <Text fontSize="lg" fontWeight="600" color="gray.700">紮實</Text>
+                    <Text fontSize="lg" fontWeight="600" color="gray.700">{ratingMock.workload}</Text>
+                  </HStack>
+                  <HStack w="100%" spacing={2} justify="start">
+                    <Text fontSize="lg" fontWeight="600" color="gray.700">品質</Text>
+                    <Text fontSize="lg" fontWeight="600" color="gray.700">{ratingMock.quality}</Text>
+                  </HStack>
+                </Flex>
+                <Flex flexDirection="column" justifyContent="center" alignItems="center">
+                  <Text fontSize="lg" fontWeight="600" color="gray.700">NTURating 上共有 {ratingMock.count} 筆評價</Text>
+                  <Button my="2" colorScheme="blue" variant="outline" size="sm" rightIcon={<IoMdOpen/>} onClick={() => window.open(ratingMock.url, "_blank")}>前往課程評價頁面</Button>
                 </Flex>
               </Flex>
             </TabPanel>
@@ -150,11 +227,23 @@ function CourseDetailInfoContainer({ course }){
         <Text fontSize="2xl" fontWeight="800" color="gray.700">考古題資訊</Text>
         {renderDataSource("PTT NTU-Exam")}
       </Flex>
-      <Flex  bg='gray.100' m='2' px="6" py="4" borderRadius='xl' flexDirection="column">
+      <Flex w="30%" bg='gray.100' m='2' px="6" py="4" borderRadius='xl' flexDirection="column">
         <Text fontSize="2xl" fontWeight="800" color="gray.700">課程大綱</Text>
+        <Flex w="100%" my="4" flexDirection="column" justifyContent="space-evenly" alignItems="start" wordBreak="break-all">
+          {
+            Object.keys(syllabusMock).map((key, index) => {
+              return(
+                <>
+                  <Text fontSize="lg" fontWeight="600" color="gray.700">{syllabusTitle[key]}</Text>
+                  <Text mb="2" fontSize="md" fontWeight="400" color="gray.600">{syllabusMock[key] !== "" ? syllabusMock[key]:"無"}</Text>
+                </>
+              );
+            })
+          }
+        </Flex>
         {renderDataSource("臺大課程網")}
       </Flex>
-      <Flex  bg='gray.100' m='2' px="6" py="4" borderRadius='xl' flexDirection="column">
+      <Flex w="30%" bg='gray.100' m='2' px="6" py="4" borderRadius='xl' flexDirection="column">
         <Text fontSize="2xl" fontWeight="800" color="gray.700">評分方式</Text>
         <Flex my="4" flexDirection="row" justifyContent="space-around" alignItems="center">
           <Box w="200px" h="200px">

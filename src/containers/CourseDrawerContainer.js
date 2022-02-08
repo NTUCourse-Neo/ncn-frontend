@@ -14,7 +14,6 @@ import {
     ModalHeader,
     ModalFooter,
     ModalBody,
-    ModalCloseButton,
     useMediaQuery,
     HStack,
     Tag,
@@ -41,7 +40,10 @@ function RenderNolContentBtn(course, title, key){
                     <Text fontSize="3xl" fontWeight="800" color="gray.700">{course.course_name}</Text>
                     <Text fontSize="2xl" fontWeight="500" color="gray.500">{course.teacher}</Text>
                     <Spacer />
-                    <Button key={"NolContent_Button_"+key} size="md" colorScheme="blue" variant="outline" leftIcon={<FaPlus />}>加入課表</Button>
+                    <ButtonGroup isAttached>
+                      <Button key={"NolContent_Button_"+key} mr='-px' size="md" colorScheme="blue" variant="outline" leftIcon={<FaPlus />}>課表</Button>
+                      <Button key={"NolContent_Button_"+key} size="md" colorScheme="blue" variant="outline" leftIcon={<FaPlus />}>課程網</Button>
+                    </ButtonGroup>
                     <Button key={"NolContent_Button_"+key} size="md" colorScheme="red" variant="outline" leftIcon={<FaHeart />}>加入最愛</Button>
                     <Button key={"NolContent_Button_"+key} size="md" rightIcon={<IoMdOpen />} onClick={() => openPage(genNolUrl(course), false)}>課程網資訊</Button>
                     <IconButton key={"close_btn"+key} size="md" icon={<ImCross/>} variant="ghost" onClick={() => onClose()}/>
