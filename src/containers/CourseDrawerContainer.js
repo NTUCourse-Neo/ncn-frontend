@@ -16,11 +16,15 @@ import {
     ModalBody,
     ModalCloseButton,
     useMediaQuery,
-    Box
+    HStack,
+    Tag,
+    IconButton,
   } from '@chakra-ui/react';
-  import { FaPlus, FaInfoCircle } from 'react-icons/fa';
-  import { IoMdOpen } from 'react-icons/io';
+import { FaPlus, FaInfoCircle, FaHeart } from 'react-icons/fa';
+import { IoMdOpen } from 'react-icons/io';
+import { ImCross } from 'react-icons/im';
 import { info_view_map } from '../data/mapping_table';
+import CourseDetailInfoContainer from './CourseDetailInfoContainer';
 
 function RenderNolContentBtn(course, title, key){
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -31,30 +35,25 @@ function RenderNolContentBtn(course, title, key){
             <Modal size="full" isOpen={isOpen} onClose={onClose} motionPreset='slideInBottom' scrollBehavior="outside" key={"NolContent_Modal_"+key}>
             <ModalOverlay key={"NolContent_ModalOverlay_"+key}/>
             <ModalContent height="90vh" key={"NolContent_Modal_"+key}>
-                <ModalHeader key={"NolContent_Header_"+key}>課程詳細資訊</ModalHeader>
-                <ModalCloseButton key={"NolContent_ModalCloseButton_"+key}/>
-
+                <ModalHeader key={"NolContent_Header_"+key}>
+                  <HStack spacing="4">
+                    <IconButton key={"close_btn"+key} size="lg" icon={<ImCross />} variant="ghost" onClick={() => onClose()}/>
+                    <Tag size="md" colorScheme="blue"><Text fontWeight="800" fontSize="lg">{course.id}</Text></Tag>
+                    <Text fontSize="3xl" fontWeight="800" color="gray.700">{course.course_name}</Text>
+                    <Text fontSize="2xl" fontWeight="500" color="gray.500">{course.teacher}</Text>
+                    <Spacer />
+                    <Button key={"NolContent_Button_"+key} size="md" colorScheme="blue" variant="outline" leftIcon={<FaPlus />}>加入課表</Button>
+                    <Button key={"NolContent_Button_"+key} size="md" colorScheme="red" variant="outline" leftIcon={<FaHeart />}>加入最愛</Button>
+                    <Button key={"NolContent_Button_"+key} size="md" rightIcon={<IoMdOpen />} onClick={() => openPage(genNolUrl(course), false)}>課程網資訊</Button>
+                  </HStack>
+                </ModalHeader>
                 <ModalBody key={"NolContent_ModalBody_"+key}>
-                    {/* <iframe title={course.id} sandbox="allow-scripts" src={genNolUrl(course)} height="100%" width="100%" key={"NolContent_iframe_"+key}/>    */}
-                    <Flex w='100%' h='100%' borderRadius='2xl' flexDirection={{base: 'column', md: 'row'}} justify='space-around'>
-                        <Flex w={{base: '100%', md: '30%'}} flexDirection='column' justify='start'>
-                            <Box bg='teal.300' h='75%' borderRadius='2xl' fontSize='3xl' mb={5}>課程基本資訊</Box>
-                            <Box bg='teal.300' h='25%' borderRadius='2xl' fontSize='3xl' mb={5}>加簽資訊( StatusModal / History data )</Box>
-                        </Flex>
-                        <Flex w={{base: '100%', md: '30%'}} flexDirection='column' justify='start'>
-                            <Box bg='teal.300' h='55%' borderRadius='2xl' fontSize='3xl' mb={5}>Little Time Table (show time-loc info)</Box>
-                            <Box bg='teal.300' h='45%' borderRadius='2xl' fontSize='3xl' mb={5}>Rating from ptt or other source</Box>
-                        </Flex>
-                        <Flex w={{base: '100%', md: '30%'}} flexDirection='column' justify='start'>
-                            <Box bg='teal.300' h='100%' borderRadius='2xl' fontSize='3xl' mb={5}>課程大綱</Box>
-                        </Flex>
-                    </Flex>
+                    <CourseDetailInfoContainer course={course}/>
                 </ModalBody>
 
                 <ModalFooter key={"NolContent_ModalFooter_"+key}>
                     <Text fontWeight="500" fontSize="sm" color="gray.300">資料來自 台大課程網</Text>
                     <Spacer key={"NolContent_Spacer_"+key}/>
-                    <Button key={"NolContent_Button_"+key} size="sm" mr="-px" rightIcon={<IoMdOpen />} onClick={() => openPage(genNolUrl(course), false)}>在新分頁中打開</Button>
                 </ModalFooter>
             </ModalContent>
             </Modal>
