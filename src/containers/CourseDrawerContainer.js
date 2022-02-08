@@ -20,7 +20,7 @@ import {
     Tag,
     IconButton,
   } from '@chakra-ui/react';
-import { FaPlus, FaInfoCircle, FaHeart } from 'react-icons/fa';
+import { FaPlus, FaInfoCircle, FaHeart, FaSyncAlt } from 'react-icons/fa';
 import { IoMdOpen } from 'react-icons/io';
 import { ImCross } from 'react-icons/im';
 import { info_view_map } from '../data/mapping_table';
@@ -52,7 +52,10 @@ function RenderNolContentBtn(course, title, key){
                 </ModalBody>
 
                 <ModalFooter key={"NolContent_ModalFooter_"+key}>
-                    <Text fontWeight="500" fontSize="sm" color="gray.300">資料來自 台大課程網</Text>
+                  <HStack>
+                    <IconButton icon={<FaSyncAlt color="gray"/>} variant="ghost" size="xs"/>
+                    <Text fontWeight="500" fontSize="md" color="gray.300">更新時間</Text>
+                  </HStack>
                     <Spacer key={"NolContent_Spacer_"+key}/>
                 </ModalFooter>
             </ModalContent>
