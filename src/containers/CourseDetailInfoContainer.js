@@ -15,6 +15,7 @@ import{
   Box,
   Button,
   Tag,
+  Spacer,
 } from '@chakra-ui/react';
 import { PieChart } from 'react-minimal-pie-chart';
 import { FaCircle, FaRss } from 'react-icons/fa';
@@ -77,7 +78,7 @@ function CourseDetailInfoContainer({ course }){
   }
   return(
     <Flex w="100%" h="100%" flexDirection="column" flexWrap="wrap">
-      <Flex bg='gray.100' h="60%" m='2' px="6" py="4" borderRadius='xl' flexDirection="column">
+      <Flex w="30%" h="50%" bg='gray.100' m='2' px="6" py="4" borderRadius='xl' flexDirection="column">
         <Text fontSize="2xl" fontWeight="800" color="gray.700">課程詳細資料</Text>
         <Flex mt="4" justifyContent="start" alignItems="start">
           <Flex mr="16" flexDirection="column" flexWrap="wrap">
@@ -140,7 +141,7 @@ function CourseDetailInfoContainer({ course }){
           </Flex>
         </Flex>
       </Flex>
-      <Flex  bg='gray.100' m='2' px="6" py="4" borderRadius='xl' flexDirection="column">
+      <Flex w="30%" h="22%" bg='gray.100' m='2' px="6" py="4" borderRadius='xl' flexDirection="column">
         <Tabs variant='soft-rounded' size="sm">
           <HStack spacing="4">
             <Text fontSize="2xl" fontWeight="800" color="gray.700">選課資訊<BetaBadge content="preview" size="sm"/></Text>
@@ -177,10 +178,10 @@ function CourseDetailInfoContainer({ course }){
         </Tabs>        
           {renderDataSource("臺大選課系統")}
       </Flex>
-      <Flex h="20%" bg='gray.100' m='2' px="6" py="4" borderRadius='xl' flexDirection="column">
+      <Flex w="30%" h="22%" bg='gray.100' m='2' px="6" py="4" borderRadius='xl' flexDirection="column">
         <Text fontSize="2xl" fontWeight="800" color="gray.700">加簽資訊<BetaBadge content="coming soon" size="sm"/></Text>
       </Flex>
-      <Flex bg='gray.100' m='2' px="6" py="4" borderRadius='xl' flexDirection="column" justifyContent="space-between">
+      <Flex w="30%" h="48%" bg='gray.100' m='2' px="6" py="4" borderRadius='xl' flexDirection="column" justifyContent="space-between">
         <Tabs variant='soft-rounded' size="sm">
           <HStack spacing="4">
             <Text fontSize="2xl" fontWeight="800" color="gray.700">課程評價</Text>
@@ -223,11 +224,11 @@ function CourseDetailInfoContainer({ course }){
         </Tabs>
         {renderDataSource("PTT NTUCourse, NTURating")}
       </Flex>
-      <Flex  h="400px" bg='gray.100' m='2' px="6" py="4" borderRadius='xl' flexDirection="column">
+      <Flex w="30%" h="48%" bg='gray.100' m='2' px="6" py="4" borderRadius='xl' flexDirection="column">
         <Text fontSize="2xl" fontWeight="800" color="gray.700">考古題資訊</Text>
         {renderDataSource("PTT NTU-Exam")}
       </Flex>
-      <Flex w="30%" bg='gray.100' m='2' px="6" py="4" borderRadius='xl' flexDirection="column">
+      <Flex w="30%" h="70%" bg='gray.100' m='2' px="6" py="4" borderRadius='xl' flexDirection="column" justifyContent="space-between">
         <Text fontSize="2xl" fontWeight="800" color="gray.700">課程大綱</Text>
         <Flex w="100%" my="4" flexDirection="column" justifyContent="space-evenly" alignItems="start" wordBreak="break-all">
           {
@@ -241,12 +242,13 @@ function CourseDetailInfoContainer({ course }){
             })
           }
         </Flex>
+        <Spacer />
         {renderDataSource("臺大課程網")}
       </Flex>
-      <Flex w="30%" bg='gray.100' m='2' px="6" py="4" borderRadius='xl' flexDirection="column">
+      <Flex w="30%" h="25%" bg='gray.100' m='2' px="6" py="4" borderRadius='xl' flexDirection="column">
         <Text fontSize="2xl" fontWeight="800" color="gray.700">評分方式</Text>
-        <Flex my="4" flexDirection="row" justifyContent="space-around" alignItems="center">
-          <Box w="200px" h="200px">
+        <Flex h="100%" my="4" flexDirection="row" justifyContent="space-around" alignItems="center">
+          <Box>
             <PieChart
               lineWidth={50}
               label={({ dataEntry }) => dataEntry.value+"%"}
