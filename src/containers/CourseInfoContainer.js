@@ -1,12 +1,23 @@
+import { 
+  HStack,
+  Tag,
+  Text,
+  ButtonGroup,
+  Button,
+  Spacer,
+  IconButton,
+  Flex,
+  Image,
+} from "@chakra-ui/react";
 import CourseDetailInfoContainer from "./CourseDetailInfoContainer";
 import {useState, useEffect} from "react";
 import { useDispatch} from "react-redux";
 import { fetchCourse } from "../actions/";
 import { useNavigate } from "react-router-dom";
-import { HStack, Tag, Text, ButtonGroup, Button, Spacer, IconButton, Flex } from "@chakra-ui/react";
 import { IoMdOpen } from 'react-icons/io';
-import { ImCross } from 'react-icons/im';
-import { FaPlus, FaInfoCircle, FaHeart, FaSyncAlt } from 'react-icons/fa';
+import { FaPlus, FaHeartbeat, FaHeart, FaSyncAlt } from 'react-icons/fa';
+import ParrotGif from "../img/parrot/parrot.gif";
+import ParrotUltraGif from "../img/parrot/ultrafastparrot.gif";
 
 function CourseInfoContainer ({code}){
     const dispatch = useDispatch();
@@ -35,9 +46,29 @@ function CourseInfoContainer ({code}){
 
     if (!course){
         if (!notFound){
-            return <div>Loading...</div>
+          return(
+            <Flex h="95vh" pt='64px' justifyContent="center" alignItems="center">
+              <Flex flexDirection="column" justifyContent="center" alignItems="center">
+                <Image w="64px" src={ParrotGif} alt="Loading Parrot" />
+                <Text pt="4" fontSize="2xl" fontWeight="600" color="gray.500">正在載入課程資訊</Text>
+              </Flex>
+            </Flex>
+          );
         } else {
-            return <Flex pt='100px'>Course Not Found</Flex>
+          return(
+            <Flex h="95vh" pt='64px' justifyContent="center" alignItems="center">
+              <Flex flexDirection="column" justifyContent="center" alignItems="center">
+                <HStack>
+                  <Image w="64px" src={ParrotUltraGif} alt="Loading Parrot" />
+                </HStack>
+                <Text mt="8" mb="4" fontSize="3xl" fontWeight="600" color="gray.500">喔哦! 找不到課程資料</Text>
+                <HStack>
+                  <Button variant="solid" onClick={() => window.open("https://www.surveycake.com/s/LzWd6", "_blank")}>問題回報</Button>
+                    <Button variant="solid" colorScheme="teal" leftIcon={<FaHeartbeat />} onClick={() => window.open("https://status.course.myntu.me/", "_blank")}>服務狀態</Button>
+                </HStack>
+              </Flex>
+            </Flex>
+          );
         }
     }
     else {
