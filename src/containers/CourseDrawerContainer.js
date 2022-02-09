@@ -24,44 +24,17 @@ import { IoMdOpen } from 'react-icons/io';
 import { ImCross } from 'react-icons/im';
 import { info_view_map } from '../data/mapping_table';
 import CourseDetailInfoContainer from './CourseDetailInfoContainer';
+import { useNavigate } from "react-router-dom";
 
 function RenderNolContentBtn(course, title, key){
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const navigate = useNavigate();
+    const toCourseInfoPage = (code) => {
+        navigate(`/courseinfo/${code}`);
+    }
+
     return (
         <>
-            <Button variant="ghost" colorScheme="blue" leftIcon={<FaInfoCircle/>} size="sm" onClick={onOpen} key={"NolContent_"+key}>{title}</Button>
-
-            <Modal size="full" isOpen={isOpen} onClose={onClose} motionPreset='slideInBottom' scrollBehavior="outside" key={"NolContent_Modal_"+key}>
-            <ModalOverlay key={"NolContent_ModalOverlay_"+key}/>
-            <ModalContent height="90vh" key={"NolContent_Modal_"+key}>
-                <ModalHeader key={"NolContent_Header_"+key}>
-                  <HStack spacing="4">
-                    <Tag size="md" colorScheme="blue"><Text fontWeight="800" fontSize="lg">{course.id}</Text></Tag>
-                    <Text fontSize="3xl" fontWeight="800" color="gray.700">{course.course_name}</Text>
-                    <Text fontSize="2xl" fontWeight="500" color="gray.500">{course.teacher}</Text>
-                    <Spacer />
-                    <ButtonGroup isAttached>
-                      <Button key={"NolContent_Button_"+key} mr='-px' size="md" colorScheme="blue" variant="outline" leftIcon={<FaPlus />}>課表</Button>
-                      <Button key={"NolContent_Button_"+key} size="md" colorScheme="blue" variant="outline" leftIcon={<FaPlus />}>課程網</Button>
-                    </ButtonGroup>
-                    <Button key={"NolContent_Button_"+key} size="md" colorScheme="red" variant="outline" leftIcon={<FaHeart />}>加入最愛</Button>
-                    <Button key={"NolContent_Button_"+key} size="md" rightIcon={<IoMdOpen />} onClick={() => openPage(genNolUrl(course), false)}>課程網資訊</Button>
-                    <IconButton key={"close_btn"+key} size="md" icon={<ImCross/>} variant="ghost" onClick={() => onClose()}/>
-                  </HStack>
-                </ModalHeader>
-                <ModalBody key={"NolContent_ModalBody_"+key} h="80%">
-                    <CourseDetailInfoContainer course={course}/>
-                </ModalBody>
-
-                <ModalFooter key={"NolContent_ModalFooter_"+key}>
-                  <HStack>
-                    <IconButton icon={<FaSyncAlt color="gray"/>} variant="ghost" size="xs"/>
-                    <Text fontWeight="500" fontSize="md" color="gray.300">更新時間</Text>
-                  </HStack>
-                    <Spacer key={"NolContent_Spacer_"+key}/>
-                </ModalFooter>
-            </ModalContent>
-            </Modal>
+            <Button variant="ghost" colorScheme="blue" leftIcon={<FaInfoCircle/>} size="sm" onClick={()=>{toCourseInfoPage(course._id)}} key={"NolContent_"+key}>{title}</Button>
         </>
     );
 }
