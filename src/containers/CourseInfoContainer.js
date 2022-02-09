@@ -43,8 +43,8 @@ function CourseInfoContainer ({code}){
     else {
         return (
             <>
-                <Flex pt="100px" w='100%' justify={'center'}>
-                    <HStack spacing="4" w='90%'>
+                <Flex pt="64px" w='100%' justifyContent={'center'}>
+                    <HStack my="2" spacing="4" w='90%'>
                         <Tag size="md" colorScheme="blue"><Text fontWeight="800" fontSize="lg">{course.id}</Text></Tag>
                         <Text fontSize="3xl" fontWeight="800" color="gray.700">{course.course_name}</Text>
                         <Text fontSize="2xl" fontWeight="500" color="gray.500">{course.teacher}</Text>

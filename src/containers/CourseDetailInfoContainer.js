@@ -16,6 +16,7 @@ import{
   Button,
   Tag,
   Spacer,
+  VStack,
 } from '@chakra-ui/react';
 import { PieChart } from 'react-minimal-pie-chart';
 import { FaCircle, FaRss } from 'react-icons/fa';
@@ -78,11 +79,11 @@ function CourseDetailInfoContainer({ course }){
     );
   }
   return(
-    <Flex w="100%" flexDirection={isMobile?'column':'row'} flexWrap="wrap" justify={'center'}>
+    <Flex w="100%" minH="83vh" flexDirection={isMobile?'column':'row'} flexWrap="wrap" justify={'center'}>
       {/* COL 1 */}
       <Flex w={isMobile?"100%": "30%"} flexDirection={'column'}>
         {/* Box1 */}
-        <Flex bg='gray.100' h="60%" m='2' px="6" py="4" borderRadius='xl' flexDirection="column">
+        <Flex bg='gray.100' h="70%" my='1%' px="6" py="4" borderRadius='xl' flexDirection="column">
           <Text fontSize="2xl" fontWeight="800" color="gray.700">課程詳細資料</Text>
           <Flex mt="4" justifyContent="start" alignItems="start" fontSize={{base: 'sm', lg: 'lg'}}>
             <Flex mr="16" flexDirection="column" flexWrap="wrap">
@@ -146,7 +147,7 @@ function CourseDetailInfoContainer({ course }){
           </Flex>
         </Flex>
         {/* Box2 */}
-        <Flex bg='gray.100' m='2' px="6" py="4" borderRadius='xl' flexDirection="column">
+        <Flex bg='gray.100' h={isMobile? "":"26%"} my='1%' px="6" py="4" borderRadius='xl' flexDirection="column">
           <Tabs variant='soft-rounded' size="sm">
             <HStack spacing="4">
               <Text fontSize="2xl" fontWeight="800" color="gray.700">選課資訊<BetaBadge content="preview" size="sm"/></Text>
@@ -185,16 +186,16 @@ function CourseDetailInfoContainer({ course }){
         </Flex>
       </Flex>
       {/* COL 2 */}
-      <Flex w={isMobile?"100%": "30%"} flexDirection={'column'}>
+      <Flex w={isMobile?"100%": "30%"} mx={isMobile? "":"1%"} flexDirection={'column'}>
         {/* Box3 */}
-        <Flex h="20%" bg='gray.100' m='2' px="6" py="4" borderRadius='xl' flexDirection="column">
+        <Flex h="20%" h={isMobile? "":"20%"} bg='gray.100' my='1%' px="6" py="4" borderRadius='xl' flexDirection="column">
           <Text fontSize="2xl" fontWeight="800" color="gray.700">加簽資訊<BetaBadge content="coming soon" size="sm"/></Text>
         </Flex>
         {/* Box4 */}
-        <Flex bg='gray.100' m='2' px="6" py="4" borderRadius='xl' flexDirection="column" justifyContent="space-between">
+        <Flex h={isMobile? "":"30%"} bg='gray.100' my='1%' px="6" py="4" borderRadius='xl' flexDirection="column" justifyContent="space-between">
           <Tabs variant='soft-rounded' size="sm">
             <HStack spacing="4">
-              <Text fontSize="2xl" fontWeight="800" color="gray.700">課程評價</Text>
+              <Text fontSize="2xl" fontWeight="800" color="gray.700">課程評價<BetaBadge content="preview" size="sm"/></Text>
               <TabList>
                 <Tab>PTT</Tab>
                 <Tab>NTURating</Tab>
@@ -235,32 +236,34 @@ function CourseDetailInfoContainer({ course }){
           {renderDataSource("PTT NTUCourse, NTURating")}
         </Flex>
         {/* Box5 */}
-        <Flex  h="400px" bg='gray.100' m='2' px="6" py="4" borderRadius='xl' flexDirection="column">
-          <Text fontSize="2xl" fontWeight="800" color="gray.700">考古題資訊</Text>
+        <Flex h={isMobile? "":"44.5%"} bg='gray.100' my='1%' px="6" py="4" borderRadius='xl' flexDirection="column">
+          <Text fontSize="2xl" fontWeight="800" color="gray.700">考古題資訊<BetaBadge content="preview" size="sm"/></Text>
           {renderDataSource("PTT NTU-Exam")}
         </Flex>
       </Flex>
       {/* COL 3 */}
       <Flex w={isMobile?"100%": "30%"} flexDirection={'column'}>
         {/* Box6 */}
-        <Flex bg='gray.100' h='50%' m='2' px="6" py="4" borderRadius='xl' flexDirection="column">
-          <Text fontSize="2xl" fontWeight="800" color="gray.700">課程大綱</Text>
-          <Flex w="100%" my="4" flexDirection="column" justifyContent="space-evenly" alignItems="start" wordBreak="break-all" overflow='auto'>
-            {
-              Object.keys(syllabusMock).map((key, index) => {
-                return(
-                  <>
-                    <Text fontSize="lg" fontWeight="600" color="gray.700">{syllabusTitle[key]}</Text>
-                    <Text mb="2" fontSize="md" fontWeight="400" color="gray.600">{syllabusMock[key] !== "" ? syllabusMock[key]:"無"}</Text>
-                  </>
-                );
-              })
-            }
-          </Flex>
+        <Flex bg='gray.100' h='60%' my='1%' px="6" py="4" borderRadius='xl' flexDirection="column" justifyContent="space-between">
+          <VStack align="start">
+            <Text fontSize="2xl" fontWeight="800" color="gray.700">課程大綱</Text>
+            <Flex w="100%" my="4" flexDirection="column" justifyContent="space-evenly" alignItems="start" wordBreak="break-all" overflow='auto'>
+              {
+                Object.keys(syllabusMock).map((key, index) => {
+                  return(
+                    <>
+                      <Text fontSize="lg" fontWeight="600" color="gray.700">{syllabusTitle[key]}</Text>
+                      <Text mb="2" fontSize="md" fontWeight="400" color="gray.600">{syllabusMock[key] !== "" ? syllabusMock[key]:"無"}</Text>
+                    </>
+                  );
+                })
+              }
+            </Flex>
+          </VStack>
           {renderDataSource("臺大課程網")}
         </Flex>
         {/* Box7 */}
-        <Flex bg='gray.100' m='2' px="6" py="4" borderRadius='xl' flexDirection="column">
+        <Flex h={isMobile? "":"36%"} bg='gray.100' my='1%' px="6" py="4" borderRadius='xl' flexDirection="column">
           <Text fontSize="2xl" fontWeight="800" color="gray.700">評分方式</Text>
           <Flex my="4" flexDirection="row" justifyContent="space-around" alignItems="center">
             <Box w="200px" h="200px">
