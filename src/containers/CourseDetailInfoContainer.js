@@ -15,6 +15,7 @@ import{
   Box,
   Button,
   Tag,
+  Spacer,
 } from '@chakra-ui/react';
 import { PieChart } from 'react-minimal-pie-chart';
 import { FaCircle, FaRss } from 'react-icons/fa';
@@ -277,7 +278,6 @@ function CourseDetailInfoContainer({ course }){
           </Flex>
           {renderDataSource("臺大課程網")}
         </Flex>
-
       </Flex>
     </Flex>
   );
