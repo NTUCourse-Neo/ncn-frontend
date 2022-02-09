@@ -22,17 +22,19 @@ import {
     IconButton
 } from '@chakra-ui/react';
 import {CourseDrawerContainer} from '../containers/CourseDrawerContainer';
-import { FaPlus, FaHeart, FaRss} from 'react-icons/fa';
+import { FaPlus, FaHeart, FaRss, FaInfoCircle} from 'react-icons/fa';
 import { info_view_map } from '../data/mapping_table';
 import {useDispatch, useSelector} from 'react-redux';
 import { fetchCourseTable, patchCourseTable, addFavoriteCourse } from '../actions';
 import { hash_to_color_hex } from '../utils/colorAgent';
 import { useAuth0 } from '@auth0/auth0-react';
+import { useNavigate } from "react-router-dom";
 
 const LOCAL_STORAGE_KEY = 'NTU_CourseNeo_Course_Table_Key';
 
 function CourseInfoRow(props) {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const userInfo = useSelector(state => state.user);
 
     const [addingCourse, setAddingCourse] = useState(false);
@@ -279,7 +281,7 @@ function CourseInfoRow(props) {
                     <Spacer />
                 </AccordionButton>
                 <Flex alignItems="center" justifyContent="end" flexDirection={isMobile? "column":"row"}>
-                    <IconButton size="sm" colorScheme="blue" icon={<FaRss />} variant="ghost" onClick={() => {props.setIsCourseStatusModalOpen(props.courseInfo.id)}}/>
+                    <IconButton size="sm" colorScheme="blue" icon={<FaInfoCircle />} variant="ghost" onClick={() => {navigate(`/courseinfo/${props.courseInfo._id}`);}}/>
                     <Button size="sm" variant={props.isfavorite? "solid":"outline"} colorScheme={"red"} onClick={() => handleAddFavorite(props.courseInfo._id)} isLoading={addingFavoriteCourse}>
                         <Box>
                             <FaHeart/>
@@ -363,7 +365,7 @@ function CourseInfoRow(props) {
                     </Flex>
                 </AccordionButton>
                 <Flex alignItems="center" justifyContent="end" flexDirection={isMobile? "column":"row"}>
-                    <IconButton size="sm" colorScheme="blue" icon={<FaRss />} variant="ghost" onClick={() => {props.setIsCourseStatusModalOpen(props.courseInfo.id)}}/>
+                    <Button size="sm" colorScheme="blue" leftIcon={<FaInfoCircle />} variant="ghost" onClick={() => {navigate(`/courseinfo/${props.courseInfo._id}`);}}>詳細</Button>
                     <Button size="sm" ml="20px" variant={props.isfavorite? "solid":"outline"} colorScheme={"red"} onClick={() => handleAddFavorite(props.courseInfo._id)} isLoading={addingFavoriteCourse}>
                         <Box>
                             <FaHeart/>
