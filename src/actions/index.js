@@ -137,6 +137,49 @@ const fetchSearchResults = (ids_arr, filters_enable, filter_obj, batch_size, off
     }
 }
 
+const fetchCourse = (id) =>async (dispatch)=>{
+
+    try {
+        let search_filter = {time: null, department: null, category: null, enroll_method: null, strict_match: false};
+        let batch_size = 1;
+        let offset = 0;
+        const {data: {courses}} = await instance.post(`/courses/ids`, {ids: [id], filter: search_filter, batch_size: batch_size, offset: offset});
+        const [course] = courses;
+        return course
+    } catch (error) {
+        if (error.response) {
+            // server did response, used for handle custom error msg
+            let error_obj = {
+                status_code: error.response.status, 
+                backend_msg: error.response.data.message, 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
+        } else if (error.request) {
+            // The request was made but no response was received (server is downed)
+            let status = 521; // Server is down
+            let error_obj = {
+                status_code: status, 
+                backend_msg: "no", 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
+        } else {
+            // Something happened in setting up the request that triggered an Error
+            let status = 400; // Bad request
+            let error_obj = {
+                status_code: status, 
+                backend_msg: "no", 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
+        }
+    }
+}
+
 const getCourseEnrollInfo = (course_id) => async (dispatch)=>{
     try {
         const {data: {course_status}} = await instance.get(`/courses/${course_id}/enrollinfo`);
@@ -753,4 +796,4 @@ const send_logs = (type, obj) => async (dispatch)=>{
     return resp.data;
 };
 
-export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, getCourseEnrollInfo, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, fetchFavoriteCourses, createCourseTable, linkCoursetableToUser, fetchCourseTable, patchCourseTable, fetchUserById, registerNewUser, logOut, logIn, updateCourseTable, addFavoriteCourse, deleteUserProfile, deleteUserAccount, patchUserInfo, verify_recaptcha, request_otp_code, use_otp_link_student_id, setNewDisplayTags, send_logs };
+export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, fetchCourse, getCourseEnrollInfo, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, fetchFavoriteCourses, createCourseTable, linkCoursetableToUser, fetchCourseTable, patchCourseTable, fetchUserById, registerNewUser, logOut, logIn, updateCourseTable, addFavoriteCourse, deleteUserProfile, deleteUserAccount, patchUserInfo, verify_recaptcha, request_otp_code, use_otp_link_student_id, setNewDisplayTags, send_logs };
