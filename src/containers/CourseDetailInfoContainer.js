@@ -85,7 +85,7 @@ function CourseDetailInfoContainer({ course }){
         {/* Box1 */}
         <Flex bg='gray.100' h="70%" my='1%' px="6" py="4" borderRadius='xl' flexDirection="column">
           <Text fontSize="2xl" fontWeight="800" color="gray.700">課程詳細資料</Text>
-          <Flex mt="4" justifyContent="start" alignItems="start" fontSize={{base: 'sm', lg: 'lg'}}>
+          <Flex mt="4" justifyContent="start" alignItems="start" flexWrap='wrap'>
             <Flex mr="16" flexDirection="column" flexWrap="wrap">
               {
                 course_codes_1.map((item, index) => {
