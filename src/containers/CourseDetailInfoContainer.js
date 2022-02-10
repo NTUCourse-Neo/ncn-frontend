@@ -20,6 +20,13 @@ import{
   StatHelpText,
   Divider,
   useToast,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverHeader,
+  PopoverBody,
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
 import { PieChart } from 'react-minimal-pie-chart';
@@ -28,9 +35,10 @@ import { IoMdOpen } from 'react-icons/io';
 import BetaBadge from '../components/BetaBadge';
 import { info_view_map } from '../data/mapping_table';
 import PTTContentRowContainer from './PTTContentRowContainer';
-import { getCourseEnrollInfo, getNTURatingData, getPTTData } from '../actions/index';
+import { getCourseEnrollInfo, getNTURatingData, getPTTData, getCourseSyllabusData } from '../actions/index';
 import { useDispatch } from 'react-redux';
 import ParrotGif from "../img/parrot/parrot.gif";
+import { hash_to_color_hex_with_hue } from '../utils/colorAgent';
 
 // fake data
 const pieMock = [
@@ -38,14 +46,6 @@ const pieMock = [
   { title: '期中考', value: 30, color: '#C13C37' },
   { title: '期末考', value: 30, color: '#6A2135' },
 ]
-const ratingMock = {
-  "sweety": 4.75,
-  "breeze": 1.5,
-  "workload": 3.75,
-  "quality": 5,
-  "count": 2,
-  "url": "https://rating.myntu.me/course-overview?_id=611654f61ca507248a5ca342&instructor=呂宛蓁&courseName=桌球初級"
-}
 const syllabusMock = {
   intro: "土木系大一必修課程，會從最基礎的內容教起。",
   objective: "透過 Python 電腦程式語言的介紹與實際寫作，提昇學生邏輯思考與善用現代化資訊工具的能力，並能利用電腦程式解決簡單的工程領域相關問題。 ",
@@ -73,12 +73,14 @@ function CourseDetailInfoContainer({ course }){
   const [ NTURatingData, setNTURatingData ] = useState(null);
   const [ PTTReviewData, setPTTReviewData ] = useState(null);
   const [ PTTExamData, setPTTExamData ] = useState(null);
+  const [ SyllubusData, setSyllubusData ] = useState(null);
 
   // Live data loading states
   const [ isLoadingEnrollInfo, setIsLoadingEnrollInfo ] = useState(true);
   const [ isLoadingRatingData, setIsLoadingRatingData ] = useState(true);
   const [ isLoadingPTTReviewData, setIsLoadingPTTReviewData ] = useState(true);
   const [ isLoadingPTTExamData, setIsLoadingPTTExamData ] = useState(true);
+  const [ isLoadingSyllubusData, setIsLoadingSyllubusData ] = useState(true);
 
   useEffect(() => {
     async function fetchCourseEnrollData() {
@@ -157,10 +159,35 @@ function CourseDetailInfoContainer({ course }){
       setPTTExamData(data);
       setIsLoadingPTTExamData(false);
     }
+    async function fetchSyllabusData() {
+      setIsLoadingSyllubusData(true);
+      let data;
+      try {
+          data = await dispatch(getCourseSyllabusData(course._id));
+      } catch (error) {
+          setIsLoadingSyllubusData(false);
+          toast({
+              title: "無法取得課程大綱資訊",
+              description: "請洽台大課程網",
+              status: "error",
+              duration: 3000,
+              isClosable: true,
+          });
+          return;
+      }
+      if(data && data.grade){
+        data.grade.forEach(grade => {
+          grade.color = hash_to_color_hex_with_hue(grade.title, {min: 180, max: 200});
+        })
+      }
+      setSyllubusData(data);
+      setIsLoadingSyllubusData(false);
+    }
     fetchNTURatingData();
     fetchCourseEnrollData();
     fetchPTTReviewData();
     fetchPTTExamData();
+    fetchSyllabusData();
 } ,[]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const course_codes_1 = [
@@ -297,6 +324,86 @@ function CourseDetailInfoContainer({ course }){
     }
     return(
       <PTTContentRowContainer info={PTTExamData} height="25vh"/>
+    );
+  };
+  const renderSyllabusDataPanel = () => {
+    if(isLoadingSyllubusData){
+      return(
+        renderPanelLoaing("載入中...", "100%", "8")
+      );
+    };
+    if(!SyllubusData){
+      return renderFallback("無課程大綱資訊", "empty", "100%", "8");
+    }
+    return(
+      <Flex w="100%" h={isMobile? "":"40vh"} my="4" flexDirection="column" justifyContent="start" alignItems="start" wordBreak="break-all" overflow="auto">
+        {
+          Object.keys(SyllubusData.syllabus).map((key, index) => {
+            return(
+              <>
+                <Text fontSize="lg" fontWeight="600" color="gray.700">{syllabusTitle[key]}</Text>
+                <Text mb="2" fontSize="md" fontWeight="400" color="gray.600">{SyllubusData.syllabus[key] !== "" ? SyllubusData.syllabus[key].trim():"無"}</Text>
+              </>
+            );
+          })
+        }
+      </Flex>
+    );
+  };
+  const renderGradePolicyPanel = () => {
+    if(isLoadingSyllubusData){
+      return(
+        renderPanelLoaing("查看配分中...", "100%", "8")
+      );
+    };
+    if(!SyllubusData || !SyllubusData.grade){
+      return renderFallback("無評分相關資訊", "empty", "100%", "8");
+    }
+    return(
+      <Flex my="4" flexDirection={isMobile ? "column":"row"} justifyContent="space-evenly" alignItems="center">
+        <Box w="200px" h="200px">
+          <PieChart
+            lineWidth={50}
+            label={({ dataEntry }) => dataEntry.value+"%"}
+            labelPosition={75}
+            data={SyllubusData.grade}
+            labelStyle={(index) => ({
+              fill: "white",
+              fontSize: '10px',
+              fontFamily: 'sans-serif',
+            })}/>
+        </Box>
+        <VStack mt={isMobile ? "4":""} align="start">
+          {SyllubusData.grade.map((item, index) => {
+            return(
+              <>
+                <Popover>
+                  <PopoverTrigger>
+                    <HStack justify="start" cursor="pointer">
+                      <Icon as={FaCircle} size="20px" color={item.color}/>
+                      <Text fontSize="lg" fontWeight="800" color={item.color}>{item.value}%</Text>
+                      <Text fontSize="md" fontWeight="600" color="gray.700">{item.title}</Text>
+                    </HStack>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <PopoverArrow />
+                    <PopoverCloseButton />
+                    <PopoverHeader>
+                      <HStack>
+                        <Text fontSize="lg" fontWeight="800" color={item.color}>{item.value}%</Text>
+                        <Text fontSize="md" fontWeight="600" color="gray.700">{item.title}</Text>
+                      </HStack>
+                    </PopoverHeader>
+                    <PopoverBody>
+                      <Text fontSize="md" fontWeight="400" color="gray.700">{item.comment === "" ? "無詳細資訊" : item.comment}</Text>
+                    </PopoverBody>
+                  </PopoverContent>
+                </Popover>
+              </>
+            );
+          })}
+        </VStack>
+      </Flex>
     );
   };
   return(
@@ -452,38 +559,14 @@ function CourseDetailInfoContainer({ course }){
         <Flex bg='gray.100' h='60%' my='1%' px="6" py="4" borderRadius='xl' flexDirection="column" justifyContent="space-between">
           <VStack align="start">
             <Text fontSize="2xl" fontWeight="800" color="gray.700">課程大綱</Text>
-            <Flex w="100%" my="4" flexDirection="column" justifyContent="space-evenly" alignItems="start" wordBreak="break-all" overflow='auto'>
-              {
-                Object.keys(syllabusMock).map((key, index) => {
-                  return(
-                    <>
-                      <Text fontSize="lg" fontWeight="600" color="gray.700">{syllabusTitle[key]}</Text>
-                      <Text mb="4" fontSize="md" fontWeight="400" color="gray.600">{syllabusMock[key] !== "" ? syllabusMock[key]:"無"}</Text>
-                    </>
-                  );
-                })
-              }
-            </Flex>
+            {renderSyllabusDataPanel()}
           </VStack>
           {renderDataSource("臺大課程網")}
         </Flex>
         {/* Box7 */}
         <Flex h={isMobile? "":"36%"} bg='gray.100' my='1%' px="6" py="4" borderRadius='xl' flexDirection="column">
           <Text fontSize="2xl" fontWeight="800" color="gray.700">評分方式</Text>
-          <Flex my="4" flexDirection="row" justifyContent="space-around" alignItems="center">
-            <Box w="200px" h="200px">
-              <PieChart
-                lineWidth={50}
-                label={({ dataEntry }) => dataEntry.value+"%"}
-                labelPosition={75}
-                data={pieMock}
-                labelStyle={(index) => ({
-                  fill: "white",
-                  fontSize: '10px',
-                  fontFamily: 'sans-serif',
-                })}/>
-            </Box>
-          </Flex>
+          {renderGradePolicyPanel()}
           {renderDataSource("臺大課程網")}
         </Flex>
       </Flex>

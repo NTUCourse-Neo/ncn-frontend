@@ -296,6 +296,45 @@ const getPTTData = (course_id, type) => async (dispatch)=>{
     }
 };
 
+
+const getCourseSyllabusData = (course_id) => async (dispatch)=>{
+    try {
+        const {data: {course_syllabus}} = await instance.get(`/courses/${course_id}/syllabus`);
+        return course_syllabus
+    } catch (error) {
+        if (error.response) {
+            // server did response, used for handle custom error msg
+            let error_obj = {
+                status_code: error.response.status, 
+                backend_msg: error.response.data.message, 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
+        } else if (error.request) {
+            // The request was made but no response was received (server is downed)
+            let status = 521; // Server is down
+            let error_obj = {
+                status_code: status, 
+                backend_msg: "no", 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
+        } else {
+            // Something happened in setting up the request that triggered an Error
+            let status = 400; // Bad request
+            let error_obj = {
+                status_code: status, 
+                backend_msg: "no", 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
+        }
+    }
+};
+
 // used in SideCourseTableContainer initialization, to fetch all course objects by ids
 const fetchCourseTableCoursesByIds = (ids_arr) => async (dispatch)=>{
     try {
@@ -878,4 +917,4 @@ const send_logs = (type, obj) => async (dispatch)=>{
     }
 };
 
-export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, fetchCourse, getCourseEnrollInfo, getNTURatingData, getPTTData, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, fetchFavoriteCourses, createCourseTable, linkCoursetableToUser, fetchCourseTable, patchCourseTable, fetchUserById, registerNewUser, logOut, logIn, updateCourseTable, addFavoriteCourse, deleteUserProfile, deleteUserAccount, patchUserInfo, verify_recaptcha, request_otp_code, use_otp_link_student_id, setNewDisplayTags, send_logs };
+export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, fetchCourse, getCourseEnrollInfo, getNTURatingData, getPTTData, getCourseSyllabusData, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, fetchFavoriteCourses, createCourseTable, linkCoursetableToUser, fetchCourseTable, patchCourseTable, fetchUserById, registerNewUser, logOut, logIn, updateCourseTable, addFavoriteCourse, deleteUserProfile, deleteUserAccount, patchUserInfo, verify_recaptcha, request_otp_code, use_otp_link_student_id, setNewDisplayTags, send_logs };
