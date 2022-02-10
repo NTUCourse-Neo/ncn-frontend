@@ -110,7 +110,7 @@ const mock = {
   ]
 }
 
-function PTTContentRowContainer({ course, type, height, isLoading}){
+function PTTContentRowContainer({ info, height}){
   const RenderRow = (data) => {
     return(
       <Flex as="button" px="2" my="1" key={data.id} w="100%" h="10" bg="blue.50" justifyContent="start" alignItems="center" borderRadius="lg" onClick={() => window.open(data.url,"_blank")}>
@@ -122,20 +122,10 @@ function PTTContentRowContainer({ course, type, height, isLoading}){
       </Flex>
     );
   };
-  if (isLoading){
-    return(
-      <Flex w="100%" h={height} mb="0" overflow="auto" flexDirection="column" justifyContent="center" alignItems="center">
-        <VStack>
-          <Image src={ParrotGif} h="32px" />
-          <Text fontSize="lg" fontWeight="800" color="gray.500" textAlign="center">努力取得資訊中...</Text>
-        </VStack>
-      </Flex>
-    );
-  }
   return(
     <Flex w="100%" h={height} mb="0" overflow="auto" flexDirection="column">
       <VStack>
-        {mock[type].map(RenderRow)}
+        {info.map(RenderRow)}
       </VStack>
     </Flex>
   );

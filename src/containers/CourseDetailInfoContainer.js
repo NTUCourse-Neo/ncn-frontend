@@ -15,17 +15,22 @@ import{
   Box,
   Button,
   Tag,
-  Spacer,
+  Image,
   VStack,
   StatHelpText,
   Divider,
+  useToast,
 } from '@chakra-ui/react';
+import { useState, useEffect } from 'react';
 import { PieChart } from 'react-minimal-pie-chart';
-import { FaCircle, FaRss } from 'react-icons/fa';
+import { FaCircle, FaRss, FaExclamationTriangle, FaQuestionCircle } from 'react-icons/fa';
 import { IoMdOpen } from 'react-icons/io';
 import BetaBadge from '../components/BetaBadge';
 import { info_view_map } from '../data/mapping_table';
 import PTTContentRowContainer from './PTTContentRowContainer';
+import { getCourseEnrollInfo, getNTURatingData, getPTTData } from '../actions/index';
+import { useDispatch } from 'react-redux';
+import ParrotGif from "../img/parrot/parrot.gif";
 
 // fake data
 const pieMock = [
@@ -59,8 +64,105 @@ const syllabusTitle = {
 }
 
 function CourseDetailInfoContainer({ course }){
+  const toast = useToast();
+  const dispatch = useDispatch();
   const [isMobile] = useMediaQuery('(max-width: 1000px)')
-  console.log(isMobile);
+
+  // Course live data
+  const [ CourseEnrollStatus, setCourseEnrollStatus ] = useState(null);
+  const [ NTURatingData, setNTURatingData ] = useState(null);
+  const [ PTTReviewData, setPTTReviewData ] = useState(null);
+  const [ PTTExamData, setPTTExamData ] = useState(null);
+
+  // Live data loading states
+  const [ isLoadingEnrollInfo, setIsLoadingEnrollInfo ] = useState(true);
+  const [ isLoadingRatingData, setIsLoadingRatingData ] = useState(true);
+  const [ isLoadingPTTReviewData, setIsLoadingPTTReviewData ] = useState(true);
+  const [ isLoadingPTTExamData, setIsLoadingPTTExamData ] = useState(true);
+
+  useEffect(() => {
+    async function fetchCourseEnrollData() {
+      setIsLoadingEnrollInfo(true);
+      let data;
+      try {
+          data = await dispatch(getCourseEnrollInfo(course.id));
+      } catch (error) {
+          setIsLoadingEnrollInfo(false);
+          toast({
+              title: "錯誤",
+              description: "無法取得課程即時資訊",
+              status: "error",
+              duration: 3000,
+              isClosable: true,
+          });
+          return;
+      }
+      setCourseEnrollStatus(data);
+      setIsLoadingEnrollInfo(false);
+    }
+    async function fetchNTURatingData() {
+      setIsLoadingRatingData(true);
+      let data;
+      try {
+          data = await dispatch(getNTURatingData(course._id));
+      } catch (error) {
+          setIsLoadingRatingData(false);
+          toast({
+              title: "無法取得 NTURating 評價資訊",
+              description: "請洽 rating.myntu.me",
+              status: "error",
+              duration: 3000,
+              isClosable: true,
+          });
+          return;
+      }
+      setNTURatingData(data);
+      setIsLoadingRatingData(false);
+    }
+    async function fetchPTTReviewData() {
+      setIsLoadingPTTReviewData(true);
+      let data;
+      try {
+          data = await dispatch(getPTTData(course._id, "review"));
+      } catch (error) {
+          setIsLoadingPTTReviewData(false);
+          toast({
+              title: "無法取得 PTT 貼文資訊",
+              description: "請洽 ptt.cc",
+              status: "error",
+              duration: 3000,
+              isClosable: true,
+          });
+          return;
+      }
+      setPTTReviewData(data);
+      setIsLoadingPTTReviewData(false);
+    }
+    async function fetchPTTExamData() {
+      setIsLoadingPTTExamData(true);
+      let data;
+      try {
+          data = await dispatch(getPTTData(course._id, "exam"));
+      } catch (error) {
+          setIsLoadingPTTExamData(false);
+          toast({
+              title: "無法取得 PTT 貼文資訊",
+              description: "請洽 ptt.cc",
+              status: "error",
+              duration: 3000,
+              isClosable: true,
+          });
+          return;
+      }
+      setPTTExamData(data);
+      setIsLoadingPTTExamData(false);
+    }
+    fetchNTURatingData();
+    fetchCourseEnrollData();
+    fetchPTTReviewData();
+    fetchPTTExamData();
+} ,[]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const course_codes_1 = [
     {title: "流水號", value: course.id},
     {title: "課號", value: course.course_code},
@@ -81,6 +183,122 @@ function CourseDetailInfoContainer({ course }){
       </HStack>
     );
   }
+  const renderPanelLoaing = (title="努力取得資訊中...", height, pt="0") => {
+    return(
+      <Flex w="100%" h={height} pt={pt} flexDirection="column" justifyContent="center" alignItems="center">
+        <VStack>
+          <Image src={ParrotGif} h="32px" />
+          <Text fontSize="lg" fontWeight="800" color="gray.500" textAlign="center">{title}</Text>
+        </VStack>
+      </Flex>
+    );
+  };
+  const renderFallback = (title="暫無資訊", type="empty", height, pt="0") => {
+    return(
+      <Flex w="100%" h={height} pt={pt} flexDirection="column" justifyContent="center" alignItems="center">
+        <Icon as={type==="empty" ? FaQuestionCircle : FaExclamationTriangle} boxSize="32px" color="gray.500" />
+        <Text mt="2" fontSize="lg" fontWeight="800" color="gray.500" textAlign="center">{title}</Text>
+      </Flex>
+    );
+  };
+  const renderCourseEnrollPanel = () => {
+    if(isLoadingEnrollInfo){
+      return(
+        renderPanelLoaing("努力取得資訊中...", "100%", "8")
+      );
+    };
+    if(!CourseEnrollStatus){
+      return renderFallback("無法取得課程即時資訊", {FaExclamationTriangle}, "100%", "8");
+    }
+    return(
+      <Flex w="100%" mt="4" flexDirection="row" justifyContent="center" alignItems={isMobile? "start":"center"} flexWrap="wrap">
+        <Stat>
+          <StatLabel>選上</StatLabel>
+          <StatNumber>{CourseEnrollStatus.enrolled}</StatNumber>
+          <StatHelpText>人</StatHelpText>
+        </Stat>
+        <Stat>
+          <StatLabel>選上外系</StatLabel>
+          <StatNumber>{CourseEnrollStatus.enrolled_other}</StatNumber>
+          <StatHelpText>人</StatHelpText>
+        </Stat>
+        <Stat>
+          <StatLabel>登記</StatLabel>
+          <StatNumber>{CourseEnrollStatus.registered}</StatNumber>
+          <StatHelpText>人</StatHelpText>
+        </Stat>
+        <Stat>
+          <StatLabel>剩餘</StatLabel>
+          <StatNumber>{CourseEnrollStatus.remain}</StatNumber>
+          <StatHelpText>空位</StatHelpText>
+        </Stat>
+      </Flex>
+    );
+  }
+  const renderNTURatingPanel = () => {
+    if(isLoadingRatingData){
+      return(
+        renderPanelLoaing("查詢評價中...", "100%", "8")
+      );
+    };
+    if(!NTURatingData){
+      return renderFallback("無評價資訊", "empty", "100%", "8");
+    }
+    return(
+      <Flex h="100%" flexDirection="column" alignItems="start">
+        <Text fontSize="md" fontWeight="600" color="gray.700">NTURating 上共有 {NTURatingData.count} 筆評價</Text>
+        <HStack w="100%" justify="space-between" my="2">
+          <Stat>
+            <StatLabel>甜度</StatLabel>
+            <StatNumber>{NTURatingData.sweety}</StatNumber>
+            <StatHelpText>平均值</StatHelpText>
+          </Stat>
+          <Stat>
+            <StatLabel>涼度</StatLabel>
+            <StatNumber>{NTURatingData.breeze}</StatNumber>
+            <StatHelpText>平均值</StatHelpText>
+          </Stat>
+          <Stat>
+            <StatLabel>紮實度</StatLabel>
+            <StatNumber>{NTURatingData.workload}</StatNumber>
+            <StatHelpText>平均值</StatHelpText>
+          </Stat>
+          <Stat>
+            <StatLabel>品質</StatLabel>
+            <StatNumber>{NTURatingData.quality}</StatNumber>
+            <StatHelpText>平均值</StatHelpText>
+          </Stat>
+        </HStack>
+        <Button colorScheme="blue" variant="outline" size="sm" rightIcon={<IoMdOpen/>} onClick={() => window.open(NTURatingData.url+"?referrer=ntucourse_neo", "_blank")}>前往 NTURating 查看該課程評價</Button>
+      </Flex>
+    );
+  }
+  const renderPTTReviewPanel = () => {
+    if(isLoadingPTTReviewData){
+      return(
+        renderPanelLoaing("努力爬文中...", "100%", "8")
+      );
+    };
+    if(!PTTReviewData){
+      return renderFallback("無相關貼文資訊", "empty", "100%", "8");
+    }
+    return(
+      <PTTContentRowContainer info={PTTReviewData} height="14vh"/>
+    );
+  };
+  const renderPTTExamPanel = () => {
+    if(isLoadingPTTExamData){
+      return(
+        renderPanelLoaing("努力爬文中...", "100%", "8")
+      );
+    };
+    if(!PTTExamData){
+      return renderFallback("無相關貼文資訊", "empty", "100%", "8");
+    }
+    return(
+      <PTTContentRowContainer info={PTTExamData} height="25vh"/>
+    );
+  };
   return(
     <Flex w="100%" minH="83vh" pt={isMobile ? "150px":""} flexDirection={isMobile?'column':'row'} flexWrap="wrap" justify={'center'}>
       {/* COL 1 */}
@@ -173,28 +391,7 @@ function CourseDetailInfoContainer({ course }){
             </HStack>
             <TabPanels>
               <TabPanel>
-                <Flex w="100%" mt="4" flexDirection="row" justifyContent="center" alignItems={isMobile? "start":"center"} flexWrap="wrap">
-                  <Stat>
-                    <StatLabel>選上</StatLabel>
-                    <StatNumber>10</StatNumber>
-                    <StatHelpText>人</StatHelpText>
-                  </Stat>
-                  <Stat>
-                    <StatLabel>選上外系</StatLabel>
-                    <StatNumber>0</StatNumber>
-                    <StatHelpText>人</StatHelpText>
-                  </Stat>
-                  <Stat>
-                    <StatLabel>登記</StatLabel>
-                    <StatNumber>100</StatNumber>
-                    <StatHelpText>人</StatHelpText>
-                  </Stat>
-                  <Stat>
-                    <StatLabel>剩餘</StatLabel>
-                    <StatNumber>20</StatNumber>
-                    <StatHelpText>空位</StatHelpText>
-                  </Stat>
-                </Flex>
+                {renderCourseEnrollPanel()}
               </TabPanel>
               <TabPanel>
                 <p>two!</p>
@@ -214,7 +411,7 @@ function CourseDetailInfoContainer({ course }){
         <Flex h={isMobile? "":"30%"} bg='gray.100' my='1%' px="6" py="4" borderRadius='xl' flexDirection="column" justifyContent="space-between">
           <Tabs h="100%" variant='soft-rounded' size="sm">
             <HStack spacing="4">
-              <Text fontSize="2xl" fontWeight="800" color="gray.700">課程評價<BetaBadge content="preview" size="sm"/></Text>
+              <Text fontSize="2xl" fontWeight="800" color="gray.700">評價<BetaBadge content="preview" size="sm"/></Text>
               <TabList>
                 <Tab>PTT</Tab>
                 <Tab>NTURating</Tab>
@@ -222,35 +419,10 @@ function CourseDetailInfoContainer({ course }){
             </HStack>
             <TabPanels>
               <TabPanel>
-                <PTTContentRowContainer course={course} type="review" height="14vh"/>
+                {renderPTTReviewPanel()}
               </TabPanel>
               <TabPanel>
-                <Flex h="100%" flexDirection="column" alignItems="start">
-                  <Text fontSize="md" fontWeight="600" color="gray.700">NTURating 上共有 {ratingMock.count} 筆評價</Text>
-                  <HStack w="100%" justify="space-between" my="2">
-                    <Stat>
-                      <StatLabel>甜度</StatLabel>
-                      <StatNumber>{ratingMock.sweety}</StatNumber>
-                      <StatHelpText>平均值</StatHelpText>
-                    </Stat>
-                    <Stat>
-                      <StatLabel>涼度</StatLabel>
-                      <StatNumber>{ratingMock.breeze}</StatNumber>
-                      <StatHelpText>平均值</StatHelpText>
-                    </Stat>
-                    <Stat>
-                      <StatLabel>紮實度</StatLabel>
-                      <StatNumber>{ratingMock.workload}</StatNumber>
-                      <StatHelpText>平均值</StatHelpText>
-                    </Stat>
-                    <Stat>
-                      <StatLabel>品質</StatLabel>
-                      <StatNumber>{ratingMock.quality}</StatNumber>
-                      <StatHelpText>平均值</StatHelpText>
-                    </Stat>
-                  </HStack>
-                  <Button colorScheme="blue" variant="outline" size="sm" rightIcon={<IoMdOpen/>} onClick={() => window.open(ratingMock.url+"?referrer=ntucourse_neo", "_blank")}>前往 NTURating 查看該課程評價</Button>
-                </Flex>
+                {renderNTURatingPanel()}
               </TabPanel>
             </TabPanels>
           </Tabs>
@@ -267,7 +439,7 @@ function CourseDetailInfoContainer({ course }){
             </HStack>
             <TabPanels>
               <TabPanel>
-                  <PTTContentRowContainer course={course} type="exam" height="25vh"/>
+                  {renderPTTExamPanel()}
               </TabPanel>
             </TabPanels>
           </Tabs>

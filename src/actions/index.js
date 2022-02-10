@@ -218,6 +218,84 @@ const getCourseEnrollInfo = (course_id) => async (dispatch)=>{
     }
 };
 
+
+const getNTURatingData = (course_id) => async (dispatch)=>{
+    try {
+        const {data: {course_rating}} = await instance.get(`/courses/${course_id}/rating`);
+        return course_rating
+    } catch (error) {
+        if (error.response) {
+            // server did response, used for handle custom error msg
+            let error_obj = {
+                status_code: error.response.status, 
+                backend_msg: error.response.data.message, 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
+        } else if (error.request) {
+            // The request was made but no response was received (server is downed)
+            let status = 521; // Server is down
+            let error_obj = {
+                status_code: status, 
+                backend_msg: "no", 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
+        } else {
+            // Something happened in setting up the request that triggered an Error
+            let status = 400; // Bad request
+            let error_obj = {
+                status_code: status, 
+                backend_msg: "no", 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
+        }
+    }
+};
+
+
+const getPTTData = (course_id, type) => async (dispatch)=>{
+    try {
+        const {data: {course_rating}} = await instance.get(`/courses/${course_id}/ptt/${type}`);
+        return course_rating
+    } catch (error) {
+        if (error.response) {
+            // server did response, used for handle custom error msg
+            let error_obj = {
+                status_code: error.response.status, 
+                backend_msg: error.response.data.message, 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
+        } else if (error.request) {
+            // The request was made but no response was received (server is downed)
+            let status = 521; // Server is down
+            let error_obj = {
+                status_code: status, 
+                backend_msg: "no", 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
+        } else {
+            // Something happened in setting up the request that triggered an Error
+            let status = 400; // Bad request
+            let error_obj = {
+                status_code: status, 
+                backend_msg: "no", 
+                error_info: error.message, 
+                error_detail: Error(error).stack
+            };
+            throw error_obj;
+        }
+    }
+};
+
 // used in SideCourseTableContainer initialization, to fetch all course objects by ids
 const fetchCourseTableCoursesByIds = (ids_arr) => async (dispatch)=>{
     try {
@@ -792,8 +870,12 @@ const use_otp_link_student_id = (token, student_id, otp_code) => async (dispatch
 
 // add try catch block to handle timeout.
 const send_logs = (type, obj) => async (dispatch)=>{
-    const resp = await instance.post(`/logs/${type}`, obj);
-    return resp.data;
+    if(process.env.REACT_APP_ENV === 'prod'){
+        const resp = await instance.post(`/logs/${type}`, obj);
+        return resp.data;
+    }else{
+        console.log("[INFO] Logs are not sent to server in development mode.");
+    }
 };
 
-export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, fetchCourse, getCourseEnrollInfo, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, fetchFavoriteCourses, createCourseTable, linkCoursetableToUser, fetchCourseTable, patchCourseTable, fetchUserById, registerNewUser, logOut, logIn, updateCourseTable, addFavoriteCourse, deleteUserProfile, deleteUserAccount, patchUserInfo, verify_recaptcha, request_otp_code, use_otp_link_student_id, setNewDisplayTags, send_logs };
+export {setSearchColumn,setSearchSettings,fetchSearchIDs, fetchSearchResults, fetchCourse, getCourseEnrollInfo, getNTURatingData, getPTTData, setFilter, setFilterEnable, fetchCourseTableCoursesByIds, fetchFavoriteCourses, createCourseTable, linkCoursetableToUser, fetchCourseTable, patchCourseTable, fetchUserById, registerNewUser, logOut, logIn, updateCourseTable, addFavoriteCourse, deleteUserProfile, deleteUserAccount, patchUserInfo, verify_recaptcha, request_otp_code, use_otp_link_student_id, setNewDisplayTags, send_logs };
