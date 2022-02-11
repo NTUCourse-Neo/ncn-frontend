@@ -68,6 +68,7 @@ function CourseDetailInfoContainer({ course }){
   const [ isLoadingPTTExamData, setIsLoadingPTTExamData ] = useState(true);
   const [ isLoadingSyllubusData, setIsLoadingSyllubusData ] = useState(true);
 
+
   async function fetchCourseEnrollData() {
     setIsLoadingEnrollInfo(true);
     let data;

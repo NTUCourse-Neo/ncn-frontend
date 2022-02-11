@@ -22,11 +22,21 @@ import {useState, useEffect} from "react";
 import { useDispatch} from "react-redux";
 import { fetchCourse } from "../actions/";
 import { useNavigate } from "react-router-dom";
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { IoMdOpen } from 'react-icons/io';
 import { FaPlus, FaHeartbeat, FaHeart, FaSyncAlt, FaAngleDown } from 'react-icons/fa';
 import { BiCopy } from 'react-icons/bi';
 import ParrotGif from "../img/parrot/parrot.gif";
 import ParrotUltraGif from "../img/parrot/ultrafastparrot.gif";
+
+const copyWordList = [
+  {count: 100, word: "複製終結者!!", color: "purple.600", bg: "purple.50"},
+  {count: 50, word: "終極複製!!", color: "red.600", bg: "red.50"},
+  {count: 25, word: "超級複製!", color: "orange.600", bg: "orange.50"},
+  {count: 10, word: "瘋狂複製", color: "yellow.600", bg: "yellow.50"},
+  {count: 1, word: "已複製", color: "green.600", bg: "green.50"},
+  {count: 0, word: "複製連結", color: "gray.500", bg: "white"},
+]
 
 function CourseInfoContainer ({code}){
     const dispatch = useDispatch();
@@ -34,7 +44,8 @@ function CourseInfoContainer ({code}){
     const [course, setCourse] = useState(null);
     const [notFound, setNotFound] = useState(false);
     const [isMobile] = useMediaQuery('(max-width: 1000px)')
-
+    const [copiedLinkClicks, setCopiedLinkClicks] = useState(0);
+    const [copyWord, setCopyWord] = useState(copyWordList.find(word => word.count <= copiedLinkClicks));
 
     useEffect(() => {
         const fetchCourseObject = async(course_code) => {
@@ -54,6 +65,10 @@ function CourseInfoContainer ({code}){
 
         fetchCourseObject(code);
     },[])
+
+    useEffect(() => {
+      setCopyWord(copyWordList.find(word => word.count <= copiedLinkClicks));
+    }, [copiedLinkClicks])
 
     if (!course){
         if (!notFound){
@@ -140,7 +155,11 @@ function CourseInfoContainer ({code}){
                       <Button key={"NolContent_Button_"+code} size="md" rightIcon={<IoMdOpen />} onClick={() => {
                         //TODO
                       }}>課程網資訊</Button>
-                      <Button rightIcon={<Icon as={BiCopy} color="gray.600" />} variant="ghost" size="md" color="gray.600">複製連結</Button>
+                      <CopyToClipboard text={"https://course.myntu.me/courseinfo/"+course._id}>
+                        <Button rightIcon={<Icon as={BiCopy} color={copyWord.color} />} variant="ghost" size="md" bg={copyWord.bg} color={copyWord.color} onClick={() => setCopiedLinkClicks(copiedLinkClicks + 1)}>
+                          {copyWord.word}
+                        </Button>
+                      </CopyToClipboard>
                   </HStack>
               </Flex>
               <CourseDetailInfoContainer course={course}/>
