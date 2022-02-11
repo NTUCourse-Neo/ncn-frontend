@@ -27,6 +27,8 @@ import Moment from "moment";
 import { IoMdOpen } from 'react-icons/io';
 import { FaPlus, FaHeartbeat, FaHeart, FaSyncAlt, FaAngleDown } from 'react-icons/fa';
 import { BiCopy } from 'react-icons/bi';
+import setPageMeta from "../utils/seo";
+import { genNolUrl } from "./CourseDrawerContainer";
 import ParrotGif from "../img/parrot/parrot.gif";
 import ParrotUltraGif from "../img/parrot/ultrafastparrot.gif";
 
@@ -52,10 +54,12 @@ function CourseInfoContainer ({code}){
     const [refreshTime, setRefreshTime] = useState(new Date());
     Moment.locale("zh-tw");
 
+
     useEffect(() => {
         const fetchCourseObject = async(course_code) => {
+            let course_obj
             try {
-                const course_obj = await dispatch(fetchCourse(course_code))
+                course_obj = await dispatch(fetchCourse(course_code))
                 console.log(course_obj);
                 if (course_obj === undefined){
                     setNotFound(true);
@@ -66,9 +70,9 @@ function CourseInfoContainer ({code}){
                 navigate(`/error/${error.status_code}`, { state: error });
                 return;
             }
-        } 
-
-        fetchCourseObject(code);
+            setPageMeta({title: `${course_obj.course_name} - 課程資訊 | NTUCourse Neo`, desc: `${course_obj.course_name} 課程的詳細資訊 | NTUCourse Neo，全新的臺大選課網站。`});
+          } 
+          fetchCourseObject(code);
     },[])
 
     useEffect(() => {
@@ -135,7 +139,7 @@ function CourseInfoContainer ({code}){
                       <MenuItem icon={<FaPlus />}>加入課程網</MenuItem>
                       <MenuItem icon={<FaHeart />}>加入最愛</MenuItem>
                     <MenuDivider />
-                      <MenuItem icon={<IoMdOpen />}>課程網資訊</MenuItem>
+                      <MenuItem icon={<IoMdOpen />} onClick={() => window.open(genNolUrl(course), "_blank")}>課程網資訊</MenuItem>
                   </MenuList>
                 </Menu>
               </HStack>
@@ -158,9 +162,7 @@ function CourseInfoContainer ({code}){
                           <Button key={"NolContent_Button_"+code} size="md" colorScheme="blue" variant="outline" leftIcon={<FaPlus />}>課程網</Button>
                       </ButtonGroup>
                       <Button key={"NolContent_Button_"+code} size="md" colorScheme="red" variant="outline" leftIcon={<FaHeart />}>加入最愛</Button>
-                      <Button key={"NolContent_Button_"+code} size="md" rightIcon={<IoMdOpen />} onClick={() => {
-                        //TODO
-                      }}>課程網資訊</Button>
+                      <Button key={"NolContent_Button_"+code} size="md" rightIcon={<IoMdOpen />} onClick={() => window.open(genNolUrl(course), "_blank")}>課程網資訊</Button>
                       <CopyToClipboard text={"https://course.myntu.me/courseinfo/"+course._id}>
                         <Button rightIcon={<Icon as={BiCopy} color={copyWord.color} />} variant="ghost" size="md" bg={copyWord.bg} color={copyWord.color} onClick={() => setCopiedLinkClicks(copiedLinkClicks + 1)}>
                           {copyWord.word}

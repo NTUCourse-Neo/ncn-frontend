@@ -61,6 +61,7 @@ import {mapStateToTimeTable, mapStateToIntervals} from '../utils/timeTableConver
 import { info_view_map } from '../data/mapping_table';
 import { useAuth0 } from '@auth0/auth0-react';
 import BetaBadge from '../components/BetaBadge';
+import setPageMeta from '../utils/seo';
 
 
 function CourseResultViewContainer() {
@@ -137,6 +138,7 @@ function CourseResultViewContainer() {
 
   useEffect(() => {
       window.scrollTo(0, 0);
+      setPageMeta({title: `課程搜尋 | NTUCourse Neo`, desc: `課程搜尋頁面 | NTUCourse Neo，全新的臺大選課網站。`});
   } ,[]);
 
   useEffect(() => {

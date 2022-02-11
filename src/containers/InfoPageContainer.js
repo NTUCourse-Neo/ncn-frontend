@@ -19,6 +19,7 @@ import {GiLiver} from 'react-icons/gi';
 import jchiroto from "../img/team_avatar/jc-hiroto.png";
 import swh00tw from "../img/team_avatar/swh00tw.png";
 import wil0408 from "../img/team_avatar/wil0408.png";
+import setPageMeta from '../utils/seo';
 
 const teams = [
   {
@@ -50,6 +51,7 @@ const teams = [
 function InfoPageContainer(props){
   useEffect(() => {
     window.scrollTo(0, 0);
+    setPageMeta({title: `關於 | NTUCourse Neo`, desc: `關於頁面 | NTUCourse Neo，全新的臺大選課網站。`});
   } , [])
   const handleOpenGithub = (github) => {
     window.open(`https://www.github.com/${github}`, '_blank');
