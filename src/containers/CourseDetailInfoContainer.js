@@ -326,10 +326,17 @@ function CourseDetailInfoContainer({ course }){
       <Flex w="100%" my="4" flexDirection="column" justifyContent="start" alignItems="start" wordBreak="break-all" overflow="auto">
         {
           Object.keys(SyllubusData.syllabus).map((key, index) => {
+            let line = SyllubusData.syllabus[key].split('\n');
+            const content = line.map((item, index) => {
+              return(
+                <Text mb="2" fontSize="md" fontWeight="400" color="gray.600">{item.trim()}</Text>
+              );
+            })
+
             return(
               <>
                 <Text fontSize="lg" fontWeight="600" color="gray.700">{syllabusTitle[key]}</Text>
-                <Text mb="2" fontSize="md" fontWeight="400" color="gray.600">{SyllubusData.syllabus[key] !== "" ? SyllubusData.syllabus[key].trim():"無"}</Text>
+                {SyllubusData.syllabus[key] !== ""? content : <Text fontSize="md" fontWeight="400" color="gray.600">無</Text>}
               </>
             );
           })
