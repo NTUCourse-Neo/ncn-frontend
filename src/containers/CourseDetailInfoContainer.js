@@ -27,10 +27,16 @@ import{
   PopoverCloseButton,
   PopoverHeader,
   PopoverBody,
+  Spacer,
+  ButtonGroup,
+  Badge,
+  IconButton,
+  Tooltip,
+  Textarea,
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
 import { PieChart } from 'react-minimal-pie-chart';
-import { FaCircle, FaRss, FaExclamationTriangle, FaQuestionCircle } from 'react-icons/fa';
+import { FaCircle, FaRss, FaExclamationTriangle, FaQuestionCircle, FaThumbsUp, FaThumbsDown, FaInfoCircle } from 'react-icons/fa';
 import { IoMdOpen } from 'react-icons/io';
 import BetaBadge from '../components/BetaBadge';
 import { info_view_map } from '../data/mapping_table';
@@ -250,6 +256,110 @@ function CourseDetailInfoContainer({ course }){
       </Flex>
     );
   }
+  const renderSignupPanel = () => {
+    const renderSubmitPopover = () => {
+      return(
+        <Popover placement="bottom">
+          <PopoverTrigger>
+            <Button colorScheme="blue" variant="solid" size="sm">我要提供資訊</Button>
+          </PopoverTrigger>
+          <PopoverContent>
+            <PopoverArrow />
+            <PopoverCloseButton />
+            <Flex p="4" flexDirection="column" alignItems="start">
+              <Text fontSize="md" fontWeight="800" color="gray.700" textAlign="center">回報加簽方式</Text>
+              <Textarea my="2" size="md" placeholder='輸入回報內容...' />
+              <ButtonGroup w="100%" size="sm" d='flex' justifyContent='end'>
+                <Button variant='outline'>
+                  取消
+                </Button>
+                <Button colorScheme='blue'>
+                  送出
+                </Button>
+              </ButtonGroup>
+            </Flex>
+          </PopoverContent>
+        </Popover>
+      );
+    };
+    const renderReportPopover = () => {
+      return(
+        <Popover placement="bottom">
+          <PopoverTrigger>
+            <Button colorScheme="red" variant="ghost" size="sm">檢舉</Button>
+          </PopoverTrigger>
+          <PopoverContent>
+            <PopoverArrow />
+            <PopoverCloseButton />
+            <Flex p="4" flexDirection="column" alignItems="start">
+              <Text fontSize="md" fontWeight="800" color="gray.700" textAlign="center">檢舉資訊不實</Text>
+              <Textarea my="2" size="md" placeholder='輸入檢舉內容...' />
+              <ButtonGroup w="100%" size="sm" d='flex' justifyContent='end'>
+                <Button variant='outline'>
+                  取消
+                </Button>
+                <Button colorScheme='red'>
+                  檢舉
+                </Button>
+              </ButtonGroup>
+            </Flex>
+          </PopoverContent>
+        </Popover>
+      );
+    };
+
+    if(false){
+      return(
+        renderPanelLoaing("努力跑加簽大地中...", "100%", "0")
+      );
+    };
+    if(!true){
+      return renderFallback("無加簽相關資訊", {FaExclamationTriangle}, "100%", "0");
+    }
+    return(
+      <Flex w="100%" h="100%" mt="4" flexDirection="column" justifyContent="center" alignItems={isMobile? "start":"center"}>
+        <Flex w="100%" h="100%" justifyContent="space-around" alignItems="start" flexDirection={isMobile? "column":"row"}>
+          <Flex h="100%" w={isMobile? "100%":"24"} flexWrap="wrap" alignItems="start">
+            <Stat minW="16">
+              <StatLabel>加簽人數</StatLabel>
+              <StatNumber>10</StatNumber>
+            </Stat>
+            <Stat minW="16">
+              <StatLabel>加簽方式</StatLabel>
+              <Text mt="1" fontSize="lg" fontWeight="600">抽籤</Text>
+            </Stat>
+            <Stat minW="16">
+              <StatLabel>加簽日期</StatLabel>
+              <Text mt="1" fontSize="lg" fontWeight="600">第一週上課</Text>
+            </Stat>
+          </Flex>
+          <VStack w={isMobile? "100%":"70%"} h="100%">
+            <VStack w="100%" h="100%" justify="start" align="start">
+              <HStack w="100%">
+                <Text fontSize="sm" fontWeight="600" color="gray.800">回報資訊</Text>
+                <Tooltip label="此資訊基於社群回報與機器學習擷取資訊，僅顯示評分最高之回報內容。此資訊可能有缺漏或不完全正確，亦不代表本站立場，請確實做好查證工作。" placement="top" hasArrow>
+                  <p>
+                    <Icon as={FaInfoCircle} boxSize="3" color="gray.500" />
+                  </p>
+                </Tooltip>
+                <Spacer />
+                <Text fontSize="xs" fontWeight="600" color="gray.500">回報者</Text>
+                <Badge colorScheme="blue">課程教師</Badge>
+              </HStack>
+              <Text maxH={isMobile? "":"8vh"} fontSize="md" fontWeight="600" color="gray.600" overflow="auto">開學第一周上課開放加簽，人數以10人為上限，欲加簽的同學請於第一堂課準時攜帶學生證來抽籤，不接受代抽、轉讓、互換體育課程，第二周之後不開放加簽，碩博生如欲加簽此堂課，第一周也須要到場抽籤。</Text>
+            </VStack>
+            <HStack w="100%">
+              <Button colorScheme="teal" variant="ghost" size="xs" leftIcon={<FaThumbsUp />}>0</Button>
+              <Button colorScheme="orange" variant="ghost" size="xs" leftIcon={<FaThumbsDown />}>0</Button>
+              {renderReportPopover()}
+              <Spacer />
+              {renderSubmitPopover()}
+            </HStack>
+          </VStack>
+        </Flex>
+      </Flex>
+    );
+  }
   const renderNTURatingPanel = () => {
     if(isLoadingRatingData){
       return(
@@ -414,7 +524,7 @@ function CourseDetailInfoContainer({ course }){
       {/* COL 1 */}
       <Flex w={isMobile?"100%": "30%"} flexDirection={'column'}>
         {/* Box1 */}
-        <Flex bg='gray.100' h="60vh" my='1vh' px="6" py="4" borderRadius='xl' flexDirection="column">
+        <Flex bg='gray.100' h={isMobile? "":"60vh"} my='1vh' px="6" py="4" borderRadius='xl' flexDirection="column">
           <Text fontSize="2xl" fontWeight="800" color="gray.700">詳細資料</Text>
           <Flex mt="4" justifyContent="start" alignItems="start" flexWrap='wrap' gap="2">
             <Flex mr="16" flexDirection="column" flexWrap="wrap">
@@ -515,7 +625,8 @@ function CourseDetailInfoContainer({ course }){
       <Flex w={isMobile?"100%": "30%"} mx={isMobile? "":"1%"} flexDirection={'column'}>
         {/* Box3 */}
         <Flex h={isMobile? "":"20vh"} bg='gray.100' my='1vh' px="6" py="4" borderRadius='xl' flexDirection="column">
-          <Text fontSize="2xl" fontWeight="800" color="gray.700">加簽資訊<BetaBadge content="coming soon" size="sm"/></Text>
+          <Text fontSize="2xl" fontWeight="800" color="gray.700">加簽資訊<BetaBadge content="beta" size="sm"/></Text>
+          {renderSignupPanel()}
         </Flex>
         {/* Box4 */}
         <Flex h={isMobile? "":"30vh"} bg='gray.100' my='1vh' px="6" py="4" borderRadius='xl' flexDirection="column" justifyContent="space-between">
