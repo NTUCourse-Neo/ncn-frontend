@@ -56,7 +56,8 @@ const genNolAddUrl = (course) => {
 const genNolUrl = (course) => {
     let lang="CH";
     let base_url = "https://nol.ntu.edu.tw/nol/coursesearch/print_table.php?";
-    let params = `course_id=${course.course_id.substr(0,3)}%20${course.course_id.substr(3)}&class=${course.class_id}&ser_no=${course.id}&semester=${course.semester.substr(0,3)}-${course.semester.substr(3,1)}&lang=${lang}`;
+    let course_id = course.course_id.replace("E", "");
+    let params = `course_id=${course_id.substr(0,3)}%20${course_id.substr(3)}&class=${course.class_id}&ser_no=${course.id}&semester=${course.semester.substr(0,3)}-${course.semester.substr(3,1)}&lang=${lang}`;
     return base_url+params;
 }
 
