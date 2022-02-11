@@ -23,6 +23,7 @@ import { useDispatch} from "react-redux";
 import { fetchCourse } from "../actions/";
 import { useNavigate } from "react-router-dom";
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import Moment from "moment";
 import { IoMdOpen } from 'react-icons/io';
 import { FaPlus, FaHeartbeat, FaHeart, FaSyncAlt, FaAngleDown } from 'react-icons/fa';
 import { BiCopy } from 'react-icons/bi';
@@ -32,10 +33,12 @@ import ParrotUltraGif from "../img/parrot/ultrafastparrot.gif";
 const copyWordList = [
   {count: 100, word: "複製終結者!!", color: "purple.600", bg: "purple.50"},
   {count: 50, word: "終極複製!!", color: "red.600", bg: "red.50"},
-  {count: 25, word: "超級複製!", color: "orange.600", bg: "orange.50"},
-  {count: 10, word: "瘋狂複製", color: "yellow.600", bg: "yellow.50"},
+  {count: 25, word: "超級複製!!", color: "orange.600", bg: "orange.50"},
+  {count: 10, word: "瘋狂複製!!", color: "yellow.600", bg: "yellow.50"},
+  {count: 3, word: "三倍複製!", color: "green.600", bg: "green.50"},
+  {count: 2, word: "雙倍複製!", color: "green.600", bg: "green.50"},
   {count: 1, word: "已複製", color: "green.600", bg: "green.50"},
-  {count: 0, word: "複製連結", color: "gray.500", bg: "white"},
+  {count: 0, word: "複製連結", color: "gray.600", bg: "white"},
 ]
 
 function CourseInfoContainer ({code}){
@@ -46,6 +49,8 @@ function CourseInfoContainer ({code}){
     const [isMobile] = useMediaQuery('(max-width: 1000px)')
     const [copiedLinkClicks, setCopiedLinkClicks] = useState(0);
     const [copyWord, setCopyWord] = useState(copyWordList.find(word => word.count <= copiedLinkClicks));
+    const [refreshTime, setRefreshTime] = useState(new Date());
+    Moment.locale("zh-tw");
 
     useEffect(() => {
         const fetchCourseObject = async(course_code) => {
@@ -110,8 +115,12 @@ function CourseInfoContainer ({code}){
                 <VStack align="start">
                   <HStack>
                     <Tag size="sm" colorScheme="blue"><Text fontWeight="600" fontSize="sm">{course.id}</Text></Tag>
-                    <IconButton icon={<FaSyncAlt color="gray"/>} variant="ghost" size="xs"/>
-                    <Text fontWeight="500" fontSize="sm" color="gray.300">11:10 更新</Text>
+                    <Text fontWeight="500" fontSize="xs" color="gray.300">{Moment(refreshTime).format("HH:mm")} 更新</Text>
+                    <CopyToClipboard text={"https://course.myntu.me/courseinfo/"+course._id}>
+                        <Button rightIcon={<Icon as={BiCopy} color={copyWord.color} />} variant="ghost" size="xs" bg={copyWord.bg} color={copyWord.color} onClick={() => setCopiedLinkClicks(copiedLinkClicks + 1)}>
+                          {copyWord.word}
+                        </Button>
+                      </CopyToClipboard>
                   </HStack>
                   <HStack>
                     <Text fontSize="xl" fontWeight="800" color="gray.700">{course.course_name}</Text>
@@ -138,14 +147,11 @@ function CourseInfoContainer ({code}){
       return (
           <>
               <Flex pt="64px" w='100%' justifyContent={'center'}>
-                  <HStack my="2" mx="4%" spacing="4" w="100%">
+                  <HStack my="2" mx="4%" spacing="4" w="100%" align="center">
                       <Tag size="md" colorScheme="blue"><Text fontWeight="800" fontSize="lg">{course.id}</Text></Tag>
                       <Text fontSize="3xl" fontWeight="800" color="gray.700">{course.course_name}</Text>
                       <Text fontSize="2xl" fontWeight="500" color="gray.500">{course.teacher}</Text>
-                      <HStack>
-                        <IconButton icon={<Icon as={FaSyncAlt} color="gray.400"/>} variant="ghost" size="xs"/>
-                        <Text fontWeight="500" fontSize="md" color="gray.300">11:10 更新</Text>
-                      </HStack>
+                      <Text fontWeight="500" fontSize="md" color="gray.300">{Moment(refreshTime).format("HH:mm")} 更新</Text>
                       <Spacer />
                       <ButtonGroup isAttached>
                           <Button key={"NolContent_Button_"+code} mr='-px' size="md" colorScheme="blue" variant="outline" leftIcon={<FaPlus />}>課表</Button>
