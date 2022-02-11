@@ -346,7 +346,9 @@ function CourseDetailInfoContainer({ course }){
                 <Text fontSize="xs" fontWeight="600" color="gray.500">回報者</Text>
                 <Badge colorScheme="blue">課程教師</Badge>
               </HStack>
-              <Text maxH={isMobile? "":"8vh"} fontSize="md" fontWeight="600" color="gray.600" overflow="auto">開學第一周上課開放加簽，人數以10人為上限，欲加簽的同學請於第一堂課準時攜帶學生證來抽籤，不接受代抽、轉讓、互換體育課程，第二周之後不開放加簽，碩博生如欲加簽此堂課，第一周也須要到場抽籤。</Text>
+              <Flex maxH={isMobile? "":""} overflow="auto" flexGrow={1}>
+                <Text fontSize="md" fontWeight="600" color="gray.600" overflow="auto">開學第一周上課開放加簽，人數以10人為上限，欲加簽的同學請於第一堂課準時攜帶學生證來抽籤，不接受代抽、轉讓、互換體育課程，第二周之後不開放加簽，碩博生如欲加簽此堂課，第一周也須要到場抽籤。</Text>
+              </Flex>
             </VStack>
             <HStack w="100%">
               <Button colorScheme="teal" variant="ghost" size="xs" leftIcon={<FaThumbsUp />}>0</Button>
@@ -408,7 +410,7 @@ function CourseDetailInfoContainer({ course }){
       return renderFallback("無相關貼文資訊", "empty", "100%", "8");
     }
     return(
-      <PTTContentRowContainer info={PTTReviewData} height="14vh"/>
+      <PTTContentRowContainer info={PTTReviewData} height="150px"/>
     );
   };
   const renderPTTExamPanel = () => {
@@ -421,7 +423,7 @@ function CourseDetailInfoContainer({ course }){
       return renderFallback("無相關貼文資訊", "empty", "100%", "8");
     }
     return(
-      <PTTContentRowContainer info={PTTExamData} height="25vh"/>
+      <PTTContentRowContainer info={PTTExamData} height="150px"/>
     );
   };
   const renderSyllabusDataPanel = () => {
@@ -524,7 +526,7 @@ function CourseDetailInfoContainer({ course }){
       {/* COL 1 */}
       <Flex w={isMobile?"100%": "30%"} flexDirection={'column'}>
         {/* Box1 */}
-        <Flex bg='gray.100' h={isMobile? "":"60vh"} my='1vh' px="6" py="4" borderRadius='xl' flexDirection="column">
+        <Flex bg='gray.100' h={isMobile? "":""} my='1vh' px="6" py="4" borderRadius='xl' flexDirection="column" flexGrow={1} flexShrink={1}>
           <Text fontSize="2xl" fontWeight="800" color="gray.700">詳細資料</Text>
           <Flex mt="4" justifyContent="start" alignItems="start" flexWrap='wrap' gap="2">
             <Flex mr="16" flexDirection="column" flexWrap="wrap">
@@ -589,18 +591,18 @@ function CourseDetailInfoContainer({ course }){
           <Divider mt="4" mb="4" borderColor="gray.300"/>
           <VStack mt="2" align="start">
             <Text fontSize="md" textAlign="center" color="gray.700" fontWeight="700">修課限制</Text>
-            <Text fontSize="sm" textAlign="center" color="gray.600">{course.limit}</Text>
+            <Text fontSize="sm" color="gray.600" align='start'>{course.limit}</Text>
           </VStack>
           <VStack mt="2" align="start">
             <Text fontSize="md" textAlign="center" color="gray.700" fontWeight="700">備註</Text>
-            <Text fontSize="sm" textAlign="center" color="gray.600">{course.note}</Text>
+            <Text fontSize="sm" color="gray.600" align="start">{course.note}</Text>
           </VStack>
           <Divider mt="4" mb="4" borderColor="gray.300"/>
           <Text fontSize="lg" color="gray.700" fontWeight="700">節次資訊</Text>
           <Text fontSize="sm" color="gray.600">{course.time_loc}</Text>
         </Flex>
         {/* Box2 */}
-        <Flex bg='gray.100' h={isMobile? "":"26vh"} my='1vh' px="6" py="4" borderRadius='xl' flexDirection="column" justifyContent="space-between">
+        <Flex bg='gray.100' h={isMobile? "":""} my='1vh' px="6" py="4" borderRadius='xl' flexDirection="column" justifyContent="space-between" flexGrow={1} flexShrink={1}>
           <Tabs variant='soft-rounded' size="sm">
             <HStack spacing="4">
               <Text fontSize="2xl" fontWeight="800" color="gray.700">選課資訊</Text>
@@ -624,12 +626,12 @@ function CourseDetailInfoContainer({ course }){
       {/* COL 2 */}
       <Flex w={isMobile?"100%": "30%"} mx={isMobile? "":"1%"} flexDirection={'column'}>
         {/* Box3 */}
-        <Flex h={isMobile? "":"20vh"} bg='gray.100' my='1vh' px="6" py="4" borderRadius='xl' flexDirection="column">
+        <Flex h={isMobile? "":""} bg='gray.100' my='1vh' px="6" py="4" borderRadius='xl' flexDirection="column" flexGrow={1} flexShrink={1}>
           <Text fontSize="2xl" fontWeight="800" color="gray.700">加簽資訊<BetaBadge content="beta" size="sm"/></Text>
           {renderSignupPanel()}
         </Flex>
         {/* Box4 */}
-        <Flex h={isMobile? "":"30vh"} bg='gray.100' my='1vh' px="6" py="4" borderRadius='xl' flexDirection="column" justifyContent="space-between">
+        <Flex h={isMobile? "":""} bg='gray.100' my='1vh' px="6" py="4" borderRadius='xl' flexDirection="column" justifyContent="space-between" flexGrow={1} flexShrink={1}>
           <Tabs h="100%" variant='soft-rounded' size="sm">
             <HStack spacing="4">
               <Text fontSize="2xl" fontWeight="800" color="gray.700">評價<BetaBadge content="preview" size="sm"/></Text>
@@ -650,7 +652,7 @@ function CourseDetailInfoContainer({ course }){
           {renderDataSource("PTT NTUCourse, NTURating")}
         </Flex>
         {/* Box5 */}
-        <Flex h={isMobile? "":"34vh"} bg='gray.100' my='1vh' px="6" py="4" borderRadius='xl' flexDirection="column" justifyContent="space-between">
+        <Flex h={isMobile? "":""} bg='gray.100' my='1vh' px="6" py="4" borderRadius='xl' flexDirection="column" justifyContent="space-between" flexGrow={1} flexShrink={1}>
           <Tabs variant='soft-rounded' size="sm">
             <HStack spacing="4">
               <Text fontSize="2xl" fontWeight="800" color="gray.700">考古題資訊<BetaBadge content="preview" size="sm"/></Text>
@@ -670,7 +672,7 @@ function CourseDetailInfoContainer({ course }){
       {/* COL 3 */}
       <Flex w={isMobile?"100%": "30%"} flexDirection={'column'}>
         {/* Box6 */}
-        <Flex bg='gray.100' h={isMobile? '':'55vh'} my='1vh' px="6" py="4" borderRadius='xl' flexDirection="column" justifyContent="space-between">
+        <Flex bg='gray.100' h={isMobile? '':'55vh'} my='1vh' px="6" py="4" borderRadius='xl' flexDirection="column" justifyContent="space-between" flexGrow={1} flexShrink={1}>
           <VStack h="95%" align="start">
             <Text fontSize="2xl" fontWeight="800" color="gray.700">課程大綱</Text>
             {renderSyllabusDataPanel()}
@@ -678,7 +680,7 @@ function CourseDetailInfoContainer({ course }){
           {renderDataSource("臺大課程網")}
         </Flex>
         {/* Box7 */}
-        <Flex h={isMobile? "":"31vh"} bg='gray.100' my='1vh' px="6" py="4" borderRadius='xl' flexDirection="column" justifyContent="space-between">
+        <Flex h={isMobile? "":"31vh"} bg='gray.100' my='1vh' px="6" py="4" borderRadius='xl' flexDirection="column" justifyContent="space-between" flexGrow={1} flexShrink={1}>
           <Text fontSize="2xl" fontWeight="800" color="gray.700">評分方式</Text>
           {renderGradePolicyPanel()}
           {renderDataSource("臺大課程網")}
