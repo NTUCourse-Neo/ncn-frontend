@@ -329,7 +329,7 @@ function CourseDetailInfoContainer({ course }){
             let line = SyllubusData.syllabus[key].split('\n');
             const content = line.map((item, index) => {
               return(
-                <Text mb="2" fontSize="md" fontWeight="400" color="gray.600">{item.trim()}</Text>
+                <Text mb="0.5" fontSize="md" fontWeight="400" color="gray.600">{item.trim()}</Text>
               );
             })
 
@@ -369,6 +369,12 @@ function CourseDetailInfoContainer({ course }){
         </Box>
         <VStack mt={isMobile ? "4":""} align="start">
           {SyllubusData.grade.map((item, index) => {
+            let line = item.comment.split('\n');
+            const content = line.map((item, index) => {
+              return(
+                <Text mb="1" fontSize="md" fontWeight="400" color="gray.700">{item.trim()}</Text>
+              );
+            })
             return(
               <>
                 <Popover>
@@ -389,7 +395,9 @@ function CourseDetailInfoContainer({ course }){
                       </HStack>
                     </PopoverHeader>
                     <PopoverBody>
-                      <Text fontSize="md" fontWeight="400" color="gray.700">{item.comment === "" ? "無詳細資訊" : item.comment}</Text>
+                      {
+                      }
+                      <Text fontSize="md" fontWeight="400" color="gray.700">{item.comment === "" ? "無詳細資訊" : content}</Text>
                     </PopoverBody>
                   </PopoverContent>
                 </Popover>
