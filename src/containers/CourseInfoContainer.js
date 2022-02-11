@@ -24,6 +24,7 @@ import { fetchCourse } from "../actions/";
 import { useNavigate } from "react-router-dom";
 import { IoMdOpen } from 'react-icons/io';
 import { FaPlus, FaHeartbeat, FaHeart, FaSyncAlt, FaAngleDown } from 'react-icons/fa';
+import { BiCopy } from 'react-icons/bi';
 import ParrotGif from "../img/parrot/parrot.gif";
 import ParrotUltraGif from "../img/parrot/ultrafastparrot.gif";
 
@@ -137,8 +138,9 @@ function CourseInfoContainer ({code}){
                       </ButtonGroup>
                       <Button key={"NolContent_Button_"+code} size="md" colorScheme="red" variant="outline" leftIcon={<FaHeart />}>加入最愛</Button>
                       <Button key={"NolContent_Button_"+code} size="md" rightIcon={<IoMdOpen />} onClick={() => {
-                          //TODO
+                        //TODO
                       }}>課程網資訊</Button>
+                      <Button rightIcon={<Icon as={BiCopy} color="gray.600" />} variant="ghost" size="md" color="gray.600">複製連結</Button>
                   </HStack>
               </Flex>
               <CourseDetailInfoContainer course={course}/>

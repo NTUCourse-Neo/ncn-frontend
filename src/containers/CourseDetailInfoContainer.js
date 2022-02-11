@@ -40,20 +40,6 @@ import { useDispatch } from 'react-redux';
 import ParrotGif from "../img/parrot/parrot.gif";
 import { hash_to_color_hex_with_hue } from '../utils/colorAgent';
 
-// fake data
-const pieMock = [
-  { title: '作業', value: 40, color: '#E38627' },
-  { title: '期中考', value: 30, color: '#C13C37' },
-  { title: '期末考', value: 30, color: '#6A2135' },
-]
-const syllabusMock = {
-  intro: "土木系大一必修課程，會從最基礎的內容教起。",
-  objective: "透過 Python 電腦程式語言的介紹與實際寫作，提昇學生邏輯思考與善用現代化資訊工具的能力，並能利用電腦程式解決簡單的工程領域相關問題。 ",
-  requirement: "來上課來上機課程資訊閱讀作業及程式實作來考試：小考、期中考、期末考",
-  office_hour: "",
-  material: "待補",
-  specify: ""
-}
 const syllabusTitle = {
   intro: "概述",
   objective: "目標",
@@ -82,107 +68,108 @@ function CourseDetailInfoContainer({ course }){
   const [ isLoadingPTTExamData, setIsLoadingPTTExamData ] = useState(true);
   const [ isLoadingSyllubusData, setIsLoadingSyllubusData ] = useState(true);
 
+  async function fetchCourseEnrollData() {
+    setIsLoadingEnrollInfo(true);
+    let data;
+    try {
+        data = await dispatch(getCourseEnrollInfo(course.id));
+    } catch (error) {
+        setIsLoadingEnrollInfo(false);
+        toast({
+            title: "錯誤",
+            description: "無法取得課程即時資訊",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+        });
+        return;
+    }
+    setCourseEnrollStatus(data);
+    setIsLoadingEnrollInfo(false);
+  }
+  async function fetchNTURatingData() {
+    setIsLoadingRatingData(true);
+    let data;
+    try {
+        data = await dispatch(getNTURatingData(course._id));
+    } catch (error) {
+        setIsLoadingRatingData(false);
+        toast({
+            title: "無法取得 NTURating 評價資訊",
+            description: "請洽 rating.myntu.me",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+        });
+        return;
+    }
+    setNTURatingData(data);
+    setIsLoadingRatingData(false);
+  }
+  async function fetchPTTReviewData() {
+    setIsLoadingPTTReviewData(true);
+    let data;
+    try {
+        data = await dispatch(getPTTData(course._id, "review"));
+    } catch (error) {
+        setIsLoadingPTTReviewData(false);
+        toast({
+            title: "無法取得 PTT 貼文資訊",
+            description: "請洽 ptt.cc",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+        });
+        return;
+    }
+    setPTTReviewData(data);
+    setIsLoadingPTTReviewData(false);
+  }
+  async function fetchPTTExamData() {
+    setIsLoadingPTTExamData(true);
+    let data;
+    try {
+        data = await dispatch(getPTTData(course._id, "exam"));
+    } catch (error) {
+        setIsLoadingPTTExamData(false);
+        toast({
+            title: "無法取得 PTT 貼文資訊",
+            description: "請洽 ptt.cc",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+        });
+        return;
+    }
+    setPTTExamData(data);
+    setIsLoadingPTTExamData(false);
+  }
+  async function fetchSyllabusData() {
+    setIsLoadingSyllubusData(true);
+    let data;
+    try {
+        data = await dispatch(getCourseSyllabusData(course._id));
+    } catch (error) {
+        setIsLoadingSyllubusData(false);
+        toast({
+            title: "無法取得課程大綱資訊",
+            description: "請洽台大課程網",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+        });
+        return;
+    }
+    if(data && data.grade){
+      data.grade.forEach(grade => {
+        grade.color = hash_to_color_hex_with_hue(grade.title, {min: 180, max: 200});
+      })
+    }
+    setSyllubusData(data);
+    setIsLoadingSyllubusData(false);
+  }
+  
   useEffect(() => {
-    async function fetchCourseEnrollData() {
-      setIsLoadingEnrollInfo(true);
-      let data;
-      try {
-          data = await dispatch(getCourseEnrollInfo(course.id));
-      } catch (error) {
-          setIsLoadingEnrollInfo(false);
-          toast({
-              title: "錯誤",
-              description: "無法取得課程即時資訊",
-              status: "error",
-              duration: 3000,
-              isClosable: true,
-          });
-          return;
-      }
-      setCourseEnrollStatus(data);
-      setIsLoadingEnrollInfo(false);
-    }
-    async function fetchNTURatingData() {
-      setIsLoadingRatingData(true);
-      let data;
-      try {
-          data = await dispatch(getNTURatingData(course._id));
-      } catch (error) {
-          setIsLoadingRatingData(false);
-          toast({
-              title: "無法取得 NTURating 評價資訊",
-              description: "請洽 rating.myntu.me",
-              status: "error",
-              duration: 3000,
-              isClosable: true,
-          });
-          return;
-      }
-      setNTURatingData(data);
-      setIsLoadingRatingData(false);
-    }
-    async function fetchPTTReviewData() {
-      setIsLoadingPTTReviewData(true);
-      let data;
-      try {
-          data = await dispatch(getPTTData(course._id, "review"));
-      } catch (error) {
-          setIsLoadingPTTReviewData(false);
-          toast({
-              title: "無法取得 PTT 貼文資訊",
-              description: "請洽 ptt.cc",
-              status: "error",
-              duration: 3000,
-              isClosable: true,
-          });
-          return;
-      }
-      setPTTReviewData(data);
-      setIsLoadingPTTReviewData(false);
-    }
-    async function fetchPTTExamData() {
-      setIsLoadingPTTExamData(true);
-      let data;
-      try {
-          data = await dispatch(getPTTData(course._id, "exam"));
-      } catch (error) {
-          setIsLoadingPTTExamData(false);
-          toast({
-              title: "無法取得 PTT 貼文資訊",
-              description: "請洽 ptt.cc",
-              status: "error",
-              duration: 3000,
-              isClosable: true,
-          });
-          return;
-      }
-      setPTTExamData(data);
-      setIsLoadingPTTExamData(false);
-    }
-    async function fetchSyllabusData() {
-      setIsLoadingSyllubusData(true);
-      let data;
-      try {
-          data = await dispatch(getCourseSyllabusData(course._id));
-      } catch (error) {
-          setIsLoadingSyllubusData(false);
-          toast({
-              title: "無法取得課程大綱資訊",
-              description: "請洽台大課程網",
-              status: "error",
-              duration: 3000,
-              isClosable: true,
-          });
-          return;
-      }
-      if(data && data.grade){
-        data.grade.forEach(grade => {
-          grade.color = hash_to_color_hex_with_hue(grade.title, {min: 180, max: 200});
-        })
-      }
-      setSyllubusData(data);
-      setIsLoadingSyllubusData(false);
-    }
     fetchNTURatingData();
     fetchCourseEnrollData();
     fetchPTTReviewData();
@@ -336,7 +323,7 @@ function CourseDetailInfoContainer({ course }){
       return renderFallback("無課程大綱資訊", "empty", "100%", "8");
     }
     return(
-      <Flex w="100%" h={isMobile? "":"40vh"} my="4" flexDirection="column" justifyContent="start" alignItems="start" wordBreak="break-all" overflow="auto">
+      <Flex w="100%" my="4" flexDirection="column" justifyContent="start" alignItems="start" wordBreak="break-all" overflow="auto">
         {
           Object.keys(SyllubusData.syllabus).map((key, index) => {
             return(
@@ -411,7 +398,7 @@ function CourseDetailInfoContainer({ course }){
       {/* COL 1 */}
       <Flex w={isMobile?"100%": "30%"} flexDirection={'column'}>
         {/* Box1 */}
-        <Flex bg='gray.100' h="70%" my='1%' px="6" py="4" borderRadius='xl' flexDirection="column">
+        <Flex bg='gray.100' h="60vh" my='1vh' px="6" py="4" borderRadius='xl' flexDirection="column">
           <Text fontSize="2xl" fontWeight="800" color="gray.700">詳細資料</Text>
           <Flex mt="4" justifyContent="start" alignItems="start" flexWrap='wrap' gap="2">
             <Flex mr="16" flexDirection="column" flexWrap="wrap">
@@ -487,7 +474,7 @@ function CourseDetailInfoContainer({ course }){
           <Text fontSize="sm" color="gray.600">{course.time_loc}</Text>
         </Flex>
         {/* Box2 */}
-        <Flex bg='gray.100' h={isMobile? "":"26%"} my='1%' px="6" py="4" borderRadius='xl' flexDirection="column" justifyContent="space-between">
+        <Flex bg='gray.100' h={isMobile? "":"26vh"} my='1vh' px="6" py="4" borderRadius='xl' flexDirection="column" justifyContent="space-between">
           <Tabs variant='soft-rounded' size="sm">
             <HStack spacing="4">
               <Text fontSize="2xl" fontWeight="800" color="gray.700">選課資訊</Text>
@@ -511,11 +498,11 @@ function CourseDetailInfoContainer({ course }){
       {/* COL 2 */}
       <Flex w={isMobile?"100%": "30%"} mx={isMobile? "":"1%"} flexDirection={'column'}>
         {/* Box3 */}
-        <Flex h="20%" h={isMobile? "":"20%"} bg='gray.100' my='1%' px="6" py="4" borderRadius='xl' flexDirection="column">
+        <Flex h={isMobile? "":"20vh"} bg='gray.100' my='1vh' px="6" py="4" borderRadius='xl' flexDirection="column">
           <Text fontSize="2xl" fontWeight="800" color="gray.700">加簽資訊<BetaBadge content="coming soon" size="sm"/></Text>
         </Flex>
         {/* Box4 */}
-        <Flex h={isMobile? "":"30%"} bg='gray.100' my='1%' px="6" py="4" borderRadius='xl' flexDirection="column" justifyContent="space-between">
+        <Flex h={isMobile? "":"30vh"} bg='gray.100' my='1vh' px="6" py="4" borderRadius='xl' flexDirection="column" justifyContent="space-between">
           <Tabs h="100%" variant='soft-rounded' size="sm">
             <HStack spacing="4">
               <Text fontSize="2xl" fontWeight="800" color="gray.700">評價<BetaBadge content="preview" size="sm"/></Text>
@@ -536,7 +523,7 @@ function CourseDetailInfoContainer({ course }){
           {renderDataSource("PTT NTUCourse, NTURating")}
         </Flex>
         {/* Box5 */}
-        <Flex h={isMobile? "":"44.5%"} bg='gray.100' my='1%' px="6" py="4" borderRadius='xl' flexDirection="column" justifyContent="space-between">
+        <Flex h={isMobile? "":"34vh"} bg='gray.100' my='1vh' px="6" py="4" borderRadius='xl' flexDirection="column" justifyContent="space-between">
           <Tabs variant='soft-rounded' size="sm">
             <HStack spacing="4">
               <Text fontSize="2xl" fontWeight="800" color="gray.700">考古題資訊<BetaBadge content="preview" size="sm"/></Text>
@@ -556,15 +543,15 @@ function CourseDetailInfoContainer({ course }){
       {/* COL 3 */}
       <Flex w={isMobile?"100%": "30%"} flexDirection={'column'}>
         {/* Box6 */}
-        <Flex bg='gray.100' h='60%' my='1%' px="6" py="4" borderRadius='xl' flexDirection="column" justifyContent="space-between">
-          <VStack align="start">
+        <Flex bg='gray.100' h={isMobile? '':'55vh'} my='1vh' px="6" py="4" borderRadius='xl' flexDirection="column" justifyContent="space-between">
+          <VStack h="95%" align="start">
             <Text fontSize="2xl" fontWeight="800" color="gray.700">課程大綱</Text>
             {renderSyllabusDataPanel()}
           </VStack>
           {renderDataSource("臺大課程網")}
         </Flex>
         {/* Box7 */}
-        <Flex h={isMobile? "":"36%"} bg='gray.100' my='1%' px="6" py="4" borderRadius='xl' flexDirection="column">
+        <Flex h={isMobile? "":"31vh"} bg='gray.100' my='1vh' px="6" py="4" borderRadius='xl' flexDirection="column" justifyContent="space-between">
           <Text fontSize="2xl" fontWeight="800" color="gray.700">評分方式</Text>
           {renderGradePolicyPanel()}
           {renderDataSource("臺大課程網")}
