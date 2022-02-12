@@ -393,9 +393,9 @@ function CourseInfoContainer ({code}){
                 <Menu>
                   <MenuButton as={Button} rightIcon={<FaAngleDown />}>功能</MenuButton>
                   <MenuList>
-                      <MenuItem icon={<FaPlus />}>加入課表</MenuItem>
-                      <MenuItem icon={<FaPlus />}>加入課程網</MenuItem>
-                      <MenuItem icon={<FaHeart />}>加入最愛</MenuItem>
+                      <MenuItem><Button key={"NolContent_Button_"+code} mr='-px' size="md" colorScheme={selected?"red":"blue"} variant="ghost" leftIcon={selected?<FaMinus />:<FaPlus />} isLoading={addingCourse || isLoading} onClick={()=>{handleAddCourse(course)}}>{selected?"從課表移除":"加入課表"}</Button></MenuItem>
+                      <MenuItem><Button key={"NolContent_Button_"+code} size="md" colorScheme="blue" variant="ghost" leftIcon={<FaPlus />} onClick={() => openPage(genNolAddUrl(course), true)}>課程網</Button></MenuItem>
+                      <MenuItem><Button key={"NolContent_Button_"+code} size="md" colorScheme="red" variant={"ghost"} leftIcon={isFavorite?<FaMinus />:<FaHeart />} isLoading={addingFavoriteCourse} disabled={!userInfo} onClick={()=>{handleAddFavorite(course._id)}}>{isFavorite?"從最愛移除":"加入最愛"}</Button></MenuItem>
                     <MenuDivider />
                       <MenuItem icon={<IoMdOpen />} onClick={() => window.open(genNolUrl(course), "_blank")}>課程網資訊</MenuItem>
                   </MenuList>
