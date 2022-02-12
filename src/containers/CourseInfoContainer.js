@@ -16,21 +16,23 @@ import {
   MenuButton,
   MenuList,
   MenuDivider,
+  useToast,
 } from "@chakra-ui/react";
 import CourseDetailInfoContainer from "./CourseDetailInfoContainer";
 import {useState, useEffect} from "react";
-import { useDispatch} from "react-redux";
-import { fetchCourse } from "../actions/";
+import { useDispatch, useSelector} from "react-redux";
+import { fetchCourse, fetchCourseTable, patchCourseTable } from "../actions/";
 import { useNavigate } from "react-router-dom";
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import Moment from "moment";
 import { IoMdOpen } from 'react-icons/io';
-import { FaPlus, FaHeartbeat, FaHeart, FaSyncAlt, FaAngleDown } from 'react-icons/fa';
+import { FaPlus, FaMinus, FaHeartbeat, FaHeart, FaSyncAlt, FaAngleDown } from 'react-icons/fa';
 import { BiCopy } from 'react-icons/bi';
 import setPageMeta from "../utils/seo";
 import { genNolUrl, genNolAddUrl, openPage } from "./CourseDrawerContainer";
 import ParrotGif from "../img/parrot/parrot.gif";
 import ParrotUltraGif from "../img/parrot/ultrafastparrot.gif";
+import { useAuth0 } from '@auth0/auth0-react';
 
 const copyWordList = [
   {count: 100, word: "複製終結者!!", color: "purple.600", bg: "purple.50"},
@@ -43,9 +45,13 @@ const copyWordList = [
   {count: 0, word: "複製連結", color: "gray.600", bg: "white"},
 ]
 
+const LOCAL_STORAGE_KEY = 'NTU_CourseNeo_Course_Table_Key';
+
 function CourseInfoContainer ({code}){
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const toast = useToast();
+
     const [course, setCourse] = useState(null);
     const [notFound, setNotFound] = useState(false);
     const [isMobile] = useMediaQuery('(max-width: 1000px)')
@@ -53,6 +59,12 @@ function CourseInfoContainer ({code}){
     const [copyWord, setCopyWord] = useState(copyWordList.find(word => word.count <= copiedLinkClicks));
     const [refreshTime, setRefreshTime] = useState(new Date());
     Moment.locale("zh-tw");
+
+    const [addingCourse, setAddingCourse] = useState(false);
+    const [selected, setSelected] = useState(false);
+    const {user, isLoading, getAccessTokenSilently} = useAuth0();
+    const userInfo = useSelector(state => state.user);
+    const course_table = useSelector(state => state.course_table);
 
 
     useEffect(() => {
@@ -72,6 +84,7 @@ function CourseInfoContainer ({code}){
             }
             setPageMeta({title: `${course_obj.course_name} - 課程資訊 | NTUCourse Neo`, desc: `${course_obj.course_name} 課程的詳細資訊 | NTUCourse Neo，全新的臺大選課網站。`});
           } 
+
           fetchCourseObject(code);
     },[])
 
@@ -79,11 +92,162 @@ function CourseInfoContainer ({code}){
       setCopyWord(copyWordList.find(word => word.count <= copiedLinkClicks));
     }, [copiedLinkClicks])
 
-    const handleAddCourse = () => {}
+    // get selected init state
+    useEffect(()=>{
+      const getCourseSelected = async() => {
+          setAddingCourse(true);
+          let uuid;
+          if (user){
+              // user mode
+              if (userInfo.db.course_tables.length === 0){
+                  uuid = null
+              } else {
+                  // use the first one
+                  uuid = userInfo.db.course_tables[0];
+              }
+          }
+          else {
+              // guest mode
+              uuid = localStorage.getItem(LOCAL_STORAGE_KEY);
+          }
+          if (uuid){
+            let course_table;
+            try {
+                course_table = await dispatch(fetchCourseTable(uuid));
+            } catch (error) {
+                toast({
+                    title: '取得課表資料失敗',
+                    status: 'error',
+                    duration: 3000,
+                    isClosable: true
+                });
+                setAddingCourse(false);
+                return;
+            }
+            if (course_table.courses.includes(code)){
+                setSelected(true);
+            } else {
+                setSelected(false);
+            }
+          }
+
+          setAddingCourse(false);
+      }
+
+      if (!isLoading){
+        getCourseSelected();
+      }
+    },[isLoading])
+
+    const handleAddCourse = async (course)=>{
+        if (!isLoading){
+          setAddingCourse(true);
+
+          let uuid;
+          if (user){
+              // user mode
+              if (userInfo.db.course_tables.length === 0){
+                  uuid = null
+              } else {
+                  // use the first one
+                  uuid = userInfo.db.course_tables[0];
+              }
+          }
+          else {
+              // guest mode
+              uuid = localStorage.getItem(LOCAL_STORAGE_KEY);
+          }
+
+          if (uuid){
+              // fetch course table from server
+              let course_table;
+              try {
+                  course_table = await dispatch(fetchCourseTable(uuid));
+              } catch (error) {
+                  toast({
+                      title: '取得課表資料失敗',
+                      status: 'error',
+                      duration: 3000,
+                      isClosable: true
+                  });
+                  setAddingCourse(false);
+                  return;
+              }
+
+              if (course_table===null){
+                  // get course_tables/:id return null (expired)
+                  // show error and break the function
+                  toast({
+                      title: `新增 ${course.course_name} 失敗`,
+                      description: `您的課表已過期，請重新建立課表`,
+                      status: 'error',
+                      duration: 3000,
+                      isClosable: true
+                  });
+              } 
+              else {
+                  // fetch course table success
+                  let res_table;
+                  let operation_str;
+                  if(course_table.courses.includes(course._id)){
+                      // course is already in course table, remove it.
+                      operation_str = "刪除";
+                      const new_courses = course_table.courses.filter(id => id!==course._id);
+                      try {
+                          res_table =  await dispatch(patchCourseTable(uuid, course_table.name, course_table.user_id, course_table.expire_ts, new_courses));
+                      } catch (error) {
+                          toast({
+                              title: `刪除 ${course.course_name} 失敗`,
+                              status: 'error',
+                              duration: 3000,
+                              isClosable: true
+                          });
+                          setAddingCourse(false);
+                          return;
+                      }
+                  }else{
+                      // course is not in course table, add it.
+                      operation_str = "新增";
+                      const new_courses = [...course_table.courses, course._id];
+                      try {
+                          res_table = await dispatch(patchCourseTable(uuid, course_table.name, course_table.user_id, course_table.expire_ts, new_courses));
+                      } catch (error) {
+                          toast({
+                              title: `新增 ${course.course_name} 失敗`,
+                              status: 'error',
+                              duration: 3000,
+                              isClosable: true
+                          });
+                          setAddingCourse(false);
+                          return;
+                      }
+                  }
+                  if (res_table){
+                      toast({
+                          title: `已${operation_str} ${course.course_name}`,
+                          description: `課表: ${course_table.name}`,
+                          status: 'success',
+                          duration: 3000,
+                          isClosable: true
+                      });
+                  }
+                  // ELSE TOAST?
+              }    
+          } else {
+              // do not have course table id in local storage
+              toast({
+                  title: `新增 ${course.course_name} 失敗`,
+                  description: `尚未建立課表`,
+                  status: 'error',
+                  duration: 3000,
+                  isClosable: true
+              });
+          }
+          setAddingCourse(false);
+        }
+    };
 
     const handleAddFavorite = () => {}
-
-
 
     if (!course){
         if (!notFound){
@@ -164,7 +328,7 @@ function CourseInfoContainer ({code}){
                       <Text fontWeight="500" fontSize="md" color="gray.300">{Moment(refreshTime).format("HH:mm")} 更新</Text>
                       <Spacer />
                       <ButtonGroup isAttached>
-                          <Button key={"NolContent_Button_"+code} mr='-px' size="md" colorScheme="blue" variant="outline" leftIcon={<FaPlus />}>課表</Button>
+                          <Button key={"NolContent_Button_"+code} mr='-px' size="md" colorScheme={selected?"red":"blue"} variant="outline" leftIcon={selected?<FaMinus />:<FaPlus />} disabled={!course_table} isLoading={addingCourse || isLoading} onClick={()=>{handleAddCourse(course); setSelected(!selected)}}>{selected?"從課表移除":"課表"}</Button>
                           <Button key={"NolContent_Button_"+code} size="md" colorScheme="blue" variant="outline" leftIcon={<FaPlus />} onClick={() => openPage(genNolAddUrl(course), true)}>課程網</Button>
                       </ButtonGroup>
                       <Button key={"NolContent_Button_"+code} size="md" colorScheme="red" variant="outline" leftIcon={<FaHeart />}>加入最愛</Button>
