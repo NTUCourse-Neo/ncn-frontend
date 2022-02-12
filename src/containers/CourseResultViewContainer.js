@@ -85,7 +85,7 @@ function CourseResultViewContainer() {
 
   const { loginWithPopup } = useAuth0();
 
-  const [isMobile] = useMediaQuery("(max-width: 760px)");
+  const [isMobile] = useMediaQuery("(max-width: 1000px)");
 
   const [selectedTime, setSelectedTime] = useState(mapStateToTimeTable(search_filters.time));
   const [selectedDept, setSelectedDept] = useState(search_filters.department);
