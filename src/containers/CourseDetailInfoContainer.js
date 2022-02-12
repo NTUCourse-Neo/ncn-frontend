@@ -261,7 +261,7 @@ function CourseDetailInfoContainer({ course }){
       return(
         <Popover placement="bottom">
           <PopoverTrigger>
-            <Button colorScheme="blue" variant="solid" size="sm">我要提供資訊</Button>
+            <Button colorScheme="blue" variant="solid" size="md">我要提供資訊</Button>
           </PopoverTrigger>
           <PopoverContent>
             <PopoverArrow />
@@ -318,7 +318,7 @@ function CourseDetailInfoContainer({ course }){
     }
     return(
       <Flex w="100%" h="100%" mt="4" flexDirection="column" justifyContent="center" alignItems={isMobile? "start":"center"}>
-        <Flex w="100%" h="100%" justifyContent="space-around" alignItems="start" flexDirection={isMobile? "column":"row"}>
+        <Flex w="100%" h="75%" py="8" px="8" justifyContent="space-around" alignItems="start" flexDirection={isMobile? "column":"row"} bg="gray.200" borderRadius="lg" boxShadow="lg">
           <Flex h="100%" w={isMobile? "100%":"24"} flexWrap="wrap" alignItems="start">
             <Stat minW="16">
               <StatLabel>加簽人數</StatLabel>
@@ -333,7 +333,7 @@ function CourseDetailInfoContainer({ course }){
               <Text mt="1" fontSize="lg" fontWeight="600">第一週上課</Text>
             </Stat>
           </Flex>
-          <VStack w={isMobile? "100%":"70%"} h="100%">
+          <VStack mt={isMobile? "4":""} w={isMobile? "100%":"70%"} h="100%">
             <VStack w="100%" h="100%" justify="start" align="start">
               <HStack w="100%">
                 <Text fontSize="sm" fontWeight="600" color="gray.800">回報資訊</Text>
@@ -350,15 +350,21 @@ function CourseDetailInfoContainer({ course }){
                 <Text fontSize="md" fontWeight="600" color="gray.600" overflow="auto">開學第一周上課開放加簽，人數以10人為上限，欲加簽的同學請於第一堂課準時攜帶學生證來抽籤，不接受代抽、轉讓、互換體育課程，第二周之後不開放加簽，碩博生如欲加簽此堂課，第一周也須要到場抽籤。</Text>
               </Flex>
             </VStack>
-            <HStack w="100%">
+            <HStack w="100%" justify="end">
               <Button colorScheme="teal" variant="ghost" size="xs" leftIcon={<FaThumbsUp />}>0</Button>
               <Button colorScheme="orange" variant="ghost" size="xs" leftIcon={<FaThumbsDown />}>0</Button>
               {renderReportPopover()}
-              <Spacer />
-              {renderSubmitPopover()}
             </HStack>
           </VStack>
         </Flex>
+        <HStack w="100%" px="8" mt="8">
+          <HStack>
+            <Text fontSize="md" fontWeight="600" color="gray.800">上/下</Text>
+            {/* TODO: add up down btn */}
+          </HStack>
+          <Spacer />
+          {renderSubmitPopover()}
+        </HStack>
       </Flex>
     );
   }
