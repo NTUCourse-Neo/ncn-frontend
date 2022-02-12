@@ -76,6 +76,7 @@ function CourseInfoRow(props) {
                         duration: 3000,
                         isClosable: true
                     });
+                    setAddingCourse(false);
                     return;
                 }
                 if (course_table===null){
@@ -106,6 +107,7 @@ function CourseInfoRow(props) {
                                 duration: 3000,
                                 isClosable: true
                             });
+                            setAddingCourse(false);
                             return;
                         }
                     }else{
@@ -121,6 +123,7 @@ function CourseInfoRow(props) {
                                 duration: 3000,
                                 isClosable: true
                             });
+                            setAddingCourse(false);
                             return;
                         }
                     }
