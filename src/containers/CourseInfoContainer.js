@@ -28,7 +28,7 @@ import { IoMdOpen } from 'react-icons/io';
 import { FaPlus, FaHeartbeat, FaHeart, FaSyncAlt, FaAngleDown } from 'react-icons/fa';
 import { BiCopy } from 'react-icons/bi';
 import setPageMeta from "../utils/seo";
-import { genNolUrl } from "./CourseDrawerContainer";
+import { genNolUrl, genNolAddUrl, openPage } from "./CourseDrawerContainer";
 import ParrotGif from "../img/parrot/parrot.gif";
 import ParrotUltraGif from "../img/parrot/ultrafastparrot.gif";
 
@@ -78,6 +78,12 @@ function CourseInfoContainer ({code}){
     useEffect(() => {
       setCopyWord(copyWordList.find(word => word.count <= copiedLinkClicks));
     }, [copiedLinkClicks])
+
+    const handleAddCourse = () => {}
+
+    const handleAddFavorite = () => {}
+
+
 
     if (!course){
         if (!notFound){
@@ -159,7 +165,7 @@ function CourseInfoContainer ({code}){
                       <Spacer />
                       <ButtonGroup isAttached>
                           <Button key={"NolContent_Button_"+code} mr='-px' size="md" colorScheme="blue" variant="outline" leftIcon={<FaPlus />}>課表</Button>
-                          <Button key={"NolContent_Button_"+code} size="md" colorScheme="blue" variant="outline" leftIcon={<FaPlus />}>課程網</Button>
+                          <Button key={"NolContent_Button_"+code} size="md" colorScheme="blue" variant="outline" leftIcon={<FaPlus />} onClick={() => openPage(genNolAddUrl(course), true)}>課程網</Button>
                       </ButtonGroup>
                       <Button key={"NolContent_Button_"+code} size="md" colorScheme="red" variant="outline" leftIcon={<FaHeart />}>加入最愛</Button>
                       <Button key={"NolContent_Button_"+code} size="md" rightIcon={<IoMdOpen />} onClick={() => window.open(genNolUrl(course), "_blank")}>課程網資訊</Button>
