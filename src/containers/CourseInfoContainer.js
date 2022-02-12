@@ -21,7 +21,7 @@ import {
 import CourseDetailInfoContainer from "./CourseDetailInfoContainer";
 import {useState, useEffect} from "react";
 import { useDispatch, useSelector} from "react-redux";
-import { fetchCourse, fetchCourseTable, patchCourseTable } from "../actions/";
+import { fetchCourse, fetchCourseTable, patchCourseTable, fetchUserById, logIn } from "../actions/";
 import { useNavigate } from "react-router-dom";
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import Moment from "moment";
@@ -64,9 +64,8 @@ function CourseInfoContainer ({code}){
     const [selected, setSelected] = useState(false);
     const {user, isLoading, getAccessTokenSilently} = useAuth0();
     const userInfo = useSelector(state => state.user);
-    const course_table = useSelector(state => state.course_table);
 
-
+    // fetch Course Info at first 
     useEffect(() => {
         const fetchCourseObject = async(course_code) => {
             let course_obj
@@ -94,16 +93,26 @@ function CourseInfoContainer ({code}){
 
     // get selected init state
     useEffect(()=>{
-      const getCourseSelected = async() => {
+      const getInitState = async() => {
           setAddingCourse(true);
           let uuid;
           if (user){
-              // user mode
-              if (userInfo.db.course_tables.length === 0){
+              // user mode, log in first
+              const token = await getAccessTokenSilently();
+              let user_data;
+              try {
+                user_data = await dispatch(fetchUserById(token, user.sub));
+              } catch (error) {
+                navigate(`/error/${error.status_code}`, { state: error });
+                return;
+              }
+              await dispatch(logIn(user_data));
+              
+              if (user_data.db.course_tables.length === 0){
                   uuid = null
               } else {
                   // use the first one
-                  uuid = userInfo.db.course_tables[0];
+                  uuid = user_data.db.course_tables[0];
               }
           }
           else {
@@ -124,6 +133,7 @@ function CourseInfoContainer ({code}){
                 setAddingCourse(false);
                 return;
             }
+            // determine init state
             if (course_table.courses.includes(code)){
                 setSelected(true);
             } else {
@@ -135,7 +145,7 @@ function CourseInfoContainer ({code}){
       }
 
       if (!isLoading){
-        getCourseSelected();
+        getInitState();
       }
     },[isLoading])
 
@@ -230,6 +240,7 @@ function CourseInfoContainer ({code}){
                           duration: 3000,
                           isClosable: true
                       });
+                      setSelected(!selected)
                   }
                   // ELSE TOAST?
               }    
@@ -328,7 +339,7 @@ function CourseInfoContainer ({code}){
                       <Text fontWeight="500" fontSize="md" color="gray.300">{Moment(refreshTime).format("HH:mm")} 更新</Text>
                       <Spacer />
                       <ButtonGroup isAttached>
-                          <Button key={"NolContent_Button_"+code} mr='-px' size="md" colorScheme={selected?"red":"blue"} variant="outline" leftIcon={selected?<FaMinus />:<FaPlus />} disabled={!course_table} isLoading={addingCourse || isLoading} onClick={()=>{handleAddCourse(course); setSelected(!selected)}}>{selected?"從課表移除":"課表"}</Button>
+                          <Button key={"NolContent_Button_"+code} mr='-px' size="md" colorScheme={selected?"red":"blue"} variant="outline" leftIcon={selected?<FaMinus />:<FaPlus />} isLoading={addingCourse || isLoading} onClick={()=>{handleAddCourse(course)}}>{selected?"從課表移除":"加入課表"}</Button>
                           <Button key={"NolContent_Button_"+code} size="md" colorScheme="blue" variant="outline" leftIcon={<FaPlus />} onClick={() => openPage(genNolAddUrl(course), true)}>課程網</Button>
                       </ButtonGroup>
                       <Button key={"NolContent_Button_"+code} size="md" colorScheme="red" variant="outline" leftIcon={<FaHeart />}>加入最愛</Button>
