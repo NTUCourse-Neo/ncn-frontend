@@ -112,7 +112,7 @@ function CourseDrawerContainer(props) {
                 {isMobile? <></>:<Spacer/>}
                 <ButtonGroup>
                     <Button variant="ghost" colorScheme="blue" leftIcon={<FaPlus/>} size="sm" onClick={() => openPage(genNolAddUrl(props.courseInfo), true)}>加入課程網</Button>
-                    {RenderNolContentBtn(props.courseInfo, "課程詳細資訊", props.courseInfo.course_id)}
+                    {/* {RenderNolContentBtn(props.courseInfo, "課程詳細資訊", props.courseInfo.course_id)} */}
                 </ButtonGroup>
             </Flex>
         </Flex>
