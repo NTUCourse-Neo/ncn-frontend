@@ -71,7 +71,7 @@ function CourseInfoContainer ({code}){
             let course_obj
             try {
                 course_obj = await dispatch(fetchCourse(course_code))
-                console.log(course_obj);
+                //console.log(course_obj);
                 if (course_obj === undefined){
                     setNotFound(true);
                 } else {
@@ -97,22 +97,32 @@ function CourseInfoContainer ({code}){
           setAddingCourse(true);
           let uuid;
           if (user){
-              // user mode, log in first
-              const token = await getAccessTokenSilently();
-              let user_data;
-              try {
-                user_data = await dispatch(fetchUserById(token, user.sub));
-              } catch (error) {
-                navigate(`/error/${error.status_code}`, { state: error });
-                return;
-              }
-              await dispatch(logIn(user_data));
-              
-              if (user_data.db.course_tables.length === 0){
-                  uuid = null
-              } else {
-                  // use the first one
-                  uuid = user_data.db.course_tables[0];
+              // user mode, if no userInfo, log in first
+              if (!userInfo){
+                const token = await getAccessTokenSilently();
+                let user_data;
+                try {
+                  user_data = await dispatch(fetchUserById(token, user.sub));
+                } catch (error) {
+                  navigate(`/error/${error.status_code}`, { state: error });
+                  return;
+                }
+                await dispatch(logIn(user_data));
+                
+                if (user_data.db.course_tables.length === 0){
+                    uuid = null
+                } else {
+                    // use the first one
+                    uuid = user_data.db.course_tables[0];
+                }
+              } 
+              else {
+                if (userInfo.db.course_tables.length === 0){
+                    uuid = null
+                } else {
+                    // use the first one
+                    uuid = userInfo.db.course_tables[0];
+                }
               }
           }
           else {
