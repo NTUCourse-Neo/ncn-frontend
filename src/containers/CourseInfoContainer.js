@@ -21,7 +21,7 @@ import {
 import CourseDetailInfoContainer from "./CourseDetailInfoContainer";
 import {useState, useEffect} from "react";
 import { useDispatch, useSelector} from "react-redux";
-import { fetchCourse, fetchCourseTable, patchCourseTable, fetchUserById, logIn } from "../actions/";
+import { fetchCourse, fetchCourseTable, patchCourseTable, fetchUserById, logIn, addFavoriteCourse } from "../actions/";
 import { useNavigate } from "react-router-dom";
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import Moment from "moment";
@@ -61,7 +61,9 @@ function CourseInfoContainer ({code}){
     Moment.locale("zh-tw");
 
     const [addingCourse, setAddingCourse] = useState(false);
+    const [addingFavoriteCourse, setAddingFavoriteCourse] = useState(false);
     const [selected, setSelected] = useState(false);
+    const [isFavorite, setIsFavorite] = useState(false);
     const {user, isLoading, getAccessTokenSilently} = useAuth0();
     const userInfo = useSelector(state => state.user);
 
@@ -91,10 +93,11 @@ function CourseInfoContainer ({code}){
       setCopyWord(copyWordList.find(word => word.count <= copiedLinkClicks));
     }, [copiedLinkClicks])
 
-    // get selected init state
+    // get selected & isFavorite init state
     useEffect(()=>{
       const getInitState = async() => {
           setAddingCourse(true);
+          setAddingFavoriteCourse(true);
           let uuid;
           if (user){
               // user mode, if no userInfo, log in first
@@ -115,6 +118,12 @@ function CourseInfoContainer ({code}){
                     // use the first one
                     uuid = user_data.db.course_tables[0];
                 }
+                // determine isFavorite init state
+                if (user_data.db.favorites.includes(code)){
+                  setIsFavorite(true);
+                } else {
+                  setIsFavorite(false);
+                }
               } 
               else {
                 if (userInfo.db.course_tables.length === 0){
@@ -122,6 +131,12 @@ function CourseInfoContainer ({code}){
                 } else {
                     // use the first one
                     uuid = userInfo.db.course_tables[0];
+                }
+                // determine isFavorite init state
+                if (userInfo.db.favorites.includes(code)){
+                  setIsFavorite(true);
+                } else {
+                  setIsFavorite(false);
                 }
               }
           }
@@ -141,6 +156,7 @@ function CourseInfoContainer ({code}){
                     isClosable: true
                 });
                 setAddingCourse(false);
+                setAddingFavoriteCourse(false);
                 return;
             }
             // determine init state
@@ -152,6 +168,7 @@ function CourseInfoContainer ({code}){
           }
 
           setAddingCourse(false);
+          setAddingFavoriteCourse(false);
       }
 
       if (!isLoading){
@@ -268,7 +285,57 @@ function CourseInfoContainer ({code}){
         }
     };
 
-    const handleAddFavorite = () => {}
+    const handleAddFavorite = async (course_id) => {
+        if (!isLoading){
+            if (user){
+                setAddingFavoriteCourse(true);
+                const favorite_list = [...userInfo.db.favorites];
+                let new_favorite_list;
+                let op_name;
+                if (favorite_list.includes(course_id)){
+                    // remove course from favorite list
+                    new_favorite_list = favorite_list.filter(id => id!==course_id);
+                    op_name = "刪除";
+                } else {
+                    // add course to favorite list
+                    new_favorite_list = [...favorite_list, course_id];
+                    op_name = "新增";
+                }
+                // API call
+                try {
+                    const token = await getAccessTokenSilently();
+                    await dispatch(addFavoriteCourse(token, new_favorite_list, userInfo.db._id));
+                    toast({
+                        title: `${op_name}最愛課程成功`,
+                        //description: `請稍後再試`,
+                        status: 'success',
+                        duration: 3000,
+                        isClosable: true
+                    });
+                    setAddingFavoriteCourse(false);
+                    setIsFavorite(!isFavorite);
+                } catch (e){
+                    // toast error
+                    toast({
+                        title: `${op_name}最愛課程失敗`,
+                        description: `請稍後再試`,
+                        status: 'error',
+                        duration: 3000,
+                        isClosable: true
+                    });
+                    setAddingFavoriteCourse(false);
+                }
+            } else {
+                toast({
+                    title: `請先登入`,
+                    // description: `請先登入`,
+                    status: 'error',
+                    duration: 3000,
+                    isClosable: true
+                });
+            }
+        }
+    }
 
     if (!course){
         if (!notFound){
@@ -352,7 +419,7 @@ function CourseInfoContainer ({code}){
                           <Button key={"NolContent_Button_"+code} mr='-px' size="md" colorScheme={selected?"red":"blue"} variant="outline" leftIcon={selected?<FaMinus />:<FaPlus />} isLoading={addingCourse || isLoading} onClick={()=>{handleAddCourse(course)}}>{selected?"從課表移除":"加入課表"}</Button>
                           <Button key={"NolContent_Button_"+code} size="md" colorScheme="blue" variant="outline" leftIcon={<FaPlus />} onClick={() => openPage(genNolAddUrl(course), true)}>課程網</Button>
                       </ButtonGroup>
-                      <Button key={"NolContent_Button_"+code} size="md" colorScheme="red" variant="outline" leftIcon={<FaHeart />}>加入最愛</Button>
+                      <Button key={"NolContent_Button_"+code} size="md" colorScheme="red" variant={isFavorite?"solid":"outline"} leftIcon={<FaHeart />} isLoading={addingFavoriteCourse} disabled={!userInfo} onClick={()=>{handleAddFavorite(course._id)}}>{isFavorite?"已加入！":"加入最愛"}</Button>
                       <Button key={"NolContent_Button_"+code} size="md" rightIcon={<IoMdOpen />} onClick={() => window.open(genNolUrl(course), "_blank")}>課程網資訊</Button>
                       <CopyToClipboard text={"https://course.myntu.me/courseinfo/"+course._id}>
                         <Button rightIcon={<Icon as={BiCopy} color={copyWord.color} />} variant="ghost" size="md" bg={copyWord.bg} color={copyWord.color} onClick={() => setCopiedLinkClicks(copiedLinkClicks + 1)}>
