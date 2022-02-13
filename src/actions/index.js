@@ -180,9 +180,13 @@ const fetchCourse = (id) =>async (dispatch)=>{
     }
 }
 
-const getCourseEnrollInfo = (course_id) => async (dispatch)=>{
+const getCourseEnrollInfo = (token, course_id) => async (dispatch)=>{
     try {
-        const {data: {course_status}} = await instance.get(`/courses/${course_id}/enrollinfo`);
+        const {data: {course_status}} = await instance.get(`/courses/${course_id}/enrollinfo`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
         return course_status
     } catch (error) {
         if (error.response) {
@@ -219,9 +223,13 @@ const getCourseEnrollInfo = (course_id) => async (dispatch)=>{
 };
 
 
-const getNTURatingData = (course_id) => async (dispatch)=>{
+const getNTURatingData = (token, course_id) => async (dispatch)=>{
     try {
-        const {data: {course_rating}} = await instance.get(`/courses/${course_id}/rating`);
+        const {data: {course_rating}} = await instance.get(`/courses/${course_id}/rating`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
         return course_rating
     } catch (error) {
         if (error.response) {
@@ -258,9 +266,13 @@ const getNTURatingData = (course_id) => async (dispatch)=>{
 };
 
 
-const getPTTData = (course_id, type) => async (dispatch)=>{
+const getPTTData = (token, course_id, type) => async (dispatch)=>{
     try {
-        const {data: {course_rating}} = await instance.get(`/courses/${course_id}/ptt/${type}`);
+        const {data: {course_rating}} = await instance.get(`/courses/${course_id}/ptt/${type}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
         return course_rating
     } catch (error) {
         if (error.response) {
