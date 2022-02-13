@@ -22,10 +22,11 @@ import {
     useToast,
 } from '@chakra-ui/react'
 import { useState } from 'react';
-import { FaThumbsUp, FaThumbsDown, FaInfoCircle } from 'react-icons/fa';
+import { FaThumbsUp, FaThumbsDown, FaInfoCircle, FaTimes, FaClock } from 'react-icons/fa';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useDispatch } from 'react-redux';
-import { deleteSocialPost, reportSocialPost, voteSocialPost } from '../actions';
+import { deleteSocialPost, getSocialPostByPostId, reportSocialPost, voteSocialPost } from '../actions';
+import { social_user_type_map } from '../data/mapping_table';
 
 // prop.post
 // {
@@ -41,7 +42,7 @@ import { deleteSocialPost, reportSocialPost, voteSocialPost } from '../actions';
 //   self_vote_status: get_self_vote_status(post, user_id) 
 // }
 
-function SignUpCard({post}) {
+function SignUpCard({post, SignUpPostData, setSignUpPostData}) {
   const is_owner = post.is_owner;
   const dispatch = useDispatch();
   const toast = useToast();
@@ -50,6 +51,30 @@ function SignUpCard({post}) {
   const [isVotingPost, setIsVotingPost] = useState(0);
   const [isDeletingPost, setIsDeletingPost] = useState(false);
   const [isReportingPost, setIsReportingPost] = useState(false);
+
+  
+  const handleRefetchPost = async(post_id, vote_type) => {
+    const token = await getAccessTokenSilently();
+    let data;
+    try {
+      data = await dispatch(getSocialPostByPostId(token, post_id));
+    } catch (error) {
+      toast({
+          title: "無法處理評分",
+          description: "請稍後再試一次",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+      });
+      return;
+    }
+    // find the post in the SignUpPostData array and replace it with the new data.
+    const new_post = data;
+    const new_post_index = SignUpPostData.findIndex(post => post._id === post_id);
+    const new_post_array = [...SignUpPostData];
+    new_post_array[new_post_index] = new_post;
+    setSignUpPostData(new_post_array);
+  };
 
   const handleVotePost = async(post_id, vote_type) => {
     setIsVotingPost(vote_type);
@@ -67,6 +92,7 @@ function SignUpCard({post}) {
         });
         return;
     }
+    handleRefetchPost(post_id);
     setIsVotingPost(0);
   };
 
@@ -150,7 +176,7 @@ function SignUpCard({post}) {
           <VStack mt={isMobile? "4":""} w={isMobile? "100%":"70%"} h="100%">
             <VStack w="100%" h="100%" justify="start" align="start">
               <HStack w="100%">
-                <Text fontSize="sm" fontWeight="600" color="gray.800">回報資訊</Text>
+                <Text fontSize="sm" fontWeight="600" color="gray.800">更多資訊</Text>
                 {/* <Tooltip label="此資訊基於社群回報與機器學習擷取資訊，僅顯示評分最高之回報內容。此資訊可能有缺漏或不完全正確，亦不代表本站立場，請確實做好查證工作。" placement="top" hasArrow>
                   <p>
                     <Icon as={FaInfoCircle} boxSize="3" color="gray.500" />
@@ -158,16 +184,21 @@ function SignUpCard({post}) {
                 </Tooltip> */}
                 <Spacer />
                 <Text fontSize="xs" fontWeight="600" color="gray.500">提供者</Text>
-                <Badge colorScheme="blue">{is_owner?"我":post.user_type}</Badge>
-                {is_owner?<Button size="sm" h='100%' variant={'ghost'} colorScheme="gray" fontSize={'sm'} color="red.600">刪除</Button>:<></>}
+                <Badge colorScheme="blue">{is_owner?"我": social_user_type_map[post.user_type]}</Badge>
+                {is_owner?<Button size="sm" h='100%' variant={'ghost'} colorScheme="gray" fontSize={'sm'} color="red.600" onClick={() => handleDeletePost(post._id)}>刪除</Button>:<></>}
               </HStack>
               <Flex maxH={isMobile? "":""} overflow="auto" flexGrow={1}>
                 <Text fontSize="md" fontWeight="600" color="gray.600" overflow="auto">{post.content.comment}</Text>
               </Flex>
             </VStack>
-            <HStack w="100%" justify="end">
-              <Button colorScheme="teal" variant={post.self_vote_status===1? "solid":"ghost"} size="xs" leftIcon={<FaThumbsUp />} isLoading={isVotingPost === 1} onClick={() => handleVotePost(post._id, post.self_vote_status===1?"0":"1")}>{post.upvotes}</Button>
-              <Button colorScheme="orange" variant={post.self_vote_status===-1? "solid":"ghost"} size="xs" leftIcon={<FaThumbsDown />} isLoading={isVotingPost === 1} onClick={() => handleVotePost(post._id, post.self_vote_status===-1?"0":"-1")}>{post.downvotes}</Button>
+            <HStack w="100%" justify="start">
+              <HStack>
+                <Icon as={FaClock} boxSize="3" color="gray.500" />
+                <Text fontSize="xs" fontWeight="500" color="gray.500">{post.create_ts}</Text>
+              </HStack>
+              <Spacer />
+              <Button colorScheme="teal" variant={post.self_vote_status===1? "solid":"ghost"} size="xs" leftIcon={<FaThumbsUp />} isLoading={isVotingPost === 1} onClick={() => handleVotePost(post._id, post.self_vote_status===1?0:1)}>{post.upvotes}</Button>
+              <Button colorScheme="orange" variant={post.self_vote_status===-1? "solid":"ghost"} size="xs" leftIcon={<FaThumbsDown />} isLoading={isVotingPost === -1} onClick={() => handleVotePost(post._id, post.self_vote_status===-1?0:-1)}>{post.downvotes}</Button>
               {renderReportPopover()}
             </HStack>
           </VStack>

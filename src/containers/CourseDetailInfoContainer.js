@@ -51,24 +51,42 @@ import { social_user_type_map } from '../data/mapping_table';
 import SignUpCard from '../components/SignUpCard';
 import { useAuth0 } from "@auth0/auth0-react";
 
-const fake_post = 
-{
-  _id: '123',
-  course_id: '1102_18338',
-  type: 'sign_up_info',
-  content: {
-    amount: 87,
-    when: '明天',
-    rule: '抽籤',
-    comment: '幹你娘吃屎'
+const fake_post = [
+  {
+    _id: '123',
+    course_id: '1102_18338',
+    type: 'sign_up_info',
+    content: {
+      amount: 87,
+      when: '明天',
+      rule: '抽籤',
+      comment: '幹你娘吃屎1'
+    },
+    is_owner: true,
+    user_type: "課程教師",
+    create_ts: null,
+    upvotes: 100,
+    downvotes: 100,
+    self_vote_status: 1,
   },
-  is_owner: true,
-  user_type: "課程教師",
-  create_ts: null,
-  upvotes: 1,
-  downvotes: 100,
-  self_vote_status: 1,
-}
+  {
+    _id: '124',
+    course_id: '1102_18338',
+    type: 'sign_up_info',
+    content: {
+      amount: 87,
+      when: '明天',
+      rule: '抽籤',
+      comment: '幹你娘吃屎2'
+    },
+    is_owner: true,
+    user_type: "課程教師",
+    create_ts: null,
+    upvotes: 100,
+    downvotes: 1,
+    self_vote_status: -1,
+  },
+]
 
 const syllabusTitle = {
   intro: "概述",
@@ -100,6 +118,8 @@ function CourseDetailInfoContainer({ course }){
   const [ isLoadingPTTExamData, setIsLoadingPTTExamData ] = useState(true);
   const [ isLoadingSyllubusData, setIsLoadingSyllubusData ] = useState(true);
   const [ isLoadingSignUpPostData, setIsLoadingSignUpPostData ] = useState(true);
+
+  const [signUpCardIdx, setSignUpCardIdx] = useState(0);
 
 
   async function fetchCourseEnrollData() {
@@ -391,11 +411,11 @@ function CourseDetailInfoContainer({ course }){
     }
     return(
       <Flex w="100%" h="100%" mt="4" flexDirection="column" justifyContent="center" alignItems={isMobile? "start":"center"}>
-        <SignUpCard post={fake_post}/>
+        <SignUpCard post={SignUpPostData[signUpCardIdx]} SignUpPostData={SignUpPostData} setSignUpPostData={setSignUpPostData}/>
         <HStack w="100%" pr="8" mt="8">
           <HStack>
-            <IconButton size="md" variant="ghost" icon={<FaChevronLeft />} />
-            <IconButton size="md" variant="ghost" icon={<FaChevronRight />} />
+            <IconButton size="md" variant="ghost" icon={<FaChevronLeft />} onClick={() => setSignUpCardIdx(signUpCardIdx===0 ? (SignUpPostData.length-1):(signUpCardIdx-1))} />
+            <IconButton size="md" variant="ghost" icon={<FaChevronRight />} onClick={() => setSignUpCardIdx((signUpCardIdx+1)%SignUpPostData.length)} />
           </HStack>
           <Spacer />
           {renderSubmitPopover()}
