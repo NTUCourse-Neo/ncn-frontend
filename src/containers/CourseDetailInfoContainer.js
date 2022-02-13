@@ -38,7 +38,7 @@ import{
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
 import { PieChart } from 'react-minimal-pie-chart';
-import { FaCircle, FaRss, FaExclamationTriangle, FaQuestionCircle, FaThumbsUp, FaThumbsDown, FaInfoCircle } from 'react-icons/fa';
+import { FaCircle, FaRss, FaExclamationTriangle, FaQuestionCircle, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { IoMdOpen } from 'react-icons/io';
 import BetaBadge from '../components/BetaBadge';
 import { info_view_map } from '../data/mapping_table';
@@ -334,10 +334,10 @@ function CourseDetailInfoContainer({ course }){
     return(
       <Flex w="100%" h="100%" mt="4" flexDirection="column" justifyContent="center" alignItems={isMobile? "start":"center"}>
         <SignUpCard post={fake_post} is_owner={fake_post.is_owner}/>
-        <HStack w="100%" px="8" mt="8">
+        <HStack w="100%" pr="8" mt="8">
           <HStack>
-            <Text fontSize="md" fontWeight="600" color="gray.800">上/下</Text>
-            {/* TODO: add up down btn */}
+            <IconButton size="md" variant="ghost" icon={<FaChevronLeft />} />
+            <IconButton size="md" variant="ghost" icon={<FaChevronRight />} />
           </HStack>
           <Spacer />
           {renderSubmitPopover()}
