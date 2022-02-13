@@ -197,7 +197,7 @@ function SignUpCard({post, SignUpPostData, setSignUpPostData, fetchSignUpPostDat
                 <Badge colorScheme="blue">{is_owner?"我": social_user_type_map[post.user_type]}</Badge>
                 {is_owner?<Button size="sm" h='100%' variant={'ghost'} colorScheme="gray" fontSize={'sm'} color="red.600" onClick={() => handleDeletePost(post._id)} isLoading={isDeletingPost}>刪除</Button>:<></>}
               </HStack>
-              <Flex maxH={isMobile? "":"150px"} overflow="auto" flexGrow={1}>
+              <Flex h={isMobile? "":"150px"} overflow="auto" flexGrow={1}>
                 <Text fontSize="md" fontWeight="600" color="gray.600" overflow="auto">{post.content.comment===""?"無":post.content.comment}</Text>
               </Flex>
             </VStack>
