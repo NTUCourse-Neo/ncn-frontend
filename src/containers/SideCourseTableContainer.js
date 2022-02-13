@@ -40,7 +40,7 @@ import {
     FaPlusSquare,
     FaPlus,
     FaTrash,
-    FaRss
+    FaInfoCircle
 } from 'react-icons/fa';
 import CourseTableContainer from './CourseTableContainer';
 import { fetchCourseTableCoursesByIds, createCourseTable, linkCoursetableToUser, fetchCourseTable, patchCourseTable, fetchUserById, logIn, updateCourseTable } from '../actions/index';
@@ -435,7 +435,7 @@ function SideCourseTableContainer(props) {
                     <Flex key={index} flexDirection="column" justifyContent="start" alignItems="start" h="100%" w="100%">
                         <Flex flexDirection="row" justifyContent="start" alignItems="center" h="100%" w="100%" mb="1">
                           <Text fontSize="xl" fontWeight="bold" color="gray">{course.course_name}</Text>
-                          <IconButton size="xs" colorScheme="blue" icon={<FaRss />} variant="ghost" onClick={() => {props.setIsCourseStatusModalOpen(course.id)}}/>
+                          <IconButton size="xs" colorScheme="blue" icon={<FaInfoCircle />} variant="ghost" onClick={() => {navigate(`/courseinfo/${course._id}`);}}/>
                         </Flex>
                         <Flex flexDirection="row" justifyContent="start" alignItems="center" mb="1">
                           <Badge colorScheme="blue" size="lg" mr="2">{course.id}</Badge>
@@ -454,7 +454,7 @@ function SideCourseTableContainer(props) {
                       <Tag size="lg" key={index} variant='solid' bg={hash_to_color_hex(course._id, 0.8)} color="gray.800" mr="4">{index + 1}</Tag>
                       <Badge colorScheme="blue" size="lg" mx="2">{course.id}</Badge>
                       <Text fontSize="xl" fontWeight="bold" color="gray">{course.course_name}</Text>
-                      <IconButton ml="2" size="sm" colorScheme="blue" icon={<FaRss />} variant="ghost" onClick={() => {props.setIsCourseStatusModalOpen(course.id)}}/>
+                      <IconButton ml="2" size="sm" colorScheme="blue" icon={<FaInfoCircle />} variant="ghost" onClick={() => {navigate(`/courseinfo/${course._id}`);}}/>
                     </Flex>
                     <Flex ml="4" flexDirection="row" justifyContent="end" alignItems="center">
                       <Button mx="2" size="sm" variant="outline" colorScheme="blue" leftIcon={<FaPlus/>} onClick={() => openPage(genNolAddUrl(course), true)}>課程網</Button>

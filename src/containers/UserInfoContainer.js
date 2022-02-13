@@ -35,6 +35,7 @@ import { deleteUserAccount, deleteUserProfile, registerNewUser, patchUserInfo, v
 import { dept_list_bachelor_only } from '../data/department';
 import ReCAPTCHA from "react-google-recaptcha";
 import useCountDown from 'react-countdown-hook';
+import setPageMeta from '../utils/seo';
 
 function UserInfoContainer(props) {
   const navigate = useNavigate();
@@ -248,8 +249,9 @@ function UserInfoContainer(props) {
       setMajor(userInfo.db.department.major);
       setDoubleMajor(userInfo.db.department.d_major);
       setMinor(userInfo.db.department.minors);
+      setPageMeta({title: `${name} 的個人資料 | NTUCourse Neo`, desc: `個人資料頁面 | NTUCourse Neo，全新的臺大選課網站。`});
     }
-  }, [userInfo]);
+  }, [userInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const clearUserProfile = async () => {
     try {

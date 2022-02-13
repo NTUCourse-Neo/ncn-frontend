@@ -13,6 +13,7 @@ import { HashLoader } from 'react-spinners';
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import { BeatLoader } from 'react-spinners';
 import { fetchFavoriteCourses, fetchUserById, logIn, updateCourseTable, fetchCourseTable } from '../actions/index';
+import setPageMeta from '../utils/seo';
 
 
 function UserMyPage() {
@@ -73,6 +74,7 @@ function UserMyPage() {
         }
     
         fetchUserInfo();
+        setPageMeta({title: `我的收藏 | NTUCourse Neo`, desc: `我的收藏頁面 | NTUCourse Neo，全新的臺大選課網站。`});
       }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
       
 

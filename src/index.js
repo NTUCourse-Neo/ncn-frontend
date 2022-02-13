@@ -22,6 +22,7 @@ ReactDOM.render(
           <Route path="/user/my" element={<App route="user/my"/>} />
           <Route path="/error/:code" element={<App route="error"/>} />
           <Route path="/about" element={<App route="about"/>} />
+          <Route path="/courseinfo/:code" element={<App route="courseinfo"/>} />
           <Route path="*" element={<App route="home"/>}/>
         </Routes>
       </BrowserRouter>
