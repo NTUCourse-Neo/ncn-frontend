@@ -395,7 +395,7 @@ function CourseInfoContainer ({code}){
                   <MenuList>
                       <MenuItem><Button key={"NolContent_Button_"+code} mr='-px' size="md" colorScheme={selected?"red":"blue"} variant="ghost" leftIcon={selected?<FaMinus />:<FaPlus />} isLoading={addingCourse || isLoading} onClick={()=>{handleAddCourse(course)}}>{selected?"從課表移除":"加入課表"}</Button></MenuItem>
                       <MenuItem><Button key={"NolContent_Button_"+code} size="md" colorScheme="blue" variant="ghost" leftIcon={<FaPlus />} onClick={() => openPage(genNolAddUrl(course), true)}>課程網</Button></MenuItem>
-                      <MenuItem><Button key={"NolContent_Button_"+code} size="md" colorScheme="red" variant={"ghost"} leftIcon={isFavorite?<FaMinus />:<FaHeart />} isLoading={addingFavoriteCourse} disabled={!userInfo} onClick={()=>{handleAddFavorite(course._id)}}>{isFavorite?"從最愛移除":"加入最愛"}</Button></MenuItem>
+                      <MenuItem><Button key={"NolContent_Button_"+code} size="md" colorScheme="red" variant={"ghost"} leftIcon={isFavorite?<FaMinus />:<FaHeart />} isLoading={addingFavoriteCourse} disabled={!userInfo} onClick={()=>{handleAddFavorite(course._id)}}>{isFavorite?"已加入最愛":"加入最愛"}</Button></MenuItem>
                     <MenuDivider />
                       <MenuItem icon={<IoMdOpen />} onClick={() => window.open(genNolUrl(course), "_blank")}>課程網資訊</MenuItem>
                   </MenuList>
@@ -419,7 +419,7 @@ function CourseInfoContainer ({code}){
                           <Button key={"NolContent_Button_"+code} mr='-px' size="md" colorScheme={selected?"red":"blue"} variant="outline" leftIcon={selected?<FaMinus />:<FaPlus />} isLoading={addingCourse || isLoading} onClick={()=>{handleAddCourse(course)}}>{selected?"從課表移除":"加入課表"}</Button>
                           <Button key={"NolContent_Button_"+code} size="md" colorScheme="blue" variant="outline" leftIcon={<FaPlus />} onClick={() => openPage(genNolAddUrl(course), true)}>課程網</Button>
                       </ButtonGroup>
-                      <Button key={"NolContent_Button_"+code} size="md" colorScheme="red" variant={isFavorite?"solid":"outline"} leftIcon={<FaHeart />} isLoading={addingFavoriteCourse} disabled={!userInfo} onClick={()=>{handleAddFavorite(course._id)}}>{isFavorite?"已加入！":"加入最愛"}</Button>
+                      <Button key={"NolContent_Button_"+code} size="md" colorScheme="red" variant={isFavorite?"solid":"outline"} leftIcon={<FaHeart />} isLoading={addingFavoriteCourse} disabled={!userInfo} onClick={()=>{handleAddFavorite(course._id)}}>{isFavorite?"已加入最愛":"加入最愛"}</Button>
                       <Button key={"NolContent_Button_"+code} size="md" rightIcon={<IoMdOpen />} onClick={() => window.open(genNolUrl(course), "_blank")}>課程網資訊</Button>
                       <CopyToClipboard text={"https://course.myntu.me/courseinfo/"+course._id}>
                         <Button rightIcon={<Icon as={BiCopy} color={copyWord.color} />} variant="ghost" size="md" bg={copyWord.bg} color={copyWord.color} onClick={() => setCopiedLinkClicks(copiedLinkClicks + 1)}>
