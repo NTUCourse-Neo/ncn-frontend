@@ -76,16 +76,16 @@ function CourseInfoContainer ({code}){
                 //console.log(course_obj);
                 if (course_obj === undefined){
                     setNotFound(true);
+                    setPageMeta({title: `未知課程 - 課程資訊 | NTUCourse Neo`, desc: `未知課程資訊頁面 | NTUCourse Neo，全新的臺大選課網站。`});
                 } else {
                     setCourse(course_obj);
+                    setPageMeta({title: `${course_obj.course_name} - 課程資訊 | NTUCourse Neo`, desc: `${course_obj.course_name} 課程的詳細資訊 | NTUCourse Neo，全新的臺大選課網站。`});
                 }
             } catch (error) {
                 navigate(`/error/${error.status_code}`, { state: error });
                 return;
             }
-            setPageMeta({title: `${course_obj.course_name} - 課程資訊 | NTUCourse Neo`, desc: `${course_obj.course_name} 課程的詳細資訊 | NTUCourse Neo，全新的臺大選課網站。`});
           } 
-
           fetchCourseObject(code);
     },[])
 
