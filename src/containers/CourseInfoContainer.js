@@ -391,11 +391,11 @@ function CourseInfoContainer ({code}){
                 </VStack>
                 <Spacer />
                 <Menu>
-                  <MenuButton as={Button} rightIcon={<FaAngleDown />}>功能</MenuButton>
+                  <MenuButton isLoading={addingCourse || isLoading || addingFavoriteCourse} as={Button} rightIcon={<FaAngleDown />}>功能</MenuButton>
                   <MenuList>
-                      <MenuItem><Button key={"NolContent_Button_"+code+"_addToCourseTable"} mr='-px' size="md" colorScheme={selected?"red":"blue"} variant="ghost" leftIcon={selected?<FaMinus />:<FaPlus />} isLoading={addingCourse || isLoading} onClick={()=>{handleAddCourse(course)}}>{selected?"從課表移除":"加入課表"}</Button></MenuItem>
-                      <MenuItem><Button key={"NolContent_Button_"+code+"_addToNol"} size="md" colorScheme="blue" variant="ghost" leftIcon={<FaPlus />} onClick={() => openPage(genNolAddUrl(course), true)}>課程網</Button></MenuItem>
-                      <MenuItem><Button key={"NolContent_Button_"+code+"_addToFavorite"} size="md" colorScheme="red" variant={"ghost"} leftIcon={isFavorite?<FaMinus />:<FaHeart />} isLoading={addingFavoriteCourse} disabled={!userInfo} onClick={()=>{handleAddFavorite(course._id)}}>{isFavorite?"從最愛移除":"加入最愛"}</Button></MenuItem>
+                      <MenuItem key={"NolContent_Button_"+code+"_addToCourseTable"} mr='-px' size="md" color={selected?"red.500":"blue.600"} variant="ghost" icon={selected?<FaMinus />:<FaPlus />} onClick={()=>{handleAddCourse(course)}}>{selected?"從課表移除":"加入課表"}</MenuItem>
+                      <MenuItem key={"NolContent_Button_"+code+"_addToNol"} size="md" color="blue.600" variant="ghost" icon={<FaPlus />} onClick={() => openPage(genNolAddUrl(course), true)}>課程網</MenuItem>
+                      <MenuItem key={"NolContent_Button_"+code+"_addToFavorite"} size="md" color="red.500" variant={"ghost"} icon={isFavorite?<FaMinus />:<FaHeart />} disabled={!userInfo} onClick={()=>{handleAddFavorite(course._id)}}>{isFavorite?"從最愛移除":"加入最愛"}</MenuItem>
                     <MenuDivider />
                       <MenuItem icon={<IoMdOpen />} onClick={() => window.open(genNolUrl(course), "_blank")}>課程網資訊</MenuItem>
                   </MenuList>
