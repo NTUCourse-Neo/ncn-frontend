@@ -52,6 +52,17 @@ function SignUpCard({post, SignUpPostData, setSignUpPostData, fetchSignUpPostDat
   const [isDeletingPost, setIsDeletingPost] = useState(false);
   const [isReportingPost, setIsReportingPost] = useState(false);
 
+  const parseTs = (ts) => {
+    let date = new Date(ts);
+    let year = date.getFullYear();
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+
+    let hour = date.getHours();
+    let minute = date.getMinutes();
+    return `${year}-${month}-${day} ${hour}:${minute}`;
+  }
+
   
   const handleRefetchPost = async(post_id, vote_type) => {
     const token = await getAccessTokenSilently();
@@ -195,7 +206,7 @@ function SignUpCard({post, SignUpPostData, setSignUpPostData, fetchSignUpPostDat
             <HStack w="100%" justify="start">
               <HStack>
                 <Icon as={FaClock} boxSize="3" color="gray.500" />
-                <Text fontSize="xs" fontWeight="500" color="gray.500">{post.create_ts}</Text>
+                <Text fontSize="xs" fontWeight="500" color="gray.500">{parseTs(post.create_ts)}</Text>
               </HStack>
               <Spacer />
               <Button colorScheme="teal" variant={post.self_vote_status===1? "solid":"ghost"} size="xs" leftIcon={<FaThumbsUp />} isLoading={isVotingPost === 1} onClick={() => handleVotePost(post._id, post.self_vote_status===1?0:1)}>{post.upvotes}</Button>
