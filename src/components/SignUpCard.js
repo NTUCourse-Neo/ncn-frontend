@@ -42,7 +42,7 @@ import { social_user_type_map } from '../data/mapping_table';
 //   self_vote_status: get_self_vote_status(post, user_id) 
 // }
 
-function SignUpCard({post, SignUpPostData, setSignUpPostData}) {
+function SignUpCard({post, SignUpPostData, setSignUpPostData, fetchSignUpPostData}) {
   const is_owner = post.is_owner;
   const dispatch = useDispatch();
   const toast = useToast();
@@ -113,6 +113,7 @@ function SignUpCard({post, SignUpPostData, setSignUpPostData}) {
         return;
     }
     setIsDeletingPost(false);
+    fetchSignUpPostData();
   };
 
   const handleReportPost = async(post_id, content) => {
@@ -185,7 +186,7 @@ function SignUpCard({post, SignUpPostData, setSignUpPostData}) {
                 <Spacer />
                 <Text fontSize="xs" fontWeight="600" color="gray.500">提供者</Text>
                 <Badge colorScheme="blue">{is_owner?"我": social_user_type_map[post.user_type]}</Badge>
-                {is_owner?<Button size="sm" h='100%' variant={'ghost'} colorScheme="gray" fontSize={'sm'} color="red.600" onClick={() => handleDeletePost(post._id)}>刪除</Button>:<></>}
+                {is_owner?<Button size="sm" h='100%' variant={'ghost'} colorScheme="gray" fontSize={'sm'} color="red.600" onClick={() => handleDeletePost(post._id)} isLoading={isDeletingPost}>刪除</Button>:<></>}
               </HStack>
               <Flex maxH={isMobile? "":""} overflow="auto" flexGrow={1}>
                 <Text fontSize="md" fontWeight="600" color="gray.600" overflow="auto">{post.content.comment}</Text>

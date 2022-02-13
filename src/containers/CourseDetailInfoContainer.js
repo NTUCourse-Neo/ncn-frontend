@@ -244,6 +244,7 @@ function CourseDetailInfoContainer({ course }){
         return;
     }
     setSignUpPostData(data);
+    setSignUpCardIdx(0);
     setIsLoadingSignUpPostData(false);
   }
   
@@ -411,7 +412,7 @@ function CourseDetailInfoContainer({ course }){
     }
     return(
       <Flex w="100%" h="100%" mt="4" flexDirection="column" justifyContent="center" alignItems={isMobile? "start":"center"}>
-        <SignUpCard post={SignUpPostData[signUpCardIdx]} SignUpPostData={SignUpPostData} setSignUpPostData={setSignUpPostData}/>
+        <SignUpCard post={SignUpPostData[signUpCardIdx]} SignUpPostData={SignUpPostData} setSignUpPostData={setSignUpPostData} fetchSignUpPostData={fetchSignUpPostData}/>
         <HStack w="100%" pr="8" mt="8">
           <HStack>
             <IconButton size="md" variant="ghost" icon={<FaChevronLeft />} onClick={() => setSignUpCardIdx(signUpCardIdx===0 ? (SignUpPostData.length-1):(signUpCardIdx-1))} />
