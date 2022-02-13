@@ -251,7 +251,7 @@ function UserInfoContainer(props) {
       setMinor(userInfo.db.department.minors);
       setPageMeta({title: `${name} 的個人資料 | NTUCourse Neo`, desc: `個人資料頁面 | NTUCourse Neo，全新的臺大選課網站。`});
     }
-  }, [userInfo]);
+  }, [userInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const clearUserProfile = async () => {
     try {
