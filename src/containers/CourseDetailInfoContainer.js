@@ -451,7 +451,10 @@ function CourseDetailInfoContainer({ course }){
           <PopoverCloseButton />
           <Flex p="4" flexDirection="column" alignItems="start">
             <Text mb="2" fontSize="md" fontWeight="800" color="gray.700" textAlign="center">提供加簽相關資訊</Text>
-            <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">我是...</Text>
+            <HStack pb={1}>
+              <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">我是...</Text>
+              <Badge colorScheme={'blue'}>Required</Badge>
+            </HStack>
             <Select mb="2" placeholder='請選擇身份' onChange={(e)=>{setSignUpCardForm({...signUpCardForm, user_type: e.currentTarget.value})}}>
               {
                 Object.keys(social_user_type_map).map(key => {
@@ -461,11 +464,20 @@ function CourseDetailInfoContainer({ course }){
                 })
               }
             </Select>
-            <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">加簽人數</Text>
+            <HStack pb={1}>
+              <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">加簽人數</Text>
+              <Badge colorScheme={'blue'}>Required</Badge>
+            </HStack>
             <Input mb="2" type="number" placeholder="請輸入加簽人數" onChange={(e)=>{setSignUpCardForm({...signUpCardForm, amount: e.currentTarget.value})}}/>
-            <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">加簽時間</Text>
+            <HStack pb={1}>
+              <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">加簽時間</Text>
+              <Badge colorScheme={'blue'}>Required</Badge>
+            </HStack>
             <Input mb="2" type="text" placeholder="第一週上課、2/15 等..." onChange={(e)=>{setSignUpCardForm({...signUpCardForm, when: e.currentTarget.value})}}/>
-            <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">加簽方式</Text>
+            <HStack pb={1}>
+              <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">加簽方式</Text>
+              <Badge colorScheme={'blue'}>Required</Badge>
+            </HStack>
             <Input mb="2" type="text" placeholder="抽學生證、填表單、網路抽選 等..." onChange={(e)=>{setSignUpCardForm({...signUpCardForm, rule: e.currentTarget.value})}}/>
             <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">更多資訊</Text>
             <Textarea mb="2" size="md" placeholder='輸入更多資訊...' onChange={(e)=>{setSignUpCardForm({...signUpCardForm, comment: e.currentTarget.value})}}/>
