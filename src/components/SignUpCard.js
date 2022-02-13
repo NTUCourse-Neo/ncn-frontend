@@ -18,9 +18,14 @@ import {
     PopoverCloseButton,
     ButtonGroup,
     Textarea,
-    useMediaQuery
+    useMediaQuery,
+    useToast,
 } from '@chakra-ui/react'
-import { FaThumbsUp, FaThumbsDown, FaInfoCircle, FaTrashAlt } from 'react-icons/fa';
+import { useState } from 'react';
+import { FaThumbsUp, FaThumbsDown, FaInfoCircle } from 'react-icons/fa';
+import { useAuth0 } from '@auth0/auth0-react';
+import { useDispatch } from 'react-redux';
+import { deleteSocialPost, reportSocialPost, voteSocialPost } from '../actions';
 
 // prop.post
 // {
@@ -36,14 +41,78 @@ import { FaThumbsUp, FaThumbsDown, FaInfoCircle, FaTrashAlt } from 'react-icons/
 //   self_vote_status: get_self_vote_status(post, user_id) 
 // }
 
-function SignUpCard({post, is_owner}) {
-    const [isMobile] = useMediaQuery('(max-width: 1000px)')
+function SignUpCard({post}) {
+  const is_owner = post.is_owner;
+  const dispatch = useDispatch();
+  const toast = useToast();
+  const [isMobile] = useMediaQuery('(max-width: 1000px)')
+  const { getAccessTokenSilently } = useAuth0();
+  const [isVotingPost, setIsVotingPost] = useState(0);
+  const [isDeletingPost, setIsDeletingPost] = useState(false);
+  const [isReportingPost, setIsReportingPost] = useState(false);
+
+  const handleVotePost = async(post_id, vote_type) => {
+    setIsVotingPost(vote_type);
+    const token = await getAccessTokenSilently();
+    try {
+        await dispatch(voteSocialPost(token, post_id, vote_type));
+    } catch (error) {
+      setIsVotingPost(0);
+        toast({
+            title: "無法處理評分",
+            description: "請稍後再試一次",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+        });
+        return;
+    }
+    setIsVotingPost(0);
+  };
+
+  const handleDeletePost = async(post_id) => {
+    setIsDeletingPost(true);
+    const token = await getAccessTokenSilently();
+    try {
+        await dispatch(deleteSocialPost(token, post_id));
+    } catch (error) {
+      setIsDeletingPost(false);
+        toast({
+            title: "無法處理刪除貼文",
+            description: "請稍後再試一次",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+        });
+        return;
+    }
+    setIsDeletingPost(false);
+  };
+
+  const handleReportPost = async(post_id, content) => {
+    setIsReportingPost(true);
+    const token = await getAccessTokenSilently();
+    try {
+        await dispatch(reportSocialPost(token, post_id, content));
+    } catch (error) {
+      setIsReportingPost(false);
+        toast({
+            title: "無法處理檢舉貼文",
+            description: "請稍後再試一次",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+        });
+        return;
+    }
+    setIsReportingPost(false);
+  };
 
     const renderReportPopover = () => {
       return(
         <Popover placement="bottom">
           <PopoverTrigger>
-            <Button colorScheme="red" variant="ghost" size="sm">檢舉</Button>
+            <Button colorScheme="red" variant="ghost" size="sm" isDisabled={is_owner}>檢舉</Button>
           </PopoverTrigger>
           <PopoverContent>
             <PopoverArrow />
@@ -52,9 +121,6 @@ function SignUpCard({post, is_owner}) {
               <Text fontSize="md" fontWeight="800" color="gray.700" textAlign="center">檢舉此資訊</Text>
               <Textarea my="2" size="md" placeholder='請輸入檢舉原因...' />
               <ButtonGroup w="100%" size="sm" d='flex' justifyContent='end'>
-                <Button variant='outline'>
-                  取消
-                </Button>
                 <Button colorScheme='red'>
                   檢舉
                 </Button>
@@ -100,8 +166,8 @@ function SignUpCard({post, is_owner}) {
               </Flex>
             </VStack>
             <HStack w="100%" justify="end">
-              <Button colorScheme="teal" variant="ghost" size="xs" leftIcon={<FaThumbsUp />}>{post.upvotes}</Button>
-              <Button colorScheme="orange" variant="ghost" size="xs" leftIcon={<FaThumbsDown />}>{post.downvotes}</Button>
+              <Button colorScheme="teal" variant={post.self_vote_status===1? "solid":"ghost"} size="xs" leftIcon={<FaThumbsUp />} isLoading={isVotingPost === 1} onClick={() => handleVotePost(post._id, post.self_vote_status===1?"0":"1")}>{post.upvotes}</Button>
+              <Button colorScheme="orange" variant={post.self_vote_status===-1? "solid":"ghost"} size="xs" leftIcon={<FaThumbsDown />} isLoading={isVotingPost === 1} onClick={() => handleVotePost(post._id, post.self_vote_status===-1?"0":"-1")}>{post.downvotes}</Button>
               {renderReportPopover()}
             </HStack>
           </VStack>
