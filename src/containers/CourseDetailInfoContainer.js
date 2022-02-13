@@ -506,7 +506,7 @@ function CourseDetailInfoContainer({ course }){
       return(
         <Flex h="100%" flexDirection="column" alignItems="center">
           {renderFallback("無評價資訊", "empty", "100%", "8")}
-          <Button mt="4" colorScheme="blue" variant="outline" size="sm" rightIcon={<IoMdOpen/>} onClick={() => window.open("https://rating.myntu.me/?referrer=ntucourse_neo", "_blank")}>前往 NTURating 查看該課程評價</Button>
+          <Button mt="4" colorScheme="blue" variant="outline" size="sm" rightIcon={<IoMdOpen/>} onClick={() => window.open("https://rating.myntu.me/?referrer=ntucourse_neo", "_blank")}>前往 NTURating 撰寫評價</Button>
         </Flex>
       );
     }
