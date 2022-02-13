@@ -400,15 +400,7 @@ function CourseDetailInfoContainer({ course }){
     return(
       <Popover placement="bottom" isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
         <PopoverTrigger>
-          <Button colorScheme="blue" variant="solid" size="md" onClick={()=>{
-            setSignUpCardForm({
-              user_type: "",
-              amount: "",
-              when: "",
-              rule: "",
-              comment: ""
-            })
-          }}
+          <Button colorScheme="blue" variant="solid" size="md"
           isDisabled={SignUpPostData.some(obj => obj.is_owner)}>{SignUpPostData.some(obj => obj.is_owner)? "已提供過":"提供資訊"}</Button>
         </PopoverTrigger>
         <PopoverContent>
