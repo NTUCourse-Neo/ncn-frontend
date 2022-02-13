@@ -83,8 +83,7 @@ function CourseDetailInfoContainer({ course }){
   const toast = useToast();
   const dispatch = useDispatch();
   const [isMobile] = useMediaQuery('(max-width: 1000px)')
-  const userInfo = useSelector(state => state.user);
-  const { loginWithRedirect, getAccessTokenSilently } = useAuth0();
+  const { loginWithRedirect, getAccessTokenSilently, isLoading: isAuth0Loading, isAuthenticated } = useAuth0();
 
   // Course live data
   const [ CourseEnrollStatus, setCourseEnrollStatus ] = useState(null);
@@ -229,13 +228,21 @@ function CourseDetailInfoContainer({ course }){
   }
   
   useEffect(() => {
-    fetchNTURatingData();
-    fetchCourseEnrollData();
-    fetchPTTReviewData();
-    fetchPTTExamData();
     fetchSyllabusData();
-    fetchSignUpPostData();
-} ,[]); // eslint-disable-line react-hooks/exhaustive-deps
+    if(!isAuth0Loading && isAuthenticated){
+      fetchCourseEnrollData();
+      fetchSignUpPostData();
+      fetchNTURatingData();
+      fetchPTTReviewData();
+      fetchPTTExamData();
+    }else if(!isAuth0Loading && !isAuthenticated){
+      setIsLoadingEnrollInfo(false);
+      setIsLoadingRatingData(false);
+      setIsLoadingPTTReviewData(false);
+      setIsLoadingPTTExamData(false);
+      setIsLoadingSignUpPostData(false);
+    }
+} ,[isAuth0Loading, isAuthenticated]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const course_codes_1 = [
     {title: "流水號", value: course.id},
@@ -287,11 +294,14 @@ function CourseDetailInfoContainer({ course }){
     );
   };
   const renderCourseEnrollPanel = () => {
-    if(isLoadingEnrollInfo){
+    if(isLoadingEnrollInfo || isAuth0Loading){
       return(
         renderPanelLoaing("努力取得資訊中...", "100%", "8")
       );
     };
+    if(!isAuthenticated){
+      return renderGuestBlockingBox();
+    }
     if(!CourseEnrollStatus){
       return renderFallback("無法取得課程即時資訊", {FaExclamationTriangle}, "100%", "8");
     }
@@ -361,11 +371,14 @@ function CourseDetailInfoContainer({ course }){
       );
     };
 
-    if(isLoadingSignUpPostData){
+    if(isLoadingSignUpPostData || isAuth0Loading){
       return(
         renderPanelLoaing("努力跑加簽大地中...", "100%", "0")
       );
     };
+    if(!isAuthenticated){
+      return renderGuestBlockingBox();
+    }
     if(!SignUpPostData){
       return (
         <Flex w="100%" h="100%" mt="4" flexDirection="column" justifyContent="center" alignItems={isMobile? "start":"center"}>
@@ -391,11 +404,14 @@ function CourseDetailInfoContainer({ course }){
     );
   }
   const renderNTURatingPanel = () => {
-    if(isLoadingRatingData){
+    if(isLoadingRatingData || isAuth0Loading){
       return(
         renderPanelLoaing("查詢評價中...", "100%", "8")
       );
     };
+    if(!isAuthenticated){
+      return renderGuestBlockingBox();
+    }
     if(!NTURatingData){
       return(
         <Flex h="100%" flexDirection="column" alignItems="center">
@@ -434,11 +450,14 @@ function CourseDetailInfoContainer({ course }){
     );
   }
   const renderPTTReviewPanel = () => {
-    if(isLoadingPTTReviewData){
+    if(isLoadingPTTReviewData || isAuth0Loading){
       return(
         renderPanelLoaing("努力爬文中...", "100%", "8")
       );
     };
+    if(!isAuthenticated){
+      return renderGuestBlockingBox();
+    }
     if(!PTTReviewData){
       return renderFallback("無相關貼文資訊", "empty", "100%", "8");
     }
@@ -447,11 +466,14 @@ function CourseDetailInfoContainer({ course }){
     );
   };
   const renderPTTExamPanel = () => {
-    if(isLoadingPTTExamData){
+    if(isLoadingPTTExamData || isAuth0Loading){
       return(
         renderPanelLoaing("努力爬文中...", "100%", "8")
       );
     };
+    if(!isAuthenticated){
+      return renderGuestBlockingBox();
+    }
     if(!PTTExamData){
       return renderFallback("無相關貼文資訊", "empty", "100%", "8");
     }
@@ -646,10 +668,9 @@ function CourseDetailInfoContainer({ course }){
             </HStack>
             <TabPanels my="3">
               <TabPanel>
-                {userInfo?renderCourseEnrollPanel():renderGuestBlockingBox()}
+                {renderCourseEnrollPanel()}
               </TabPanel>
               <TabPanel>
-                {userInfo?<p>REAL DATA PLACE HOLDER</p>:renderGuestBlockingBox()}
               </TabPanel>
             </TabPanels>
           </Tabs>   
@@ -675,10 +696,10 @@ function CourseDetailInfoContainer({ course }){
             </HStack>
             <TabPanels>
               <TabPanel>
-                {userInfo?renderPTTReviewPanel():renderGuestBlockingBox()}
+                {renderPTTReviewPanel()}
               </TabPanel>
               <TabPanel>
-                {userInfo?renderNTURatingPanel():renderGuestBlockingBox()}
+                {renderNTURatingPanel()}
               </TabPanel>
             </TabPanels>
           </Tabs>
@@ -695,7 +716,7 @@ function CourseDetailInfoContainer({ course }){
             </HStack>
             <TabPanels>
               <TabPanel>
-                  {userInfo?renderPTTExamPanel():renderGuestBlockingBox()}
+                  {renderPTTExamPanel()}
               </TabPanel>
             </TabPanels>
           </Tabs>
