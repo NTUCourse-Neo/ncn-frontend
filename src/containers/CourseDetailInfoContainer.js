@@ -52,43 +52,6 @@ import { social_user_type_map } from '../data/mapping_table';
 import SignUpCard from '../components/SignUpCard';
 import { useAuth0 } from "@auth0/auth0-react";
 
-const fake_post = [
-  {
-    _id: '123',
-    course_id: '1102_18338',
-    type: 'sign_up_info',
-    content: {
-      amount: 87,
-      when: '明天',
-      rule: '抽籤',
-      comment: '幹你娘吃屎1'
-    },
-    is_owner: true,
-    user_type: "課程教師",
-    create_ts: null,
-    upvotes: 100,
-    downvotes: 100,
-    self_vote_status: 1,
-  },
-  {
-    _id: '124',
-    course_id: '1102_18338',
-    type: 'sign_up_info',
-    content: {
-      amount: 87,
-      when: '明天',
-      rule: '抽籤',
-      comment: '幹你娘吃屎2'
-    },
-    is_owner: true,
-    user_type: "課程教師",
-    create_ts: null,
-    upvotes: 100,
-    downvotes: 1,
-    self_vote_status: -1,
-  },
-]
-
 const syllabusTitle = {
   intro: "概述",
   objective: "目標",
@@ -459,7 +422,7 @@ function CourseDetailInfoContainer({ course }){
               {
                 Object.keys(social_user_type_map).map(key => {
                   return(
-                    <option value={key}>{social_user_type_map[key]}</option>
+                    <option value={key} key={key}>{social_user_type_map[key]}</option>
                   );
                 })
               }
@@ -627,14 +590,14 @@ function CourseDetailInfoContainer({ course }){
             let line = SyllubusData.syllabus[key].split('\n');
             const content = line.map((item, index) => {
               return(
-                <Text mb="0.5" fontSize="md" fontWeight="400" color="gray.600">{item.trim()}</Text>
+                <Text key={syllabusTitle[key]+"content"+index} mb="0.5" fontSize="md" fontWeight="400" color="gray.600">{item.trim()}</Text>
               );
             })
 
             return(
               <>
-                <Text fontSize="lg" fontWeight="600" color="gray.700">{syllabusTitle[key]}</Text>
-                {SyllubusData.syllabus[key] !== ""? content : <Text fontSize="md" fontWeight="400" color="gray.600">無</Text>}
+                <Text key={syllabusTitle[key]} fontSize="lg" fontWeight="600" color="gray.700">{syllabusTitle[key]}</Text>
+                {SyllubusData.syllabus[key] !== ""? content : <Text key={syllabusTitle[key]+"content"} fontSize="md" fontWeight="400" color="gray.600">無</Text>}
               </>
             );
           })
@@ -670,12 +633,12 @@ function CourseDetailInfoContainer({ course }){
             let line = item.comment.split('\n');
             const content = line.map((item, index) => {
               return(
-                <Text mb="1" fontSize="md" fontWeight="400" color="gray.700">{item.trim()}</Text>
+                <Text key={"syllubusDataContent"+index} mb="1" fontSize="md" fontWeight="400" color="gray.700">{item.trim()}</Text>
               );
             })
             return(
               <>
-                <Popover>
+                <Popover key={"syllubusData"+index}>
                   <PopoverTrigger>
                     <HStack justify="start" cursor="pointer">
                       <Icon as={FaCircle} size="20px" color={item.color}/>
