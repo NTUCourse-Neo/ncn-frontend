@@ -35,6 +35,7 @@ import{
   Textarea,
   Input,
   Select, 
+  useDisclosure
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
 import { PieChart } from 'react-minimal-pie-chart';
@@ -44,7 +45,7 @@ import BetaBadge from '../components/BetaBadge';
 import { info_view_map } from '../data/mapping_table';
 import PTTContentRowContainer from './PTTContentRowContainer';
 import { useDispatch, useSelector } from 'react-redux';
-import { getCourseEnrollInfo, getNTURatingData, getPTTData, getCourseSyllabusData, getSocialPostByCourseId } from '../actions/index';
+import { getCourseEnrollInfo, getNTURatingData, getPTTData, getCourseSyllabusData, getSocialPostByCourseId, createSocialPost } from '../actions/index';
 import ParrotGif from "../img/parrot/parrot.gif";
 import { hash_to_color_hex_with_hue } from '../utils/colorAgent';
 import { social_user_type_map } from '../data/mapping_table';
@@ -98,6 +99,7 @@ const syllabusTitle = {
 }
 
 function CourseDetailInfoContainer({ course }){
+  const { onOpen, onClose, isOpen } = useDisclosure()
   const toast = useToast();
   const dispatch = useDispatch();
   const [isMobile] = useMediaQuery('(max-width: 1000px)')
@@ -119,7 +121,85 @@ function CourseDetailInfoContainer({ course }){
   const [ isLoadingSyllubusData, setIsLoadingSyllubusData ] = useState(true);
   const [ isLoadingSignUpPostData, setIsLoadingSignUpPostData ] = useState(true);
 
+  // sign up card form
+  const [ sendingForm, setSendingForm ] = useState(false);
+  const [ signUpCardForm, setSignUpCardForm ] = useState({
+    user_type: "",
+    amount: "",
+    when: "",
+    rule: "",
+    comment: ""
+  });
+
+  // useEffect(()=>{
+  //   console.log('Form: ', signUpCardForm);
+  // },[signUpCardForm])
+
   const [signUpCardIdx, setSignUpCardIdx] = useState(0);
+
+  const handleSubmitSignUpCardForm = async()=>{
+    // check all fields first
+    for(let key in signUpCardForm){
+      // check negative amount
+      if (key==="amount"){
+        let amount = parseInt(signUpCardForm[key]);
+        if (amount<0){
+          toast({
+            title: "加簽人數請填入大於0的數字",
+            description: "",
+            status: "error",
+            duration: 3000,
+            isClosable: true
+          });
+          return false;
+        }
+      }
+      // each field should not be empty except comment
+      if (key !== "comment"){
+        if(signUpCardForm[key] === ""){
+          toast({
+            title: "請填寫所有欄位",
+            description: "",
+            status: "error",
+            duration: 3000,
+            isClosable: true
+          });
+          return false;
+        }
+      }
+    }
+    // send to server
+    try {
+      const token = await getAccessTokenSilently();
+      const post = {
+        type: "sign_up_info",
+        content: {
+          amount: signUpCardForm.amount,
+          when: signUpCardForm.when,
+          rule: signUpCardForm.rule,
+          comment: signUpCardForm.comment
+        },
+        user_type: signUpCardForm.user_type,
+      }
+      dispatch(createSocialPost(token, course._id, post))
+      toast({
+        title: "發送成功",
+        description: "感謝您的填寫！",
+        status: "success",
+        duration: 3000,
+        isClosable: true
+      });
+    } catch (e) {
+      toast({
+        title: "發送失敗，請稍後再試",
+        description: "或填寫問題回報表單，讓我們幫助你！",
+        status: "error",
+        duration: 3000,
+        isClosable: true
+      });
+    }
+    return true;
+  }
 
 
   async function fetchCourseEnrollData() {
@@ -243,7 +323,6 @@ function CourseDetailInfoContainer({ course }){
         });
         return;
     }
-    console.log('data: ', data);
     setSignUpPostData(data);
     setSignUpCardIdx(0);
     setIsLoadingSignUpPostData(false);
@@ -352,47 +431,64 @@ function CourseDetailInfoContainer({ course }){
       </Flex>
     );
   }
-  const renderSignupPanel = () => {
-    const renderSubmitPopover = () => {
-      return(
-        <Popover placement="bottom">
-          <PopoverTrigger>
-            <Button colorScheme="blue" variant="solid" size="md">提供資訊</Button>
-          </PopoverTrigger>
-          <PopoverContent>
-            <PopoverArrow />
-            <PopoverCloseButton />
-            <Flex p="4" flexDirection="column" alignItems="start">
-              <Text mb="2" fontSize="md" fontWeight="800" color="gray.700" textAlign="center">提供加簽相關資訊</Text>
-              <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">我是...</Text>
-              <Select mb="2" placeholder='請選擇身份'>
-                {
-                  Object.keys(social_user_type_map).map(key => {
-                    return(
-                      <option value={key}>{social_user_type_map[key]}</option>
-                    );
-                  })
-                }
-              </Select>
-              <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">加簽人數</Text>
-              <Input mb="2" type="number" placeholder="請輸入加簽人數" />
-              <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">加簽時間</Text>
-              <Input mb="2" type="text" placeholder="第一週上課、2/15 等..." />
-              <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">加簽方式</Text>
-              <Input mb="2" type="text" placeholder="抽學生證、填表單、網路抽選 等..." />
-              <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">更多資訊</Text>
-              <Textarea mb="2" size="md" placeholder='輸入更多資訊...' />
-              <ButtonGroup w="100%" size="sm" d='flex' justifyContent='end'>
-                <Button colorScheme='blue'>
-                  送出
-                </Button>
-              </ButtonGroup>
-            </Flex>
-          </PopoverContent>
-        </Popover>
-      );
-    };
 
+  const renderSubmitPopover = () => {
+    return(
+      <Popover placement="bottom" isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
+        <PopoverTrigger>
+          <Button colorScheme="blue" variant="solid" size="md" onClick={()=>{
+            setSignUpCardForm({
+              user_type: "",
+              amount: "",
+              when: "",
+              rule: "",
+              comment: ""
+            })
+          }}>提供資訊</Button>
+        </PopoverTrigger>
+        <PopoverContent>
+          <PopoverArrow />
+          <PopoverCloseButton />
+          <Flex p="4" flexDirection="column" alignItems="start">
+            <Text mb="2" fontSize="md" fontWeight="800" color="gray.700" textAlign="center">提供加簽相關資訊</Text>
+            <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">我是...</Text>
+            <Select mb="2" placeholder='請選擇身份' onChange={(e)=>{setSignUpCardForm({...signUpCardForm, user_type: e.currentTarget.value})}}>
+              {
+                Object.keys(social_user_type_map).map(key => {
+                  return(
+                    <option value={key}>{social_user_type_map[key]}</option>
+                  );
+                })
+              }
+            </Select>
+            <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">加簽人數</Text>
+            <Input mb="2" type="number" placeholder="請輸入加簽人數" onChange={(e)=>{setSignUpCardForm({...signUpCardForm, amount: e.currentTarget.value})}}/>
+            <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">加簽時間</Text>
+            <Input mb="2" type="text" placeholder="第一週上課、2/15 等..." onChange={(e)=>{setSignUpCardForm({...signUpCardForm, when: e.currentTarget.value})}}/>
+            <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">加簽方式</Text>
+            <Input mb="2" type="text" placeholder="抽學生證、填表單、網路抽選 等..." onChange={(e)=>{setSignUpCardForm({...signUpCardForm, rule: e.currentTarget.value})}}/>
+            <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">更多資訊</Text>
+            <Textarea mb="2" size="md" placeholder='輸入更多資訊...' onChange={(e)=>{setSignUpCardForm({...signUpCardForm, comment: e.currentTarget.value})}}/>
+            <ButtonGroup w="100%" size="sm" d='flex' justifyContent='end'>
+              <Button colorScheme='blue' isLoading={sendingForm} onClick={async()=>{
+                setSendingForm(true);
+                let res = await handleSubmitSignUpCardForm();
+                setSendingForm(false);
+                if (res===true){
+                  onClose();
+                  await fetchSignUpPostData();
+                }
+              }}>
+                送出
+              </Button>
+            </ButtonGroup>
+          </Flex>
+        </PopoverContent>
+      </Popover>
+    );
+  };
+
+  const renderSignupPanel = () => {
     if(isLoadingSignUpPostData || isAuth0Loading){
       return(
         renderPanelLoaing("努力跑加簽大地中...", "100%", "0")
