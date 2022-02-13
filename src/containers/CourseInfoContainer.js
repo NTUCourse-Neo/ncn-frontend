@@ -5,7 +5,6 @@ import {
   ButtonGroup,
   Button,
   Spacer,
-  IconButton,
   Icon,
   Flex,
   Image,
@@ -26,7 +25,7 @@ import { useNavigate } from "react-router-dom";
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import Moment from "moment";
 import { IoMdOpen } from 'react-icons/io';
-import { FaPlus, FaMinus, FaHeartbeat, FaHeart, FaSyncAlt, FaAngleDown } from 'react-icons/fa';
+import { FaPlus, FaMinus, FaHeartbeat, FaHeart, FaAngleDown } from 'react-icons/fa';
 import { BiCopy } from 'react-icons/bi';
 import setPageMeta from "../utils/seo";
 import { genNolUrl, genNolAddUrl, openPage } from "./CourseDrawerContainer";
@@ -57,7 +56,7 @@ function CourseInfoContainer ({code}){
     const [isMobile] = useMediaQuery('(max-width: 1000px)')
     const [copiedLinkClicks, setCopiedLinkClicks] = useState(0);
     const [copyWord, setCopyWord] = useState(copyWordList.find(word => word.count <= copiedLinkClicks));
-    const [refreshTime, setRefreshTime] = useState(new Date());
+    const [refreshTime] = useState(new Date());
     Moment.locale("zh-tw");
 
     const [addingCourse, setAddingCourse] = useState(false);

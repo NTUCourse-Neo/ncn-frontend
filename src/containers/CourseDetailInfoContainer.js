@@ -31,7 +31,6 @@ import{
   ButtonGroup,
   Badge,
   IconButton,
-  Tooltip,
   Textarea,
   Input,
   Select, 
@@ -44,7 +43,7 @@ import { IoMdOpen } from 'react-icons/io';
 import BetaBadge from '../components/BetaBadge';
 import { info_view_map } from '../data/mapping_table';
 import PTTContentRowContainer from './PTTContentRowContainer';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { getCourseEnrollInfo, getNTURatingData, getPTTData, getCourseSyllabusData, getSocialPostByCourseId, createSocialPost } from '../actions/index';
 import ParrotGif from "../img/parrot/parrot.gif";
 import { hash_to_color_hex_with_hue } from '../utils/colorAgent';

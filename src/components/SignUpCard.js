@@ -23,7 +23,7 @@ import {
     useDisclosure,
 } from '@chakra-ui/react'
 import { useState } from 'react';
-import { FaThumbsUp, FaThumbsDown, FaInfoCircle, FaTimes, FaClock } from 'react-icons/fa';
+import { FaThumbsUp, FaThumbsDown, FaInfoCircle, FaClock } from 'react-icons/fa';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useDispatch } from 'react-redux';
 import { deleteSocialPost, getSocialPostByPostId, reportSocialPost, voteSocialPost } from '../actions';

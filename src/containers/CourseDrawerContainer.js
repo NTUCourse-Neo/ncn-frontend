@@ -7,23 +7,10 @@ import {
     Spacer,
     Button,
     ButtonGroup,
-    useDisclosure,
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalFooter,
-    ModalBody,
     useMediaQuery,
-    HStack,
-    Tag,
-    IconButton,
   } from '@chakra-ui/react';
-import { FaPlus, FaInfoCircle, FaHeart, FaSyncAlt } from 'react-icons/fa';
-import { IoMdOpen } from 'react-icons/io';
-import { ImCross } from 'react-icons/im';
+import { FaPlus, FaInfoCircle } from 'react-icons/fa';
 import { info_view_map } from '../data/mapping_table';
-import CourseDetailInfoContainer from './CourseDetailInfoContainer';
 import { useNavigate } from "react-router-dom";
 
 function RenderNolContentBtn(course, title, key){

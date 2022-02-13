@@ -6,11 +6,8 @@ import {
   Text,
   VStack,
   Icon,
-  HStack,
-  Image,
 } from '@chakra-ui/react';
 import { IoMdOpen } from 'react-icons/io';
-import ParrotGif from "../img/parrot/parrot.gif";
 
 function PTTContentRowContainer({ info, height}){
   const RenderRow = (data) => {
