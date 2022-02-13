@@ -189,7 +189,7 @@ function SignUpCard({post, SignUpPostData, setSignUpPostData, fetchSignUpPostDat
                 {is_owner?<Button size="sm" h='100%' variant={'ghost'} colorScheme="gray" fontSize={'sm'} color="red.600" onClick={() => handleDeletePost(post._id)} isLoading={isDeletingPost}>刪除</Button>:<></>}
               </HStack>
               <Flex maxH={isMobile? "":""} overflow="auto" flexGrow={1}>
-                <Text fontSize="md" fontWeight="600" color="gray.600" overflow="auto">{post.content.comment}</Text>
+                <Text fontSize="md" fontWeight="600" color="gray.600" overflow="auto">{post.content.comment===""?"無":post.content.comment}</Text>
               </Flex>
             </VStack>
             <HStack w="100%" justify="start">
