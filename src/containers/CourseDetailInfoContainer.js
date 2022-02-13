@@ -33,6 +33,8 @@ import{
   IconButton,
   Tooltip,
   Textarea,
+  Input,
+  Select, 
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
 import { PieChart } from 'react-minimal-pie-chart';
@@ -45,6 +47,7 @@ import { getCourseEnrollInfo, getNTURatingData, getPTTData, getCourseSyllabusDat
 import { useDispatch } from 'react-redux';
 import ParrotGif from "../img/parrot/parrot.gif";
 import { hash_to_color_hex_with_hue } from '../utils/colorAgent';
+import { social_user_type_map } from '../data/mapping_table';
 
 const syllabusTitle = {
   intro: "概述",
@@ -261,14 +264,31 @@ function CourseDetailInfoContainer({ course }){
       return(
         <Popover placement="bottom">
           <PopoverTrigger>
-            <Button colorScheme="blue" variant="solid" size="md">我要提供資訊</Button>
+            <Button colorScheme="blue" variant="solid" size="md">提供資訊</Button>
           </PopoverTrigger>
           <PopoverContent>
             <PopoverArrow />
             <PopoverCloseButton />
             <Flex p="4" flexDirection="column" alignItems="start">
-              <Text fontSize="md" fontWeight="800" color="gray.700" textAlign="center">回報加簽方式</Text>
-              <Textarea my="2" size="md" placeholder='輸入回報內容...' />
+              <Text mb="2" fontSize="md" fontWeight="800" color="gray.700" textAlign="center">提供加簽相關資訊</Text>
+              <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">我是...</Text>
+              <Select mb="2" placeholder='請選擇身份'>
+                {
+                  Object.keys(social_user_type_map).map(key => {
+                    return(
+                      <option value={key}>{social_user_type_map[key]}</option>
+                    );
+                  })
+                }
+              </Select>
+              <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">加簽人數</Text>
+              <Input mb="2" type="number" placeholder="請輸入加簽人數" />
+              <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">加簽時間</Text>
+              <Input mb="2" type="text" placeholder="第一週上課、2/15 等..." />
+              <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">加簽方式</Text>
+              <Input mb="2" type="text" placeholder="抽學生證、填表單、網路抽選 等..." />
+              <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">更多資訊</Text>
+              <Textarea mb="2" size="md" placeholder='輸入更多資訊...' />
               <ButtonGroup w="100%" size="sm" d='flex' justifyContent='end'>
                 <Button variant='outline'>
                   取消
@@ -292,8 +312,8 @@ function CourseDetailInfoContainer({ course }){
             <PopoverArrow />
             <PopoverCloseButton />
             <Flex p="4" flexDirection="column" alignItems="start">
-              <Text fontSize="md" fontWeight="800" color="gray.700" textAlign="center">檢舉資訊不實</Text>
-              <Textarea my="2" size="md" placeholder='輸入檢舉內容...' />
+              <Text fontSize="md" fontWeight="800" color="gray.700" textAlign="center">檢舉此資訊</Text>
+              <Textarea my="2" size="md" placeholder='請輸入檢舉原因...' />
               <ButtonGroup w="100%" size="sm" d='flex' justifyContent='end'>
                 <Button variant='outline'>
                   取消

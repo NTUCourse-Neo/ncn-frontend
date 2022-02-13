@@ -173,4 +173,12 @@ const weekdays_map = {
     "7": "日"
 }
 
-export {info_view_map, weekdays_map};
+const social_user_type_map = {
+    "student": "學生",
+    "teacher": "教師",
+    "course_teacher":   "課程講師",
+    "course_assistant": "課程助教",
+    "others":  "其他"
+}
+
+export {info_view_map, weekdays_map, social_user_type_map};
