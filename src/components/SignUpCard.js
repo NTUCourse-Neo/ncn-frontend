@@ -20,6 +20,7 @@ import {
     Textarea,
     useMediaQuery,
     useToast,
+    useDisclosure,
 } from '@chakra-ui/react'
 import { useState } from 'react';
 import { FaThumbsUp, FaThumbsDown, FaInfoCircle, FaTimes, FaClock } from 'react-icons/fa';
@@ -27,6 +28,8 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { useDispatch } from 'react-redux';
 import { deleteSocialPost, getSocialPostByPostId, reportSocialPost, voteSocialPost } from '../actions';
 import { social_user_type_map } from '../data/mapping_table';
+import Moment from "moment";
+
 
 // prop.post
 // {
@@ -51,17 +54,9 @@ function SignUpCard({post, SignUpPostData, setSignUpPostData, fetchSignUpPostDat
   const [isVotingPost, setIsVotingPost] = useState(0);
   const [isDeletingPost, setIsDeletingPost] = useState(false);
   const [isReportingPost, setIsReportingPost] = useState(false);
-
-  const parseTs = (ts) => {
-    let date = new Date(ts);
-    let year = date.getFullYear();
-    let month = date.getMonth() + 1;
-    let day = date.getDate();
-
-    let hour = date.getHours();
-    let minute = date.getMinutes();
-    return `${year}-${month}-${day} ${hour}:${minute}`;
-  }
+  const [reportReason, setReportReason] = useState("");
+  const { onOpen, onClose, isOpen } = useDisclosure()
+  Moment.locale("zh-tw");
 
   
   const handleRefetchPost = async(post_id, vote_type) => {
@@ -96,7 +91,7 @@ function SignUpCard({post, SignUpPostData, setSignUpPostData, fetchSignUpPostDat
       setIsVotingPost(0);
         toast({
             title: "無法處理評分",
-            description: "請稍後再試一次",
+            description: "請稍後再試。",
             status: "error",
             duration: 3000,
             isClosable: true,
@@ -116,7 +111,7 @@ function SignUpCard({post, SignUpPostData, setSignUpPostData, fetchSignUpPostDat
       setIsDeletingPost(false);
         toast({
             title: "無法處理刪除貼文",
-            description: "請稍後再試一次",
+            description: "請稍後再試。",
             status: "error",
             duration: 3000,
             isClosable: true,
@@ -131,12 +126,14 @@ function SignUpCard({post, SignUpPostData, setSignUpPostData, fetchSignUpPostDat
     setIsReportingPost(true);
     const token = await getAccessTokenSilently();
     try {
-        await dispatch(reportSocialPost(token, post_id, content));
+        await dispatch(reportSocialPost(token, post_id, {
+          reason: content,
+        }));
     } catch (error) {
       setIsReportingPost(false);
         toast({
-            title: "無法處理檢舉貼文",
-            description: "請稍後再試一次",
+            title: "檢舉貼文失敗",
+            description: "您可能已檢舉過此貼文，或請稍後再試一次。",
             status: "error",
             duration: 3000,
             isClosable: true,
@@ -144,22 +141,23 @@ function SignUpCard({post, SignUpPostData, setSignUpPostData, fetchSignUpPostDat
         return;
     }
     setIsReportingPost(false);
+    fetchSignUpPostData();
   };
 
     const renderReportPopover = () => {
       return(
-        <Popover placement="bottom">
+        <Popover placement="bottom" isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
           <PopoverTrigger>
-            <Button colorScheme="red" variant="ghost" size="sm" isDisabled={is_owner}>檢舉</Button>
+            <Button colorScheme="red" variant="ghost" size="sm" isDisabled={is_owner} isLoading={isReportingPost}>檢舉</Button>
           </PopoverTrigger>
           <PopoverContent>
             <PopoverArrow />
             <PopoverCloseButton />
             <Flex p="4" flexDirection="column" alignItems="start">
               <Text fontSize="md" fontWeight="800" color="gray.700" textAlign="center">檢舉此資訊</Text>
-              <Textarea my="2" size="md" placeholder='請輸入檢舉原因...' />
+              <Textarea my="2" size="md" placeholder='請輸入檢舉原因' onChange={(e)=>{setReportReason(e.currentTarget.value)}}/>
               <ButtonGroup w="100%" size="sm" d='flex' justifyContent='end'>
-                <Button colorScheme='red'>
+                <Button colorScheme='red' onClick={() => { handleReportPost(post._id, reportReason); onClose(); }} isDisabled={reportReason === ""}>
                   檢舉
                 </Button>
               </ButtonGroup>
@@ -189,11 +187,11 @@ function SignUpCard({post, SignUpPostData, setSignUpPostData, fetchSignUpPostDat
             <VStack w="100%" h="100%" justify="start" align="start">
               <HStack w="100%">
                 <Text fontSize="sm" fontWeight="600" color="gray.800">更多資訊</Text>
-                {/* <Tooltip label="此資訊基於社群回報與機器學習擷取資訊，僅顯示評分最高之回報內容。此資訊可能有缺漏或不完全正確，亦不代表本站立場，請確實做好查證工作。" placement="top" hasArrow>
+                <Tooltip label="此資訊基於社群回報取得資訊，可能有缺漏或不完全正確，亦不代表本站立場，請確實做好事實查證。" placement="top" hasArrow>
                   <p>
                     <Icon as={FaInfoCircle} boxSize="3" color="gray.500" />
                   </p>
-                </Tooltip> */}
+                </Tooltip>
                 <Spacer />
                 <Text fontSize="xs" fontWeight="600" color="gray.500">提供者</Text>
                 <Badge colorScheme="blue">{is_owner?"我": social_user_type_map[post.user_type]}</Badge>
@@ -206,7 +204,7 @@ function SignUpCard({post, SignUpPostData, setSignUpPostData, fetchSignUpPostDat
             <HStack w="100%" justify="start">
               <HStack>
                 <Icon as={FaClock} boxSize="3" color="gray.500" />
-                <Text fontSize="xs" fontWeight="500" color="gray.500">{parseTs(post.create_ts)}</Text>
+                <Text fontSize="xs" fontWeight="500" color="gray.500">{Moment(post.create_ts).format("YYYY-MM-DD HH:mm")}</Text>
               </HStack>
               <Spacer />
               <Button colorScheme="teal" variant={post.self_vote_status===1? "solid":"ghost"} size="xs" leftIcon={<FaThumbsUp />} isLoading={isVotingPost === 1} onClick={() => handleVotePost(post._id, post.self_vote_status===1?0:1)}>{post.upvotes}</Button>

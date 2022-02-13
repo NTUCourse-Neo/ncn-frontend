@@ -445,7 +445,10 @@ function CourseDetailInfoContainer({ course }){
             <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">更多資訊</Text>
             <Textarea mb="2" size="md" placeholder='輸入更多資訊...' onChange={(e)=>{setSignUpCardForm({...signUpCardForm, comment: e.currentTarget.value})}}/>
             <ButtonGroup w="100%" size="sm" d='flex' justifyContent='end'>
-              <Button colorScheme='blue' isLoading={sendingForm} onClick={async()=>{
+              <Button colorScheme='blue' isLoading={sendingForm} isDisabled={
+                  signUpCardForm.amount === "" || signUpCardForm.user_type === "" || signUpCardForm.when === "" || signUpCardForm.rule === ""
+                } 
+                onClick={async()=>{
                 setSendingForm(true);
                 let res = await handleSubmitSignUpCardForm();
                 setSendingForm(false);
@@ -489,6 +492,7 @@ function CourseDetailInfoContainer({ course }){
           <HStack>
             <IconButton size="md" variant="ghost" icon={<FaChevronLeft />} onClick={() => setSignUpCardIdx(signUpCardIdx===0 ? (SignUpPostData.length-1):(signUpCardIdx-1))} />
             <IconButton size="md" variant="ghost" icon={<FaChevronRight />} onClick={() => setSignUpCardIdx((signUpCardIdx+1)%SignUpPostData.length)} />
+            <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">{signUpCardIdx+1}/{SignUpPostData.length}</Text>
           </HStack>
           <Spacer />
           {renderSubmitPopover()}
