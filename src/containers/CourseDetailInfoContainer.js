@@ -339,9 +339,6 @@ function CourseDetailInfoContainer({ course }){
               <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">更多資訊</Text>
               <Textarea mb="2" size="md" placeholder='輸入更多資訊...' />
               <ButtonGroup w="100%" size="sm" d='flex' justifyContent='end'>
-                <Button variant='outline'>
-                  取消
-                </Button>
                 <Button colorScheme='blue'>
                   送出
                 </Button>
@@ -369,7 +366,7 @@ function CourseDetailInfoContainer({ course }){
     }
     return(
       <Flex w="100%" h="100%" mt="4" flexDirection="column" justifyContent="center" alignItems={isMobile? "start":"center"}>
-        <SignUpCard post={fake_post} is_owner={fake_post.is_owner}/>
+        <SignUpCard post={fake_post}/>
         <HStack w="100%" pr="8" mt="8">
           <HStack>
             <IconButton size="md" variant="ghost" icon={<FaChevronLeft />} />
