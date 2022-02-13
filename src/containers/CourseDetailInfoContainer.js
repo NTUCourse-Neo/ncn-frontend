@@ -713,7 +713,9 @@ function CourseDetailInfoContainer({ course }){
                 <StatNumber>
                   <HStack spacing="2">
                     {
-                      course.department === "" ? "無":
+                      course.department[0] === "" ?
+                      <Tag colorScheme="blackAlpha" size="lg">無資訊</Tag>
+                      :
                       course.department.map((item, index) => {
                         return(
                           <Tag key={"department_"+index} colorScheme="blue" size="lg">{item}</Tag>
