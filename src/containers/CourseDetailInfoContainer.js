@@ -38,17 +38,18 @@ import{
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
 import { PieChart } from 'react-minimal-pie-chart';
-import { FaCircle, FaRss, FaExclamationTriangle, FaQuestionCircle, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaCircle, FaRss, FaExclamationTriangle, FaQuestionCircle, FaChevronLeft, FaChevronRight, FaInfoCircle } from 'react-icons/fa';
 import { IoMdOpen } from 'react-icons/io';
 import BetaBadge from '../components/BetaBadge';
 import { info_view_map } from '../data/mapping_table';
 import PTTContentRowContainer from './PTTContentRowContainer';
 import { getCourseEnrollInfo, getNTURatingData, getPTTData, getCourseSyllabusData } from '../actions/index';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import ParrotGif from "../img/parrot/parrot.gif";
 import { hash_to_color_hex_with_hue } from '../utils/colorAgent';
 import { social_user_type_map } from '../data/mapping_table';
 import SignUpCard from '../components/SignUpCard';
+import { useAuth0 } from "@auth0/auth0-react";
 
 const fake_post = 
 {
@@ -82,6 +83,8 @@ function CourseDetailInfoContainer({ course }){
   const toast = useToast();
   const dispatch = useDispatch();
   const [isMobile] = useMediaQuery('(max-width: 1000px)')
+  const userInfo = useSelector(state => state.user);
+  const { loginWithRedirect } = useAuth0();
 
   // Course live data
   const [ CourseEnrollStatus, setCourseEnrollStatus ] = useState(null);
@@ -219,6 +222,17 @@ function CourseDetailInfoContainer({ course }){
     {title: "開課學期", value: course.semester},
     {title: "授課語言", value: info_view_map.language.map[course.language]},
   ];
+
+  const renderGuestBlockingBox = () => {
+    return (
+      <Flex flexDirection={'column'} my={3} h='100%' w='100%' align='center' justify='center'>
+        <Icon as={FaInfoCircle} boxSize="32px" color="gray.500" />
+        <Text mt="2" fontSize="lg" fontWeight="800" color="gray.500" textAlign="center">會員專屬功能</Text>
+        <Button rightIcon={<FaChevronRight/>} size="md" my={2} py={2} colorScheme="blue" fontSize="md" fontWeight="800" onClick={()=>{loginWithRedirect()}}>來去登入</Button>
+      </Flex>
+    )
+  }
+
   const renderDataSource = (dataSource) => {
     return(
       <HStack spacing="2">
@@ -594,16 +608,16 @@ function CourseDetailInfoContainer({ course }){
                 <Tab isDisabled cursor="not-allowed">歷史<BetaBadge content="coming soon" size="xs"/></Tab>
               </TabList>
             </HStack>
-            <TabPanels>
+            <TabPanels my="3">
               <TabPanel>
-                {renderCourseEnrollPanel()}
+                {userInfo?renderCourseEnrollPanel():renderGuestBlockingBox()}
               </TabPanel>
               <TabPanel>
-                <p>two!</p>
+                {userInfo?<p>REAL DATA PLACE HOLDER</p>:renderGuestBlockingBox()}
               </TabPanel>
             </TabPanels>
-          </Tabs>        
-            {renderDataSource("臺大選課系統")}
+          </Tabs>   
+          {renderDataSource("臺大選課系統")}
         </Flex>
       </Flex>
       {/* COL 2 */}
@@ -625,10 +639,10 @@ function CourseDetailInfoContainer({ course }){
             </HStack>
             <TabPanels>
               <TabPanel>
-                {renderPTTReviewPanel()}
+                {userInfo?renderPTTReviewPanel():renderGuestBlockingBox()}
               </TabPanel>
               <TabPanel>
-                {renderNTURatingPanel()}
+                {userInfo?renderNTURatingPanel():renderGuestBlockingBox()}
               </TabPanel>
             </TabPanels>
           </Tabs>
@@ -645,7 +659,7 @@ function CourseDetailInfoContainer({ course }){
             </HStack>
             <TabPanels>
               <TabPanel>
-                  {renderPTTExamPanel()}
+                  {userInfo?renderPTTExamPanel():renderGuestBlockingBox()}
               </TabPanel>
             </TabPanels>
           </Tabs>
