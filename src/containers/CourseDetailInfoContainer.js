@@ -45,6 +45,26 @@ import { getCourseEnrollInfo, getNTURatingData, getPTTData, getCourseSyllabusDat
 import { useDispatch } from 'react-redux';
 import ParrotGif from "../img/parrot/parrot.gif";
 import { hash_to_color_hex_with_hue } from '../utils/colorAgent';
+import SignUpCard from '../components/SignUpCard';
+
+const fake_post = 
+{
+  _id: '123',
+  course_id: '1102_18338',
+  type: 'sign_up_info',
+  content: {
+    amount: 87,
+    when: '明天',
+    rule: '抽籤',
+    comment: '幹你娘吃屎'
+  },
+  is_owner: true,
+  user_type: "課程教師",
+  create_ts: null,
+  upvotes: 1,
+  downvotes: 100,
+  self_vote_status: 1,
+}
 
 const syllabusTitle = {
   intro: "概述",
@@ -282,31 +302,6 @@ function CourseDetailInfoContainer({ course }){
         </Popover>
       );
     };
-    const renderReportPopover = () => {
-      return(
-        <Popover placement="bottom">
-          <PopoverTrigger>
-            <Button colorScheme="red" variant="ghost" size="sm">檢舉</Button>
-          </PopoverTrigger>
-          <PopoverContent>
-            <PopoverArrow />
-            <PopoverCloseButton />
-            <Flex p="4" flexDirection="column" alignItems="start">
-              <Text fontSize="md" fontWeight="800" color="gray.700" textAlign="center">檢舉資訊不實</Text>
-              <Textarea my="2" size="md" placeholder='輸入檢舉內容...' />
-              <ButtonGroup w="100%" size="sm" d='flex' justifyContent='end'>
-                <Button variant='outline'>
-                  取消
-                </Button>
-                <Button colorScheme='red'>
-                  檢舉
-                </Button>
-              </ButtonGroup>
-            </Flex>
-          </PopoverContent>
-        </Popover>
-      );
-    };
 
     if(false){
       return(
@@ -318,45 +313,7 @@ function CourseDetailInfoContainer({ course }){
     }
     return(
       <Flex w="100%" h="100%" mt="4" flexDirection="column" justifyContent="center" alignItems={isMobile? "start":"center"}>
-        <Flex w="100%" h="75%" py="8" px="8" justifyContent="space-around" alignItems="start" flexDirection={isMobile? "column":"row"} bg="gray.200" borderRadius="lg" boxShadow="lg">
-          <Flex h="100%" w={isMobile? "100%":"24"} flexWrap="wrap" alignItems="start">
-            <Stat minW="16">
-              <StatLabel>加簽人數</StatLabel>
-              <StatNumber>10</StatNumber>
-            </Stat>
-            <Stat minW="16">
-              <StatLabel>加簽方式</StatLabel>
-              <Text mt="1" fontSize="lg" fontWeight="600">抽籤</Text>
-            </Stat>
-            <Stat minW="16">
-              <StatLabel>加簽日期</StatLabel>
-              <Text mt="1" fontSize="lg" fontWeight="600">第一週上課</Text>
-            </Stat>
-          </Flex>
-          <VStack mt={isMobile? "4":""} w={isMobile? "100%":"70%"} h="100%">
-            <VStack w="100%" h="100%" justify="start" align="start">
-              <HStack w="100%">
-                <Text fontSize="sm" fontWeight="600" color="gray.800">回報資訊</Text>
-                <Tooltip label="此資訊基於社群回報與機器學習擷取資訊，僅顯示評分最高之回報內容。此資訊可能有缺漏或不完全正確，亦不代表本站立場，請確實做好查證工作。" placement="top" hasArrow>
-                  <p>
-                    <Icon as={FaInfoCircle} boxSize="3" color="gray.500" />
-                  </p>
-                </Tooltip>
-                <Spacer />
-                <Text fontSize="xs" fontWeight="600" color="gray.500">回報者</Text>
-                <Badge colorScheme="blue">課程教師</Badge>
-              </HStack>
-              <Flex maxH={isMobile? "":""} overflow="auto" flexGrow={1}>
-                <Text fontSize="md" fontWeight="600" color="gray.600" overflow="auto">開學第一周上課開放加簽，人數以10人為上限，欲加簽的同學請於第一堂課準時攜帶學生證來抽籤，不接受代抽、轉讓、互換體育課程，第二周之後不開放加簽，碩博生如欲加簽此堂課，第一周也須要到場抽籤。</Text>
-              </Flex>
-            </VStack>
-            <HStack w="100%" justify="end">
-              <Button colorScheme="teal" variant="ghost" size="xs" leftIcon={<FaThumbsUp />}>0</Button>
-              <Button colorScheme="orange" variant="ghost" size="xs" leftIcon={<FaThumbsDown />}>0</Button>
-              {renderReportPopover()}
-            </HStack>
-          </VStack>
-        </Flex>
+        <SignUpCard post={fake_post} is_owner={fake_post.is_owner}/>
         <HStack w="100%" px="8" mt="8">
           <HStack>
             <Text fontSize="md" fontWeight="600" color="gray.800">上/下</Text>
