@@ -243,6 +243,7 @@ function CourseDetailInfoContainer({ course }){
         });
         return;
     }
+    console.log('data: ', data);
     setSignUpPostData(data);
     setSignUpCardIdx(0);
     setIsLoadingSignUpPostData(false);
@@ -400,7 +401,7 @@ function CourseDetailInfoContainer({ course }){
     if(!isAuthenticated){
       return renderGuestBlockingBox();
     }
-    if(!SignUpPostData){
+    if(SignUpPostData.length===0){
       return (
         <Flex w="100%" h="100%" mt="4" flexDirection="column" justifyContent="center" alignItems={isMobile? "start":"center"}>
           {renderFallback("無加簽相關資訊", "empty", "100%", "0")}
