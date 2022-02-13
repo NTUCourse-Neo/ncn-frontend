@@ -395,6 +395,7 @@ function CourseDetailInfoContainer({ course }){
     );
   }
 
+
   const renderSubmitPopover = () => {
     return(
       <Popover placement="bottom" isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
@@ -407,7 +408,8 @@ function CourseDetailInfoContainer({ course }){
               rule: "",
               comment: ""
             })
-          }}>提供資訊</Button>
+          }}
+          isDisabled={SignUpPostData.some(obj => obj.is_owner)}>{SignUpPostData.some(obj => obj.is_owner)? "已提供過":"提供資訊"}</Button>
         </PopoverTrigger>
         <PopoverContent>
           <PopoverArrow />
