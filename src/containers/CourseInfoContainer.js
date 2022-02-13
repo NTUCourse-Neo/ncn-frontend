@@ -86,7 +86,7 @@ function CourseInfoContainer ({code}){
             }
           } 
           fetchCourseObject(code);
-    },[])
+    },[]) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
       setCopyWord(copyWordList.find(word => word.count <= copiedLinkClicks));
@@ -173,7 +173,7 @@ function CourseInfoContainer ({code}){
       if (!isLoading){
         getInitState();
       }
-    },[isLoading])
+    },[isLoading]) // eslint-disable-line react-hooks/exhaustive-deps
 
     const handleAddCourse = async (course)=>{
         if (!isLoading){
