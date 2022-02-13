@@ -416,7 +416,7 @@ function CourseDetailInfoContainer({ course }){
             <Text mb="2" fontSize="md" fontWeight="800" color="gray.700" textAlign="center">提供加簽相關資訊</Text>
             <HStack pb={1}>
               <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">我是...</Text>
-              <Badge colorScheme={'blue'}>Required</Badge>
+              <Badge colorScheme={'blue'}>必填</Badge>
             </HStack>
             <Select mb="2" placeholder='請選擇身份' onChange={(e)=>{setSignUpCardForm({...signUpCardForm, user_type: e.currentTarget.value})}}>
               {
@@ -429,21 +429,21 @@ function CourseDetailInfoContainer({ course }){
             </Select>
             <HStack pb={1}>
               <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">加簽人數</Text>
-              <Badge colorScheme={'blue'}>Required</Badge>
+              <Badge colorScheme={'blue'}>必填</Badge>
             </HStack>
-            <Input mb="2" type="number" placeholder="請輸入加簽人數" onChange={(e)=>{setSignUpCardForm({...signUpCardForm, amount: e.currentTarget.value})}}/>
+            <Input mb="2" type="number" placeholder="限填數字。若不確定，請於下方補充" onChange={(e)=>{setSignUpCardForm({...signUpCardForm, amount: e.currentTarget.value})}}/>
             <HStack pb={1}>
               <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">加簽時間</Text>
-              <Badge colorScheme={'blue'}>Required</Badge>
+              <Badge colorScheme={'blue'}>必填</Badge>
             </HStack>
             <Input mb="2" type="text" placeholder="第一週上課、2/15 等..." onChange={(e)=>{setSignUpCardForm({...signUpCardForm, when: e.currentTarget.value})}}/>
             <HStack pb={1}>
               <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">加簽方式</Text>
-              <Badge colorScheme={'blue'}>Required</Badge>
+              <Badge colorScheme={'blue'}>必填</Badge>
             </HStack>
             <Input mb="2" type="text" placeholder="抽學生證、填表單、網路抽選 等..." onChange={(e)=>{setSignUpCardForm({...signUpCardForm, rule: e.currentTarget.value})}}/>
             <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">更多資訊</Text>
-            <Textarea mb="2" size="md" placeholder='輸入更多資訊...' onChange={(e)=>{setSignUpCardForm({...signUpCardForm, comment: e.currentTarget.value})}}/>
+            <Textarea mb="2" size="md" placeholder='輸入補充資訊' onChange={(e)=>{setSignUpCardForm({...signUpCardForm, comment: e.currentTarget.value})}}/>
             <ButtonGroup w="100%" size="sm" d='flex' justifyContent='end'>
               <Button colorScheme='blue' isLoading={sendingForm} isDisabled={
                   signUpCardForm.amount === "" || signUpCardForm.user_type === "" || signUpCardForm.when === "" || signUpCardForm.rule === ""
