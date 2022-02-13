@@ -9,7 +9,7 @@ function Footer() {
     return (
         <Flex h="5vh" flexDirection="row" flexWrap="wrap" justifyContent="center" alignItems="start" px="4" py="4" borderTop="1px solid" borderColor="gray.200" zIndex="10000" css={{gap: "10px"}}>
             <Text size="sm" color="gray.500" ml="2" fontWeight="800">NTUCourse Neo</Text>
-            <Text fontSize="xs" color="gray.300">Beta V1.1 (20220210)</Text>
+            <Text fontSize="xs" color="gray.300">Beta V1.1 (20220214)</Text>
             {isMobile? <></>:<Spacer />}
             <Text fontSize="sm" color="gray.300">A wp1101 project. Made with 💖 by </Text>
             <ButtonGroup spacing="2">
