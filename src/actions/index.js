@@ -914,9 +914,13 @@ const getSocialPostByCourseId = (token, course_id) => async (dispatch)=>{
                 Authorization: `Bearer ${token}`
             }
         });
-        return posts
+        return posts;
     } catch (error) {
-        if (error.response) {
+        console.log(error.response.status)
+        if(error.response && error.response.status === 404){
+            return [];
+        }
+        else if (error.response) {
             // server did response, used for handle custom error msg
             let error_obj = {
                 status_code: error.response.status, 
