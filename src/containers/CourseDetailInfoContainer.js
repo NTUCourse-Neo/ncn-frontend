@@ -43,8 +43,8 @@ import { IoMdOpen } from 'react-icons/io';
 import BetaBadge from '../components/BetaBadge';
 import { info_view_map } from '../data/mapping_table';
 import PTTContentRowContainer from './PTTContentRowContainer';
-import { getCourseEnrollInfo, getNTURatingData, getPTTData, getCourseSyllabusData } from '../actions/index';
 import { useDispatch, useSelector } from 'react-redux';
+import { getCourseEnrollInfo, getNTURatingData, getPTTData, getCourseSyllabusData, getSocialPostByCourseId } from '../actions/index';
 import ParrotGif from "../img/parrot/parrot.gif";
 import { hash_to_color_hex_with_hue } from '../utils/colorAgent';
 import { social_user_type_map } from '../data/mapping_table';
@@ -84,7 +84,7 @@ function CourseDetailInfoContainer({ course }){
   const dispatch = useDispatch();
   const [isMobile] = useMediaQuery('(max-width: 1000px)')
   const userInfo = useSelector(state => state.user);
-  const { loginWithRedirect } = useAuth0();
+  const { loginWithRedirect, getAccessTokenSilently } = useAuth0();
 
   // Course live data
   const [ CourseEnrollStatus, setCourseEnrollStatus ] = useState(null);
@@ -92,6 +92,7 @@ function CourseDetailInfoContainer({ course }){
   const [ PTTReviewData, setPTTReviewData ] = useState(null);
   const [ PTTExamData, setPTTExamData ] = useState(null);
   const [ SyllubusData, setSyllubusData ] = useState(null);
+  const [ SignUpPostData, setSignUpPostData ] = useState(null);
 
   // Live data loading states
   const [ isLoadingEnrollInfo, setIsLoadingEnrollInfo ] = useState(true);
@@ -99,13 +100,15 @@ function CourseDetailInfoContainer({ course }){
   const [ isLoadingPTTReviewData, setIsLoadingPTTReviewData ] = useState(true);
   const [ isLoadingPTTExamData, setIsLoadingPTTExamData ] = useState(true);
   const [ isLoadingSyllubusData, setIsLoadingSyllubusData ] = useState(true);
+  const [ isLoadingSignUpPostData, setIsLoadingSignUpPostData ] = useState(true);
 
 
   async function fetchCourseEnrollData() {
     setIsLoadingEnrollInfo(true);
+    const token = await getAccessTokenSilently();
     let data;
     try {
-        data = await dispatch(getCourseEnrollInfo(course.id));
+        data = await dispatch(getCourseEnrollInfo(token, course.id));
     } catch (error) {
         setIsLoadingEnrollInfo(false);
         toast({
@@ -122,9 +125,10 @@ function CourseDetailInfoContainer({ course }){
   }
   async function fetchNTURatingData() {
     setIsLoadingRatingData(true);
+    const token = await getAccessTokenSilently();
     let data;
     try {
-        data = await dispatch(getNTURatingData(course._id));
+        data = await dispatch(getNTURatingData(token, course._id));
     } catch (error) {
         setIsLoadingRatingData(false);
         toast({
@@ -141,9 +145,10 @@ function CourseDetailInfoContainer({ course }){
   }
   async function fetchPTTReviewData() {
     setIsLoadingPTTReviewData(true);
+    const token = await getAccessTokenSilently();
     let data;
     try {
-        data = await dispatch(getPTTData(course._id, "review"));
+        data = await dispatch(getPTTData(token, course._id, "review"));
     } catch (error) {
         setIsLoadingPTTReviewData(false);
         toast({
@@ -160,9 +165,10 @@ function CourseDetailInfoContainer({ course }){
   }
   async function fetchPTTExamData() {
     setIsLoadingPTTExamData(true);
+    const token = await getAccessTokenSilently();
     let data;
     try {
-        data = await dispatch(getPTTData(course._id, "exam"));
+        data = await dispatch(getPTTData(token, course._id, "exam"));
     } catch (error) {
         setIsLoadingPTTExamData(false);
         toast({
@@ -201,6 +207,26 @@ function CourseDetailInfoContainer({ course }){
     setSyllubusData(data);
     setIsLoadingSyllubusData(false);
   }
+  async function fetchSignUpPostData() {
+    setIsLoadingSignUpPostData(true);
+    const token = await getAccessTokenSilently();
+    let data;
+    try {
+        data = await dispatch(getSocialPostByCourseId(token, course._id));
+    } catch (error) {
+      setIsLoadingSignUpPostData(false);
+        toast({
+            title: "無法取得加簽資訊",
+            description: "請稍後再試一次",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+        });
+        return;
+    }
+    setSignUpPostData(data);
+    setIsLoadingSignUpPostData(false);
+  }
   
   useEffect(() => {
     fetchNTURatingData();
@@ -208,6 +234,7 @@ function CourseDetailInfoContainer({ course }){
     fetchPTTReviewData();
     fetchPTTExamData();
     fetchSyllabusData();
+    fetchSignUpPostData();
 } ,[]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const course_codes_1 = [
@@ -337,13 +364,20 @@ function CourseDetailInfoContainer({ course }){
       );
     };
 
-    if(false){
+    if(isLoadingSignUpPostData){
       return(
         renderPanelLoaing("努力跑加簽大地中...", "100%", "0")
       );
     };
-    if(!true){
-      return renderFallback("無加簽相關資訊", {FaExclamationTriangle}, "100%", "0");
+    if(!SignUpPostData){
+      return (
+        <Flex w="100%" h="100%" mt="4" flexDirection="column" justifyContent="center" alignItems={isMobile? "start":"center"}>
+          {renderFallback("無加簽相關資訊", "empty", "100%", "0")}
+          <HStack w="100%" pr="8" mt="8" justify="end">
+            {renderSubmitPopover()}
+          </HStack>
+        </Flex>
+      );
     }
     return(
       <Flex w="100%" h="100%" mt="4" flexDirection="column" justifyContent="center" alignItems={isMobile? "start":"center"}>
@@ -366,7 +400,12 @@ function CourseDetailInfoContainer({ course }){
       );
     };
     if(!NTURatingData){
-      return renderFallback("無評價資訊", "empty", "100%", "8");
+      return(
+        <Flex h="100%" flexDirection="column" alignItems="center">
+          {renderFallback("無評價資訊", "empty", "100%", "8")}
+          <Button mt="4" colorScheme="blue" variant="outline" size="sm" rightIcon={<IoMdOpen/>} onClick={() => window.open("https://rating.myntu.me/?referrer=ntucourse_neo", "_blank")}>前往 NTURating 查看該課程評價</Button>
+        </Flex>
+      );
     }
     return(
       <Flex h="100%" flexDirection="column" alignItems="start">
