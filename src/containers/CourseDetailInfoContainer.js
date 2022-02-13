@@ -660,9 +660,11 @@ function CourseDetailInfoContainer({ course }){
                       </HStack>
                     </PopoverHeader>
                     <PopoverBody>
-                      {
+                      {item.comment===""?
+                        <Text fontSize="md" fontWeight="400" color="gray.700">無詳細資訊</Text>
+                        :
+                        content
                       }
-                      <Text fontSize="md" fontWeight="400" color="gray.700">{item.comment === "" ? "無詳細資訊" : content}</Text>
                     </PopoverBody>
                   </PopoverContent>
                 </Popover>
