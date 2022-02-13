@@ -61,6 +61,7 @@ const syllabusTitle = {
 }
 
 function CourseDetailInfoContainer({ course }){
+  console.error = () => {};
   const { onOpen, onClose, isOpen } = useDisclosure()
   const toast = useToast();
   const dispatch = useDispatch();
