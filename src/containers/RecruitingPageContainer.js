@@ -91,7 +91,7 @@ function RecruitingPageContainer(props){
         </HStack>
         <Flex my={4} w="100%" flexDirection={{base: 'column', lg: 'row'}} justifyContent="space-between" alignItems="center" mt="20px">
           <Flex w="100%" direction="column" alignItems={{base: 'center', lg: 'start'}} justifyContent="center">
-            <Text as="h1" fontSize={{base: '5xl', md: '8xl'}} fontWeight="bold" color="gray.700">We are hiring!</Text>
+            <Text as="h1" fontSize={{base: '5xl', md: '7xl'}} fontWeight="bold" color="gray.700">We are hiring!</Text>
             <Text mt="-20px" ml="2" as="h1" fontSize="5xl" fontWeight="500" color="gray.500">新夥伴招募</Text>
             <Flex mt="8" w={{base: '100%', md: '80%'}} px="8" py="4" direction="column" alignItems="start" justifyContent="center" border="2px" borderColor="gray.400" borderRadius="lg">
               <Flex w="100%" justifyContent="space-between" alignItems="center">
