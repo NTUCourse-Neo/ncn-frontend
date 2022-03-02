@@ -82,6 +82,10 @@ function RecruitingPageContainer(props){
     setPageMeta({title: `招募 | NTUCourse Neo`, desc: `招募頁面 | NTUCourse Neo，全新的臺大選課網站。`});
   } , [])
 
+  const isFilledRequiredFields = () => {
+    return name !== '' && email !== '' && school !== ''
+  }
+
   return(
       <Flex minH="95vh" direction="column" alignItems="center" px={["10", "20", "100","200"]} pt="100px">
         <HStack w="100%" align="end" justify="space-between">
@@ -97,7 +101,7 @@ function RecruitingPageContainer(props){
               <Flex w="100%" justifyContent="space-between" alignItems="center">
                 <HStack>
                   <Icon as={FaHandshake} boxSize="5" color="gray.500" />
-                  <Text fontSize="lg" fontWeight="500" color="gray.500">招募中</Text>
+                  <Text fontSize="lg" fontWeight="800" color="gray.500">Active</Text>
                 </HStack>
                 <Text fontSize="sm" fontWeight="500" color="gray.400">2020-03-02</Text>
               </Flex>
@@ -139,7 +143,7 @@ function RecruitingPageContainer(props){
                 <Checkbox alignContent="center" onChange={()=>{setIsChecked(!isChecked)}}>我已閱讀並同意</Checkbox>
                 <Text as="button" color="blue.500" size="sm"> <Text as="u">資料利用政策</Text></Text>
               </HStack>
-              <Button isDisabled={!isChecked} size='md' colorScheme='blue' mt={{base: 5, md: 0}} w={{base: '100%', md: '30%'}} onClick={()=>{onSubmit()}}>送出 / Submit</Button>
+              <Button isDisabled={!isChecked || !isFilledRequiredFields()} size='md' colorScheme='blue' mt={{base: 5, md: 0}} w={{base: '100%', md: '30%'}} onClick={()=>{onSubmit()}}>送出 / Submit</Button>
             </Flex>
           </Flex>
         </Flex>
