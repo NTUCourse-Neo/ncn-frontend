@@ -10,8 +10,7 @@ import {
     InputRightAddon,
     Button,
     Icon,
-    useToast,
-    VStack
+    useToast
   } from '@chakra-ui/react';
 import ReCAPTCHA from "react-google-recaptcha";
 import { FaHandshake } from 'react-icons/fa';
