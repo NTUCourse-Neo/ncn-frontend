@@ -9,8 +9,10 @@ import {
     Checkbox,
     InputRightAddon,
     Button,
+    Icon,
+    VStack
   } from '@chakra-ui/react';
-import { FaGithub } from 'react-icons/fa';
+import { FaGithub, FaHandshake } from 'react-icons/fa';
 import setPageMeta from '../utils/seo';
 import hiringPeopleSvg from '../img/hiring_people.svg';
 import hiringCollabSvg from '../img/hiring_collab.svg';
@@ -33,7 +35,32 @@ function RecruitingPageContainer(props){
         <Flex h="600px" w="100%" flexDirection="row" justifyContent="space-between" alignItems="center" mt="20px">
           <Flex w="100%" direction="column" alignItems="start" justifyContent="center">
             <Text as="h1" fontSize="8xl" fontWeight="bold" color="gray.700">We are hiring!</Text>
-            <Text as="h1" fontSize="5xl" fontWeight="500" color="gray.500">新夥伴招募</Text>
+            <Text mt="-20px" ml="2" as="h1" fontSize="5xl" fontWeight="500" color="gray.500">新夥伴招募</Text>
+            <Flex mt="8" w="600px" px="8" py="4" direction="column" alignItems="start" justifyContent="center" border="2px" borderColor="gray.400" borderRadius="lg">
+              <Flex w="100%" justifyContent="space-between" alignItems="center">
+                <HStack>
+                  <Icon as={FaHandshake} boxSize="5" color="gray.500" />
+                  <Text fontSize="lg" fontWeight="500" color="gray.500">招募中</Text>
+                </HStack>
+                <Text fontSize="sm" fontWeight="500" color="gray.400">2020-03-02</Text>
+              </Flex>
+              <HStack>
+                <Text fontSize="xl" fontWeight="600" color="gray.700">Full-Stack Web Developer</Text>
+                <Text as="i" fontSize="md" fontWeight="500" color="gray.600"> － Part-time</Text>
+              </HStack>
+              <Flex flexDirection="column" mt="2" w="100%" alignItems="start">
+                <Text fontSize="md" fontWeight="700" color="gray.500">In this role, you will...</Text>
+                <Text fontSize="md" fontWeight="500" color="gray.500">- Co-develop the course selection service with NTU.</Text>
+                <Text fontSize="md" fontWeight="500" color="gray.500">- Work with an innovative team.</Text>
+              </Flex>
+              <Flex flexDirection="column" mt="2" w="100%" alignItems="start">
+                <Text fontSize="md" fontWeight="700" color="gray.500">Ideal candidate</Text>
+                <Text fontSize="md" fontWeight="500" color="gray.500">- Good teamworking skills.</Text>
+                <Text fontSize="md" fontWeight="500" color="gray.500">- Familiar with React.js development.</Text>
+                <Text fontSize="md" fontWeight="500" color="gray.500">- Familiar with Node.js development.</Text>
+                <Text fontSize="md" fontWeight="500" color="gray.500">- Experiences of DevOps or CI/CD is a plus.</Text>
+              </Flex>
+            </Flex>
           </Flex>
           <Flex w="70%" direction="column" alignItems="end" justifyContent="center">
             <InputGroup my="2" size='lg'>
