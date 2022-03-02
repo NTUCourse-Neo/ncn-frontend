@@ -27,13 +27,13 @@ function RecruitingPageContainer(props){
   const [personalWebsite, setPersonalWebsite] = useState('');
   const [portfolio, setPortfolio] = useState('');
 
-  useEffect(()=>{
-    console.log('name: ', name);
-    console.log('email: ', email);
-    console.log('school: ', school);
-    console.log('personalWebsite: ', personalWebsite);
-    console.log('portfolio: ', portfolio);
-  },[name, email, school, personalWebsite, portfolio]);
+  // useEffect(()=>{
+  //   console.log('name: ', name);
+  //   console.log('email: ', email);
+  //   console.log('school: ', school);
+  //   console.log('personalWebsite: ', personalWebsite);
+  //   console.log('portfolio: ', portfolio);
+  // },[name, email, school, personalWebsite, portfolio]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
