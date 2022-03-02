@@ -7,7 +7,7 @@ function Footer() {
     };
     const [isMobile] = useMediaQuery("(max-width: 760px)") 
     return (
-        <Flex h="5vh" flexDirection="row" flexWrap="wrap" justifyContent="center" alignItems="start" px="4" py="4" borderTop="1px solid" borderColor="gray.200" zIndex="10000" css={{gap: "10px"}}>
+        <Flex flexDirection="row" flexWrap="wrap" justifyContent="center" alignItems="start" px="4" py="4" borderTop="1px solid" borderColor="gray.200" zIndex="10000" css={{gap: "10px"}}>
             <Text size="sm" color="gray.500" ml="2" fontWeight="800">NTUCourse Neo</Text>
             <Text fontSize="xs" color="gray.300">Beta V1.1 (20220214)</Text>
             {isMobile? <></>:<Spacer />}
