@@ -892,12 +892,8 @@ const deleteUserAccount = (token) => async (dispatch)=>{
     }
 }
 
-const verify_recaptcha = (token, captcha_token) => async (dispatch)=>{
-    const resp = await instance.post(`/recaptcha`, { captcha_token: captcha_token }, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    });
+const verify_recaptcha = (captcha_token) => async (dispatch)=>{
+    const resp = await instance.post(`/recaptcha`, { captcha_token: captcha_token });
     return resp.data;
 }
 

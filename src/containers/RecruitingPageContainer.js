@@ -1,4 +1,4 @@
-import { React, useEffect ,useState } from 'react';
+import { React, useEffect ,useState, useRef } from 'react';
 import {
   Input,
     Flex,
@@ -10,9 +10,13 @@ import {
     InputRightAddon,
     Button,
     Icon,
-    useToast
+    useToast,
+    VStack
   } from '@chakra-ui/react';
-import { FaGithub, FaHandshake } from 'react-icons/fa';
+import ReCAPTCHA from "react-google-recaptcha";
+import { FaHandshake } from 'react-icons/fa';
+import { useDispatch } from 'react-redux';
+import { send_logs, verify_recaptcha } from '../actions';
 import setPageMeta from '../utils/seo';
 import hiringPeopleSvg from '../img/hiring_people.svg';
 import hiringCollabSvg from '../img/hiring_collab.svg';
@@ -21,13 +25,19 @@ import hiringOfficeSvg from '../img/hiring_office.svg';
 
 function RecruitingPageContainer(props){
   const toast = useToast();
+  const dispatch = useDispatch();
   const [isChecked, setIsChecked] = useState(false);
+  const [isSubmiting, setIsSubmiting] = useState(false);
+  const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
+
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [school, setSchool] = useState('');
   const [personalWebsite, setPersonalWebsite] = useState('');
   const [portfolio, setPortfolio] = useState('');
+
+  const recaptchaRef = useRef();
 
   // useEffect(()=>{
   //   console.log('name: ', name);
@@ -37,7 +47,29 @@ function RecruitingPageContainer(props){
   //   console.log('portfolio: ', portfolio);
   // },[name, email, school, personalWebsite, portfolio]);
 
-  const onSubmit = () => {
+  const recOnChange = async(value) => {
+    let resp
+    // console.log('Captcha value:', value);
+    if(value){
+      try{
+        resp = await dispatch(verify_recaptcha(value));
+      }catch(err){
+        // console.log(err);
+        recaptchaRef.current.reset();
+      }
+      if(resp.data.success){
+        setIsCaptchaVerified(true);
+        console.log('recaptcha success');
+      }else{
+        console.log('recaptcha fail');
+        setIsCaptchaVerified(false);
+        recaptchaRef.current.reset();
+      }
+    }
+  };
+
+  const onSubmit = async() => {
+    setIsSubmiting(true);
     // check required fields
     if (name === '' || email === '' || school === '') {
       toast({
@@ -50,6 +82,7 @@ function RecruitingPageContainer(props){
       return;
     }
     const form = {
+      type: "Recruiting Application Form",
       name: name,
       email: email,
       school: school,
@@ -58,7 +91,8 @@ function RecruitingPageContainer(props){
     }
     // API call
     try {
-      // placeholder
+      await dispatch(send_logs("info", form));
+      setIsSubmiting(false);
       toast({
         title: '我們收到囉！',
         description: '請等候我們的聯絡',
@@ -138,12 +172,15 @@ function RecruitingPageContainer(props){
             </InputGroup>
             <Input size='lg' my="2" variant='outline' placeholder='個人網站 / Personal Website' onChange={(e)=>{setPersonalWebsite(e.currentTarget.value)}}/>
             <Input size='lg' my="2" variant='outline' placeholder='簡歷、作品集網址 / CV or Portfolio Link' onChange={(e)=>{setPortfolio(e.currentTarget.value)}}/>
-            <Flex mt="8" w="100%" justify="space-between" align="center" flexDirection={{base: 'column', md: 'row'}}>
-              <HStack>
-                <Checkbox alignContent="center" onChange={()=>{setIsChecked(!isChecked)}}>我已閱讀並同意</Checkbox>
-                <Text as="button" color="blue.500" size="sm"> <Text as="u">資料利用政策</Text></Text>
-              </HStack>
-              <Button isDisabled={!isChecked || !isFilledRequiredFields()} size='md' colorScheme='blue' mt={{base: 5, md: 0}} w={{base: '100%', md: '30%'}} onClick={()=>{onSubmit()}}>送出 / Submit</Button>
+            <Flex mt="8" w="100%" justify="space-between" align="center" flexDirection={{base: 'column', lg: 'row'}}>
+              <ReCAPTCHA sitekey={process.env.REACT_APP_RECAPTCHA_CLIENT_KEY} onChange={recOnChange} ref={recaptchaRef}/>
+              <Flex w="100%" flexDirection={{base: "column", md:"row", lg: "column"}} alignItems={{lg: "end"}} justifyContent={{base: "space-between"}} mt={{base: 4, md:0}}>
+                <HStack>
+                  <Checkbox alignContent="center" onChange={()=>{setIsChecked(!isChecked)}}>我已閱讀並同意</Checkbox>
+                  <Text as="button" color="blue.500" size="sm"> <Text as="u">資料利用政策</Text></Text>
+                </HStack>
+                <Button isDisabled={!isChecked || !isFilledRequiredFields() || !isCaptchaVerified}  isLoading={isSubmiting} size='md' colorScheme='blue' mt={{base: 5, md: 3}} w={{base: '100%', md: '150px'}} onClick={()=>{onSubmit()}}>送出 / Submit</Button>
+              </Flex>
             </Flex>
           </Flex>
         </Flex>

@@ -84,8 +84,7 @@ function UserInfoContainer(props) {
     // console.log('Captcha value:', value);
     if(value){
       try{
-        const token = await getAccessTokenSilently();
-        resp = await dispatch(verify_recaptcha(token, value));
+        resp = await dispatch(verify_recaptcha(value));
       }catch(err){
         // console.log(err);
         recaptchaRef.current.reset();
