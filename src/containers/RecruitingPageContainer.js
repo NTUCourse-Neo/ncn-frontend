@@ -10,7 +10,7 @@ import {
     InputRightAddon,
     Button,
     Icon,
-    VStack
+    useToast
   } from '@chakra-ui/react';
 import { FaGithub, FaHandshake } from 'react-icons/fa';
 import setPageMeta from '../utils/seo';
@@ -20,6 +20,8 @@ import hiringOfficeSvg from '../img/hiring_office.svg';
 
 
 function RecruitingPageContainer(props){
+  const toast = useToast();
+  const [isChecked, setIsChecked] = useState(false);
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -34,6 +36,46 @@ function RecruitingPageContainer(props){
   //   console.log('personalWebsite: ', personalWebsite);
   //   console.log('portfolio: ', portfolio);
   // },[name, email, school, personalWebsite, portfolio]);
+
+  const onSubmit = () => {
+    // check required fields
+    if (name === '' || email === '' || school === '') {
+      toast({
+        title: '請填寫必填欄位',
+        description: 'Please fill out all required fields',
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
+      return;
+    }
+    const form = {
+      name: name,
+      email: email,
+      school: school,
+      personalWebsite: personalWebsite===''?null:personalWebsite,
+      portfolio: portfolio===''?null:portfolio,
+    }
+    // API call
+    try {
+      // placeholder
+      toast({
+        title: '我們收到囉！',
+        description: '請等候我們的聯絡',
+        status: 'success',
+        duration: 9000,
+        isClosable: true,
+      });
+    } catch (e) {
+      toast({
+        title: '發生錯誤',
+        description: '請稍後再試',
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
+    }
+  }
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -94,10 +136,10 @@ function RecruitingPageContainer(props){
             <Input size='lg' my="2" variant='outline' placeholder='簡歷、作品集網址 / CV or Portfolio Link' onChange={(e)=>{setPortfolio(e.currentTarget.value)}}/>
             <Flex mt="8" w="100%" justify="space-between" align="center" flexDirection={{base: 'column', md: 'row'}}>
               <HStack>
-                <Checkbox alignContent="center">我已閱讀並同意</Checkbox>
+                <Checkbox alignContent="center" onChange={()=>{setIsChecked(!isChecked)}}>我已閱讀並同意</Checkbox>
                 <Text as="button" color="blue.500" size="sm"> <Text as="u">資料利用政策</Text></Text>
               </HStack>
-              <Button size='md' colorScheme='blue' mt={{base: 5, md: 0}} w={{base: '100%', md: '30%'}}>送出 / Submit</Button>
+              <Button isDisabled={!isChecked} size='md' colorScheme='blue' mt={{base: 5, md: 0}} w={{base: '100%', md: '30%'}} onClick={()=>{onSubmit()}}>送出 / Submit</Button>
             </Flex>
           </Flex>
         </Flex>
