@@ -83,7 +83,7 @@ function RecruitingPageContainer(props){
   } , [])
 
   return(
-      <Flex direction="column" alignItems="center" px={["10", "20", "100","200"]} pt="100px">
+      <Flex minH="95vh" direction="column" alignItems="center" px={["10", "20", "100","200"]} pt="100px">
         <HStack w="100%" align="end" justify="space-between">
           <Image src={hiringOfficeSvg} alt="hire_office" w={{ md: '25%'}} display={{base: 'none', md: 'inline-block'}}/>
           <Image src={hiringPeopleSvg} alt="hire_people" w={{ base: '90%', md: '25%'}} />
