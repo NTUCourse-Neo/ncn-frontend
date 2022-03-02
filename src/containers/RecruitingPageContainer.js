@@ -1,4 +1,4 @@
-import { React, useEffect } from 'react';
+import { React, useEffect ,useState } from 'react';
 import {
   Input,
     Flex,
@@ -20,10 +20,26 @@ import hiringOfficeSvg from '../img/hiring_office.svg';
 
 
 function RecruitingPageContainer(props){
+
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [school, setSchool] = useState('');
+  const [personalWebsite, setPersonalWebsite] = useState('');
+  const [portfolio, setPortfolio] = useState('');
+
+  useEffect(()=>{
+    console.log('name: ', name);
+    console.log('email: ', email);
+    console.log('school: ', school);
+    console.log('personalWebsite: ', personalWebsite);
+    console.log('portfolio: ', portfolio);
+  },[name, email, school, personalWebsite, portfolio]);
+
   useEffect(() => {
     window.scrollTo(0, 0);
     setPageMeta({title: `招募 | NTUCourse Neo`, desc: `招募頁面 | NTUCourse Neo，全新的臺大選課網站。`});
   } , [])
+
   return(
       <Flex direction="column" alignItems="center" px={["10", "20", "100","200"]} pt="100px">
         <HStack w="100%" align="end" justify="space-between">
@@ -63,19 +79,19 @@ function RecruitingPageContainer(props){
           </Flex>
           <Flex my={4} w="80%" direction="column" alignItems="end" justifyContent="center">
             <InputGroup my="2" size='lg'>
-              <Input variant='outline' placeholder={"姓名 / Name"} />
+              <Input variant='outline' placeholder={"姓名 / Name"} onChange={(e)=>{setName(e.currentTarget.value)}}/>
               <InputRightAddon children='必填' />
             </InputGroup>
             <InputGroup my="2" size='lg'>
-              <Input variant='outline' placeholder='電子郵件 / E-mail Address' />
+              <Input variant='outline' placeholder='電子郵件 / E-mail Address' onChange={(e)=>{setEmail(e.currentTarget.value)}}/>
               <InputRightAddon children='必填' />
             </InputGroup>
             <InputGroup my="2" size='lg'>
-              <Input variant='outline' placeholder='就讀、畢業學校 / School' />
+              <Input variant='outline' placeholder='就讀、畢業學校 / School' onChange={(e)=>{setSchool(e.currentTarget.value)}}/>
               <InputRightAddon children='必填' />
             </InputGroup>
-            <Input size='lg' my="2" variant='outline' placeholder='個人網站 / Personal Website' />
-            <Input size='lg' my="2" variant='outline' placeholder='簡歷、作品集網址 / CV or Portfolio Link' />
+            <Input size='lg' my="2" variant='outline' placeholder='個人網站 / Personal Website' onChange={(e)=>{setPersonalWebsite(e.currentTarget.value)}}/>
+            <Input size='lg' my="2" variant='outline' placeholder='簡歷、作品集網址 / CV or Portfolio Link' onChange={(e)=>{setPortfolio(e.currentTarget.value)}}/>
             <Flex mt="8" w="100%" justify="space-between" align="center" flexDirection={{base: 'column', md: 'row'}}>
               <HStack>
                 <Checkbox alignContent="center">我已閱讀並同意</Checkbox>
