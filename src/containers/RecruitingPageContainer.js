@@ -61,7 +61,7 @@ function RecruitingPageContainer(props){
               </Flex>
             </Flex>
           </Flex>
-          <Flex my={4} w="70%" direction="column" alignItems="end" justifyContent="center">
+          <Flex my={4} w="80%" direction="column" alignItems="end" justifyContent="center">
             <InputGroup my="2" size='lg'>
               <Input variant='outline' placeholder={"姓名 / Name"} />
               <InputRightAddon children='必填' />
@@ -76,13 +76,13 @@ function RecruitingPageContainer(props){
             </InputGroup>
             <Input size='lg' my="2" variant='outline' placeholder='個人網站 / Personal Website' />
             <Input size='lg' my="2" variant='outline' placeholder='簡歷、作品集網址 / CV or Portfolio Link' />
-            <HStack mt="8" w="100%" justify="space-between">
+            <Flex mt="8" w="100%" justify="space-between" align="center" flexDirection={{base: 'column', md: 'row'}}>
               <HStack>
                 <Checkbox alignContent="center">我已閱讀並同意</Checkbox>
                 <Text as="button" color="blue.500" size="sm"> <Text as="u">資料利用政策</Text></Text>
               </HStack>
-              <Button size='md' colorScheme='blue' mt="20px">送出 / Submit</Button>
-            </HStack>
+              <Button size='md' colorScheme='blue' mt={{base: 5, md: 0}} w={{base: '100%', md: '30%'}}>送出 / Submit</Button>
+            </Flex>
           </Flex>
         </Flex>
       </Flex>
