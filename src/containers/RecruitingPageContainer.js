@@ -127,7 +127,7 @@ function RecruitingPageContainer(props){
   }
 
   return(
-      <Flex minH="95vh" direction="column" alignItems="center" px={["10", "20", "100","200"]} pt="100px">
+      <Flex minH="95vh" direction="column" alignItems="center" px={["5", "20", "100","200"]} pt="100px">
         <HStack w="100%" align="end" justify="space-between">
           <Image src={hiringOfficeSvg} alt="hire_office" w={{ md: '25%'}} display={{base: 'none', md: 'inline-block'}}/>
           <Image src={hiringPeopleSvg} alt="hire_people" w={{ base: '90%', md: '25%'}} />
@@ -147,7 +147,6 @@ function RecruitingPageContainer(props){
               </Flex>
               <HStack>
                 <Text fontSize="xl" fontWeight="600" color="gray.700">Full-Stack Web Developer</Text>
-                <Text as="i" fontSize="md" fontWeight="500" color="gray.600"> － Part-time</Text>
               </HStack>
               <Flex flexDirection="column" mt="2" w="100%" alignItems="start">
                 <Text fontSize="md" fontWeight="700" color="gray.500">In this role, you will...</Text>
@@ -165,7 +164,7 @@ function RecruitingPageContainer(props){
               </Flex>
             </Flex>
           </Flex>
-          <Flex my={4} w="80%" direction="column" alignItems="end" justifyContent="center">
+          <Flex my={4} w={{base: "95%", md:"80%"}} direction="column" alignItems="end" justifyContent="center">
             <Flex w="100%" direction="column" alignItems="start" justifyContent="center">
               <Text my="4" fontSize={{base:"xl", md:"3xl"}} fontWeight="600" color="gray.600">Join us @ NTUCourse Neo!</Text>
             </Flex>
