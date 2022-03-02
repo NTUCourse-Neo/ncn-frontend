@@ -160,6 +160,9 @@ function RecruitingPageContainer(props){
             </Flex>
           </Flex>
           <Flex my={4} w="80%" direction="column" alignItems="end" justifyContent="center">
+            <Flex w="100%" direction="column" alignItems="start" justifyContent="center">
+              <Text my="4" fontSize={{base:"xl", md:"3xl"}} fontWeight="600" color="gray.600">Join us @ NTUCourse Neo!</Text>
+            </Flex>
             <InputGroup my="2" size='lg'>
               <Input variant='outline' placeholder={"姓名 / Name"} onChange={(e)=>{setName(e.currentTarget.value)}}/>
               <InputRightAddon children='必填' />
