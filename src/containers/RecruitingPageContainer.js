@@ -144,15 +144,18 @@ function RecruitingPageContainer(props){
               </HStack>
               <Flex flexDirection="column" mt="2" w="100%" alignItems="start">
                 <Text fontSize="md" fontWeight="700" color="gray.500">In this role, you will...</Text>
-                <Text fontSize="md" fontWeight="500" color="gray.500">- Co-develop the course selection service with NTU.</Text>
+                <Text fontSize="md" fontWeight="500" color="gray.500">- Co-develop the course selection service.</Text>
                 <Text fontSize="md" fontWeight="500" color="gray.500">- Work with an innovative team.</Text>
+                <Text fontSize="md" fontWeight="500" color="gray.500">- Designing and developing APIs.</Text>
+                <Text fontSize="md" fontWeight="500" color="gray.500">- Staying abreast of developments in web applications and programming languages.</Text>
               </Flex>
               <Flex flexDirection="column" mt="2" w="100%" alignItems="start">
                 <Text fontSize="md" fontWeight="700" color="gray.500">Ideal candidate</Text>
-                <Text fontSize="md" fontWeight="500" color="gray.500">- Good teamworking skills.</Text>
+                <Text fontSize="md" fontWeight="500" color="gray.500">- Capability to teamwork and communicate.</Text>
                 <Text fontSize="md" fontWeight="500" color="gray.500">- Familiar with React.js development.</Text>
                 <Text fontSize="md" fontWeight="500" color="gray.500">- Familiar with Node.js development.</Text>
-                <Text fontSize="md" fontWeight="500" color="gray.500">- Experiences of DevOps or CI/CD is a plus.</Text>
+                <Text fontSize="md" fontWeight="500" color="gray.500">- Experience on Git. (perferred)</Text>
+                <Text fontSize="md" fontWeight="500" color="gray.500">- Experiences of DevOps or CI/CD. (perferred)</Text>
               </Flex>
             </Flex>
           </Flex>
