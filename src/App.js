@@ -17,6 +17,7 @@ import UserMyPage from './containers/userMyPage';
 import CourseInfoContainer from './containers/CourseInfoContainer';
 import { useParams } from 'react-router-dom';
 import ReactGA from 'react-ga';
+import RecruitingPageContainer from './containers/RecruitingPageContainer';
 
 dotenv.config();
 
@@ -44,6 +45,8 @@ function App(props) {
         return <UserMyPage />
       case "courseinfo":
         return <CourseInfoContainer code={code}/>
+      case "recruiting":
+        return <RecruitingPageContainer />
       default:
         return <HomeViewContainer />
     }
