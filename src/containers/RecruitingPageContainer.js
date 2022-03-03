@@ -140,8 +140,8 @@ function RecruitingPageContainer(props){
             <Flex mt="8" w={{base: '100%', md: '80%'}} px="8" py="4" direction="column" alignItems="start" justifyContent="center" border="2px" borderColor="gray.400" borderRadius="lg">
               <Flex w="100%" justifyContent="space-between" alignItems="center">
                 <HStack>
-                  <Icon as={FaCheckCircle} boxSize="4" color="gray.500" />
-                  <Text fontSize="lg" fontWeight="800" color="gray.500">Active</Text>
+                  <Icon as={FaCheckCircle} boxSize="4" color="green.500" />
+                  <Text fontSize="lg" fontWeight="800" color="green.500">Active</Text>
                 </HStack>
                 <Text fontSize="sm" fontWeight="500" color="gray.400">2020-03-02</Text>
               </Flex>
