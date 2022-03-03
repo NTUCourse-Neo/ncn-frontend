@@ -20,7 +20,7 @@ import {
     PopoverBody
   } from '@chakra-ui/react';
 import ReCAPTCHA from "react-google-recaptcha";
-import { FaHandshake } from 'react-icons/fa';
+import { FaCheckCircle } from 'react-icons/fa';
 import { useDispatch } from 'react-redux';
 import { send_logs, verify_recaptcha } from '../actions';
 import setPageMeta from '../utils/seo';
@@ -140,22 +140,22 @@ function RecruitingPageContainer(props){
             <Flex mt="8" w={{base: '100%', md: '80%'}} px="8" py="4" direction="column" alignItems="start" justifyContent="center" border="2px" borderColor="gray.400" borderRadius="lg">
               <Flex w="100%" justifyContent="space-between" alignItems="center">
                 <HStack>
-                  <Icon as={FaHandshake} boxSize="5" color="gray.500" />
+                  <Icon as={FaCheckCircle} boxSize="4" color="gray.500" />
                   <Text fontSize="lg" fontWeight="800" color="gray.500">Active</Text>
                 </HStack>
                 <Text fontSize="sm" fontWeight="500" color="gray.400">2020-03-02</Text>
               </Flex>
-              <HStack>
+              <HStack my="2">
                 <Text fontSize="xl" fontWeight="600" color="gray.700">Full-Stack Web Developer</Text>
               </HStack>
-              <Flex flexDirection="column" mt="2" w="100%" alignItems="start">
+              <Flex flexDirection="column" w="100%" alignItems="start">
                 <Text fontSize="md" fontWeight="700" color="gray.500">In this role, you will...</Text>
                 <Text fontSize="md" fontWeight="500" color="gray.500">- Co-develop the course selection service to enhance user experience.</Text>
                 <Text fontSize="md" fontWeight="500" color="gray.500">- Work with innovative teammates.</Text>
                 <Text fontSize="md" fontWeight="500" color="gray.500">- Designing and developing APIs.</Text>
                 <Text fontSize="md" fontWeight="500" color="gray.500">- Staying abreast of developments in web applications and programming languages.</Text>
               </Flex>
-              <Flex flexDirection="column" mt="2" w="100%" alignItems="start">
+              <Flex flexDirection="column" mt="4" w="100%" alignItems="start">
                 <Text fontSize="md" fontWeight="700" color="gray.500">Ideal candidate</Text>
                 <Text fontSize="md" fontWeight="500" color="gray.500">- Capability to teamwork and communicate.</Text>
                 <Text fontSize="md" fontWeight="500" color="gray.500">- Familiar with React and Node.js development.</Text>
