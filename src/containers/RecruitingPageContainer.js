@@ -92,8 +92,8 @@ function RecruitingPageContainer(props){
       name: name,
       email: email,
       school: school,
-      personalWebsite: personalWebsite===''?null:personalWebsite,
-      portfolio: portfolio===''?null:portfolio,
+      personalWebsite: personalWebsite===''?"Not Provided":personalWebsite,
+      portfolio: portfolio===''?"Not Provided":portfolio,
     }
     // API call
     try {
