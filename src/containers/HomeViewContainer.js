@@ -210,7 +210,7 @@ function HomeViewContainer(props) {
                   <Text fontSize="md" fontWeight="500" color="gray.600">新夥伴招募中，想跟我們一起打造更優質的選課系統嗎？ 快來加入我們吧！🥰</Text>
                   <Flex w="100%" justifyContent="space-between" alignItems="center" flexDirection="row">
                     <Text fontSize="sm" fontWeight="400" color="gray.500" mt="4">Team NTUCourse Neo - 20220303</Text>
-                    <Link to="/recruiting"><Button colorScheme="teal" variant="solid" size="md" mt="4" rightIcon={<FaArrowRight />}>加入我們</Button></Link>
+                    <Link to="/recruiting"><Button colorScheme="teal" variant="solid" size="sm" mt="4" rightIcon={<FaArrowRight />}>加入我們</Button></Link>
                   </Flex>
                 </Flex>
                 <CourseDeadlineCountdown />
