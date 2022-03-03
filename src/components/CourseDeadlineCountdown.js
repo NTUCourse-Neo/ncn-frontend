@@ -113,7 +113,7 @@ function CourseDeadlineCountdown(props){
                 </Flex>
                 <Flex w="100%" mt="4" justifyContent="end" alignItems="center">
                     <Button variant="solid" mr="2" size="sm" onClick={()=>{window.open(ntu_course_select_url[0], "_blank")}} colorScheme={status_map[status_idx].color.slice(0,-4)}>選課系統 1</Button>
-                    <Button variant="solid" mr="2" size="sm" onClick={()=>{window.open(ntu_course_select_url[1], "_blank")}} colorScheme={status_map[status_idx].color.slice(0,-4)}>選課系統 2</Button>
+                    <Button variant="solid" size="sm" onClick={()=>{window.open(ntu_course_select_url[1], "_blank")}} colorScheme={status_map[status_idx].color.slice(0,-4)}>選課系統 2</Button>
                 </Flex>
             </Flex>
         </>
