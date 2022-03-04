@@ -27,6 +27,7 @@ import {
     TabPanels,
     TabPanel,
     SkeletonText,
+    useMediaQuery,
 } from '@chakra-ui/react';
 import {
     FaRegEdit,
@@ -49,6 +50,7 @@ const LOCAL_STORAGE_KEY = 'NTU_CourseNeo_Course_Table_Key';
 function SideCourseTableContainer(props) {
     const navigate = useNavigate();
     const {user, isLoading, isAuthenticated, getAccessTokenSilently} = useAuth0();
+    const [isMobile] = useMediaQuery("(max-width: 1000px)");
     const toast = useToast();
     const dispatch = useDispatch();
     const courseTable = useSelector(state => state.course_table);
@@ -345,11 +347,11 @@ function SideCourseTableContainer(props) {
     }
     const renderEditName = () => {
         return(
-            <Popover isOpen={isOpen} initialFocusRef={firstFieldRef} onOpen={onOpen} onClose={onClose} placement="right">
+            <Popover isOpen={isOpen} initialFocusRef={firstFieldRef} onOpen={onOpen} onClose={onClose}>
                 <PopoverTrigger>
                     <Button size="sm" variant="solid" colorScheme="gray" p="2"><FaRegEdit size={22}/></Button>
                 </PopoverTrigger>
-                <PopoverContent >
+                <PopoverContent>
                     <FocusLock returnFocus persistentFocus={false}>
                         <PopoverArrow />
                         <PopoverCloseButton />
@@ -383,7 +385,7 @@ function SideCourseTableContainer(props) {
         );
       }
       return(
-        <Box overflow="auto" w="100%" mt="4">
+        <Box overflow="auto" w="100%" mt={isMobile? "0":"4"}>
           <Flex flexDirection="column">
             <Tabs>
             <Flex flexDirection="row" justifyContent="start" alignItems="center" mt="2" ml="4">
@@ -419,7 +421,11 @@ function SideCourseTableContainer(props) {
     return(
       <Flex h="100%" w="100%">
         <Flex justifyContent="center" alignItems="center">
-          <IconButton h="100%" icon={<FaAngleRight size={24}/>} onClick={()=>{props.setIsOpen(!props.isOpen)}} size="sm" variant="ghost"/>
+          { isMobile ? 
+            <></>
+            :
+            <IconButton h="100%" icon={<FaAngleRight size={24}/>} onClick={()=>{props.setIsOpen(!props.isOpen)}} size="sm" variant="ghost"/>
+          }
         </Flex>
         {renderSideCourseTableContent()}
       </Flex>
