@@ -104,7 +104,7 @@ function CourseTableCard(props){
                     <Button  
                             bg={hash_to_color_hex(course._id, isOpen ? 0.7:0.8)} 
                             borderRadius="md" boxShadow="lg" 
-                            mb="1" p="2" w="4vw" h="3vh"
+                            mb="1" p="2" w="100%" h="3vh"
                             border={props.hoverId === courseId  ? "2px":""}
                             borderColor={hash_to_color_hex(course._id, 0.5)}
                             key={courseId+"_Button"}>
@@ -205,7 +205,7 @@ function CourseTableCard(props){
     <>
         <Popover onOpen={onOpen} onClose={()=>{leavePopover()}} isOpen={isOpen} closeOnBlur={false} placement="auto" flip>
             <PopoverTrigger>
-                <Flex w="4vw" justifyContent="center" alignItems="center" flexDirection="column" onClick={()=>{setCourseList(courseOrder); setPrepareToRemoveCourseId([]);}}>
+                <Flex w={props.grow? "100%":"4vw"} justifyContent="center" alignItems="center" flexDirection="column" onClick={()=>{setCourseList(courseOrder); setPrepareToRemoveCourseId([]);}}>
                     {courseOrder.map(courseId => {
                         return renderCourseBox(courseId, props.courseData);
                     })}
