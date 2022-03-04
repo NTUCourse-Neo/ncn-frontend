@@ -345,7 +345,7 @@ function SideCourseTableContainer(props) {
     }
     const renderEditName = () => {
         return(
-            <Popover isOpen={isOpen} initialFocusRef={firstFieldRef} onOpen={onOpen} onClose={onClose}>
+            <Popover isOpen={isOpen} initialFocusRef={firstFieldRef} onOpen={onOpen} onClose={onClose} placement="right">
                 <PopoverTrigger>
                     <Button size="sm" variant="solid" colorScheme="gray" p="2"><FaRegEdit size={22}/></Button>
                 </PopoverTrigger>

@@ -17,17 +17,20 @@ import {
     FaPlus,
     FaTrash,
     FaExclamationTriangle,
+    FaInfoCircle,
 } from 'react-icons/fa';
 
-import {MdDragHandle} from 'react-icons/md';
+import { MdDragHandle } from 'react-icons/md';
 import { patchCourseTable } from '../actions/index';
 import { hash_to_color_hex } from '../utils/colorAgent';
 import { genNolAddUrl, openPage } from './CourseDrawerContainer';
 import { useDispatch } from 'react-redux';
 import {sortableContainer, sortableElement, sortableHandle} from 'react-sortable-hoc';
+import { useNavigate } from 'react-router-dom';
 
 function CourseListContainer({ courseTable, courses }) {
   
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const toast = useToast();
   const [ courseListForSort, setCourseListForSort ] = useState(Object.keys(courses));
@@ -87,6 +90,7 @@ function CourseListContainer({ courseTable, courses }) {
         <Tag size="lg" key={key} variant='solid' bg={hash_to_color_hex(course._id, 0.8)} mx="2"><Text fontWeight="800" color="gray.700">{courseIdx + 1}</Text></Tag>
         <Badge colorScheme="blue" size="lg" mx="2">{course.id}</Badge>
         <Text as={prepareToRemoveCourseId.includes(course._id) ? "del":""} color={prepareToRemoveCourseId.includes(course._id) ? "red.700":"gray.500"} fontSize="xl" fontWeight="bold">{course.course_name}</Text>
+        <IconButton ml="2" size="sm" colorScheme="blue" icon={<FaInfoCircle />} variant="ghost" onClick={() => {navigate(`/courseinfo/${course._id}`);}}/>
       </Flex>
       <Flex ml="4" flexDirection="row" justifyContent="end" alignItems="center">
         <Button mx="2" size="sm" variant="ghost" colorScheme="blue" leftIcon={<FaPlus/>} onClick={() => openPage(genNolAddUrl(course), true)}>課程網</Button>
