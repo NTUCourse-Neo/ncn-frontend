@@ -112,7 +112,7 @@ function CourseListContainer({ courseTable, courses }) {
       );
     }
     return(
-      <Flex key={key} flexDirection="row" justifyContent="center" alignItems="center" h="100%" w="100%" py="2" px="2" bg="gray.100" my="1" borderRadius="lg" zIndex="1000" flexWrap="wrap">
+      <Flex key={key} flexDirection="row" justifyContent="center" alignItems="center" h="100%" w="100%" py="2" px="2" bg="gray.100" my="1" borderRadius="lg" zIndex="1000">
         <Flex flexDirection="row" justifyContent="start" alignItems="center" h="100%" w="100%">
           <DragHandle key={"Sortable_"+key+"_DragHandle"}/>
           <Tag size="lg" key={key} variant='solid' bg={hash_to_color_hex(course._id, 0.8)} mx="2"><Text fontWeight="800" color="gray.700">{courseIdx + 1}</Text></Tag>
