@@ -165,9 +165,13 @@ function CourseListContainer({ courseTable, courses }) {
           {
               courseListForSort.map((key, index) => {
               const course = courses[key];
-              return(
-                <SortableElement key={key} index={index} course={course} courseIdx={index} helperClass="sortableHelper"/>
-              );
+              if (course){
+                return(
+                  <SortableElement key={key} index={index} course={course} courseIdx={index} helperClass="sortableHelper"/>
+                );
+              } else {
+                return <></>
+              }
             })
           }
         </SortableContainer>
