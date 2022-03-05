@@ -165,7 +165,6 @@ function SideCourseTableContainer(props) {
         }
       };
       // run after useAuth0 finish loading.
-      // console.log('isLoading: ', isLoading);
       if (!isLoading) {
         // user mode
         if (user) {
@@ -213,7 +212,9 @@ function SideCourseTableContainer(props) {
       }
       // guest mode & do not have uuid on localstorage
       if(!localStorage.getItem(LOCAL_STORAGE_KEY)){
-        setLoading(false);
+        console.log("no uuid in localStorage");
+        // !This line will make the loading state disappear when there is no uuid in localStorage
+        // setLoading(false); 
       }
     }, [courseTable]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -275,6 +276,8 @@ function SideCourseTableContainer(props) {
     // useEffect(() => console.log('courseTimes: ',courseTimes), [courseTimes]);
     // useEffect(() => console.log('courses: ',courses), [courses]);
     // useEffect(() => console.log('courseIds: ',courseIds), [courseIds]);
+    // useEffect(() => console.log('isLoading: ', isLoading), [isLoading]);
+    // useEffect(() => console.log('loading: ', loading), [loading]);
 
     const { onOpen, onClose, isOpen } = useDisclosure()
     const firstFieldRef = useRef(null)
