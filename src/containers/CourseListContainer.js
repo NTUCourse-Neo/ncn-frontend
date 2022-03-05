@@ -60,16 +60,18 @@ function CourseListContainer({ courseTable, courses }) {
   const handleSaveCourseTable = async() => {
     setIsLoading(true);
     try{
-      setCourseListForSort(courseListForSort.filter(id => !prepareToRemoveCourseId.includes(id)));
-      const res_table = await dispatch(patchCourseTable(courseTable._id, courseTable.name, courseTable.user_id, courseTable.expire_ts, courseListForSort));
+      // remove the course_id in the prepareToRemoveCourseId from the courseListForSort
+      const newCourseListForSort = courseListForSort.filter(id => !prepareToRemoveCourseId.includes(id));
+      const res_table = await dispatch(patchCourseTable(courseTable._id, courseTable.name, courseTable.user_id, courseTable.expire_ts, newCourseListForSort));
       if(res_table){
         toast({
           title: "編輯課表成功",
-          description: "志願序更動已儲存",
+          description: "課程更動已儲存",
           status: "success",
           duration: 3000,
           isClosable: true,
         });
+        setCourseListForSort(res_table.courses)
       }
     }catch(err){
       toast({
@@ -146,17 +148,19 @@ function CourseListContainer({ courseTable, courses }) {
       <>
         <Flex flexDirection="column" justifyContent="center" alignItems="start" w="100%" py="2" px="2">
           <Flex w="100%" justifyContent="space-between" alignItems="center">
-            <Text fontSize="md" fontWeight="bold" color="gray.600">已選 {courseListForSort.length} 課程</Text>
+            <Flex flexDirection="column" alignItems="start">
+              <Text fontSize="md" fontWeight="bold" color="gray.600">已選 {courseListForSort.length} 課程</Text>
+              <HStack mt="2">
+                <Button size="sm" variant="solid" colorScheme="teal" disabled={!isEdited()} onClick={() => {handleSaveCourseTable();}} isLoading={isLoading}>儲存</Button>
+                <Button ml="2" size="sm" variant="ghost" colorScheme="blue" disabled={!isEdited()} onClick={() => {setCourseListForSort(Object.keys(courses)); setPrepareToRemoveCourseId([]);}}>重設</Button>
+              </HStack>
+            </Flex>
             <Collapse in={isEdited()}>
               <Flex alignItems="center" justifyContent="center" flexDirection="column">
                 <Tag colorScheme="yellow" variant="solid" >
                   <TagLeftIcon boxSize='12px' as={FaExclamationTriangle} />
                   變更未儲存
                 </Tag>
-                <HStack mt="2">
-                  <Button size="sm" variant="solid" colorScheme="teal" disabled={!isEdited()} onClick={() => {handleSaveCourseTable();}} isLoading={isLoading}>套用</Button>
-                  <Button ml="2" size="sm" variant="ghost" colorScheme="blue" disabled={!isEdited()} onClick={() => {setCourseListForSort(Object.keys(courses)); setPrepareToRemoveCourseId([]);}}>重設</Button>
-                </HStack>
               </Flex>
             </Collapse>
           </Flex>
@@ -183,9 +187,6 @@ function CourseListContainer({ courseTable, courses }) {
     <>
       <Flex flexDirection="row" justifyContent="start" alignItems="center" w="100%" py="2" px="2">
         <Text fontSize="md" fontWeight="bold" color="gray.600">已選 {courseListForSort.length} 課程</Text>
-        <Button ml="4" size="xs" variant="ghost" colorScheme="blue" leftIcon={<FaPlus/>} disabled>
-          批次加入課程網 <Text ml="1" as='sup' color="gray.500" fontWeight="500" style={{fontStyle: "italic"}}>coming soon</Text>
-        </Button>
         <Spacer />
         <ScaleFade initialScale={0.9} in={isEdited()}>
           <Tag colorScheme="yellow" variant="solid" >
@@ -194,7 +195,7 @@ function CourseListContainer({ courseTable, courses }) {
           </Tag>
         </ScaleFade>
         <Button ml="2" size="sm" variant="ghost" colorScheme="blue" disabled={!isEdited()} onClick={() => {setCourseListForSort(Object.keys(courses)); setPrepareToRemoveCourseId([]);}}>重設</Button>
-        <Button ml="2" size="sm" variant="solid" colorScheme="teal" disabled={!isEdited()} onClick={() => {handleSaveCourseTable();}} isLoading={isLoading}>套用</Button>
+        <Button ml="2" size="sm" variant="solid" colorScheme="teal" disabled={!isEdited()} onClick={() => {handleSaveCourseTable();}} isLoading={isLoading}>儲存</Button>
       </Flex>
       <SortableContainer onSortEnd={onSortEnd} lockAxis="y" useDragHandle>
         {
