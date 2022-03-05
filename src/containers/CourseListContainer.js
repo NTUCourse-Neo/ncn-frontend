@@ -43,6 +43,7 @@ function CourseListContainer({ courseTable, courses }) {
   const [ isMobile ] = useMediaQuery('(max-width: 1000px)');
   
   useEffect(() => {
+    //console.log('new list for sort', Object.keys(courses));
     setCourseListForSort(Object.keys(courses));
   } , [courses]);
   
@@ -195,9 +196,13 @@ function CourseListContainer({ courseTable, courses }) {
         {
             courseListForSort.map((key, index) => {
             const course = courses[key];
-            return(
-              <SortableElement key={key} index={index} course={course} courseIdx={index} helperClass="sortableHelper"/>
-            );
+            if (course){
+              return(
+                <SortableElement key={key} index={index} course={course} courseIdx={index} helperClass="sortableHelper"/>
+              );
+            } else {
+              return <></>
+            }
           })
         }
       </SortableContainer>
