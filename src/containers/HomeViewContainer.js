@@ -232,17 +232,9 @@ function HomeViewContainer(props) {
               <Flex alignItems="start" justifyContent={{base: 'center', lg: 'start'}}>
                 <Flex flexDirection="column" alignItems="start">
                   <AnimatePresence initial={true} exitBeforeEnter={true}>
-                    {
-                      newsCard.map((item, index) => { // eslint-disable-line
-                        if (index === displayingCard){
-                          return (
-                            <motion.div key={index} initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }} transition={{duration: 0.4}}>
-                              {item}
-                            </motion.div>
-                          )
-                        }
-                      })
-                    }
+                    <motion.div key={displayingCard} initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }} transition={{duration: 0.4}}>
+                      {newsCard[displayingCard]}
+                    </motion.div>
                   </AnimatePresence>
                   <Spacer my="4" />
                   <CourseDeadlineCountdown />
