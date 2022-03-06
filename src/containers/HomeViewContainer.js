@@ -101,11 +101,11 @@ function HomeViewContainer(props) {
         <AlertDialogContent>
           <AlertDialogHeader>溫馨提醒</AlertDialogHeader>
           <AlertDialogBody>
-            <Center mb="4">
-              <Image src="https://media.giphy.com/media/7NoNw4pMNTvgc/giphy.gif" alt="" width="100px" borderRadius="lg" boxShadow="lg"/>
-            </Center>
-            <Text fontWeight="500" color="gray.600">
-              行動裝置介面仍在最佳化中，使用手機瀏覽課表與課程將影響到您的體驗。建議使用電腦瀏覽，讓您能獲得更好的選課時光。<br/>請再給我們一些時間 🙏
+            <Text fontWeight="400" color="gray.600">
+              行動裝置介面仍在調整測試中。建議使用電腦瀏覽，能讓您獲得更好的選課體驗。
+            </Text>
+            <Text mt="2" fontWeight="700" color="gray.600">
+              我們正在努力讓 NTUCourse Neo 更加進步，若有任何建議歡迎至問題回報處告訴我們 🙏
             </Text>
           </AlertDialogBody>
           <AlertDialogFooter>
