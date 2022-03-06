@@ -193,6 +193,15 @@ function CourseResultViewContainer() {
 
       // console.log(isFetchingCourseStatus);
   } ,[isCourseStatusModalOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // if isMobile, when show Alert Modal, set displayTable to false to prevent ugly overlapping
+  useEffect(()=>{
+    if (isLoginWarningOpen){
+      if (isMobile){
+        setDisplayTable(false);
+      }
+    }
+  },[isLoginWarningOpen]) // eslint-disable-line react-hooks/exhaustive-deps
   
   const renderCourseStatusModal = () => {
     const renderFormattedTime = () => {
