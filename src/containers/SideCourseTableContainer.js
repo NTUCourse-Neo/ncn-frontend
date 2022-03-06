@@ -27,6 +27,7 @@ import {
     TabPanels,
     TabPanel,
     SkeletonText,
+    useMediaQuery
 } from '@chakra-ui/react';
 import {
     FaRegEdit,
@@ -35,6 +36,7 @@ import {
     FaRegHandPointUp,
     FaRegMeh,
     FaPlusSquare,
+    FaAngleDown,
 } from 'react-icons/fa';
 import CourseTableContainer from './CourseTableContainer';
 import { fetchCourseTableCoursesByIds, createCourseTable, linkCoursetableToUser, fetchCourseTable, patchCourseTable, fetchUserById, logIn, updateCourseTable } from '../actions/index';
@@ -53,6 +55,7 @@ function SideCourseTableContainer(props) {
     const dispatch = useDispatch();
     const courseTable = useSelector(state => state.course_table);
     const userInfo = useSelector(state => state.user);
+    const [isMobile] = useMediaQuery("(max-width: 1000px)");
 
     // some local states for handling course data
     // const courseIds = props.courseIds;
@@ -387,10 +390,10 @@ function SideCourseTableContainer(props) {
         );
       }
       return(
-        <Box overflow="auto" w="100%" mt="4">
+        <Box overflow="auto" w="100%">
           <Flex flexDirection="column">
             <Tabs>
-            <Flex flexDirection="row" justifyContent="start" alignItems="center" my="2" ml="4">
+            <Flex flexDirection="row" justifyContent="start" alignItems="center" mb="2" ml="4">
                 {
                   courseTable?
                   <Flex alignItems="center" flexWrap="wrap">
@@ -420,6 +423,14 @@ function SideCourseTableContainer(props) {
         </Box>
       );
     };
+    if(isMobile){
+      return(
+        <Flex h="100%" w="100%" flexDirection="column">
+          <IconButton w="100%" icon={<FaAngleDown size={24}/>} onClick={()=>{props.setIsOpen(!props.isOpen)}} size="sm" variant="ghost"/>
+          {renderSideCourseTableContent()}
+        </Flex>
+      );
+    }
     return(
       <Flex h="100%" w="100%">
         <Flex justifyContent="center" alignItems="center">
