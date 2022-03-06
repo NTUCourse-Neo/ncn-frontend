@@ -13,6 +13,7 @@ import {useAuth0} from '@auth0/auth0-react';
 import { send_logs } from '../actions';
 import { BounceLoader } from 'react-spinners';
 import { v4 as uuidv4 } from 'uuid';
+import setPageMeta from '../utils/seo';
 
 function ErrorContainer(props){
     const error_page_states = useLocation().state;
@@ -49,6 +50,7 @@ function ErrorContainer(props){
             }
         }
         redirect_and_send_logs();
+        setPageMeta({title: `${props.code} 錯誤 | NTUCourse Neo`, desc: `${props.code} 錯誤頁面 | NTUCourse Neo，全新的臺大選課網站。`});
     } , [user, loading]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (

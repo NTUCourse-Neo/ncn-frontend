@@ -36,6 +36,7 @@ import { BeatLoader } from 'react-spinners';
 import { fetchUserById, registerNewUser, logIn } from '../actions/';
 import { useDispatch } from 'react-redux';
 import CourseDeadlineCountdown from '../components/CourseDeadlineCountdown';
+import setPageMeta from '../utils/seo';
 
 
 function HomeViewContainer(props) {
@@ -62,6 +63,7 @@ function HomeViewContainer(props) {
     if(isMobile && !localStorage.getItem("NCN_NO_MOBILE_WARNING")) {
       onWarningOpen();
     }
+    setPageMeta({title: `首頁 | NTUCourse Neo`, desc: `首頁 | NTUCourse Neo，全新的臺大選課網站。`});
   } , []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const renderMobileWarning = () => {

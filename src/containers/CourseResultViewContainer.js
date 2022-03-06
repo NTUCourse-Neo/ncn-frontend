@@ -23,21 +23,45 @@ import {
     MenuDivider,
     Fade,
     Tag,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalCloseButton,
+    ModalBody,
+    ModalFooter,
     TagLeftIcon,
+    Spinner,
+    Stat,
+    StatLabel,
+    StatNumber,
     useMediaQuery,
+    HStack,
+    Spacer,
+    AlertDialog,
+    AlertDialogOverlay,
+    AlertDialogContent,
+    AlertDialogHeader,
+    AlertDialogBody,
+    AlertDialogFooter,
+    Alert,
+    AlertIcon,
 } from '@chakra-ui/react';
 import { BeatLoader } from 'react-spinners';
-import { FaAngleLeft, FaChevronDown, FaChevronUp, FaPlus, FaMinus } from 'react-icons/fa';
+import { FaAngleLeft, FaChevronDown, FaChevronUp, FaPlus, FaMinus, FaArrowRight, FaRss } from 'react-icons/fa';
 import CourseInfoRowContainer from './CourseInfoRowContainer';
 import FilterModal from '../components/FilterModal';
 import CourseSearchInput from '../components/CourseSearchInput';
 import SkeletonRow from '../components/SkeletonRow';
 import SideCourseTableContainer from './SideCourseTableContainer';
-import { setSearchSettings, fetchSearchResults, setFilter, setFilterEnable, setNewDisplayTags} from '../actions/index';
+import { setSearchSettings, fetchSearchResults, setFilter, setFilterEnable, setNewDisplayTags, getCourseEnrollInfo} from '../actions/index';
 import {useSelector, useDispatch} from 'react-redux';
 import useOnScreen from '../hooks/useOnScreen';
 import {mapStateToTimeTable, mapStateToIntervals} from '../utils/timeTableConverter';
 import { info_view_map } from '../data/mapping_table';
+import { useAuth0 } from '@auth0/auth0-react';
+import BetaBadge from '../components/BetaBadge';
+import setPageMeta from '../utils/seo';
 
 
 function CourseResultViewContainer() {
@@ -59,7 +83,9 @@ function CourseResultViewContainer() {
   const total_count = useSelector(state => state.total_count);
   const display_tags = useSelector(state => state.display_tags);
 
-  const [isMobile] = useMediaQuery("(max-width: 760px)");
+  const { loginWithPopup } = useAuth0();
+
+  const [isMobile] = useMediaQuery("(max-width: 1000px)");
 
   const [selectedTime, setSelectedTime] = useState(mapStateToTimeTable(search_filters.time));
   const [selectedDept, setSelectedDept] = useState(search_filters.department);
@@ -74,6 +100,10 @@ function CourseResultViewContainer() {
   const [ displayFilter, setDisplayFilter ] = useState(false);
   const [ displayTable, setDisplayTable ] = useState(!isMobile);
 
+  // state for no login warning when creating a course table.
+  const [isLoginWarningOpen, setIsLoginWarningOpen] = useState(false);
+  const [agreeToCreateTableWithoutLogin, setAgreeToCreateTableWithoutLogin] = useState(false);
+
   // State for the course result row that is been hovered now.
   const [ hoveredCourse, setHoveredCourse ] = useState(null);
   // search_settings local states
@@ -86,6 +116,18 @@ function CourseResultViewContainer() {
   const [displayTags, setDisplayTags] = useState(display_tags);
   const available_tags = ["required", "total_slot", "enroll_method", "area"];
 
+  // states for course enroll status
+  const [isCourseStatusModalOpen, setIsCourseStatusModalOpen] = useState(null);
+  const [isFetchingCourseStatus, setIsFetchingCourseStatus] = useState(false);
+  const [courseEnrollStatus, setCourseEnrollStatus] = useState({
+    enrolled: "",
+    enrolled_other: "",
+    registered: "",
+    remain: "",
+  });
+
+  const { isAuthenticated } = useAuth0();
+
   useEffect(() => {
       dispatch(setNewDisplayTags(displayTags))
   },[displayTags]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -96,8 +138,156 @@ function CourseResultViewContainer() {
 
   useEffect(() => {
       window.scrollTo(0, 0);
+      setPageMeta({title: `課程搜尋 | NTUCourse Neo`, desc: `課程搜尋頁面 | NTUCourse Neo，全新的臺大選課網站。`});
   } ,[]);
+
+  useEffect(() => {
+      async function fetchCourseEnrollData() {
+        setIsFetchingCourseStatus(true);
+        let data;
+        try {
+            data = await dispatch(getCourseEnrollInfo(isCourseStatusModalOpen));
+        } catch (error) {
+            setIsFetchingCourseStatus(false);
+            setIsCourseStatusModalOpen(null);
+            toast({
+                title: "錯誤",
+                description: "無法取得課程即時資訊",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            });
+            return;
+        }
+        if(!data){
+          setIsFetchingCourseStatus(false);
+          setIsCourseStatusModalOpen(null);
+          toast({
+            title: "錯誤",
+            description: "無法取得課程即時資訊",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+          return;
+        }
+        
+        setCourseEnrollStatus(data);
+        setIsFetchingCourseStatus(false);
+      }
+
+      if(isCourseStatusModalOpen){
+        if(!isAuthenticated){
+          toast({
+            title: "請先登入",
+            description: "課程即時資訊功能尚為 Beta 階段，僅供會員搶先試用",
+            status: "info",
+            duration: 3000,
+            isClosable: true,
+          });
+          setIsCourseStatusModalOpen(null)
+        } else {
+          fetchCourseEnrollData();
+        }
+      }
+
+      // console.log(isFetchingCourseStatus);
+  } ,[isCourseStatusModalOpen]); // eslint-disable-line react-hooks/exhaustive-deps
   
+  const renderCourseStatusModal = () => {
+    const renderFormattedTime = () => {
+      const fetch_time = new Date(courseEnrollStatus.fetch_ts*1000);
+      const fetch_time_str = `${fetch_time.getFullYear()}-${fetch_time.getMonth()+1}-${fetch_time.getDate()} ${fetch_time.getHours()}:${fetch_time.getMinutes()}:${fetch_time.getSeconds()}`;
+      return fetch_time_str;
+    };
+      return(
+          <>
+            <Modal isOpen={isCourseStatusModalOpen && isAuthenticated} onClose={() => {setIsCourseStatusModalOpen(null)}} size="xl">
+                <ModalOverlay />
+                <ModalContent>
+                <ModalHeader>課程即時資訊<BetaBadge content="beta" /></ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                  <Flex w="100%" justifyContent="center" alignItems="center">
+                    {
+                      isFetchingCourseStatus ?
+                      <Spinner size="xl" color="teal"/>:
+                      <Flex w="100%" flexDirection="column" justifyContent="center" alignItems="start" bg="gray.200" px="8" py="4" borderRadius="xl" boxShadow="lg">
+                        <Flex w="100%" flexDirection={isMobile? "column":"row"} justifyContent="center" alignItems={isMobile? "start":"center"} flexWrap="wrap">
+                          <Stat w="20vw">
+                            <StatLabel>已選上人數</StatLabel>
+                            <StatNumber>{courseEnrollStatus.enrolled}</StatNumber>
+                          </Stat>
+                          <Stat>
+                            <StatLabel>已選上外系人數</StatLabel>
+                            <StatNumber>{courseEnrollStatus.enrolled_other}</StatNumber>
+                          </Stat>
+                          <Stat>
+                            <StatLabel>已登記人數</StatLabel>
+                            <StatNumber>{courseEnrollStatus.registered}</StatNumber>
+                          </Stat>
+                          <Stat>
+                            <StatLabel>剩餘空位</StatLabel>
+                            <StatNumber>{courseEnrollStatus.remain}</StatNumber>
+                          </Stat>
+                          </Flex>
+                          <HStack mt="4" spacing="2">
+                            <FaRss color="gray" size="15"/>
+                            <Text fontSize="sm" textAlign="center" color="gray.500">更新時間: {renderFormattedTime()}</Text>
+                          </HStack>
+                      </Flex>
+                    }
+                  </Flex>
+                </ModalBody>
+
+                <ModalFooter>
+                  <Text fontSize="sm" textAlign="center" color="gray.500">資料來自 臺大選課系統</Text>
+                  <Spacer />
+                  <Button colorScheme='blue' mr={3} onClick={() => {setIsCourseStatusModalOpen(null)}}>
+                  關閉
+                  </Button>
+                </ModalFooter>
+                </ModalContent>
+            </Modal>
+          </>
+      );
+  };
+
+  const renderNoLoginWarning = () => {
+    const onClose = () => setIsLoginWarningOpen(false);
+    // console.log("renderNoLoginWarning");
+    return(
+      <>
+        <AlertDialog isOpen={isLoginWarningOpen} onClose={onClose} motionPreset='slideInBottom' isCentered>
+          <AlertDialogOverlay>
+            <AlertDialogContent>
+              <AlertDialogHeader fontSize='lg' fontWeight='bold'>
+                等等，你還沒登入啊！
+              </AlertDialogHeader>
+              <AlertDialogBody>
+              <Alert status='warning'>
+                <AlertIcon />
+                訪客課表將於一天後過期，屆時您將無法存取此課表。
+              </Alert>
+              <Text mt={4} color="gray.600" fontWeight="700" fontSize="lg">
+                真的啦！相信我。<br/>註冊跟登入非常迅速，而且課表還能永久保存喔！
+              </Text>
+              </AlertDialogBody>
+              <AlertDialogFooter>
+                <Button onClick={() => {setIsLoginWarningOpen(false); setAgreeToCreateTableWithoutLogin(true);}}>
+                  等等再說
+                </Button>
+                <Button colorScheme='teal' rightIcon={<FaArrowRight />} onClick={() => {setIsLoginWarningOpen(false); loginWithPopup();}} ml={3}>
+                  去登入
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialogOverlay>
+        </AlertDialog>
+      </>
+    );
+  };
+
   const renderSettingSwitch = (label, default_checked, isDisabled) => {
         const handleChangeSettings = (e)=>{
             // console.log(e.currentTarget.checked);
@@ -186,6 +376,8 @@ function CourseResultViewContainer() {
 
     return (
         <>
+          {renderCourseStatusModal()}
+          {renderNoLoginWarning()}
             <Flex w="100vw" direction="row" justifyContent="center" alignItems="center" overflow="hidden">
                 <Box display="flex" flexBasis="100vw" flexDirection="column" alignItems="start" h="95vh" overflow="auto" maxW="screen-md" mx="auto" pt="64px" pb="40px">
                     <div ref={topRef}/>
@@ -250,8 +442,6 @@ function CourseResultViewContainer() {
                                                         </Menu>
                                                         </Flex>
                                                     </Flex>
-                                                    
-                                                    
                                                 </Flex>
                                             </TabPanel>
                                             <TabPanel>
@@ -323,7 +513,7 @@ function CourseResultViewContainer() {
                                     {search_loading ? <BeatLoader size={8} color='teal'/>:<></>}
                                     <Text fontSize="md" fontWeight="medium" color="gray.400" my="2" ml="1">{search_loading ? "載入中" : `共找到 ${total_count} 筆結果`}</Text>
                                 </Flex>
-                                <CourseInfoRowContainer courseInfo={search_results} setHoveredCourse={setHoveredCourse} selectedCourses={coursesInTable} displayTags={displayTags} displayTable={displayTable}/>
+                                <CourseInfoRowContainer courseInfo={search_results} setHoveredCourse={setHoveredCourse} selectedCourses={coursesInTable} displayTags={displayTags} displayTable={displayTable} isCourseStatusModalOpen={isCourseStatusModalOpen} setIsCourseStatusModalOpen={setIsCourseStatusModalOpen} />
                             </Flex>
                             <Flex w="100%" alignItems="center" justifyContent="center">
                                 <SkeletonRow loading={search_loading} error={search_error}/>
@@ -336,7 +526,7 @@ function CourseResultViewContainer() {
                                     {search_loading ? <BeatLoader size={8} color='teal'/>:<></>}
                                     <Text fontSize="md" fontWeight="medium" color="gray.400" my="2" ml="1">{search_loading ? "載入中" : `共找到 ${total_count} 筆結果`}</Text>
                                 </Flex>
-                                <CourseInfoRowContainer courseInfo={search_results} setHoveredCourse={setHoveredCourse} selectedCourses={coursesInTable} displayTags={displayTags} displayTable={displayTable}/>
+                                <CourseInfoRowContainer courseInfo={search_results} setHoveredCourse={setHoveredCourse} selectedCourses={coursesInTable} displayTags={displayTags} displayTable={displayTable} isCourseStatusModalOpen={isCourseStatusModalOpen} setIsCourseStatusModalOpen={setIsCourseStatusModalOpen} />
                             </Box>
                             <Box ml={displayTable ? "24vw":"48vw"} transition="all 500ms ease-in-out">
                                 <SkeletonRow loading={search_loading} error={search_error}/>
@@ -356,7 +546,7 @@ function CourseResultViewContainer() {
             <Collapse in={displayTable} animateOpacity>
                 <Flex justifyContent="end" mr="2">
                     <Box position="absolute" top={isMobile?"12vh":"8vh"} zIndex={isMobile? "10000":"1"} w={isMobile? "90vw":"40vw"} h={isMobile? "70vh":"70vh"} bg="gray.200" mt="128px" borderRadius="lg" boxShadow="xl">
-                        <SideCourseTableContainer isOpen={displayTable} setIsOpen={setDisplayTable} hoveredCourse={hoveredCourse} setHoveredCourse={setHoveredCourse} courseIds={coursesInTable} setCourseIds={setCoursesInTable}/>
+                        <SideCourseTableContainer isOpen={displayTable} setIsOpen={setDisplayTable} hoveredCourse={hoveredCourse} setHoveredCourse={setHoveredCourse} courseIds={coursesInTable} setCourseIds={setCoursesInTable} setIsLoginWarningOpen={setIsLoginWarningOpen} agreeToCreateTableWithoutLogin={agreeToCreateTableWithoutLogin} setIsCourseStatusModalOpen={setIsCourseStatusModalOpen}/>
                     </Box>
                 </Flex>
             </Collapse>

@@ -7,41 +7,21 @@ import {
     Spacer,
     Button,
     ButtonGroup,
-    useDisclosure,
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalFooter,
-    ModalBody,
-    ModalCloseButton,
-    useMediaQuery
+    useMediaQuery,
   } from '@chakra-ui/react';
-  import { FaPlus, FaInfoCircle } from 'react-icons/fa';
-  import { IoMdOpen } from 'react-icons/io';
+import { FaPlus, FaInfoCircle } from 'react-icons/fa';
 import { info_view_map } from '../data/mapping_table';
+import { useNavigate } from "react-router-dom";
 
 function RenderNolContentBtn(course, title, key){
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const navigate = useNavigate();
+    const toCourseInfoPage = (code) => {
+        navigate(`/courseinfo/${code}`);
+    }
+
     return (
         <>
-            <Button variant="ghost" colorScheme="blue" leftIcon={<FaInfoCircle/>} size="sm" onClick={onOpen} key={"NolContent_"+key}>{title}</Button>
-
-            <Modal size="xl" isOpen={isOpen} onClose={onClose} motionPreset='slideInBottom' scrollBehavior="outside" key={"NolContent_Modal_"+key}>
-            <ModalOverlay key={"NolContent_ModalOverlay_"+key}/>
-            <ModalContent maxW="850px" height="90vh" key={"NolContent_Modal_"+key}>
-                <ModalHeader key={"NolContent_Header_"+key}>課程詳細資訊</ModalHeader>
-                <ModalCloseButton key={"NolContent_ModalCloseButton_"+key}/>
-                <ModalBody key={"NolContent_ModalBody_"+key}>
-                <iframe title={course.id} sandbox="allow-scripts" src={genNolUrl(course)} height="100%" width="100%" key={"NolContent_iframe_"+key}/>   
-                </ModalBody>
-                <ModalFooter key={"NolContent_ModalFooter_"+key}>
-                <Text fontWeight="500" fontSize="sm" color="gray.300">資料來自 台大課程網</Text>
-                <Spacer key={"NolContent_Spacer_"+key}/>
-                <Button key={"NolContent_Button_"+key} size="sm" mr="-px" rightIcon={<IoMdOpen />} onClick={() => openPage(genNolUrl(course), false)}>在新分頁中打開</Button>
-                </ModalFooter>
-            </ModalContent>
-            </Modal>
+            <Button variant="ghost" colorScheme="blue" leftIcon={<FaInfoCircle/>} size="sm" onClick={()=>{toCourseInfoPage(course._id)}} key={"NolContent_"+key}>{title}</Button>
         </>
     );
 }
@@ -63,7 +43,8 @@ const genNolAddUrl = (course) => {
 const genNolUrl = (course) => {
     let lang="CH";
     let base_url = "https://nol.ntu.edu.tw/nol/coursesearch/print_table.php?";
-    let params = `course_id=${course.course_id.substr(0,3)}%20${course.course_id.substr(3)}&class=${course.class_id}&ser_no=${course.id}&semester=${course.semester.substr(0,3)}-${course.semester.substr(3,1)}&lang=${lang}`;
+    let course_id = course.course_id.replace("E", "");
+    let params = `course_id=${course_id.substr(0,3)}%20${course_id.substr(3)}&class=${course.class_id}&ser_no=${course.id}&semester=${course.semester.substr(0,3)}-${course.semester.substr(3,1)}&lang=${lang}`;
     return base_url+params;
 }
 
@@ -118,7 +99,7 @@ function CourseDrawerContainer(props) {
                 {isMobile? <></>:<Spacer/>}
                 <ButtonGroup>
                     <Button variant="ghost" colorScheme="blue" leftIcon={<FaPlus/>} size="sm" onClick={() => openPage(genNolAddUrl(props.courseInfo), true)}>加入課程網</Button>
-                    {RenderNolContentBtn(props.courseInfo, "課程詳細資訊", props.courseInfo.course_id)}
+                    {/* {RenderNolContentBtn(props.courseInfo, "課程詳細資訊", props.courseInfo.course_id)} */}
                 </ButtonGroup>
             </Flex>
         </Flex>

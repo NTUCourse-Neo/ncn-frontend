@@ -39,7 +39,8 @@ import {
     FaRegMeh,
     FaPlusSquare,
     FaPlus,
-    FaTrash
+    FaTrash,
+    FaInfoCircle
 } from 'react-icons/fa';
 import CourseTableContainer from './CourseTableContainer';
 import { fetchCourseTableCoursesByIds, createCourseTable, linkCoursetableToUser, fetchCourseTable, patchCourseTable, fetchUserById, logIn, updateCourseTable } from '../actions/index';
@@ -55,7 +56,7 @@ const LOCAL_STORAGE_KEY = 'NTU_CourseNeo_Course_Table_Key';
 
 function SideCourseTableContainer(props) {
     const navigate = useNavigate();
-    const {user, isLoading, getAccessTokenSilently} = useAuth0();
+    const {user, isLoading, isAuthenticated, getAccessTokenSilently} = useAuth0();
     const toast = useToast();
     const dispatch = useDispatch();
     const courseTable = useSelector(state => state.course_table);
@@ -75,6 +76,7 @@ function SideCourseTableContainer(props) {
     // TODO: Move this part to a new dedicated component.
     const [isDeletingCourse, setIsDeletingCourse] = useState("");
     console.error = () => {};
+
 
     const [isMobile] = useMediaQuery('(max-width: 760px)');
 
@@ -190,6 +192,8 @@ function SideCourseTableContainer(props) {
           if (uuid){
             setLoading(true);
             courseTableInit(uuid);
+          }else{
+            setLoading(false);
           }
         }
       } 
@@ -223,8 +227,11 @@ function SideCourseTableContainer(props) {
         fetchCoursesDataById(() => setLoading(false));
       }
       // guest mode & do not have uuid on localstorage
-      if(!localStorage.getItem(LOCAL_STORAGE_KEY)){
-        setLoading(false);
+      if (!isLoading) {
+        // user mode
+        if (!user && !localStorage.getItem(LOCAL_STORAGE_KEY)) {
+          setLoading(false);
+        }
       }
     }, [courseTable]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -377,7 +384,6 @@ function SideCourseTableContainer(props) {
     };
     const renderSideCourseTableContent = () => {
       if((courseTable===null || expired===true) && !(loading || isLoading)){
-        // console.log("courseTable is null");
         return(
           <Flex flexDirection="column" justifyContent="center" alignItems="center" h="100%" w="100%">
             <Flex flexDirection="row" justifyContent="center" alignItems="center">
@@ -386,7 +392,13 @@ function SideCourseTableContainer(props) {
               <FaRegHandPointDown size="3vh" style={{color:"gray"}}/>
             </Flex>
             <Text fontSize="2xl" fontWeight="bold" color="gray">{expired?"您的課表已過期":"尚無課表"}</Text>
-            <Button colorScheme="teal" leftIcon={<FaPlusSquare />} onClick={()=>{handleCreateTable()}}>新增課表</Button>
+            <Button colorScheme="teal" leftIcon={<FaPlusSquare />} onClick={()=>{
+              if(isAuthenticated || props.agreeToCreateTableWithoutLogin){
+                handleCreateTable();
+              }else{
+                props.setIsLoginWarningOpen(true);
+              }
+            }}>新增課表</Button>
           </Flex>
         );
       }
@@ -428,14 +440,14 @@ function SideCourseTableContainer(props) {
                     <Flex key={index} flexDirection="column" justifyContent="start" alignItems="start" h="100%" w="100%">
                         <Flex flexDirection="row" justifyContent="start" alignItems="center" h="100%" w="100%" mb="1">
                           <Text fontSize="xl" fontWeight="bold" color="gray">{course.course_name}</Text>
+                          <IconButton size="xs" colorScheme="blue" icon={<FaInfoCircle />} variant="ghost" onClick={() => {navigate(`/courseinfo/${course._id}`);}}/>
                         </Flex>
                         <Flex flexDirection="row" justifyContent="start" alignItems="center" mb="1">
                           <Badge colorScheme="blue" size="lg" mr="2">{course.id}</Badge>
-                          <Badge variant="outline" isTruncated>{course.time_loc}</Badge>
                         </Flex>
                         <Flex flexDirection="row" justifyContent="start" alignItems="center">
                           <Button mr="2" size="xs" variant="outline" colorScheme="blue" leftIcon={<FaPlus/>} onClick={() => openPage(genNolAddUrl(course), true)}>課程網</Button>
-                          <IconButton size="xs" variant="outline" colorScheme="red" icon={<FaTrash />} onClick={() => handleDeleteCourse(course._id)} isLoading={isDeletingCourse === course._id}/>
+                          <IconButton ml="2" size="xs" variant="outline" colorScheme="red" icon={<FaTrash />} onClick={() => handleDeleteCourse(course._id)} isLoading={isDeletingCourse === course._id}/>
                         </Flex>
                       </Flex>
                   </Flex>
@@ -447,7 +459,7 @@ function SideCourseTableContainer(props) {
                       <Tag size="lg" key={index} variant='solid' bg={hash_to_color_hex(course._id, 0.8)} color="gray.800" mr="4">{index + 1}</Tag>
                       <Badge colorScheme="blue" size="lg" mx="2">{course.id}</Badge>
                       <Text fontSize="xl" fontWeight="bold" color="gray">{course.course_name}</Text>
-                      <Badge ml="4" variant="outline" isTruncated>{course.time_loc}</Badge>
+                      <IconButton ml="2" size="sm" colorScheme="blue" icon={<FaInfoCircle />} variant="ghost" onClick={() => {navigate(`/courseinfo/${course._id}`);}}/>
                     </Flex>
                     <Flex ml="4" flexDirection="row" justifyContent="end" alignItems="center">
                       <Button mx="2" size="sm" variant="outline" colorScheme="blue" leftIcon={<FaPlus/>} onClick={() => openPage(genNolAddUrl(course), true)}>課程網</Button>
@@ -477,7 +489,7 @@ function SideCourseTableContainer(props) {
                     </TabList>
                   </Flex>:
                     <SkeletonText width="15vw" mt="2" h="2" noOfLines={3}/>
-                }
+                  }
             </Flex>
               <TabPanels>
                 <TabPanel>

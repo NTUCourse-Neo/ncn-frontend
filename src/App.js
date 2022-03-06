@@ -14,12 +14,17 @@ import dotenv from 'dotenv-defaults';
 import UserInfoContainer from './containers/UserInfoContainer';
 import ErrorContainer from './containers/ErrorContainer';
 import UserMyPage from './containers/userMyPage';
+import CourseInfoContainer from './containers/CourseInfoContainer';
 import { useParams } from 'react-router-dom';
 import ReactGA from 'react-ga';
+import RecruitingPageContainer from './containers/RecruitingPageContainer';
 
 dotenv.config();
-ReactGA.initialize(process.env.REACT_APP_GA_TRACKING_ID);
-ReactGA.pageview(window.location.pathname + window.location.search);
+
+if(process.env.REACT_APP_ENV === 'prod'){
+  ReactGA.initialize(process.env.REACT_APP_GA_TRACKING_ID);
+  ReactGA.pageview(window.location.pathname + window.location.search);
+}
 
 function App(props) {
   let { code } = useParams();
@@ -38,6 +43,10 @@ function App(props) {
         return <InfoPageContainer />
       case "user/my":
         return <UserMyPage />
+      case "courseinfo":
+        return <CourseInfoContainer code={code}/>
+      case "recruiting":
+        return <RecruitingPageContainer />
       default:
         return <HomeViewContainer />
     }
