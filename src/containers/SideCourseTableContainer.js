@@ -192,6 +192,8 @@ function SideCourseTableContainer(props) {
           if (uuid){
             setLoading(true);
             courseTableInit(uuid);
+          }else{
+            setLoading(false);
           }
         }
       } 
@@ -225,8 +227,11 @@ function SideCourseTableContainer(props) {
         fetchCoursesDataById(() => setLoading(false));
       }
       // guest mode & do not have uuid on localstorage
-      if(!localStorage.getItem(LOCAL_STORAGE_KEY)){
-        setLoading(false);
+      if (!isLoading) {
+        // user mode
+        if (!user && !localStorage.getItem(LOCAL_STORAGE_KEY)) {
+          setLoading(false);
+        }
       }
     }, [courseTable]); // eslint-disable-line react-hooks/exhaustive-deps
 
