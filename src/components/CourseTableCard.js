@@ -195,7 +195,7 @@ function CourseTableCard(props){
     if(props.isHover){
         const course = props.courseData;
         return(
-            <Button borderRadius="lg" boxShadow="lg" p="2" w="4vw" h="3vh" mb="1" border="2px" borderColor={hash_to_color_hex(course._id, 0.7)} borderStyle="dashed">
+            <Button borderRadius="lg" boxShadow="lg" p="2" w={props.grow? "100%":{base: '14vw', md: '12vw',lg: '4vw'}} h="3vh" mb="1" border="2px" borderColor={hash_to_color_hex(course._id, 0.7)} borderStyle="dashed">
                 <Text fontSize="xs" isTruncated> {course.course_name} </Text>
             </Button>
         );
