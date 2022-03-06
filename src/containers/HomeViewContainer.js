@@ -220,17 +220,17 @@ function HomeViewContainer(props) {
           {renderMobileWarning()}
         <Flex justifyContent="space-between" mb={4} grow="1" flexDirection="column" alignItems="center">
           <Spacer/>
-          <Flex justifyContent={["center","space-between" ]}flexDirection="row" alignItems="center" w="90vw" flexWrap="wrap-reverse">
+          <Flex justifyContent={["center","space-between" ]} flexDirection={{base: 'column-reverse', lg: 'row'}} alignItems="center" w="90vw">
             <Flex flexDirection="column" pt={10}>
-              <Heading as="h1" fontSize={["4xl","6xl"]} fontWeight="800" color="gray.700">Course Schedule</Heading>
-              <Heading as="h1" fontSize={["4xl","6xl"]} fontWeight="extrabold" color="gray.700" mb={4}>Re-imagined.</Heading>
-              <Heading as="h1" fontSize="3xl" fontWeight="500" color="gray.500">修課安排不再是難事。</Heading>
+              <Text align={{base: 'center', lg: 'start'}} fontSize={["4xl","6xl"]} fontWeight="800" color="gray.700">Course Schedule</Text>
+              <Text align={{base: 'center', lg: 'start'}} fontSize={["4xl","6xl"]} fontWeight="extrabold" color="gray.700" mt={-4} mb={2}>Re-imagined.</Text>
+              <Text align={{base: 'center', lg: 'start'}} fontSize={["xl","3xl"]} fontWeight="500" color="gray.500">修課安排不再是難事。</Text>
               <Spacer my={4}/>
-              <Flex justifyContent="start" alignItems="center" flexDirection="row">
+              <Flex justifyContent={{base: 'center', lg: 'start'}} alignItems="center" flexDirection="row">
                 <Link to="/course"><Button colorScheme="teal" variant="solid" size="lg" mr={4}>開始使用</Button></Link>
                 <Link to="/about"><Button colorScheme="teal" variant="outline" size="lg" mr={4}>了解更多</Button></Link>
               </Flex> 
-              <Flex alignItems="start">
+              <Flex alignItems="start" justifyContent={{base: 'center', lg: 'start'}}>
                 <Flex flexDirection="column" alignItems="start">
                   <AnimatePresence initial={true} exitBeforeEnter={true}>
                     {
