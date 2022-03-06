@@ -2,7 +2,6 @@ import { React, useEffect, useState } from 'react';
 import {
     Box,
     Flex,
-    Heading,
     Image,
     Spacer,
     Button,
@@ -234,7 +233,7 @@ function HomeViewContainer(props) {
                 <Flex flexDirection="column" alignItems="start">
                   <AnimatePresence initial={true} exitBeforeEnter={true}>
                     {
-                      newsCard.map((item, index) => {
+                      newsCard.map((item, index) => { // eslint-disable-line
                         if (index === displayingCard){
                           return (
                             <motion.div key={index} initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }} transition={{duration: 0.4}}>
