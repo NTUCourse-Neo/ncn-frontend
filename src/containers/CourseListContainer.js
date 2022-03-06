@@ -23,7 +23,7 @@ import {
     FaExclamationTriangle,
     FaInfoCircle,
 } from 'react-icons/fa';
-
+import { FadeLoader } from 'react-spinners';
 import { MdDragHandle } from 'react-icons/md';
 import { patchCourseTable } from '../actions/index';
 import { hash_to_color_hex } from '../utils/colorAgent';
@@ -85,6 +85,7 @@ function CourseListContainer({ courseTable, courses, loading }) {
     setIsLoading(false);
   }
 
+  // TODO: refactor logic
   const isEdited = () => {
     // return true if the popup data is different from the original data.
     return !(courseListForSort.every((course, index) => course === Object.keys(courses)[index])) || prepareToRemoveCourseId.length > 0;
@@ -145,9 +146,9 @@ function CourseListContainer({ courseTable, courses, loading }) {
 
   if(loading){
     return(
-      <>
-      
-      </>
+      <Flex h='60vh' w='100%' justify='center' align='center'>
+        <FadeLoader margin="8" radius="5" height="20" width="8" color="teal"/>
+      </Flex>
     );
   }
 
