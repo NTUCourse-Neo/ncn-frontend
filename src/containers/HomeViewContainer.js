@@ -39,7 +39,7 @@ import {motion, AnimatePresence} from 'framer-motion';
 
 const newsCard = [
   (
-    <Flex h='180px' overflowY={'auto'} w={["80vw","80vw","50vw","25vw"]} justifyContent={["center","start" ]} alignItems="start" flexDirection="column" bg="teal.200" borderRadius="xl" boxShadow="xl" p="4" mt="8">
+    <Flex h={{base: '200px', lg: '180px'}} overflowY={'auto'} w={["80vw","80vw","50vw","25vw"]} justifyContent={["center","start" ]} alignItems="start" flexDirection="column" bg="teal.200" borderRadius="xl" boxShadow="xl" p="4" mt="8">
       <Text fontSize="xl" fontWeight="800" color="gray.700" mb="2">👋 We are hiring!</Text>
       <Text fontSize="md" fontWeight="500" color="gray.600">新夥伴招募中，想跟我們一起打造更優質的選課系統嗎？ 快來加入我們吧！🥰</Text>
       <Flex flexDirection='column' flexGrow={1} justify='end' w='100%'>
@@ -51,7 +51,7 @@ const newsCard = [
     </Flex>
   ),
   (
-    <Flex h='180px' overflowY={'auto'} w={["80vw","80vw","50vw","25vw"]} justifyContent={["center","start" ]} alignItems="start" flexDirection="column" bg="teal.200" borderRadius="xl" boxShadow="xl" p="4" mt="8">
+    <Flex h={{base: '200px', lg: '180px'}} overflowY={'auto'} w={["80vw","80vw","50vw","25vw"]} justifyContent={["center","start" ]} alignItems="start" flexDirection="column" bg="teal.200" borderRadius="xl" boxShadow="xl" p="4" mt="8">
       <Text fontSize="xl" fontWeight="800" color="gray.700" mb="2">🎉 已更新臺大 110-2 課表</Text>
       <Text fontSize="md" fontWeight="500" color="gray.600">讚啦！我們已更新 110 學年度第二學期的課程囉！<br/>現在就開始規劃課程吧！ 🥰</Text>
       <Flex flexDirection='column' flexGrow={1} justify='end' w='100%'>
