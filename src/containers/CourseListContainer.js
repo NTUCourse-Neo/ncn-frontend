@@ -46,7 +46,7 @@ function CourseListContainer({ courseTable, courses, loading }) {
     //console.log('new list for sort', Object.keys(courses));
     setCourseListForSort(Object.keys(courses));
   } , [courses]);
-  
+
   const handleDelete = (courseId) => {
     if (prepareToRemoveCourseId.includes(courseId)){
         // If the course is in the prepareToRemoveCourseId, remove it from the list.
@@ -72,6 +72,7 @@ function CourseListContainer({ courseTable, courses, loading }) {
           isClosable: true,
         });
         setCourseListForSort(res_table.courses)
+        setPrepareToRemoveCourseId([]);
       }
     }catch(err){
       toast({
