@@ -147,7 +147,7 @@ function CourseListContainer({ courseTable, courses, loading }) {
   if(loading){
     return(
       <Flex h='60vh' w='100%' justify='center' align='center'>
-        <FadeLoader margin="8" radius="5" height="20" width="8" color="teal"/>
+        <FadeLoader margin="8px" radius="5px" height="20px" width="8px" color="teal"/>
       </Flex>
     );
   }
