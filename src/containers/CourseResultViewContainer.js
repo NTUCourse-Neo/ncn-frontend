@@ -46,9 +46,10 @@ import {
     AlertDialogFooter,
     Alert,
     AlertIcon,
+    Icon,
 } from '@chakra-ui/react';
 import { BeatLoader } from 'react-spinners';
-import { FaAngleLeft, FaChevronDown, FaChevronUp, FaPlus, FaMinus, FaArrowRight, FaRss } from 'react-icons/fa';
+import { FaChevronDown, FaChevronUp, FaPlus, FaMinus, FaArrowRight, FaRss, FaRegCalendarAlt } from 'react-icons/fa';
 import CourseInfoRowContainer from './CourseInfoRowContainer';
 import FilterModal from '../components/FilterModal';
 import CourseSearchInput from '../components/CourseSearchInput';
@@ -193,6 +194,15 @@ function CourseResultViewContainer() {
 
       // console.log(isFetchingCourseStatus);
   } ,[isCourseStatusModalOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // if isMobile, when show Alert Modal, set displayTable to false to prevent ugly overlapping
+  useEffect(()=>{
+    if (isLoginWarningOpen){
+      if (isMobile){
+        setDisplayTable(false);
+      }
+    }
+  },[isLoginWarningOpen]) // eslint-disable-line react-hooks/exhaustive-deps
   
   const renderCourseStatusModal = () => {
     const renderFormattedTime = () => {
@@ -537,15 +547,15 @@ function CourseResultViewContainer() {
                 </Box>
             </Flex>
             <Fade in={!displayTable}>
-                <Flex as="button" flexDirection={isMobile? "row":"column"} alignItems="center" justifyContent="center" position="absolute" top={isMobile? "85vh":"80vh"} left={isMobile? "70vw":"90vw"} bg="gray.100" boxShadow="md" py={isMobile?"1":"4"} px="2" borderRadius="xl"
+                <Flex as="button" flexDirection="row" alignItems="center" justifyContent="center" position="absolute" top={isMobile? "85vh":"80vh"} left={isMobile? "70vw":"90vw"} bg="gray.100" boxShadow="md" py="1" px="4" borderRadius="xl"
                 onClick={() => setDisplayTable(!displayTable)} _hover={{boxShadow:"lg", transform:"translateY(-2px) scale(1.02)"}} transition="all 200ms">
-                  <FaAngleLeft size={24}/>
-                    <Text my="2" fontWeight={800} fontSize={isMobile? "md":"lg"} color="gray.600" style={isMobile?{}:{writingMode: "vertical-rl"}}>課表</Text>
+                  <Icon mr="1" as={FaRegCalendarAlt} boxSize="4" color="teal.500" />
+                  <Text my="2" fontWeight={800} fontSize={isMobile? "md":"lg"} color="gray.600">課表</Text>
                 </Flex>
             </Fade>
             <Collapse in={displayTable} animateOpacity>
                 <Flex justifyContent="end" mr="2">
-                    <Box position="absolute" top={isMobile?"12vh":"8vh"} zIndex={isMobile? "10000":"1"} w={isMobile? "90vw":"40vw"} h={isMobile? "70vh":"70vh"} bg="gray.200" mt="128px" borderRadius="lg" boxShadow="xl">
+                    <Box position="absolute" top={isMobile?"":"8vh"} bottom="0" right="0" zIndex={isMobile? "10000":"1"} w={isMobile? "100vw":"40vw"} h={isMobile? "90vh":"70vh"} bg="gray.200" mt="128px" borderRadius="lg" boxShadow="xl">
                         <SideCourseTableContainer isOpen={displayTable} setIsOpen={setDisplayTable} hoveredCourse={hoveredCourse} setHoveredCourse={setHoveredCourse} courseIds={coursesInTable} setCourseIds={setCoursesInTable} setIsLoginWarningOpen={setIsLoginWarningOpen} agreeToCreateTableWithoutLogin={agreeToCreateTableWithoutLogin} setIsCourseStatusModalOpen={setIsCourseStatusModalOpen}/>
                     </Box>
                 </Flex>

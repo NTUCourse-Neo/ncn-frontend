@@ -26,8 +26,6 @@ import {
     TabList,
     TabPanels,
     TabPanel,
-    Badge,
-    Tag,
     SkeletonText,
     useMediaQuery
 } from '@chakra-ui/react';
@@ -38,19 +36,15 @@ import {
     FaRegHandPointUp,
     FaRegMeh,
     FaPlusSquare,
-    FaPlus,
-    FaTrash,
-    FaInfoCircle
+    FaAngleDown,
 } from 'react-icons/fa';
 import CourseTableContainer from './CourseTableContainer';
 import { fetchCourseTableCoursesByIds, createCourseTable, linkCoursetableToUser, fetchCourseTable, patchCourseTable, fetchUserById, logIn, updateCourseTable } from '../actions/index';
 import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import { useAuth0 } from "@auth0/auth0-react";
-// import { BeatLoader } from 'react-spinners';
-import { hash_to_color_hex } from '../utils/colorAgent';
-import { genNolAddUrl, openPage } from './CourseDrawerContainer';
 import { useNavigate } from 'react-router-dom';
+import CourseListContainer from './CourseListContainer';
 
 const LOCAL_STORAGE_KEY = 'NTU_CourseNeo_Course_Table_Key';
 
@@ -61,6 +55,7 @@ function SideCourseTableContainer(props) {
     const dispatch = useDispatch();
     const courseTable = useSelector(state => state.course_table);
     const userInfo = useSelector(state => state.user);
+    const [isMobile] = useMediaQuery("(max-width: 1000px)");
 
     // some local states for handling course data
     // const courseIds = props.courseIds;
@@ -71,15 +66,7 @@ function SideCourseTableContainer(props) {
 
     const [loading, setLoading] = useState(true);
     const [expired, setExpired] = useState(false);
-
-    // state for delete function in the side course table list.
-    // TODO: Move this part to a new dedicated component.
-    const [isDeletingCourse, setIsDeletingCourse] = useState("");
     console.error = () => {};
-
-
-    const [isMobile] = useMediaQuery('(max-width: 760px)');
-
 
     const parseCourseDateTime = (course, course_time_tmp) => {
       course.time_loc_pair.map(time_loc_pair => { // eslint-disable-line array-callback-return
@@ -402,81 +389,11 @@ function SideCourseTableContainer(props) {
           </Flex>
         );
       }
-      const renderCourseList = () => {
-        const handleDeleteCourse = async (course_id) => {
-          // console.log("course_id: ",course_id);
-          const new_courses = courseTable.courses.filter(course => course !== course_id);
-          // console.log("new_courses: ",new_courses);
-          setIsDeletingCourse(course_id);
-          try {
-            await dispatch(patchCourseTable(courseTable._id, courseTable.name, courseTable.user_id, courseTable.expire_ts, new_courses));
-              toast({
-                title: `刪除課程成功`,
-                description: `課程已刪除`,
-                status: 'success',
-                duration: 3000,
-                isClosable: true
-              });
-            }catch (e){
-              toast({
-                title: `刪除課程失敗`,
-                description: `請稍後再試`,
-                status: 'error',
-                duration: 3000,
-                isClosable: true
-              });
-            }
-            setIsDeletingCourse("");
-          };
-        return(
-          <Flex flexDirection="column" justifyContent={isMobile? "start":"center"} alignItems={isMobile? "start":"center"} h="100%" w="100%">
-            {
-                Object.keys(courses).map((key, index) => {
-                const course = courses[key];
-                if(isMobile){
-                  return(
-                    <Flex key={index} flexDirection="row" justifyContent="start" alignItems="center" h="100%" w="100%" py="1" px="2" bg="gray.100" my="1" borderRadius="lg" as="button">
-                      <Tag size="md" key={index} variant='solid' bg={hash_to_color_hex(course._id, 0.8)} color="gray.800" mr="2">{index + 1}</Tag>
-                    <Flex key={index} flexDirection="column" justifyContent="start" alignItems="start" h="100%" w="100%">
-                        <Flex flexDirection="row" justifyContent="start" alignItems="center" h="100%" w="100%" mb="1">
-                          <Text fontSize="xl" fontWeight="bold" color="gray">{course.course_name}</Text>
-                          <IconButton size="xs" colorScheme="blue" icon={<FaInfoCircle />} variant="ghost" onClick={() => {navigate(`/courseinfo/${course._id}`);}}/>
-                        </Flex>
-                        <Flex flexDirection="row" justifyContent="start" alignItems="center" mb="1">
-                          <Badge colorScheme="blue" size="lg" mr="2">{course.id}</Badge>
-                        </Flex>
-                        <Flex flexDirection="row" justifyContent="start" alignItems="center">
-                          <Button mr="2" size="xs" variant="outline" colorScheme="blue" leftIcon={<FaPlus/>} onClick={() => openPage(genNolAddUrl(course), true)}>課程網</Button>
-                          <IconButton ml="2" size="xs" variant="outline" colorScheme="red" icon={<FaTrash />} onClick={() => handleDeleteCourse(course._id)} isLoading={isDeletingCourse === course._id}/>
-                        </Flex>
-                      </Flex>
-                  </Flex>
-                  );
-                }
-                return(
-                  <Flex key={index} flexDirection="row" justifyContent="center" alignItems="center" h="100%" w="100%" py="2" px="2" bg="gray.100" my="1" borderRadius="lg" as="button">
-                    <Flex flexDirection="row" justifyContent="start" alignItems="center" h="100%" w="100%">
-                      <Tag size="lg" key={index} variant='solid' bg={hash_to_color_hex(course._id, 0.8)} color="gray.800" mr="4">{index + 1}</Tag>
-                      <Badge colorScheme="blue" size="lg" mx="2">{course.id}</Badge>
-                      <Text fontSize="xl" fontWeight="bold" color="gray">{course.course_name}</Text>
-                      <IconButton ml="2" size="sm" colorScheme="blue" icon={<FaInfoCircle />} variant="ghost" onClick={() => {navigate(`/courseinfo/${course._id}`);}}/>
-                    </Flex>
-                    <Flex ml="4" flexDirection="row" justifyContent="end" alignItems="center">
-                      <Button mx="2" size="sm" variant="outline" colorScheme="blue" leftIcon={<FaPlus/>} onClick={() => openPage(genNolAddUrl(course), true)}>課程網</Button>
-                      <IconButton mx="2" size="sm" variant="outline" colorScheme="red" icon={<FaTrash />} onClick={() => handleDeleteCourse(course._id)} isLoading={isDeletingCourse === course._id}/>
-                    </Flex>
-                  </Flex>
-                );
-              })
-            }
-          </Flex>
-        );
-      };
       return(
-        <Box overflow="auto" w="100%" mt="4">
+        <Box overflow="auto" w="100%" mt={isMobile? "":"4"}>
           <Flex flexDirection="column">
             <Tabs>
-            <Flex flexDirection="row" justifyContent="start" alignItems="center" my="2" ml="4">
+            <Flex flexDirection="row" justifyContent="start" alignItems="center" mb="2" ml="4">
                 {
                   courseTable?
                   <Flex alignItems="center" flexWrap="wrap">
@@ -493,12 +410,12 @@ function SideCourseTableContainer(props) {
             </Flex>
               <TabPanels>
                 <TabPanel>
-                  <Flex flexDirection="row" justifyContent="center" alignItems="center">
+                  <Flex flexDirection="row" justifyContent="start" alignItems="center" overflowX={'auto'}>
                     <CourseTableContainer courseTimes={courseTimes} courses={courses} loading={loading || isLoading} hoveredCourseTime={hoveredCourseTime} hoveredCourse={props.hoveredCourse}/>  
                   </Flex>
                 </TabPanel>
                 <TabPanel>
-                  {renderCourseList()}
+                  <CourseListContainer courseTable={courseTable} courses={courses} loading={loading || isLoading}/>
                 </TabPanel>
               </TabPanels>
             </Tabs>
@@ -507,9 +424,9 @@ function SideCourseTableContainer(props) {
       );
     };
     return(
-      <Flex h="100%" w="100%">
+      <Flex flexDirection={isMobile? "column":"row"} h="100%" w="100%">
         <Flex justifyContent="center" alignItems="center">
-          <IconButton h="100%" icon={<FaAngleRight size={24}/>} onClick={()=>{props.setIsOpen(!props.isOpen)}} size="sm" variant="ghost"/>
+          <IconButton h={isMobile? "":"100%"} w={isMobile? "100%":""} icon={isMobile? <FaAngleDown size={24}/>:<FaAngleRight size={24}/>} onClick={()=>{props.setIsOpen(!props.isOpen)}} size="sm" variant="ghost"/>
         </Flex>
         {renderSideCourseTableContent()}
       </Flex>

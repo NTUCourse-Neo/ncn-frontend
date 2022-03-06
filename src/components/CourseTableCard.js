@@ -25,7 +25,8 @@ import {
 } from '@chakra-ui/react';
 import { hash_to_color_hex } from '../utils/colorAgent';
 import {sortableContainer, sortableElement, sortableHandle} from 'react-sortable-hoc';
-import { FaBars, FaTrashAlt, FaExclamationTriangle } from 'react-icons/fa';
+import { FaTrashAlt, FaExclamationTriangle } from 'react-icons/fa';
+import { MdDragHandle } from 'react-icons/md';
 import {RenderNolContentBtn} from '../containers/CourseDrawerContainer';
 import {useSelector, useDispatch} from 'react-redux';
 import {patchCourseTable} from '../actions';
@@ -60,7 +61,7 @@ function CourseTableCard(props){
         return !(courseOrder.every((course, index) => course===courseList[index])) || prepareToRemoveCourseId.length > 0;
     }
 
-    const DragHandle = sortableHandle(() => <FaBars />);
+    const DragHandle = sortableHandle(() => <MdDragHandle cursor="row-resize" size="20" color="gray"/>);
     const SortableElement = sortableElement(({key, course}) => (
       <Flex className="sortableHelper" alignItems="center" my="1" key={"Sortable_"+key+"_Flex"}>
         <DragHandle key={"Sortable_"+key+"_DragHandle"}/>
@@ -103,7 +104,7 @@ function CourseTableCard(props){
                     <Button  
                             bg={hash_to_color_hex(course._id, isOpen ? 0.7:0.8)} 
                             borderRadius="md" boxShadow="lg" 
-                            mb="1" p="2" w="4vw" h="3vh"
+                            mb="1" p="2" w="100%" h="3vh"
                             border={props.hoverId === courseId  ? "2px":""}
                             borderColor={hash_to_color_hex(course._id, 0.5)}
                             key={courseId+"_Button"}>
@@ -194,7 +195,7 @@ function CourseTableCard(props){
     if(props.isHover){
         const course = props.courseData;
         return(
-            <Button borderRadius="lg" boxShadow="lg" p="2" w="4vw" h="3vh" mb="1" border="2px" borderColor={hash_to_color_hex(course._id, 0.7)} borderStyle="dashed">
+            <Button borderRadius="lg" boxShadow="lg" p="2" w={props.grow? "100%":{base: '14vw', md: '12vw',lg: '4vw'}} h="3vh" mb="1" border="2px" borderColor={hash_to_color_hex(course._id, 0.7)} borderStyle="dashed">
                 <Text fontSize="xs" isTruncated> {course.course_name} </Text>
             </Button>
         );
@@ -204,7 +205,7 @@ function CourseTableCard(props){
     <>
         <Popover onOpen={onOpen} onClose={()=>{leavePopover()}} isOpen={isOpen} closeOnBlur={false} placement="auto" flip>
             <PopoverTrigger>
-                <Flex w="4vw" justifyContent="center" alignItems="center" flexDirection="column" onClick={()=>{setCourseList(courseOrder); setPrepareToRemoveCourseId([]);}}>
+                <Flex w={props.grow? "100%":{base: '14vw', md: '12vw',lg: '4vw'}} justifyContent="center" alignItems="center" flexDirection="column" onClick={()=>{setCourseList(courseOrder); setPrepareToRemoveCourseId([]);}}>
                     {courseOrder.map(courseId => {
                         return renderCourseBox(courseId, props.courseData);
                     })}
