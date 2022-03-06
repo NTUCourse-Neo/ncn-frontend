@@ -17,7 +17,7 @@
         "color-hash": "^2.0.1",
         "dotenv-defaults": "^3.0.0",
         "focus-visible": "^5.2.0",
-        "framer-motion": "^4.0.0",
+        "framer-motion": "^4.1.17",
         "moment": "^2.29.1",
         "randomcolor": "^0.6.2",
         "react": "^17.0.2",

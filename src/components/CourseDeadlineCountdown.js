@@ -96,7 +96,7 @@ function CourseDeadlineCountdown(props){
     const process_percent = ((time_percent + schedule_idx)/(course_select_schedule.length-1) * 100);
     return(
         <>
-            <Flex w={["80vw","80vw","50vw","25vw"]} justifyContent={["center","start" ]} alignItems="start" flexDirection="column" bg={status_map[status_idx].color} borderRadius="xl" boxShadow="xl" p="4" mt="8">
+            <Flex w={["80vw","80vw","50vw","25vw"]} justifyContent={["center","start" ]} alignItems="start" flexDirection="column" bg={status_map[status_idx].color} borderRadius="xl" boxShadow="xl" p="4">
                 <Flex w="100%" justifyContent="space-between" alignItems="center" wrap="wrap" css={{gap: "2"}}>
                     <Text fontSize="xl" fontWeight="800" color="gray.700" mb="2">{status_map[status_idx].emoji} {course_select_schedule[schedule_idx].name} {status_map[status_idx].name}</Text>
                     <HStack ml="1"><FaClock/><Text fontSize="sm" fontWeight="600" color="gray.700" mb="2"> 尚餘 {elasped_days} 天 {elapsed_hours} 時</Text></HStack>

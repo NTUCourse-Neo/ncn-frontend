@@ -2,7 +2,6 @@ import { React, useEffect, useState } from 'react';
 import {
     Box,
     Flex,
-    Heading,
     Image,
     Spacer,
     Button,
@@ -23,11 +22,12 @@ import {
     AlertDialogContent,
     AlertDialogOverlay,
     Center,
+    IconButton
   } from '@chakra-ui/react';
 import homeMainSvg from '../img/home_main.svg';
 import HomeCard from '../components/HomeCard';
 import { useAuth0 } from '@auth0/auth0-react';
-import { FaArrowDown, FaArrowRight, FaArrowUp } from "react-icons/fa";
+import { FaArrowDown, FaArrowRight, FaArrowUp, FaSortDown, FaSortUp } from "react-icons/fa";
 import { animateScroll as scroll, scroller } from 'react-scroll'
 import { Link, useNavigate } from "react-router-dom";
 import { BeatLoader } from 'react-spinners';
@@ -35,7 +35,31 @@ import { fetchUserById, registerNewUser, logIn } from '../actions/';
 import { useDispatch } from 'react-redux';
 import CourseDeadlineCountdown from '../components/CourseDeadlineCountdown';
 import setPageMeta from '../utils/seo';
+import {motion, AnimatePresence} from 'framer-motion';
 
+const newsCard = [
+  (
+    <Flex h={{base: '200px', lg: '180px'}} overflowY={'auto'} w={["80vw","80vw","50vw","25vw"]} justifyContent={["center","start" ]} alignItems="start" flexDirection="column" bg="teal.200" borderRadius="xl" boxShadow="xl" p="4" mt="8">
+      <Text fontSize="xl" fontWeight="800" color="gray.700" mb="2">👋 We are hiring!</Text>
+      <Text fontSize="md" fontWeight="500" color="gray.600">新夥伴招募中，想跟我們一起打造更優質的選課系統嗎？ 快來加入我們吧！🥰</Text>
+      <Flex flexDirection='column' flexGrow={1} justify='end' w='100%'>
+        <Flex justifyContent="space-between" alignItems="center" flexDirection="row">
+          <Text fontSize="sm" fontWeight="400" color="gray.500" mt="4">Team NTUCourse Neo - 20220303</Text>
+          <Link to="/recruiting"><Button colorScheme="teal" variant="solid" size="sm" mt="4" rightIcon={<FaArrowRight />}>加入我們</Button></Link>
+        </Flex>
+      </Flex>
+    </Flex>
+  ),
+  (
+    <Flex h={{base: '200px', lg: '180px'}} overflowY={'auto'} w={["80vw","80vw","50vw","25vw"]} justifyContent={["center","start" ]} alignItems="start" flexDirection="column" bg="teal.200" borderRadius="xl" boxShadow="xl" p="4" mt="8">
+      <Text fontSize="xl" fontWeight="800" color="gray.700" mb="2">🎉 已更新臺大 110-2 課表</Text>
+      <Text fontSize="md" fontWeight="500" color="gray.600">讚啦！我們已更新 110 學年度第二學期的課程囉！<br/>現在就開始規劃課程吧！ 🥰</Text>
+      <Flex flexDirection='column' flexGrow={1} justify='end' w='100%'>
+        <Text fontSize="sm" fontWeight="400" color="gray.500" mt="4">Team NTUCourse Neo - 20210115</Text>
+      </Flex>
+    </Flex>
+  ),
+]
 
 function HomeViewContainer(props) {
   const toast = useToast();
@@ -47,6 +71,7 @@ function HomeViewContainer(props) {
 
   const [ isRegistering, setIsRegistering ] = useState(false);
   const [isMobile] = useMediaQuery("(max-width: 760px)") 
+  const [ displayingCard, setDisplayingCard ] = useState(0);
 
   const scroll_config = {duration: 1000,delay: 50,smooth: true, offset: -60};
 
@@ -76,11 +101,11 @@ function HomeViewContainer(props) {
         <AlertDialogContent>
           <AlertDialogHeader>溫馨提醒</AlertDialogHeader>
           <AlertDialogBody>
-            <Center mb="4">
-              <Image src="https://media.giphy.com/media/7NoNw4pMNTvgc/giphy.gif" alt="" width="100px" borderRadius="lg" boxShadow="lg"/>
-            </Center>
-            <Text fontWeight="500" color="gray.600">
-              行動裝置介面仍在最佳化中，使用手機瀏覽課表與課程將影響到您的體驗。建議使用電腦瀏覽，讓您能獲得更好的選課時光。<br/>請再給我們一些時間 🙏
+            <Text fontWeight="400" color="gray.600">
+              行動裝置介面仍在調整測試中。建議使用電腦瀏覽，能讓您獲得更好的選課體驗。
+            </Text>
+            <Text mt="2" fontWeight="700" color="gray.600">
+              我們正在努力讓 NTUCourse Neo 更加進步，若有任何建議歡迎至問題回報處告訴我們 🙏
             </Text>
           </AlertDialogBody>
           <AlertDialogFooter>
@@ -194,28 +219,32 @@ function HomeViewContainer(props) {
           {renderMobileWarning()}
         <Flex justifyContent="space-between" mb={4} grow="1" flexDirection="column" alignItems="center">
           <Spacer/>
-          <Flex justifyContent={["center","space-between" ]}flexDirection="row" alignItems="center" w="90vw" flexWrap="wrap-reverse">
-            <Box>
-              <Heading as="h1" fontSize={["4xl","6xl"]} fontWeight="800" color="gray.700">Course Schedule</Heading>
-              <Heading as="h1" fontSize={["4xl","6xl"]} fontWeight="extrabold" color="gray.700" mb={4}>Re-imagined.</Heading>
-              <Heading as="h1" fontSize="3xl" fontWeight="500" color="gray.500" mb={4}>修課安排不再是難事。</Heading>
-              <Spacer my={8}/>
-              <Flex flexDirection="column" alignItems="start">
-                <Flex justifyContent={["center","start" ]} alignItems="center" flexDirection="row">
-                  <Link to="/course"><Button colorScheme="teal" variant="solid" size="lg" mr={4}>開始使用</Button></Link>
-                  <Link to="/about"><Button colorScheme="teal" variant="outline" size="lg" mr={4}>了解更多</Button></Link>
-                </Flex> 
-                <Flex w={["80vw","80vw","50vw","25vw"]} justifyContent={["center","start" ]} alignItems="start" flexDirection="column" bg="teal.200" borderRadius="xl" boxShadow="xl" p="4" mt="8">
-                  <Text fontSize="xl" fontWeight="800" color="gray.700" mb="2">👋 We are hiring!</Text>
-                  <Text fontSize="md" fontWeight="500" color="gray.600">新夥伴招募中，想跟我們一起打造更優質的選課系統嗎？ 快來加入我們吧！🥰</Text>
-                  <Flex w="100%" justifyContent="space-between" alignItems="center" flexDirection="row">
-                    <Text fontSize="sm" fontWeight="400" color="gray.500" mt="4">Team NTUCourse Neo - 20220303</Text>
-                    <Link to="/recruiting"><Button colorScheme="teal" variant="solid" size="sm" mt="4" rightIcon={<FaArrowRight />}>加入我們</Button></Link>
-                  </Flex>
+          <Flex justifyContent={["center","space-between" ]} flexDirection={{base: 'column-reverse', lg: 'row'}} alignItems="center" w="90vw">
+            <Flex flexDirection="column" pt={10}>
+              <Text align={{base: 'center', lg: 'start'}} fontSize={["4xl","6xl"]} fontWeight="800" color="gray.700">Course Schedule</Text>
+              <Text align={{base: 'center', lg: 'start'}} fontSize={["4xl","6xl"]} fontWeight="extrabold" color="gray.700" mt={-4} mb={2}>Re-imagined.</Text>
+              <Text align={{base: 'center', lg: 'start'}} fontSize={["xl","3xl"]} fontWeight="500" color="gray.500">修課安排不再是難事。</Text>
+              <Spacer my={4}/>
+              <Flex justifyContent={{base: 'center', lg: 'start'}} alignItems="center" flexDirection="row">
+                <Link to="/course"><Button colorScheme="teal" variant="solid" size="lg" mr={4}>開始使用</Button></Link>
+                <Link to="/about"><Button colorScheme="teal" variant="outline" size="lg" mr={4}>了解更多</Button></Link>
+              </Flex> 
+              <Flex alignItems="start" justifyContent={{base: 'center', lg: 'start'}}>
+                <Flex flexDirection="column" alignItems="start">
+                  <AnimatePresence initial={true} exitBeforeEnter={true}>
+                    <motion.div key={displayingCard} initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }} transition={{duration: 0.4}}>
+                      {newsCard[displayingCard]}
+                    </motion.div>
+                  </AnimatePresence>
+                  <Spacer my="4" />
+                  <CourseDeadlineCountdown />
                 </Flex>
-                <CourseDeadlineCountdown />
+                <Flex flexDirection={'column'} justify='start'  mt="10"> 
+                  <IconButton ml="2" icon={<FaSortUp color="gray.500"/>} variant="ghost" size="sm" onClick={() => setDisplayingCard((displayingCard + 1)%newsCard.length)} />
+                  <IconButton ml="2" icon={<FaSortDown color="gray.500"/>} variant="ghost" size="sm" onClick={() => setDisplayingCard((displayingCard - 1)<0?(displayingCard-1+newsCard.length):(displayingCard - 1))} />
+                </Flex>
               </Flex>
-            </Box>
+            </Flex>
             <Spacer/>
             <Image src={homeMainSvg} alt="home_main" w={["80vw","50vw"]}/>
           </Flex>
