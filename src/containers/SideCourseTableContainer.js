@@ -26,10 +26,7 @@ import {
     TabList,
     TabPanels,
     TabPanel,
-    Badge,
-    Tag,
     SkeletonText,
-    useMediaQuery
 } from '@chakra-ui/react';
 import {
     FaRegEdit,
@@ -38,18 +35,12 @@ import {
     FaRegHandPointUp,
     FaRegMeh,
     FaPlusSquare,
-    FaPlus,
-    FaTrash,
-    FaInfoCircle
 } from 'react-icons/fa';
 import CourseTableContainer from './CourseTableContainer';
 import { fetchCourseTableCoursesByIds, createCourseTable, linkCoursetableToUser, fetchCourseTable, patchCourseTable, fetchUserById, logIn, updateCourseTable } from '../actions/index';
 import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import { useAuth0 } from "@auth0/auth0-react";
-// import { BeatLoader } from 'react-spinners';
-import { hash_to_color_hex } from '../utils/colorAgent';
-import { genNolAddUrl, openPage } from './CourseDrawerContainer';
 import { useNavigate } from 'react-router-dom';
 import CourseListContainer from './CourseListContainer';
 
@@ -72,15 +63,7 @@ function SideCourseTableContainer(props) {
 
     const [loading, setLoading] = useState(true);
     const [expired, setExpired] = useState(false);
-
-    // state for delete function in the side course table list.
-    // TODO: Move this part to a new dedicated component.
-    const [isDeletingCourse, setIsDeletingCourse] = useState("");
     console.error = () => {};
-
-
-    const [isMobile] = useMediaQuery('(max-width: 760px)');
-
 
     const parseCourseDateTime = (course, course_time_tmp) => {
       course.time_loc_pair.map(time_loc_pair => { // eslint-disable-line array-callback-return
