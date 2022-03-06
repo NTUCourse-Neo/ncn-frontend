@@ -390,7 +390,7 @@ function SideCourseTableContainer(props) {
         );
       }
       return(
-        <Box overflow="auto" w="100%">
+        <Box overflow="auto" w="100%" mt={isMobile? "":"4"}>
           <Flex flexDirection="column">
             <Tabs>
             <Flex flexDirection="row" justifyContent="start" alignItems="center" mb="2" ml="4">
