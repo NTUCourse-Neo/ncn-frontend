@@ -134,8 +134,8 @@ function HeaderBar() {
   if(isMobile) {
     return(
       <>
-        <Flex position="fixed" w="100%" h="64px" bg="teal.300" flexDirection="row" justifyContent="space-between" alignItems="center" zIndex="100000" pl="8" pr="4">
-          <Link to="/"><Heading fontSize="2xl" fontWeight="700" mr="auto" color="gray.600" minW="200px">NTUCourse Neo</Heading></Link>
+        <Flex position="fixed" w="100%" h="64px" bg="teal.300" flexDirection="row" justifyContent="space-between" alignItems="center" zIndex="1000" pl="8" pr="4">
+          <Link to="/"><Heading fontSize="xl" fontWeight="700" mr="auto" color="gray.600" minW="200px">NTUCourse Neo</Heading></Link>
           <Link to="/course"><Button colorScheme="blue" variant="ghost" size="md" leftIcon={<FaBook />}>課程</Button></Link>
           {renderSignInButton()}
         </Flex>
