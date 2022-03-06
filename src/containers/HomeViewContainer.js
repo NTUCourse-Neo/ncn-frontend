@@ -21,7 +21,6 @@ import {
     AlertDialogHeader,
     AlertDialogContent,
     AlertDialogOverlay,
-    Center,
     IconButton
   } from '@chakra-ui/react';
 import homeMainSvg from '../img/home_main.svg';
