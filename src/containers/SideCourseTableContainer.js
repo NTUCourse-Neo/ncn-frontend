@@ -407,7 +407,7 @@ function SideCourseTableContainer(props) {
             </Flex>
               <TabPanels>
                 <TabPanel>
-                  <Flex flexDirection="row" justifyContent="start" alignItems="center">
+                  <Flex flexDirection="row" justifyContent="start" alignItems="center" overflowX={'auto'}>
                     <CourseTableContainer courseTimes={courseTimes} courses={courses} loading={loading || isLoading} hoveredCourseTime={hoveredCourseTime} hoveredCourse={props.hoveredCourse}/>  
                   </Flex>
                 </TabPanel>
