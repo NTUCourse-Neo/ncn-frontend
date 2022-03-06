@@ -1,8 +1,10 @@
-import { Flex, Spacer, Text, Button, ButtonGroup, useMediaQuery, Image, IconButton } from '@chakra-ui/react';
-import { FaExclamationTriangle, FaGithub, FaHeartbeat } from 'react-icons/fa';
+import { Flex, Spacer, Text, Button, ButtonGroup, useMediaQuery, Image, IconButton, HStack, Icon } from '@chakra-ui/react';
+import { FaCodeBranch, FaExclamationTriangle, FaGithub, FaHeartbeat } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 import ncnLogo from '../img/ncn_logo.png';
 
 function Footer({mini}) {
+    const ver = "beta (20220306)"
     const handleOpenPage = (page) => {
         window.open(page, '_blank');
     };
@@ -13,8 +15,11 @@ function Footer({mini}) {
                 mini && isMobile?
                 <>
                     <Flex w="100%" flexDirection="row" justifyContent="space-between" alignItems="center">
-                        <Image src={ncnLogo} alt="ncnLogo" boxSize="6"/>
-                        <Text fontSize="xs" color="gray.300">Beta V1.2 (20220306)</Text>
+                        <Link to="/"><Image src={ncnLogo} alt="ncnLogo" boxSize="6"/></Link>
+                        <HStack>
+                            <Icon as={FaCodeBranch} color="gray.300" size="4"></Icon>
+                            <Text fontSize="xs" color="gray.300" fontWeight="600">{ver}</Text>
+                        </HStack>
                         <ButtonGroup spacing="2">
                             <IconButton size="sm" variant="ghost" color="gray.400" icon={<FaGithub size="20"/>} mx="1" onClick={() => handleOpenPage("https://github.com/NTUCourse-Neo")} />
                             <IconButton size="sm" variant="ghost" color="gray.400" icon={<FaHeartbeat size="20"/>} mx="1" onClick={() => handleOpenPage("https://status.course.myntu.me/")} />
@@ -25,9 +30,12 @@ function Footer({mini}) {
                 :
                 <>
                     <Text size="sm" color="gray.500" ml="2" fontWeight="800">NTUCourse Neo</Text>
-                    <Text fontSize="xs" color="gray.300">Beta V1.1.1 (20220303)</Text>
+                    <HStack ml="2">
+                        <Icon as={FaCodeBranch} color="gray.300" size="4"></Icon>
+                        <Text fontSize="xs" color="gray.300" fontWeight="600">{ver}</Text>
+                    </HStack>
                     {isMobile? <></>:<Spacer />}
-                    <Text fontSize="sm" color="gray.300">A wp1101 project. Made with 💖 by </Text>
+                    <Text fontSize="sm" color="gray.300">Made with 💖 by </Text>
                     <ButtonGroup spacing="2">
                         <Button size="xs" leftIcon={<FaGithub/>} color="gray.300" variant="ghost" onClick={() => handleOpenPage("https://github.com/jc-hiroto")}>jc-hiroto</Button>
                         <Button size="xs" leftIcon={<FaGithub/>} color="gray.300" variant="ghost" onClick={() => handleOpenPage("https://github.com/swh00tw")}>swh00tw</Button>
