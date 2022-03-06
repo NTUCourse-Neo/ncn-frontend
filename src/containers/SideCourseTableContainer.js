@@ -423,18 +423,10 @@ function SideCourseTableContainer(props) {
         </Box>
       );
     };
-    if(isMobile){
-      return(
-        <Flex h="100%" w="100%" flexDirection="column">
-          <IconButton w="100%" icon={<FaAngleDown size={24}/>} onClick={()=>{props.setIsOpen(!props.isOpen)}} size="sm" variant="ghost"/>
-          {renderSideCourseTableContent()}
-        </Flex>
-      );
-    }
     return(
-      <Flex h="100%" w="100%">
+      <Flex flexDirection={isMobile? "column":"row"} h="100%" w="100%">
         <Flex justifyContent="center" alignItems="center">
-          <IconButton h="100%" icon={<FaAngleRight size={24}/>} onClick={()=>{props.setIsOpen(!props.isOpen)}} size="sm" variant="ghost"/>
+          <IconButton h={isMobile? "":"100%"} w={isMobile? "100%":""} icon={isMobile? <FaAngleDown size={24}/>:<FaAngleRight size={24}/>} onClick={()=>{props.setIsOpen(!props.isOpen)}} size="sm" variant="ghost"/>
         </Flex>
         {renderSideCourseTableContent()}
       </Flex>
