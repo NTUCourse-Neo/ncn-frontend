@@ -23,7 +23,7 @@ function Footer({mini}) {
                         </HStack>
                         <ButtonGroup spacing="2">
                             <IconButton size="sm" variant="ghost" color="gray.400" icon={<FaHeartbeat size="20"/>} mx="1" onClick={() => handleOpenPage("https://status.course.myntu.me/")} />
-                            <IconButton size="sm" variant="ghost" color="gray.400" icon={<DiscordIcon boxSize="5"/>} mx="1" onClick={() => handleOpenPage("https://discord.gg/")} />
+                            <IconButton size="sm" variant="ghost" color="gray.400" icon={<DiscordIcon boxSize="5"/>} mx="1" onClick={() => handleOpenPage("https://discord.gg/M7NrenYEbS")} />
                             <IconButton size="sm" variant="ghost" color="gray.400" icon={<FaGithub size="20"/>} mx="1" onClick={() => handleOpenPage("https://github.com/NTUCourse-Neo")} />
                         </ButtonGroup>
                     </Flex>
@@ -45,7 +45,7 @@ function Footer({mini}) {
                     {isMobile? <></>:<Spacer />}
                     <ButtonGroup spacing="2">
                         <Button size="xs" variant="ghost" color="gray.500" leftIcon={<FaHeartbeat/>} mx="1" onClick={() => handleOpenPage("https://status.course.myntu.me/")}>服務狀態</Button>
-                        <Button size="xs" variant="ghost" color="gray.500" leftIcon={<DiscordIcon />} mx="1" onClick={() => handleOpenPage("https://www.discord.gg/")}>Discord</Button>
+                        <Button size="xs" variant="ghost" color="gray.500" leftIcon={<DiscordIcon />} mx="1" onClick={() => handleOpenPage("https://discord.gg/M7NrenYEbS")}>Discord</Button>
                         <Button size="xs" variant="ghost" color="gray.500" leftIcon={<FaGithub/>} mx="1" onClick={() => handleOpenPage("https://github.com/NTUCourse-Neo")}>Github</Button>
                     </ButtonGroup>
                 </>
