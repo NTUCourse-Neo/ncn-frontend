@@ -21,12 +21,14 @@ import {
     AlertDialogHeader,
     AlertDialogContent,
     AlertDialogOverlay,
-    IconButton
+    IconButton,
+    Icon,
+    HStack
   } from '@chakra-ui/react';
 import homeMainSvg from '../img/home_main.svg';
 import HomeCard from '../components/HomeCard';
 import { useAuth0 } from '@auth0/auth0-react';
-import { FaArrowDown, FaArrowRight, FaArrowUp, FaSortDown, FaSortUp } from "react-icons/fa";
+import { FaArrowDown, FaArrowRight, FaArrowUp, FaGithub, FaSortDown, FaSortUp } from "react-icons/fa";
 import { animateScroll as scroll, scroller } from 'react-scroll'
 import { Link, useNavigate } from "react-router-dom";
 import { BeatLoader } from 'react-spinners';
@@ -35,6 +37,8 @@ import { useDispatch } from 'react-redux';
 import CourseDeadlineCountdown from '../components/CourseDeadlineCountdown';
 import setPageMeta from '../utils/seo';
 import {motion, AnimatePresence} from 'framer-motion';
+import HomeFooterImg from '../img/home_footer.svg';
+import { DiscordIcon } from '../components/CustomIcons';
 
 const newsCard = [
   (
@@ -213,7 +217,7 @@ function HomeViewContainer(props) {
   };
 
     return (
-        <Box maxW="screen-md" mx="auto" overflow="visible" p="64px">
+        <Box maxW="screen-md" mx="auto" overflow="visible" px="64px" pt="64px">
           {renderNewRegisterModal()}
           {renderMobileWarning()}
         <Flex justifyContent="space-between" mb={4} grow="1" flexDirection="column" alignItems="center">
@@ -294,6 +298,40 @@ function HomeViewContainer(props) {
           </HomeCard>
           <Spacer mt="10" mb="10"/>
           <Button variant="ghost" size="lg" onClick={() => scroll.scrollTo(0)} leftIcon={<FaArrowUp/>}>返回頂端</Button>
+          <Spacer mt="10" mb="10"/>
+          <Flex w="100vw" bg="gray.700" px={{base:"8", md:"16", lg:"64"}} py="16" justifyContent="space-between" alignItems="center" flexWrap="wrap" css={{gap: "2rem"}}>
+            <HStack spacing={8}>
+              <Icon as={FaGithub} boxSize="16" color="white" />
+              <Flex flexDirection="column" alignItems="start">
+                <Text fontSize="4xl" color="gray.100" fontWeight="800">動手參與開發</Text>
+                <Text fontSize="lg" color="gray.100" fontWeight="500">不管是 Issue 、 PR 或甚至加入我們 ，歡迎一起來讓 NTUCourse Neo 變得更加完美。</Text>
+              </Flex>
+            </HStack>
+            <HStack>
+              <Link to="recruiting"><Button variant="outline" colorScheme="whiteAlpha" size="lg" color="white" borderColor="white">夥伴招募 Recruiting</Button></Link>
+              <Button variant="solid" size="lg" onClick={() => window.open("https://github.com/NTUCourse-Neo/")} leftIcon={<FaGithub/>}>NTUCourse Neo</Button>
+            </HStack>
+          </Flex>
+          <Flex w="100vw" bg="#5865F2" px={{base:"8", md:"16", lg:"64"}} py="16" justifyContent="space-between" alignItems="center" flexWrap="wrap" css={{gap: "2rem"}}>
+            <HStack spacing={8} wrap="wrap" justify="center">
+              <Icon as={DiscordIcon} boxSize="16" color="white" />
+              <Flex flexDirection="column" alignItems="start">
+                <Text fontSize="4xl" color="gray.100" fontWeight="800">加入社群</Text>
+                <Text fontSize="lg" color="gray.100" fontWeight="500">一起進來聊聊天、回報問題或給予功能建議，都超讚的啦！</Text>
+              </Flex>
+            </HStack>
+            <Button variant="solid" size="lg" onClick={() => window.open("https://discord.gg/")} color="#5865F2" leftIcon={<DiscordIcon />}>Join #NTUCourse Neo</Button>
+          </Flex>
+          <Flex w="100vw" bg="white" px="8" pt="8" justifyContent="space-around" alignItems="center" flexWrap="wrap" css={{gap: "2rem"}}>
+            <HStack spacing={8}>
+              <Flex flexDirection="column" alignItems="start">
+                <Text fontSize="4xl" color="gray.700" fontWeight="800">現在就開始體驗新世代的選課吧。</Text>
+                <Text fontSize="lg" color="teal.500" fontWeight="500">由學生開發、維運，最懂你的選課網站。</Text>
+                <Link to="course"><Button mt="8" variant="solid" size="lg" colorScheme="teal">開始使用</Button></Link>
+              </Flex>
+            </HStack>
+            <Image src={HomeFooterImg} h="256px"/>
+          </Flex>
         </Flex>
       </Box>
     );
