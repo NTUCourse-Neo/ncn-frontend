@@ -1,7 +1,8 @@
 import { Flex, Spacer, Text, Button, ButtonGroup, useMediaQuery, Image, IconButton, HStack, Icon } from '@chakra-ui/react';
-import { FaCodeBranch, FaExclamationTriangle, FaGithub, FaHeartbeat } from 'react-icons/fa';
+import { FaCodeBranch, FaGithub, FaHeartbeat } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import ncnLogo from '../img/ncn_logo.png';
+import { DiscordIcon } from './CustomIcons';
 
 function Footer({mini}) {
     const ver = "beta (20220306)"
@@ -21,9 +22,9 @@ function Footer({mini}) {
                             <Text fontSize="xs" color="gray.300" fontWeight="600">{ver}</Text>
                         </HStack>
                         <ButtonGroup spacing="2">
-                            <IconButton size="sm" variant="ghost" color="gray.400" icon={<FaGithub size="20"/>} mx="1" onClick={() => handleOpenPage("https://github.com/NTUCourse-Neo")} />
                             <IconButton size="sm" variant="ghost" color="gray.400" icon={<FaHeartbeat size="20"/>} mx="1" onClick={() => handleOpenPage("https://status.course.myntu.me/")} />
-                            <IconButton size="sm" variant="ghost" color="gray.400" icon={<FaExclamationTriangle size="20"/>} mx="1" onClick={() => handleOpenPage("https://www.surveycake.com/s/LzWd6")} />
+                            <IconButton size="sm" variant="ghost" color="gray.400" icon={<DiscordIcon boxSize="5"/>} mx="1" onClick={() => handleOpenPage("https://discord.gg/")} />
+                            <IconButton size="sm" variant="ghost" color="gray.400" icon={<FaGithub size="20"/>} mx="1" onClick={() => handleOpenPage("https://github.com/NTUCourse-Neo")} />
                         </ButtonGroup>
                     </Flex>
                 </>
@@ -43,9 +44,9 @@ function Footer({mini}) {
                     </ButtonGroup>
                     {isMobile? <></>:<Spacer />}
                     <ButtonGroup spacing="2">
-                        <Button size="xs" variant="ghost" color="gray.500" leftIcon={<FaGithub/>} mx="1" onClick={() => handleOpenPage("https://github.com/NTUCourse-Neo")}>Github</Button>
                         <Button size="xs" variant="ghost" color="gray.500" leftIcon={<FaHeartbeat/>} mx="1" onClick={() => handleOpenPage("https://status.course.myntu.me/")}>服務狀態</Button>
-                        <Button size="xs" variant="ghost" color="gray.500" leftIcon={<FaExclamationTriangle/>} mx="1" onClick={() => handleOpenPage("https://www.surveycake.com/s/LzWd6")}>問題回報</Button>
+                        <Button size="xs" variant="ghost" color="gray.500" leftIcon={<DiscordIcon />} mx="1" onClick={() => handleOpenPage("https://www.discord.gg/")}>Discord</Button>
+                        <Button size="xs" variant="ghost" color="gray.500" leftIcon={<FaGithub/>} mx="1" onClick={() => handleOpenPage("https://github.com/NTUCourse-Neo")}>Github</Button>
                     </ButtonGroup>
                 </>
             }
