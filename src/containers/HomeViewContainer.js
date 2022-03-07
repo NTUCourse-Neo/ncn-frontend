@@ -300,10 +300,10 @@ function HomeViewContainer(props) {
           <Spacer mt="10" mb="10"/>
           <Flex w="100vw" bg="gray.700" px={{base:"8", md:"16", lg:"64"}} py="16" flexDirection={{base: 'column', lg: 'row'}} justifyContent="space-between" alignItems="center" css={{gap: "2rem"}}>
             <Flex w={{base: '100%', lg: '65%'}} flexDirection={{base: 'column', md: 'row'}} align={'center'}>
-              <Icon m={8} as={FaGithub} boxSize="16" color="white" />
+              <Icon mx="8" mb="4" as={FaGithub} boxSize="16" color="white" />
               <Flex flexDirection="column" align={{base: 'center', md: 'start'}} textAlign={{base: 'center', md: 'start'}}>
                 <Text fontSize="4xl" color="gray.100" fontWeight="800">動手參與開發</Text>
-                <Text fontSize="lg" color="gray.100" fontWeight="500">不管是 Issue 、 PR 或甚至加入我們 ，歡迎一起來讓 NTUCourse Neo 變得更加完美。</Text>
+                <Text mt="2" fontSize="lg" color="gray.100" fontWeight="500">不管是 Issue 、 PR 或甚至加入我們 ，歡迎一起來讓 NTUCourse Neo 變得更加完美。</Text>
               </Flex>
             </Flex>
             <Flex justify={{base: 'center', md: 'start'}} flexDirection={{base: 'column', md: 'row'}}>
@@ -313,10 +313,10 @@ function HomeViewContainer(props) {
           </Flex>
           <Flex w="100vw" bg="#5865F2" px={{base:"8", md:"16", lg:"64"}} py="16" flexDirection={{base: 'column', lg: 'row'}} justifyContent="space-between" alignItems="center" flexWrap="wrap" css={{gap: "2rem"}}>
             <Flex w={{base: '100%', lg: '65%'}} flexDirection={{base: 'column', md: 'row'}} align={'center'}>
-              <Icon m={8} as={DiscordIcon} boxSize="16" color="white" />
+              <Icon mx="8" mb="4" as={DiscordIcon} boxSize="16" color="white" />
               <Flex flexDirection="column" align={{base: 'center', md: 'start'}} textAlign={{base: 'center', md: 'start'}}>
                 <Text fontSize="4xl" color="gray.100" fontWeight="800">加入社群</Text>
-                <Text fontSize="lg" color="gray.100" fontWeight="500">一起進來聊聊天、回報問題或給予功能建議，都超讚的啦！</Text>
+                <Text mt="2" fontSize="lg" color="gray.100" fontWeight="500">一起進來聊聊天、回報問題或給予功能建議，都超讚的啦！</Text>
               </Flex>
             </Flex>
             <Flex justify={{base: 'center', md: 'start'}} flexDirection={{base: 'column', md: 'row'}}>
