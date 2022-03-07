@@ -107,7 +107,11 @@ function HomeViewContainer(props) {
               行動裝置介面仍在調整測試中。建議使用電腦瀏覽，能讓您獲得更好的選課體驗。
             </Text>
             <Text mt="2" fontWeight="700" color="gray.600">
-              我們正在努力讓 NTUCourse Neo 更加進步，若有任何建議歡迎至問題回報處告訴我們 🙏
+              我們正在努力讓 NTUCourse Neo 更加進步，若有任何建議歡迎至
+              <Button leftIcon={<DiscordIcon />} color="#5865F2" size="sm" variant="ghost" onClick={() => window.open("https://discord.gg/M7NrenYEbS")}>
+              Discord 
+              </Button>
+              告訴我們 🙏
             </Text>
           </AlertDialogBody>
           <AlertDialogFooter>
@@ -320,7 +324,7 @@ function HomeViewContainer(props) {
               </Flex>
             </Flex>
             <Flex justify={{base: 'center', md: 'start'}} flexDirection={{base: 'column', md: 'row'}}>
-              <Button variant="solid" size="lg" onClick={() => window.open("https://discord.gg/M7NrenYEbS")} color="#5865F2" leftIcon={<DiscordIcon />}>Join #NTUCourse Neo</Button>
+              <Button variant="solid" size="lg" onClick={() => window.open("https://discord.gg/M7NrenYEbS")} color="#5865F2" leftIcon={<DiscordIcon />}>Join #NTUCourse-Neo</Button>
             </Flex>
           </Flex>
           <Flex w="100vw" bg="white" px="8" pt="8" justifyContent="space-around" alignItems="center" flexDirection={{base: 'column', lg: 'row'}} css={{gap: "2rem"}}>
