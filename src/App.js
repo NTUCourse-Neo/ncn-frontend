@@ -31,7 +31,7 @@ if(process.env.REACT_APP_ENV === 'prod'){
 function App(props) {
   let { code } = useParams();
   const [isMobile] = useMediaQuery("(max-width: 1000px)");
-  const miniFooterPages = ["course", "courseinfo", "user/my", "user/info", "recruiting"];
+  const miniFooterPages = ["home", "course", "courseinfo", "user/my", "user/info", "recruiting"];
   
   const content = (route)=>{
     switch(route){

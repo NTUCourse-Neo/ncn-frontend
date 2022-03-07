@@ -21,12 +21,13 @@ import {
     AlertDialogHeader,
     AlertDialogContent,
     AlertDialogOverlay,
-    IconButton
+    IconButton,
+    Icon,
   } from '@chakra-ui/react';
 import homeMainSvg from '../img/home_main.svg';
 import HomeCard from '../components/HomeCard';
 import { useAuth0 } from '@auth0/auth0-react';
-import { FaArrowDown, FaArrowRight, FaArrowUp, FaSortDown, FaSortUp } from "react-icons/fa";
+import { FaArrowDown, FaArrowRight, FaArrowUp, FaGithub, FaSortDown, FaSortUp } from "react-icons/fa";
 import { animateScroll as scroll, scroller } from 'react-scroll'
 import { Link, useNavigate } from "react-router-dom";
 import { BeatLoader } from 'react-spinners';
@@ -35,6 +36,8 @@ import { useDispatch } from 'react-redux';
 import CourseDeadlineCountdown from '../components/CourseDeadlineCountdown';
 import setPageMeta from '../utils/seo';
 import {motion, AnimatePresence} from 'framer-motion';
+import HomeFooterImg from '../img/home_footer.svg';
+import { DiscordIcon } from '../components/CustomIcons';
 
 const newsCard = [
   (
@@ -104,7 +107,11 @@ function HomeViewContainer(props) {
               行動裝置介面仍在調整測試中。建議使用電腦瀏覽，能讓您獲得更好的選課體驗。
             </Text>
             <Text mt="2" fontWeight="700" color="gray.600">
-              我們正在努力讓 NTUCourse Neo 更加進步，若有任何建議歡迎至問題回報處告訴我們 🙏
+              我們正在努力讓 NTUCourse Neo 更加進步，若有任何建議歡迎至
+              <Button leftIcon={<DiscordIcon />} color="#5865F2" size="sm" variant="ghost" onClick={() => window.open("https://discord.gg/M7NrenYEbS")}>
+              Discord 
+              </Button>
+              告訴我們 🙏
             </Text>
           </AlertDialogBody>
           <AlertDialogFooter>
@@ -213,7 +220,7 @@ function HomeViewContainer(props) {
   };
 
     return (
-        <Box maxW="screen-md" mx="auto" overflow="visible" p="64px">
+        <Box maxW="screen-md" mx="auto" overflow="visible" px="64px" pt="64px">
           {renderNewRegisterModal()}
           {renderMobileWarning()}
         <Flex justifyContent="space-between" mb={4} grow="1" flexDirection="column" alignItems="center">
@@ -294,6 +301,40 @@ function HomeViewContainer(props) {
           </HomeCard>
           <Spacer mt="10" mb="10"/>
           <Button variant="ghost" size="lg" onClick={() => scroll.scrollTo(0)} leftIcon={<FaArrowUp/>}>返回頂端</Button>
+          <Spacer mt="10" mb="10"/>
+          <Flex w="100vw" bg="gray.700" px={{base:"8", md:"16", lg:"64"}} py="16" flexDirection={{base: 'column', lg: 'row'}} justifyContent="space-between" alignItems="center" css={{gap: "2rem"}}>
+            <Flex w={{base: '100%', lg: '65%'}} flexDirection={{base: 'column', md: 'row'}} align={'center'}>
+              <Icon mx="8" mb="4" as={FaGithub} boxSize="16" color="white" />
+              <Flex flexDirection="column" align={{base: 'center', md: 'start'}} textAlign={{base: 'center', md: 'start'}}>
+                <Text fontSize="4xl" color="gray.100" fontWeight="800">動手參與開發</Text>
+                <Text mt="2" fontSize="lg" color="gray.100" fontWeight="500">不管是 Issue 、 PR 或甚至加入我們 ，歡迎一起來讓 NTUCourse Neo 變得更加完美。</Text>
+              </Flex>
+            </Flex>
+            <Flex justify={{base: 'center', md: 'start'}} flexDirection={{base: 'column', md: 'row'}}>
+              <Link to="recruiting"><Button m={2} variant="outline" colorScheme="whiteAlpha" size="lg" color="white" borderColor="white">夥伴招募 Recruiting</Button></Link>
+              <Button m={2} variant="solid" size="lg" onClick={() => window.open("https://github.com/NTUCourse-Neo/")} leftIcon={<FaGithub/>}>NTUCourse Neo</Button>
+            </Flex>
+          </Flex>
+          <Flex w="100vw" bg="#5865F2" px={{base:"8", md:"16", lg:"64"}} py="16" flexDirection={{base: 'column', lg: 'row'}} justifyContent="space-between" alignItems="center" flexWrap="wrap" css={{gap: "2rem"}}>
+            <Flex w={{base: '100%', lg: '65%'}} flexDirection={{base: 'column', md: 'row'}} align={'center'}>
+              <Icon mx="8" mb="4" as={DiscordIcon} boxSize="16" color="white" />
+              <Flex flexDirection="column" align={{base: 'center', md: 'start'}} textAlign={{base: 'center', md: 'start'}}>
+                <Text fontSize="4xl" color="gray.100" fontWeight="800">加入社群</Text>
+                <Text mt="2" fontSize="lg" color="gray.100" fontWeight="500">一起進來聊聊天、回報問題或給予功能建議，都超讚的啦！</Text>
+              </Flex>
+            </Flex>
+            <Flex justify={{base: 'center', md: 'start'}} flexDirection={{base: 'column', md: 'row'}}>
+              <Button variant="solid" size="lg" onClick={() => window.open("https://discord.gg/M7NrenYEbS")} color="#5865F2" leftIcon={<DiscordIcon />}>Join #NTUCourse-Neo</Button>
+            </Flex>
+          </Flex>
+          <Flex w="100vw" bg="white" px="8" pt="8" justifyContent="space-around" alignItems="center" flexDirection={{base: 'column', lg: 'row'}} css={{gap: "2rem"}}>
+            <Flex flexDirection="column" align={{base: 'center', lg: 'start'}} textAlign={{base: 'center', md: 'start'}}>
+              <Text py={2} fontSize="4xl" color="gray.700" fontWeight="800">現在就開始體驗新世代的選課吧。</Text>
+              <Text fontSize="lg" color="teal.500" fontWeight="500">由學生開發、維運，最懂你的選課網站。</Text>
+              <Link to="course"><Button mt="8" variant="solid" size="lg" colorScheme="teal">開始使用</Button></Link>
+            </Flex>
+            <Image src={HomeFooterImg} h="256px"/>
+          </Flex>
         </Flex>
       </Box>
     );
