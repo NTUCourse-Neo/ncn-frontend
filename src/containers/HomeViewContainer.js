@@ -320,7 +320,7 @@ function HomeViewContainer(props) {
                 <Text fontSize="lg" color="gray.100" fontWeight="500">一起進來聊聊天、回報問題或給予功能建議，都超讚的啦！</Text>
               </Flex>
             </HStack>
-            <Button variant="solid" size="lg" onClick={() => window.open("https://discord.gg/")} color="#5865F2" leftIcon={<DiscordIcon />}>Join #NTUCourse Neo</Button>
+            <Button variant="solid" size="lg" onClick={() => window.open("https://discord.gg/M7NrenYEbS")} color="#5865F2" leftIcon={<DiscordIcon />}>Join #NTUCourse Neo</Button>
           </Flex>
           <Flex w="100vw" bg="white" px="8" pt="8" justifyContent="space-around" alignItems="center" flexWrap="wrap" css={{gap: "2rem"}}>
             <HStack spacing={8}>
