@@ -60,6 +60,7 @@ const syllabusTitle = {
   specify: "指定閱讀"
 }
 
+// TODO: Change this function's name to CourseDashboardContainer.
 function CourseDetailInfoContainer({ course }){
   const { onOpen, onClose, isOpen } = useDisclosure()
   const toast = useToast();
@@ -320,6 +321,9 @@ function CourseDetailInfoContainer({ course }){
     {title: "授課語言", value: info_view_map.language.map[course.language]},
   ];
 
+
+  // TODO: Move these render functions to seperate components
+
   const renderGuestBlockingBox = () => {
     return (
       <Flex flexDirection={'column'} my={3} h='100%' w='100%' align='center' justify='center'>
@@ -552,6 +556,7 @@ function CourseDetailInfoContainer({ course }){
       return renderFallback("無相關貼文資訊", "empty", "100%", "8");
     }
     return(
+      // TODO: Change this into a component
       <PTTContentRowContainer info={PTTReviewData} height="150px"/>
     );
   };

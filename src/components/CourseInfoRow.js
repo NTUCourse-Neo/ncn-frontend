@@ -18,7 +18,7 @@ import {
     Tooltip,
     useToast,
     Collapse,
-    useMediaQuery,
+    useMediaQuery, // TODO: Remove this.
     IconButton
 } from '@chakra-ui/react';
 import {CourseDrawerContainer} from '../containers/CourseDrawerContainer';
@@ -30,7 +30,7 @@ import { hash_to_color_hex } from '../utils/colorAgent';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useNavigate } from "react-router-dom";
 
-const LOCAL_STORAGE_KEY = 'NTU_CourseNeo_Course_Table_Key';
+const LOCAL_STORAGE_KEY = 'NTU_CourseNeo_Course_Table_Key'; // TODO: Move to centralized file.
 
 function CourseInfoRow(props) {
     const dispatch = useDispatch();
@@ -45,6 +45,7 @@ function CourseInfoRow(props) {
 
     const [isMobile] = useMediaQuery('(max-width: 760px)');
 
+    // TODO: Change function name.
     const handleButtonClick = async (course)=>{
         if (!isLoading){
             setAddingCourse(true);
@@ -244,6 +245,7 @@ function CourseInfoRow(props) {
                         <Flex maxW="100%" alignItems="center" justifyContent="start" mt="4" flexWrap="wrap" css={{gap: "2px"}}>
                             {
                                 props.displayTags.map((tag, index) => {
+                                    // TODO: Transfer these into a function
                                     if (tag === "area"){
                                         let display_str = "";
                                         let tooltip_str = "";
@@ -329,6 +331,7 @@ function CourseInfoRow(props) {
                     <Spacer />
                     <Flex alignItems="center" justifyContent="end">
                         {
+                            // TODO: Transfer into function.
                             props.displayTags.map((tag, index) => {
                                 if (tag === "area"){
                                     let display_str = "";

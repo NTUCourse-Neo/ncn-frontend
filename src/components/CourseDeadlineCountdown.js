@@ -8,6 +8,7 @@ import {
 } from '@chakra-ui/react';
 import { FaClock } from 'react-icons/fa';
 
+// TODO: move to map file.
 const status_map = [
     {
         name: "即將開始",
@@ -30,6 +31,8 @@ const status_map = [
         color: "red.200"
     }
 ]
+
+//TODO: move to data file.
 const ntu_course_select_url = ["https://if192.aca.ntu.edu.tw/index.php", "https://if177.aca.ntu.edu.tw/index.php"]
 const course_select_schedule = [
     {
@@ -63,6 +66,8 @@ const course_select_schedule = [
         "end": 1646679600
     },
 ]
+
+// TODO: Add comments.
 
 const identify_course_select_schedule = (timestamp) => {
     for (let i = 0; i < course_select_schedule.length; i++) {

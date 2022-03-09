@@ -1,3 +1,6 @@
+// TODO: organize into folder (w/ css file)
+// TODO: solve unique key issue
+// TODO: split into three sub-components: card, popup, and sortable component
 import { React, useEffect,useState } from 'react';
 import {arrayMoveImmutable as arrayMove} from 'array-move';
 import "./CourseTableCard.css";

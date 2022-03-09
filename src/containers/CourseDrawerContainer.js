@@ -13,6 +13,8 @@ import { FaPlus, FaInfoCircle } from 'react-icons/fa';
 import { info_view_map } from '../data/mapping_table';
 import { useNavigate } from "react-router-dom";
 
+
+// TODO: move to component file.
 function RenderNolContentBtn(course, title, key){
     const navigate = useNavigate();
     const toCourseInfoPage = (code) => {
@@ -26,6 +28,7 @@ function RenderNolContentBtn(course, title, key){
     );
 }
 
+// TODO: change name and move to utils folder.
 function openPage(url, doClose){
     let wnd = window.open(url, '_blank');
     if(doClose){
@@ -35,11 +38,14 @@ function openPage(url, doClose){
         }, 1000);
     }
 }
+
+// TODO: move to utils folder.
 const genNolAddUrl = (course) => {
     let d_id = "T010"
     return `https://nol.ntu.edu.tw/nol/coursesearch/myschedule.php?add=${course.id}&ddd=${d_id}`;
     
 };
+// TODO: move to utils folder.
 const genNolUrl = (course) => {
     let lang="CH";
     let base_url = "https://nol.ntu.edu.tw/nol/coursesearch/print_table.php?";
@@ -61,6 +67,7 @@ function CourseDrawerContainer(props) {
             </Flex>
         );
     };
+    // TODO: too complex, simply this.
     const renderHyperButton = (fieldName, url) => {
         if (url === "" || !url) {
             return (<></>);

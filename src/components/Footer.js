@@ -5,6 +5,7 @@ import ncnLogo from '../img/ncn_logo.png';
 import { DiscordIcon } from './CustomIcons';
 
 function Footer({mini}) {
+    // TODO: move constants to a separate file.
     const ver = "beta (20220306)"
     const handleOpenPage = (page) => {
         window.open(page, '_blank');
@@ -22,6 +23,7 @@ function Footer({mini}) {
                             <Text fontSize="xs" color="gray.300" fontWeight="600">{ver}</Text>
                         </HStack>
                         <ButtonGroup spacing="2">
+                            // TODO: Move constants to a separate file
                             <IconButton size="sm" variant="ghost" color="gray.400" icon={<FaHeartbeat size="20"/>} mx="1" onClick={() => handleOpenPage("https://status.course.myntu.me/")} />
                             <IconButton size="sm" variant="ghost" color="gray.400" icon={<DiscordIcon boxSize="5"/>} mx="1" onClick={() => handleOpenPage("https://discord.gg/M7NrenYEbS")} />
                             <IconButton size="sm" variant="ghost" color="gray.400" icon={<FaGithub size="20"/>} mx="1" onClick={() => handleOpenPage("https://github.com/NTUCourse-Neo")} />

@@ -19,6 +19,7 @@ function HomeCard(props) {
                     );
                   })}
                 </Flex>
+                // TODO: modify gif images to solid images or smaller animations like webm
                 <Image src={props.img} alt={props.title} w={["100%", "100%","100%", "30%"]} borderRadius="xl" boxShadow="xl" _hover={{ transform: "Scale(1.2)", boxShadow: "2xl"}} transition="all ease-out 0.2s"/>
               </Flex>
             </Flex>

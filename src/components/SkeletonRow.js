@@ -1,3 +1,4 @@
+// TODO: Change file name
 import React from 'react';
 import {Flex, useToast, Text, VisuallyHidden} from '@chakra-ui/react';
 import {HashLoader} from 'react-spinners';
@@ -5,6 +6,8 @@ import { FaSadTear } from 'react-icons/fa';
 
 function SkeletonRow(props) {
     const toast = useToast();
+
+    // TODO: simplfy this logic coding style.
     const visible_logic = () =>{
         if (props.loading){
             return (
