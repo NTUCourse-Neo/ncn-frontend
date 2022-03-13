@@ -15,14 +15,14 @@ import { BounceLoader } from 'react-spinners';
 import { v4 as uuidv4 } from 'uuid';
 import setPageMeta from '../utils/seo';
 
-function ErrorContainer(props){
+function ErrorContainer({ code }){
     const error_page_states = useLocation().state;
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const handleOpenPage = (page) => {
         window.open(page, '_blank');
     };
-    const error_img_src = `https://http.cat/${props.code}`
+    const error_img_src = `https://http.cat/${code}`
     // can random pick one msg from the list, welcome to add more msgs
     const error_msgs = [`太無情了你真的太無情了`, `出事了阿北`, `==?`, `哭啊`] 
     const error_message = error_msgs[Math.floor(Math.random() * error_msgs.length)];
@@ -41,7 +41,7 @@ function ErrorContainer(props){
                     uuid: uuid,
                     component: "ncn-frontend",
                     log: '```'+JSON.stringify(error_page_states, null, " ")+'```',
-                    code: props.code,
+                    code: code,
                     user_id: isAuthenticated? user.sub : "guest",
                     agent: navigator.userAgent,
                 }
@@ -50,7 +50,7 @@ function ErrorContainer(props){
             }
         }
         redirect_and_send_logs();
-        setPageMeta({title: `${props.code} 錯誤 | NTUCourse Neo`, desc: `${props.code} 錯誤頁面 | NTUCourse Neo，全新的臺大選課網站。`});
+        setPageMeta({title: `${code} 錯誤 | NTUCourse Neo`, desc: `${code} 錯誤頁面 | NTUCourse Neo，全新的臺大選課網站。`});
     } , [user, loading]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
