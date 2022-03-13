@@ -48,7 +48,7 @@ const genNolUrl = (course) => {
     return base_url+params;
 }
 
-function CourseDrawerContainer(props) {
+function CourseDrawerContainer({ courseInfo }) {
     const [isMobile] = useMediaQuery('(max-width: 760px)');
     const renderDataElement = (fieldName, data) => {
         if (data === "") {
@@ -72,34 +72,34 @@ function CourseDrawerContainer(props) {
     return(
         <Flex px="1" flexDirection="column" width="100%" alignItems="start" justifyContent="space-between">
             <Flex ml="2px" flexDirection="row" alignItems="center" justifyContent="start" flexWrap="wrap" css={{ gap: '.5rem' }}>
-                {renderDataElement("課程識別碼", props.courseInfo.course_id)}
-                {renderDataElement("課號", props.courseInfo.course_code)}
-                {renderDataElement("班次", props.courseInfo.class_id)}
-                {renderDataElement(info_view_map.enroll_method.name, info_view_map.enroll_method.map[props.courseInfo.enroll_method])}
-                {renderDataElement(info_view_map.language.name, info_view_map.language.map[props.courseInfo.language])}
-                {renderDataElement("開課單位", props.courseInfo.provider.toUpperCase())}
+                {renderDataElement("課程識別碼", courseInfo.course_id)}
+                {renderDataElement("課號", courseInfo.course_code)}
+                {renderDataElement("班次", courseInfo.class_id)}
+                {renderDataElement(info_view_map.enroll_method.name, info_view_map.enroll_method.map[courseInfo.enroll_method])}
+                {renderDataElement(info_view_map.language.name, info_view_map.language.map[courseInfo.language])}
+                {renderDataElement("開課單位", courseInfo.provider.toUpperCase())}
             </Flex>
             <Spacer my="2" />
             <Flex w="100%" flexDirection="row" alignItems="start" justifyContent="start" borderRadius="md" border="2px" borderColor="gray.200" flexWrap="wrap" css={{gap: "4px"}}>
                 <Flex w={isMobile? "100%":"30%"} flexDirection="column" alignItems="start" justifyContent="start" p="2">
                     <Heading as="h3" color="gray.600" fontSize="lg" ml="4px" mb="1">修課限制</Heading>
-                    <Text fontSize="sm" color="gray.800" mx="4px">{props.courseInfo.limit === "" ? "無" : props.courseInfo.limit}</Text>
+                    <Text fontSize="sm" color="gray.800" mx="4px">{courseInfo.limit === "" ? "無" : courseInfo.limit}</Text>
                 </Flex>
                 <Flex w={isMobile? "100%":"60%"} flexDirection="column" alignItems="start" justifyContent="start" p="2">
                     <Heading as="h3" color="gray.600" fontSize="lg" ml="4px" mb="1">備註</Heading>
-                    <Text fontSize="sm" color="gray.800" mx="4px">{props.courseInfo.note === "" ? "無" : props.courseInfo.note}</Text>
+                    <Text fontSize="sm" color="gray.800" mx="4px">{courseInfo.note === "" ? "無" : courseInfo.note}</Text>
                 </Flex>
             </Flex>
             <Spacer my="2" />
             <Flex w="100%" flexDirection={isMobile? "column":"row"} alignItems={isMobile? "start":"center"} justifyContent="start" flexWrap="wrap" css={{gap: "2px"}}>
                 <ButtonGroup size="sm" isAttached variant='outline' colorScheme="blue">
-                    {renderHyperButton("CEIBA", props.courseInfo.url["ceiba"])}
-                    {renderHyperButton("COOL", props.courseInfo.url["cool"])}
+                    {renderHyperButton("CEIBA", courseInfo.url["ceiba"])}
+                    {renderHyperButton("COOL", courseInfo.url["cool"])}
                 </ButtonGroup>
                 {isMobile? <></>:<Spacer/>}
                 <ButtonGroup>
-                    <Button variant="ghost" colorScheme="blue" leftIcon={<FaPlus/>} size="sm" onClick={() => openPage(genNolAddUrl(props.courseInfo), true)}>加入課程網</Button>
-                    {/* {RenderNolContentBtn(props.courseInfo, "課程詳細資訊", props.courseInfo.course_id)} */}
+                    <Button variant="ghost" colorScheme="blue" leftIcon={<FaPlus/>} size="sm" onClick={() => openPage(genNolAddUrl(courseInfo), true)}>加入課程網</Button>
+                    {/* {RenderNolContentBtn(courseInfo, "課程詳細資訊", courseInfo.course_id)} */}
                 </ButtonGroup>
             </Flex>
         </Flex>
