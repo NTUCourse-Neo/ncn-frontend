@@ -33,7 +33,7 @@ import {patchCourseTable} from '../actions';
 
 
 
-function CourseTableCard(props){
+function CourseTableCard({courseTime, courseData, day, interval, grow, hoverId, isHover}){
     const dispatch = useDispatch();
     const course_table = useSelector(state => state.course_table);
     const { isOpen, onOpen, onClose } = useDisclosure()
@@ -41,7 +41,7 @@ function CourseTableCard(props){
     console.error = () => {};
 
     // initial state or sorting result
-    const [ courseOrder, setCourseOrder ] = useState(props.courseTime);
+    const [ courseOrder, setCourseOrder ] = useState(courseTime);
     // temp state (buffer), used for decide the NEW course order / dispatch to server, when press "save"
     const [ courseList, setCourseList ] = useState([]);
     const [ prepareToRemoveCourseId, setPrepareToRemoveCourseId ] = useState([]);
@@ -105,7 +105,7 @@ function CourseTableCard(props){
                             bg={hash_to_color_hex(course._id, isOpen ? 0.7:0.8)} 
                             borderRadius="md" boxShadow="lg" 
                             mb="1" p="2" w="100%" h="3vh"
-                            border={props.hoverId === courseId  ? "2px":""}
+                            border={hoverId === courseId  ? "2px":""}
                             borderColor={hash_to_color_hex(course._id, 0.5)}
                             key={courseId+"_Button"}>
                         <Text key={courseId+"_Text"} fontSize="xs" isTruncated> {course.course_name} </Text>
@@ -184,18 +184,18 @@ function CourseTableCard(props){
 
     // set state and force re-render
     useEffect(()=>{
-        setCourseOrder(props.courseTime)
-    },[props])
+        setCourseOrder(courseTime)
+    },[courseTime, courseData, day, interval, grow, hoverId, isHover]); // depend on all props
 
     // debugger
     // useEffect(()=>{console.log('CourseTableCard--courseOrder: ', courseOrder);},[courseOrder])
     // useEffect(()=>{console.log('CourseTableCard--courseList: ', courseList);},[courseList])
     // useEffect(()=>{console.log('CourseTableCard--prepareToRemoveCourseId: ', prepareToRemoveCourseId);},[prepareToRemoveCourseId])
 
-    if(props.isHover){
-        const course = props.courseData;
+    if(isHover){
+        const course = courseData;
         return(
-            <Button borderRadius="lg" boxShadow="lg" p="2" w={props.grow? "100%":{base: '14vw', md: '12vw',lg: '4vw'}} h="3vh" mb="1" border="2px" borderColor={hash_to_color_hex(course._id, 0.7)} borderStyle="dashed">
+            <Button borderRadius="lg" boxShadow="lg" p="2" w={grow? "100%":{base: '14vw', md: '12vw',lg: '4vw'}} h="3vh" mb="1" border="2px" borderColor={hash_to_color_hex(course._id, 0.7)} borderStyle="dashed">
                 <Text fontSize="xs" isTruncated> {course.course_name} </Text>
             </Button>
         );
@@ -205,9 +205,9 @@ function CourseTableCard(props){
     <>
         <Popover onOpen={onOpen} onClose={()=>{leavePopover()}} isOpen={isOpen} closeOnBlur={false} placement="auto" flip>
             <PopoverTrigger>
-                <Flex w={props.grow? "100%":{base: '14vw', md: '12vw',lg: '4vw'}} justifyContent="center" alignItems="center" flexDirection="column" onClick={()=>{setCourseList(courseOrder); setPrepareToRemoveCourseId([]);}}>
+                <Flex w={grow? "100%":{base: '14vw', md: '12vw',lg: '4vw'}} justifyContent="center" alignItems="center" flexDirection="column" onClick={()=>{setCourseList(courseOrder); setPrepareToRemoveCourseId([]);}}>
                     {courseOrder.map(courseId => {
-                        return renderCourseBox(courseId, props.courseData);
+                        return renderCourseBox(courseId, courseData);
                     })}
                 </Flex>
             </PopoverTrigger>
@@ -217,13 +217,13 @@ function CourseTableCard(props){
                     <PopoverHeader>
                         <Flex flexDirection="row" alignItems="center" justifyContent="start" mb="2">
                             節次資訊
-                            <Badge key={props.day} ml="2" size="sm">週{props.day}</Badge>
-                            <Badge key={props.interval} ml="2" size="sm">第{props.interval}節</Badge>
+                            <Badge key={day} ml="2" size="sm">週{day}</Badge>
+                            <Badge key={interval} ml="2" size="sm">第{interval}節</Badge>
                         </Flex>
                     </PopoverHeader>
                     <PopoverBody>
                     <Flex flexDirection="column" justifyContent="center">
-                        {renderPopoverBody(props.courseData)}
+                        {renderPopoverBody(courseData)}
                     </Flex>
                     </PopoverBody>
                     <PopoverFooter>
