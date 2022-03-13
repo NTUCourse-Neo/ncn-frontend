@@ -29,7 +29,7 @@ import hiringCollabSvg from '../img/hiring_collab.svg';
 import hiringOfficeSvg from '../img/hiring_office.svg';
 
 
-function RecruitingPageContainer(props){
+function RecruitingPageContainer(){
   const toast = useToast();
   const dispatch = useDispatch();
   const [isChecked, setIsChecked] = useState(false);
