@@ -63,7 +63,7 @@ const newsCard = [
   ),
 ]
 
-function HomeViewContainer(props) {
+function HomeViewContainer() {
   const toast = useToast();
   const navigate = useNavigate();
   const { user, isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
