@@ -37,7 +37,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import useCountDown from 'react-countdown-hook';
 import setPageMeta from '../utils/seo';
 
-function UserInfoContainer(props) {
+function UserInfoContainer() {
   const navigate = useNavigate();
   const toast = useToast();
   const dispatch = useDispatch();
