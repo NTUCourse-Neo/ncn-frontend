@@ -48,7 +48,7 @@ import CourseListContainer from './CourseListContainer';
 
 const LOCAL_STORAGE_KEY = 'NTU_CourseNeo_Course_Table_Key';
 
-function SideCourseTableContainer(props) {
+function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, hoveredCourse, agreeToCreateTableWithoutLogin, setIsLoginWarningOpen }) {
     const navigate = useNavigate();
     const {user, isLoading, isAuthenticated, getAccessTokenSilently} = useAuth0();
     const toast = useToast();
@@ -59,7 +59,6 @@ function SideCourseTableContainer(props) {
 
     // some local states for handling course data
     // const courseIds = props.courseIds;
-    const setCourseIds = props.setCourseIds;
     const [courses, setCourses] = useState({}); // dictionary of Course objects using courseId as key
     const [courseTimes, setCourseTimes] = useState({}); // coursesTime is a dictionary of courseIds and their corresponding time in time table
     const [hoveredCourseTime, setHoveredCourseTime]  = useState({}); // courseTime is a dictionary of courseIds and their corresponding time in time table
@@ -223,18 +222,18 @@ function SideCourseTableContainer(props) {
     }, [courseTable]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
-      if (props.hoveredCourse){
+      if (hoveredCourse){
         let tmp = {
           time_map:{},
           parsed:[],
-          course_data:props.hoveredCourse
+          course_data: hoveredCourse
         }
-        parseCourseDateTime(props.hoveredCourse, tmp);
+        parseCourseDateTime(hoveredCourse, tmp);
         setHoveredCourseTime(tmp);
       }else{
         setHoveredCourseTime(null);
       }
-    } , [props.hoveredCourse]);
+    } , [hoveredCourse]);
 
     const handleCreateTable = async () => {
       if (!isLoading){
@@ -380,10 +379,10 @@ function SideCourseTableContainer(props) {
             </Flex>
             <Text fontSize="2xl" fontWeight="bold" color="gray">{expired?"您的課表已過期":"尚無課表"}</Text>
             <Button colorScheme="teal" leftIcon={<FaPlusSquare />} onClick={()=>{
-              if(isAuthenticated || props.agreeToCreateTableWithoutLogin){
+              if(isAuthenticated || agreeToCreateTableWithoutLogin){
                 handleCreateTable();
               }else{
-                props.setIsLoginWarningOpen(true);
+                setIsLoginWarningOpen(true);
               }
             }}>新增課表</Button>
           </Flex>
@@ -411,7 +410,7 @@ function SideCourseTableContainer(props) {
               <TabPanels>
                 <TabPanel>
                   <Flex flexDirection="row" justifyContent="start" alignItems="center" overflowX={'auto'}>
-                    <CourseTableContainer courseTimes={courseTimes} courses={courses} loading={loading || isLoading} hoveredCourseTime={hoveredCourseTime} hoveredCourse={props.hoveredCourse}/>  
+                    <CourseTableContainer courseTimes={courseTimes} courses={courses} loading={loading || isLoading} hoveredCourseTime={hoveredCourseTime} hoveredCourse={hoveredCourse}/>  
                   </Flex>
                 </TabPanel>
                 <TabPanel>
@@ -426,7 +425,7 @@ function SideCourseTableContainer(props) {
     return(
       <Flex flexDirection={isMobile? "column":"row"} h="100%" w="100%">
         <Flex justifyContent="center" alignItems="center">
-          <IconButton h={isMobile? "":"100%"} w={isMobile? "100%":""} icon={isMobile? <FaAngleDown size={24}/>:<FaAngleRight size={24}/>} onClick={()=>{props.setIsOpen(!props.isOpen)}} size="sm" variant="ghost"/>
+          <IconButton h={isMobile? "":"100%"} w={isMobile? "100%":""} icon={isMobile? <FaAngleDown size={24}/>:<FaAngleRight size={24}/>} onClick={()=>{setIsDisplay(!isDisplay)}} size="sm" variant="ghost"/>
         </Flex>
         {renderSideCourseTableContent()}
       </Flex>
