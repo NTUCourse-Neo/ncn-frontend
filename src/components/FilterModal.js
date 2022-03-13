@@ -22,7 +22,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import {setFilter} from '../actions';
 import { mapStateToTimeTable } from "../utils/timeTableConverter";
 
-function FilterModal(props){
+function FilterModal({selectedDept, selectedTime, selectedType, type, setSelectedDept, setSelectedTime, setSelectedType, toggle, title}) {
   const dispatch = useDispatch();
   const time_state = useSelector(state => state.search_filters.time);
   const department_state = useSelector(state => state.search_filters.department);
@@ -33,7 +33,7 @@ function FilterModal(props){
 
   const handleSet = (type) => {
     if (type==='department'){
-      dispatch(setFilter('department', props.selectedDept));
+      dispatch(setFilter('department', selectedDept));
     }
     else if (type==='time'){
       // turn 15x7 2D array (selectedTime) to 7x15 array
@@ -42,7 +42,7 @@ function FilterModal(props){
       for (let i=0;i<intervals.length;i++){
         let interval = intervals[i]
         for (let j=0;j<7;j++){
-          if (props.selectedTime[i][j] === true){
+          if (selectedTime[i][j] === true){
             timeTable[j].push(interval)
           }
         }
@@ -50,25 +50,25 @@ function FilterModal(props){
       dispatch(setFilter('time', timeTable));      
     }
     else if (type==='category'){
-      dispatch(setFilter('category', props.selectedType));
+      dispatch(setFilter('category', selectedType));
     }
   }
 
   const renderSelectedHeader = () => {
-    if (props.type === "department"){
+    if (type === "department"){
       return(
         <Flex flexDirection="column" justifyContent="start" alignItems="start" mx="8" mb="4">
         <Flex w="100%" flexWrap="wrap" flexDirection="row" justifyContent="start" alignItems="start">
-          {dept_list_bachelor_only.map(dept => renderButton("department", dept, props.selectedDept, props.setSelectedDept, true))} 
+          {dept_list_bachelor_only.map(dept => renderButton("department", dept, selectedDept, setSelectedDept, true))} 
         </Flex>
       </Flex>
       );
     }
-    if (props.type === "category"){
+    if (type === "category"){
       return(
         <Flex flexDirection="column" justifyContent="start" alignItems="start" mx="8" mb="4">
         <Flex w="100%" flexWrap="wrap" flexDirection="row" justifyContent="start" alignItems="start">
-          {type_list.map(category => renderButton("category", category, props.selectedType, props.setSelectedType, true))} 
+          {type_list.map(category => renderButton("category", category, selectedType, setSelectedType, true))} 
         </Flex>
         </Flex>
       );
@@ -123,14 +123,14 @@ function FilterModal(props){
     let setSelected;
     switch(type){
       case "department":
-        setSelected = props.setSelectedDept;
+        setSelected = setSelectedDept;
         break;
       case "category":
-        setSelected = props.setSelectedType;
+        setSelected = setSelectedType;
         break;
       case "time":
         // used when reset
-        setSelected = ()=>{props.setSelectedTime([
+        setSelected = ()=>{setSelectedTime([
           [false, false, false, false, false, false, false],
           [false, false, false, false, false, false, false],
           [false, false, false, false, false, false, false],
@@ -157,8 +157,8 @@ function FilterModal(props){
     <Button size={isMobile? "sm":"md"} isDisabled={!filterOn} onClick={()=>{
       onOpen();
       // because this modal will not re-render, so manually reload from redux state 
-      if (props.type==='time'){
-        props.setSelectedTime(mapStateToTimeTable(time_state));
+      if (type==='time'){
+        setSelectedTime(mapStateToTimeTable(time_state));
       }
     }}>{title}</Button>
     <Modal isOpen={isOpen} onClose={()=>{
@@ -178,7 +178,7 @@ function FilterModal(props){
           {
             isMobile?
             <Flex flexDirection="row" justifyContent="start" alignItems="center" mt="2">
-              <Button size="sm" colorScheme='blue' mr={3} onClick={()=>{onClose();handleSet(props.type);}}>
+              <Button size="sm" colorScheme='blue' mr={3} onClick={()=>{onClose();handleSet(type);}}>
                 套用
               </Button>
               <Button size="sm" variant='ghost' onClick={()=> setSelected([])}>重設</Button>
@@ -196,7 +196,7 @@ function FilterModal(props){
           <ModalFooter>
             <Button colorScheme='blue' mr={3} onClick={()=>{
               onClose();
-              handleSet(props.type);
+              handleSet(type);
             }}>
               套用
             </Button>
@@ -212,7 +212,7 @@ function FilterModal(props){
 const FilterModalBody = (type) => {
     if (type === "time"){
       return (
-        <TimetableSelector selectedTime={props.selectedTime} setSelectedTime={props.setSelectedTime}/>
+        <TimetableSelector selectedTime={selectedTime} setSelectedTime={setSelectedTime}/>
       );
     }
     if (type === "department"){
@@ -227,12 +227,12 @@ const FilterModalBody = (type) => {
                   <Heading key={dept.code+"_heading"} fontSize="2xl" color="gray.600">{college_code+" "+college_map[college_code].name}</Heading>
                   <Divider key={dept.code+"_divider"}/>
                 </Flex>
-                {renderButton("department", dept, props.selectedDept, props.setSelectedDept, false)}
+                {renderButton("department", dept, selectedDept, setSelectedDept, false)}
                 </>
               );
             }
             return(
-              renderButton("department", dept, props.selectedDept, props.setSelectedDept, false)
+              renderButton("department", dept, selectedDept, setSelectedDept, false)
             );
           })}
         </>
@@ -249,19 +249,19 @@ const FilterModalBody = (type) => {
                   <Heading key={type.id+"_heading"} fontSize="2xl" color="gray.600">{code_map[type.code.substr(0,1)].name}</Heading>
                   <Divider key={type.id+"_divider"}/>
                 </Flex>
-                {renderButton("category", type, props.selectedType, props.setSelectedType, false)}
+                {renderButton("category", type, selectedType, setSelectedType, false)}
                 </>
               );
             }
             return(
-              renderButton("category", type, props.selectedType, props.setSelectedType, false)
+              renderButton("category", type, selectedType, setSelectedType, false)
             );
           })}
         </>
       );
     }
   };
-  return FilterModalContainer(props.title, props.toggle, props.type);
+  return FilterModalContainer(title, toggle, type);
 }
 
 export default FilterModal;
