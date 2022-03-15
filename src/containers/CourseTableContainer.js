@@ -13,7 +13,7 @@ import {
   Tooltip,
 } from '@chakra-ui/react'
 import { useState } from 'react';
-import CourseTableCard from '../components/CourseTableCard';
+import CourseTableCard from '../components/CourseTableCard/CourseTableCard';
 import { weekdays_map } from '../data/mapping_table';
 
 function CourseTableContainer({courses, loading, courseTimes, hoveredCourse, hoveredCourseTime}) {

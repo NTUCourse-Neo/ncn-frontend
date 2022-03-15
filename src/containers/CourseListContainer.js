@@ -1,5 +1,5 @@
 import { React, useEffect, useState } from 'react';
-import "../components/CourseTableCard.css";
+import "../components/CourseTableCard/CourseTableCard.css";
 import {arrayMoveImmutable as arrayMove} from 'array-move';
 import {
     Flex,

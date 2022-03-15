@@ -23,13 +23,13 @@ import {
     ScaleFade,
     useToast
 } from '@chakra-ui/react';
-import { hash_to_color_hex } from '../utils/colorAgent';
+import { hash_to_color_hex } from '../../utils/colorAgent';
 import {sortableContainer, sortableElement, sortableHandle} from 'react-sortable-hoc';
 import { FaTrashAlt, FaExclamationTriangle } from 'react-icons/fa';
 import { MdDragHandle } from 'react-icons/md';
-import {RenderNolContentBtn} from '../containers/CourseDrawerContainer';
+import {RenderNolContentBtn} from '../../containers/CourseDrawerContainer';
 import {useSelector, useDispatch} from 'react-redux';
-import {patchCourseTable} from '../actions';
+import {patchCourseTable} from '../../actions';
 
 
 
