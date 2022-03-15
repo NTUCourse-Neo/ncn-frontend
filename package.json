@@ -43,7 +43,15 @@
         "uuid": "^8.3.2",
         "web-vitals": "^0.2.2"
     },
-    "prettier": ".prettierrc",
+    "prettier": {
+        "arrowParens": "avoid",
+        "trailingComma": "es5",
+        "singleQuote": true,
+        "semi": true,
+        "tabWidth": 4,
+        "useTabs": false,
+        "printWidth": 150
+    },
     "scripts": {
         "start": "react-scripts start",
         "build": "CI=false && react-scripts build",
