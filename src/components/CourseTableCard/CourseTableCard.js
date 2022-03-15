@@ -17,19 +17,16 @@ import {
     Badge,
     PopoverFooter,
     Spacer,
-    IconButton,
     Tag,
     TagLeftIcon,
     ScaleFade,
     useToast
 } from '@chakra-ui/react';
 import { hash_to_color_hex } from '../../utils/colorAgent';
-import {sortableContainer, sortableElement, sortableHandle} from 'react-sortable-hoc';
-import { FaTrashAlt, FaExclamationTriangle } from 'react-icons/fa';
-import { MdDragHandle } from 'react-icons/md';
-import {RenderNolContentBtn} from '../../containers/CourseDrawerContainer';
+import { FaExclamationTriangle } from 'react-icons/fa';
 import {useSelector, useDispatch} from 'react-redux';
 import {patchCourseTable} from '../../actions';
+import SortablePopover from './SortablePopover';
 
 
 
@@ -40,6 +37,11 @@ function CourseTableCard({courseTime, courseData, day, interval, grow, hoverId, 
     const toast = useToast();
     console.error = () => {};
 
+    /*
+        state design concept:
+        when open Popover, overwrite the courseList by courseOrder
+        when click save, overwrite the courseOrder by courseList
+    */
     // initial state or sorting result
     const [ courseOrder, setCourseOrder ] = useState(courseTime);
     // temp state (buffer), used for decide the NEW course order / dispatch to server, when press "save"
@@ -61,37 +63,8 @@ function CourseTableCard({courseTime, courseData, day, interval, grow, hoverId, 
         return !(courseOrder.every((course, index) => course===courseList[index])) || prepareToRemoveCourseId.length > 0;
     }
 
-    const DragHandle = sortableHandle(() => <MdDragHandle cursor="row-resize" size="20" color="gray"/>);
-    const SortableElement = sortableElement(({key, course}) => (
-      <Flex className="sortableHelper" alignItems="center" my="1" key={"Sortable_"+key+"_Flex"}>
-        <DragHandle key={"Sortable_"+key+"_DragHandle"}/>
-        <Badge ml="4" mr="1" variant="solid" bg={hash_to_color_hex(course._id, 0.9)} color="gray.600" key={"Sortable_"+key+"_Badge"}>{course.id}</Badge>
-        <Text as={prepareToRemoveCourseId.includes(course._id) ? "del":""}fontSize="lg" color={prepareToRemoveCourseId.includes(course._id) ? "red.700":"gray.500"} mx="1" fontWeight="700" isTruncated key={"Sortable_"+key+"_Text"}>{course.course_name}</Text>
-            {RenderNolContentBtn(course, "", key)}
-        <Spacer key={"Sortable_"+key+"_Spacer"}/>
-        <IconButton aria-label='Delete' variant={prepareToRemoveCourseId.includes(course._id) ? "solid":"outline"} icon={<FaTrashAlt />} size="sm" colorScheme="red" key={"Sortable_"+key+"_IconButton"} onClick={() => {handleDelete(course._id)}}/>
-      </Flex>
-    ));
-    const SortableContainer = sortableContainer(({children}) => {
-      return <Flex flexDirection="column">{children}</Flex>;
-    });
     const onSortEnd = ({oldIndex, newIndex}) => {
         setCourseList(arrayMove(courseList, oldIndex, newIndex));
-    };
-
-    // when open Popover, overwrite the courseList by courseOrder
-    // when click save, overwrite the courseOrder by courseList
-    const renderPopoverBody = (courseData) => {
-        return(
-            <SortableContainer useDragHandle onSortEnd={onSortEnd} lockAxis="y">
-                {courseList.map((courseId, index) => {
-                    let course = courseData[courseId];
-                    return(
-                        <SortableElement key={courseId} index={index} course={course} helperClass="sortableHelper"/>
-                    );
-                })}
-            </SortableContainer>
-        );
     };
     
     const renderCourseBox = (courseId, courseData) => {
@@ -223,7 +196,13 @@ function CourseTableCard({courseTime, courseData, day, interval, grow, hoverId, 
                     </PopoverHeader>
                     <PopoverBody>
                     <Flex flexDirection="column" justifyContent="center">
-                        {renderPopoverBody(courseData)}
+                        <SortablePopover
+                            courseData={courseData}
+                            courseList={courseList}
+                            prepareToRemoveCourseId={prepareToRemoveCourseId}
+                            onSortEnd={onSortEnd}
+                            handlePrepareToDelete={handleDelete}
+                        />
                     </Flex>
                     </PopoverBody>
                     <PopoverFooter>
