@@ -710,9 +710,13 @@ function CourseDetailInfoContainer({ course }){
                       <Tag colorScheme="blackAlpha" size="lg">無資訊</Tag>
                       :
                       course.department.map((item, index) => {
-                        return(
-                          <Tag key={"department_"+index} colorScheme="blue" size="lg">{item}</Tag>
-                          );
+                            if (item.length>0){
+                                return(
+                                <Tag key={"department_"+index} colorScheme="blue" size="lg">{item}</Tag>
+                                );
+                            } else {
+                                return null;
+                            }
                         })
                     }
                   </HStack>
