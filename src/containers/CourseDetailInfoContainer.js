@@ -36,7 +36,7 @@ import {
     Select,
     useDisclosure,
 } from '@chakra-ui/react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { PieChart } from 'react-minimal-pie-chart';
 import { FaCircle, FaRss, FaExclamationTriangle, FaQuestionCircle, FaChevronLeft, FaChevronRight, FaInfoCircle } from 'react-icons/fa';
 import { IoMdOpen } from 'react-icons/io';
@@ -320,7 +320,7 @@ function CourseDetailInfoContainer({ course }) {
         { title: '授課語言', value: info_view_map.language.map[course.language] },
     ];
 
-    const renderGuestBlockingBox = () => {
+    const renderGuestBlockingBox = useCallback(() => {
         return (
             <Flex flexDirection={'column'} my={3} h="100%" w="100%" align="center" justify="center">
                 <Icon as={FaInfoCircle} boxSize="32px" color="gray.500" />
@@ -343,9 +343,9 @@ function CourseDetailInfoContainer({ course }) {
                 </Button>
             </Flex>
         );
-    };
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-    const renderDataSource = dataSource => {
+    const renderDataSource = useCallback(dataSource => {
         return (
             <HStack spacing="2">
                 <FaRss color="gray" size="12" />
@@ -354,8 +354,9 @@ function CourseDetailInfoContainer({ course }) {
                 </Text>
             </HStack>
         );
-    };
-    const renderPanelLoaing = (title = '努力取得資訊中...', height, pt = '0') => {
+    }, []);
+
+    const renderPanelLoaing = useCallback((title = '努力取得資訊中...', height, pt = '0') => {
         return (
             <Flex w="100%" h={height} pt={pt} flexDirection="column" justifyContent="center" alignItems="center">
                 <VStack>
@@ -366,8 +367,9 @@ function CourseDetailInfoContainer({ course }) {
                 </VStack>
             </Flex>
         );
-    };
-    const renderFallback = (title = '暫無資訊', type = 'empty', height, pt = '0') => {
+    }, []);
+
+    const renderFallback = useCallback((title = '暫無資訊', type = 'empty', height, pt = '0') => {
         return (
             <Flex w="100%" h={height} pt={pt} flexDirection="column" justifyContent="center" alignItems="center">
                 <Icon as={type === 'empty' ? FaQuestionCircle : FaExclamationTriangle} boxSize="32px" color="gray.500" />
@@ -376,8 +378,9 @@ function CourseDetailInfoContainer({ course }) {
                 </Text>
             </Flex>
         );
-    };
-    const renderCourseEnrollPanel = () => {
+    }, []);
+
+    const renderCourseEnrollPanel = useCallback(() => {
         if (isLoadingEnrollInfo || isAuth0Loading) {
             return renderPanelLoaing('努力取得資訊中...', '100%', '8');
         }
@@ -411,9 +414,9 @@ function CourseDetailInfoContainer({ course }) {
                 </Stat>
             </Flex>
         );
-    };
+    }, [isLoadingEnrollInfo, isAuth0Loading, isAuthenticated, CourseEnrollStatus, isMobile, renderGuestBlockingBox, renderFallback, renderPanelLoaing]);
 
-    const renderSubmitPopover = () => {
+    const renderSubmitPopover = useCallback(() => {
         return (
             <Popover placement="bottom" isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
                 <PopoverTrigger>
@@ -524,43 +527,60 @@ function CourseDetailInfoContainer({ course }) {
                 </PopoverContent>
             </Popover>
         );
-    };
+    }, [signUpCardForm, SignUpPostData, sendingForm, handleSubmitSignUpCardForm, fetchSignUpPostData]); // eslint-disable-line
 
-    const renderSignupPanel = () => {
-        if (isLoadingSignUpPostData || isAuth0Loading) {
-            return renderPanelLoaing('努力跑加簽大地中...', '100%', '0');
-        }
-        if (!isAuthenticated) {
-            return renderGuestBlockingBox();
-        }
-        if (SignUpPostData.length === 0) {
+    const renderSignupPanel = useCallback(
+        () => {
+            if (isLoadingSignUpPostData || isAuth0Loading) {
+                return renderPanelLoaing('努力跑加簽大地中...', '100%', '0');
+            }
+            if (!isAuthenticated) {
+                return renderGuestBlockingBox();
+            }
+            if (SignUpPostData.length === 0) {
+                return (
+                    <Flex w="100%" h="100%" mt="4" flexDirection="column" justifyContent="center" alignItems={isMobile ? 'start' : 'center'}>
+                        {renderFallback('無加簽相關資訊', 'empty', '100%', '0')}
+                        <HStack w="100%" pr="8" mt="8" justify="end">
+                            {renderSubmitPopover()}
+                        </HStack>
+                    </Flex>
+                );
+            }
             return (
                 <Flex w="100%" h="100%" mt="4" flexDirection="column" justifyContent="center" alignItems={isMobile ? 'start' : 'center'}>
-                    {renderFallback('無加簽相關資訊', 'empty', '100%', '0')}
-                    <HStack w="100%" pr="8" mt="8" justify="end">
+                    <SignUpCard post={SignUpPostData[signUpCardIdx]} SignUpPostData={SignUpPostData} setSignUpPostData={setSignUpPostData} fetchSignUpPostData={fetchSignUpPostData} />
+                    <HStack w="100%" pr="8" mt="8">
+                        <HStack>
+                            <IconButton size="md" variant="ghost" icon={<FaChevronLeft />} onClick={() => setSignUpCardIdx(signUpCardIdx === 0 ? SignUpPostData.length - 1 : signUpCardIdx - 1)} />
+                            <IconButton size="md" variant="ghost" icon={<FaChevronRight />} onClick={() => setSignUpCardIdx((signUpCardIdx + 1) % SignUpPostData.length)} />
+                            <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">
+                                {signUpCardIdx + 1}/{SignUpPostData.length}
+                            </Text>
+                        </HStack>
+                        <Spacer />
                         {renderSubmitPopover()}
                     </HStack>
                 </Flex>
             );
-        }
-        return (
-            <Flex w="100%" h="100%" mt="4" flexDirection="column" justifyContent="center" alignItems={isMobile ? 'start' : 'center'}>
-                <SignUpCard post={SignUpPostData[signUpCardIdx]} SignUpPostData={SignUpPostData} setSignUpPostData={setSignUpPostData} fetchSignUpPostData={fetchSignUpPostData} />
-                <HStack w="100%" pr="8" mt="8">
-                    <HStack>
-                        <IconButton size="md" variant="ghost" icon={<FaChevronLeft />} onClick={() => setSignUpCardIdx(signUpCardIdx === 0 ? SignUpPostData.length - 1 : signUpCardIdx - 1)} />
-                        <IconButton size="md" variant="ghost" icon={<FaChevronRight />} onClick={() => setSignUpCardIdx((signUpCardIdx + 1) % SignUpPostData.length)} />
-                        <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">
-                            {signUpCardIdx + 1}/{SignUpPostData.length}
-                        </Text>
-                    </HStack>
-                    <Spacer />
-                    {renderSubmitPopover()}
-                </HStack>
-            </Flex>
-        );
-    };
-    const renderNTURatingPanel = () => {
+        },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [
+            isMobile,
+            signUpCardIdx,
+            SignUpPostData,
+            isLoadingSignUpPostData,
+            isAuth0Loading,
+            isAuthenticated,
+            setSignUpCardIdx,
+            renderSubmitPopover,
+            renderGuestBlockingBox,
+            renderFallback,
+            renderPanelLoaing,
+        ]
+    );
+
+    const renderNTURatingPanel = useCallback(() => {
         if (isLoadingRatingData || isAuth0Loading) {
             return renderPanelLoaing('查詢評價中...', '100%', '8');
         }
@@ -609,8 +629,9 @@ function CourseDetailInfoContainer({ course }) {
                 </Button>
             </Flex>
         );
-    };
-    const renderPTTReviewPanel = () => {
+    }, [NTURatingData, isLoadingRatingData, isAuth0Loading, isAuthenticated, renderFallback, renderPanelLoaing, renderGuestBlockingBox]);
+
+    const renderPTTReviewPanel = useCallback(() => {
         if (isLoadingPTTReviewData || isAuth0Loading) {
             return renderPanelLoaing('努力爬文中...', '100%', '8');
         }
@@ -621,8 +642,9 @@ function CourseDetailInfoContainer({ course }) {
             return renderFallback('無相關貼文資訊', 'empty', '100%', '8');
         }
         return <PTTContentRowContainer info={PTTReviewData} height="150px" />;
-    };
-    const renderPTTExamPanel = () => {
+    }, [isLoadingPTTReviewData, isAuth0Loading, isAuthenticated, renderFallback, renderPanelLoaing, renderGuestBlockingBox, PTTReviewData]);
+
+    const renderPTTExamPanel = useCallback(() => {
         if (isLoadingPTTExamData || isAuth0Loading) {
             return renderPanelLoaing('努力爬文中...', '100%', '8');
         }
@@ -633,8 +655,9 @@ function CourseDetailInfoContainer({ course }) {
             return renderFallback('無相關貼文資訊', 'empty', '100%', '8');
         }
         return <PTTContentRowContainer info={PTTExamData} height="150px" />;
-    };
-    const renderSyllabusDataPanel = () => {
+    }, [isLoadingPTTExamData, isAuth0Loading, isAuthenticated, renderFallback, renderPanelLoaing, renderGuestBlockingBox, PTTExamData]);
+
+    const renderSyllabusDataPanel = useCallback(() => {
         if (isLoadingSyllubusData) {
             return renderPanelLoaing('載入中...', '100%', '8');
         }
@@ -670,8 +693,9 @@ function CourseDetailInfoContainer({ course }) {
                 })}
             </Flex>
         );
-    };
-    const renderGradePolicyPanel = () => {
+    }, [isLoadingSyllubusData, SyllubusData, renderFallback, renderPanelLoaing]);
+
+    const renderGradePolicyPanel = useCallback(() => {
         if (isLoadingSyllubusData) {
             return renderPanelLoaing('查看配分中...', '100%', '8');
         }
@@ -747,7 +771,8 @@ function CourseDetailInfoContainer({ course }) {
                 </VStack>
             </Flex>
         );
-    };
+    }, [isLoadingSyllubusData, SyllubusData, renderFallback, renderPanelLoaing, isMobile]);
+
     return (
         <Flex w="100%" minH="83vh" pt={isMobile ? '150px' : ''} flexDirection={isMobile ? 'column' : 'row'} flexWrap="wrap" justify={'center'}>
             {/* COL 1 */}
