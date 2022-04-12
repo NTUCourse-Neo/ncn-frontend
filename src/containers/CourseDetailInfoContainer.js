@@ -44,7 +44,7 @@ import BetaBadge from '../components/BetaBadge';
 import { info_view_map } from '../data/mapping_table';
 import PTTContentRowContainer from './PTTContentRowContainer';
 import { useDispatch } from 'react-redux';
-import { getCourseEnrollInfo, getNTURatingData, getPTTData, getCourseSyllabusData } from '../actions/index';
+import { getCourseEnrollInfo, getNTURatingData, getPTTData, getCourseSyllabusData } from '../actions/courses';
 import { getSocialPostByCourseId, createSocialPost } from '../actions/social';
 import ParrotGif from '../img/parrot/parrot.gif';
 import { hash_to_color_hex_with_hue } from '../utils/colorAgent';

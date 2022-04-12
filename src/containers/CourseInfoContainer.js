@@ -2,7 +2,8 @@ import { HStack, Tag, Text, ButtonGroup, Button, Spacer, Icon, Flex, Image, useM
 import CourseDetailInfoContainer from './CourseDetailInfoContainer';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCourse, logIn } from '../actions/';
+import { logIn } from '../actions/';
+import { fetchCourse } from '../actions/courses';
 import { fetchCourseTable, patchCourseTable } from '../actions/course_tables';
 import { fetchUserById, addFavoriteCourse } from '../actions/users';
 import { useNavigate } from 'react-router-dom';

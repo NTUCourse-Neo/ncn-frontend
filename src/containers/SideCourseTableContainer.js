@@ -31,7 +31,8 @@ import {
 } from '@chakra-ui/react';
 import { FaRegEdit, FaAngleRight, FaRegHandPointDown, FaRegHandPointUp, FaRegMeh, FaPlusSquare, FaAngleDown } from 'react-icons/fa';
 import CourseTableContainer from './CourseTableContainer';
-import { fetchCourseTableCoursesByIds, logIn, updateCourseTable } from '../actions/index';
+import { logIn, updateCourseTable } from '../actions/index';
+import { fetchCourseTableCoursesByIds } from '../actions/courses';
 import { createCourseTable, fetchCourseTable, patchCourseTable } from '../actions/course_tables';
 import { linkCoursetableToUser, fetchUserById } from '../actions/users';
 import { useDispatch, useSelector } from 'react-redux';
