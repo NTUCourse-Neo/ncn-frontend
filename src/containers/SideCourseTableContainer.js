@@ -31,7 +31,8 @@ import {
 } from '@chakra-ui/react';
 import { FaRegEdit, FaAngleRight, FaRegHandPointDown, FaRegHandPointUp, FaRegMeh, FaPlusSquare, FaAngleDown } from 'react-icons/fa';
 import CourseTableContainer from './CourseTableContainer';
-import { fetchCourseTableCoursesByIds, createCourseTable, fetchCourseTable, patchCourseTable, logIn, updateCourseTable } from '../actions/index';
+import { fetchCourseTableCoursesByIds, logIn, updateCourseTable } from '../actions/index';
+import { createCourseTable, fetchCourseTable, patchCourseTable } from '../actions/course_tables';
 import { linkCoursetableToUser, fetchUserById } from '../actions/users';
 import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
@@ -423,7 +424,13 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, hover
                         <TabPanels>
                             <TabPanel>
                                 <Flex flexDirection="row" justifyContent="start" alignItems="center" overflowX={'auto'}>
-                                    <CourseTableContainer courseTimes={courseTimes} courses={courses} loading={loading || isLoading} hoveredCourseTime={hoveredCourseTime} hoveredCourse={hoveredCourse} />
+                                    <CourseTableContainer
+                                        courseTimes={courseTimes}
+                                        courses={courses}
+                                        loading={loading || isLoading}
+                                        hoveredCourseTime={hoveredCourseTime}
+                                        hoveredCourse={hoveredCourse}
+                                    />
                                 </Flex>
                             </TabPanel>
                             <TabPanel>

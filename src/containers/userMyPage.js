@@ -6,7 +6,8 @@ import SkeletonRow from '../components/SkeletonRow';
 import { HashLoader } from 'react-spinners';
 import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react';
 import { BeatLoader } from 'react-spinners';
-import { fetchFavoriteCourses, logIn, updateCourseTable, fetchCourseTable } from '../actions/index';
+import { fetchFavoriteCourses, logIn, updateCourseTable } from '../actions/index';
+import { fetchCourseTable } from '../actions/course_tables';
 import { fetchUserById } from '../actions/users';
 import setPageMeta from '../utils/seo';
 

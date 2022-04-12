@@ -2,12 +2,30 @@
 // | courseInfo: Obj
 //
 import { React, useState } from 'react';
-import { Box, Flex, Heading, Badge, Spacer, AccordionItem, AccordionButton, AccordionPanel, Tag, TagLeftIcon, TagLabel, Button, Tooltip, useToast, Collapse, useMediaQuery, IconButton } from '@chakra-ui/react';
+import {
+    Box,
+    Flex,
+    Heading,
+    Badge,
+    Spacer,
+    AccordionItem,
+    AccordionButton,
+    AccordionPanel,
+    Tag,
+    TagLeftIcon,
+    TagLabel,
+    Button,
+    Tooltip,
+    useToast,
+    Collapse,
+    useMediaQuery,
+    IconButton,
+} from '@chakra-ui/react';
 import { CourseDrawerContainer } from '../containers/CourseDrawerContainer';
 import { FaPlus, FaHeart, FaInfoCircle } from 'react-icons/fa';
 import { info_view_map } from '../data/mapping_table';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCourseTable, patchCourseTable } from '../actions';
+import { fetchCourseTable, patchCourseTable } from '../actions/course_tables';
 import { addFavoriteCourse } from '../actions/users';
 import { hash_to_color_hex } from '../utils/colorAgent';
 import { useAuth0 } from '@auth0/auth0-react';
@@ -28,6 +46,7 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
 
     const [isMobile] = useMediaQuery('(max-width: 760px)');
 
+    // TODO: better naming
     const handleButtonClick = async course => {
         if (!isLoading) {
             setAddingCourse(true);

@@ -2,7 +2,8 @@ import { HStack, Tag, Text, ButtonGroup, Button, Spacer, Icon, Flex, Image, useM
 import CourseDetailInfoContainer from './CourseDetailInfoContainer';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCourse, fetchCourseTable, patchCourseTable, logIn } from '../actions/';
+import { fetchCourse, logIn } from '../actions/';
+import { fetchCourseTable, patchCourseTable } from '../actions/course_tables';
 import { fetchUserById, addFavoriteCourse } from '../actions/users';
 import { useNavigate } from 'react-router-dom';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
@@ -374,7 +375,14 @@ function CourseInfoContainer({ code }) {
                                         {Moment(refreshTime).format('HH:mm')} 更新
                                     </Text>
                                     <CopyToClipboard text={'https://course.myntu.me/courseinfo/' + course._id}>
-                                        <Button rightIcon={<Icon as={BiCopy} color={copyWord.color} />} variant="ghost" size="xs" bg={copyWord.bg} color={copyWord.color} onClick={() => setCopiedLinkClicks(copiedLinkClicks + 1)}>
+                                        <Button
+                                            rightIcon={<Icon as={BiCopy} color={copyWord.color} />}
+                                            variant="ghost"
+                                            size="xs"
+                                            bg={copyWord.bg}
+                                            color={copyWord.color}
+                                            onClick={() => setCopiedLinkClicks(copiedLinkClicks + 1)}
+                                        >
                                             {copyWord.word}
                                         </Button>
                                     </CopyToClipboard>
@@ -407,7 +415,14 @@ function CourseInfoContainer({ code }) {
                                     >
                                         {selected ? '從課表移除' : '加入課表'}
                                     </MenuItem>
-                                    <MenuItem key={'NolContent_Button_' + code + '_addToNol'} size="md" color="blue.600" variant="ghost" icon={<FaPlus />} onClick={() => openPage(genNolAddUrl(course), true)}>
+                                    <MenuItem
+                                        key={'NolContent_Button_' + code + '_addToNol'}
+                                        size="md"
+                                        color="blue.600"
+                                        variant="ghost"
+                                        icon={<FaPlus />}
+                                        onClick={() => openPage(genNolAddUrl(course), true)}
+                                    >
                                         課程網
                                     </MenuItem>
                                     <MenuItem
@@ -469,7 +484,14 @@ function CourseInfoContainer({ code }) {
                             >
                                 {selected ? '從課表移除' : '加入課表'}
                             </Button>
-                            <Button key={'NolContent_Button_' + code + '_addToNol'} size="md" colorScheme="blue" variant="outline" leftIcon={<FaPlus />} onClick={() => openPage(genNolAddUrl(course), true)}>
+                            <Button
+                                key={'NolContent_Button_' + code + '_addToNol'}
+                                size="md"
+                                colorScheme="blue"
+                                variant="outline"
+                                leftIcon={<FaPlus />}
+                                onClick={() => openPage(genNolAddUrl(course), true)}
+                            >
                                 課程網
                             </Button>
                         </ButtonGroup>
@@ -491,7 +513,14 @@ function CourseInfoContainer({ code }) {
                             課程網資訊
                         </Button>
                         <CopyToClipboard text={'https://course.myntu.me/courseinfo/' + course._id}>
-                            <Button rightIcon={<Icon as={BiCopy} color={copyWord.color} />} variant="ghost" size="md" bg={copyWord.bg} color={copyWord.color} onClick={() => setCopiedLinkClicks(copiedLinkClicks + 1)}>
+                            <Button
+                                rightIcon={<Icon as={BiCopy} color={copyWord.color} />}
+                                variant="ghost"
+                                size="md"
+                                bg={copyWord.bg}
+                                color={copyWord.color}
+                                onClick={() => setCopiedLinkClicks(copiedLinkClicks + 1)}
+                            >
                                 {copyWord.word}
                             </Button>
                         </CopyToClipboard>
