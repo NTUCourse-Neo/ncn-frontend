@@ -159,7 +159,7 @@ function CourseInfoContainer ({code}){
                 return;
             }
             // determine init state
-            if (course_table.courses.includes(code)){
+            if (course_table && course_table.courses.includes(code)){
                 setSelected(true);
             } else {
                 setSelected(false);
