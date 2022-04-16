@@ -358,18 +358,20 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, hover
                         <FaRegEdit size={22} />
                     </Button>
                 </PopoverTrigger>
-                <PopoverContent>
-                    <FocusLock returnFocus persistentFocus={false}>
-                        <PopoverArrow />
-                        <PopoverCloseButton />
-                        <PopoverHeader color="gray.500" fontWeight="700">
-                            課表設定
-                        </PopoverHeader>
-                        <PopoverBody p={5}>
-                            <Form firstFieldRef={firstFieldRef} onClose={onClose} />
-                        </PopoverBody>
-                    </FocusLock>
-                </PopoverContent>
+                <Flex zIndex={2000}>
+                    <PopoverContent>
+                        <FocusLock returnFocus persistentFocus={false}>
+                            <PopoverArrow />
+                            <PopoverCloseButton />
+                            <PopoverHeader color="gray.500" fontWeight="700">
+                                課表設定
+                            </PopoverHeader>
+                            <PopoverBody p={5}>
+                                <Form firstFieldRef={firstFieldRef} onClose={onClose} />
+                            </PopoverBody>
+                        </FocusLock>
+                    </PopoverContent>
+                </Flex>
             </Popover>
         );
     };
