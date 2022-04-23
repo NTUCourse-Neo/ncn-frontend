@@ -1,12 +1,12 @@
-name: Cypress E2E testing
+name: E2E testing
 on: [push]
 jobs:
-  cypress-run:
+  cypress-e2e:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: 🛎 Checkout
         uses: actions/checkout@v2
-      - name: Cypress run (Chrome)
+      - name: 🧪 Cypress run (Chrome)
         uses: cypress-io/github-action@v2
         with: 
           spec: cypress/integration/e2e/*
