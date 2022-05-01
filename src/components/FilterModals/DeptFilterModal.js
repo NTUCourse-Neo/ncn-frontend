@@ -13,7 +13,7 @@ import {
     Flex,
     useMediaQuery,
 } from '@chakra-ui/react';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { college_map } from '../../data/college';
 import { dept_list_bachelor_only } from '../../data/department';
@@ -61,7 +61,7 @@ function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
                         return null;
                     }
                     return (
-                        <>
+                        <React.Fragment key={`${college_key}`}>
                             <Flex
                                 key={`${college_key}-${index}`}
                                 px="2"
@@ -81,9 +81,9 @@ function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
                             </Flex>
                             {departments
                                 .filter(dept => !selectedDept.includes(dept.code))
-                                .map((dept, index) => (
+                                .map((dept, dept_index) => (
                                     <FilterElement
-                                        key={`${dept.code}-${index}-modalBody`}
+                                        key={`${dept.code}-${dept_index}-modalBody`}
                                         id={dept.code}
                                         name={dept.full_name}
                                         selected={false}
@@ -92,7 +92,7 @@ function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
                                         }}
                                     />
                                 ))}
-                        </>
+                        </React.Fragment>
                     );
                 })}
             </>
