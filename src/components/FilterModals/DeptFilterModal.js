@@ -120,7 +120,7 @@ function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
                 scrollBehavior="inside"
             >
                 <ModalOverlay />
-                <ModalContent maxW={isMobile ? '' : '50vw'}>
+                <ModalContent maxW={{ base: '100vw', md: '90vw', lg: '50vw' }}>
                     <ModalHeader>
                         {title}
                         {isMobile ? (
