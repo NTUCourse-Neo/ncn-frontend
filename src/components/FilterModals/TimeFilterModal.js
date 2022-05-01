@@ -7,14 +7,10 @@ import {
     ModalFooter,
     ModalBody,
     ModalCloseButton,
-    Badge,
     Button,
-    Heading,
-    Divider,
     Flex,
     useMediaQuery,
 } from '@chakra-ui/react';
-import { type_list, code_map } from '../../data/course_type';
 import TimetableSelector from './components/TimetableSelector';
 import { useSelector, useDispatch } from 'react-redux';
 import { setFilter } from '../../actions';
@@ -24,7 +20,6 @@ function TimeFilterModal({ selectedTime, setSelectedTime, toggle, title }) {
     const dispatch = useDispatch();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const time_state = useSelector(state => state.search_filters.time);
-    // console.error = () => {};
 
     const [isMobile] = useMediaQuery('(max-width: 760px)');
 
@@ -43,75 +38,6 @@ function TimeFilterModal({ selectedTime, setSelectedTime, toggle, title }) {
         dispatch(setFilter('time', timeTable));
     };
 
-    // const renderSelectedHeader = () => {
-    //     if (type === 'department') {
-    //         return (
-    //             <Flex flexDirection="column" justifyContent="start" alignItems="start" mx="8" mb="4">
-    //                 <Flex w="100%" flexWrap="wrap" flexDirection="row" justifyContent="start" alignItems="start">
-    //                     {dept_list_bachelor_only.map(dept => renderButton('department', dept, selectedDept, setSelectedDept, true))}
-    //                 </Flex>
-    //             </Flex>
-    //         );
-    //     }
-    //     if (type === 'category') {
-    //         return (
-    //             <Flex flexDirection="column" justifyContent="start" alignItems="start" mx="8" mb="4">
-    //                 <Flex w="100%" flexWrap="wrap" flexDirection="row" justifyContent="start" alignItems="start">
-    //                     {type_list.map(category => renderButton('category', category, selectedType, setSelectedType, true))}
-    //                 </Flex>
-    //             </Flex>
-    //         );
-    //     }
-    //     return <></>;
-    // };
-
-    // for dept and category
-    // const handleSelect = (value, selected, setSelected) => {
-    //     let index = selected.indexOf(value);
-    //     if (index === -1) {
-    //         setSelected([...selected, value]);
-    //     } else {
-    //         selected.splice(index, 1);
-    //         setSelected([...selected]);
-    //     }
-    // };
-    // for dept and category
-    // TODO: move as functional compopnent
-    // const renderButton = (type, data, selected, setSelected, renderSelected) => {
-    //     let key;
-    //     switch (type) {
-    //         case 'department':
-    //             key = data.code;
-    //             break;
-    //         case 'category':
-    //             key = data.id;
-    //             break;
-    //         default:
-    //             key = data.code;
-    //     }
-    //     let index = selected.indexOf(key);
-    //     if ((index === -1) === !renderSelected) {
-    //         return (
-    //             <Button
-    //                 key={type + key + ' button'}
-    //                 colorScheme="teal"
-    //                 variant={index === -1 ? 'outline' : 'solid'}
-    //                 size="sm"
-    //                 minW="100px"
-    //                 m="1"
-    //                 onClick={() => handleSelect(key, selected, setSelected)}
-    //                 _hover={index === -1 ? { bg: 'teal.100' } : { bg: 'red.700' }}
-    //             >
-    //                 <Badge mx="2" colorScheme="blue" key={type + key + ' badge'}>
-    //                     {data.code}
-    //                 </Badge>
-    //                 {data.full_name}
-    //             </Button>
-    //         );
-    //     } else {
-    //         return <></>;
-    //     }
-    // };
     const resetSelectedTime = () => {
         setSelectedTime([
             [false, false, false, false, false, false, false],
