@@ -7,7 +7,6 @@ import {
     ModalFooter,
     ModalBody,
     ModalCloseButton,
-    Badge,
     Button,
     Heading,
     Divider,
