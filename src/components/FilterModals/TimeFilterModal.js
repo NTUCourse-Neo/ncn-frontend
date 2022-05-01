@@ -1,6 +1,19 @@
-import { useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Badge, Button, Heading, Divider, Flex, useMediaQuery } from '@chakra-ui/react';
-import { college_map } from '../../data/college';
-import { dept_list_bachelor_only } from '../../data/department';
+import {
+    useDisclosure,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalFooter,
+    ModalBody,
+    ModalCloseButton,
+    Badge,
+    Button,
+    Heading,
+    Divider,
+    Flex,
+    useMediaQuery,
+} from '@chakra-ui/react';
 import { type_list, code_map } from '../../data/course_type';
 import TimetableSelector from './components/TimetableSelector';
 import { useSelector, useDispatch } from 'react-redux';
