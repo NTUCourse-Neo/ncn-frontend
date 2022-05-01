@@ -15,6 +15,9 @@ import {
     useMediaQuery,
 } from '@chakra-ui/react';
 import { useDispatch, useSelector } from 'react-redux';
+import { college_map } from '../../data/college';
+import { dept_list_bachelor_only } from '../../data/department';
+import FilterElement from './components/FilterElement';
 
 function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
     const dispatch = useDispatch();
@@ -95,7 +98,17 @@ function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
                     <ModalCloseButton />
                     <ModalBody overflow="auto" pt="0">
                         {/* TODO: render buttons */}
-                        <h1>hello</h1>
+                        {/* <FilterElement
+                            id={'1010'}
+                            name={'電機系'}
+                            selected={false}
+                            onClick={() => {
+                                console.log('hello');
+                            }}
+                        /> */}
+                        {dept_list_bachelor_only.map(dept => (
+                            <FilterElement key={dept.code} id={dept.code} name={dept.full_name} selected={true} />
+                        ))}
                     </ModalBody>
                     {isMobile ? (
                         <></>
