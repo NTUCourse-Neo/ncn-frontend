@@ -522,7 +522,7 @@ function CourseResultViewContainer() {
                                                             />
                                                             <DeptFilterModal
                                                                 title={
-                                                                    search_filters.department.length === 0
+                                                                    selectedDept.length === 0
                                                                         ? '未選擇開課系所'
                                                                         : '已選擇 ' + selectedDept.length + ' 系所'
                                                                 }
@@ -545,7 +545,7 @@ function CourseResultViewContainer() {
                                                             />
                                                             <CategoryFilterModal
                                                                 title={
-                                                                    search_filters.category.length === 0
+                                                                    selectedType.length === 0
                                                                         ? '未選擇課程類別'
                                                                         : '已選擇 ' + selectedType.length + ' 類別'
                                                                 }
