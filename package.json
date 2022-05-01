@@ -50,7 +50,7 @@
         "semi": true,
         "tabWidth": 4,
         "useTabs": false,
-        "printWidth": 200
+        "printWidth": 150
     },
     "scripts": {
         "start": "react-scripts start",
