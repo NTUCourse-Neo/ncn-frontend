@@ -51,7 +51,7 @@ import {
 import { BeatLoader } from 'react-spinners';
 import { FaChevronDown, FaChevronUp, FaPlus, FaMinus, FaArrowRight, FaRss, FaRegCalendarAlt } from 'react-icons/fa';
 import CourseInfoRowContainer from './CourseInfoRowContainer';
-import FilterModal from '../components/FilterModal';
+import TimeFilterModal from '../components/FilterModals/TimeFilterModal';
 import CourseSearchInput from '../components/CourseSearchInput';
 import SkeletonRow from '../components/SkeletonRow';
 import SideCourseTableContainer from './SideCourseTableContainer';
@@ -464,12 +464,11 @@ function CourseResultViewContainer() {
                                                                     dispatch(setFilterEnable('time', e.currentTarget.checked));
                                                                 }}
                                                             />
-                                                            <FilterModal
+                                                            <TimeFilterModal
                                                                 title={
                                                                     mapStateToIntervals(search_filters.time) === 0 ? '未選擇課程時間' : '已選擇 ' + mapStateToIntervals(search_filters.time) + ' 節次'
                                                                 }
                                                                 toggle={timeFilterOn}
-                                                                type="time"
                                                                 selectedTime={selectedTime}
                                                                 setSelectedTime={setSelectedTime}
                                                             />
@@ -486,13 +485,13 @@ function CourseResultViewContainer() {
                                                                     dispatch(setFilterEnable('department', e.currentTarget.checked));
                                                                 }}
                                                             />
-                                                            <FilterModal
+                                                            {/* <FilterModal
                                                                 title={selectedDept.length === 0 ? '未選擇開課系所' : '已選擇 ' + selectedDept.length + ' 系所'}
                                                                 toggle={deptFilterOn}
                                                                 type="department"
                                                                 selectedDept={selectedDept}
                                                                 setSelectedDept={setSelectedDept}
-                                                            />
+                                                            /> */}
                                                         </Flex>
                                                     </Flex>
                                                     <Flex flexDirection="column" px="4">
@@ -506,13 +505,13 @@ function CourseResultViewContainer() {
                                                                     dispatch(setFilterEnable('category', e.currentTarget.checked));
                                                                 }}
                                                             />
-                                                            <FilterModal
+                                                            {/* <FilterModal
                                                                 title={selectedType.length === 0 ? '未選擇課程類別' : '已選擇 ' + selectedType.length + ' 類別'}
                                                                 toggle={catFilterOn}
                                                                 type="category"
                                                                 selectedType={selectedType}
                                                                 setSelectedType={setSelectedType}
-                                                            />
+                                                            /> */}
                                                         </Flex>
                                                     </Flex>
                                                     <Flex flexDirection="column" px="4">
