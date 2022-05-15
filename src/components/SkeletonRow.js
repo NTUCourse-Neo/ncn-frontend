@@ -3,18 +3,17 @@ import {Flex, useToast, Text, VisuallyHidden} from '@chakra-ui/react';
 import {HashLoader} from 'react-spinners';
 import { FaSadTear } from 'react-icons/fa';
 
-function SkeletonRow(props) {
+function SkeletonRow({loading, error}) {
     const toast = useToast();
     const visible_logic = () =>{
-        if (props.loading){
+        if (loading){
             return (
                 <Flex p="4">
                     <HashLoader size="60px" color="teal"/>
                 </Flex>
             )
         }
-        else if (props.error){
-            // console.log(props.error);
+        else if (error){
             return (
                 <>
                     <Text color="gray.300" pt="10"> <FaSadTear size={32}/> </Text>

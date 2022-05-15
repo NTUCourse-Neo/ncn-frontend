@@ -9,7 +9,7 @@ import {
   } from '@chakra-ui/react';
 import {useSelector} from 'react-redux';
 
-function CourseInfoRowContainer(props) {
+function CourseInfoRowContainer({ courseInfo, w, setHoveredCourse, selectedCourses, displayTable, displayTags}) {
     const userInfo = useSelector(state => state.user);
 
     // const hide_scroll_bar = {
@@ -22,10 +22,10 @@ function CourseInfoRowContainer(props) {
 
     const renderCourseInfoRow = () => {
         return(
-            props.courseInfo.map((info, index) => {
+            courseInfo.map((info, index) => {
                 return(
-                    <Accordion allowToggle w={isMobile? "90vw":props.w} key={index} onMouseEnter={() => props.setHoveredCourse(info)} onMouseLeave={() => {props.setHoveredCourse(null)}}>
-                        <CourseInfoRow id={info["id"]} index={index} courseInfo={info} selected={props.selectedCourses.includes(info._id)} setHoveredCourse={props.setHoveredCourse} displayTags={props.displayTags} displayTable={props.displayTable} isfavorite={userInfo===null?false:userInfo.db.favorites.includes(info._id)} isCourseStatusModalOpen={props.isCourseStatusModalOpen} setIsCourseStatusModalOpen={props.setIsCourseStatusModalOpen} />
+                    <Accordion allowToggle w={isMobile? "90vw":w} key={index} onMouseEnter={() => setHoveredCourse(info)} onMouseLeave={() => {setHoveredCourse(null)}}>
+                        <CourseInfoRow id={info["id"]} index={index} courseInfo={info} selected={selectedCourses.includes(info._id)} setHoveredCourse={setHoveredCourse} displayTags={displayTags} displayTable={displayTable} isfavorite={userInfo===null?false:userInfo.db.favorites.includes(info._id)}/>
                         <Spacer my={isMobile? "2":"1"} />
                     </Accordion>
                 );

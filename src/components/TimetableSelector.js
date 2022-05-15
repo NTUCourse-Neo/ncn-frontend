@@ -3,7 +3,7 @@ import TableDragSelect from "react-table-drag-select";
 import "react-table-drag-select/style.css";
 import { Flex, Text, useMediaQuery } from '@chakra-ui/react';
  
-function TimetableSelector (props) {
+function TimetableSelector ({selectedTime, setSelectedTime}) {
   const [isMobile] = useMediaQuery("(max-width: 760px)");
   const days = ["一", "二", "三", "四", "五", "六" ,"日"];
   const interval = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "A", "B", "C", "D"];
@@ -25,7 +25,7 @@ function TimetableSelector (props) {
           );
         })}
       </Flex>
-      <TableDragSelect value={props.selectedTime} onChange={new_time_table => props.setSelectedTime(new_time_table)}>
+      <TableDragSelect value={selectedTime} onChange={new_time_table => setSelectedTime(new_time_table)}>
         {interval.map((day, i) =>{
           return (
             <tr key={i}>

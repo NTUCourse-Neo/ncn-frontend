@@ -48,7 +48,7 @@ const teams = [
   },
 ]
 
-function InfoPageContainer(props){
+function InfoPageContainer(){
   useEffect(() => {
     window.scrollTo(0, 0);
     setPageMeta({title: `關於 | NTUCourse Neo`, desc: `關於頁面 | NTUCourse Neo，全新的臺大選課網站。`});
