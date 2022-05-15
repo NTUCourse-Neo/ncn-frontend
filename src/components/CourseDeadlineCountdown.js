@@ -22,7 +22,7 @@ const identify_course_select_schedule = (timestamp) => {
 };
 
 function CourseDeadlineCountdown() {
-  const ts = new Date().getTime() / 999;
+  const ts = new Date().getTime() / 1000;
   const { status_idx, schedule_idx } = identify_course_select_schedule(ts);
   if (status_idx === -1) {
     return <></>;
