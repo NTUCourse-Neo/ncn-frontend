@@ -43,15 +43,6 @@
         "uuid": "^8.3.2",
         "web-vitals": "^0.2.2"
     },
-    "prettier": {
-        "arrowParens": "avoid",
-        "trailingComma": "es5",
-        "singleQuote": true,
-        "semi": true,
-        "tabWidth": 4,
-        "useTabs": false,
-        "printWidth": 200
-    },
     "scripts": {
         "start": "react-scripts start",
         "build": "CI=false && react-scripts build",
@@ -72,5 +63,8 @@
             "last 1 firefox version",
             "last 1 safari version"
         ]
+    },
+    "devDependencies": {
+        "prettier": "^2.6.2"
     }
 }
