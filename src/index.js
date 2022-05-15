@@ -1,35 +1,33 @@
-import { ColorModeScript } from '@chakra-ui/react';
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import * as serviceWorker from './serviceWorker';
-import theme from './theme';
+import { ColorModeScript } from "@chakra-ui/react";
+import React from "react";
+import ReactDOM from "react-dom";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import * as serviceWorker from "./serviceWorker";
+import theme from "./theme";
 import { Provider } from "react-redux";
 import store from "./store/index";
-import 'focus-visible/dist/focus-visible';
+import "focus-visible/dist/focus-visible";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-
 ReactDOM.render(
-    <Provider store={store}>
-      <BrowserRouter>
-        <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-        <Routes>
-          <Route path="/" element={<App route="home"/>} />
-          <Route path="/course" element={<App route="course"/>} />
-          <Route path="/user/info" element={<App route="user/info"/>} />
-          <Route path="/user/my" element={<App route="user/my"/>} />
-          <Route path="/error/:code" element={<App route="error"/>} />
-          <Route path="/about" element={<App route="about"/>} />
-          <Route path="/courseinfo/:code" element={<App route="courseinfo"/>} />
-          <Route path="/recruiting" element={<App route="recruiting"/>} />
-          <Route path="*" element={<App route="home"/>}/>
-        </Routes>
-      </BrowserRouter>
-    </Provider>
-  ,
-  document.getElementById('root')
+  <Provider store={store}>
+    <BrowserRouter>
+      <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+      <Routes>
+        <Route path="/" element={<App route="home" />} />
+        <Route path="/course" element={<App route="course" />} />
+        <Route path="/user/info" element={<App route="user/info" />} />
+        <Route path="/user/my" element={<App route="user/my" />} />
+        <Route path="/error/:code" element={<App route="error" />} />
+        <Route path="/about" element={<App route="about" />} />
+        <Route path="/courseinfo/:code" element={<App route="courseinfo" />} />
+        <Route path="/recruiting" element={<App route="recruiting" />} />
+        <Route path="*" element={<App route="home" />} />
+      </Routes>
+    </BrowserRouter>
+  </Provider>,
+  document.getElementById("root")
 );
 
 // If you want your app to work offline and load faster, you can change
