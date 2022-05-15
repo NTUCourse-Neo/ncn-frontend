@@ -51,7 +51,9 @@ import {
 import { BeatLoader } from 'react-spinners';
 import { FaChevronDown, FaChevronUp, FaPlus, FaMinus, FaArrowRight, FaRss, FaRegCalendarAlt } from 'react-icons/fa';
 import CourseInfoRowContainer from './CourseInfoRowContainer';
-import FilterModal from '../components/FilterModal';
+import TimeFilterModal from '../components/FilterModals/TimeFilterModal';
+import DeptFilterModal from '../components/FilterModals/DeptFilterModal';
+import CategoryFilterModal from '../components/FilterModals/CategoryFilterModal';
 import CourseSearchInput from '../components/CourseSearchInput';
 import SkeletonRow from '../components/SkeletonRow';
 import SideCourseTableContainer from './SideCourseTableContainer';
@@ -207,7 +209,9 @@ function CourseResultViewContainer() {
     const renderCourseStatusModal = () => {
         const renderFormattedTime = () => {
             const fetch_time = new Date(courseEnrollStatus.fetch_ts * 1000);
-            const fetch_time_str = `${fetch_time.getFullYear()}-${fetch_time.getMonth() + 1}-${fetch_time.getDate()} ${fetch_time.getHours()}:${fetch_time.getMinutes()}:${fetch_time.getSeconds()}`;
+            const fetch_time_str = `${fetch_time.getFullYear()}-${
+                fetch_time.getMonth() + 1
+            }-${fetch_time.getDate()} ${fetch_time.getHours()}:${fetch_time.getMinutes()}:${fetch_time.getSeconds()}`;
             return fetch_time_str;
         };
         return (
@@ -231,8 +235,24 @@ function CourseResultViewContainer() {
                                 {isFetchingCourseStatus ? (
                                     <Spinner size="xl" color="teal" />
                                 ) : (
-                                    <Flex w="100%" flexDirection="column" justifyContent="center" alignItems="start" bg="gray.200" px="8" py="4" borderRadius="xl" boxShadow="lg">
-                                        <Flex w="100%" flexDirection={isMobile ? 'column' : 'row'} justifyContent="center" alignItems={isMobile ? 'start' : 'center'} flexWrap="wrap">
+                                    <Flex
+                                        w="100%"
+                                        flexDirection="column"
+                                        justifyContent="center"
+                                        alignItems="start"
+                                        bg="gray.200"
+                                        px="8"
+                                        py="4"
+                                        borderRadius="xl"
+                                        boxShadow="lg"
+                                    >
+                                        <Flex
+                                            w="100%"
+                                            flexDirection={isMobile ? 'column' : 'row'}
+                                            justifyContent="center"
+                                            alignItems={isMobile ? 'start' : 'center'}
+                                            flexWrap="wrap"
+                                        >
                                             <Stat w="20vw">
                                                 <StatLabel>已選上人數</StatLabel>
                                                 <StatNumber>{courseEnrollStatus.enrolled}</StatNumber>
@@ -379,7 +399,9 @@ function CourseResultViewContainer() {
             // fetch next batch of search results
             if (search_results.length < total_count) {
                 try {
-                    dispatch(fetchSearchResults(search_ids, search_filters_enable, search_filters, batch_size, offset, search_settings.strict_search_mode));
+                    dispatch(
+                        fetchSearchResults(search_ids, search_filters_enable, search_filters, batch_size, offset, search_settings.strict_search_mode)
+                    );
                 } catch (error) {
                     toast({
                         title: '獲取課程資訊失敗',
@@ -429,7 +451,18 @@ function CourseResultViewContainer() {
             {renderCourseStatusModal()}
             {renderNoLoginWarning()}
             <Flex w="100vw" direction="row" justifyContent="center" alignItems="center" overflow="hidden">
-                <Box display="flex" flexBasis="100vw" flexDirection="column" alignItems="start" h="95vh" overflow="auto" maxW="screen-md" mx="auto" pt="64px" pb="40px">
+                <Box
+                    display="flex"
+                    flexBasis="100vw"
+                    flexDirection="column"
+                    alignItems="start"
+                    h="95vh"
+                    overflow="auto"
+                    maxW="screen-md"
+                    mx="auto"
+                    pt="64px"
+                    pb="40px"
+                >
                     <div ref={topRef} />
                     <Flex w="100%" direction="column" position="sticky" top="0" bgColor="white" zIndex="100" boxShadow="md">
                         <Flex w="100%" px="10vw" py="4" direction="column">
@@ -464,12 +497,13 @@ function CourseResultViewContainer() {
                                                                     dispatch(setFilterEnable('time', e.currentTarget.checked));
                                                                 }}
                                                             />
-                                                            <FilterModal
+                                                            <TimeFilterModal
                                                                 title={
-                                                                    mapStateToIntervals(search_filters.time) === 0 ? '未選擇課程時間' : '已選擇 ' + mapStateToIntervals(search_filters.time) + ' 節次'
+                                                                    mapStateToIntervals(search_filters.time) === 0
+                                                                        ? '未選擇課程時間'
+                                                                        : '已選擇 ' + mapStateToIntervals(search_filters.time) + ' 節次'
                                                                 }
                                                                 toggle={timeFilterOn}
-                                                                type="time"
                                                                 selectedTime={selectedTime}
                                                                 setSelectedTime={setSelectedTime}
                                                             />
@@ -486,10 +520,13 @@ function CourseResultViewContainer() {
                                                                     dispatch(setFilterEnable('department', e.currentTarget.checked));
                                                                 }}
                                                             />
-                                                            <FilterModal
-                                                                title={selectedDept.length === 0 ? '未選擇開課系所' : '已選擇 ' + selectedDept.length + ' 系所'}
-                                                                toggle={deptFilterOn}
-                                                                type="department"
+                                                            <DeptFilterModal
+                                                                title={
+                                                                    selectedDept.length === 0
+                                                                        ? '未選擇開課系所'
+                                                                        : '已選擇 ' + selectedDept.length + ' 系所'
+                                                                }
+                                                                isEnabled={deptFilterOn}
                                                                 selectedDept={selectedDept}
                                                                 setSelectedDept={setSelectedDept}
                                                             />
@@ -506,10 +543,13 @@ function CourseResultViewContainer() {
                                                                     dispatch(setFilterEnable('category', e.currentTarget.checked));
                                                                 }}
                                                             />
-                                                            <FilterModal
-                                                                title={selectedType.length === 0 ? '未選擇課程類別' : '已選擇 ' + selectedType.length + ' 類別'}
-                                                                toggle={catFilterOn}
-                                                                type="category"
+                                                            <CategoryFilterModal
+                                                                title={
+                                                                    selectedType.length === 0
+                                                                        ? '未選擇課程類別'
+                                                                        : '已選擇 ' + selectedType.length + ' 類別'
+                                                                }
+                                                                isEnabled={catFilterOn}
                                                                 selectedType={selectedType}
                                                                 setSelectedType={setSelectedType}
                                                             />
@@ -527,7 +567,12 @@ function CourseResultViewContainer() {
                                                                 }}
                                                             />
                                                             <Menu closeOnSelect={false} mx="2">
-                                                                <MenuButton size={isMobile ? 'sm' : 'md'} as={Button} rightIcon={<FaChevronDown />} disabled={!enrollFilterOn}>
+                                                                <MenuButton
+                                                                    size={isMobile ? 'sm' : 'md'}
+                                                                    as={Button}
+                                                                    rightIcon={<FaChevronDown />}
+                                                                    disabled={!enrollFilterOn}
+                                                                >
                                                                     加選方式
                                                                 </MenuButton>
                                                                 <MenuList>
@@ -584,7 +629,14 @@ function CourseResultViewContainer() {
                                             <TabPanel>
                                                 {/* Settings */}
                                                 <Flex flexDirection="row" flexWrap="wrap" css={{ gap: '10px' }}>
-                                                    <Flex w={isMobile ? '100%' : '50%'} flexDirection="column" p="4" mr={isMobile ? '0' : '4'} borderWidth="2px" borderRadius="lg">
+                                                    <Flex
+                                                        w={isMobile ? '100%' : '50%'}
+                                                        flexDirection="column"
+                                                        p="4"
+                                                        mr={isMobile ? '0' : '4'}
+                                                        borderWidth="2px"
+                                                        borderRadius="lg"
+                                                    >
                                                         <Text fontSize="lg" color="gray.500" fontWeight="700" mb="4">
                                                             課表設定
                                                         </Text>
@@ -645,7 +697,11 @@ function CourseResultViewContainer() {
                                                                         }
                                                                         transition="all 200ms ease-in-out"
                                                                     >
-                                                                        <TagLeftIcon key={tag + '-Icon'} boxSize="12px" as={selected ? FaMinus : FaPlus} />
+                                                                        <TagLeftIcon
+                                                                            key={tag + '-Icon'}
+                                                                            boxSize="12px"
+                                                                            as={selected ? FaMinus : FaPlus}
+                                                                        />
                                                                         {info_view_map[tag].name}
                                                                     </Tag>
                                                                 );
@@ -659,7 +715,12 @@ function CourseResultViewContainer() {
                                 </Box>
                             </Collapse>
                         </Flex>
-                        <IconButton size="xs" variant="ghost" icon={displayFilter ? <FaChevronUp /> : <FaChevronDown />} onClick={() => setDisplayFilter(!displayFilter)} />
+                        <IconButton
+                            size="xs"
+                            variant="ghost"
+                            icon={displayFilter ? <FaChevronUp /> : <FaChevronDown />}
+                            onClick={() => setDisplayFilter(!displayFilter)}
+                        />
                     </Flex>
                     {isMobile ? (
                         <>
