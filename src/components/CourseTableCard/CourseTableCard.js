@@ -1,6 +1,6 @@
 import { React, useEffect, useState } from "react";
 import { arrayMoveImmutable as arrayMove } from "array-move";
-import "./CourseTableCard.css";
+import "components/CourseTableCard/CourseTableCard.css";
 import {
   Flex,
   Text,
@@ -22,11 +22,11 @@ import {
   ScaleFade,
   useToast,
 } from "@chakra-ui/react";
-import { hash_to_color_hex } from "../../utils/colorAgent";
+import { hash_to_color_hex } from "utils/colorAgent";
 import { FaExclamationTriangle } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
-import { patchCourseTable } from "../../actions/course_tables";
-import SortablePopover from "./SortablePopover";
+import { patchCourseTable } from "actions/course_tables";
+import SortablePopover from "components/CourseTableCard/SortablePopover";
 
 function CourseTableCard({ courseTime, courseData, day, interval, grow, hoverId, isHover }) {
   const dispatch = useDispatch();

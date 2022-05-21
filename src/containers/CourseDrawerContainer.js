@@ -1,7 +1,7 @@
 import { React } from "react";
 import { Flex, Heading, Badge, Text, Spacer, Button, ButtonGroup, useMediaQuery } from "@chakra-ui/react";
 import { FaPlus, FaInfoCircle } from "react-icons/fa";
-import { info_view_map } from "../data/mapping_table";
+import { info_view_map } from "data/mapping_table";
 import { useNavigate } from "react-router-dom";
 
 function RenderNolContentBtn(course, title, key) {

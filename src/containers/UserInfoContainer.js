@@ -31,7 +31,7 @@ import { HashLoader } from "react-spinners";
 import { useDispatch, useSelector } from "react-redux";
 import { FaFacebook, FaGithub, FaGoogle, FaExclamationTriangle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { verify_recaptcha, logIn } from "../actions/";
+import { verify_recaptcha, logIn } from "actions/";
 import {
   fetchUserById,
   registerNewUser,
@@ -40,11 +40,11 @@ import {
   deleteUserProfile,
   request_otp_code,
   use_otp_link_student_id,
-} from "../actions/users";
-import { dept_list_bachelor_only } from "../data/department";
+} from "actions/users";
+import { dept_list_bachelor_only } from "data/department";
 import ReCAPTCHA from "react-google-recaptcha";
 import useCountDown from "react-countdown-hook";
-import setPageMeta from "../utils/seo";
+import setPageMeta from "utils/seo";
 
 function UserInfoContainer() {
   const navigate = useNavigate();

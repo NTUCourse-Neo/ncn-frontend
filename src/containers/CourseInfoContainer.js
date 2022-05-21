@@ -17,23 +17,23 @@ import {
   MenuDivider,
   useToast,
 } from "@chakra-ui/react";
-import CourseDetailInfoContainer from "./CourseDetailInfoContainer";
+import CourseDetailInfoContainer from "containers/CourseDetailInfoContainer";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { logIn } from "../actions/";
-import { fetchCourse } from "../actions/courses";
-import { fetchCourseTable, patchCourseTable } from "../actions/course_tables";
-import { fetchUserById, addFavoriteCourse } from "../actions/users";
+import { logIn } from "actions/";
+import { fetchCourse } from "actions/courses";
+import { fetchCourseTable, patchCourseTable } from "actions/course_tables";
+import { fetchUserById, addFavoriteCourse } from "actions/users";
 import { useNavigate } from "react-router-dom";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import Moment from "moment";
 import { IoMdOpen } from "react-icons/io";
 import { FaPlus, FaMinus, FaHeartbeat, FaHeart, FaAngleDown } from "react-icons/fa";
 import { BiCopy } from "react-icons/bi";
-import setPageMeta from "../utils/seo";
-import { genNolUrl, genNolAddUrl, openPage } from "./CourseDrawerContainer";
-import ParrotGif from "../img/parrot/parrot.gif";
-import ParrotUltraGif from "../img/parrot/ultrafastparrot.gif";
+import setPageMeta from "utils/seo";
+import { genNolUrl, genNolAddUrl, openPage } from "containers/CourseDrawerContainer";
+import ParrotGif from "img/parrot/parrot.gif";
+import ParrotUltraGif from "img/parrot/ultrafastparrot.gif";
 import { useAuth0 } from "@auth0/auth0-react";
 
 const copyWordList = [

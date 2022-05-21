@@ -15,10 +15,10 @@ import {
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { college_map } from "../../data/college";
-import { dept_list_bachelor_only } from "../../data/department";
-import FilterElement from "./components/FilterElement";
-import { setFilter } from "../../actions";
+import { college_map } from "data/college";
+import { dept_list_bachelor_only } from "data/department";
+import FilterElement from "components/FilterModals/components/FilterElement";
+import { setFilter } from "actions";
 
 function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
   const dispatch = useDispatch();

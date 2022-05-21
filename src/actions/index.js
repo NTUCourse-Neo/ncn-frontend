@@ -7,8 +7,8 @@ import {
   LOG_IN_SUCCESS,
   LOG_OUT_SUCCESS,
   SET_DISPLAY_TAGS,
-} from "../constants/action-types";
-import instance from "../api/axios";
+} from "constants/action-types";
+import instance from "api/axios";
 
 // normal actions
 const setSearchColumn = (col_name) => ({ type: SET_SEARCH_COLUMN, payload: col_name });

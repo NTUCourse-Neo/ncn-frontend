@@ -1,7 +1,7 @@
 import { Table, Thead, Tbody, Tr, Th, Td, Flex, Center, Box, Text, Skeleton, Tooltip } from "@chakra-ui/react";
 import { useState } from "react";
-import CourseTableCard from "../components/CourseTableCard/CourseTableCard";
-import { weekdays_map } from "../data/mapping_table";
+import CourseTableCard from "components/CourseTableCard/CourseTableCard";
+import { weekdays_map } from "data/mapping_table";
 
 function CourseTableContainer({ courses, loading, courseTimes, hoveredCourse, hoveredCourseTime }) {
   const days = ["1", "2", "3", "4", "5"];

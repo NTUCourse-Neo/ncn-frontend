@@ -7,8 +7,8 @@ import {
   FETCH_SEARCH_IDS_SUCCESS,
   INCREMENT_OFFSET,
   UPDATE_TOTAL_COUNT,
-} from "../constants/action-types";
-import instance from "../api/axios";
+} from "constants/action-types";
+import instance from "api/axios";
 
 const fetchSearchIDs = (searchString, paths, filters_enable, filter_obj, batch_size, strict_match_bool) => async (dispatch) => {
   dispatch({ type: FETCH_SEARCH_IDS_REQUEST });

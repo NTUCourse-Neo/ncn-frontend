@@ -11,10 +11,10 @@ import {
   Flex,
   useMediaQuery,
 } from "@chakra-ui/react";
-import TimetableSelector from "./components/TimetableSelector";
+import TimetableSelector from "components/FilterModals/components/TimetableSelector";
 import { useSelector, useDispatch } from "react-redux";
-import { setFilter } from "../../actions";
-import { mapStateToTimeTable } from "../../utils/timeTableConverter";
+import { setFilter } from "actions";
+import { mapStateToTimeTable } from "utils/timeTableConverter";
 
 function TimeFilterModal({ selectedTime, setSelectedTime, toggle, title }) {
   const dispatch = useDispatch();

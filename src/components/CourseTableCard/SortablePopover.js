@@ -1,8 +1,8 @@
 import { sortableContainer, sortableElement, sortableHandle } from "react-sortable-hoc";
 import { MdDragHandle } from "react-icons/md";
 import { Flex, Text, Badge, Spacer, IconButton } from "@chakra-ui/react";
-import { RenderNolContentBtn } from "../../containers/CourseDrawerContainer";
-import { hash_to_color_hex } from "../../utils/colorAgent";
+import { RenderNolContentBtn } from "containers/CourseDrawerContainer";
+import { hash_to_color_hex } from "utils/colorAgent";
 import { FaTrashAlt } from "react-icons/fa";
 
 // for future typescript used

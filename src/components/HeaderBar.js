@@ -21,7 +21,7 @@ import { FaCheck, FaExclamation, FaBook, FaInfoCircle, FaBookmark } from "react-
 import { Link } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import BeatLoader from "react-spinners/BeatLoader";
-import { logOut } from "../actions/";
+import { logOut } from "actions/";
 import { useDispatch } from "react-redux";
 
 function HeaderBar() {

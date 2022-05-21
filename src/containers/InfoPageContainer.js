@@ -3,10 +3,10 @@ import { Avatar, Box, Divider, Flex, HStack, Spacer, Text, VStack, Image, Icon, 
 import { FaGithub } from "react-icons/fa";
 import { SiNotion, SiDiscord } from "react-icons/si";
 import { GiLiver } from "react-icons/gi";
-import jchiroto from "../img/team_avatar/jc-hiroto.png";
-import swh00tw from "../img/team_avatar/swh00tw.png";
-import wil0408 from "../img/team_avatar/wil0408.png";
-import setPageMeta from "../utils/seo";
+import jchiroto from "img/team_avatar/jc-hiroto.png";
+import swh00tw from "img/team_avatar/swh00tw.png";
+import wil0408 from "img/team_avatar/wil0408.png";
+import setPageMeta from "utils/seo";
 
 const teams = [
   {

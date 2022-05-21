@@ -18,8 +18,8 @@ import {
 import { Search2Icon, ChevronDownIcon } from "@chakra-ui/icons";
 import { FaSearch } from "react-icons/fa";
 
-import { setSearchColumn } from "../actions/index";
-import { fetchSearchIDs } from "../actions/courses";
+import { setSearchColumn } from "actions/index";
+import { fetchSearchIDs } from "actions/courses";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 

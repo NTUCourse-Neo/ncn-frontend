@@ -1,5 +1,5 @@
-import { UPDATE_USER, LOG_OUT_SUCCESS } from "../constants/action-types";
-import instance from "../api/axios";
+import { UPDATE_USER, LOG_OUT_SUCCESS } from "constants/action-types";
+import instance from "api/axios";
 
 const linkCoursetableToUser = (token, course_table_id, user_id) => async (dispatch) => {
   try {

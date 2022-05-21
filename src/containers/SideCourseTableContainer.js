@@ -30,16 +30,16 @@ import {
   useMediaQuery,
 } from "@chakra-ui/react";
 import { FaRegEdit, FaAngleRight, FaRegHandPointDown, FaRegHandPointUp, FaRegMeh, FaPlusSquare, FaAngleDown } from "react-icons/fa";
-import CourseTableContainer from "./CourseTableContainer";
-import { logIn, updateCourseTable } from "../actions/index";
-import { fetchCourseTableCoursesByIds } from "../actions/courses";
-import { createCourseTable, fetchCourseTable, patchCourseTable } from "../actions/course_tables";
-import { linkCoursetableToUser, fetchUserById } from "../actions/users";
+import CourseTableContainer from "containers/CourseTableContainer";
+import { logIn, updateCourseTable } from "actions/index";
+import { fetchCourseTableCoursesByIds } from "actions/courses";
+import { createCourseTable, fetchCourseTable, patchCourseTable } from "actions/course_tables";
+import { linkCoursetableToUser, fetchUserById } from "actions/users";
 import { useDispatch, useSelector } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
-import CourseListContainer from "./CourseListContainer";
+import CourseListContainer from "containers/CourseListContainer";
 
 const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
