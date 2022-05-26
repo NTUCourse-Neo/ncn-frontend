@@ -22,11 +22,11 @@ import {
 import ReCAPTCHA from "react-google-recaptcha";
 import { FaCheckCircle } from "react-icons/fa";
 import { useDispatch } from "react-redux";
-import { send_logs, verify_recaptcha } from "../actions";
-import setPageMeta from "../utils/seo";
-import hiringPeopleSvg from "../img/hiring_people.svg";
-import hiringCollabSvg from "../img/hiring_collab.svg";
-import hiringOfficeSvg from "../img/hiring_office.svg";
+import { send_logs, verify_recaptcha } from "actions";
+import setPageMeta from "utils/seo";
+import hiringPeopleSvg from "img/hiring_people.svg";
+import hiringCollabSvg from "img/hiring_collab.svg";
+import hiringOfficeSvg from "img/hiring_office.svg";
 
 function RecruitingPageContainer() {
   const toast = useToast();

@@ -4,10 +4,10 @@ import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { send_logs } from "../actions";
+import { send_logs } from "actions";
 import { BounceLoader } from "react-spinners";
 import { v4 as uuidv4 } from "uuid";
-import setPageMeta from "../utils/seo";
+import setPageMeta from "utils/seo";
 
 function ErrorContainer({ code }) {
   const error_page_states = useLocation().state;

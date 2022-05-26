@@ -1,5 +1,5 @@
 import { React, useEffect, useState } from "react";
-import "../components/CourseTableCard/CourseTableCard.css";
+import "components/CourseTableCard/CourseTableCard.css";
 import { arrayMoveImmutable as arrayMove } from "array-move";
 import {
   Flex,
@@ -20,9 +20,9 @@ import {
 import { FaPlus, FaTrash, FaExclamationTriangle, FaInfoCircle } from "react-icons/fa";
 import { FadeLoader } from "react-spinners";
 import { MdDragHandle } from "react-icons/md";
-import { patchCourseTable } from "../actions/course_tables";
-import { hash_to_color_hex } from "../utils/colorAgent";
-import { genNolAddUrl, openPage } from "./CourseDrawerContainer";
+import { patchCourseTable } from "actions/course_tables";
+import { hash_to_color_hex } from "utils/colorAgent";
+import { genNolAddUrl, openPage } from "containers/CourseDrawerContainer";
 import { useDispatch } from "react-redux";
 import { sortableContainer, sortableElement, sortableHandle } from "react-sortable-hoc";
 import { useNavigate } from "react-router-dom";

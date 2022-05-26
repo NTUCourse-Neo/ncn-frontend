@@ -1,16 +1,16 @@
 import { React, useEffect, useState } from "react";
 import { Box, Flex, Text, useToast, useMediaQuery } from "@chakra-ui/react";
 import { useSelector, useDispatch } from "react-redux";
-import CourseInfoRowContainer from "./CourseInfoRowContainer";
-import SkeletonRow from "../components/SkeletonRow";
+import CourseInfoRowContainer from "containers/CourseInfoRowContainer";
+import SkeletonRow from "components/SkeletonRow";
 import { HashLoader } from "react-spinners";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import { BeatLoader } from "react-spinners";
-import { logIn, updateCourseTable } from "../actions/index";
-import { fetchFavoriteCourses } from "../actions/courses";
-import { fetchCourseTable } from "../actions/course_tables";
-import { fetchUserById } from "../actions/users";
-import setPageMeta from "../utils/seo";
+import { logIn, updateCourseTable } from "actions/index";
+import { fetchFavoriteCourses } from "actions/courses";
+import { fetchCourseTable } from "actions/course_tables";
+import { fetchUserById } from "actions/users";
+import setPageMeta from "utils/seo";
 
 function UserMyPage() {
   const toast = useToast();

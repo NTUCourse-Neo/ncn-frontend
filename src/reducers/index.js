@@ -17,7 +17,7 @@ import {
   LOG_OUT_SUCCESS,
   UPDATE_USER,
   SET_DISPLAY_TAGS,
-} from "../constants/action-types";
+} from "constants/action-types";
 
 const initState = {
   search_ids: [], // array of course_id

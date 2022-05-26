@@ -40,16 +40,16 @@ import { useState, useEffect, useCallback } from "react";
 import { PieChart } from "react-minimal-pie-chart";
 import { FaCircle, FaRss, FaExclamationTriangle, FaQuestionCircle, FaChevronLeft, FaChevronRight, FaInfoCircle } from "react-icons/fa";
 import { IoMdOpen } from "react-icons/io";
-import BetaBadge from "../components/BetaBadge";
-import { info_view_map } from "../data/mapping_table";
-import PTTContentRowContainer from "./PTTContentRowContainer";
+import BetaBadge from "components/BetaBadge";
+import { info_view_map } from "data/mapping_table";
+import PTTContentRowContainer from "containers/PTTContentRowContainer";
 import { useDispatch } from "react-redux";
-import { getCourseEnrollInfo, getNTURatingData, getPTTData, getCourseSyllabusData } from "../actions/courses";
-import { getSocialPostByCourseId, createSocialPost } from "../actions/social";
-import ParrotGif from "../img/parrot/parrot.gif";
-import { hash_to_color_hex_with_hue } from "../utils/colorAgent";
-import { social_user_type_map } from "../data/mapping_table";
-import SignUpCard from "../components/SignUpCard";
+import { getCourseEnrollInfo, getNTURatingData, getPTTData, getCourseSyllabusData } from "actions/courses";
+import { getSocialPostByCourseId, createSocialPost } from "actions/social";
+import ParrotGif from "img/parrot/parrot.gif";
+import { hash_to_color_hex_with_hue } from "utils/colorAgent";
+import { social_user_type_map } from "data/mapping_table";
+import SignUpCard from "components/SignUpCard";
 import { useAuth0 } from "@auth0/auth0-react";
 
 const syllabusTitle = {
@@ -529,7 +529,7 @@ function CourseDetailInfoContainer({ course }) {
         </PopoverContent>
       </Popover>
     );
-    }, [signUpCardForm, SignUpPostData, sendingForm, handleSubmitSignUpCardForm, fetchSignUpPostData]); // eslint-disable-line
+  }, [signUpCardForm, SignUpPostData, sendingForm, handleSubmitSignUpCardForm, fetchSignUpPostData]); // eslint-disable-line
 
   const renderSignupPanel = useCallback(
     () => {

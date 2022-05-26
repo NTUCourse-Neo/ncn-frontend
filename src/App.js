@@ -1,20 +1,20 @@
 import { React } from "react";
 import { ChakraProvider, useColorModeValue, Box, useMediaQuery } from "@chakra-ui/react";
-import theme from "./theme";
-import HeaderBar from "./components/HeaderBar";
-import Footer from "./components/Footer";
-import HomeViewContainer from "./containers/HomeViewContainer";
-import CourseResultViewContainer from "./containers/CourseResultViewContainer";
-import InfoPageContainer from "./containers/InfoPageContainer";
+import theme from "theme";
+import HeaderBar from "components/HeaderBar";
+import Footer from "components/Footer";
+import HomeViewContainer from "containers/HomeViewContainer";
+import CourseResultViewContainer from "containers/CourseResultViewContainer";
+import InfoPageContainer from "containers/InfoPageContainer";
 import { Auth0Provider } from "@auth0/auth0-react";
 import dotenv from "dotenv-defaults";
-import UserInfoContainer from "./containers/UserInfoContainer";
-import ErrorContainer from "./containers/ErrorContainer";
-import UserMyPage from "./containers/userMyPage";
-import CourseInfoContainer from "./containers/CourseInfoContainer";
+import UserInfoContainer from "containers/UserInfoContainer";
+import ErrorContainer from "containers/ErrorContainer";
+import UserMyPage from "containers/userMyPage";
+import CourseInfoContainer from "containers/CourseInfoContainer";
 import { useParams } from "react-router-dom";
 import ReactGA from "react-ga";
-import RecruitingPageContainer from "./containers/RecruitingPageContainer";
+import RecruitingPageContainer from "containers/RecruitingPageContainer";
 
 dotenv.config();
 

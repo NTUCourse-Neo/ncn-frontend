@@ -21,13 +21,13 @@ import {
   useMediaQuery,
   IconButton,
 } from "@chakra-ui/react";
-import { CourseDrawerContainer } from "../containers/CourseDrawerContainer";
+import { CourseDrawerContainer } from "containers/CourseDrawerContainer";
 import { FaPlus, FaHeart, FaInfoCircle } from "react-icons/fa";
-import { info_view_map } from "../data/mapping_table";
+import { info_view_map } from "data/mapping_table";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCourseTable, patchCourseTable } from "../actions/course_tables";
-import { addFavoriteCourse } from "../actions/users";
-import { hash_to_color_hex } from "../utils/colorAgent";
+import { fetchCourseTable, patchCourseTable } from "actions/course_tables";
+import { addFavoriteCourse } from "actions/users";
+import { hash_to_color_hex } from "utils/colorAgent";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
 

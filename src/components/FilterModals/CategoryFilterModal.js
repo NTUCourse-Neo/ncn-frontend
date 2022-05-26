@@ -14,9 +14,9 @@ import {
   useMediaQuery,
 } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
-import { type_list, code_map } from "../../data/course_type";
-import FilterElement from "./components/FilterElement";
-import { setFilter } from "../../actions";
+import { type_list, code_map } from "data/course_type";
+import FilterElement from "components/FilterModals/components/FilterElement";
+import { setFilter } from "actions";
 import React, { useMemo } from "react";
 
 function CategoryFilterModal({ title, isEnabled, selectedType, setSelectedType }) {

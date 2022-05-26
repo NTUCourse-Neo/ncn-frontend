@@ -1,4 +1,4 @@
-import instance from "../api/axios";
+import instance from "api/axios";
 
 const getSocialPostByCourseId = (token, course_id) => async (dispatch) => {
   try {

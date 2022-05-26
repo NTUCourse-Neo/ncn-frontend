@@ -15,7 +15,19 @@ module.exports = {
         sourceType: "module",
         ecmaVersion: 2021,
       },
-      rules: {},
+      rules: {
+        "no-restricted-imports": [
+          "error",
+          {
+            patterns: [
+              {
+                group: [".*"],
+                message: "please use absolute import path instead.",
+              },
+            ],
+          },
+        ],
+      },
     },
   ],
 };

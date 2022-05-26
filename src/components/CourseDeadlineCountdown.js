@@ -1,7 +1,7 @@
 import { React } from "react";
 import { Text, Flex, Progress, HStack, Button } from "@chakra-ui/react";
 import { FaClock } from "react-icons/fa";
-import { course_select_schedule, ntu_course_select_url, status_map } from "../data/course_select_schedule";
+import { course_select_schedule, ntu_course_select_url, status_map } from "data/course_select_schedule";
 
 const identify_course_select_schedule = (timestamp) => {
   for (let i = 0; i < course_select_schedule.length; i++) {

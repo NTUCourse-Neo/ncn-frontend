@@ -1,8 +1,8 @@
 import { Flex, Spacer, Text, Button, ButtonGroup, useMediaQuery, Image, IconButton, HStack, Icon } from "@chakra-ui/react";
 import { FaCodeBranch, FaGithub, FaHeartbeat } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import ncnLogo from "../img/ncn_logo.png";
-import { DiscordIcon } from "./CustomIcons";
+import ncnLogo from "img/ncn_logo.png";
+import { DiscordIcon } from "components/CustomIcons";
 
 function Footer({ mini }) {
   const ver = "beta (20220306)";

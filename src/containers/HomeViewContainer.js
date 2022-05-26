@@ -24,21 +24,21 @@ import {
   IconButton,
   Icon,
 } from "@chakra-ui/react";
-import homeMainSvg from "../img/home_main.svg";
-import HomeCard from "../components/HomeCard";
+import homeMainSvg from "img/home_main.svg";
+import HomeCard from "components/HomeCard";
 import { useAuth0 } from "@auth0/auth0-react";
 import { FaArrowDown, FaArrowRight, FaArrowUp, FaGithub, FaSortDown, FaSortUp } from "react-icons/fa";
 import { animateScroll as scroll, scroller } from "react-scroll";
 import { Link, useNavigate } from "react-router-dom";
 import { BeatLoader } from "react-spinners";
-import { logIn } from "../actions/";
-import { fetchUserById, registerNewUser } from "../actions/users";
+import { logIn } from "actions/index";
+import { fetchUserById, registerNewUser } from "actions/users";
 import { useDispatch } from "react-redux";
-import CourseDeadlineCountdown from "../components/CourseDeadlineCountdown";
-import setPageMeta from "../utils/seo";
+import CourseDeadlineCountdown from "components/CourseDeadlineCountdown";
+import setPageMeta from "utils/seo";
 import { motion, AnimatePresence } from "framer-motion";
-import HomeFooterImg from "../img/home_footer.svg";
-import { DiscordIcon } from "../components/CustomIcons";
+import HomeFooterImg from "img/home_footer.svg";
+import { DiscordIcon } from "components/CustomIcons";
 
 const newsCard = [
   <Flex

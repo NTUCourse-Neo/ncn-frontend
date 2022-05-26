@@ -50,22 +50,22 @@ import {
 } from "@chakra-ui/react";
 import { BeatLoader } from "react-spinners";
 import { FaChevronDown, FaChevronUp, FaPlus, FaMinus, FaArrowRight, FaRss, FaRegCalendarAlt } from "react-icons/fa";
-import CourseInfoRowContainer from "./CourseInfoRowContainer";
-import TimeFilterModal from "../components/FilterModals/TimeFilterModal";
-import DeptFilterModal from "../components/FilterModals/DeptFilterModal";
-import CategoryFilterModal from "../components/FilterModals/CategoryFilterModal";
-import CourseSearchInput from "../components/CourseSearchInput";
-import SkeletonRow from "../components/SkeletonRow";
-import SideCourseTableContainer from "./SideCourseTableContainer";
-import { setSearchSettings, setFilter, setFilterEnable, setNewDisplayTags } from "../actions/index";
-import { getCourseEnrollInfo, fetchSearchResults } from "../actions/courses";
+import CourseInfoRowContainer from "containers/CourseInfoRowContainer";
+import TimeFilterModal from "components/FilterModals/TimeFilterModal";
+import DeptFilterModal from "components/FilterModals/DeptFilterModal";
+import CategoryFilterModal from "components/FilterModals/CategoryFilterModal";
+import CourseSearchInput from "components/CourseSearchInput";
+import SkeletonRow from "components/SkeletonRow";
+import SideCourseTableContainer from "containers/SideCourseTableContainer";
+import { setSearchSettings, setFilter, setFilterEnable, setNewDisplayTags } from "actions/index";
+import { getCourseEnrollInfo, fetchSearchResults } from "actions/courses";
 import { useSelector, useDispatch } from "react-redux";
-import useOnScreen from "../hooks/useOnScreen";
-import { mapStateToTimeTable, mapStateToIntervals } from "../utils/timeTableConverter";
-import { info_view_map } from "../data/mapping_table";
+import useOnScreen from "hooks/useOnScreen";
+import { mapStateToTimeTable, mapStateToIntervals } from "utils/timeTableConverter";
+import { info_view_map } from "data/mapping_table";
 import { useAuth0 } from "@auth0/auth0-react";
-import BetaBadge from "../components/BetaBadge";
-import setPageMeta from "../utils/seo";
+import BetaBadge from "components/BetaBadge";
+import setPageMeta from "utils/seo";
 
 function CourseResultViewContainer() {
   const toast = useToast();

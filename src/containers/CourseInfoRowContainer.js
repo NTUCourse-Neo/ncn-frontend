@@ -1,5 +1,5 @@
 import { React } from "react";
-import CourseInfoRow from "../components/CourseInfoRow";
+import CourseInfoRow from "components/CourseInfoRow";
 import { Box, Flex, Spacer, Accordion, useMediaQuery } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
 
