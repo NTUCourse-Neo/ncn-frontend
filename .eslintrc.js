@@ -34,6 +34,7 @@ module.exports = {
         "react/no-unescaped-entities": "off",
         "no-unused-vars": "off",
         "prefer-const": "error",
+        "react/no-unstable-nested-components": "warn",
       },
     },
   ],

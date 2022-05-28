@@ -288,72 +288,42 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, hover
 
   const { onOpen, onClose, isOpen } = useDisclosure();
   const firstFieldRef = useRef(null);
-  const Form = ({ firstFieldRef, onClose }) => {
-    const handleSave = async () => {
-      onClose();
-
-      const new_table_name = firstFieldRef.current.value;
-      try {
-        const res_table = await dispatch(
-          patchCourseTable(courseTable._id, new_table_name, courseTable.user_id, courseTable.expire_ts, courseTable.courses)
-        );
-        if (res_table) {
-          toast({
-            title: `變更課表名稱成功`,
-            description: `課表名稱已更新為 ${new_table_name}`,
-            status: "success",
-            duration: 3000,
-            isClosable: true,
-          });
-        } else {
-          toast({
-            title: `變更課表名稱失敗`,
-            description: `課表已過期`,
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-          setExpired(true);
-        }
-      } catch (e) {
+  const handleSave = async () => {
+    onClose();
+    const new_table_name = firstFieldRef.current.value;
+    try {
+      const res_table = await dispatch(
+        patchCourseTable(courseTable._id, new_table_name, courseTable.user_id, courseTable.expire_ts, courseTable.courses)
+      );
+      if (res_table) {
+        toast({
+          title: `變更課表名稱成功`,
+          description: `課表名稱已更新為 ${new_table_name}`,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      } else {
         toast({
           title: `變更課表名稱失敗`,
-          description: `請聯繫客服(?)`,
+          description: `課表已過期`,
           status: "error",
           duration: 3000,
           isClosable: true,
         });
+        setExpired(true);
       }
-    };
-    return (
-      <Stack spacing={4}>
-        <TextInput
-          label="課表名稱"
-          id="table_name"
-          ref={firstFieldRef}
-          defaultValue={courseTable.name}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              handleSave();
-            }
-          }}
-        />
-        <ButtonGroup d="flex" justifyContent="flex-end">
-          <Button variant="outline" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button
-            colorScheme="teal"
-            onClick={() => {
-              handleSave();
-            }}
-          >
-            Save
-          </Button>
-        </ButtonGroup>
-      </Stack>
-    );
+    } catch (e) {
+      toast({
+        title: `變更課表名稱失敗`,
+        description: `請聯繫客服(?)`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   };
+
   const renderEditName = () => {
     return (
       <Popover isOpen={isOpen} initialFocusRef={firstFieldRef} onOpen={onOpen} onClose={onClose}>
@@ -371,7 +341,32 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, hover
                 課表設定
               </PopoverHeader>
               <PopoverBody p={5}>
-                <Form firstFieldRef={firstFieldRef} onClose={onClose} />
+                <Stack spacing={4}>
+                  <TextInput
+                    label="課表名稱"
+                    id="table_name"
+                    ref={firstFieldRef}
+                    defaultValue={courseTable.name}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleSave();
+                      }
+                    }}
+                  />
+                  <ButtonGroup d="flex" justifyContent="flex-end">
+                    <Button variant="outline" onClick={onClose}>
+                      Cancel
+                    </Button>
+                    <Button
+                      colorScheme="teal"
+                      onClick={() => {
+                        handleSave();
+                      }}
+                    >
+                      Save
+                    </Button>
+                  </ButtonGroup>
+                </Stack>
               </PopoverBody>
             </FocusLock>
           </PopoverContent>
