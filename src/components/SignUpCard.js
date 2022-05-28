@@ -57,7 +57,7 @@ function SignUpCard({ post, SignUpPostData, setSignUpPostData, fetchSignUpPostDa
   const { onOpen, onClose, isOpen } = useDisclosure();
   Moment.locale("zh-tw");
 
-  const handleRefetchPost = async (post_id, vote_type) => {
+  const handleRefetchPost = async (post_id) => {
     const token = await getAccessTokenSilently();
     let data;
     try {

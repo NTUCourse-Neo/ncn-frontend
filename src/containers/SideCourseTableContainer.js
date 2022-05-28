@@ -43,6 +43,16 @@ import CourseListContainer from "containers/CourseListContainer";
 
 const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
+// eslint-disable-next-line react/display-name
+const TextInput = forwardRef((props, ref) => {
+  return (
+    <FormControl>
+      <FormLabel htmlFor={props.id}>{props.label}</FormLabel>
+      <Input ref={ref} id={props.id} {...props} />
+    </FormControl>
+  );
+});
+
 function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, hoveredCourse, agreeToCreateTableWithoutLogin, setIsLoginWarningOpen }) {
   const navigate = useNavigate();
   const { user, isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
@@ -278,15 +288,7 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, hover
 
   const { onOpen, onClose, isOpen } = useDisclosure();
   const firstFieldRef = useRef(null);
-  const TextInput = forwardRef((props, ref) => {
-    return (
-      <FormControl>
-        <FormLabel htmlFor={props.id}>{props.label}</FormLabel>
-        <Input ref={ref} id={props.id} {...props} />
-      </FormControl>
-    );
-  });
-  const Form = ({ firstFieldRef, onClose, onSet }) => {
+  const Form = ({ firstFieldRef, onClose }) => {
     const handleSave = async () => {
       onClose();
 

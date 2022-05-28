@@ -131,7 +131,9 @@ function CourseSearchInput() {
           </MenuList>
         </Menu>
         <InputGroup w={["70%", "60%", "60%", "60%"]}>
-          <InputLeftElement children={<Search2Icon color="gray.500" />} />
+          <InputLeftElement>
+            <Search2Icon color="gray.500" />
+          </InputLeftElement>
           <Input
             variant="flushed"
             size="md"

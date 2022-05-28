@@ -696,7 +696,7 @@ function CourseDetailInfoContainer({ course }) {
     }
     return (
       <Flex w="100%" my="4" flexDirection="column" justifyContent="start" alignItems="start" wordBreak="break-all" overflow="auto">
-        {Object.keys(SyllubusData.syllabus).map((key, index) => {
+        {Object.keys(SyllubusData.syllabus).map((key) => {
           let line = SyllubusData.syllabus[key].split("\n");
           const content = line.map((item, index) => {
             return (
@@ -740,7 +740,7 @@ function CourseDetailInfoContainer({ course }) {
             label={({ dataEntry }) => dataEntry.value + "%"}
             labelPosition={75}
             data={SyllubusData.grade}
-            labelStyle={(index) => ({
+            labelStyle={() => ({
               fill: "white",
               fontSize: "10px",
               fontFamily: "sans-serif",

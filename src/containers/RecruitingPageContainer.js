@@ -217,7 +217,7 @@ function RecruitingPageContainer() {
                 setName(e.currentTarget.value);
               }}
             />
-            <InputRightAddon children="必填" />
+            <InputRightAddon>必填</InputRightAddon>
           </InputGroup>
           <InputGroup my="2" size="lg">
             <Input
@@ -227,7 +227,7 @@ function RecruitingPageContainer() {
                 setEmail(e.currentTarget.value);
               }}
             />
-            <InputRightAddon children="必填" />
+            <InputRightAddon>必填</InputRightAddon>
           </InputGroup>
           <InputGroup my="2" size="lg">
             <Input
@@ -237,7 +237,7 @@ function RecruitingPageContainer() {
                 setSchool(e.currentTarget.value);
               }}
             />
-            <InputRightAddon children="必填" />
+            <InputRightAddon>必填</InputRightAddon>
           </InputGroup>
           <Input
             size="lg"

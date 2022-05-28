@@ -98,11 +98,11 @@ function CourseTableContainer({ courses, loading, courseTimes, hoveredCourse, ho
             <Tr>
               {days.map((day, j) => {
                 return (
-                  <Tooltip hasArrow placement="top" label="點擊展開單日" bg="gray.600" color="white">
-                    <Th key={day + "_Th"} onClick={() => setActiveDayCol(day)} cursor="pointer">
+                  <Th key={`${day}-${j}`} onClick={() => setActiveDayCol(day)} cursor="pointer">
+                    <Tooltip hasArrow placement="top" label="點擊展開單日" bg="gray.600" color="white">
                       <Center key={day + "_Center"}>{weekdays_map[day]}</Center>
-                    </Th>
-                  </Tooltip>
+                    </Tooltip>
+                  </Th>
                 );
               })}
             </Tr>
