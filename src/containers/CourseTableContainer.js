@@ -40,62 +40,62 @@ function CourseTableContainer({ courses, loading, courseTimes, hoveredCourse, ho
     [courses]
   );
 
-  const renderTableContent = (days, interval, i, grow) => {
-    return (
-      <>
-        {days.map((day, j) => {
-          if (loading) {
-            return (
-              <Td key={`${day}-${i}-${j}`}>
-                <Skeleton borderRadius="lg" speed={1 + (i + j) * 0.1}>
-                  <Box h="12" w="4vw" />
-                </Skeleton>
-              </Td>
-            );
-          }
-          if (courseTimes.time_map && day in courseTimes.time_map && interval in courseTimes.time_map[day]) {
-            if (hoveredCourse && hoveredCourseTime && day in hoveredCourseTime.time_map && interval in hoveredCourseTime.time_map[day]) {
-              return <Td key={`${day}-${i}-${j}`}>{renderCourseTableCard(courseTimes, hoveredCourseTime, day, interval, grow)}</Td>;
-            }
-            return (
-              <Td key={`${day}-${i}-${j}`}>
-                <CourseTableCard
-                  grow={grow}
-                  courseTime={courseTimes.time_map[day][interval]}
-                  courseData={courses}
-                  interval={interval}
-                  day={weekdays_map[day]}
-                />
-              </Td>
-            );
-          }
+  const renderIntervalContent = useCallback(
+    (days, interval, i, grow) => {
+      return days.map((day, j) => {
+        if (loading) {
+          return (
+            <Td key={`${day}-${i}-${j}`}>
+              <Skeleton borderRadius="lg" speed={1 + (i + j) * 0.1}>
+                <Box h="12" w="4vw" />
+              </Skeleton>
+            </Td>
+          );
+        }
+        if (courseTimes.time_map && day in courseTimes.time_map && interval in courseTimes.time_map[day]) {
           if (hoveredCourse && hoveredCourseTime && day in hoveredCourseTime.time_map && interval in hoveredCourseTime.time_map[day]) {
-            return (
-              <Td key={`${day}-${i}-${j}`}>
-                <CourseTableCard
-                  grow={grow}
-                  isHover
-                  courseTime={[]}
-                  courseData={hoveredCourseTime.course_data}
-                  interval={interval}
-                  day={weekdays_map[day]}
-                />
-              </Td>
-            );
+            return <Td key={`${day}-${i}-${j}`}>{renderCourseTableCard(courseTimes, hoveredCourseTime, day, interval, grow)}</Td>;
           }
           return (
             <Td key={`${day}-${i}-${j}`}>
-              <Flex w="100%" h="3vh" mb="1" justifyContent="center" alignItems="center">
-                <Text color="gray.300" fontSize="5xl" fontWeight="700" key={i + "_" + j}>
-                  {interval}
-                </Text>
-              </Flex>
+              <CourseTableCard
+                grow={grow}
+                courseTime={courseTimes.time_map[day][interval]}
+                courseData={courses}
+                interval={interval}
+                day={weekdays_map[day]}
+              />
             </Td>
           );
-        })}
-      </>
-    );
-  };
+        }
+        if (hoveredCourse && hoveredCourseTime && day in hoveredCourseTime.time_map && interval in hoveredCourseTime.time_map[day]) {
+          return (
+            <Td key={`${day}-${i}-${j}`}>
+              <CourseTableCard
+                grow={grow}
+                isHover
+                courseTime={[]}
+                courseData={hoveredCourseTime.course_data}
+                interval={interval}
+                day={weekdays_map[day]}
+              />
+            </Td>
+          );
+        }
+        return (
+          <Td key={`${day}-${i}-${j}`}>
+            <Flex w="100%" h="3vh" mb="1" justifyContent="center" alignItems="center">
+              <Text color="gray.300" fontSize="5xl" fontWeight="700">
+                {interval}
+              </Text>
+            </Flex>
+          </Td>
+        );
+      });
+    },
+    [courseTimes, courses, hoveredCourse, hoveredCourseTime, loading, renderCourseTableCard]
+  );
+
   return (
     <Table variant="simple" colorScheme="blue" borderRadius="lg" w="100%">
       <Thead>
@@ -103,32 +103,30 @@ function CourseTableContainer({ courses, loading, courseTimes, hoveredCourse, ho
           <Tr>
             {days.map((day, j) => {
               return (
-                <Tooltip hasArrow placement="top" label="點擊展開單日" bg="gray.600" color="white" key={`${day}-${j}`}>
-                  <Th key={day + "_Th"} onClick={() => setActiveDayCol(day)} cursor="pointer">
-                    <Center key={day + "_Center"}>{weekdays_map[day]}</Center>
-                  </Th>
-                </Tooltip>
+                <Th onClick={() => setActiveDayCol(day)} cursor="pointer" key={`${day}-${j}`}>
+                  <Tooltip hasArrow placement="top" label="點擊展開單日" bg="gray.600" color="white">
+                    <Center>{weekdays_map[day]}</Center>
+                  </Tooltip>
+                </Th>
               );
             })}
           </Tr>
         ) : (
           <Tr>
-            {
+            <Th onClick={() => setActiveDayCol(0)} cursor="pointer">
               <Tooltip hasArrow placement="top" label="點擊收合" bg="gray.600" color="white">
-                <Th onClick={() => setActiveDayCol(0)} cursor="pointer">
-                  <Center>{weekdays_map[activeDayCol]}</Center>
-                </Th>
+                <Center>{weekdays_map[activeDayCol]}</Center>
               </Tooltip>
-            }
+            </Th>
           </Tr>
         )}
       </Thead>
       <Tbody>
         {interval.map((interval, i) => {
           if (activeDayCol === 0) {
-            return <Tr key={`${interval}-${i}`}>{renderTableContent(days, interval, i, false)}</Tr>;
+            return <Tr key={`${interval}-${i}`}>{renderIntervalContent(days, interval, i, false)}</Tr>;
           }
-          return <Tr key={`${interval}-${i}`}>{renderTableContent([activeDayCol], interval, i, true)}</Tr>;
+          return <Tr key={`${interval}-${i}`}>{renderIntervalContent([activeDayCol], interval, i, true)}</Tr>;
         })}
       </Tbody>
     </Table>
