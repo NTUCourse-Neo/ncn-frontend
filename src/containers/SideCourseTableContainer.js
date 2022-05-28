@@ -93,7 +93,7 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, hover
 
   // will set courseTimes in this function
   const extract_course_info = (courses) => {
-    let course_time_tmp = {};
+    const course_time_tmp = {};
     if (!course_time_tmp.parsed) {
       course_time_tmp.parsed = [];
     }
@@ -229,7 +229,7 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, hover
 
   useEffect(() => {
     if (hoveredCourse) {
-      let tmp = {
+      const tmp = {
         time_map: {},
         parsed: [],
         course_data: hoveredCourse,
@@ -244,7 +244,7 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, hover
   const handleCreateTable = async () => {
     if (!isLoading) {
       // generate a new uuid of course table
-      let new_uuid = uuidv4();
+      const new_uuid = uuidv4();
       if (user) {
         // hasLogIn
         try {

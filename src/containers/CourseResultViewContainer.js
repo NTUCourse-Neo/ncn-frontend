@@ -415,8 +415,8 @@ function CourseResultViewContainer() {
 
   const set_enroll_method = (e) => {
     // console.log(e.currentTarget.value)
-    let new_enroll_method = e.currentTarget.value;
-    let idx = selectedEnrollMethod.indexOf(new_enroll_method);
+    const new_enroll_method = e.currentTarget.value;
+    const idx = selectedEnrollMethod.indexOf(new_enroll_method);
     if (idx === -1) {
       //add
       setSelectedEnrollMethod([...selectedEnrollMethod, new_enroll_method]);

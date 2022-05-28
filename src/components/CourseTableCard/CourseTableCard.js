@@ -106,12 +106,12 @@ function CourseTableCard({ courseTime, courseData, day, interval, grow, hoverId,
 
   const saveChanges = async () => {
     // get indice need to reorder from courseOrder
-    let index_arr = fetchIndexByIds(courseOrder);
+    const index_arr = fetchIndexByIds(courseOrder);
     // do reorder, generate new course_table.courses to be patched
     const new_courses = [...course_table.courses];
     for (let i = 0; i < courseList.length; i++) {
-      let target_index = index_arr[i];
-      let target_id = courseList[i];
+      const target_index = index_arr[i];
+      const target_id = courseList[i];
       if (!prepareToRemoveCourseId.includes(target_id)) {
         new_courses[target_index] = target_id;
       } else {

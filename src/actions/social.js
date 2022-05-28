@@ -16,7 +16,7 @@ const getSocialPostByCourseId = (token, course_id) => async (dispatch) => {
       return [];
     } else if (error.response) {
       // server did response, used for handle custom error msg
-      let error_obj = {
+      const error_obj = {
         status_code: error.response.status,
         backend_msg: error.response.data.message,
         error_info: error.message,
@@ -25,8 +25,8 @@ const getSocialPostByCourseId = (token, course_id) => async (dispatch) => {
       throw error_obj;
     } else if (error.request) {
       // The request was made but no response was received (server is downed)
-      let status = 521; // Server is down
-      let error_obj = {
+      const status = 521; // Server is down
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -35,8 +35,8 @@ const getSocialPostByCourseId = (token, course_id) => async (dispatch) => {
       throw error_obj;
     } else {
       // Something happened in setting up the request that triggered an Error
-      let status = 400; // Bad request
-      let error_obj = {
+      const status = 400; // Bad request
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -60,7 +60,7 @@ const getSocialPostByPostId = (token, post_id) => async (dispatch) => {
   } catch (error) {
     if (error.response) {
       // server did response, used for handle custom error msg
-      let error_obj = {
+      const error_obj = {
         status_code: error.response.status,
         backend_msg: error.response.data.message,
         error_info: error.message,
@@ -69,8 +69,8 @@ const getSocialPostByPostId = (token, post_id) => async (dispatch) => {
       throw error_obj;
     } else if (error.request) {
       // The request was made but no response was received (server is downed)
-      let status = 521; // Server is down
-      let error_obj = {
+      const status = 521; // Server is down
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -79,8 +79,8 @@ const getSocialPostByPostId = (token, post_id) => async (dispatch) => {
       throw error_obj;
     } else {
       // Something happened in setting up the request that triggered an Error
-      let status = 400; // Bad request
-      let error_obj = {
+      const status = 400; // Bad request
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -108,7 +108,7 @@ const createSocialPost = (token, course_id, post) => async (dispatch) => {
   } catch (error) {
     if (error.response) {
       // server did response, used for handle custom error msg
-      let error_obj = {
+      const error_obj = {
         status_code: error.response.status,
         backend_msg: error.response.data.message,
         error_info: error.message,
@@ -117,8 +117,8 @@ const createSocialPost = (token, course_id, post) => async (dispatch) => {
       throw error_obj;
     } else if (error.request) {
       // The request was made but no response was received (server is downed)
-      let status = 521; // Server is down
-      let error_obj = {
+      const status = 521; // Server is down
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -127,8 +127,8 @@ const createSocialPost = (token, course_id, post) => async (dispatch) => {
       throw error_obj;
     } else {
       // Something happened in setting up the request that triggered an Error
-      let status = 400; // Bad request
-      let error_obj = {
+      const status = 400; // Bad request
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -156,7 +156,7 @@ const reportSocialPost = (token, post_id, report) => async (dispatch) => {
   } catch (error) {
     if (error.response) {
       // server did response, used for handle custom error msg
-      let error_obj = {
+      const error_obj = {
         status_code: error.response.status,
         backend_msg: error.response.data.message,
         error_info: error.message,
@@ -165,8 +165,8 @@ const reportSocialPost = (token, post_id, report) => async (dispatch) => {
       throw error_obj;
     } else if (error.request) {
       // The request was made but no response was received (server is downed)
-      let status = 521; // Server is down
-      let error_obj = {
+      const status = 521; // Server is down
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -175,8 +175,8 @@ const reportSocialPost = (token, post_id, report) => async (dispatch) => {
       throw error_obj;
     } else {
       // Something happened in setting up the request that triggered an Error
-      let status = 400; // Bad request
-      let error_obj = {
+      const status = 400; // Bad request
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -204,7 +204,7 @@ const voteSocialPost = (token, post_id, type) => async (dispatch) => {
   } catch (error) {
     if (error.response) {
       // server did response, used for handle custom error msg
-      let error_obj = {
+      const error_obj = {
         status_code: error.response.status,
         backend_msg: error.response.data.message,
         error_info: error.message,
@@ -213,8 +213,8 @@ const voteSocialPost = (token, post_id, type) => async (dispatch) => {
       throw error_obj;
     } else if (error.request) {
       // The request was made but no response was received (server is downed)
-      let status = 521; // Server is down
-      let error_obj = {
+      const status = 521; // Server is down
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -223,8 +223,8 @@ const voteSocialPost = (token, post_id, type) => async (dispatch) => {
       throw error_obj;
     } else {
       // Something happened in setting up the request that triggered an Error
-      let status = 400; // Bad request
-      let error_obj = {
+      const status = 400; // Bad request
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -245,7 +245,7 @@ const deleteSocialPost = (token, post_id) => async (dispatch) => {
   } catch (error) {
     if (error.response) {
       // server did response, used for handle custom error msg
-      let error_obj = {
+      const error_obj = {
         status_code: error.response.status,
         backend_msg: error.response.data.message,
         error_info: error.message,
@@ -254,8 +254,8 @@ const deleteSocialPost = (token, post_id) => async (dispatch) => {
       throw error_obj;
     } else if (error.request) {
       // The request was made but no response was received (server is downed)
-      let status = 521; // Server is down
-      let error_obj = {
+      const status = 521; // Server is down
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -264,8 +264,8 @@ const deleteSocialPost = (token, post_id) => async (dispatch) => {
       throw error_obj;
     } else {
       // Something happened in setting up the request that triggered an Error
-      let status = 400; // Bad request
-      let error_obj = {
+      const status = 400; // Bad request
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,

@@ -23,7 +23,7 @@ const fetchSearchIDs = (searchString, paths, filters_enable, filter_obj, batch_s
     // fetch batch 0 first
     dispatch({ type: FETCH_SEARCH_RESULTS_REQUEST });
     try {
-      let search_filter = { ...filter_obj, strict_match: strict_match_bool };
+      const search_filter = { ...filter_obj, strict_match: strict_match_bool };
       if (filters_enable.time === false) {
         search_filter.time = null;
       }
@@ -57,7 +57,7 @@ const fetchSearchIDs = (searchString, paths, filters_enable, filter_obj, batch_s
 
     if (error.response) {
       // server did response, used for handle custom error msg
-      let error_obj = {
+      const error_obj = {
         status_code: error.response.status,
         backend_msg: error.response.data.message,
         error_info: error.message,
@@ -66,8 +66,8 @@ const fetchSearchIDs = (searchString, paths, filters_enable, filter_obj, batch_s
       throw error_obj;
     } else if (error.request) {
       // The request was made but no response was received (server is downed)
-      let status = 521; // Server is down
-      let error_obj = {
+      const status = 521; // Server is down
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -76,8 +76,8 @@ const fetchSearchIDs = (searchString, paths, filters_enable, filter_obj, batch_s
       throw error_obj;
     } else {
       // Something happened in setting up the request that triggered an Error
-      let status = 400; // Bad request
-      let error_obj = {
+      const status = 400; // Bad request
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -92,7 +92,7 @@ const fetchSearchResults = (ids_arr, filters_enable, filter_obj, batch_size, off
   dispatch({ type: FETCH_SEARCH_RESULTS_REQUEST });
 
   try {
-    let search_filter = { ...filter_obj, strict_match: strict_match_bool };
+    const search_filter = { ...filter_obj, strict_match: strict_match_bool };
     if (filters_enable.time === false) {
       search_filter.time = null;
     }
@@ -119,7 +119,7 @@ const fetchSearchResults = (ids_arr, filters_enable, filter_obj, batch_size, off
 
     if (error.response) {
       // server did response, used for handle custom error msg
-      let error_obj = {
+      const error_obj = {
         status_code: error.response.status,
         backend_msg: error.response.data.message,
         error_info: error.message,
@@ -128,8 +128,8 @@ const fetchSearchResults = (ids_arr, filters_enable, filter_obj, batch_size, off
       throw error_obj;
     } else if (error.request) {
       // The request was made but no response was received (server is downed)
-      let status = 521; // Server is down
-      let error_obj = {
+      const status = 521; // Server is down
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -138,8 +138,8 @@ const fetchSearchResults = (ids_arr, filters_enable, filter_obj, batch_size, off
       throw error_obj;
     } else {
       // Something happened in setting up the request that triggered an Error
-      let status = 400; // Bad request
-      let error_obj = {
+      const status = 400; // Bad request
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -152,9 +152,9 @@ const fetchSearchResults = (ids_arr, filters_enable, filter_obj, batch_size, off
 
 const fetchCourse = (id) => async (dispatch) => {
   try {
-    let search_filter = { time: null, department: null, category: null, enroll_method: null, strict_match: false };
-    let batch_size = 1;
-    let offset = 0;
+    const search_filter = { time: null, department: null, category: null, enroll_method: null, strict_match: false };
+    const batch_size = 1;
+    const offset = 0;
     const {
       data: { courses },
     } = await instance.post(`/courses/ids`, { ids: [id], filter: search_filter, batch_size: batch_size, offset: offset });
@@ -163,7 +163,7 @@ const fetchCourse = (id) => async (dispatch) => {
   } catch (error) {
     if (error.response) {
       // server did response, used for handle custom error msg
-      let error_obj = {
+      const error_obj = {
         status_code: error.response.status,
         backend_msg: error.response.data.message,
         error_info: error.message,
@@ -172,8 +172,8 @@ const fetchCourse = (id) => async (dispatch) => {
       throw error_obj;
     } else if (error.request) {
       // The request was made but no response was received (server is downed)
-      let status = 521; // Server is down
-      let error_obj = {
+      const status = 521; // Server is down
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -182,8 +182,8 @@ const fetchCourse = (id) => async (dispatch) => {
       throw error_obj;
     } else {
       // Something happened in setting up the request that triggered an Error
-      let status = 400; // Bad request
-      let error_obj = {
+      const status = 400; // Bad request
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -207,7 +207,7 @@ const getCourseEnrollInfo = (token, course_id) => async (dispatch) => {
   } catch (error) {
     if (error.response) {
       // server did response, used for handle custom error msg
-      let error_obj = {
+      const error_obj = {
         status_code: error.response.status,
         backend_msg: error.response.data.message,
         error_info: error.message,
@@ -216,8 +216,8 @@ const getCourseEnrollInfo = (token, course_id) => async (dispatch) => {
       throw error_obj;
     } else if (error.request) {
       // The request was made but no response was received (server is downed)
-      let status = 521; // Server is down
-      let error_obj = {
+      const status = 521; // Server is down
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -226,8 +226,8 @@ const getCourseEnrollInfo = (token, course_id) => async (dispatch) => {
       throw error_obj;
     } else {
       // Something happened in setting up the request that triggered an Error
-      let status = 400; // Bad request
-      let error_obj = {
+      const status = 400; // Bad request
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -251,7 +251,7 @@ const getNTURatingData = (token, course_id) => async (dispatch) => {
   } catch (error) {
     if (error.response) {
       // server did response, used for handle custom error msg
-      let error_obj = {
+      const error_obj = {
         status_code: error.response.status,
         backend_msg: error.response.data.message,
         error_info: error.message,
@@ -260,8 +260,8 @@ const getNTURatingData = (token, course_id) => async (dispatch) => {
       throw error_obj;
     } else if (error.request) {
       // The request was made but no response was received (server is downed)
-      let status = 521; // Server is down
-      let error_obj = {
+      const status = 521; // Server is down
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -270,8 +270,8 @@ const getNTURatingData = (token, course_id) => async (dispatch) => {
       throw error_obj;
     } else {
       // Something happened in setting up the request that triggered an Error
-      let status = 400; // Bad request
-      let error_obj = {
+      const status = 400; // Bad request
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -295,7 +295,7 @@ const getPTTData = (token, course_id, type) => async (dispatch) => {
   } catch (error) {
     if (error.response) {
       // server did response, used for handle custom error msg
-      let error_obj = {
+      const error_obj = {
         status_code: error.response.status,
         backend_msg: error.response.data.message,
         error_info: error.message,
@@ -304,8 +304,8 @@ const getPTTData = (token, course_id, type) => async (dispatch) => {
       throw error_obj;
     } else if (error.request) {
       // The request was made but no response was received (server is downed)
-      let status = 521; // Server is down
-      let error_obj = {
+      const status = 521; // Server is down
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -314,8 +314,8 @@ const getPTTData = (token, course_id, type) => async (dispatch) => {
       throw error_obj;
     } else {
       // Something happened in setting up the request that triggered an Error
-      let status = 400; // Bad request
-      let error_obj = {
+      const status = 400; // Bad request
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -335,7 +335,7 @@ const getCourseSyllabusData = (course_id) => async (dispatch) => {
   } catch (error) {
     if (error.response) {
       // server did response, used for handle custom error msg
-      let error_obj = {
+      const error_obj = {
         status_code: error.response.status,
         backend_msg: error.response.data.message,
         error_info: error.message,
@@ -344,8 +344,8 @@ const getCourseSyllabusData = (course_id) => async (dispatch) => {
       throw error_obj;
     } else if (error.request) {
       // The request was made but no response was received (server is downed)
-      let status = 521; // Server is down
-      let error_obj = {
+      const status = 521; // Server is down
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -354,8 +354,8 @@ const getCourseSyllabusData = (course_id) => async (dispatch) => {
       throw error_obj;
     } else {
       // Something happened in setting up the request that triggered an Error
-      let status = 400; // Bad request
-      let error_obj = {
+      const status = 400; // Bad request
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -369,9 +369,9 @@ const getCourseSyllabusData = (course_id) => async (dispatch) => {
 // used in SideCourseTableContainer initialization, to fetch all course objects by ids
 const fetchCourseTableCoursesByIds = (ids_arr) => async (dispatch) => {
   try {
-    let search_filter = { strict_match: false, time: null, department: null, category: null, enroll_method: null };
-    let batch_size = 15000; // max batch size
-    let offset = 0;
+    const search_filter = { strict_match: false, time: null, department: null, category: null, enroll_method: null };
+    const batch_size = 15000; // max batch size
+    const offset = 0;
     const {
       data: { courses },
     } = await instance.post(`/courses/ids`, { ids: ids_arr, filter: search_filter, batch_size: batch_size, offset: offset });
@@ -381,7 +381,7 @@ const fetchCourseTableCoursesByIds = (ids_arr) => async (dispatch) => {
 
     if (error.response) {
       // server did response, used for handle custom error msg
-      let error_obj = {
+      const error_obj = {
         status_code: error.response.status,
         backend_msg: error.response.data.message,
         error_info: error.message,
@@ -390,8 +390,8 @@ const fetchCourseTableCoursesByIds = (ids_arr) => async (dispatch) => {
       throw error_obj;
     } else if (error.request) {
       // The request was made but no response was received (server is downed)
-      let status = 521; // Server is down
-      let error_obj = {
+      const status = 521; // Server is down
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -400,8 +400,8 @@ const fetchCourseTableCoursesByIds = (ids_arr) => async (dispatch) => {
       throw error_obj;
     } else {
       // Something happened in setting up the request that triggered an Error
-      let status = 400; // Bad request
-      let error_obj = {
+      const status = 400; // Bad request
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -415,9 +415,9 @@ const fetchCourseTableCoursesByIds = (ids_arr) => async (dispatch) => {
 // used in userMyPage initialization, to fetch all favorite courses object by user's favorite courses ids
 const fetchFavoriteCourses = (ids_arr) => async (dispatch) => {
   try {
-    let search_filter = { strict_match: false, time: null, department: null, category: null, enroll_method: null };
-    let batch_size = 15000;
-    let offset = 0;
+    const search_filter = { strict_match: false, time: null, department: null, category: null, enroll_method: null };
+    const batch_size = 15000;
+    const offset = 0;
     const {
       data: { courses },
     } = await instance.post(`/courses/ids`, { ids: ids_arr, filter: search_filter, batch_size: batch_size, offset: offset });
@@ -425,7 +425,7 @@ const fetchFavoriteCourses = (ids_arr) => async (dispatch) => {
   } catch (error) {
     if (error.response) {
       // server did response, used for handle custom error msg
-      let error_obj = {
+      const error_obj = {
         status_code: error.response.status,
         backend_msg: error.response.data.message,
         error_info: error.message,
@@ -434,8 +434,8 @@ const fetchFavoriteCourses = (ids_arr) => async (dispatch) => {
       throw error_obj;
     } else if (error.request) {
       // The request was made but no response was received (server is downed)
-      let status = 521; // Server is down
-      let error_obj = {
+      const status = 521; // Server is down
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -444,8 +444,8 @@ const fetchFavoriteCourses = (ids_arr) => async (dispatch) => {
       throw error_obj;
     } else {
       // Something happened in setting up the request that triggered an Error
-      let status = 400; // Bad request
-      let error_obj = {
+      const status = 400; // Bad request
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,

@@ -33,6 +33,7 @@ module.exports = {
         "react/react-in-jsx-scope": "off",
         "react/no-unescaped-entities": "off",
         "no-unused-vars": "off",
+        "prefer-const": "error",
       },
     },
   ],

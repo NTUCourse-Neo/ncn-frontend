@@ -56,7 +56,7 @@ const reducer = (state = initState, action) => {
     case UPDATE_TOTAL_COUNT:
       return { ...state, total_count: action.payload };
     case SET_SEARCH_COLUMN: {
-      let col_name = action.payload;
+      const col_name = action.payload;
       if (state.search_columns.includes(col_name)) {
         // remove column_name from columns
         return { ...state, search_columns: state.search_columns.filter((col) => col !== col_name) };
@@ -81,8 +81,8 @@ const reducer = (state = initState, action) => {
         return state;
       }
     case SET_FILTERS: {
-      let data = action.payload;
-      let filter_name = action.filter_name;
+      const data = action.payload;
+      const filter_name = action.filter_name;
       if (filter_name === "department") {
         return { ...state, search_filters: { ...state.search_filters, department: data } };
       } else if (filter_name === "time") {

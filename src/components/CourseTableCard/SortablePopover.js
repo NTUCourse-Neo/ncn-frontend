@@ -57,7 +57,7 @@ function SortablePopover({ courseData, courseList, prepareToRemoveCourseId, onSo
   return (
     <SortableContainer useDragHandle onSortEnd={onSortEnd} lockAxis="y">
       {courseList.map((courseId, index) => {
-        let course = courseData[courseId];
+        const course = courseData[courseId];
         return <SortableElement key={courseId} index={index} course={course} helperClass="sortableHelper" />;
       })}
     </SortableContainer>

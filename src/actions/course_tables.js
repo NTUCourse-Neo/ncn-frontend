@@ -13,7 +13,7 @@ const createCourseTable = (course_table_id, course_table_name, user_id, semester
 
     if (error.response) {
       // server did response, used for handle custom error msg
-      let error_obj = {
+      const error_obj = {
         status_code: error.response.status,
         backend_msg: error.response.data.message,
         error_info: error.message,
@@ -22,8 +22,8 @@ const createCourseTable = (course_table_id, course_table_name, user_id, semester
       throw error_obj;
     } else if (error.request) {
       // The request was made but no response was received (server is downed)
-      let status = 521; // Server is down
-      let error_obj = {
+      const status = 521; // Server is down
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -32,8 +32,8 @@ const createCourseTable = (course_table_id, course_table_name, user_id, semester
       throw error_obj;
     } else {
       // Something happened in setting up the request that triggered an Error
-      let status = 400; // Bad request
-      let error_obj = {
+      const status = 400; // Bad request
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -64,7 +64,7 @@ const fetchCourseTable = (course_table_id) => async (dispatch) => {
     } else {
       if (error.response) {
         // server did response, used for handle custom error msg
-        let error_obj = {
+        const error_obj = {
           status_code: error.response.status,
           backend_msg: error.response.data.message,
           error_info: error.message,
@@ -73,8 +73,8 @@ const fetchCourseTable = (course_table_id) => async (dispatch) => {
         throw error_obj;
       } else if (error.request) {
         // The request was made but no response was received (server is downed)
-        let status = 521; // Server is down
-        let error_obj = {
+        const status = 521; // Server is down
+        const error_obj = {
           status_code: status,
           backend_msg: "no",
           error_info: error.message,
@@ -83,8 +83,8 @@ const fetchCourseTable = (course_table_id) => async (dispatch) => {
         throw error_obj;
       } else {
         // Something happened in setting up the request that triggered an Error
-        let status = 400; // Bad request
-        let error_obj = {
+        const status = 400; // Bad request
+        const error_obj = {
           status_code: status,
           backend_msg: "no",
           error_info: error.message,
@@ -124,7 +124,7 @@ const patchCourseTable = (course_table_id, course_table_name, user_id, expire_ts
     } else {
       if (error.response) {
         // server did response, used for handle custom error msg
-        let error_obj = {
+        const error_obj = {
           status_code: error.response.status,
           backend_msg: error.response.data.message,
           error_info: error.message,
@@ -133,8 +133,8 @@ const patchCourseTable = (course_table_id, course_table_name, user_id, expire_ts
         throw error_obj;
       } else if (error.request) {
         // The request was made but no response was received (server is downed)
-        let status = 521; // Server is down
-        let error_obj = {
+        const status = 521; // Server is down
+        const error_obj = {
           status_code: status,
           backend_msg: "no",
           error_info: error.message,
@@ -143,8 +143,8 @@ const patchCourseTable = (course_table_id, course_table_name, user_id, expire_ts
         throw error_obj;
       } else {
         // Something happened in setting up the request that triggered an Error
-        let status = 400; // Bad request
-        let error_obj = {
+        const status = 400; // Bad request
+        const error_obj = {
           status_code: status,
           backend_msg: "no",
           error_info: error.message,

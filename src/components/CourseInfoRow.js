@@ -208,7 +208,7 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
       return <></>;
     }
     if (course.department.length > 1) {
-      let dept_str = course.department.join(", ");
+      const dept_str = course.department.join(", ");
       return (
         <Tooltip hasArrow placement="top" label={dept_str} bg="gray.600" color="white">
           <Badge colorScheme="teal" variant="solid" mr="4px">

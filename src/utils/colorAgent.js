@@ -1,12 +1,12 @@
 import ColorHash from "color-hash";
 import RandomColor from "randomcolor";
 const hash_to_color_hex = (str, lightness) => {
-  let colorhash = new ColorHash({ lightness: lightness });
+  const colorhash = new ColorHash({ lightness: lightness });
   return colorhash.hex(str);
 };
 
 const hash_to_color_hex_with_hue = (str, hue) => {
-  let colorhash = new ColorHash({ hue: hue });
+  const colorhash = new ColorHash({ hue: hue });
   return colorhash.hex(str);
 };
 
