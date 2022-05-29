@@ -1,5 +1,5 @@
 import { React } from "react";
-import { ChakraProvider, useColorModeValue, Box, useMediaQuery } from "@chakra-ui/react";
+import { ChakraProvider, useColorModeValue, Box } from "@chakra-ui/react";
 import theme from "theme";
 import HeaderBar from "components/HeaderBar";
 import Footer from "components/Footer";
@@ -25,8 +25,6 @@ if (process.env.REACT_APP_ENV === "prod") {
 
 function App(props) {
   const { code } = useParams();
-  const [isMobile] = useMediaQuery("(max-width: 1000px)");
-  const miniFooterPages = ["home", "course", "courseinfo", "user/my", "user/info", "recruiting"];
 
   const content = (route) => {
     switch (route) {
@@ -61,10 +59,10 @@ function App(props) {
       cacheLocation={"localstorage"}
     >
       <ChakraProvider theme={theme}>
-        <Box w="100vw" h={isMobile && miniFooterPages.includes(props.route) ? "100%" : ""}>
+        <Box w="100vw" h={{ base: "100%", lg: "" }}>
           <HeaderBar useColorModeValue={useColorModeValue} />
           {content(props.route)}
-          <Footer mini={miniFooterPages.includes(props.route)} />
+          <Footer />
         </Box>
       </ChakraProvider>
     </Auth0Provider>
