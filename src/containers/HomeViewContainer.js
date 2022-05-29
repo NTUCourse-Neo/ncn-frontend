@@ -124,12 +124,11 @@ function HomeViewContainer() {
   };
 
   useEffect(() => {
-    window.scrollTo(0, 0);
     if (isMobile && !localStorage.getItem("NCN_NO_MOBILE_WARNING")) {
       onWarningOpen();
     }
     setPageMeta({ title: `首頁 | NTUCourse Neo`, desc: `首頁 | NTUCourse Neo，全新的臺大選課網站。` });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isMobile, onWarningOpen]);
 
   const renderMobileWarning = () => {
     return (
