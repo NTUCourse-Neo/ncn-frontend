@@ -32,7 +32,7 @@ module.exports = {
         "react/prop-types": "off",
         "react/react-in-jsx-scope": "off",
         "react/no-unescaped-entities": "off",
-        "no-unused-vars": "off",
+        "no-unused-vars": "warn",
         "prefer-const": "error",
         "react/no-unstable-nested-components": "warn",
       },
