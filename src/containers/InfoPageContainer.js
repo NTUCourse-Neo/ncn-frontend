@@ -115,9 +115,9 @@ function InfoPageContainer() {
             width="320"
             src="https://www.youtube.com/embed/r98m09bb4pU"
             title="YouTube video player"
-            frameborder="0"
+            frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
+            allowFullScreen
           ></iframe>
         </Flex>
         <Text fontSize={["3xl", "4xl", "5xl"]} fontWeight="800" color="gray.700">

@@ -150,7 +150,7 @@ function UserInfoContainer() {
 
   // TODO
   const generateUpdateObject = () => {
-    let updateObject = {};
+    const updateObject = {};
     if (name !== userInfo.db.name) {
       updateObject.name = name;
     }
@@ -158,7 +158,7 @@ function UserInfoContainer() {
     //   updateObject.student_id = studentId;
     // }
     //major, doubleMajor, minor
-    let new_department = {};
+    const new_department = {};
     if (major !== userInfo.db.department.major) {
       new_department.major = major;
     } else {

@@ -102,10 +102,10 @@ function CourseDetailInfoContainer({ course }) {
 
   const handleSubmitSignUpCardForm = async () => {
     // check all fields first
-    for (let key in signUpCardForm) {
+    for (const key in signUpCardForm) {
       // check negative amount
       if (key === "amount") {
-        let amount = parseInt(signUpCardForm[key]);
+        const amount = parseInt(signUpCardForm[key]);
         if (amount < 0) {
           toast({
             title: "加簽人數請填入大於0的數字",
@@ -514,7 +514,7 @@ function CourseDetailInfoContainer({ course }) {
                 }
                 onClick={async () => {
                   setSendingForm(true);
-                  let res = await handleSubmitSignUpCardForm();
+                  const res = await handleSubmitSignUpCardForm();
                   setSendingForm(false);
                   if (res === true) {
                     onClose();
@@ -696,8 +696,8 @@ function CourseDetailInfoContainer({ course }) {
     }
     return (
       <Flex w="100%" my="4" flexDirection="column" justifyContent="start" alignItems="start" wordBreak="break-all" overflow="auto">
-        {Object.keys(SyllubusData.syllabus).map((key, index) => {
-          let line = SyllubusData.syllabus[key].split("\n");
+        {Object.keys(SyllubusData.syllabus).map((key) => {
+          const line = SyllubusData.syllabus[key].split("\n");
           const content = line.map((item, index) => {
             return (
               <Text key={syllabusTitle[key] + "content" + index} mb="0.5" fontSize="md" fontWeight="400" color="gray.600">
@@ -740,7 +740,7 @@ function CourseDetailInfoContainer({ course }) {
             label={({ dataEntry }) => dataEntry.value + "%"}
             labelPosition={75}
             data={SyllubusData.grade}
-            labelStyle={(index) => ({
+            labelStyle={() => ({
               fill: "white",
               fontSize: "10px",
               fontFamily: "sans-serif",
@@ -749,7 +749,7 @@ function CourseDetailInfoContainer({ course }) {
         </Box>
         <VStack mt={isMobile ? "4" : ""} align="start">
           {SyllubusData.grade.map((item, index) => {
-            let line = item.comment.split("\n");
+            const line = item.comment.split("\n");
             const content = line.map((item, index) => {
               return (
                 <Text key={"syllubusDataContent" + index} mb="1" fontSize="md" fontWeight="400" color="gray.700">

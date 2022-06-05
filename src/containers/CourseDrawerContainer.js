@@ -29,7 +29,7 @@ function RenderNolContentBtn(course, title, key) {
 }
 
 function openPage(url, doClose) {
-  let wnd = window.open(url, "_blank");
+  const wnd = window.open(url, "_blank");
   if (doClose) {
     // console.log("closing");
     setTimeout(() => {
@@ -38,14 +38,14 @@ function openPage(url, doClose) {
   }
 }
 const genNolAddUrl = (course) => {
-  let d_id = "T010";
+  const d_id = "T010";
   return `https://nol.ntu.edu.tw/nol/coursesearch/myschedule.php?add=${course.id}&ddd=${d_id}`;
 };
 const genNolUrl = (course) => {
-  let lang = "CH";
-  let base_url = "https://nol.ntu.edu.tw/nol/coursesearch/print_table.php?";
-  let course_id = course.course_id.replace("E", "");
-  let params = `course_id=${course_id.substr(0, 3)}%20${course_id.substr(3)}&class=${course.class_id}&ser_no=${
+  const lang = "CH";
+  const base_url = "https://nol.ntu.edu.tw/nol/coursesearch/print_table.php?";
+  const course_id = course.course_id.replace("E", "");
+  const params = `course_id=${course_id.substr(0, 3)}%20${course_id.substr(3)}&class=${course.class_id}&ser_no=${
     course.id
   }&semester=${course.semester.substr(0, 3)}-${course.semester.substr(3, 1)}&lang=${lang}`;
   return base_url + params;

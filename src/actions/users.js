@@ -20,7 +20,7 @@ const linkCoursetableToUser = (token, course_table_id, user_id) => async (dispat
 
     if (error.response) {
       // server did response, used for handle custom error msg
-      let error_obj = {
+      const error_obj = {
         status_code: error.response.status,
         backend_msg: error.response.data.message,
         error_info: error.message,
@@ -29,8 +29,8 @@ const linkCoursetableToUser = (token, course_table_id, user_id) => async (dispat
       throw error_obj;
     } else if (error.request) {
       // The request was made but no response was received (server is downed)
-      let status = 521; // Server is down
-      let error_obj = {
+      const status = 521; // Server is down
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -39,8 +39,8 @@ const linkCoursetableToUser = (token, course_table_id, user_id) => async (dispat
       throw error_obj;
     } else {
       // Something happened in setting up the request that triggered an Error
-      let status = 400; // Bad request
-      let error_obj = {
+      const status = 400; // Bad request
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -65,7 +65,7 @@ const fetchUserById = (token, user_id) => async (dispatch) => {
   } catch (error) {
     if (error.response) {
       // server did response, used for handle custom error msg
-      let error_obj = {
+      const error_obj = {
         status_code: error.response.status,
         backend_msg: error.response.data.message,
         error_info: error.message,
@@ -74,8 +74,8 @@ const fetchUserById = (token, user_id) => async (dispatch) => {
       throw error_obj;
     } else if (error.request) {
       // The request was made but no response was received (server is downed)
-      let status = 521; // Server is down
-      let error_obj = {
+      const status = 521; // Server is down
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -84,8 +84,8 @@ const fetchUserById = (token, user_id) => async (dispatch) => {
       throw error_obj;
     } else {
       // Something happened in setting up the request that triggered an Error
-      let status = 400; // Bad request
-      let error_obj = {
+      const status = 400; // Bad request
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -116,7 +116,7 @@ const registerNewUser = (token, email) => async (dispatch) => {
 
     if (error.response) {
       // server did response, used for handle custom error msg
-      let error_obj = {
+      const error_obj = {
         status_code: error.response.status,
         backend_msg: error.response.data.message,
         error_info: error.message,
@@ -125,8 +125,8 @@ const registerNewUser = (token, email) => async (dispatch) => {
       throw error_obj;
     } else if (error.request) {
       // The request was made but no response was received (server is downed)
-      let status = 521; // Server is down
-      let error_obj = {
+      const status = 521; // Server is down
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -135,8 +135,8 @@ const registerNewUser = (token, email) => async (dispatch) => {
       throw error_obj;
     } else {
       // Something happened in setting up the request that triggered an Error
-      let status = 400; // Bad request
-      let error_obj = {
+      const status = 400; // Bad request
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -166,7 +166,7 @@ const addFavoriteCourse = (token, new_favorite_list) => async (dispatch) => {
 
     if (error.response) {
       // server did response, used for handle custom error msg
-      let error_obj = {
+      const error_obj = {
         status_code: error.response.status,
         backend_msg: error.response.data.message,
         error_info: error.message,
@@ -175,8 +175,8 @@ const addFavoriteCourse = (token, new_favorite_list) => async (dispatch) => {
       throw error_obj;
     } else if (error.request) {
       // The request was made but no response was received (server is downed)
-      let status = 521; // Server is down
-      let error_obj = {
+      const status = 521; // Server is down
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -185,8 +185,8 @@ const addFavoriteCourse = (token, new_favorite_list) => async (dispatch) => {
       throw error_obj;
     } else {
       // Something happened in setting up the request that triggered an Error
-      let status = 400; // Bad request
-      let error_obj = {
+      const status = 400; // Bad request
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -216,7 +216,7 @@ const patchUserInfo = (token, updateObject) => async (dispatch) => {
 
     if (error.response) {
       // server did response, used for handle custom error msg
-      let error_obj = {
+      const error_obj = {
         status_code: error.response.status,
         backend_msg: error.response.data.message,
         error_info: error.message,
@@ -225,8 +225,8 @@ const patchUserInfo = (token, updateObject) => async (dispatch) => {
       throw error_obj;
     } else if (error.request) {
       // The request was made but no response was received (server is downed)
-      let status = 521; // Server is down
-      let error_obj = {
+      const status = 521; // Server is down
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -235,8 +235,8 @@ const patchUserInfo = (token, updateObject) => async (dispatch) => {
       throw error_obj;
     } else {
       // Something happened in setting up the request that triggered an Error
-      let status = 400; // Bad request
-      let error_obj = {
+      const status = 400; // Bad request
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -259,7 +259,7 @@ const deleteUserProfile = (token) => async (dispatch) => {
 
     if (error.response) {
       // server did response, used for handle custom error msg
-      let error_obj = {
+      const error_obj = {
         status_code: error.response.status,
         backend_msg: error.response.data.message,
         error_info: error.message,
@@ -268,8 +268,8 @@ const deleteUserProfile = (token) => async (dispatch) => {
       throw error_obj;
     } else if (error.request) {
       // The request was made but no response was received (server is downed)
-      let status = 521; // Server is down
-      let error_obj = {
+      const status = 521; // Server is down
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -278,8 +278,8 @@ const deleteUserProfile = (token) => async (dispatch) => {
       throw error_obj;
     } else {
       // Something happened in setting up the request that triggered an Error
-      let status = 400; // Bad request
-      let error_obj = {
+      const status = 400; // Bad request
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -303,7 +303,7 @@ const deleteUserAccount = (token) => async (dispatch) => {
 
     if (error.response) {
       // server did response, used for handle custom error msg
-      let error_obj = {
+      const error_obj = {
         status_code: error.response.status,
         backend_msg: error.response.data.message,
         error_info: error.message,
@@ -312,8 +312,8 @@ const deleteUserAccount = (token) => async (dispatch) => {
       throw error_obj;
     } else if (error.request) {
       // The request was made but no response was received (server is downed)
-      let status = 521; // Server is down
-      let error_obj = {
+      const status = 521; // Server is down
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,
@@ -322,8 +322,8 @@ const deleteUserAccount = (token) => async (dispatch) => {
       throw error_obj;
     } else {
       // Something happened in setting up the request that triggered an Error
-      let status = 400; // Bad request
-      let error_obj = {
+      const status = 400; // Bad request
+      const error_obj = {
         status_code: status,
         backend_msg: "no",
         error_info: error.message,

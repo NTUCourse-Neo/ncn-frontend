@@ -42,6 +42,7 @@ import { DiscordIcon } from "components/CustomIcons";
 
 const newsCard = [
   <Flex
+    key="RecrutingCard"
     h={{ base: "200px", lg: "180px" }}
     overflowY={"auto"}
     w={["80vw", "80vw", "50vw", "25vw"]}
@@ -74,6 +75,7 @@ const newsCard = [
     </Flex>
   </Flex>,
   <Flex
+    key="1102 Updating"
     h={{ base: "200px", lg: "180px" }}
     overflowY={"auto"}
     w={["80vw", "80vw", "50vw", "25vw"]}

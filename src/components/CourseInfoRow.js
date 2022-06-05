@@ -208,7 +208,7 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
       return <></>;
     }
     if (course.department.length > 1) {
-      let dept_str = course.department.join(", ");
+      const dept_str = course.department.join(", ");
       return (
         <Tooltip hasArrow placement="top" label={dept_str} bg="gray.600" color="white">
           <Badge colorScheme="teal" variant="solid" mr="4px">
@@ -272,7 +272,7 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
                       tooltip_str = info_view_map[tag].name + ":" + info_view_map[tag].map[courseInfo[tag][0]].full_name;
                     }
                     return (
-                      <Tooltip hasArrow placement="top" label={tooltip_str} bg="gray.600" color="white">
+                      <Tooltip hasArrow placement="top" label={tooltip_str} bg="gray.600" color="white" key={index}>
                         <Tag mx="2px" variant="subtle" colorScheme={info_view_map[tag].color} hidden={courseInfo[tag] === -1}>
                           <TagLeftIcon boxSize="12px" as={info_view_map[tag].logo} />
                           <TagLabel>{display_str}</TagLabel>
@@ -281,7 +281,7 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
                     );
                   }
                   return (
-                    <Tooltip hasArrow placement="top" label={info_view_map[tag].name} bg="gray.600" color="white">
+                    <Tooltip hasArrow placement="top" label={info_view_map[tag].name} bg="gray.600" color="white" key={index}>
                       <Tag variant="subtle" colorScheme={info_view_map[tag].color} hidden={courseInfo[tag] === -1}>
                         <TagLeftIcon boxSize="12px" as={info_view_map[tag].logo} />
                         <TagLabel>{"map" in info_view_map[tag] ? info_view_map[tag].map[courseInfo[tag]] : courseInfo[tag]}</TagLabel>
@@ -380,7 +380,7 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
                   tooltip_str = info_view_map[tag].name + ":" + info_view_map[tag].map[courseInfo[tag][0]].full_name;
                 }
                 return (
-                  <Tooltip hasArrow placement="top" label={tooltip_str} bg="gray.600" color="white">
+                  <Tooltip hasArrow placement="top" label={tooltip_str} bg="gray.600" color="white" key={index}>
                     <Tag mx="2px" variant="subtle" colorScheme={info_view_map[tag].color} hidden={courseInfo[tag] === -1}>
                       <TagLeftIcon boxSize="12px" as={info_view_map[tag].logo} />
                       <TagLabel>{display_str}</TagLabel>
@@ -389,7 +389,7 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
                 );
               }
               return (
-                <Tooltip hasArrow placement="top" label={info_view_map[tag].name} bg="gray.600" color="white">
+                <Tooltip hasArrow placement="top" label={info_view_map[tag].name} bg="gray.600" color="white" key={index}>
                   <Tag mx="2px" variant="subtle" colorScheme={info_view_map[tag].color} hidden={courseInfo[tag] === -1}>
                     <TagLeftIcon boxSize="12px" as={info_view_map[tag].logo} />
                     <TagLabel>{"map" in info_view_map[tag] ? info_view_map[tag].map[courseInfo[tag]] : courseInfo[tag]}</TagLabel>

@@ -58,8 +58,8 @@ const reducer = (state = initState, action) => {
       return { ...state, offset: state.offset + state.batch_size };
     case UPDATE_TOTAL_COUNT:
       return { ...state, total_count: action.payload };
-    case SET_SEARCH_COLUMN:
-      let col_name = action.payload;
+    case SET_SEARCH_COLUMN: {
+      const col_name = action.payload;
       if (state.search_columns.includes(col_name)) {
         // remove column_name from columns
         return { ...state, search_columns: state.search_columns.filter((col) => col !== col_name) };
@@ -67,9 +67,9 @@ const reducer = (state = initState, action) => {
         // add column_name to columns
         return { ...state, search_columns: [...state.search_columns, col_name] };
       }
+    }
     case SET_SEARCH_SETTINGS:
-      let new_setting = action.payload;
-      return { ...state, search_settings: new_setting };
+      return { ...state, search_settings: action.payload };
     case SET_FILTERS_ENABLE:
       if (action.filter_name === "time") {
         return { ...state, search_filters_enable: { ...state.search_filters_enable, time: action.payload } };
@@ -83,9 +83,9 @@ const reducer = (state = initState, action) => {
         // default
         return state;
       }
-    case SET_FILTERS:
-      let data = action.payload;
-      let filter_name = action.filter_name;
+    case SET_FILTERS: {
+      const data = action.payload;
+      const filter_name = action.filter_name;
       if (filter_name === "department") {
         return { ...state, search_filters: { ...state.search_filters, department: data } };
       } else if (filter_name === "time") {
@@ -97,6 +97,7 @@ const reducer = (state = initState, action) => {
       } else {
         return { ...state };
       }
+    }
     case UPDATE_COURSE_TABLE:
       return { ...state, course_table: action.payload };
     case LOG_IN_SUCCESS:

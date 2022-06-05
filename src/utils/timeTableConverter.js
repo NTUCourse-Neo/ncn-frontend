@@ -30,7 +30,7 @@ const mapStateToTimeTable = (time_state) => {
       [false, false, false, false, false, false, false],
     ];
   } else {
-    let time_table = [
+    const time_table = [
       [false, false, false, false, false, false, false],
       [false, false, false, false, false, false, false],
       [false, false, false, false, false, false, false],
@@ -48,7 +48,7 @@ const mapStateToTimeTable = (time_state) => {
       [false, false, false, false, false, false, false],
     ];
     for (let i = 0; i < 7; i++) {
-      let day = time_state[i];
+      const day = time_state[i];
       for (let j = 0; j < day.length; j++) {
         switch (day[j]) {
           case "0":
