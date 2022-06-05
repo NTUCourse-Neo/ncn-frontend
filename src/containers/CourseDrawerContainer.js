@@ -1,5 +1,5 @@
 import { React } from "react";
-import { Flex, Heading, Badge, Text, Spacer, Button, ButtonGroup, useMediaQuery } from "@chakra-ui/react";
+import { Flex, Heading, Badge, Text, Spacer, Button, ButtonGroup } from "@chakra-ui/react";
 import { FaPlus, FaInfoCircle } from "react-icons/fa";
 import { info_view_map } from "data/mapping_table";
 import { useNavigate } from "react-router-dom";
@@ -52,7 +52,6 @@ const genNolUrl = (course) => {
 };
 
 function CourseDrawerContainer({ courseInfo }) {
-  const [isMobile] = useMediaQuery("(max-width: 760px)");
   const renderDataElement = (fieldName, data) => {
     if (data === "") {
       return <></>;
@@ -100,7 +99,7 @@ function CourseDrawerContainer({ courseInfo }) {
         flexWrap="wrap"
         css={{ gap: "4px" }}
       >
-        <Flex w={isMobile ? "100%" : "30%"} flexDirection="column" alignItems="start" justifyContent="start" p="2">
+        <Flex w={{ base: "100%", md: "30%" }} flexDirection="column" alignItems="start" justifyContent="start" p="2">
           <Heading as="h3" color="gray.600" fontSize="lg" ml="4px" mb="1">
             修課限制
           </Heading>
@@ -108,7 +107,7 @@ function CourseDrawerContainer({ courseInfo }) {
             {courseInfo.limit === "" ? "無" : courseInfo.limit}
           </Text>
         </Flex>
-        <Flex w={isMobile ? "100%" : "60%"} flexDirection="column" alignItems="start" justifyContent="start" p="2">
+        <Flex w={{ base: "100%", md: "60%" }} flexDirection="column" alignItems="start" justifyContent="start" p="2">
           <Heading as="h3" color="gray.600" fontSize="lg" ml="4px" mb="1">
             備註
           </Heading>
@@ -120,9 +119,9 @@ function CourseDrawerContainer({ courseInfo }) {
       <Spacer my="2" />
       <Flex
         w="100%"
-        flexDirection={isMobile ? "column" : "row"}
-        alignItems={isMobile ? "start" : "center"}
-        justifyContent="start"
+        flexDirection={{ base: "column", md: "row" }}
+        alignItems={{ base: "start", md: "center" }}
+        justifyContent={{ base: "start", md: "space-between" }}
         flexWrap="wrap"
         css={{ gap: "2px" }}
       >
@@ -130,7 +129,6 @@ function CourseDrawerContainer({ courseInfo }) {
           {renderHyperButton("CEIBA", courseInfo.url["ceiba"])}
           {renderHyperButton("COOL", courseInfo.url["cool"])}
         </ButtonGroup>
-        {isMobile ? <></> : <Spacer />}
         <ButtonGroup>
           <Button variant="ghost" colorScheme="blue" leftIcon={<FaPlus />} size="sm" onClick={() => openPage(genNolAddUrl(courseInfo), true)}>
             加入課程網
