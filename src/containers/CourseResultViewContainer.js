@@ -135,7 +135,7 @@ function CourseResultViewContainer() {
     if (isHigherThan1325) {
       dispatch(setBatchSize(25));
     }
-  }, [isHigherThan1325]);
+  }, [isHigherThan1325, dispatch]);
 
   useEffect(() => {
     dispatch(setNewDisplayTags(displayTags));

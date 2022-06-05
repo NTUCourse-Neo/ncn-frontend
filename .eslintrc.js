@@ -5,7 +5,7 @@ module.exports = {
     node: true,
     es6: true,
   },
-  extends: ["plugin:prettier/recommended", "prettier"],
+  extends: ["plugin:prettier/recommended", "prettier", "plugin:react-hooks/recommended"],
   overrides: [
     {
       files: ["*.js", "*.jsx"],
@@ -27,6 +27,8 @@ module.exports = {
             ],
           },
         ],
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "error",
       },
     },
   ],
