@@ -1,72 +1,83 @@
 {
-    "name": "ncn-frontend",
-    "version": "0.1.0",
-    "private": true,
-    "dependencies": {
-        "@auth0/auth0-react": "^1.8.0",
-        "@chakra-ui/icons": "^1.1.1",
-        "@chakra-ui/react": "^1.0.0",
-        "@emotion/react": "^11.0.0",
-        "@emotion/styled": "^11.0.0",
-        "@testing-library/jest-dom": "^5.9.0",
-        "@testing-library/react": "^10.2.1",
-        "@testing-library/user-event": "^12.0.2",
-        "array-move": "^4.0.0",
-        "axios": "^0.24.0",
-        "chart.js": "^3.7.0",
-        "color-hash": "^2.0.1",
-        "dotenv-defaults": "^3.0.0",
-        "focus-visible": "^5.2.0",
-        "framer-motion": "^4.1.17",
-        "moment": "^2.29.1",
-        "randomcolor": "^0.6.2",
-        "react": "^17.0.2",
-        "react-chartjs-2": "^4.0.1",
-        "react-copy-to-clipboard": "^5.0.4",
-        "react-countdown-hook": "^1.1.1",
-        "react-dom": "^17.0.2",
-        "react-ga": "^3.3.0",
-        "react-google-recaptcha": "^2.1.0",
-        "react-icons": "^3.0.0",
-        "react-loading-overlay": "^1.0.1",
-        "react-minimal-pie-chart": "^8.2.0",
-        "react-redux": "^7.2.6",
-        "react-router-dom": "6",
-        "react-scripts": "4.0.3",
-        "react-scroll": "^1.8.4",
-        "react-select": "^5.2.1",
-        "react-sortable-hoc": "^2.0.0",
-        "react-spinners": "^0.11.0",
-        "react-table-drag-select": "^0.3.1",
-        "redux": "^4.1.2",
-        "redux-thunk": "^2.4.1",
-        "uuid": "^8.3.2",
-        "web-vitals": "^0.2.2"
-    },
-    "prettier": ".prettierrc",
-    "scripts": {
-        "start": "react-scripts start",
-        "build": "CI=false && react-scripts build",
-        "test": "react-scripts test",
-        "eject": "react-scripts eject"
-    },
-    "eslintConfig": {
-        "extends": "react-app"
-    },
-    "browserslist": {
-        "production": [
-            ">0.2%",
-            "not dead",
-            "not op_mini all"
-        ],
-        "development": [
-            "last 1 chrome version",
-            "last 1 firefox version",
-            "last 1 safari version"
-        ]
-    },
-    "devDependencies": {
-        "cypress": "^9.5.4",
-        "eslint-plugin-cypress": "^2.12.1"
-    }
+  "name": "ncn-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@auth0/auth0-react": "^1.8.0",
+    "@chakra-ui/icons": "^1.1.1",
+    "@chakra-ui/react": "^1.0.0",
+    "@emotion/react": "^11.0.0",
+    "@emotion/styled": "^11.0.0",
+    "@testing-library/jest-dom": "^5.9.0",
+    "@testing-library/react": "^10.2.1",
+    "@testing-library/user-event": "^12.0.2",
+    "array-move": "^4.0.0",
+    "axios": "^0.24.0",
+    "chart.js": "^3.7.0",
+    "color-hash": "^2.0.1",
+    "dotenv-defaults": "^3.0.0",
+    "focus-visible": "^5.2.0",
+    "framer-motion": "^4.1.17",
+    "moment": "^2.29.1",
+    "randomcolor": "^0.6.2",
+    "react": "^17.0.2",
+    "react-chartjs-2": "^4.0.1",
+    "react-copy-to-clipboard": "^5.0.4",
+    "react-countdown-hook": "^1.1.1",
+    "react-dom": "^17.0.2",
+    "react-ga": "^3.3.0",
+    "react-google-recaptcha": "^2.1.0",
+    "react-icons": "^3.0.0",
+    "react-loading-overlay": "^1.0.1",
+    "react-minimal-pie-chart": "^8.2.0",
+    "react-redux": "^7.2.6",
+    "react-router-dom": "6",
+    "react-scripts": "4.0.3",
+    "react-scroll": "^1.8.4",
+    "react-select": "^5.2.1",
+    "react-sortable-hoc": "^2.0.0",
+    "react-spinners": "^0.11.0",
+    "react-table-drag-select": "^0.3.1",
+    "redux": "^4.1.2",
+    "redux-thunk": "^2.4.1",
+    "uuid": "^8.3.2",
+    "web-vitals": "^0.2.2"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "CI=false && react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "lint": "./node_modules/.bin/eslint --config=./.eslintrc.js .",
+    "lint-fix": "./node_modules/.bin/eslint --config=./.eslintrc.js . --cache --fix",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": "yarn lint-fix"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "cypress": "^9.5.4",
+    "eslint-plugin-cypress": "^2.12.1",
+    "@babel/eslint-parser": "^7.17.0",
+    "@babel/preset-react": "^7.16.7",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-react-app": "^7.0.1",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-unused-imports": "^2.0.0",
+    "husky": "^8.0.1",
+    "lint-staged": "^12.4.1",
+    "prettier": "^2.6.2"
+  }
 }
