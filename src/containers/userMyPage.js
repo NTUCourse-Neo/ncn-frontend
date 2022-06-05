@@ -1,5 +1,5 @@
 import { React, useEffect, useState } from "react";
-import { Box, Flex, Text, useToast, useMediaQuery } from "@chakra-ui/react";
+import { Box, Flex, Text, useToast } from "@chakra-ui/react";
 import { useSelector, useDispatch } from "react-redux";
 import CourseInfoRowContainer from "containers/CourseInfoRowContainer";
 import SkeletonRow from "components/SkeletonRow";
@@ -25,8 +25,6 @@ function UserMyPage() {
   const displayTags = useSelector((state) => state.display_tags);
   const [Loading, setLoading] = useState(true);
   const userLoading = isLoading || !userInfo;
-
-  const [isMobile] = useMediaQuery("(max-width: 760px)");
 
   // fetch userInfo
   useEffect(() => {
@@ -117,7 +115,7 @@ function UserMyPage() {
 
   return (
     <>
-      <Flex h={isMobile ? "90vh" : "95vh"} w="100vw">
+      <Flex h={{ base: "90vh", md: "95vh" }} w="100vw">
         <Flex w="100vw" direction="column" justifyContent="start" alignItems="center" overflow="auto" transition="all 500ms ease-in-out" pt="64px">
           <Flex flexDirection="row" alignItems="center" justifyContent="start">
             {Loading ? <BeatLoader size={8} color="teal" /> : <></>}
