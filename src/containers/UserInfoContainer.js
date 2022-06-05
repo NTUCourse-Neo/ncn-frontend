@@ -24,7 +24,6 @@ import {
   PinInput,
   PinInputField,
   Badge,
-  useMediaQuery,
 } from "@chakra-ui/react";
 import Select from "react-select";
 import { HashLoader } from "react-spinners";
@@ -75,8 +74,6 @@ function UserInfoContainer() {
   const [otpSent, setOtpSent] = useState(false);
   const [timeLeft, actions] = useCountDown(0, 1000);
   const [otpInputStatus, setOtpInputStatus] = useState(0);
-
-  const [isMobile] = useMediaQuery("(max-width: 760px)");
 
   const recaptchaRef = useRef();
 
@@ -490,7 +487,7 @@ function UserInfoContainer() {
     );
   }
   return (
-    <Box maxW={isMobile ? "100vw" : "60vw"} mx="auto" overflow="visible" px={isMobile ? "32px" : "64px"} pt="64px">
+    <Box maxW={{ base: "100vw", md: "60vw" }} mx="auto" overflow="visible" px={{ base: "32px", md: "64px" }} pt="64px">
       <Flex justifyContent="space-between" mb={4} grow="1" flexDirection="column" alignItems="center">
         <Text fontSize={["xl", "3xl"]} fontWeight="700" color="gray.600" my="8">
           ✌️ 歡迎回來，{userInfo.db.name}
@@ -557,7 +554,7 @@ function UserInfoContainer() {
               {major === null ? (
                 <></>
               ) : (
-                <Box w={isMobile ? "100%" : "20vw"}>
+                <Box w={{ base: "100%", md: "20vw" }}>
                   <Select
                     className="basic-single"
                     classNamePrefix="select"
@@ -580,7 +577,7 @@ function UserInfoContainer() {
               {doubleMajor === null ? (
                 <></>
               ) : (
-                <Box w={isMobile ? "100%" : "20vw"}>
+                <Box w={{ base: "100%", md: "20vw" }}>
                   <Select
                     className="basic-single"
                     classNamePrefix="select"
@@ -603,7 +600,7 @@ function UserInfoContainer() {
               {minor === null ? (
                 <></>
               ) : (
-                <Box w={isMobile ? "100%" : "20vw"}>
+                <Box w={{ base: "100%", md: "20vw" }}>
                   <Select
                     isMulti
                     w="100%"
