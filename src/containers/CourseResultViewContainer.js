@@ -57,7 +57,7 @@ import CategoryFilterModal from "components/FilterModals/CategoryFilterModal";
 import CourseSearchInput from "components/CourseSearchInput";
 import SkeletonRow from "components/SkeletonRow";
 import SideCourseTableContainer from "containers/SideCourseTableContainer";
-import { setSearchSettings, setFilter, setFilterEnable, setNewDisplayTags } from "actions/index";
+import { setSearchSettings, setFilter, setFilterEnable, setNewDisplayTags, setBatchSize } from "actions/index";
 import { getCourseEnrollInfo, fetchSearchResults } from "actions/courses";
 import { useSelector, useDispatch } from "react-redux";
 import useOnScreen from "hooks/useOnScreen";
@@ -88,7 +88,7 @@ function CourseResultViewContainer() {
 
   const { loginWithPopup } = useAuth0();
 
-  const [isMobile] = useMediaQuery("(max-width: 1000px)");
+  const [isMobile, isHigherThan1325] = useMediaQuery(["(max-width: 1000px)", "(min-height: 1325px)"]);
 
   const [selectedTime, setSelectedTime] = useState(mapStateToTimeTable(search_filters.time));
   const [selectedDept, setSelectedDept] = useState(search_filters.department);
@@ -130,6 +130,12 @@ function CourseResultViewContainer() {
   });
 
   const { isAuthenticated } = useAuth0();
+
+  useEffect(() => {
+    if (isHigherThan1325) {
+      dispatch(setBatchSize(25));
+    }
+  }, [isHigherThan1325, dispatch]);
 
   useEffect(() => {
     dispatch(setNewDisplayTags(displayTags));

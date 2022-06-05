@@ -1,6 +1,7 @@
 import {
   SET_SEARCH_COLUMN,
   SET_SEARCH_SETTINGS,
+  SET_BATCH_SIZE,
   SET_FILTERS,
   SET_FILTERS_ENABLE,
   UPDATE_COURSE_TABLE,
@@ -18,6 +19,7 @@ const updateCourseTable = (course_table) => ({ type: UPDATE_COURSE_TABLE, payloa
 const logOut = () => ({ type: LOG_OUT_SUCCESS });
 const logIn = (user_data) => ({ type: LOG_IN_SUCCESS, payload: user_data });
 const setNewDisplayTags = (new_display_tags) => ({ type: SET_DISPLAY_TAGS, payload: new_display_tags });
+const setBatchSize = (new_batch_size) => ({ type: SET_BATCH_SIZE, payload: new_batch_size });
 
 // data =
 // when filter_name == 'department', arr of dept_code (4-digits),
@@ -52,4 +54,5 @@ export {
   send_logs,
   setFilter,
   setFilterEnable,
+  setBatchSize,
 };
