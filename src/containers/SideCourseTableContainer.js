@@ -70,7 +70,6 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, hover
 
   const [loading, setLoading] = useState(true);
   const [expired, setExpired] = useState(false);
-  console.error = () => {};
 
   const parseCourseDateTime = (course, course_time_tmp) => {
     // eslint-disable-next-line array-callback-return

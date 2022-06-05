@@ -68,6 +68,8 @@
     ]
   },
   "devDependencies": {
+    "cypress": "9.6.0",
+    "eslint-plugin-cypress": "^2.12.1",
     "@babel/eslint-parser": "^7.17.0",
     "@babel/preset-react": "^7.16.7",
     "eslint-config-prettier": "^8.5.0",

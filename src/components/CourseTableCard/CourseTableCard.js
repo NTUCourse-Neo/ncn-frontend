@@ -1,4 +1,5 @@
-import { React, useEffect, useState } from "react";
+import * as React from "react";
+import { useEffect, useState } from "react";
 import { arrayMoveImmutable as arrayMove } from "array-move";
 import "components/CourseTableCard/CourseTableCard.css";
 import {
@@ -28,12 +29,40 @@ import { useSelector, useDispatch } from "react-redux";
 import { patchCourseTable } from "actions/course_tables";
 import SortablePopover from "components/CourseTableCard/SortablePopover";
 
+function CourseBox({ courseId, courseData, isOpen, hoverId }) {
+  const course = courseData?.[courseId];
+  if (!course) {
+    return <></>;
+  }
+
+  return (
+    <>
+      <Tooltip label={course.course_name} placement="top" hasArrow>
+        <Button
+          bg={hash_to_color_hex(course._id, isOpen ? 0.7 : 0.8)}
+          borderRadius="md"
+          boxShadow="lg"
+          mb="1"
+          p="2"
+          w="100%"
+          h="3vh"
+          border={hoverId === courseId ? "2px" : ""}
+          borderColor={hash_to_color_hex(course._id, 0.5)}
+        >
+          <Text fontSize="xs" isTruncated>
+            {` ${course.course_name} `}
+          </Text>
+        </Button>
+      </Tooltip>
+    </>
+  );
+}
+
 function CourseTableCard({ courseTime, courseData, day, interval, grow, hoverId, isHover }) {
   const dispatch = useDispatch();
   const course_table = useSelector((state) => state.course_table);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
-  console.error = () => {};
 
   /*
         state design concept:
@@ -63,36 +92,6 @@ function CourseTableCard({ courseTime, courseData, day, interval, grow, hoverId,
 
   const onSortEnd = ({ oldIndex, newIndex }) => {
     setCourseList(arrayMove(courseList, oldIndex, newIndex));
-  };
-
-  const renderCourseBox = (courseId, courseData) => {
-    const course = courseData[courseId];
-    // console.log(courseId);
-    if (course) {
-      return (
-        <>
-          <Tooltip label={course.course_name} placement="top" hasArrow key={courseId}>
-            <Button
-              bg={hash_to_color_hex(course._id, isOpen ? 0.7 : 0.8)}
-              borderRadius="md"
-              boxShadow="lg"
-              mb="1"
-              p="2"
-              w="100%"
-              h="3vh"
-              border={hoverId === courseId ? "2px" : ""}
-              borderColor={hash_to_color_hex(course._id, 0.5)}
-              key={courseId + "_Button"}
-            >
-              <Text key={courseId + "_Text"} fontSize="xs" isTruncated>
-                {" "}
-                {course.course_name}{" "}
-              </Text>
-            </Button>
-          </Tooltip>
-        </>
-      );
-    }
   };
 
   // fetch original order from courseOrder (ids_array), return the indices need to reorder
@@ -216,9 +215,11 @@ function CourseTableCard({ courseTime, courseData, day, interval, grow, hoverId,
               setPrepareToRemoveCourseId([]);
             }}
           >
-            {courseOrder.map((courseId) => {
-              return renderCourseBox(courseId, courseData);
-            })}
+            {courseOrder.map((courseId, index) => (
+              <React.Fragment key={index}>
+                <CourseBox courseId={courseId} courseData={courseData} isOpen={isOpen} hoverId={hoverId} />
+              </React.Fragment>
+            ))}
           </Flex>
         </PopoverTrigger>
         <PopoverContent>
