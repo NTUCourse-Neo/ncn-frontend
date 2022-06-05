@@ -1,0 +1,10 @@
+{
+  "baseUrl": "http://localhost:3000/",
+  "viewportWidth": 1500,
+  "viewportHeight": 900,
+  "projectId": "79x2jm",
+  "env": {
+    "REACT_APP_API_ENDPOINT":"",
+    "REACT_APP_API_VERSION":""
+  }
+}

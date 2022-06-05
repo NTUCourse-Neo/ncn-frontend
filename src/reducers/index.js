@@ -6,6 +6,7 @@ import {
   FETCH_SEARCH_IDS_FAILURE,
   FETCH_SEARCH_IDS_REQUEST,
   FETCH_SEARCH_IDS_SUCCESS,
+  SET_BATCH_SIZE,
   SET_SEARCH_COLUMN,
   SET_SEARCH_SETTINGS,
   SET_FILTERS,
@@ -51,6 +52,8 @@ const reducer = (state = initState, action) => {
       return { ...state, search_results: [...state.search_results, ...action.payload], search_loading: false, search_error: null };
     case FETCH_SEARCH_RESULTS_FAILURE:
       return { ...state, search_loading: false, search_error: action.payload };
+    case SET_BATCH_SIZE:
+      return { ...state, batch_size: action.payload };
     case INCREMENT_OFFSET:
       return { ...state, offset: state.offset + state.batch_size };
     case UPDATE_TOTAL_COUNT:

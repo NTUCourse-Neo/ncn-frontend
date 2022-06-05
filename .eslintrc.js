@@ -32,4 +32,5 @@ module.exports = {
       },
     },
   ],
+  ignorePatterns: ["cypress/*"],
 };
