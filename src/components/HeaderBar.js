@@ -151,7 +151,7 @@ function HeaderBar() {
         </Link>
       </Flex>
       <Flex justifyContent="center" alignItems="center">
-        <Link to="/course">
+        <Link to="/about">
           <Button colorScheme="blue" variant="ghost" size="md" ml="30px" display={{ base: "none", md: "inline-block" }}>
             <HStack>
               <FaInfoCircle />
