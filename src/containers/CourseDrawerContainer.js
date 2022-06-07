@@ -51,41 +51,32 @@ const genNolUrl = (course) => {
   return base_url + params;
 };
 
-function CourseDrawerContainer({ courseInfo }) {
-  const renderDataElement = (fieldName, data) => {
-    if (data === "") {
-      return <></>;
-    }
-    return (
-      <Flex flexDirection="row" alignItems="center" justifyContent="start" mr="4" minW="10vw">
-        <Badge variant="solid" colorScheme="gray">
-          {fieldName}
-        </Badge>
-        <Heading as="h3" color="gray.600" fontSize="sm" ml="4px">
-          {data}
-        </Heading>
-      </Flex>
-    );
-  };
-  const renderHyperButton = (fieldName, url) => {
-    if (url === "" || !url) {
-      return <></>;
-    }
-    return (
-      <Button size="sm" mr="-px" onClick={() => openPage(url)}>
+function DrawerDataTag({ fieldName, label }) {
+  if (label === "" || label === null || label === undefined) {
+    return <></>;
+  }
+  return (
+    <Flex flexDirection="row" alignItems="center" justifyContent="start" mr="4" minW="10vw">
+      <Badge variant="solid" colorScheme="gray">
         {fieldName}
-      </Button>
-    );
-  };
+      </Badge>
+      <Heading as="h3" color="gray.600" fontSize="sm" ml="4px">
+        {label}
+      </Heading>
+    </Flex>
+  );
+}
+
+function CourseDrawerContainer({ courseInfo }) {
   return (
     <Flex px="1" flexDirection="column" width="100%" alignItems="start" justifyContent="space-between">
       <Flex ml="2px" flexDirection="row" alignItems="center" justifyContent="start" flexWrap="wrap" css={{ gap: ".5rem" }}>
-        {renderDataElement("課程識別碼", courseInfo.course_id)}
-        {renderDataElement("課號", courseInfo.course_code)}
-        {renderDataElement("班次", courseInfo.class_id)}
-        {renderDataElement(info_view_map.enroll_method.name, info_view_map.enroll_method.map[courseInfo.enroll_method])}
-        {renderDataElement(info_view_map.language.name, info_view_map.language.map[courseInfo.language])}
-        {renderDataElement("開課單位", courseInfo.provider.toUpperCase())}
+        <DrawerDataTag fieldName={"課程識別碼"} label={courseInfo.course_id} />
+        <DrawerDataTag fieldName={"課號"} label={courseInfo.course_code} />
+        <DrawerDataTag fieldName={"班次"} label={courseInfo.class_id} />
+        <DrawerDataTag fieldName={info_view_map.enroll_method.name} label={info_view_map.enroll_method.map[courseInfo.enroll_method]} />
+        <DrawerDataTag fieldName={info_view_map.language.name} label={info_view_map.language.map[courseInfo.language]} />
+        <DrawerDataTag fieldName={"開課單位"} label={courseInfo.provider.toUpperCase()} />
       </Flex>
       <Spacer my="2" />
       <Flex
@@ -126,14 +117,22 @@ function CourseDrawerContainer({ courseInfo }) {
         css={{ gap: "2px" }}
       >
         <ButtonGroup size="sm" isAttached variant="outline" colorScheme="blue">
-          {renderHyperButton("CEIBA", courseInfo.url["ceiba"])}
-          {renderHyperButton("COOL", courseInfo.url["cool"])}
+          {["ceiba", "cool"].map((linkName) => {
+            const url = courseInfo.url?.[linkName];
+            if (!url || url === "") {
+              return null;
+            }
+            return (
+              <Button key={`${linkName}`} size="sm" mr="-px" onClick={() => openPage(url)}>
+                {linkName.toUpperCase()}
+              </Button>
+            );
+          })}
         </ButtonGroup>
         <ButtonGroup>
           <Button variant="ghost" colorScheme="blue" leftIcon={<FaPlus />} size="sm" onClick={() => openPage(genNolAddUrl(courseInfo), true)}>
             加入課程網
           </Button>
-          {/* {RenderNolContentBtn(courseInfo, "課程詳細資訊", courseInfo.course_id)} */}
         </ButtonGroup>
       </Flex>
     </Flex>
