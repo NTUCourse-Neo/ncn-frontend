@@ -12,8 +12,9 @@ import {
   MenuItemOption,
   MenuOptionGroup,
   Badge,
-  useMediaQuery,
   Spacer,
+  HStack,
+  Text,
 } from "@chakra-ui/react";
 import { Search2Icon, ChevronDownIcon } from "@chakra-ui/icons";
 import { FaSearch } from "react-icons/fa";
@@ -32,7 +33,6 @@ function CourseSearchInput() {
   const batch_size = useSelector((state) => state.batch_size);
   const strict_match = useSelector((state) => state.search_settings.strict_search_mode);
   const search_filters_enable = useSelector((state) => state.search_filters_enable);
-  const [isMobile] = useMediaQuery("(max-width: 760px)");
 
   const [search, setSearch] = useState("");
 
@@ -79,7 +79,7 @@ function CourseSearchInput() {
     <Flex flexDirection="column">
       <Flex flexDirection="row" alignItems="center" justifyContent={["start", "start", "center", "center"]} flexWrap="wrap" css={{ gap: "10px" }}>
         <Menu closeOnSelect={false} mx="2">
-          <MenuButton as={Button} size={isMobile ? "sm" : "md"} rightIcon={<ChevronDownIcon />}>
+          <MenuButton as={Button} size={"md"} rightIcon={<ChevronDownIcon />}>
             搜尋欄位
           </MenuButton>
           <MenuList>
@@ -150,17 +150,19 @@ function CourseSearchInput() {
             }}
           />
         </InputGroup>
-        {isMobile ? <Spacer /> : <></>}
+        <Spacer display={{ base: "inline-block", md: "none" }} />
         <Button
           colorScheme="blue"
-          size={isMobile ? "sm" : "md"}
+          size={"md"}
           variant="solid"
-          leftIcon={<FaSearch />}
           onClick={() => {
             startSearch();
           }}
         >
-          {isMobile ? "" : "搜尋"}
+          <HStack>
+            <FaSearch />
+            <Text display={{ base: "none", md: "inline" }}>搜尋</Text>
+          </HStack>
         </Button>
       </Flex>
     </Flex>
