@@ -31,7 +31,7 @@ import { IoMdOpen } from "react-icons/io";
 import { FaPlus, FaMinus, FaHeartbeat, FaHeart, FaAngleDown } from "react-icons/fa";
 import { BiCopy } from "react-icons/bi";
 import setPageMeta from "utils/seo";
-import { genNolUrl, genNolAddUrl } from "containers/CourseDrawerContainer";
+import { getNolAddUrl, getNolUrl } from "utils/getNolUrls";
 import openPage from "utils/openPage";
 import ParrotGif from "img/parrot/parrot.gif";
 import ParrotUltraGif from "img/parrot/ultrafastparrot.gif";
@@ -454,7 +454,7 @@ function CourseInfoContainer({ code }) {
                     color="blue.600"
                     variant="ghost"
                     icon={<FaPlus />}
-                    onClick={() => openPage(genNolAddUrl(course), true)}
+                    onClick={() => openPage(getNolAddUrl(course), true)}
                   >
                     課程網
                   </MenuItem>
@@ -472,7 +472,7 @@ function CourseInfoContainer({ code }) {
                     {isFavorite ? "從最愛移除" : "加入最愛"}
                   </MenuItem>
                   <MenuDivider />
-                  <MenuItem icon={<IoMdOpen />} onClick={() => window.open(genNolUrl(course), "_blank")}>
+                  <MenuItem icon={<IoMdOpen />} onClick={() => window.open(getNolUrl(course), "_blank")}>
                     課程網資訊
                   </MenuItem>
                 </MenuList>
@@ -523,7 +523,7 @@ function CourseInfoContainer({ code }) {
                 colorScheme="blue"
                 variant="outline"
                 leftIcon={<FaPlus />}
-                onClick={() => openPage(genNolAddUrl(course), true)}
+                onClick={() => openPage(getNolAddUrl(course), true)}
               >
                 課程網
               </Button>
@@ -546,7 +546,7 @@ function CourseInfoContainer({ code }) {
               key={"NolContent_Button_" + code + "_OpenNol"}
               size="md"
               rightIcon={<IoMdOpen />}
-              onClick={() => window.open(genNolUrl(course), "_blank")}
+              onClick={() => window.open(getNolUrl(course), "_blank")}
             >
               課程網資訊
             </Button>

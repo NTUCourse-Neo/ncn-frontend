@@ -4,6 +4,7 @@ import { FaPlus, FaInfoCircle } from "react-icons/fa";
 import { info_view_map } from "data/mapping_table";
 import { useNavigate } from "react-router-dom";
 import openPage from "utils/openPage";
+import { getNolAddUrl } from "utils/getNolUrls";
 
 function RenderNolContentBtn(course, title, key) {
   const navigate = useNavigate();
@@ -28,20 +29,6 @@ function RenderNolContentBtn(course, title, key) {
     </>
   );
 }
-
-const genNolAddUrl = (course) => {
-  const d_id = "T010";
-  return `https://nol.ntu.edu.tw/nol/coursesearch/myschedule.php?add=${course.id}&ddd=${d_id}`;
-};
-const genNolUrl = (course) => {
-  const lang = "CH";
-  const base_url = "https://nol.ntu.edu.tw/nol/coursesearch/print_table.php?";
-  const course_id = course.course_id.replace("E", "");
-  const params = `course_id=${course_id.substr(0, 3)}%20${course_id.substr(3)}&class=${course.class_id}&ser_no=${
-    course.id
-  }&semester=${course.semester.substr(0, 3)}-${course.semester.substr(3, 1)}&lang=${lang}`;
-  return base_url + params;
-};
 
 function DrawerDataTag({ fieldName, label }) {
   if (label === "" || label === null || label === undefined) {
@@ -122,7 +109,7 @@ function CourseDrawerContainer({ courseInfo }) {
           })}
         </ButtonGroup>
         <ButtonGroup>
-          <Button variant="ghost" colorScheme="blue" leftIcon={<FaPlus />} size="sm" onClick={() => openPage(genNolAddUrl(courseInfo), true)}>
+          <Button variant="ghost" colorScheme="blue" leftIcon={<FaPlus />} size="sm" onClick={() => openPage(getNolAddUrl(courseInfo), true)}>
             加入課程網
           </Button>
         </ButtonGroup>
@@ -131,4 +118,4 @@ function CourseDrawerContainer({ courseInfo }) {
   );
 }
 
-export { CourseDrawerContainer, RenderNolContentBtn, genNolAddUrl, genNolUrl };
+export { CourseDrawerContainer, RenderNolContentBtn };

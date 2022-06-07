@@ -22,7 +22,7 @@ import { FadeLoader } from "react-spinners";
 import { MdDragHandle } from "react-icons/md";
 import { patchCourseTable } from "actions/course_tables";
 import { hash_to_color_hex } from "utils/colorAgent";
-import { genNolAddUrl } from "containers/CourseDrawerContainer";
+import { getNolAddUrl } from "utils/getNolUrls";
 import openPage from "utils/openPage";
 import { useDispatch } from "react-redux";
 import { sortableContainer, sortableElement, sortableHandle } from "react-sortable-hoc";
@@ -140,7 +140,7 @@ function CourseListContainer({ courseTable, courses, loading }) {
                     navigate(`/courseinfo/${course._id}`);
                   }}
                 />
-                <Button size="xs" variant="ghost" colorScheme="blue" leftIcon={<FaPlus />} onClick={() => openPage(genNolAddUrl(course), true)}>
+                <Button size="xs" variant="ghost" colorScheme="blue" leftIcon={<FaPlus />} onClick={() => openPage(getNolAddUrl(course), true)}>
                   課程網
                 </Button>
               </HStack>
@@ -207,7 +207,7 @@ function CourseListContainer({ courseTable, courses, loading }) {
           />
         </Flex>
         <Flex ml="4" flexDirection="row" justifyContent="end" alignItems="center">
-          <Button mx="2" size="sm" variant="ghost" colorScheme="blue" leftIcon={<FaPlus />} onClick={() => openPage(genNolAddUrl(course), true)}>
+          <Button mx="2" size="sm" variant="ghost" colorScheme="blue" leftIcon={<FaPlus />} onClick={() => openPage(getNolAddUrl(course), true)}>
             課程網
           </Button>
           <IconButton
