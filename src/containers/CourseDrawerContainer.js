@@ -1,34 +1,9 @@
 import { React } from "react";
 import { Flex, Heading, Badge, Text, Spacer, Button, ButtonGroup } from "@chakra-ui/react";
-import { FaPlus, FaInfoCircle } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa";
 import { info_view_map } from "data/mapping_table";
-import { useNavigate } from "react-router-dom";
 import openPage from "utils/openPage";
 import { getNolAddUrl } from "utils/getNolUrls";
-
-function RenderNolContentBtn(course, title, key) {
-  const navigate = useNavigate();
-  const toCourseInfoPage = (code) => {
-    navigate(`/courseinfo/${code}`);
-  };
-
-  return (
-    <>
-      <Button
-        variant="ghost"
-        colorScheme="blue"
-        leftIcon={<FaInfoCircle />}
-        size="sm"
-        onClick={() => {
-          toCourseInfoPage(course._id);
-        }}
-        key={"NolContent_" + key}
-      >
-        {title}
-      </Button>
-    </>
-  );
-}
 
 function DrawerDataTag({ fieldName, label }) {
   if (label === "" || label === null || label === undefined) {
@@ -118,4 +93,4 @@ function CourseDrawerContainer({ courseInfo }) {
   );
 }
 
-export { CourseDrawerContainer, RenderNolContentBtn };
+export { CourseDrawerContainer };
