@@ -3,6 +3,7 @@ import { Flex, Heading, Badge, Text, Spacer, Button, ButtonGroup } from "@chakra
 import { FaPlus, FaInfoCircle } from "react-icons/fa";
 import { info_view_map } from "data/mapping_table";
 import { useNavigate } from "react-router-dom";
+import openPage from "utils/openPage";
 
 function RenderNolContentBtn(course, title, key) {
   const navigate = useNavigate();
@@ -28,15 +29,6 @@ function RenderNolContentBtn(course, title, key) {
   );
 }
 
-function openPage(url, doClose) {
-  const wnd = window.open(url, "_blank");
-  if (doClose) {
-    // console.log("closing");
-    setTimeout(() => {
-      wnd.close();
-    }, 1000);
-  }
-}
 const genNolAddUrl = (course) => {
   const d_id = "T010";
   return `https://nol.ntu.edu.tw/nol/coursesearch/myschedule.php?add=${course.id}&ddd=${d_id}`;
@@ -139,4 +131,4 @@ function CourseDrawerContainer({ courseInfo }) {
   );
 }
 
-export { CourseDrawerContainer, RenderNolContentBtn, genNolAddUrl, genNolUrl, openPage };
+export { CourseDrawerContainer, RenderNolContentBtn, genNolAddUrl, genNolUrl };
