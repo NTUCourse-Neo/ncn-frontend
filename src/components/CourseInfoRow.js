@@ -18,8 +18,9 @@ import {
   Tooltip,
   useToast,
   Collapse,
-  useMediaQuery,
-  IconButton,
+  useBreakpointValue,
+  Text,
+  HStack,
 } from "@chakra-ui/react";
 import { CourseDrawerContainer } from "containers/CourseDrawerContainer";
 import { FaPlus, FaHeart, FaInfoCircle } from "react-icons/fa";
@@ -43,8 +44,6 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
 
   const toast = useToast();
   const { user, isLoading, getAccessTokenSilently } = useAuth0();
-
-  const [isMobile] = useMediaQuery("(max-width: 760px)");
 
   // TODO: better naming
   const handleButtonClick = async (course) => {
@@ -223,117 +222,19 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
       </Badge>
     );
   };
-  if (isMobile) {
-    return (
-      <AccordionItem bg={selected ? hash_to_color_hex(courseInfo._id, 0.95) : "gray.100"} borderRadius="md" transition="all ease-in-out 500ms">
-        <Flex alignItems="center" justifyContent="start" flexDirection="row" w="100%" pr="2" pl="2" py="1">
-          <AccordionButton>
-            <Flex alignItems="start" justifyContent="start" flexDirection="column" flexWrap="wrap" css={{ gap: "2px" }}>
-              <Flex alignItems="center" justifyContent="start" mb="2">
-                <Heading as="h3" size="sm" color="gray.600" mr="2">
-                  {courseInfo.course_name}
-                </Heading>
-                <Heading as="h3" size="xs" ml="2px" color="gray.500" fontWeight="500">
-                  {courseInfo.teacher}
-                </Heading>
-              </Flex>
-              <Flex alignItems="center" justifyContent="start" mb="2">
-                {renderDeptBadge(courseInfo)}
-                <Tooltip hasArrow placement="top" label="課程流水號" bg="gray.600" color="white">
-                  <Badge variant="outline" mr="4px">
-                    {courseInfo.id}
-                  </Badge>
-                </Tooltip>
-                <Tooltip hasArrow placement="top" label={courseInfo.credit + " 學分"} bg="gray.600" color="white">
-                  <Badge variant="outline">{courseInfo.credit}</Badge>
-                </Tooltip>
-              </Flex>
-              <Tooltip hasArrow placement="top" label={courseInfo.time_loc} bg="gray.600" color="white">
-                <Badge variant="outline" size="lg" maxW="60vw" isTruncated>
-                  {courseInfo.time_loc}
-                </Badge>
-              </Tooltip>
-              <Flex maxW="100%" alignItems="center" justifyContent="start" mt="4" flexWrap="wrap" css={{ gap: "2px" }}>
-                {displayTags.map((tag, index) => {
-                  if (tag === "area") {
-                    let display_str = "";
-                    let tooltip_str = "";
-                    if (courseInfo.area.length === 0) {
-                      display_str = "無";
-                      tooltip_str = info_view_map[tag].name + ": 無";
-                    } else if (courseInfo.area.length > 1) {
-                      display_str = "多個領域";
-                      tooltip_str = courseInfo.area.map((area) => info_view_map[tag].map[area].full_name).join(", ");
-                    } else if (courseInfo[tag][0] === "g") {
-                      display_str = "通識 " + info_view_map[tag].map[courseInfo[tag][0]].code;
-                      tooltip_str = info_view_map[tag].name + ": " + info_view_map[tag].map[courseInfo[tag][0]].full_name;
-                    } else {
-                      display_str = info_view_map[tag].map[courseInfo[tag][0]].full_name;
-                      tooltip_str = info_view_map[tag].name + ":" + info_view_map[tag].map[courseInfo[tag][0]].full_name;
-                    }
-                    return (
-                      <Tooltip hasArrow placement="top" label={tooltip_str} bg="gray.600" color="white" key={index}>
-                        <Tag mx="2px" variant="subtle" colorScheme={info_view_map[tag].color} hidden={courseInfo[tag] === -1}>
-                          <TagLeftIcon boxSize="12px" as={info_view_map[tag].logo} />
-                          <TagLabel>{display_str}</TagLabel>
-                        </Tag>
-                      </Tooltip>
-                    );
-                  }
-                  return (
-                    <Tooltip hasArrow placement="top" label={info_view_map[tag].name} bg="gray.600" color="white" key={index}>
-                      <Tag variant="subtle" colorScheme={info_view_map[tag].color} hidden={courseInfo[tag] === -1}>
-                        <TagLeftIcon boxSize="12px" as={info_view_map[tag].logo} />
-                        <TagLabel>{"map" in info_view_map[tag] ? info_view_map[tag].map[courseInfo[tag]] : courseInfo[tag]}</TagLabel>
-                      </Tag>
-                    </Tooltip>
-                  );
-                })}
-              </Flex>
-            </Flex>
-            <Spacer />
-          </AccordionButton>
-          <Flex alignItems="center" justifyContent="end" flexDirection={isMobile ? "column" : "row"}>
-            <IconButton
-              size="sm"
-              colorScheme="blue"
-              icon={<FaInfoCircle />}
-              variant="ghost"
-              onClick={() => {
-                navigate(`/courseinfo/${courseInfo._id}`);
-              }}
-            />
-            <Button
-              size="sm"
-              variant={isfavorite ? "solid" : "outline"}
-              colorScheme={"red"}
-              onClick={() => handleAddFavorite(courseInfo._id)}
-              isLoading={addingFavoriteCourse}
-            >
-              <Box>
-                <FaHeart />
-              </Box>
-            </Button>
-            <Button size="sm" colorScheme={selected ? "red" : "blue"} onClick={() => handleButtonClick(courseInfo)} isLoading={addingCourse}>
-              <Box transform={selected ? "rotate(45deg)" : ""} transition="all ease-in-out 200ms">
-                <FaPlus />
-              </Box>
-            </Button>
-          </Flex>
-        </Flex>
-        <AccordionPanel>
-          <CourseDrawerContainer courseInfo={courseInfo} />
-        </AccordionPanel>
-      </AccordionItem>
-    );
-  }
 
   return (
     <AccordionItem bg={selected ? hash_to_color_hex(courseInfo._id, 0.95) : "gray.100"} borderRadius="md" transition="all ease-in-out 500ms">
       <Flex alignItems="center" justifyContent="start" flexDirection="row" w="100%" pr="2" pl="2" py="1">
-        <AccordionButton>
-          <Flex alignItems="center" justifyContent="start" flexWrap="wrap" css={{ gap: "8px" }}>
-            <Flex w="8vw" alignItems="center" justifyContent="start">
+        <AccordionButton flexDirection={{ base: "column", md: "row" }} alignItems="start">
+          <Flex
+            flexDirection={{ base: "column", md: "row" }}
+            alignItems={{ base: "start", md: "center" }}
+            justifyContent="start"
+            flexWrap="wrap"
+            css={{ gap: "8px" }}
+          >
+            <Flex w="8vw" alignItems="center" justifyContent="start" display={{ base: "none", md: "flex" }}>
               <Tooltip hasArrow placement="top" label="課程流水號" bg="gray.600" color="white">
                 <Badge variant="outline" mr="4px">
                   {courseInfo.id}
@@ -341,27 +242,46 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
               </Tooltip>
               {renderDeptBadge(courseInfo)}
             </Flex>
-            <Heading as="h3" size="md" ml="10px" mr="8px" color="gray.600">
-              {courseInfo.course_name}
-            </Heading>
-            <Tooltip hasArrow placement="top" label={courseInfo.credit + " 學分"} bg="gray.600" color="white">
-              <Badge variant="outline" mr="4">
-                {courseInfo.credit}
-              </Badge>
-            </Tooltip>
-            <Heading as="h3" size="sm" ml="20px" mr="5px" color="gray.500" fontWeight="500">
+            <HStack>
+              <Heading as="h3" size={useBreakpointValue({ base: "sm", md: "md" }) ?? "sm"} color="gray.600">
+                {courseInfo.course_name}
+              </Heading>
+              <Heading
+                as="h3"
+                size={useBreakpointValue({ base: "xs", md: "sm" }) ?? "xs"}
+                color="gray.500"
+                fontWeight="500"
+                display={{ base: "inline-block", md: "none" }}
+              >
+                {courseInfo.teacher}
+              </Heading>
+            </HStack>
+            <HStack>
+              <Tooltip hasArrow placement="top" label="課程流水號" bg="gray.600" color="white">
+                <Badge variant="outline" display={{ base: "inline-block", md: "none" }}>
+                  {courseInfo.id}
+                </Badge>
+              </Tooltip>
+              <Tooltip hasArrow placement="top" label={courseInfo.credit + " 學分"} bg="gray.600" color="white">
+                <Badge variant="outline" mx={{ base: 0, md: 4 }}>
+                  {courseInfo.credit}
+                </Badge>
+              </Tooltip>
+              <Flex display={{ base: "inline-block", md: "none" }}>{renderDeptBadge(courseInfo)}</Flex>
+            </HStack>
+            <Heading as="h3" size="sm" color="gray.500" fontWeight="500" display={{ base: "none", md: "flex" }}>
               {courseInfo.teacher}
             </Heading>
             <Collapse in={!displayTable}>
               <Tooltip hasArrow placement="top" label={courseInfo.time_loc} bg="gray.600" color="white">
-                <Badge variant="outline" ml="8" size="lg" maxW="10vw" isTruncated>
+                <Badge variant="outline" ml={{ base: 0, md: 8 }} size="lg" w="150px" isTruncated>
                   {courseInfo.time_loc}
                 </Badge>
               </Tooltip>
             </Collapse>
           </Flex>
           <Spacer />
-          <Flex alignItems="center" justifyContent="end">
+          <Flex alignItems="start" justifyContent="start" mt={{ base: 4, md: 0 }} flexWrap="wrap" css={{ gap: "2px" }}>
             {displayTags.map((tag, index) => {
               if (tag === "area") {
                 let display_str = "";
@@ -399,21 +319,23 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
             })}
           </Flex>
         </AccordionButton>
-        <Flex alignItems="center" justifyContent="end" flexDirection={isMobile ? "column" : "row"}>
+        <Flex alignItems="center" justifyContent="end" flexDirection={{ base: "column", md: "row" }}>
           <Button
             size="sm"
             colorScheme="blue"
-            leftIcon={<FaInfoCircle />}
             variant="ghost"
             onClick={() => {
               navigate(`/courseinfo/${courseInfo._id}`);
             }}
           >
-            詳細
+            <HStack>
+              <FaInfoCircle />
+              <Text display={{ base: "none", md: "inline-block" }}>詳細</Text>
+            </HStack>
           </Button>
           <Button
             size="sm"
-            ml="20px"
+            ml={{ base: 0, md: "20px" }}
             variant={isfavorite ? "solid" : "outline"}
             colorScheme={"red"}
             onClick={() => handleAddFavorite(courseInfo._id)}
@@ -423,7 +345,13 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
               <FaHeart />
             </Box>
           </Button>
-          <Button size="sm" ml="20px" colorScheme={selected ? "red" : "blue"} onClick={() => handleButtonClick(courseInfo)} isLoading={addingCourse}>
+          <Button
+            size="sm"
+            ml={{ base: 0, md: "20px" }}
+            colorScheme={selected ? "red" : "blue"}
+            onClick={() => handleButtonClick(courseInfo)}
+            isLoading={addingCourse}
+          >
             <Box transform={selected ? "rotate(45deg)" : ""} transition="all ease-in-out 200ms">
               <FaPlus />
             </Box>
