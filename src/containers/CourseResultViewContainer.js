@@ -1,4 +1,4 @@
-import { React, useEffect, useState, useRef } from "react";
+import { React, useEffect, useState, useRef, useCallback } from "react";
 import {
   Box,
   Flex,
@@ -23,21 +23,8 @@ import {
   MenuDivider,
   Fade,
   Tag,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
   TagLeftIcon,
-  Spinner,
-  Stat,
-  StatLabel,
-  StatNumber,
   useMediaQuery,
-  HStack,
-  Spacer,
   AlertDialog,
   AlertDialogOverlay,
   AlertDialogContent,
@@ -50,7 +37,7 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 import { BeatLoader } from "react-spinners";
-import { FaChevronDown, FaChevronUp, FaPlus, FaMinus, FaArrowRight, FaRss, FaRegCalendarAlt } from "react-icons/fa";
+import { FaChevronDown, FaChevronUp, FaPlus, FaMinus, FaArrowRight, FaRegCalendarAlt } from "react-icons/fa";
 import CourseInfoRowContainer from "containers/CourseInfoRowContainer";
 import TimeFilterModal from "components/FilterModals/TimeFilterModal";
 import DeptFilterModal from "components/FilterModals/DeptFilterModal";
@@ -59,13 +46,12 @@ import CourseSearchInput from "components/CourseSearchInput";
 import SkeletonRow from "components/SkeletonRow";
 import SideCourseTableContainer from "containers/SideCourseTableContainer";
 import { setSearchSettings, setFilter, setFilterEnable, setNewDisplayTags, setBatchSize } from "actions/index";
-import { getCourseEnrollInfo, fetchSearchResults } from "actions/courses";
+import { fetchSearchResults } from "actions/courses";
 import { useSelector, useDispatch } from "react-redux";
 import useOnScreen from "hooks/useOnScreen";
 import { mapStateToTimeTable, mapStateToIntervals } from "utils/timeTableConverter";
 import { info_view_map } from "data/mapping_table";
 import { useAuth0 } from "@auth0/auth0-react";
-import BetaBadge from "components/BetaBadge";
 import setPageMeta from "utils/seo";
 
 function CourseResultViewContainer() {
@@ -120,18 +106,6 @@ function CourseResultViewContainer() {
   const [displayTags, setDisplayTags] = useState(display_tags);
   const available_tags = ["required", "total_slot", "enroll_method", "area"];
 
-  // states for course enroll status
-  const [isCourseStatusModalOpen, setIsCourseStatusModalOpen] = useState(null);
-  const [isFetchingCourseStatus, setIsFetchingCourseStatus] = useState(false);
-  const [courseEnrollStatus, setCourseEnrollStatus] = useState({
-    enrolled: "",
-    enrolled_other: "",
-    registered: "",
-    remain: "",
-  });
-
-  const { isAuthenticated } = useAuth0();
-
   useEffect(() => {
     if (isHigherThan1325) {
       dispatch(setBatchSize(25));
@@ -151,59 +125,6 @@ function CourseResultViewContainer() {
     setPageMeta({ title: `課程搜尋 | NTUCourse Neo`, desc: `課程搜尋頁面 | NTUCourse Neo，全新的臺大選課網站。` });
   }, []);
 
-  useEffect(() => {
-    async function fetchCourseEnrollData() {
-      setIsFetchingCourseStatus(true);
-      let data;
-      try {
-        data = await dispatch(getCourseEnrollInfo(isCourseStatusModalOpen));
-      } catch (error) {
-        setIsFetchingCourseStatus(false);
-        setIsCourseStatusModalOpen(null);
-        toast({
-          title: "錯誤",
-          description: "無法取得課程即時資訊",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-        return;
-      }
-      if (!data) {
-        setIsFetchingCourseStatus(false);
-        setIsCourseStatusModalOpen(null);
-        toast({
-          title: "錯誤",
-          description: "無法取得課程即時資訊",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-        return;
-      }
-
-      setCourseEnrollStatus(data);
-      setIsFetchingCourseStatus(false);
-    }
-
-    if (isCourseStatusModalOpen) {
-      if (!isAuthenticated) {
-        toast({
-          title: "請先登入",
-          description: "課程即時資訊功能尚為 Beta 階段，僅供會員搶先試用",
-          status: "info",
-          duration: 3000,
-          isClosable: true,
-        });
-        setIsCourseStatusModalOpen(null);
-      } else {
-        fetchCourseEnrollData();
-      }
-    }
-
-    // console.log(isFetchingCourseStatus);
-  }, [isCourseStatusModalOpen]); // eslint-disable-line react-hooks/exhaustive-deps
-
   // if isMobile, when show Alert Modal, set displayTable to false to prevent ugly overlapping
   useEffect(() => {
     if (isLoginWarningOpen) {
@@ -212,102 +133,6 @@ function CourseResultViewContainer() {
       }
     }
   }, [isLoginWarningOpen]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const renderCourseStatusModal = () => {
-    const renderFormattedTime = () => {
-      const fetch_time = new Date(courseEnrollStatus.fetch_ts * 1000);
-      const fetch_time_str = `${fetch_time.getFullYear()}-${
-        fetch_time.getMonth() + 1
-      }-${fetch_time.getDate()} ${fetch_time.getHours()}:${fetch_time.getMinutes()}:${fetch_time.getSeconds()}`;
-      return fetch_time_str;
-    };
-    return (
-      <>
-        <Modal
-          isOpen={isCourseStatusModalOpen && isAuthenticated}
-          onClose={() => {
-            setIsCourseStatusModalOpen(null);
-          }}
-          size="xl"
-        >
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>
-              課程即時資訊
-              <BetaBadge content="beta" />
-            </ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <Flex w="100%" justifyContent="center" alignItems="center">
-                {isFetchingCourseStatus ? (
-                  <Spinner size="xl" color="teal" />
-                ) : (
-                  <Flex
-                    w="100%"
-                    flexDirection="column"
-                    justifyContent="center"
-                    alignItems="start"
-                    bg="gray.200"
-                    px="8"
-                    py="4"
-                    borderRadius="xl"
-                    boxShadow="lg"
-                  >
-                    <Flex
-                      w="100%"
-                      flexDirection={{ base: "column", lg: "row" }}
-                      justifyContent="center"
-                      alignItems={{ base: "start", lg: "center" }}
-                      flexWrap="wrap"
-                    >
-                      <Stat w="20vw">
-                        <StatLabel>已選上人數</StatLabel>
-                        <StatNumber>{courseEnrollStatus.enrolled}</StatNumber>
-                      </Stat>
-                      <Stat>
-                        <StatLabel>已選上外系人數</StatLabel>
-                        <StatNumber>{courseEnrollStatus.enrolled_other}</StatNumber>
-                      </Stat>
-                      <Stat>
-                        <StatLabel>已登記人數</StatLabel>
-                        <StatNumber>{courseEnrollStatus.registered}</StatNumber>
-                      </Stat>
-                      <Stat>
-                        <StatLabel>剩餘空位</StatLabel>
-                        <StatNumber>{courseEnrollStatus.remain}</StatNumber>
-                      </Stat>
-                    </Flex>
-                    <HStack mt="4" spacing="2">
-                      <FaRss color="gray" size="15" />
-                      <Text fontSize="sm" textAlign="center" color="gray.500">
-                        更新時間: {renderFormattedTime()}
-                      </Text>
-                    </HStack>
-                  </Flex>
-                )}
-              </Flex>
-            </ModalBody>
-
-            <ModalFooter>
-              <Text fontSize="sm" textAlign="center" color="gray.500">
-                資料來自 臺大選課系統
-              </Text>
-              <Spacer />
-              <Button
-                colorScheme="blue"
-                mr={3}
-                onClick={() => {
-                  setIsCourseStatusModalOpen(null);
-                }}
-              >
-                關閉
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-      </>
-    );
-  };
 
   const renderNoLoginWarning = () => {
     const onClose = () => setIsLoginWarningOpen(false);
@@ -359,47 +184,50 @@ function CourseResultViewContainer() {
     );
   };
 
-  const renderSettingSwitch = (label, default_checked, isDisabled) => {
-    const handleChangeSettings = (e) => {
-      // console.log(e.currentTarget.checked);
-      if (label === "ˋ只顯示未選課程") {
-        set_show_selected_courses(e.currentTarget.checked);
-      } else if (label === "只顯示未衝堂課程") {
-        set_only_show_not_conflicted_courses(e.currentTarget.checked);
-      } else if (label === "同步新增至課程網") {
-        set_sync_add_to_nol(e.currentTarget.checked);
-      } else if (label === "篩選條件嚴格搜尋") {
-        set_strict_search_mode(e.currentTarget.checked);
+  const renderSettingSwitch = useCallback(
+    (label, default_checked, isDisabled) => {
+      const handleChangeSettings = (e) => {
+        // console.log(e.currentTarget.checked);
+        if (label === "ˋ只顯示未選課程") {
+          set_show_selected_courses(e.currentTarget.checked);
+        } else if (label === "只顯示未衝堂課程") {
+          set_only_show_not_conflicted_courses(e.currentTarget.checked);
+        } else if (label === "同步新增至課程網") {
+          set_sync_add_to_nol(e.currentTarget.checked);
+        } else if (label === "篩選條件嚴格搜尋") {
+          set_strict_search_mode(e.currentTarget.checked);
+        }
+      };
+      if (isMobile && isDisabled) {
+        return <></>;
       }
-    };
-    if (isMobile && isDisabled) {
-      return <></>;
-    }
 
-    return (
-      <Flex alignItems="center">
-        <Switch
-          id={label}
-          defaultChecked={default_checked}
-          mr="2"
-          onChange={(e) => {
-            handleChangeSettings(e);
-          }}
-          isDisabled={isDisabled}
-        />
-        <FormLabel htmlFor={label} mb="0" fontWeight="500" color="gray.600">
-          {label}
-          {isDisabled ? (
-            <Badge ml="2" colorScheme="blue">
-              即將推出
-            </Badge>
-          ) : (
-            <></>
-          )}
-        </FormLabel>
-      </Flex>
-    );
-  };
+      return (
+        <Flex alignItems="center">
+          <Switch
+            id={label}
+            defaultChecked={default_checked}
+            mr="2"
+            onChange={(e) => {
+              handleChangeSettings(e);
+            }}
+            isDisabled={isDisabled}
+          />
+          <FormLabel htmlFor={label} mb="0" fontWeight="500" color="gray.600">
+            {label}
+            {isDisabled ? (
+              <Badge ml="2" colorScheme="blue">
+                即將推出
+              </Badge>
+            ) : (
+              <></>
+            )}
+          </FormLabel>
+        </Flex>
+      );
+    },
+    [isMobile]
+  );
 
   const handleScrollToBottom = () => {
     if (reachedBottom && search_results.length !== 0) {
@@ -453,7 +281,6 @@ function CourseResultViewContainer() {
 
   return (
     <>
-      {renderCourseStatusModal()}
       {renderNoLoginWarning()}
       <Flex w="100vw" direction="row" justifyContent="center" alignItems="center" overflow="hidden">
         <Box
@@ -734,8 +561,6 @@ function CourseResultViewContainer() {
               selectedCourses={coursesInTable}
               displayTags={displayTags}
               displayTable={displayTable}
-              isCourseStatusModalOpen={isCourseStatusModalOpen}
-              setIsCourseStatusModalOpen={setIsCourseStatusModalOpen}
             />
           </Flex>
           <Flex
@@ -798,7 +623,6 @@ function CourseResultViewContainer() {
               setCourseIds={setCoursesInTable}
               setIsLoginWarningOpen={setIsLoginWarningOpen}
               agreeToCreateTableWithoutLogin={agreeToCreateTableWithoutLogin}
-              setIsCourseStatusModalOpen={setIsCourseStatusModalOpen}
             />
           </Box>
         </Flex>
