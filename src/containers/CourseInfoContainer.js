@@ -8,8 +8,6 @@ import {
   Icon,
   Flex,
   Image,
-  useMediaQuery,
-  VStack,
   Menu,
   MenuItem,
   MenuButton,
@@ -57,7 +55,6 @@ function CourseInfoContainer({ code }) {
 
   const [course, setCourse] = useState(null);
   const [notFound, setNotFound] = useState(false);
-  const [isMobile] = useMediaQuery("(max-width: 1000px)");
   const [copiedLinkClicks, setCopiedLinkClicks] = useState(0);
   const [copyWord, setCopyWord] = useState(copyWordList.find((word) => word.count <= copiedLinkClicks));
   const [refreshTime] = useState(new Date());
@@ -392,176 +389,152 @@ function CourseInfoContainer({ code }) {
       );
     }
   } else {
-    if (isMobile) {
-      return (
-        <>
-          <Flex pt="64px" w="100%" justifyContent={"center"} position="fixed" bg="white" zIndex="100" boxShadow="md">
-            <HStack my="2" mx="4%" spacing="4" w="100%">
-              <VStack align="start">
-                <HStack>
-                  <Tag size="sm" colorScheme="blue">
-                    <Text fontWeight="600" fontSize="sm">
-                      {course.id}
-                    </Text>
-                  </Tag>
-                  <Text fontWeight="500" fontSize="xs" color="gray.300">
-                    {Moment(refreshTime).format("HH:mm")} 更新
-                  </Text>
-                  <CopyToClipboard text={"https://course.myntu.me/courseinfo/" + course._id}>
-                    <Button
-                      rightIcon={<Icon as={BiCopy} color={copyWord.color} />}
-                      variant="ghost"
-                      size="xs"
-                      bg={copyWord.bg}
-                      color={copyWord.color}
-                      onClick={() => setCopiedLinkClicks(copiedLinkClicks + 1)}
-                    >
-                      {copyWord.word}
-                    </Button>
-                  </CopyToClipboard>
-                </HStack>
-                <HStack>
-                  <Text fontSize="xl" fontWeight="800" color="gray.700">
-                    {course.course_name}
-                  </Text>
-                  <Text fontSize="md" fontWeight="500" color="gray.500">
-                    {course.teacher}
-                  </Text>
-                </HStack>
-              </VStack>
-              <Spacer />
-              <Menu>
-                <MenuButton isLoading={addingCourse || isLoading || addingFavoriteCourse} as={Button} rightIcon={<FaAngleDown />}>
-                  功能
-                </MenuButton>
-                <MenuList>
-                  <MenuItem
-                    key={"NolContent_Button_" + code + "_addToCourseTable"}
-                    mr="-px"
-                    size="md"
-                    color={selected ? "red.500" : "blue.600"}
-                    variant="ghost"
-                    icon={selected ? <FaMinus /> : <FaPlus />}
-                    onClick={() => {
-                      handleAddCourse(course);
-                    }}
-                  >
-                    {selected ? "從課表移除" : "加入課表"}
-                  </MenuItem>
-                  <MenuItem
-                    key={"NolContent_Button_" + code + "_addToNol"}
-                    size="md"
-                    color="blue.600"
-                    variant="ghost"
-                    icon={<FaPlus />}
-                    onClick={() => openPage(getNolAddUrl(course), true)}
-                  >
-                    課程網
-                  </MenuItem>
-                  <MenuItem
-                    key={"NolContent_Button_" + code + "_addToFavorite"}
-                    size="md"
-                    color="red.500"
-                    variant={"ghost"}
-                    icon={isFavorite ? <FaMinus /> : <FaHeart />}
-                    disabled={!userInfo}
-                    onClick={() => {
-                      handleAddFavorite(course._id);
-                    }}
-                  >
-                    {isFavorite ? "從最愛移除" : "加入最愛"}
-                  </MenuItem>
-                  <MenuDivider />
-                  <MenuItem icon={<IoMdOpen />} onClick={() => window.open(getNolUrl(course), "_blank")}>
-                    課程網資訊
-                  </MenuItem>
-                </MenuList>
-              </Menu>
-            </HStack>
-          </Flex>
-          <CourseDetailInfoContainer course={course} />
-        </>
-      );
-    }
     return (
       <>
-        <Flex pt="64px" w="100%" justifyContent={"center"}>
+        <Flex pt="64px" w="100%" justifyContent={"center"} position={{ base: "fixed", lg: "static" }} zIndex={{ base: 100, lg: 0 }} bg="white">
           <HStack my="2" mx="4%" spacing="4" w="100%" align="center">
             <Tag size="md" colorScheme="blue">
-              <Text fontWeight="800" fontSize="lg">
+              <Text fontWeight="800" fontSize={{ base: "md", lg: "lg" }}>
                 {course.id}
               </Text>
             </Tag>
-            <Text fontSize="3xl" fontWeight="800" color="gray.700">
+            <Text fontSize={{ base: "xl", lg: "3xl" }} fontWeight="800" color="gray.700">
               {course.course_name}
             </Text>
-            <Text fontSize="2xl" fontWeight="500" color="gray.500">
+            <Text fontSize={{ base: "md", lg: "2xl" }} fontWeight="500" color="gray.500">
               {course.teacher}
             </Text>
-            <Text fontWeight="500" fontSize="md" color="gray.300">
-              {Moment(refreshTime).format("HH:mm")} 更新
-            </Text>
-            <Spacer />
-            <ButtonGroup isAttached>
-              <Button
-                key={"NolContent_Button_" + code + "_addToCourseTable"}
-                mr="-px"
-                size="md"
-                colorScheme={selected ? "red" : "blue"}
-                variant="outline"
-                leftIcon={selected ? <FaMinus /> : <FaPlus />}
-                isLoading={addingCourse || isLoading}
-                onClick={() => {
-                  handleAddCourse(course);
-                }}
-              >
-                {selected ? "從課表移除" : "加入課表"}
-              </Button>
-              <Button
-                key={"NolContent_Button_" + code + "_addToNol"}
-                size="md"
-                colorScheme="blue"
-                variant="outline"
-                leftIcon={<FaPlus />}
-                onClick={() => openPage(getNolAddUrl(course), true)}
-              >
-                課程網
-              </Button>
-            </ButtonGroup>
-            <Button
-              key={"NolContent_Button_" + code + "_addToFavorite"}
-              size="md"
-              colorScheme="red"
-              variant={isFavorite ? "solid" : "outline"}
-              leftIcon={<FaHeart />}
-              isLoading={addingFavoriteCourse}
-              disabled={!userInfo}
-              onClick={() => {
-                handleAddFavorite(course._id);
-              }}
-            >
-              {isFavorite ? "已加入最愛" : "加入最愛"}
-            </Button>
-            <Button
-              key={"NolContent_Button_" + code + "_OpenNol"}
-              size="md"
-              rightIcon={<IoMdOpen />}
-              onClick={() => window.open(getNolUrl(course), "_blank")}
-            >
-              課程網資訊
-            </Button>
             <CopyToClipboard text={"https://course.myntu.me/courseinfo/" + course._id}>
               <Button
                 rightIcon={<Icon as={BiCopy} color={copyWord.color} />}
                 variant="ghost"
-                size="md"
+                size="xs"
                 bg={copyWord.bg}
                 color={copyWord.color}
                 onClick={() => setCopiedLinkClicks(copiedLinkClicks + 1)}
+                display={{ base: "inline-block", lg: "none" }}
               >
                 {copyWord.word}
               </Button>
             </CopyToClipboard>
+            <Text fontWeight="500" fontSize={{ base: "sm", lg: "md" }} color="gray.300">
+              {Moment(refreshTime).format("HH:mm")} 更新
+            </Text>
+            <Spacer />
+            <HStack spacing="2" display={{ base: "none", lg: "flex" }}>
+              <ButtonGroup isAttached>
+                <Button
+                  key={"NolContent_Button_" + code + "_addToCourseTable"}
+                  mr="-px"
+                  size="md"
+                  colorScheme={selected ? "red" : "blue"}
+                  variant="outline"
+                  leftIcon={selected ? <FaMinus /> : <FaPlus />}
+                  isLoading={addingCourse || isLoading}
+                  onClick={() => {
+                    handleAddCourse(course);
+                  }}
+                >
+                  {selected ? "從課表移除" : "加入課表"}
+                </Button>
+                <Button
+                  key={"NolContent_Button_" + code + "_addToNol"}
+                  size="md"
+                  colorScheme="blue"
+                  variant="outline"
+                  leftIcon={<FaPlus />}
+                  onClick={() => openPage(getNolAddUrl(course), true)}
+                >
+                  課程網
+                </Button>
+              </ButtonGroup>
+              <Button
+                key={"NolContent_Button_" + code + "_addToFavorite"}
+                size="md"
+                colorScheme="red"
+                variant={isFavorite ? "solid" : "outline"}
+                leftIcon={<FaHeart />}
+                isLoading={addingFavoriteCourse}
+                disabled={!userInfo}
+                onClick={() => {
+                  handleAddFavorite(course._id);
+                }}
+              >
+                {isFavorite ? "已加入最愛" : "加入最愛"}
+              </Button>
+              <Button
+                key={"NolContent_Button_" + code + "_OpenNol"}
+                size="md"
+                rightIcon={<IoMdOpen />}
+                onClick={() => window.open(getNolUrl(course), "_blank")}
+              >
+                課程網資訊
+              </Button>
+              <CopyToClipboard text={"https://course.myntu.me/courseinfo/" + course._id}>
+                <Button
+                  rightIcon={<Icon as={BiCopy} color={copyWord.color} />}
+                  variant="ghost"
+                  size="md"
+                  bg={copyWord.bg}
+                  color={copyWord.color}
+                  onClick={() => setCopiedLinkClicks(copiedLinkClicks + 1)}
+                >
+                  {copyWord.word}
+                </Button>
+              </CopyToClipboard>
+            </HStack>
+            <Menu>
+              <MenuButton
+                isLoading={addingCourse || isLoading || addingFavoriteCourse}
+                as={Button}
+                rightIcon={<FaAngleDown />}
+                display={{ base: "inline-block", lg: "none" }}
+              >
+                功能
+              </MenuButton>
+              <MenuList display={{ base: "inline-block", lg: "none" }}>
+                <MenuItem
+                  key={"NolContent_Button_" + code + "_addToCourseTable"}
+                  mr="-px"
+                  size="md"
+                  color={selected ? "red.500" : "blue.600"}
+                  variant="ghost"
+                  icon={selected ? <FaMinus /> : <FaPlus />}
+                  onClick={() => {
+                    handleAddCourse(course);
+                  }}
+                >
+                  {selected ? "從課表移除" : "加入課表"}
+                </MenuItem>
+                <MenuItem
+                  key={"NolContent_Button_" + code + "_addToNol"}
+                  size="md"
+                  color="blue.600"
+                  variant="ghost"
+                  icon={<FaPlus />}
+                  onClick={() => openPage(getNolAddUrl(course), true)}
+                >
+                  課程網
+                </MenuItem>
+                <MenuItem
+                  key={"NolContent_Button_" + code + "_addToFavorite"}
+                  size="md"
+                  color="red.500"
+                  variant={"ghost"}
+                  icon={isFavorite ? <FaMinus /> : <FaHeart />}
+                  disabled={!userInfo}
+                  onClick={() => {
+                    handleAddFavorite(course._id);
+                  }}
+                >
+                  {isFavorite ? "從最愛移除" : "加入最愛"}
+                </MenuItem>
+                <MenuDivider />
+                <MenuItem icon={<IoMdOpen />} onClick={() => window.open(getNolUrl(course), "_blank")}>
+                  課程網資訊
+                </MenuItem>
+              </MenuList>
+            </Menu>
           </HStack>
         </Flex>
         <CourseDetailInfoContainer course={course} />
