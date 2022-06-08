@@ -134,55 +134,53 @@ function CourseResultViewContainer() {
     }
   }, [isLoginWarningOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const renderNoLoginWarning = () => {
+  const renderNoLoginWarning = useCallback(() => {
     const onClose = () => setIsLoginWarningOpen(false);
     // console.log("renderNoLoginWarning");
     return (
-      <>
-        <AlertDialog isOpen={isLoginWarningOpen} onClose={onClose} motionPreset="slideInBottom" isCentered>
-          <AlertDialogOverlay>
-            <AlertDialogContent>
-              <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                等等，你還沒登入啊！
-              </AlertDialogHeader>
-              <AlertDialogBody>
-                <Alert status="warning">
-                  <AlertIcon />
-                  訪客課表將於一天後過期，屆時您將無法存取此課表。
-                </Alert>
-                <Text mt={4} color="gray.600" fontWeight="700" fontSize="lg">
-                  真的啦！相信我。
-                  <br />
-                  註冊跟登入非常迅速，而且課表還能永久保存喔！
-                </Text>
-              </AlertDialogBody>
-              <AlertDialogFooter>
-                <Button
-                  onClick={() => {
-                    setIsLoginWarningOpen(false);
-                    setAgreeToCreateTableWithoutLogin(true);
-                  }}
-                >
-                  等等再說
-                </Button>
-                <Button
-                  colorScheme="teal"
-                  rightIcon={<FaArrowRight />}
-                  onClick={() => {
-                    setIsLoginWarningOpen(false);
-                    loginWithPopup();
-                  }}
-                  ml={3}
-                >
-                  去登入
-                </Button>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialogOverlay>
-        </AlertDialog>
-      </>
+      <AlertDialog isOpen={isLoginWarningOpen} onClose={onClose} motionPreset="slideInBottom" isCentered>
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              等等，你還沒登入啊！
+            </AlertDialogHeader>
+            <AlertDialogBody>
+              <Alert status="warning">
+                <AlertIcon />
+                訪客課表將於一天後過期，屆時您將無法存取此課表。
+              </Alert>
+              <Text mt={4} color="gray.600" fontWeight="700" fontSize="lg">
+                真的啦！相信我。
+                <br />
+                註冊跟登入非常迅速，而且課表還能永久保存喔！
+              </Text>
+            </AlertDialogBody>
+            <AlertDialogFooter>
+              <Button
+                onClick={() => {
+                  setIsLoginWarningOpen(false);
+                  setAgreeToCreateTableWithoutLogin(true);
+                }}
+              >
+                等等再說
+              </Button>
+              <Button
+                colorScheme="teal"
+                rightIcon={<FaArrowRight />}
+                onClick={() => {
+                  setIsLoginWarningOpen(false);
+                  loginWithPopup();
+                }}
+                ml={3}
+              >
+                去登入
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     );
-  };
+  }, [isLoginWarningOpen, loginWithPopup]);
 
   const renderSettingSwitch = useCallback(
     (label, default_checked, isDisabled) => {
