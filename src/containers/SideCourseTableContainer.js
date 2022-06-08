@@ -27,9 +27,8 @@ import {
   TabPanels,
   TabPanel,
   SkeletonText,
-  useMediaQuery,
 } from "@chakra-ui/react";
-import { FaRegEdit, FaAngleRight, FaRegHandPointDown, FaRegHandPointUp, FaRegMeh, FaPlusSquare, FaAngleDown } from "react-icons/fa";
+import { FaRegEdit, FaRegHandPointDown, FaRegHandPointUp, FaRegMeh, FaPlusSquare, FaAngleDown } from "react-icons/fa";
 import CourseTableContainer from "containers/CourseTableContainer";
 import { logIn, updateCourseTable } from "actions/index";
 import { fetchCourseTableCoursesByIds } from "actions/courses";
@@ -60,7 +59,6 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, hover
   const dispatch = useDispatch();
   const courseTable = useSelector((state) => state.course_table);
   const userInfo = useSelector((state) => state.user);
-  const [isMobile] = useMediaQuery("(max-width: 1000px)");
 
   // some local states for handling course data
   // const courseIds = props.courseIds;
@@ -402,7 +400,7 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, hover
       );
     }
     return (
-      <Box overflow="auto" w="100%" mt={isMobile ? "" : "4"}>
+      <Box overflow="auto" w="100%" mt={{ base: 0, lg: 4 }}>
         <Flex flexDirection="column">
           <Tabs>
             <Flex flexDirection="row" justifyContent="start" alignItems="center" mb="2" ml="4">
@@ -444,12 +442,16 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, hover
     );
   };
   return (
-    <Flex flexDirection={isMobile ? "column" : "row"} h="100%" w="100%">
+    <Flex flexDirection={{ base: "column", lg: "row" }} h="100%" w="100%">
       <Flex justifyContent="center" alignItems="center">
         <IconButton
-          h={isMobile ? "" : "100%"}
-          w={isMobile ? "100%" : ""}
-          icon={isMobile ? <FaAngleDown size={24} /> : <FaAngleRight size={24} />}
+          h={{ base: "", lg: "100%" }}
+          w={{ base: "100%", lg: "" }}
+          icon={
+            <Box transform={{ base: "none", lg: "rotate(270deg)" }}>
+              <FaAngleDown size={24} />
+            </Box>
+          }
           onClick={() => {
             setIsDisplay(!isDisplay);
           }}
