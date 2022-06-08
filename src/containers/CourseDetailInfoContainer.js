@@ -11,7 +11,6 @@ import {
   TabPanel,
   Tabs,
   Icon,
-  useMediaQuery,
   Box,
   Button,
   Tag,
@@ -65,7 +64,6 @@ function CourseDetailInfoContainer({ course }) {
   const { onOpen, onClose, isOpen } = useDisclosure();
   const toast = useToast();
   const dispatch = useDispatch();
-  const [isMobile] = useMediaQuery("(max-width: 1000px)");
   const { loginWithRedirect, getAccessTokenSilently, isLoading: isAuth0Loading, isAuthenticated } = useAuth0();
 
   // Course live data
@@ -391,7 +389,7 @@ function CourseDetailInfoContainer({ course }) {
       return renderFallback("無法取得課程即時資訊", { FaExclamationTriangle }, "100%", "8");
     }
     return (
-      <Flex w="100%" mt="4" flexDirection="row" justifyContent="center" alignItems={isMobile ? "start" : "center"} flexWrap="wrap">
+      <Flex w="100%" mt="4" flexDirection="row" justifyContent="center" alignItems={{ base: "start", lg: "center" }} flexWrap="wrap">
         <Stat>
           <StatLabel>選上</StatLabel>
           <StatNumber>{CourseEnrollStatus.enrolled}</StatNumber>
@@ -414,7 +412,7 @@ function CourseDetailInfoContainer({ course }) {
         </Stat>
       </Flex>
     );
-  }, [isLoadingEnrollInfo, isAuth0Loading, isAuthenticated, CourseEnrollStatus, isMobile, renderGuestBlockingBox, renderFallback, renderPanelLoaing]);
+  }, [isLoadingEnrollInfo, isAuth0Loading, isAuthenticated, CourseEnrollStatus, renderGuestBlockingBox, renderFallback, renderPanelLoaing]);
 
   const renderSubmitPopover = useCallback(() => {
     return (
@@ -541,7 +539,7 @@ function CourseDetailInfoContainer({ course }) {
       }
       if (SignUpPostData.length === 0) {
         return (
-          <Flex w="100%" h="100%" mt="4" flexDirection="column" justifyContent="center" alignItems={isMobile ? "start" : "center"}>
+          <Flex w="100%" h="100%" mt="4" flexDirection="column" justifyContent="center" alignItems={{ base: "start", lg: "center" }}>
             {renderFallback("無加簽相關資訊", "empty", "100%", "0")}
             <HStack w="100%" pr="8" mt="8" justify="end">
               {renderSubmitPopover()}
@@ -550,7 +548,7 @@ function CourseDetailInfoContainer({ course }) {
         );
       }
       return (
-        <Flex w="100%" h="100%" mt="4" flexDirection="column" justifyContent="center" alignItems={isMobile ? "start" : "center"}>
+        <Flex w="100%" h="100%" mt="4" flexDirection="column" justifyContent="center" alignItems={{ base: "start", lg: "center" }}>
           <SignUpCard
             post={SignUpPostData[signUpCardIdx]}
             SignUpPostData={SignUpPostData}
@@ -583,7 +581,6 @@ function CourseDetailInfoContainer({ course }) {
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
-      isMobile,
       signUpCardIdx,
       SignUpPostData,
       isLoadingSignUpPostData,
@@ -733,7 +730,7 @@ function CourseDetailInfoContainer({ course }) {
       return renderFallback("無評分相關資訊", "empty", "100%", "8");
     }
     return (
-      <Flex my="4" flexDirection={isMobile ? "column" : "row"} justifyContent="space-evenly" alignItems="center">
+      <Flex my="4" flexDirection={{ base: "column", lg: "row" }} justifyContent="space-evenly" alignItems="center">
         <Box w="200px" h="200px">
           <PieChart
             lineWidth={50}
@@ -747,7 +744,7 @@ function CourseDetailInfoContainer({ course }) {
             })}
           />
         </Box>
-        <VStack mt={isMobile ? "4" : ""} align="start">
+        <VStack mt={{ base: 4, lg: 0 }} align="start">
           {SyllubusData.grade.map((item, index) => {
             const line = item.comment.split("\n");
             const content = line.map((item, index) => {
@@ -799,14 +796,14 @@ function CourseDetailInfoContainer({ course }) {
         </VStack>
       </Flex>
     );
-  }, [isLoadingSyllubusData, SyllubusData, renderFallback, renderPanelLoaing, isMobile]);
+  }, [isLoadingSyllubusData, SyllubusData, renderFallback, renderPanelLoaing]);
 
   return (
-    <Flex w="100%" minH="83vh" pt={isMobile ? "150px" : ""} flexDirection={isMobile ? "column" : "row"} flexWrap="wrap" justify={"center"}>
+    <Flex w="100%" minH="83vh" pt={{ base: "150px", lg: 0 }} flexDirection={{ base: "column", lg: "row" }} flexWrap="wrap" justify={"center"}>
       {/* COL 1 */}
-      <Flex w={isMobile ? "100%" : "30%"} flexDirection={"column"}>
+      <Flex w={{ base: "100%", lg: "30%" }} flexDirection={"column"}>
         {/* Box1 */}
-        <Flex bg="gray.100" h={isMobile ? "" : ""} my="1vh" px="6" py="4" borderRadius="xl" flexDirection="column" flexGrow={1} flexShrink={1}>
+        <Flex bg="gray.100" my="1vh" px="6" py="4" borderRadius="xl" flexDirection="column" flexGrow={1} flexShrink={1}>
           <Text fontSize="2xl" fontWeight="800" color="gray.700">
             詳細資料
           </Text>
@@ -905,7 +902,6 @@ function CourseDetailInfoContainer({ course }) {
         {/* Box2 */}
         <Flex
           bg="gray.100"
-          h={isMobile ? "" : ""}
           my="1vh"
           px="6"
           py="4"
@@ -940,9 +936,9 @@ function CourseDetailInfoContainer({ course }) {
         </Flex>
       </Flex>
       {/* COL 2 */}
-      <Flex w={isMobile ? "100%" : "30%"} mx={isMobile ? "" : "1%"} flexDirection={"column"}>
+      <Flex w={{ base: "100%", lg: "30%" }} mx={{ base: 0, lg: "1%" }} flexDirection={"column"}>
         {/* Box3 */}
-        <Flex h={isMobile ? "" : ""} bg="gray.100" my="1vh" px="6" py="4" borderRadius="xl" flexDirection="column" flexGrow={1} flexShrink={1}>
+        <Flex bg="gray.100" my="1vh" px="6" py="4" borderRadius="xl" flexDirection="column" flexGrow={1} flexShrink={1}>
           <Text fontSize="2xl" fontWeight="800" color="gray.700">
             加簽資訊
             <BetaBadge content="beta" size="sm" />
@@ -951,7 +947,6 @@ function CourseDetailInfoContainer({ course }) {
         </Flex>
         {/* Box4 */}
         <Flex
-          h={isMobile ? "" : ""}
           bg="gray.100"
           my="1vh"
           px="6"
@@ -982,7 +977,6 @@ function CourseDetailInfoContainer({ course }) {
         </Flex>
         {/* Box5 */}
         <Flex
-          h={isMobile ? "" : ""}
           bg="gray.100"
           my="1vh"
           px="6"
@@ -1011,11 +1005,11 @@ function CourseDetailInfoContainer({ course }) {
         </Flex>
       </Flex>
       {/* COL 3 */}
-      <Flex w={isMobile ? "100%" : "30%"} flexDirection={"column"}>
+      <Flex w={{ base: "100%", lg: "30%" }} flexDirection={"column"}>
         {/* Box6 */}
         <Flex
           bg="gray.100"
-          h={isMobile ? "" : "55vh"}
+          h={{ base: "", md: "55vh" }}
           my="1vh"
           px="6"
           py="4"
@@ -1035,7 +1029,7 @@ function CourseDetailInfoContainer({ course }) {
         </Flex>
         {/* Box7 */}
         <Flex
-          h={isMobile ? "" : "31vh"}
+          h={{ base: "", md: "31vh" }}
           bg="gray.100"
           my="1vh"
           px="6"
