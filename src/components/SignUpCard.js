@@ -18,7 +18,6 @@ import {
   PopoverCloseButton,
   ButtonGroup,
   Textarea,
-  useMediaQuery,
   useToast,
   useDisclosure,
 } from "@chakra-ui/react";
@@ -48,7 +47,6 @@ function SignUpCard({ post, SignUpPostData, setSignUpPostData, fetchSignUpPostDa
   const is_owner = post.is_owner;
   const dispatch = useDispatch();
   const toast = useToast();
-  const [isMobile] = useMediaQuery("(max-width: 1000px)");
   const { getAccessTokenSilently } = useAuth0();
   const [isVotingPost, setIsVotingPost] = useState(0);
   const [isDeletingPost, setIsDeletingPost] = useState(false);
@@ -194,12 +192,12 @@ function SignUpCard({ post, SignUpPostData, setSignUpPostData, fetchSignUpPostDa
       px="8"
       justifyContent="space-around"
       alignItems="start"
-      flexDirection={isMobile ? "column" : "row"}
+      flexDirection={{ base: "column", md: "row" }}
       bg="gray.200"
       borderRadius="lg"
       boxShadow="lg"
     >
-      <Flex h="100%" w={isMobile ? "100%" : "24"} flexWrap="wrap" alignItems="start">
+      <Flex h="100%" w={{ base: "100%", md: "24" }} flexWrap="wrap" alignItems="start">
         <Stat minW="16">
           <StatLabel>加簽人數</StatLabel>
           <StatNumber>{post.content.amount}</StatNumber>
@@ -217,7 +215,7 @@ function SignUpCard({ post, SignUpPostData, setSignUpPostData, fetchSignUpPostDa
           </Text>
         </Stat>
       </Flex>
-      <VStack mt={isMobile ? "4" : ""} w={isMobile ? "100%" : "70%"} h="100%">
+      <VStack mt={{ base: 4, md: 0 }} w={{ base: "100%", md: "70%" }} h="100%">
         <VStack w="100%" h="100%" justify="start" align="start">
           <HStack w="100%">
             <Text fontSize="sm" fontWeight="600" color="gray.800">
@@ -250,7 +248,7 @@ function SignUpCard({ post, SignUpPostData, setSignUpPostData, fetchSignUpPostDa
               <></>
             )}
           </HStack>
-          <Flex h={isMobile ? "150px" : "150px"} overflow="auto" flexGrow={1}>
+          <Flex h={{ base: "150px", md: "150px" }} overflow="auto" flexGrow={1}>
             <Text fontSize="md" fontWeight="600" color="gray.600" overflow="auto" wordBreak="break-all">
               {post.content.comment === "" ? "無" : post.content.comment}
             </Text>
