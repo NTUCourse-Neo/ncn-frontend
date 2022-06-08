@@ -34,6 +34,27 @@ import { useNavigate } from "react-router-dom";
 
 const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
+function DeptBadge({ course }) {
+  if (!course.department || course.department.length === 0 || (course.department.length === 1 && course.department[0].length === 0)) {
+    return <></>;
+  }
+  if (course.department.length > 1) {
+    const dept_str = course.department.join(", ");
+    return (
+      <Tooltip hasArrow placement="top" label={dept_str} bg="gray.600" color="white">
+        <Badge colorScheme="teal" variant="solid" mr="4px">
+          多個系所
+        </Badge>
+      </Tooltip>
+    );
+  }
+  return (
+    <Badge colorScheme="blue" variant="solid" mr="4px">
+      {course?.department[0] ?? ""}
+    </Badge>
+  );
+}
+
 function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayTable }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -202,27 +223,6 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
     }
   };
 
-  const renderDeptBadge = (course) => {
-    if (!course.department || course.department.length === 0 || (course.department.length === 1 && course.department[0].length === 0)) {
-      return <></>;
-    }
-    if (course.department.length > 1) {
-      const dept_str = course.department.join(", ");
-      return (
-        <Tooltip hasArrow placement="top" label={dept_str} bg="gray.600" color="white">
-          <Badge colorScheme="teal" variant="solid" mr="4px">
-            多個系所
-          </Badge>
-        </Tooltip>
-      );
-    }
-    return (
-      <Badge colorScheme="blue" variant="solid" mr="4px">
-        {courseInfo.department[0]}
-      </Badge>
-    );
-  };
-
   return (
     <AccordionItem bg={selected ? hash_to_color_hex(courseInfo._id, 0.95) : "gray.100"} borderRadius="md" transition="all ease-in-out 500ms">
       <Flex alignItems="center" justifyContent="start" flexDirection="row" w="100%" pr="2" pl="2" py="1">
@@ -240,7 +240,7 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
                   {courseInfo.id}
                 </Badge>
               </Tooltip>
-              {renderDeptBadge(courseInfo)}
+              <DeptBadge course={courseInfo} />
             </Flex>
             <HStack>
               <Heading as="h3" size={useBreakpointValue({ base: "sm", md: "md" }) ?? "sm"} color="gray.600">
@@ -267,7 +267,9 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
                   {courseInfo.credit}
                 </Badge>
               </Tooltip>
-              <Flex display={{ base: "inline-block", md: "none" }}>{renderDeptBadge(courseInfo)}</Flex>
+              <Flex display={{ base: "inline-block", md: "none" }}>
+                <DeptBadge course={courseInfo} />
+              </Flex>
             </HStack>
             <Heading as="h3" size="sm" color="gray.500" fontWeight="500" display={{ base: "none", md: "flex" }}>
               {courseInfo.teacher}
