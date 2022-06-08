@@ -709,53 +709,38 @@ function CourseResultViewContainer() {
               onClick={() => setDisplayFilter(!displayFilter)}
             />
           </Flex>
-          {isMobile ? (
-            <>
-              <Flex flexDirection="column" alignItems="center" justifyContent="start" w="100%">
-                <Flex flexDirection="row" alignItems="center" justifyContent="start">
-                  {search_loading ? <BeatLoader size={8} color="teal" /> : <></>}
-                  <Text fontSize="md" fontWeight="medium" color="gray.400" my="2" ml="1">
-                    {search_loading ? "載入中" : `共找到 ${total_count} 筆結果`}
-                  </Text>
-                </Flex>
-                <CourseInfoRowContainer
-                  courseInfo={search_results}
-                  setHoveredCourse={setHoveredCourse}
-                  selectedCourses={coursesInTable}
-                  displayTags={displayTags}
-                  displayTable={displayTable}
-                  isCourseStatusModalOpen={isCourseStatusModalOpen}
-                  setIsCourseStatusModalOpen={setIsCourseStatusModalOpen}
-                />
-              </Flex>
-              <Flex w="100%" alignItems="center" justifyContent="center">
-                <SkeletonRow loading={search_loading} error={search_error} />
-              </Flex>
-            </>
-          ) : (
-            <>
-              <Box ml={displayTable ? "2vw" : "15vw"} w={displayTable ? "55vw" : "70vw"} transition="all 500ms ease-in-out">
-                <Flex flexDirection="row" alignItems="center" justifyContent="start">
-                  {search_loading ? <BeatLoader size={8} color="teal" /> : <></>}
-                  <Text fontSize="md" fontWeight="medium" color="gray.400" my="2" ml="1">
-                    {search_loading ? "載入中" : `共找到 ${total_count} 筆結果`}
-                  </Text>
-                </Flex>
-                <CourseInfoRowContainer
-                  courseInfo={search_results}
-                  setHoveredCourse={setHoveredCourse}
-                  selectedCourses={coursesInTable}
-                  displayTags={displayTags}
-                  displayTable={displayTable}
-                  isCourseStatusModalOpen={isCourseStatusModalOpen}
-                  setIsCourseStatusModalOpen={setIsCourseStatusModalOpen}
-                />
-              </Box>
-              <Box ml={displayTable ? "24vw" : "48vw"} transition="all 500ms ease-in-out">
-                <SkeletonRow loading={search_loading} error={search_error} />
-              </Box>
-            </>
-          )}
+          <Flex
+            flexDirection={"column"}
+            alignItems={{ base: "center", lg: "start" }}
+            ml={{ base: "0", lg: displayTable ? "2vw" : "15vw" }}
+            w={{ base: "100%", lg: displayTable ? "55vw" : "70vw" }}
+            transition="all 500ms ease-in-out"
+          >
+            <Flex flexDirection="row" alignItems="center" justifyContent="start">
+              {search_loading ? <BeatLoader size={8} color="teal" /> : <></>}
+              <Text fontSize="md" fontWeight="medium" color="gray.400" my="2" ml="1">
+                {search_loading ? "載入中" : `共找到 ${total_count} 筆結果`}
+              </Text>
+            </Flex>
+            <CourseInfoRowContainer
+              courseInfo={search_results}
+              setHoveredCourse={setHoveredCourse}
+              selectedCourses={coursesInTable}
+              displayTags={displayTags}
+              displayTable={displayTable}
+              isCourseStatusModalOpen={isCourseStatusModalOpen}
+              setIsCourseStatusModalOpen={setIsCourseStatusModalOpen}
+            />
+          </Flex>
+          <Flex
+            w="100%"
+            alignItems="center"
+            justifyContent={{ base: "center", lg: "start" }}
+            ml={{ base: "0", lg: displayTable ? "24vw" : "48vw" }}
+            transition="all 500ms ease-in-out"
+          >
+            <SkeletonRow loading={search_loading} error={search_error} />
+          </Flex>
           <div ref={bottomRef} />
         </Box>
       </Flex>
