@@ -12,8 +12,8 @@ function CourseInfoRowContainer({ courseInfo, setHoveredCourse, selectedCourses,
   //     },
   // }
   return (
-    <Box>
-      <Flex direction="column">
+    <Box w="100%">
+      <Flex direction="column" alignItems={"center"}>
         {courseInfo.map((info, index) => (
           <Accordion
             allowToggle
