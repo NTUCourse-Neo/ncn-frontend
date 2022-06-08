@@ -1,6 +1,6 @@
 import { React } from "react";
 import CourseInfoRow from "components/CourseInfoRow";
-import { Box, Flex, Spacer, Accordion, useMediaQuery } from "@chakra-ui/react";
+import { Box, Flex, Spacer, Accordion } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
 
 function CourseInfoRowContainer({ courseInfo, w, setHoveredCourse, selectedCourses, displayTable, displayTags }) {
@@ -12,14 +12,12 @@ function CourseInfoRowContainer({ courseInfo, w, setHoveredCourse, selectedCours
   //     },
   // }
 
-  const [isMobile] = useMediaQuery("(max-width: 760px)");
-
   const renderCourseInfoRow = () => {
     return courseInfo.map((info, index) => {
       return (
         <Accordion
           allowToggle
-          w={isMobile ? "90vw" : w}
+          w={{ base: "90vw", md: w }}
           key={index}
           onMouseEnter={() => setHoveredCourse(info)}
           onMouseLeave={() => {
@@ -36,7 +34,7 @@ function CourseInfoRowContainer({ courseInfo, w, setHoveredCourse, selectedCours
             displayTable={displayTable}
             isfavorite={userInfo === null ? false : userInfo.db.favorites.includes(info._id)}
           />
-          <Spacer my={isMobile ? "2" : "1"} />
+          <Spacer my={{ base: 2, md: 1 }} />
         </Accordion>
       );
     });
