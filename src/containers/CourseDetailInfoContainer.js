@@ -36,7 +36,7 @@ import {
   Select,
   useDisclosure,
 } from "@chakra-ui/react";
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { PieChart } from "react-minimal-pie-chart";
 import { FaCircle, FaRss, FaExclamationTriangle, FaQuestionCircle, FaChevronLeft, FaChevronRight, FaInfoCircle } from "react-icons/fa";
 import { IoMdOpen } from "react-icons/io";
@@ -707,8 +707,8 @@ function CourseDetailInfoContainer({ course }) {
           });
 
           return (
-            <>
-              <Text key={syllabusTitle[key]} fontSize="lg" fontWeight="600" color="gray.700">
+            <React.Fragment key={syllabusTitle[key]}>
+              <Text fontSize="lg" fontWeight="600" color="gray.700">
                 {syllabusTitle[key]}
               </Text>
               {SyllubusData.syllabus[key] !== "" ? (
@@ -718,7 +718,7 @@ function CourseDetailInfoContainer({ course }) {
                   無
                 </Text>
               )}
-            </>
+            </React.Fragment>
           );
         })}
       </Flex>
@@ -758,11 +758,23 @@ function CourseDetailInfoContainer({ course }) {
               );
             });
             return (
-              <>
-                <Popover key={"syllubusData" + index}>
-                  <PopoverTrigger>
-                    <HStack justify="start" cursor="pointer">
-                      <Icon as={FaCircle} size="20px" color={item.color} />
+              <Popover key={"syllubusData" + index}>
+                <PopoverTrigger>
+                  <HStack justify="start" cursor="pointer">
+                    <Icon as={FaCircle} size="20px" color={item.color} />
+                    <Text fontSize="lg" fontWeight="800" color={item.color}>
+                      {item.value}%
+                    </Text>
+                    <Text fontSize="md" fontWeight="600" color="gray.700">
+                      {item.title}
+                    </Text>
+                  </HStack>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <PopoverArrow />
+                  <PopoverCloseButton />
+                  <PopoverHeader>
+                    <HStack>
                       <Text fontSize="lg" fontWeight="800" color={item.color}>
                         {item.value}%
                       </Text>
@@ -770,32 +782,18 @@ function CourseDetailInfoContainer({ course }) {
                         {item.title}
                       </Text>
                     </HStack>
-                  </PopoverTrigger>
-                  <PopoverContent>
-                    <PopoverArrow />
-                    <PopoverCloseButton />
-                    <PopoverHeader>
-                      <HStack>
-                        <Text fontSize="lg" fontWeight="800" color={item.color}>
-                          {item.value}%
-                        </Text>
-                        <Text fontSize="md" fontWeight="600" color="gray.700">
-                          {item.title}
-                        </Text>
-                      </HStack>
-                    </PopoverHeader>
-                    <PopoverBody>
-                      {item.comment === "" ? (
-                        <Text fontSize="md" fontWeight="400" color="gray.700">
-                          無詳細資訊
-                        </Text>
-                      ) : (
-                        content
-                      )}
-                    </PopoverBody>
-                  </PopoverContent>
-                </Popover>
-              </>
+                  </PopoverHeader>
+                  <PopoverBody>
+                    {item.comment === "" ? (
+                      <Text fontSize="md" fontWeight="400" color="gray.700">
+                        無詳細資訊
+                      </Text>
+                    ) : (
+                      content
+                    )}
+                  </PopoverBody>
+                </PopoverContent>
+              </Popover>
             );
           })}
         </VStack>
@@ -816,7 +814,7 @@ function CourseDetailInfoContainer({ course }) {
             <Flex mr="16" flexDirection="column" flexWrap="wrap">
               {course_codes_1.map((item, index) => {
                 return (
-                  <Stat key={"code_stats_" + index}>
+                  <Stat key={"code_stats_1" + index}>
                     <StatLabel>{item.title}</StatLabel>
                     <StatNumber>{item.value}</StatNumber>
                   </Stat>
@@ -826,7 +824,7 @@ function CourseDetailInfoContainer({ course }) {
             <Flex mr="16" flexDirection="column" flexWrap="wrap">
               {course_codes_2.map((item, index) => {
                 return (
-                  <Stat key={"code_stats_" + index}>
+                  <Stat key={"code_stats_2" + index}>
                     <StatLabel>{item.title}</StatLabel>
                     <StatNumber>{item.value}</StatNumber>
                   </Stat>
