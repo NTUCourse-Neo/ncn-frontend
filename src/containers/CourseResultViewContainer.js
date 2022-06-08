@@ -47,6 +47,7 @@ import {
   Alert,
   AlertIcon,
   Icon,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { BeatLoader } from "react-spinners";
 import { FaChevronDown, FaChevronUp, FaPlus, FaMinus, FaArrowRight, FaRss, FaRegCalendarAlt } from "react-icons/fa";
@@ -254,9 +255,9 @@ function CourseResultViewContainer() {
                   >
                     <Flex
                       w="100%"
-                      flexDirection={isMobile ? "column" : "row"}
+                      flexDirection={{ base: "column", lg: "row" }}
                       justifyContent="center"
-                      alignItems={isMobile ? "start" : "center"}
+                      alignItems={{ base: "start", lg: "center" }}
                       flexWrap="wrap"
                     >
                       <Stat w="20vw">
@@ -476,12 +477,12 @@ function CourseResultViewContainer() {
                   <Tabs>
                     <TabList>
                       <Tab>
-                        <Text color="gray.700" fontSize={isMobile ? "md" : "xl"} fontWeight="700">
+                        <Text color="gray.700" fontSize={{ base: "md", lg: "xl" }} fontWeight="700">
                           篩選
                         </Text>
                       </Tab>
                       <Tab>
-                        <Text color="gray.700" fontSize={isMobile ? "md" : "xl"} fontWeight="700">
+                        <Text color="gray.700" fontSize={{ base: "md", lg: "xl" }} fontWeight="700">
                           設定
                         </Text>
                       </Tab>
@@ -493,7 +494,7 @@ function CourseResultViewContainer() {
                           <Flex flexDirection="column" px="4">
                             <Flex flexDirection="row" alignItems="center" justifyContent="center">
                               <Switch
-                                size={isMobile ? "md" : "lg"}
+                                size={useBreakpointValue({ base: "md", lg: "lg" }) ?? "md"}
                                 mr="2"
                                 isChecked={timeFilterOn}
                                 onChange={(e) => {
@@ -516,7 +517,7 @@ function CourseResultViewContainer() {
                           <Flex flexDirection="column" px="4">
                             <Flex flexDirection="row" alignItems="center" justifyContent="center">
                               <Switch
-                                size={isMobile ? "md" : "lg"}
+                                size={useBreakpointValue({ base: "md", lg: "lg" }) ?? "md"}
                                 mr="2"
                                 isChecked={deptFilterOn}
                                 onChange={(e) => {
@@ -535,7 +536,7 @@ function CourseResultViewContainer() {
                           <Flex flexDirection="column" px="4">
                             <Flex flexDirection="row" alignItems="center" justifyContent="center">
                               <Switch
-                                size={isMobile ? "md" : "lg"}
+                                size={useBreakpointValue({ base: "md", lg: "lg" }) ?? "md"}
                                 mr="2"
                                 isChecked={catFilterOn}
                                 onChange={(e) => {
@@ -554,7 +555,7 @@ function CourseResultViewContainer() {
                           <Flex flexDirection="column" px="4">
                             <Flex flexDirection="row" alignItems="center" justifyContent="center">
                               <Switch
-                                size={isMobile ? "md" : "lg"}
+                                size={useBreakpointValue({ base: "md", lg: "lg" }) ?? "md"}
                                 mr="2"
                                 isChecked={enrollFilterOn}
                                 onChange={(e) => {
@@ -563,7 +564,12 @@ function CourseResultViewContainer() {
                                 }}
                               />
                               <Menu closeOnSelect={false} mx="2">
-                                <MenuButton size={isMobile ? "sm" : "md"} as={Button} rightIcon={<FaChevronDown />} disabled={!enrollFilterOn}>
+                                <MenuButton
+                                  size={useBreakpointValue({ base: "sm", md: "md" }) ?? "md"}
+                                  as={Button}
+                                  rightIcon={<FaChevronDown />}
+                                  disabled={!enrollFilterOn}
+                                >
                                   加選方式
                                 </MenuButton>
                                 <MenuList>
@@ -621,10 +627,10 @@ function CourseResultViewContainer() {
                         {/* Settings */}
                         <Flex flexDirection="row" flexWrap="wrap" css={{ gap: "10px" }}>
                           <Flex
-                            w={isMobile ? "100%" : "50%"}
+                            w={{ base: "100%", lg: "50%" }}
                             flexDirection="column"
                             p="4"
-                            mr={isMobile ? "0" : "4"}
+                            mr={{ base: 0, lg: 4 }}
                             borderWidth="2px"
                             borderRadius="lg"
                           >
@@ -640,7 +646,7 @@ function CourseResultViewContainer() {
                             <Button
                               mt={2}
                               colorScheme="teal"
-                              size={isMobile ? "sm" : "md"}
+                              size={useBreakpointValue({ base: "sm", lg: "md" }) ?? "sm"}
                               onClick={() => {
                                 dispatch(
                                   setSearchSettings({
@@ -751,8 +757,8 @@ function CourseResultViewContainer() {
           alignItems="center"
           justifyContent="center"
           position="absolute"
-          top={isMobile ? "85vh" : "80vh"}
-          left={isMobile ? "70vw" : "90vw"}
+          top={{ base: "85vh", lg: "80vh" }}
+          left={{ base: "70vw", md: "85vw", lg: "90vw" }}
           bg="gray.100"
           boxShadow="md"
           py="1"
@@ -763,7 +769,7 @@ function CourseResultViewContainer() {
           transition="all 200ms"
         >
           <Icon mr="1" as={FaRegCalendarAlt} boxSize="4" color="teal.500" />
-          <Text my="2" fontWeight={800} fontSize={isMobile ? "md" : "lg"} color="gray.600">
+          <Text my="2" fontWeight={800} fontSize={{ base: "md", lg: "lg" }} color="gray.600">
             課表
           </Text>
         </Flex>
@@ -772,12 +778,12 @@ function CourseResultViewContainer() {
         <Flex justifyContent="end" mr="2">
           <Box
             position="absolute"
-            top={isMobile ? "" : "8vh"}
+            top={{ base: "", lg: "8vh" }}
             bottom="0"
             right="0"
-            zIndex={isMobile ? "10000" : "1"}
-            w={isMobile ? "100vw" : "40vw"}
-            h={isMobile ? "90vh" : "70vh"}
+            zIndex={{ base: "10000", lg: "1" }}
+            w={{ base: "100vw", lg: "40vw" }}
+            h={{ base: "90vh", lg: "70vh" }}
             bg="gray.200"
             mt="128px"
             borderRadius="lg"
