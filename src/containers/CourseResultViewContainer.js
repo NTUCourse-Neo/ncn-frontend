@@ -1,4 +1,4 @@
-import { React, useEffect, useState, useRef, useCallback } from "react";
+import { React, useEffect, useState, useRef } from "react";
 import {
   Box,
   Flex,
@@ -32,6 +32,53 @@ import useOnScreen from "hooks/useOnScreen";
 import { useAuth0 } from "@auth0/auth0-react";
 import setPageMeta from "utils/seo";
 
+function NoLoginWarningDialog({ isOpen, setIsOpen, setAgreeToCreateTableWithoutLogin }) {
+  const { loginWithPopup } = useAuth0();
+  return (
+    <AlertDialog isOpen={isOpen} onClose={() => setIsOpen(false)} motionPreset="slideInBottom" isCentered>
+      <AlertDialogOverlay>
+        <AlertDialogContent>
+          <AlertDialogHeader fontSize="lg" fontWeight="bold">
+            等等，你還沒登入啊！
+          </AlertDialogHeader>
+          <AlertDialogBody>
+            <Alert status="warning">
+              <AlertIcon />
+              訪客課表將於一天後過期，屆時您將無法存取此課表。
+            </Alert>
+            <Text mt={4} color="gray.600" fontWeight="700" fontSize="lg">
+              真的啦！相信我。
+              <br />
+              註冊跟登入非常迅速，而且課表還能永久保存喔！
+            </Text>
+          </AlertDialogBody>
+          <AlertDialogFooter>
+            <Button
+              onClick={() => {
+                setIsOpen(false);
+                setAgreeToCreateTableWithoutLogin(true);
+              }}
+            >
+              等等再說
+            </Button>
+            <Button
+              colorScheme="teal"
+              rightIcon={<FaArrowRight />}
+              onClick={() => {
+                setIsOpen(false);
+                loginWithPopup();
+              }}
+              ml={3}
+            >
+              去登入
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialogOverlay>
+    </AlertDialog>
+  );
+}
+
 function CourseResultViewContainer() {
   const toast = useToast();
   const topRef = useRef();
@@ -49,8 +96,6 @@ function CourseResultViewContainer() {
   const offset = useSelector((state) => state.offset);
   const batch_size = useSelector((state) => state.batch_size);
   const total_count = useSelector((state) => state.total_count);
-
-  const { loginWithPopup } = useAuth0();
 
   const [isMobile, isHigherThan1325] = useMediaQuery(["(max-width: 1000px)", "(min-height: 1325px)"]);
 
@@ -83,60 +128,10 @@ function CourseResultViewContainer() {
 
   // if isMobile, when show Alert Modal, set displayTable to false to prevent ugly overlapping
   useEffect(() => {
-    if (isLoginWarningOpen) {
-      if (isMobile) {
-        setDisplayTable(false);
-      }
+    if (isLoginWarningOpen && isMobile) {
+      setDisplayTable(false);
     }
-  }, [isLoginWarningOpen]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const renderNoLoginWarning = useCallback(() => {
-    const onClose = () => setIsLoginWarningOpen(false);
-    // console.log("renderNoLoginWarning");
-    return (
-      <AlertDialog isOpen={isLoginWarningOpen} onClose={onClose} motionPreset="slideInBottom" isCentered>
-        <AlertDialogOverlay>
-          <AlertDialogContent>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              等等，你還沒登入啊！
-            </AlertDialogHeader>
-            <AlertDialogBody>
-              <Alert status="warning">
-                <AlertIcon />
-                訪客課表將於一天後過期，屆時您將無法存取此課表。
-              </Alert>
-              <Text mt={4} color="gray.600" fontWeight="700" fontSize="lg">
-                真的啦！相信我。
-                <br />
-                註冊跟登入非常迅速，而且課表還能永久保存喔！
-              </Text>
-            </AlertDialogBody>
-            <AlertDialogFooter>
-              <Button
-                onClick={() => {
-                  setIsLoginWarningOpen(false);
-                  setAgreeToCreateTableWithoutLogin(true);
-                }}
-              >
-                等等再說
-              </Button>
-              <Button
-                colorScheme="teal"
-                rightIcon={<FaArrowRight />}
-                onClick={() => {
-                  setIsLoginWarningOpen(false);
-                  loginWithPopup();
-                }}
-                ml={3}
-              >
-                去登入
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
-      </AlertDialog>
-    );
-  }, [isLoginWarningOpen, loginWithPopup]);
+  }, [isLoginWarningOpen, isMobile]);
 
   const handleScrollToBottom = () => {
     if (reachedBottom && search_results.length !== 0) {
@@ -168,7 +163,11 @@ function CourseResultViewContainer() {
 
   return (
     <>
-      {renderNoLoginWarning()}
+      <NoLoginWarningDialog
+        isOpen={isLoginWarningOpen}
+        setIsOpen={setIsLoginWarningOpen}
+        setAgreeToCreateTableWithoutLogin={setAgreeToCreateTableWithoutLogin}
+      />
       <Flex w="100vw" direction="row" justifyContent="center" alignItems="center" overflow="hidden">
         <Box
           display="flex"
