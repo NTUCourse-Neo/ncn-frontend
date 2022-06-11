@@ -28,14 +28,157 @@ import { useDispatch } from "react-redux";
 import { sortableContainer, sortableElement, sortableHandle } from "react-sortable-hoc";
 import { useNavigate } from "react-router-dom";
 
-function CourseListContainer({ courseTable, courses, loading }) {
+const DragHandle = sortableHandle(() => <MdDragHandle cursor="row-resize" size="20" color="gray" />);
+
+function ListRowElement({ course, courseIdx, prepareToRemoveCourseId, handleDelete }) {
   const navigate = useNavigate();
+  const [isMobile] = useMediaQuery("(max-width: 1000px)");
+  if (isMobile) {
+    return (
+      <Flex
+        flexDirection="row"
+        justifyContent="center"
+        alignItems="center"
+        h="100%"
+        w="100%"
+        py="2"
+        px="2"
+        bg="gray.100"
+        my="1"
+        borderRadius="lg"
+        zIndex="1000"
+      >
+        <Flex flexDirection="row" justifyContent="start" alignItems="center" h="100%" w="100%">
+          <DragHandle />
+          <VStack>
+            <Tag size="md" variant="solid" bg={hash_to_color_hex(course._id, 0.8)} mx="2">
+              <Text fontWeight="800" color="gray.700">
+                {courseIdx + 1}
+              </Text>
+            </Tag>
+          </VStack>
+          <Flex flexDirection="column" alignItems="start">
+            <Text
+              maxW="40vw"
+              ml="2"
+              as={prepareToRemoveCourseId.includes(course._id) ? "del" : ""}
+              color={prepareToRemoveCourseId.includes(course._id) ? "red.700" : "gray.500"}
+              fontSize="lg"
+              fontWeight="bold"
+              isTruncated
+            >
+              {course.course_name}
+            </Text>
+            <HStack>
+              <Badge colorScheme="blue" size="lg" mx="2">
+                {course.id}
+              </Badge>
+              <IconButton
+                size="sm"
+                colorScheme="blue"
+                icon={<FaInfoCircle />}
+                variant="ghost"
+                onClick={() => {
+                  navigate(`/courseinfo/${course._id}`);
+                }}
+              />
+              <Button size="xs" variant="ghost" colorScheme="blue" leftIcon={<FaPlus />} onClick={() => openPage(getNolAddUrl(course), true)}>
+                課程網
+              </Button>
+            </HStack>
+          </Flex>
+        </Flex>
+        <Flex ml="4" flexDirection="row" justifyContent="end" alignItems="center">
+          <IconButton
+            aria-label="Delete"
+            variant={prepareToRemoveCourseId.includes(course._id) ? "solid" : "outline"}
+            icon={<FaTrash />}
+            size="sm"
+            colorScheme="red"
+            onClick={() => {
+              handleDelete(course._id);
+            }}
+          />
+        </Flex>
+      </Flex>
+    );
+  }
+  return (
+    <Flex
+      flexDirection="row"
+      justifyContent="center"
+      alignItems="center"
+      h="100%"
+      w="100%"
+      py="2"
+      px="2"
+      bg="gray.100"
+      my="1"
+      borderRadius="lg"
+      zIndex="1000"
+    >
+      <Flex flexDirection="row" justifyContent="start" alignItems="center" h="100%" w="100%">
+        <DragHandle />
+        <Tag size="lg" variant="solid" bg={hash_to_color_hex(course._id, 0.8)} mx="2">
+          <Text fontWeight="800" color="gray.700">
+            {courseIdx + 1}
+          </Text>
+        </Tag>
+        <Badge colorScheme="blue" size="lg" mx="2">
+          {course.id}
+        </Badge>
+        <Text
+          as={prepareToRemoveCourseId.includes(course._id) ? "del" : ""}
+          color={prepareToRemoveCourseId.includes(course._id) ? "red.700" : "gray.500"}
+          fontSize="xl"
+          fontWeight="bold"
+        >
+          {course.course_name}
+        </Text>
+        <IconButton
+          ml="2"
+          size="sm"
+          colorScheme="blue"
+          icon={<FaInfoCircle />}
+          variant="ghost"
+          onClick={() => {
+            navigate(`/courseinfo/${course._id}`);
+          }}
+        />
+      </Flex>
+      <Flex ml="4" flexDirection="row" justifyContent="end" alignItems="center">
+        <Button mx="2" size="sm" variant="ghost" colorScheme="blue" leftIcon={<FaPlus />} onClick={() => openPage(getNolAddUrl(course), true)}>
+          課程網
+        </Button>
+        <IconButton
+          aria-label="Delete"
+          variant={prepareToRemoveCourseId.includes(course._id) ? "solid" : "outline"}
+          icon={<FaTrash />}
+          size="sm"
+          colorScheme="red"
+          onClick={() => {
+            handleDelete(course._id);
+          }}
+        />
+      </Flex>
+    </Flex>
+  );
+}
+
+const SortableElement = sortableElement(({ course, courseIdx, prepareToRemoveCourseId, handleDelete }) => (
+  <ListRowElement course={course} courseIdx={courseIdx} prepareToRemoveCourseId={prepareToRemoveCourseId} handleDelete={handleDelete} />
+));
+
+const SortableContainer = sortableContainer(({ children }) => {
+  return <Flex flexDirection="column">{children}</Flex>;
+});
+
+function CourseListContainer({ courseTable, courses, loading }) {
   const dispatch = useDispatch();
   const toast = useToast();
   const [courseListForSort, setCourseListForSort] = useState(Object.keys(courses));
   const [prepareToRemoveCourseId, setPrepareToRemoveCourseId] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isMobile] = useMediaQuery("(max-width: 1000px)");
 
   useEffect(() => {
     //console.log('new list for sort', Object.keys(courses));
@@ -89,149 +232,6 @@ function CourseListContainer({ courseTable, courses, loading }) {
     return !courseListForSort.every((course, index) => course === Object.keys(courses)[index]) || prepareToRemoveCourseId.length > 0;
   };
 
-  const renderRowElement = (key, course, courseIdx) => {
-    if (isMobile) {
-      return (
-        <Flex
-          key={key}
-          flexDirection="row"
-          justifyContent="center"
-          alignItems="center"
-          h="100%"
-          w="100%"
-          py="2"
-          px="2"
-          bg="gray.100"
-          my="1"
-          borderRadius="lg"
-          zIndex="1000"
-        >
-          <Flex flexDirection="row" justifyContent="start" alignItems="center" h="100%" w="100%">
-            <DragHandle key={"Sortable_" + key + "_DragHandle"} />
-            <VStack>
-              <Tag size="md" key={key} variant="solid" bg={hash_to_color_hex(course._id, 0.8)} mx="2">
-                <Text fontWeight="800" color="gray.700">
-                  {courseIdx + 1}
-                </Text>
-              </Tag>
-            </VStack>
-            <Flex flexDirection="column" alignItems="start">
-              <Text
-                maxW="40vw"
-                ml="2"
-                as={prepareToRemoveCourseId.includes(course._id) ? "del" : ""}
-                color={prepareToRemoveCourseId.includes(course._id) ? "red.700" : "gray.500"}
-                fontSize="lg"
-                fontWeight="bold"
-                isTruncated
-              >
-                {course.course_name}
-              </Text>
-              <HStack>
-                <Badge colorScheme="blue" size="lg" mx="2">
-                  {course.id}
-                </Badge>
-                <IconButton
-                  size="sm"
-                  colorScheme="blue"
-                  icon={<FaInfoCircle />}
-                  variant="ghost"
-                  onClick={() => {
-                    navigate(`/courseinfo/${course._id}`);
-                  }}
-                />
-                <Button size="xs" variant="ghost" colorScheme="blue" leftIcon={<FaPlus />} onClick={() => openPage(getNolAddUrl(course), true)}>
-                  課程網
-                </Button>
-              </HStack>
-            </Flex>
-          </Flex>
-          <Flex ml="4" flexDirection="row" justifyContent="end" alignItems="center">
-            <IconButton
-              aria-label="Delete"
-              variant={prepareToRemoveCourseId.includes(course._id) ? "solid" : "outline"}
-              icon={<FaTrash />}
-              size="sm"
-              colorScheme="red"
-              key={key}
-              onClick={() => {
-                handleDelete(course._id);
-              }}
-            />
-          </Flex>
-        </Flex>
-      );
-    }
-    return (
-      <Flex
-        key={key}
-        flexDirection="row"
-        justifyContent="center"
-        alignItems="center"
-        h="100%"
-        w="100%"
-        py="2"
-        px="2"
-        bg="gray.100"
-        my="1"
-        borderRadius="lg"
-        zIndex="1000"
-      >
-        <Flex flexDirection="row" justifyContent="start" alignItems="center" h="100%" w="100%">
-          <DragHandle key={"Sortable_" + key + "_DragHandle"} />
-          <Tag size="lg" key={key} variant="solid" bg={hash_to_color_hex(course._id, 0.8)} mx="2">
-            <Text fontWeight="800" color="gray.700">
-              {courseIdx + 1}
-            </Text>
-          </Tag>
-          <Badge colorScheme="blue" size="lg" mx="2">
-            {course.id}
-          </Badge>
-          <Text
-            as={prepareToRemoveCourseId.includes(course._id) ? "del" : ""}
-            color={prepareToRemoveCourseId.includes(course._id) ? "red.700" : "gray.500"}
-            fontSize="xl"
-            fontWeight="bold"
-          >
-            {course.course_name}
-          </Text>
-          <IconButton
-            ml="2"
-            size="sm"
-            colorScheme="blue"
-            icon={<FaInfoCircle />}
-            variant="ghost"
-            onClick={() => {
-              navigate(`/courseinfo/${course._id}`);
-            }}
-          />
-        </Flex>
-        <Flex ml="4" flexDirection="row" justifyContent="end" alignItems="center">
-          <Button mx="2" size="sm" variant="ghost" colorScheme="blue" leftIcon={<FaPlus />} onClick={() => openPage(getNolAddUrl(course), true)}>
-            課程網
-          </Button>
-          <IconButton
-            aria-label="Delete"
-            variant={prepareToRemoveCourseId.includes(course._id) ? "solid" : "outline"}
-            icon={<FaTrash />}
-            size="sm"
-            colorScheme="red"
-            key={key}
-            onClick={() => {
-              handleDelete(course._id);
-            }}
-          />
-        </Flex>
-      </Flex>
-    );
-  };
-
-  const DragHandle = sortableHandle(() => <MdDragHandle cursor="row-resize" size="20" color="gray" />);
-  const SortableElement = sortableElement(({ key, course, courseIdx }) => renderRowElement(key, course, courseIdx));
-
-  const SortableContainer = sortableContainer(({ children }) => {
-    return <Flex flexDirection="column">{children}</Flex>;
-  });
   const onSortEnd = ({ oldIndex, newIndex }) => {
     setCourseListForSort(arrayMove(courseListForSort, oldIndex, newIndex));
   };
@@ -287,7 +287,17 @@ function CourseListContainer({ courseTable, courses, loading }) {
       <SortableContainer onSortEnd={onSortEnd} lockAxis="y" useDragHandle helperClass="sortableHelper">
         {courseListForSort.map((key, index) => {
           const course = courses[key];
-          return <SortableElement key={key} index={index} course={course} courseIdx={index} helperClass="sortableHelper" />;
+          return (
+            <SortableElement
+              key={key}
+              index={index}
+              helperClass="sortableHelper"
+              course={course}
+              courseIdx={index}
+              handleDelete={handleDelete}
+              prepareToRemoveCourseId={prepareToRemoveCourseId}
+            />
+          );
         })}
       </SortableContainer>
     </>
