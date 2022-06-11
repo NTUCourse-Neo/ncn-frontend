@@ -3,8 +3,9 @@ import CourseInfoRow from "components/CourseInfoRow";
 import { Box, Flex, Spacer, Accordion } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
 
-function CourseInfoRowContainer({ courseInfo, setHoveredCourse, selectedCourses, displayTable, displayTags }) {
+function CourseInfoRowContainer({ courseInfo, setHoveredCourse, selectedCourses, displayTable }) {
   const userInfo = useSelector((state) => state.user);
+  const displayTags = useSelector((state) => state.display_tags);
 
   // const hide_scroll_bar = {
   //     '::-webkit-scrollbar': {
