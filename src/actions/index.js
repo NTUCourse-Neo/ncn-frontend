@@ -8,6 +8,7 @@ import {
   LOG_IN_SUCCESS,
   LOG_OUT_SUCCESS,
   SET_DISPLAY_TAGS,
+  SET_HOVER_COURSE,
 } from "constants/action-types";
 import instance from "api/axios";
 
@@ -20,6 +21,7 @@ const logOut = () => ({ type: LOG_OUT_SUCCESS });
 const logIn = (user_data) => ({ type: LOG_IN_SUCCESS, payload: user_data });
 const setNewDisplayTags = (new_display_tags) => ({ type: SET_DISPLAY_TAGS, payload: new_display_tags });
 const setBatchSize = (new_batch_size) => ({ type: SET_BATCH_SIZE, payload: new_batch_size });
+const setHoveredCourse = (course) => ({ type: SET_HOVER_COURSE, payload: course });
 
 // data =
 // when filter_name == 'department', arr of dept_code (4-digits),
@@ -55,4 +57,5 @@ export {
   setFilter,
   setFilterEnable,
   setBatchSize,
+  setHoveredCourse,
 };

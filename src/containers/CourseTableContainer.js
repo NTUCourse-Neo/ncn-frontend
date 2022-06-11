@@ -3,11 +3,15 @@ import * as React from "react";
 import { useState, useCallback } from "react";
 import CourseTableCard from "components/CourseTableCard/CourseTableCard";
 import { weekdays_map } from "data/mapping_table";
+import { useSelector } from "react-redux";
 
-function CourseTableContainer({ courses, loading, courseTimes, hoveredCourse, hoveredCourseTime }) {
+function CourseTableContainer({ courses, loading, courseTimes }) {
   const days = ["1", "2", "3", "4", "5"];
   const interval = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "A", "B", "C", "D"];
   const [activeDayCol, setActiveDayCol] = useState(0);
+
+  const hoveredCourse = useSelector((state) => state.hoveredCourse);
+  const hoveredCourseTime = useSelector((state) => state.hoveredCourseTime);
 
   const renderCourseTableCard = useCallback(
     (course, hover, day, interval, grow) => {

@@ -102,7 +102,6 @@ function CourseResultViewContainer() {
   const [agreeToCreateTableWithoutLogin, setAgreeToCreateTableWithoutLogin] = useState(false);
 
   // State for the course result row that is been hovered now.
-  const [hoveredCourse, setHoveredCourse] = useState(null);
 
   const [coursesInTable, setCoursesInTable] = useState([]);
 
@@ -169,7 +168,7 @@ function CourseResultViewContainer() {
                 {search_loading ? "載入中" : `共找到 ${total_count} 筆結果`}
               </Text>
             </Flex>
-            <CourseInfoRowContainer setHoveredCourse={setHoveredCourse} selectedCourses={coursesInTable} displayTable={displayTable} />
+            <CourseInfoRowContainer selectedCourses={coursesInTable} displayTable={displayTable} />
           </Flex>
           <Flex
             w="100%"
@@ -225,8 +224,6 @@ function CourseResultViewContainer() {
             <SideCourseTableContainer
               isDisplay={displayTable}
               setIsDisplay={setDisplayTable}
-              hoveredCourse={hoveredCourse}
-              setHoveredCourse={setHoveredCourse}
               courseIds={coursesInTable}
               setCourseIds={setCoursesInTable}
               setIsLoginWarningOpen={setIsLoginWarningOpen}

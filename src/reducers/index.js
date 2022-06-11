@@ -18,6 +18,7 @@ import {
   LOG_OUT_SUCCESS,
   UPDATE_USER,
   SET_DISPLAY_TAGS,
+  SET_HOVER_COURSE,
 } from "constants/action-types";
 
 const initState = {
@@ -35,6 +36,8 @@ const initState = {
   search_filters: { time: [[], [], [], [], [], [], []], department: [], category: [], enroll_method: ["1", "2", "3"] }, // default value of filters
   course_table: null, // only one course table for now
   user: null, // userInfo include {db, auth0}
+  hoveredCourse: null, // course object
+  hoveredCourseTime: null, // course time object
 };
 
 const reducer = (state = initState, action) => {
@@ -108,6 +111,34 @@ const reducer = (state = initState, action) => {
       return { ...state, user: action.payload };
     case SET_DISPLAY_TAGS:
       return { ...state, display_tags: action.payload };
+    case SET_HOVER_COURSE: {
+      if (action.payload === null) {
+        return { ...state, hoveredCourse: null, hoveredCourseTime: null };
+      }
+      const course = action.payload;
+      const course_time_tmp = {
+        time_map: {},
+        parsed: [],
+        course_data: course,
+      };
+      // eslint-disable-next-line array-callback-return
+      course.time_loc_pair.map((time_loc_pair) => {
+        Object.keys(time_loc_pair.time).forEach((day) => {
+          // eslint-disable-next-line array-callback-return
+          time_loc_pair.time[day].map((time) => {
+            if (!(day in course_time_tmp.time_map)) {
+              course_time_tmp.time_map[day] = {};
+            }
+            if (!(time in course_time_tmp.time_map[day])) {
+              course_time_tmp.time_map[day][time] = [course._id];
+            } else {
+              course_time_tmp.time_map[day][time].push(course._id);
+            }
+          });
+        });
+      });
+      return { ...state, hoveredCourse: course, hoveredCourseTime: course_time_tmp };
+    }
     default:
       return state;
   }

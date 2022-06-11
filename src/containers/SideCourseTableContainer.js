@@ -52,7 +52,7 @@ const TextInput = forwardRef((props, ref) => {
   );
 });
 
-function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, hoveredCourse, agreeToCreateTableWithoutLogin, setIsLoginWarningOpen }) {
+function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, agreeToCreateTableWithoutLogin, setIsLoginWarningOpen }) {
   const navigate = useNavigate();
   const { user, isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const toast = useToast();
@@ -64,7 +64,6 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, hover
   // const courseIds = props.courseIds;
   const [courses, setCourses] = useState({}); // dictionary of Course objects using courseId as key
   const [courseTimes, setCourseTimes] = useState({}); // coursesTime is a dictionary of courseIds and their corresponding time in time table
-  const [hoveredCourseTime, setHoveredCourseTime] = useState({}); // courseTime is a dictionary of courseIds and their corresponding time in time table
 
   const [loading, setLoading] = useState(true);
   const [expired, setExpired] = useState(false);
@@ -223,20 +222,6 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, hover
       }
     }
   }, [courseTable]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    if (hoveredCourse) {
-      const tmp = {
-        time_map: {},
-        parsed: [],
-        course_data: hoveredCourse,
-      };
-      parseCourseDateTime(hoveredCourse, tmp);
-      setHoveredCourseTime(tmp);
-    } else {
-      setHoveredCourseTime(null);
-    }
-  }, [hoveredCourse]);
 
   const handleCreateTable = async () => {
     if (!isLoading) {
@@ -423,13 +408,7 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, hover
             <TabPanels>
               <TabPanel>
                 <Flex flexDirection="row" justifyContent="start" alignItems="center" overflowX={"auto"}>
-                  <CourseTableContainer
-                    courseTimes={courseTimes}
-                    courses={courses}
-                    loading={loading || isLoading}
-                    hoveredCourseTime={hoveredCourseTime}
-                    hoveredCourse={hoveredCourse}
-                  />
+                  <CourseTableContainer courseTimes={courseTimes} courses={courses} loading={loading || isLoading} />
                 </Flex>
               </TabPanel>
               <TabPanel>
