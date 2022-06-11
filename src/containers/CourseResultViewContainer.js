@@ -6,7 +6,6 @@ import {
   Collapse,
   IconButton,
   Button,
-  useToast,
   Fade,
   useMediaQuery,
   AlertDialog,
@@ -26,11 +25,10 @@ import CourseSearchInput from "components/CourseSearchInput";
 import SkeletonRow from "components/SkeletonRow";
 import SideCourseTableContainer from "containers/SideCourseTableContainer";
 import { setBatchSize } from "actions/index";
-import { fetchSearchResults } from "actions/courses";
 import { useSelector, useDispatch } from "react-redux";
-import useOnScreen from "hooks/useOnScreen";
 import { useAuth0 } from "@auth0/auth0-react";
 import setPageMeta from "utils/seo";
+import usePagination from "hooks/usePagination";
 
 function NoLoginWarningDialog({ isOpen, setIsOpen, setAgreeToCreateTableWithoutLogin }) {
   const { loginWithPopup } = useAuth0();
@@ -80,21 +78,14 @@ function NoLoginWarningDialog({ isOpen, setIsOpen, setAgreeToCreateTableWithoutL
 }
 
 function CourseResultViewContainer() {
-  const toast = useToast();
   const topRef = useRef();
   const bottomRef = useRef();
-  const reachedBottom = useOnScreen(bottomRef);
+  usePagination(bottomRef);
 
   const dispatch = useDispatch();
   const search_ids = useSelector((state) => state.search_ids);
-  const search_results = useSelector((state) => state.search_results);
-  const search_settings = useSelector((state) => state.search_settings);
-  const search_filters_enable = useSelector((state) => state.search_filters_enable);
-  const search_filters = useSelector((state) => state.search_filters);
   const search_loading = useSelector((state) => state.search_loading);
   const search_error = useSelector((state) => state.search_error);
-  const offset = useSelector((state) => state.offset);
-  const batch_size = useSelector((state) => state.batch_size);
   const total_count = useSelector((state) => state.total_count);
 
   const [isMobile, isHigherThan1325] = useMediaQuery(["(max-width: 1000px)", "(min-height: 1325px)"]);
@@ -133,33 +124,9 @@ function CourseResultViewContainer() {
     }
   }, [isLoginWarningOpen, isMobile]);
 
-  const handleScrollToBottom = () => {
-    if (reachedBottom && search_results.length !== 0) {
-      // fetch next batch of search results
-      if (search_results.length < total_count) {
-        try {
-          dispatch(fetchSearchResults(search_ids, search_filters_enable, search_filters, batch_size, offset, search_settings.strict_search_mode));
-        } catch (error) {
-          toast({
-            title: "獲取課程資訊失敗",
-            description: "請檢查網路連線",
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-      }
-    }
-  };
-
   useEffect(() => {
     topRef.current.focus();
   }, [search_ids]);
-
-  useEffect(() => {
-    // console.log('reachedBottom: ',reachedBottom);
-    handleScrollToBottom();
-  }, [reachedBottom]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
