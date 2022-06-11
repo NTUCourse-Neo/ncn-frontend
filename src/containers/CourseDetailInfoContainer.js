@@ -51,6 +51,17 @@ import { social_user_type_map } from "data/mapping_table";
 import SignUpCard from "components/SignUpCard";
 import { useAuth0 } from "@auth0/auth0-react";
 
+function DataSourceTag({ source }) {
+  return (
+    <HStack spacing="2">
+      <FaRss color="gray" size="12" />
+      <Text fontSize="sm" textAlign="center" color="gray.500">
+        資料來源: {source}
+      </Text>
+    </HStack>
+  );
+}
+
 const syllabusTitle = {
   intro: "概述",
   objective: "目標",
@@ -342,17 +353,6 @@ function CourseDetailInfoContainer({ course }) {
       </Flex>
     );
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const renderDataSource = useCallback((dataSource) => {
-    return (
-      <HStack spacing="2">
-        <FaRss color="gray" size="12" />
-        <Text fontSize="sm" textAlign="center" color="gray.500">
-          資料來源: {dataSource}
-        </Text>
-      </HStack>
-    );
-  }, []);
 
   const renderPanelLoaing = useCallback((title = "努力取得資訊中...", height, pt = "0") => {
     return (
@@ -932,7 +932,7 @@ function CourseDetailInfoContainer({ course }) {
               <TabPanel></TabPanel>
             </TabPanels>
           </Tabs>
-          {renderDataSource("臺大選課系統")}
+          <DataSourceTag source={"臺大選課系統"} />
         </Flex>
       </Flex>
       {/* COL 2 */}
@@ -973,7 +973,7 @@ function CourseDetailInfoContainer({ course }) {
               <TabPanel>{renderNTURatingPanel()}</TabPanel>
             </TabPanels>
           </Tabs>
-          {renderDataSource("PTT NTUCourse, NTURating")}
+          <DataSourceTag source="PTT NTUCourse, NTURating" />
         </Flex>
         {/* Box5 */}
         <Flex
@@ -1001,7 +1001,7 @@ function CourseDetailInfoContainer({ course }) {
               <TabPanel>{renderPTTExamPanel()}</TabPanel>
             </TabPanels>
           </Tabs>
-          {renderDataSource("PTT NTU-Exam")}
+          <DataSourceTag source="PTT NTU-Exam" />
         </Flex>
       </Flex>
       {/* COL 3 */}
@@ -1025,7 +1025,7 @@ function CourseDetailInfoContainer({ course }) {
             </Text>
             {renderSyllabusDataPanel()}
           </VStack>
-          {renderDataSource("臺大課程網")}
+          <DataSourceTag source="臺大課程網" />
         </Flex>
         {/* Box7 */}
         <Flex
@@ -1044,7 +1044,7 @@ function CourseDetailInfoContainer({ course }) {
             評分方式
           </Text>
           {renderGradePolicyPanel()}
-          {renderDataSource("臺大課程網")}
+          <DataSourceTag source="臺大課程網" />
         </Flex>
       </Flex>
     </Flex>
