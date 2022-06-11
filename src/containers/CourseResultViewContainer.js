@@ -206,12 +206,7 @@ function CourseResultViewContainer() {
                 {search_loading ? "載入中" : `共找到 ${total_count} 筆結果`}
               </Text>
             </Flex>
-            <CourseInfoRowContainer
-              courseInfo={search_results}
-              setHoveredCourse={setHoveredCourse}
-              selectedCourses={coursesInTable}
-              displayTable={displayTable}
-            />
+            <CourseInfoRowContainer setHoveredCourse={setHoveredCourse} selectedCourses={coursesInTable} displayTable={displayTable} />
           </Flex>
           <Flex
             w="100%"
