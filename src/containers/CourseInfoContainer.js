@@ -416,7 +416,7 @@ function CourseInfoContainer({ code }) {
                 </CopyToClipboard>
               </HStack>
               <HStack>
-                <Text fontSize={{ base: "xl", lg: "3xl" }} fontWeight="800" color="gray.700">
+                <Text fontSize={{ base: "xl", lg: "3xl" }} fontWeight="800" color="gray.700" maxW={{ base: "100px", md: "30vw" }} isTruncated>
                   {course.course_name}
                 </Text>
                 <Text fontSize={{ base: "md", lg: "2xl" }} fontWeight="500" color="gray.500">
