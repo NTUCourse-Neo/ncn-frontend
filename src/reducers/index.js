@@ -20,6 +20,7 @@ import {
   SET_DISPLAY_TAGS,
   SET_HOVER_COURSE,
 } from "constants/action-types";
+import parseCourseTime from "utils/parseCourseTime";
 
 const initState = {
   search_ids: [], // array of course_id
@@ -121,23 +122,8 @@ const reducer = (state = initState, action) => {
         parsed: [],
         course_data: course,
       };
-      // eslint-disable-next-line array-callback-return
-      course.time_loc_pair.map((time_loc_pair) => {
-        Object.keys(time_loc_pair.time).forEach((day) => {
-          // eslint-disable-next-line array-callback-return
-          time_loc_pair.time[day].map((time) => {
-            if (!(day in course_time_tmp.time_map)) {
-              course_time_tmp.time_map[day] = {};
-            }
-            if (!(time in course_time_tmp.time_map[day])) {
-              course_time_tmp.time_map[day][time] = [course._id];
-            } else {
-              course_time_tmp.time_map[day][time].push(course._id);
-            }
-          });
-        });
-      });
-      return { ...state, hoveredCourse: course, hoveredCourseTime: course_time_tmp };
+      const hoverCourseTime = parseCourseTime(course, course_time_tmp);
+      return { ...state, hoveredCourse: course, hoveredCourseTime: hoverCourseTime };
     }
     default:
       return state;

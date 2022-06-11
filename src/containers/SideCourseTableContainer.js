@@ -39,6 +39,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
 import CourseListContainer from "containers/CourseListContainer";
+import parseCourseTime from "utils/parseCourseTime";
 
 const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
@@ -68,28 +69,9 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, agree
   const [loading, setLoading] = useState(true);
   const [expired, setExpired] = useState(false);
 
-  const parseCourseDateTime = (course, course_time_tmp) => {
-    // eslint-disable-next-line array-callback-return
-    course.time_loc_pair.map((time_loc_pair) => {
-      Object.keys(time_loc_pair.time).forEach((day) => {
-        // eslint-disable-next-line array-callback-return
-        time_loc_pair.time[day].map((time) => {
-          if (!(day in course_time_tmp.time_map)) {
-            course_time_tmp.time_map[day] = {};
-          }
-          if (!(time in course_time_tmp.time_map[day])) {
-            course_time_tmp.time_map[day][time] = [course._id];
-          } else {
-            course_time_tmp.time_map[day][time].push(course._id);
-          }
-        });
-      });
-    });
-  };
-
   // will set courseTimes in this function
   const extract_course_info = (courses) => {
-    const course_time_tmp = {};
+    let course_time_tmp = {};
     if (!course_time_tmp.parsed) {
       course_time_tmp.parsed = [];
     }
@@ -100,7 +82,7 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, agree
       if (course_time_tmp.parsed.includes(courses[key]._id)) {
         return;
       }
-      parseCourseDateTime(courses[key], course_time_tmp);
+      course_time_tmp = parseCourseTime(courses[key], course_time_tmp);
       course_time_tmp.parsed.push(courses[key]._id);
     });
     // console.log(course_time_tmp);
