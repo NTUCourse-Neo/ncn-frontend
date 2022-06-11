@@ -75,7 +75,7 @@ function LoadingPanel({ title, ...restProps }) {
   );
 }
 
-function SubmitPopover({ course, SignUpPostData, fetchSignUpPostData }) {
+function SignUpReportForm({ courseId, haveSubmitted, submitCallback }) {
   const { onOpen, onClose, isOpen } = useDisclosure();
   const toast = useToast();
   const dispatch = useDispatch();
@@ -133,7 +133,7 @@ function SubmitPopover({ course, SignUpPostData, fetchSignUpPostData }) {
         },
         user_type: signUpCardForm.user_type,
       };
-      dispatch(createSocialPost(token, course._id, post));
+      dispatch(createSocialPost(token, courseId, post));
       toast({
         title: "發送成功",
         description: "感謝您的填寫！",
@@ -156,8 +156,8 @@ function SubmitPopover({ course, SignUpPostData, fetchSignUpPostData }) {
   return (
     <Popover placement="bottom" isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
       <PopoverTrigger>
-        <Button colorScheme="blue" variant="solid" size="md" isDisabled={SignUpPostData.some((obj) => obj.is_owner)}>
-          {SignUpPostData.some((obj) => obj.is_owner) ? "已提供過" : "提供資訊"}
+        <Button colorScheme="blue" variant="solid" size="md" isDisabled={haveSubmitted}>
+          {haveSubmitted ? "已提供過" : "提供資訊"}
         </Button>
       </PopoverTrigger>
       <PopoverContent>
@@ -252,7 +252,7 @@ function SubmitPopover({ course, SignUpPostData, fetchSignUpPostData }) {
                 setSendingForm(false);
                 if (res === true) {
                   onClose();
-                  await fetchSignUpPostData();
+                  await submitCallback();
                 }
               }}
             >
@@ -542,7 +542,11 @@ function CourseDetailInfoContainer({ course }) {
           <Flex w="100%" h="100%" mt="4" flexDirection="column" justifyContent="center" alignItems={{ base: "start", lg: "center" }}>
             {renderFallback("無加簽相關資訊", "empty", "100%", "0")}
             <HStack w="100%" pr="8" mt="8" justify="end">
-              <SubmitPopover course={course} SignUpPostData={SignUpPostData} fetchSignUpPostData={fetchSignUpPostData} />
+              <SignUpReportForm
+                courseId={course._id}
+                haveSubmitted={SignUpPostData.some((obj) => obj.is_owner)}
+                submitCallback={fetchSignUpPostData}
+              />
             </HStack>
           </Flex>
         );
@@ -574,7 +578,7 @@ function CourseDetailInfoContainer({ course }) {
               </Text>
             </HStack>
             <Spacer />
-            <SubmitPopover course={course} SignUpPostData={SignUpPostData} fetchSignUpPostData={fetchSignUpPostData} />
+            <SignUpReportForm courseId={course._id} haveSubmitted={SignUpPostData.some((obj) => obj.is_owner)} submitCallback={fetchSignUpPostData} />
           </HStack>
         </Flex>
       );
