@@ -29,7 +29,7 @@ import {
   Spacer,
   IconButton,
 } from "@chakra-ui/react";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { PieChart } from "react-minimal-pie-chart";
 import { FaCircle, FaRss, FaExclamationTriangle, FaQuestionCircle, FaChevronLeft, FaChevronRight, FaInfoCircle } from "react-icons/fa";
 import { IoMdOpen } from "react-icons/io";
