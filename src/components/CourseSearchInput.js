@@ -200,7 +200,6 @@ function CourseSearchInput({ displayPanel }) {
   const [selectedTime, setSelectedTime] = useState(mapStateToTimeTable(search_filters.time));
   const [selectedDept, setSelectedDept] = useState(search_filters.department);
   const [selectedType, setSelectedType] = useState(search_filters.category);
-  const [selectedEnrollMethod, setSelectedEnrollMethod] = useState(search_filters.enroll_method);
 
   const [timeFilterOn, setTimeFilterOn] = useState(search_filters_enable.time);
   const [deptFilterOn, setDeptFilterOn] = useState(search_filters_enable.department);
@@ -216,13 +215,18 @@ function CourseSearchInput({ displayPanel }) {
   const set_enroll_method = (e) => {
     // console.log(e.currentTarget.value)
     const new_enroll_method = e.currentTarget.value;
-    const idx = selectedEnrollMethod.indexOf(new_enroll_method);
+    const idx = search_filters.enroll_method.indexOf(new_enroll_method);
     if (idx === -1) {
       //add
-      setSelectedEnrollMethod([...selectedEnrollMethod, new_enroll_method]);
+      dispatch(setFilter("enroll_method", [...search_filters.enroll_method, new_enroll_method]));
     } else {
       // remove
-      setSelectedEnrollMethod(selectedEnrollMethod.filter((item) => item !== new_enroll_method));
+      dispatch(
+        setFilter(
+          "enroll_method",
+          search_filters.enroll_method.filter((item) => item !== new_enroll_method)
+        )
+      );
     }
   };
 
@@ -267,11 +271,6 @@ function CourseSearchInput({ displayPanel }) {
       </Flex>
     );
   };
-
-  useEffect(() => {
-    // console.log(selectedEnrollMethod);
-    dispatch(setFilter("enroll_method", selectedEnrollMethod));
-  }, [selectedEnrollMethod]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     setSelectedTime(mapStateToTimeTable(search_filters.time));
@@ -381,7 +380,7 @@ function CourseSearchInput({ displayPanel }) {
                           加選方式
                         </MenuButton>
                         <MenuList>
-                          <MenuOptionGroup value={selectedEnrollMethod} type="checkbox">
+                          <MenuOptionGroup value={search_filters.enroll_method} type="checkbox">
                             <MenuItemOption
                               key="1"
                               value="1"
