@@ -69,6 +69,32 @@ function LoadingPanel({ title, ...restProps }) {
   );
 }
 
+function UnauthenticatedPanel({ ...restProps }) {
+  const { loginWithRedirect } = useAuth0();
+  return (
+    <Flex flexDirection={"column"} py={2} my={3} h="100%" w="100%" align="center" justify="center" {...restProps}>
+      <Icon as={FaInfoCircle} boxSize="32px" color="gray.500" />
+      <Text mt="2" fontSize="lg" fontWeight="800" color="gray.500" textAlign="center">
+        會員專屬功能
+      </Text>
+      <Button
+        rightIcon={<FaChevronRight />}
+        size="md"
+        my={2}
+        py={2}
+        colorScheme="blue"
+        fontSize="md"
+        fontWeight="800"
+        onClick={() => {
+          loginWithRedirect();
+        }}
+      >
+        來去登入
+      </Button>
+    </Flex>
+  );
+}
+
 const syllabusTitle = {
   intro: "概述",
   objective: "目標",
@@ -81,7 +107,7 @@ const syllabusTitle = {
 function CourseDetailInfoContainer({ course }) {
   const toast = useToast();
   const dispatch = useDispatch();
-  const { loginWithRedirect, getAccessTokenSilently, isLoading: isAuth0Loading, isAuthenticated } = useAuth0();
+  const { getAccessTokenSilently, isLoading: isAuth0Loading, isAuthenticated } = useAuth0();
 
   // Course live data
   const [CourseEnrollStatus, setCourseEnrollStatus] = useState(null);
@@ -261,31 +287,6 @@ function CourseDetailInfoContainer({ course }) {
     { title: "授課語言", value: info_view_map.language.map[course.language] },
   ];
 
-  const renderGuestBlockingBox = useCallback(() => {
-    return (
-      <Flex flexDirection={"column"} my={3} h="100%" w="100%" align="center" justify="center">
-        <Icon as={FaInfoCircle} boxSize="32px" color="gray.500" />
-        <Text mt="2" fontSize="lg" fontWeight="800" color="gray.500" textAlign="center">
-          會員專屬功能
-        </Text>
-        <Button
-          rightIcon={<FaChevronRight />}
-          size="md"
-          my={2}
-          py={2}
-          colorScheme="blue"
-          fontSize="md"
-          fontWeight="800"
-          onClick={() => {
-            loginWithRedirect();
-          }}
-        >
-          來去登入
-        </Button>
-      </Flex>
-    );
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
   const renderFallback = useCallback((title = "暫無資訊", type = "empty", height, pt = "0") => {
     return (
       <Flex w="100%" h={height} pt={pt} flexDirection="column" justifyContent="center" alignItems="center">
@@ -302,7 +303,7 @@ function CourseDetailInfoContainer({ course }) {
       return <LoadingPanel title="努力取得資訊中..." height="100%" pt={8} />;
     }
     if (!isAuthenticated) {
-      return renderGuestBlockingBox();
+      return <UnauthenticatedPanel />;
     }
     if (!CourseEnrollStatus) {
       return renderFallback("無法取得課程即時資訊", { FaExclamationTriangle }, "100%", "8");
@@ -331,7 +332,7 @@ function CourseDetailInfoContainer({ course }) {
         </Stat>
       </Flex>
     );
-  }, [isLoadingEnrollInfo, isAuth0Loading, isAuthenticated, CourseEnrollStatus, renderGuestBlockingBox, renderFallback]);
+  }, [isLoadingEnrollInfo, isAuth0Loading, isAuthenticated, CourseEnrollStatus, renderFallback]);
 
   const renderSignupPanel = useCallback(
     () => {
@@ -339,7 +340,7 @@ function CourseDetailInfoContainer({ course }) {
         return <LoadingPanel title="努力跑加簽大地中..." height="100%" />;
       }
       if (!isAuthenticated) {
-        return renderGuestBlockingBox();
+        return <UnauthenticatedPanel />;
       }
       if (SignUpPostData.length === 0) {
         return (
@@ -388,16 +389,7 @@ function CourseDetailInfoContainer({ course }) {
       );
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [
-      signUpCardIdx,
-      SignUpPostData,
-      isLoadingSignUpPostData,
-      isAuth0Loading,
-      isAuthenticated,
-      setSignUpCardIdx,
-      renderGuestBlockingBox,
-      renderFallback,
-    ]
+    [signUpCardIdx, SignUpPostData, isLoadingSignUpPostData, isAuth0Loading, isAuthenticated, setSignUpCardIdx, renderFallback]
   );
 
   const renderNTURatingPanel = useCallback(() => {
@@ -405,7 +397,7 @@ function CourseDetailInfoContainer({ course }) {
       return <LoadingPanel title="查詢評價中..." height="100%" pt={8} />;
     }
     if (!isAuthenticated) {
-      return renderGuestBlockingBox();
+      return <UnauthenticatedPanel />;
     }
     if (!NTURatingData) {
       return (
@@ -462,33 +454,33 @@ function CourseDetailInfoContainer({ course }) {
         </Button>
       </Flex>
     );
-  }, [NTURatingData, isLoadingRatingData, isAuth0Loading, isAuthenticated, renderFallback, renderGuestBlockingBox]);
+  }, [NTURatingData, isLoadingRatingData, isAuth0Loading, isAuthenticated, renderFallback]);
 
   const renderPTTReviewPanel = useCallback(() => {
     if (isLoadingPTTReviewData || isAuth0Loading) {
       return <LoadingPanel title="努力爬文中..." height="100%" pt={8} />;
     }
     if (!isAuthenticated) {
-      return renderGuestBlockingBox();
+      return <UnauthenticatedPanel />;
     }
     if (!PTTReviewData) {
       return renderFallback("無相關貼文資訊", "empty", "100%", "8");
     }
     return <PTTContentRowContainer info={PTTReviewData} height="150px" />;
-  }, [isLoadingPTTReviewData, isAuth0Loading, isAuthenticated, renderFallback, renderGuestBlockingBox, PTTReviewData]);
+  }, [isLoadingPTTReviewData, isAuth0Loading, isAuthenticated, renderFallback, PTTReviewData]);
 
   const renderPTTExamPanel = useCallback(() => {
     if (isLoadingPTTExamData || isAuth0Loading) {
       return <LoadingPanel title="努力爬文中..." height="100%" pt={8} />;
     }
     if (!isAuthenticated) {
-      return renderGuestBlockingBox();
+      return <UnauthenticatedPanel />;
     }
     if (!PTTExamData) {
       return renderFallback("無相關貼文資訊", "empty", "100%", "8");
     }
     return <PTTContentRowContainer info={PTTExamData} height="150px" />;
-  }, [isLoadingPTTExamData, isAuth0Loading, isAuthenticated, renderFallback, renderGuestBlockingBox, PTTExamData]);
+  }, [isLoadingPTTExamData, isAuth0Loading, isAuthenticated, renderFallback, PTTExamData]);
 
   const renderSyllabusDataPanel = useCallback(() => {
     if (isLoadingSyllubusData) {
