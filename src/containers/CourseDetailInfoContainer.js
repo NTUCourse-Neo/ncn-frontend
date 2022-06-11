@@ -169,6 +169,39 @@ function SignUpPanel({ isLoading, isUnauth, course, SignUpPostData, setSignUpPos
   );
 }
 
+function EnrollStatusPanel({ isLoading, isUnauth, CourseEnrollStatus }) {
+  return (
+    <PanelWrapper isLoading={isLoading} isUnauth={isUnauth} loadingFallback={<LoadingPanel title="努力取得資訊中..." height="100%" pt={8} />}>
+      {!CourseEnrollStatus ? (
+        <PanelPlaceholder title="無法取得課程即時資訊" isEmpty={false} h="100%" pt="8" />
+      ) : (
+        <Flex w="100%" mt="4" flexDirection="row" justifyContent="center" alignItems={{ base: "start", lg: "center" }} flexWrap="wrap">
+          <Stat>
+            <StatLabel>選上</StatLabel>
+            <StatNumber>{CourseEnrollStatus.enrolled}</StatNumber>
+            <StatHelpText>人</StatHelpText>
+          </Stat>
+          <Stat>
+            <StatLabel>選上外系</StatLabel>
+            <StatNumber>{CourseEnrollStatus.enrolled_other}</StatNumber>
+            <StatHelpText>人</StatHelpText>
+          </Stat>
+          <Stat>
+            <StatLabel>登記</StatLabel>
+            <StatNumber>{CourseEnrollStatus.registered}</StatNumber>
+            <StatHelpText>人</StatHelpText>
+          </Stat>
+          <Stat>
+            <StatLabel>剩餘</StatLabel>
+            <StatNumber>{CourseEnrollStatus.remain}</StatNumber>
+            <StatHelpText>空位</StatHelpText>
+          </Stat>
+        </Flex>
+      )}
+    </PanelWrapper>
+  );
+}
+
 const syllabusTitle = {
   intro: "概述",
   objective: "目標",
@@ -360,42 +393,6 @@ function CourseDetailInfoContainer({ course }) {
     { title: "開課學期", value: course.semester },
     { title: "授課語言", value: info_view_map.language.map[course.language] },
   ];
-
-  const renderCourseEnrollPanel = useCallback(() => {
-    if (isLoadingEnrollInfo || isAuth0Loading) {
-      return <LoadingPanel title="努力取得資訊中..." height="100%" pt={8} />;
-    }
-    if (!isAuthenticated) {
-      return <UnauthenticatedPanel />;
-    }
-    if (!CourseEnrollStatus) {
-      return <PanelPlaceholder title="無法取得課程即時資訊" isEmpty={false} h="100%" pt="8" />;
-    }
-    return (
-      <Flex w="100%" mt="4" flexDirection="row" justifyContent="center" alignItems={{ base: "start", lg: "center" }} flexWrap="wrap">
-        <Stat>
-          <StatLabel>選上</StatLabel>
-          <StatNumber>{CourseEnrollStatus.enrolled}</StatNumber>
-          <StatHelpText>人</StatHelpText>
-        </Stat>
-        <Stat>
-          <StatLabel>選上外系</StatLabel>
-          <StatNumber>{CourseEnrollStatus.enrolled_other}</StatNumber>
-          <StatHelpText>人</StatHelpText>
-        </Stat>
-        <Stat>
-          <StatLabel>登記</StatLabel>
-          <StatNumber>{CourseEnrollStatus.registered}</StatNumber>
-          <StatHelpText>人</StatHelpText>
-        </Stat>
-        <Stat>
-          <StatLabel>剩餘</StatLabel>
-          <StatNumber>{CourseEnrollStatus.remain}</StatNumber>
-          <StatHelpText>空位</StatHelpText>
-        </Stat>
-      </Flex>
-    );
-  }, [isLoadingEnrollInfo, isAuth0Loading, isAuthenticated, CourseEnrollStatus]);
 
   const renderNTURatingPanel = useCallback(() => {
     if (isLoadingRatingData || isAuth0Loading) {
@@ -731,7 +728,13 @@ function CourseDetailInfoContainer({ course }) {
               </TabList>
             </HStack>
             <TabPanels my="3">
-              <TabPanel>{renderCourseEnrollPanel()}</TabPanel>
+              <TabPanel>
+                <EnrollStatusPanel
+                  isLoading={isLoadingEnrollInfo || isAuth0Loading}
+                  isUnauth={!isAuthenticated}
+                  CourseEnrollStatus={CourseEnrollStatus}
+                />
+              </TabPanel>
               <TabPanel></TabPanel>
             </TabPanels>
           </Tabs>
