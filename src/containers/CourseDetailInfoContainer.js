@@ -62,6 +62,19 @@ function DataSourceTag({ source }) {
   );
 }
 
+function LoadingPanel({ title, ...restProps }) {
+  return (
+    <Flex w="100%" flexDirection="column" justifyContent="center" alignItems="center" {...restProps}>
+      <VStack>
+        <Image src={ParrotGif} h="32px" />
+        <Text fontSize="lg" fontWeight="800" color="gray.500" textAlign="center">
+          {title}
+        </Text>
+      </VStack>
+    </Flex>
+  );
+}
+
 const syllabusTitle = {
   intro: "概述",
   objective: "目標",
@@ -354,19 +367,6 @@ function CourseDetailInfoContainer({ course }) {
     );
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const renderPanelLoaing = useCallback((title = "努力取得資訊中...", height, pt = "0") => {
-    return (
-      <Flex w="100%" h={height} pt={pt} flexDirection="column" justifyContent="center" alignItems="center">
-        <VStack>
-          <Image src={ParrotGif} h="32px" />
-          <Text fontSize="lg" fontWeight="800" color="gray.500" textAlign="center">
-            {title}
-          </Text>
-        </VStack>
-      </Flex>
-    );
-  }, []);
-
   const renderFallback = useCallback((title = "暫無資訊", type = "empty", height, pt = "0") => {
     return (
       <Flex w="100%" h={height} pt={pt} flexDirection="column" justifyContent="center" alignItems="center">
@@ -380,7 +380,7 @@ function CourseDetailInfoContainer({ course }) {
 
   const renderCourseEnrollPanel = useCallback(() => {
     if (isLoadingEnrollInfo || isAuth0Loading) {
-      return renderPanelLoaing("努力取得資訊中...", "100%", "8");
+      return <LoadingPanel title="努力取得資訊中..." height="100%" pt={8} />;
     }
     if (!isAuthenticated) {
       return renderGuestBlockingBox();
@@ -412,7 +412,7 @@ function CourseDetailInfoContainer({ course }) {
         </Stat>
       </Flex>
     );
-  }, [isLoadingEnrollInfo, isAuth0Loading, isAuthenticated, CourseEnrollStatus, renderGuestBlockingBox, renderFallback, renderPanelLoaing]);
+  }, [isLoadingEnrollInfo, isAuth0Loading, isAuthenticated, CourseEnrollStatus, renderGuestBlockingBox, renderFallback]);
 
   const renderSubmitPopover = useCallback(() => {
     return (
@@ -532,7 +532,7 @@ function CourseDetailInfoContainer({ course }) {
   const renderSignupPanel = useCallback(
     () => {
       if (isLoadingSignUpPostData || isAuth0Loading) {
-        return renderPanelLoaing("努力跑加簽大地中...", "100%", "0");
+        return <LoadingPanel title="努力跑加簽大地中..." height="100%" />;
       }
       if (!isAuthenticated) {
         return renderGuestBlockingBox();
@@ -590,13 +590,12 @@ function CourseDetailInfoContainer({ course }) {
       renderSubmitPopover,
       renderGuestBlockingBox,
       renderFallback,
-      renderPanelLoaing,
     ]
   );
 
   const renderNTURatingPanel = useCallback(() => {
     if (isLoadingRatingData || isAuth0Loading) {
-      return renderPanelLoaing("查詢評價中...", "100%", "8");
+      return <LoadingPanel title="查詢評價中..." height="100%" pt={8} />;
     }
     if (!isAuthenticated) {
       return renderGuestBlockingBox();
@@ -656,11 +655,11 @@ function CourseDetailInfoContainer({ course }) {
         </Button>
       </Flex>
     );
-  }, [NTURatingData, isLoadingRatingData, isAuth0Loading, isAuthenticated, renderFallback, renderPanelLoaing, renderGuestBlockingBox]);
+  }, [NTURatingData, isLoadingRatingData, isAuth0Loading, isAuthenticated, renderFallback, renderGuestBlockingBox]);
 
   const renderPTTReviewPanel = useCallback(() => {
     if (isLoadingPTTReviewData || isAuth0Loading) {
-      return renderPanelLoaing("努力爬文中...", "100%", "8");
+      return <LoadingPanel title="努力爬文中..." height="100%" pt={8} />;
     }
     if (!isAuthenticated) {
       return renderGuestBlockingBox();
@@ -669,11 +668,11 @@ function CourseDetailInfoContainer({ course }) {
       return renderFallback("無相關貼文資訊", "empty", "100%", "8");
     }
     return <PTTContentRowContainer info={PTTReviewData} height="150px" />;
-  }, [isLoadingPTTReviewData, isAuth0Loading, isAuthenticated, renderFallback, renderPanelLoaing, renderGuestBlockingBox, PTTReviewData]);
+  }, [isLoadingPTTReviewData, isAuth0Loading, isAuthenticated, renderFallback, renderGuestBlockingBox, PTTReviewData]);
 
   const renderPTTExamPanel = useCallback(() => {
     if (isLoadingPTTExamData || isAuth0Loading) {
-      return renderPanelLoaing("努力爬文中...", "100%", "8");
+      return <LoadingPanel title="努力爬文中..." height="100%" pt={8} />;
     }
     if (!isAuthenticated) {
       return renderGuestBlockingBox();
@@ -682,11 +681,11 @@ function CourseDetailInfoContainer({ course }) {
       return renderFallback("無相關貼文資訊", "empty", "100%", "8");
     }
     return <PTTContentRowContainer info={PTTExamData} height="150px" />;
-  }, [isLoadingPTTExamData, isAuth0Loading, isAuthenticated, renderFallback, renderPanelLoaing, renderGuestBlockingBox, PTTExamData]);
+  }, [isLoadingPTTExamData, isAuth0Loading, isAuthenticated, renderFallback, renderGuestBlockingBox, PTTExamData]);
 
   const renderSyllabusDataPanel = useCallback(() => {
     if (isLoadingSyllubusData) {
-      return renderPanelLoaing("載入中...", "100%", "8");
+      return <LoadingPanel title="載入中..." height="100%" pt={8} />;
     }
     if (!SyllubusData) {
       return renderFallback("無課程大綱資訊", "empty", "100%", "8");
@@ -720,11 +719,11 @@ function CourseDetailInfoContainer({ course }) {
         })}
       </Flex>
     );
-  }, [isLoadingSyllubusData, SyllubusData, renderFallback, renderPanelLoaing]);
+  }, [isLoadingSyllubusData, SyllubusData, renderFallback]);
 
   const renderGradePolicyPanel = useCallback(() => {
     if (isLoadingSyllubusData) {
-      return renderPanelLoaing("查看配分中...", "100%", "8");
+      return <LoadingPanel title="查看配分中..." height="100%" pt={8} />;
     }
     if (!SyllubusData || !SyllubusData.grade) {
       return renderFallback("無評分相關資訊", "empty", "100%", "8");
@@ -796,7 +795,7 @@ function CourseDetailInfoContainer({ course }) {
         </VStack>
       </Flex>
     );
-  }, [isLoadingSyllubusData, SyllubusData, renderFallback, renderPanelLoaing]);
+  }, [isLoadingSyllubusData, SyllubusData, renderFallback]);
 
   return (
     <Flex w="100%" minH="83vh" pt={{ base: "150px", lg: 0 }} flexDirection={{ base: "column", lg: "row" }} flexWrap="wrap" justify={"center"}>
