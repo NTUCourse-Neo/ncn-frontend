@@ -29,6 +29,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useAuth0 } from "@auth0/auth0-react";
 import setPageMeta from "utils/seo";
 import usePagination from "hooks/usePagination";
+import { useMount } from "react-use";
 
 function NoLoginWarningDialog({ isOpen, setIsOpen, setAgreeToCreateTableWithoutLogin }) {
   const { loginWithPopup } = useAuth0();
@@ -78,6 +79,9 @@ function NoLoginWarningDialog({ isOpen, setIsOpen, setAgreeToCreateTableWithoutL
 }
 
 function CourseResultViewContainer() {
+  useMount(() => {
+    setPageMeta({ title: `課程搜尋 | NTUCourse Neo`, desc: `課程搜尋頁面 | NTUCourse Neo，全新的臺大選課網站。` });
+  });
   const topRef = useRef();
   const bottomRef = useRef();
   usePagination(bottomRef);
@@ -109,13 +113,9 @@ function CourseResultViewContainer() {
   }, [isHigherThan1325, dispatch]);
 
   useEffect(() => {
+    topRef.current.focus();
     setDisplayFilter(false);
   }, [search_ids]);
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-    setPageMeta({ title: `課程搜尋 | NTUCourse Neo`, desc: `課程搜尋頁面 | NTUCourse Neo，全新的臺大選課網站。` });
-  }, []);
 
   // if isMobile, when show Alert Modal, set displayTable to false to prevent ugly overlapping
   useEffect(() => {
@@ -123,10 +123,6 @@ function CourseResultViewContainer() {
       setDisplayTable(false);
     }
   }, [isLoginWarningOpen, isMobile]);
-
-  useEffect(() => {
-    topRef.current.focus();
-  }, [search_ids]);
 
   return (
     <>
