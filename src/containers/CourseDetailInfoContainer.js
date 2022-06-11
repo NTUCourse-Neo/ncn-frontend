@@ -106,6 +106,69 @@ function UnauthenticatedPanel({ ...restProps }) {
   );
 }
 
+function PanelWrapper({
+  isLoading,
+  loadingFallback = <LoadingPanel title="Loading..." height="100%" />,
+  isUnauth,
+  unauthFallback = <UnauthenticatedPanel />,
+  children,
+}) {
+  if (isLoading) {
+    return loadingFallback;
+  }
+  if (isUnauth) {
+    return unauthFallback;
+  }
+  return <>{children}</>;
+}
+
+function SignUpPanel({ isLoading, isUnauth, course, SignUpPostData, setSignUpPostData, fetchSignUpPostData, signUpCardIdx, setSignUpCardIdx }) {
+  return (
+    <PanelWrapper isLoading={isLoading} isUnauth={isUnauth} loadingFallback={<LoadingPanel title="努力跑加簽大地中..." height="100%" />}>
+      {!SignUpPostData ? (
+        <PanelPlaceholder title="無加簽相關資訊" height="100%" />
+      ) : SignUpPostData.length === 0 ? (
+        <Flex w="100%" h="100%" mt="4" flexDirection="column" justifyContent="center" alignItems={{ base: "start", lg: "center" }}>
+          <PanelPlaceholder title="無加簽相關資訊" h="100%" pt="0" />
+          <HStack w="100%" pr="8" mt="8" justify="end">
+            <SignUpReportForm courseId={course._id} haveSubmitted={SignUpPostData.some((obj) => obj.is_owner)} submitCallback={fetchSignUpPostData} />
+          </HStack>
+        </Flex>
+      ) : (
+        <Flex w="100%" h="100%" mt="4" flexDirection="column" justifyContent="center" alignItems={{ base: "start", lg: "center" }}>
+          <SignUpCard
+            post={SignUpPostData[signUpCardIdx]}
+            SignUpPostData={SignUpPostData}
+            setSignUpPostData={setSignUpPostData}
+            fetchSignUpPostData={fetchSignUpPostData}
+          />
+          <HStack w="100%" pr="8" mt="8">
+            <HStack>
+              <IconButton
+                size="md"
+                variant="ghost"
+                icon={<FaChevronLeft />}
+                onClick={() => setSignUpCardIdx(signUpCardIdx === 0 ? SignUpPostData.length - 1 : signUpCardIdx - 1)}
+              />
+              <IconButton
+                size="md"
+                variant="ghost"
+                icon={<FaChevronRight />}
+                onClick={() => setSignUpCardIdx((signUpCardIdx + 1) % SignUpPostData.length)}
+              />
+              <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">
+                {signUpCardIdx + 1}/{SignUpPostData.length}
+              </Text>
+            </HStack>
+            <Spacer />
+            <SignUpReportForm courseId={course._id} haveSubmitted={SignUpPostData.some((obj) => obj.is_owner)} submitCallback={fetchSignUpPostData} />
+          </HStack>
+        </Flex>
+      )}
+    </PanelWrapper>
+  );
+}
+
 const syllabusTitle = {
   intro: "概述",
   objective: "目標",
@@ -333,64 +396,6 @@ function CourseDetailInfoContainer({ course }) {
       </Flex>
     );
   }, [isLoadingEnrollInfo, isAuth0Loading, isAuthenticated, CourseEnrollStatus]);
-
-  const renderSignupPanel = useCallback(
-    () => {
-      if (isLoadingSignUpPostData || isAuth0Loading) {
-        return <LoadingPanel title="努力跑加簽大地中..." height="100%" />;
-      }
-      if (!isAuthenticated) {
-        return <UnauthenticatedPanel />;
-      }
-      if (SignUpPostData.length === 0) {
-        return (
-          <Flex w="100%" h="100%" mt="4" flexDirection="column" justifyContent="center" alignItems={{ base: "start", lg: "center" }}>
-            <PanelPlaceholder title="無加簽相關資訊" h="100%" pt="0" />
-            <HStack w="100%" pr="8" mt="8" justify="end">
-              <SignUpReportForm
-                courseId={course._id}
-                haveSubmitted={SignUpPostData.some((obj) => obj.is_owner)}
-                submitCallback={fetchSignUpPostData}
-              />
-            </HStack>
-          </Flex>
-        );
-      }
-      return (
-        <Flex w="100%" h="100%" mt="4" flexDirection="column" justifyContent="center" alignItems={{ base: "start", lg: "center" }}>
-          <SignUpCard
-            post={SignUpPostData[signUpCardIdx]}
-            SignUpPostData={SignUpPostData}
-            setSignUpPostData={setSignUpPostData}
-            fetchSignUpPostData={fetchSignUpPostData}
-          />
-          <HStack w="100%" pr="8" mt="8">
-            <HStack>
-              <IconButton
-                size="md"
-                variant="ghost"
-                icon={<FaChevronLeft />}
-                onClick={() => setSignUpCardIdx(signUpCardIdx === 0 ? SignUpPostData.length - 1 : signUpCardIdx - 1)}
-              />
-              <IconButton
-                size="md"
-                variant="ghost"
-                icon={<FaChevronRight />}
-                onClick={() => setSignUpCardIdx((signUpCardIdx + 1) % SignUpPostData.length)}
-              />
-              <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">
-                {signUpCardIdx + 1}/{SignUpPostData.length}
-              </Text>
-            </HStack>
-            <Spacer />
-            <SignUpReportForm courseId={course._id} haveSubmitted={SignUpPostData.some((obj) => obj.is_owner)} submitCallback={fetchSignUpPostData} />
-          </HStack>
-        </Flex>
-      );
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [signUpCardIdx, SignUpPostData, isLoadingSignUpPostData, isAuth0Loading, isAuthenticated, setSignUpCardIdx]
-  );
 
   const renderNTURatingPanel = useCallback(() => {
     if (isLoadingRatingData || isAuth0Loading) {
@@ -741,7 +746,16 @@ function CourseDetailInfoContainer({ course }) {
             加簽資訊
             <BetaBadge content="beta" size="sm" />
           </Text>
-          {renderSignupPanel()}
+          <SignUpPanel
+            isLoading={isLoadingSignUpPostData || isAuth0Loading}
+            isUnauth={!isAuthenticated}
+            course={course}
+            SignUpPostData={SignUpPostData}
+            setSignUpPostData={setSignUpPostData}
+            fetchSignUpPostData={fetchSignUpPostData}
+            signUpCardIdx={signUpCardIdx}
+            setSignUpCardIdx={setSignUpCardIdx}
+          />
         </Flex>
         {/* Box4 */}
         <Flex
