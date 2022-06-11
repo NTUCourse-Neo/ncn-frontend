@@ -1,22 +1,7 @@
 import { React, useEffect, useState } from "react";
 import "components/CourseTableCard/CourseTableCard.css";
 import { arrayMoveImmutable as arrayMove } from "array-move";
-import {
-  Flex,
-  Text,
-  Button,
-  IconButton,
-  Badge,
-  Tag,
-  useToast,
-  ScaleFade,
-  TagLeftIcon,
-  Spacer,
-  useMediaQuery,
-  HStack,
-  Collapse,
-  VStack,
-} from "@chakra-ui/react";
+import { Flex, Text, Button, IconButton, Badge, Tag, useToast, ScaleFade, TagLeftIcon, Spacer, Stack, useBreakpointValue } from "@chakra-ui/react";
 import { FaPlus, FaTrash, FaExclamationTriangle, FaInfoCircle } from "react-icons/fa";
 import { FadeLoader } from "react-spinners";
 import { MdDragHandle } from "react-icons/md";
@@ -32,77 +17,6 @@ const DragHandle = sortableHandle(() => <MdDragHandle cursor="row-resize" size="
 
 function ListRowElement({ course, courseIdx, prepareToRemoveCourseId, handleDelete }) {
   const navigate = useNavigate();
-  const [isMobile] = useMediaQuery("(max-width: 1000px)");
-  if (isMobile) {
-    return (
-      <Flex
-        flexDirection="row"
-        justifyContent="center"
-        alignItems="center"
-        h="100%"
-        w="100%"
-        py="2"
-        px="2"
-        bg="gray.100"
-        my="1"
-        borderRadius="lg"
-        zIndex="1000"
-      >
-        <Flex flexDirection="row" justifyContent="start" alignItems="center" h="100%" w="100%">
-          <DragHandle />
-          <VStack>
-            <Tag size="md" variant="solid" bg={hash_to_color_hex(course._id, 0.8)} mx="2">
-              <Text fontWeight="800" color="gray.700">
-                {courseIdx + 1}
-              </Text>
-            </Tag>
-          </VStack>
-          <Flex flexDirection="column" alignItems="start">
-            <Text
-              maxW="40vw"
-              ml="2"
-              as={prepareToRemoveCourseId.includes(course._id) ? "del" : ""}
-              color={prepareToRemoveCourseId.includes(course._id) ? "red.700" : "gray.500"}
-              fontSize="lg"
-              fontWeight="bold"
-              isTruncated
-            >
-              {course.course_name}
-            </Text>
-            <HStack>
-              <Badge colorScheme="blue" size="lg" mx="2">
-                {course.id}
-              </Badge>
-              <IconButton
-                size="sm"
-                colorScheme="blue"
-                icon={<FaInfoCircle />}
-                variant="ghost"
-                onClick={() => {
-                  navigate(`/courseinfo/${course._id}`);
-                }}
-              />
-              <Button size="xs" variant="ghost" colorScheme="blue" leftIcon={<FaPlus />} onClick={() => openPage(getNolAddUrl(course), true)}>
-                課程網
-              </Button>
-            </HStack>
-          </Flex>
-        </Flex>
-        <Flex ml="4" flexDirection="row" justifyContent="end" alignItems="center">
-          <IconButton
-            aria-label="Delete"
-            variant={prepareToRemoveCourseId.includes(course._id) ? "solid" : "outline"}
-            icon={<FaTrash />}
-            size="sm"
-            colorScheme="red"
-            onClick={() => {
-              handleDelete(course._id);
-            }}
-          />
-        </Flex>
-      </Flex>
-    );
-  }
   return (
     <Flex
       flexDirection="row"
@@ -119,24 +33,29 @@ function ListRowElement({ course, courseIdx, prepareToRemoveCourseId, handleDele
     >
       <Flex flexDirection="row" justifyContent="start" alignItems="center" h="100%" w="100%">
         <DragHandle />
-        <Tag size="lg" variant="solid" bg={hash_to_color_hex(course._id, 0.8)} mx="2">
+        <Tag size={"lg"} variant="solid" bg={hash_to_color_hex(course._id, 0.8)} mx="2">
           <Text fontWeight="800" color="gray.700">
             {courseIdx + 1}
           </Text>
         </Tag>
-        <Badge colorScheme="blue" size="lg" mx="2">
-          {course.id}
-        </Badge>
-        <Text
-          as={prepareToRemoveCourseId.includes(course._id) ? "del" : ""}
-          color={prepareToRemoveCourseId.includes(course._id) ? "red.700" : "gray.500"}
-          fontSize="xl"
-          fontWeight="bold"
-        >
-          {course.course_name}
-        </Text>
+        <Stack direction={{ base: "column", md: "row" }} alignItems={{ base: "start", md: "center" }} ml={{ base: 2, md: 0 }}>
+          <Badge colorScheme="blue" size={useBreakpointValue({ base: "md", md: "lg" }) ?? "md"} mx={{ base: 0, md: 2 }} mb={{ base: -1, md: 0 }}>
+            {course.id}
+          </Badge>
+          <Text
+            as={prepareToRemoveCourseId.includes(course._id) ? "del" : ""}
+            color={prepareToRemoveCourseId.includes(course._id) ? "red.700" : "gray.500"}
+            fontSize={{ base: "lg", md: "xl" }}
+            fontWeight="bold"
+            isTruncated
+            maxW={{ base: "120px", md: "300px" }}
+          >
+            {course.course_name}
+          </Text>
+        </Stack>
         <IconButton
-          ml="2"
+          display={{ base: "none", md: "block" }}
+          ml={3}
           size="sm"
           colorScheme="blue"
           icon={<FaInfoCircle />}
@@ -146,8 +65,26 @@ function ListRowElement({ course, courseIdx, prepareToRemoveCourseId, handleDele
           }}
         />
       </Flex>
-      <Flex ml="4" flexDirection="row" justifyContent="end" alignItems="center">
-        <Button mx="2" size="sm" variant="ghost" colorScheme="blue" leftIcon={<FaPlus />} onClick={() => openPage(getNolAddUrl(course), true)}>
+      <Flex ml={{ base: 0, md: 4 }} flexDirection="row" justifyContent="end" alignItems="center">
+        <Button
+          display={{ base: "inline-block", md: "none" }}
+          size="sm"
+          colorScheme="blue"
+          variant="ghost"
+          onClick={() => {
+            navigate(`/courseinfo/${course._id}`);
+          }}
+        >
+          <FaInfoCircle />
+        </Button>
+        <Button
+          mx={{ base: 0, md: 2 }}
+          size="sm"
+          variant="ghost"
+          colorScheme="blue"
+          leftIcon={<FaPlus />}
+          onClick={() => openPage(getNolAddUrl(course), true)}
+        >
           課程網
         </Button>
         <IconButton
