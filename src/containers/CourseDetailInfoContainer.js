@@ -75,38 +75,11 @@ function LoadingPanel({ title, ...restProps }) {
   );
 }
 
-const syllabusTitle = {
-  intro: "概述",
-  objective: "目標",
-  requirement: "要求",
-  office_hour: "Office Hour",
-  material: "參考書目",
-  specify: "指定閱讀",
-};
-
-function CourseDetailInfoContainer({ course }) {
+function SubmitPopover({ course, SignUpPostData, fetchSignUpPostData }) {
   const { onOpen, onClose, isOpen } = useDisclosure();
   const toast = useToast();
   const dispatch = useDispatch();
-  const { loginWithRedirect, getAccessTokenSilently, isLoading: isAuth0Loading, isAuthenticated } = useAuth0();
-
-  // Course live data
-  const [CourseEnrollStatus, setCourseEnrollStatus] = useState(null);
-  const [NTURatingData, setNTURatingData] = useState(null);
-  const [PTTReviewData, setPTTReviewData] = useState(null);
-  const [PTTExamData, setPTTExamData] = useState(null);
-  const [SyllubusData, setSyllubusData] = useState(null);
-  const [SignUpPostData, setSignUpPostData] = useState(null);
-
-  // Live data loading states
-  const [isLoadingEnrollInfo, setIsLoadingEnrollInfo] = useState(true);
-  const [isLoadingRatingData, setIsLoadingRatingData] = useState(true);
-  const [isLoadingPTTReviewData, setIsLoadingPTTReviewData] = useState(true);
-  const [isLoadingPTTExamData, setIsLoadingPTTExamData] = useState(true);
-  const [isLoadingSyllubusData, setIsLoadingSyllubusData] = useState(true);
-  const [isLoadingSignUpPostData, setIsLoadingSignUpPostData] = useState(true);
-
-  // sign up card form
+  const { getAccessTokenSilently } = useAuth0();
   const [sendingForm, setSendingForm] = useState(false);
   const [signUpCardForm, setSignUpCardForm] = useState({
     user_type: "",
@@ -115,12 +88,6 @@ function CourseDetailInfoContainer({ course }) {
     rule: "",
     comment: "",
   });
-
-  // useEffect(()=>{
-  //   console.log('Form: ', signUpCardForm);
-  // },[signUpCardForm])
-
-  const [signUpCardIdx, setSignUpCardIdx] = useState(0);
 
   const handleSubmitSignUpCardForm = async () => {
     // check all fields first
@@ -185,6 +152,154 @@ function CourseDetailInfoContainer({ course }) {
     }
     return true;
   };
+
+  return (
+    <Popover placement="bottom" isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
+      <PopoverTrigger>
+        <Button colorScheme="blue" variant="solid" size="md" isDisabled={SignUpPostData.some((obj) => obj.is_owner)}>
+          {SignUpPostData.some((obj) => obj.is_owner) ? "已提供過" : "提供資訊"}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent>
+        <PopoverArrow />
+        <PopoverCloseButton />
+        <Flex p="4" flexDirection="column" alignItems="start">
+          <Text mb="2" fontSize="md" fontWeight="800" color="gray.700" textAlign="center">
+            提供加簽相關資訊
+          </Text>
+          <HStack pb={1}>
+            <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">
+              我是...
+            </Text>
+            <Badge colorScheme={"blue"}>必填</Badge>
+          </HStack>
+          <Select
+            mb="2"
+            placeholder="請選擇身份"
+            onChange={(e) => {
+              setSignUpCardForm({ ...signUpCardForm, user_type: e.currentTarget.value });
+            }}
+          >
+            {Object.keys(social_user_type_map).map((key) => {
+              return (
+                <option value={key} key={key}>
+                  {social_user_type_map[key]}
+                </option>
+              );
+            })}
+          </Select>
+          <HStack pb={1}>
+            <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">
+              加簽人數
+            </Text>
+            <Badge colorScheme={"blue"}>必填</Badge>
+          </HStack>
+          <Input
+            mb="2"
+            type="number"
+            placeholder="限填數字。若不確定，請於下方補充"
+            onChange={(e) => {
+              setSignUpCardForm({ ...signUpCardForm, amount: e.currentTarget.value });
+            }}
+          />
+          <HStack pb={1}>
+            <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">
+              加簽時間
+            </Text>
+            <Badge colorScheme={"blue"}>必填</Badge>
+          </HStack>
+          <Input
+            mb="2"
+            type="text"
+            placeholder="第一週上課、2/15 等..."
+            onChange={(e) => {
+              setSignUpCardForm({ ...signUpCardForm, when: e.currentTarget.value });
+            }}
+          />
+          <HStack pb={1}>
+            <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">
+              加簽方式
+            </Text>
+            <Badge colorScheme={"blue"}>必填</Badge>
+          </HStack>
+          <Input
+            mb="2"
+            type="text"
+            placeholder="抽學生證、填表單、網路抽選 等..."
+            onChange={(e) => {
+              setSignUpCardForm({ ...signUpCardForm, rule: e.currentTarget.value });
+            }}
+          />
+          <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">
+            更多資訊
+          </Text>
+          <Textarea
+            mb="2"
+            size="md"
+            placeholder="輸入補充資訊"
+            onChange={(e) => {
+              setSignUpCardForm({ ...signUpCardForm, comment: e.currentTarget.value });
+            }}
+          />
+          <ButtonGroup w="100%" size="sm" d="flex" justifyContent="end">
+            <Button
+              colorScheme="blue"
+              isLoading={sendingForm}
+              isDisabled={signUpCardForm.amount === "" || signUpCardForm.user_type === "" || signUpCardForm.when === "" || signUpCardForm.rule === ""}
+              onClick={async () => {
+                setSendingForm(true);
+                const res = await handleSubmitSignUpCardForm();
+                setSendingForm(false);
+                if (res === true) {
+                  onClose();
+                  await fetchSignUpPostData();
+                }
+              }}
+            >
+              送出
+            </Button>
+          </ButtonGroup>
+        </Flex>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+const syllabusTitle = {
+  intro: "概述",
+  objective: "目標",
+  requirement: "要求",
+  office_hour: "Office Hour",
+  material: "參考書目",
+  specify: "指定閱讀",
+};
+
+function CourseDetailInfoContainer({ course }) {
+  const toast = useToast();
+  const dispatch = useDispatch();
+  const { loginWithRedirect, getAccessTokenSilently, isLoading: isAuth0Loading, isAuthenticated } = useAuth0();
+
+  // Course live data
+  const [CourseEnrollStatus, setCourseEnrollStatus] = useState(null);
+  const [NTURatingData, setNTURatingData] = useState(null);
+  const [PTTReviewData, setPTTReviewData] = useState(null);
+  const [PTTExamData, setPTTExamData] = useState(null);
+  const [SyllubusData, setSyllubusData] = useState(null);
+  const [SignUpPostData, setSignUpPostData] = useState(null);
+
+  // Live data loading states
+  const [isLoadingEnrollInfo, setIsLoadingEnrollInfo] = useState(true);
+  const [isLoadingRatingData, setIsLoadingRatingData] = useState(true);
+  const [isLoadingPTTReviewData, setIsLoadingPTTReviewData] = useState(true);
+  const [isLoadingPTTExamData, setIsLoadingPTTExamData] = useState(true);
+  const [isLoadingSyllubusData, setIsLoadingSyllubusData] = useState(true);
+  const [isLoadingSignUpPostData, setIsLoadingSignUpPostData] = useState(true);
+
+  // useEffect(()=>{
+  //   console.log('Form: ', signUpCardForm);
+  // },[signUpCardForm])
+
+  const [signUpCardIdx, setSignUpCardIdx] = useState(0);
 
   async function fetchCourseEnrollData() {
     setIsLoadingEnrollInfo(true);
@@ -414,121 +529,6 @@ function CourseDetailInfoContainer({ course }) {
     );
   }, [isLoadingEnrollInfo, isAuth0Loading, isAuthenticated, CourseEnrollStatus, renderGuestBlockingBox, renderFallback]);
 
-  const renderSubmitPopover = useCallback(() => {
-    return (
-      <Popover placement="bottom" isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
-        <PopoverTrigger>
-          <Button colorScheme="blue" variant="solid" size="md" isDisabled={SignUpPostData.some((obj) => obj.is_owner)}>
-            {SignUpPostData.some((obj) => obj.is_owner) ? "已提供過" : "提供資訊"}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent>
-          <PopoverArrow />
-          <PopoverCloseButton />
-          <Flex p="4" flexDirection="column" alignItems="start">
-            <Text mb="2" fontSize="md" fontWeight="800" color="gray.700" textAlign="center">
-              提供加簽相關資訊
-            </Text>
-            <HStack pb={1}>
-              <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">
-                我是...
-              </Text>
-              <Badge colorScheme={"blue"}>必填</Badge>
-            </HStack>
-            <Select
-              mb="2"
-              placeholder="請選擇身份"
-              onChange={(e) => {
-                setSignUpCardForm({ ...signUpCardForm, user_type: e.currentTarget.value });
-              }}
-            >
-              {Object.keys(social_user_type_map).map((key) => {
-                return (
-                  <option value={key} key={key}>
-                    {social_user_type_map[key]}
-                  </option>
-                );
-              })}
-            </Select>
-            <HStack pb={1}>
-              <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">
-                加簽人數
-              </Text>
-              <Badge colorScheme={"blue"}>必填</Badge>
-            </HStack>
-            <Input
-              mb="2"
-              type="number"
-              placeholder="限填數字。若不確定，請於下方補充"
-              onChange={(e) => {
-                setSignUpCardForm({ ...signUpCardForm, amount: e.currentTarget.value });
-              }}
-            />
-            <HStack pb={1}>
-              <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">
-                加簽時間
-              </Text>
-              <Badge colorScheme={"blue"}>必填</Badge>
-            </HStack>
-            <Input
-              mb="2"
-              type="text"
-              placeholder="第一週上課、2/15 等..."
-              onChange={(e) => {
-                setSignUpCardForm({ ...signUpCardForm, when: e.currentTarget.value });
-              }}
-            />
-            <HStack pb={1}>
-              <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">
-                加簽方式
-              </Text>
-              <Badge colorScheme={"blue"}>必填</Badge>
-            </HStack>
-            <Input
-              mb="2"
-              type="text"
-              placeholder="抽學生證、填表單、網路抽選 等..."
-              onChange={(e) => {
-                setSignUpCardForm({ ...signUpCardForm, rule: e.currentTarget.value });
-              }}
-            />
-            <Text fontSize="sm" fontWeight="800" color="gray.700" textAlign="center">
-              更多資訊
-            </Text>
-            <Textarea
-              mb="2"
-              size="md"
-              placeholder="輸入補充資訊"
-              onChange={(e) => {
-                setSignUpCardForm({ ...signUpCardForm, comment: e.currentTarget.value });
-              }}
-            />
-            <ButtonGroup w="100%" size="sm" d="flex" justifyContent="end">
-              <Button
-                colorScheme="blue"
-                isLoading={sendingForm}
-                isDisabled={
-                  signUpCardForm.amount === "" || signUpCardForm.user_type === "" || signUpCardForm.when === "" || signUpCardForm.rule === ""
-                }
-                onClick={async () => {
-                  setSendingForm(true);
-                  const res = await handleSubmitSignUpCardForm();
-                  setSendingForm(false);
-                  if (res === true) {
-                    onClose();
-                    await fetchSignUpPostData();
-                  }
-                }}
-              >
-                送出
-              </Button>
-            </ButtonGroup>
-          </Flex>
-        </PopoverContent>
-      </Popover>
-    );
-  }, [signUpCardForm, SignUpPostData, sendingForm, handleSubmitSignUpCardForm, fetchSignUpPostData]); // eslint-disable-line
-
   const renderSignupPanel = useCallback(
     () => {
       if (isLoadingSignUpPostData || isAuth0Loading) {
@@ -542,7 +542,7 @@ function CourseDetailInfoContainer({ course }) {
           <Flex w="100%" h="100%" mt="4" flexDirection="column" justifyContent="center" alignItems={{ base: "start", lg: "center" }}>
             {renderFallback("無加簽相關資訊", "empty", "100%", "0")}
             <HStack w="100%" pr="8" mt="8" justify="end">
-              {renderSubmitPopover()}
+              <SubmitPopover course={course} SignUpPostData={SignUpPostData} fetchSignUpPostData={fetchSignUpPostData} />
             </HStack>
           </Flex>
         );
@@ -574,7 +574,7 @@ function CourseDetailInfoContainer({ course }) {
               </Text>
             </HStack>
             <Spacer />
-            {renderSubmitPopover()}
+            <SubmitPopover course={course} SignUpPostData={SignUpPostData} fetchSignUpPostData={fetchSignUpPostData} />
           </HStack>
         </Flex>
       );
@@ -587,7 +587,6 @@ function CourseDetailInfoContainer({ course }) {
       isAuth0Loading,
       isAuthenticated,
       setSignUpCardIdx,
-      renderSubmitPopover,
       renderGuestBlockingBox,
       renderFallback,
     ]
