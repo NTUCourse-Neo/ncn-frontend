@@ -23,7 +23,7 @@ function ListRowElement({ course, courseIdx, prepareToRemoveCourseId, handleDele
       justifyContent="start"
       alignItems="center"
       h="100%"
-      w={{ base: "100%", lg: "fit-content" }}
+      w="100%"
       py="2"
       px="2"
       bg="gray.100"

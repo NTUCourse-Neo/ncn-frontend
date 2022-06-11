@@ -544,7 +544,7 @@ function CourseResultViewContainer() {
             flexDirection={"column"}
             alignItems={{ base: "center", lg: "start" }}
             ml={{ base: "0", lg: displayTable ? "2vw" : "15vw" }}
-            w={{ base: "100%", lg: displayTable ? "55vw" : "70vw" }}
+            w={{ base: "100%", lg: displayTable ? "50vw" : "70vw", xl: displayTable ? "55vw" : "70vw" }}
             transition="all 500ms ease-in-out"
           >
             <Flex flexDirection="row" alignItems="center" justifyContent="start">
@@ -605,7 +605,7 @@ function CourseResultViewContainer() {
             bottom="0"
             right="0"
             zIndex={{ base: "10000", lg: "1" }}
-            w={{ base: "100vw", lg: "40vw" }}
+            w={{ base: "100vw", lg: "45vw", xl: "40vw" }}
             h={{ base: "90vh", lg: "70vh" }}
             bg="gray.200"
             mt="128px"
