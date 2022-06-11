@@ -186,6 +186,35 @@ function CourseSearchInputTextArea() {
   );
 }
 
+function SettingSwitch({ label, setterFunc, defaultValue, isDisabled }) {
+  if (isDisabled) {
+    return <></>;
+  }
+  return (
+    <Flex alignItems="center" diisplay={{ base: "none", lg: "inline-block" }}>
+      <Switch
+        id={label}
+        defaultChecked={defaultValue}
+        mr="2"
+        onChange={(e) => {
+          setterFunc(e.currentTarget.checked);
+        }}
+        isDisabled={isDisabled}
+      />
+      <FormLabel htmlFor={label} mb="0" fontWeight="500" color="gray.600">
+        {label}
+        {isDisabled ? (
+          <Badge ml="2" colorScheme="blue">
+            即將推出
+          </Badge>
+        ) : (
+          <></>
+        )}
+      </FormLabel>
+    </Flex>
+  );
+}
+
 function CourseSearchInput({ displayPanel }) {
   const dispatch = useDispatch();
   const toast = useToast();
@@ -232,48 +261,6 @@ function CourseSearchInput({ displayPanel }) {
         )
       );
     }
-  };
-
-  const renderSettingSwitch = (label, default_checked, isDisabled) => {
-    const handleChangeSettings = (e) => {
-      // console.log(e.currentTarget.checked);
-      if (label === "ˋ只顯示未選課程") {
-        set_show_selected_courses(e.currentTarget.checked);
-      } else if (label === "只顯示未衝堂課程") {
-        set_only_show_not_conflicted_courses(e.currentTarget.checked);
-      } else if (label === "同步新增至課程網") {
-        set_sync_add_to_nol(e.currentTarget.checked);
-      } else if (label === "篩選條件嚴格搜尋") {
-        set_strict_search_mode(e.currentTarget.checked);
-      }
-    };
-    if (isDisabled) {
-      return <></>;
-    }
-
-    return (
-      <Flex alignItems="center" diisplay={{ base: "none", lg: "inline-block" }}>
-        <Switch
-          id={label}
-          defaultChecked={default_checked}
-          mr="2"
-          onChange={(e) => {
-            handleChangeSettings(e);
-          }}
-          isDisabled={isDisabled}
-        />
-        <FormLabel htmlFor={label} mb="0" fontWeight="500" color="gray.600">
-          {label}
-          {isDisabled ? (
-            <Badge ml="2" colorScheme="blue">
-              即將推出
-            </Badge>
-          ) : (
-            <></>
-          )}
-        </FormLabel>
-      </Flex>
-    );
   };
 
   return (
@@ -438,10 +425,25 @@ function CourseSearchInput({ displayPanel }) {
                       課表設定
                     </Text>
                     <Flex w="100%" flexDirection="row" alignItems="center" flexWrap="wrap" css={{ gap: "6px" }}>
-                      {renderSettingSwitch("篩選條件嚴格搜尋", strict_search_mode, false)}
-                      {renderSettingSwitch("只顯示未選課程", show_selected_courses, true)}
-                      {renderSettingSwitch("只顯示未衝堂課程", only_show_not_conflicted_courses, true)}
-                      {renderSettingSwitch("同步新增至課程網", sync_add_to_nol, true)}
+                      <SettingSwitch
+                        label="篩選條件嚴格搜尋"
+                        setterFunc={set_strict_search_mode}
+                        defaultValue={strict_search_mode}
+                        isDisabled={false}
+                      />
+                      <SettingSwitch
+                        label="只顯示未選課程"
+                        setterFunc={set_show_selected_courses}
+                        defaultValue={show_selected_courses}
+                        isDisabled={true}
+                      />
+                      <SettingSwitch
+                        label="只顯示未衝堂課程"
+                        setterFunc={set_only_show_not_conflicted_courses}
+                        defaultValue={only_show_not_conflicted_courses}
+                        isDisabled={true}
+                      />
+                      <SettingSwitch label="同步新增至課程網" setterFunc={set_sync_add_to_nol} defaultValue={sync_add_to_nol} isDisabled={true} />
                     </Flex>
                     <Button
                       mt={2}
