@@ -108,7 +108,7 @@ function UnauthenticatedPanel({ ...restProps }) {
 
 function PanelWrapper({
   isLoading,
-  loadingFallback = <LoadingPanel title="Loading..." height="100%" />,
+  loadingFallback = <LoadingPanel title="載入中..." height="100%" />,
   isUnauth,
   unauthFallback = <UnauthenticatedPanel />,
   children,
@@ -277,6 +277,44 @@ function PTTExamPanel({ isLoading, isUnauth, PTTExamData }) {
   );
 }
 
+function SyllabusPanel({ isLoading, isUnauth, SyllabusData }) {
+  return (
+    <PanelWrapper isLoading={isLoading} isUnauth={isUnauth}>
+      {!SyllabusData ? (
+        <PanelPlaceholder title="無課程大綱資訊" h="100%" pt="8" />
+      ) : (
+        <Flex w="100%" my="4" flexDirection="column" justifyContent="start" alignItems="start" wordBreak="break-all" overflow="auto">
+          {Object.keys(SyllabusData.syllabus).map((key) => {
+            const line = SyllabusData.syllabus[key].split("\n");
+            const content = line.map((item, index) => {
+              return (
+                <Text key={syllabusTitle[key] + "content" + index} mb="0.5" fontSize="md" fontWeight="400" color="gray.600">
+                  {item.trim()}
+                </Text>
+              );
+            });
+
+            return (
+              <React.Fragment key={syllabusTitle[key]}>
+                <Text fontSize="lg" fontWeight="600" color="gray.700">
+                  {syllabusTitle[key]}
+                </Text>
+                {SyllabusData.syllabus[key] !== "" ? (
+                  content
+                ) : (
+                  <Text key={syllabusTitle[key] + "content"} fontSize="md" fontWeight="400" color="gray.600">
+                    無
+                  </Text>
+                )}
+              </React.Fragment>
+            );
+          })}
+        </Flex>
+      )}
+    </PanelWrapper>
+  );
+}
+
 const syllabusTitle = {
   intro: "概述",
   objective: "目標",
@@ -296,7 +334,7 @@ function CourseDetailInfoContainer({ course }) {
   const [NTURatingData, setNTURatingData] = useState(null);
   const [PTTReviewData, setPTTReviewData] = useState(null);
   const [PTTExamData, setPTTExamData] = useState(null);
-  const [SyllubusData, setSyllubusData] = useState(null);
+  const [SyllabusData, setSyllabusData] = useState(null);
   const [SignUpPostData, setSignUpPostData] = useState(null);
 
   // Live data loading states
@@ -304,7 +342,7 @@ function CourseDetailInfoContainer({ course }) {
   const [isLoadingRatingData, setIsLoadingRatingData] = useState(true);
   const [isLoadingPTTReviewData, setIsLoadingPTTReviewData] = useState(true);
   const [isLoadingPTTExamData, setIsLoadingPTTExamData] = useState(true);
-  const [isLoadingSyllubusData, setIsLoadingSyllubusData] = useState(true);
+  const [isLoadingSyllabusData, setIsLoadingSyllabusData] = useState(true);
   const [isLoadingSignUpPostData, setIsLoadingSignUpPostData] = useState(true);
 
   // useEffect(()=>{
@@ -394,12 +432,12 @@ function CourseDetailInfoContainer({ course }) {
     setIsLoadingPTTExamData(false);
   }
   async function fetchSyllabusData() {
-    setIsLoadingSyllubusData(true);
+    setIsLoadingSyllabusData(true);
     let data;
     try {
       data = await dispatch(getCourseSyllabusData(course._id));
     } catch (error) {
-      setIsLoadingSyllubusData(false);
+      setIsLoadingSyllabusData(false);
       toast({
         title: "無法取得課程大綱資訊",
         description: "請洽台大課程網",
@@ -414,8 +452,8 @@ function CourseDetailInfoContainer({ course }) {
         grade.color = hash_to_color_hex_with_hue(grade.title, { min: 180, max: 200 });
       });
     }
-    setSyllubusData(data);
-    setIsLoadingSyllubusData(false);
+    setSyllabusData(data);
+    setIsLoadingSyllabusData(false);
   }
   async function fetchSignUpPostData() {
     setIsLoadingSignUpPostData(true);
@@ -469,49 +507,11 @@ function CourseDetailInfoContainer({ course }) {
     { title: "授課語言", value: info_view_map.language.map[course.language] },
   ];
 
-  const renderSyllabusDataPanel = useCallback(() => {
-    if (isLoadingSyllubusData) {
-      return <LoadingPanel title="載入中..." height="100%" pt={8} />;
-    }
-    if (!SyllubusData) {
-      return <PanelPlaceholder title="無課程大綱資訊" h="100%" pt="8" />;
-    }
-    return (
-      <Flex w="100%" my="4" flexDirection="column" justifyContent="start" alignItems="start" wordBreak="break-all" overflow="auto">
-        {Object.keys(SyllubusData.syllabus).map((key) => {
-          const line = SyllubusData.syllabus[key].split("\n");
-          const content = line.map((item, index) => {
-            return (
-              <Text key={syllabusTitle[key] + "content" + index} mb="0.5" fontSize="md" fontWeight="400" color="gray.600">
-                {item.trim()}
-              </Text>
-            );
-          });
-
-          return (
-            <React.Fragment key={syllabusTitle[key]}>
-              <Text fontSize="lg" fontWeight="600" color="gray.700">
-                {syllabusTitle[key]}
-              </Text>
-              {SyllubusData.syllabus[key] !== "" ? (
-                content
-              ) : (
-                <Text key={syllabusTitle[key] + "content"} fontSize="md" fontWeight="400" color="gray.600">
-                  無
-                </Text>
-              )}
-            </React.Fragment>
-          );
-        })}
-      </Flex>
-    );
-  }, [isLoadingSyllubusData, SyllubusData]);
-
   const renderGradePolicyPanel = useCallback(() => {
-    if (isLoadingSyllubusData) {
+    if (isLoadingSyllabusData) {
       return <LoadingPanel title="查看配分中..." height="100%" pt={8} />;
     }
-    if (!SyllubusData || !SyllubusData.grade) {
+    if (!SyllabusData || !SyllabusData.grade) {
       return <PanelPlaceholder title="無評分相關資訊" h="100%" pt="8" />;
     }
     return (
@@ -521,7 +521,7 @@ function CourseDetailInfoContainer({ course }) {
             lineWidth={50}
             label={({ dataEntry }) => dataEntry.value + "%"}
             labelPosition={75}
-            data={SyllubusData.grade}
+            data={SyllabusData.grade}
             labelStyle={() => ({
               fill: "white",
               fontSize: "10px",
@@ -530,17 +530,17 @@ function CourseDetailInfoContainer({ course }) {
           />
         </Box>
         <VStack mt={{ base: 4, lg: 0 }} align="start">
-          {SyllubusData.grade.map((item, index) => {
+          {SyllabusData.grade.map((item, index) => {
             const line = item.comment.split("\n");
             const content = line.map((item, index) => {
               return (
-                <Text key={"syllubusDataContent" + index} mb="1" fontSize="md" fontWeight="400" color="gray.700">
+                <Text key={"SyllabusDataContent" + index} mb="1" fontSize="md" fontWeight="400" color="gray.700">
                   {item.trim()}
                 </Text>
               );
             });
             return (
-              <Popover key={"syllubusData" + index}>
+              <Popover key={"SyllabusData" + index}>
                 <PopoverTrigger>
                   <HStack justify="start" cursor="pointer">
                     <Icon as={FaCircle} size="20px" color={item.color} />
@@ -581,7 +581,7 @@ function CourseDetailInfoContainer({ course }) {
         </VStack>
       </Flex>
     );
-  }, [isLoadingSyllubusData, SyllubusData]);
+  }, [isLoadingSyllabusData, SyllabusData]);
 
   return (
     <Flex w="100%" minH="83vh" pt={{ base: "150px", lg: 0 }} flexDirection={{ base: "column", lg: "row" }} flexWrap="wrap" justify={"center"}>
@@ -829,7 +829,7 @@ function CourseDetailInfoContainer({ course }) {
             <Text fontSize="2xl" fontWeight="800" color="gray.700">
               課程大綱
             </Text>
-            {renderSyllabusDataPanel()}
+            <SyllabusPanel isLoading={isLoadingSyllabusData} isUnauth={null} SyllabusData={SyllabusData} />
           </VStack>
           <DataSourceTag source="臺大課程網" />
         </Flex>
