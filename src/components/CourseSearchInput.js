@@ -1,4 +1,4 @@
-import { React, useEffect, useState } from "react";
+import { React, useState } from "react";
 import {
   Flex,
   InputGroup,
@@ -40,6 +40,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { mapStateToTimeTable, mapStateToIntervals } from "utils/timeTableConverter";
 import { info_view_map } from "data/mapping_table";
+import { useMount } from "react-use";
 
 function CourseSearchInputTextArea() {
   const navigate = useNavigate();
@@ -52,16 +53,15 @@ function CourseSearchInputTextArea() {
   const search_filters_enable = useSelector((state) => state.search_filters_enable);
 
   const [search, setSearch] = useState("");
+  useMount(() => {
+    setSearch("");
+  });
 
   const dispatch = useDispatch();
 
   const toggle_search_column = (e) => {
     dispatch(setSearchColumn(e.currentTarget.value));
   };
-
-  useEffect(() => {
-    setSearch("");
-  }, []);
 
   const startSearch = () => {
     // console.log(search_columns);
@@ -212,6 +212,10 @@ function CourseSearchInput({ displayPanel }) {
   const [sync_add_to_nol, set_sync_add_to_nol] = useState(search_settings.sync_add_to_nol);
   const [strict_search_mode, set_strict_search_mode] = useState(search_settings.strict_search_mode);
 
+  useMount(() => {
+    setSelectedTime(mapStateToTimeTable(search_filters.time));
+  });
+
   const set_enroll_method = (e) => {
     // console.log(e.currentTarget.value)
     const new_enroll_method = e.currentTarget.value;
@@ -271,10 +275,6 @@ function CourseSearchInput({ displayPanel }) {
       </Flex>
     );
   };
-
-  useEffect(() => {
-    setSelectedTime(mapStateToTimeTable(search_filters.time));
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
