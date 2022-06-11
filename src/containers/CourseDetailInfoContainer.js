@@ -269,6 +269,14 @@ function PTTReviewPanel({ isLoading, isUnauth, PTTReviewData }) {
   );
 }
 
+function PTTExamPanel({ isLoading, isUnauth, PTTExamData }) {
+  return (
+    <PanelWrapper isLoading={isLoading} isUnauth={isUnauth} loadingFallback={<LoadingPanel title="努力爬文中..." height="100%" pt={8} />}>
+      {!PTTExamData ? <PanelPlaceholder title="無相關貼文資訊" h="100%" pt="8" /> : <PTTContentRowContainer info={PTTExamData} height="150px" />}
+    </PanelWrapper>
+  );
+}
+
 const syllabusTitle = {
   intro: "概述",
   objective: "目標",
@@ -460,19 +468,6 @@ function CourseDetailInfoContainer({ course }) {
     { title: "開課學期", value: course.semester },
     { title: "授課語言", value: info_view_map.language.map[course.language] },
   ];
-
-  const renderPTTExamPanel = useCallback(() => {
-    if (isLoadingPTTExamData || isAuth0Loading) {
-      return <LoadingPanel title="努力爬文中..." height="100%" pt={8} />;
-    }
-    if (!isAuthenticated) {
-      return <UnauthenticatedPanel />;
-    }
-    if (!PTTExamData) {
-      return <PanelPlaceholder title="無相關貼文資訊" h="100%" pt="8" />;
-    }
-    return <PTTContentRowContainer info={PTTExamData} height="150px" />;
-  }, [isLoadingPTTExamData, isAuth0Loading, isAuthenticated, PTTExamData]);
 
   const renderSyllabusDataPanel = useCallback(() => {
     if (isLoadingSyllubusData) {
@@ -807,7 +802,9 @@ function CourseDetailInfoContainer({ course }) {
               </TabList>
             </HStack>
             <TabPanels>
-              <TabPanel>{renderPTTExamPanel()}</TabPanel>
+              <TabPanel>
+                <PTTExamPanel isLoading={isLoadingPTTExamData || isAuth0Loading} isUnauth={!isAuthenticated} PTTExamData={PTTExamData} />
+              </TabPanel>
             </TabPanels>
           </Tabs>
           <DataSourceTag source="PTT NTU-Exam" />
