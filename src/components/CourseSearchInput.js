@@ -195,7 +195,6 @@ function CourseSearchInput({ displayPanel }) {
   const search_settings = useSelector((state) => state.search_settings);
   const search_filters_enable = useSelector((state) => state.search_filters_enable);
   const display_tags = useSelector((state) => state.display_tags);
-  const [displayTags, setDisplayTags] = useState(display_tags);
 
   // filters local states
   const [selectedTime, setSelectedTime] = useState(mapStateToTimeTable(search_filters.time));
@@ -268,10 +267,6 @@ function CourseSearchInput({ displayPanel }) {
       </Flex>
     );
   };
-
-  useEffect(() => {
-    dispatch(setNewDisplayTags(displayTags));
-  }, [displayTags]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     // console.log(selectedEnrollMethod);
@@ -481,7 +476,7 @@ function CourseSearchInput({ displayPanel }) {
                     <Flex w="100%" flexDirection="row" alignItems="center" flexWrap="wrap" css={{ gap: "4px" }}>
                       {available_tags.map((tag) => {
                         // console.log(displayTags)
-                        const selected = displayTags.includes(tag);
+                        const selected = display_tags.includes(tag);
                         return (
                           <Tag
                             key={tag}
@@ -492,10 +487,10 @@ function CourseSearchInput({ displayPanel }) {
                             onClick={
                               selected
                                 ? () => {
-                                    setDisplayTags([...displayTags.filter((t) => t !== tag)]);
+                                    dispatch(setNewDisplayTags([...display_tags.filter((t) => t !== tag)]));
                                   }
                                 : () => {
-                                    setDisplayTags([...displayTags, tag]);
+                                    dispatch(setNewDisplayTags([...display_tags, tag]));
                                   }
                             }
                             transition="all 200ms ease-in-out"
