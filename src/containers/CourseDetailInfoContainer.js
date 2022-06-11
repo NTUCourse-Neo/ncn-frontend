@@ -202,6 +202,73 @@ function EnrollStatusPanel({ isLoading, isUnauth, CourseEnrollStatus }) {
   );
 }
 
+function NTURatingPanel({ isLoading, isUnauth, NTURatingData }) {
+  return (
+    <PanelWrapper isLoading={isLoading} isUnauth={isUnauth} loadingFallback={<LoadingPanel title="查詢評價中..." height="100%" pt={8} />}>
+      {!NTURatingData ? (
+        <Flex h="100%" flexDirection="column" alignItems="center">
+          <PanelPlaceholder title="無評價資訊" h="100%" pt="8" />
+          <Button
+            mt="4"
+            colorScheme="blue"
+            variant="outline"
+            size="sm"
+            rightIcon={<IoMdOpen />}
+            onClick={() => window.open("https://rating.myntu.me/?referrer=ntucourse_neo", "_blank")}
+          >
+            前往 NTURating 撰寫評價
+          </Button>
+        </Flex>
+      ) : (
+        <Flex h="100%" flexDirection="column" alignItems="start">
+          <Text fontSize="md" fontWeight="600" color="gray.700">
+            NTURating 上共有 {NTURatingData.count} 筆評價
+          </Text>
+          <HStack w="100%" justify="space-between" my="2">
+            <Stat>
+              <StatLabel>甜度</StatLabel>
+              <StatNumber>{NTURatingData.sweety}</StatNumber>
+              <StatHelpText>平均值</StatHelpText>
+            </Stat>
+            <Stat>
+              <StatLabel>涼度</StatLabel>
+              <StatNumber>{NTURatingData.breeze}</StatNumber>
+              <StatHelpText>平均值</StatHelpText>
+            </Stat>
+            <Stat>
+              <StatLabel>紮實度</StatLabel>
+              <StatNumber>{NTURatingData.workload}</StatNumber>
+              <StatHelpText>平均值</StatHelpText>
+            </Stat>
+            <Stat>
+              <StatLabel>品質</StatLabel>
+              <StatNumber>{NTURatingData.quality}</StatNumber>
+              <StatHelpText>平均值</StatHelpText>
+            </Stat>
+          </HStack>
+          <Button
+            colorScheme="blue"
+            variant="outline"
+            size="sm"
+            rightIcon={<IoMdOpen />}
+            onClick={() => window.open(NTURatingData.url + "?referrer=ntucourse_neo", "_blank")}
+          >
+            前往 NTURating 查看該課程評價
+          </Button>
+        </Flex>
+      )}
+    </PanelWrapper>
+  );
+}
+
+function PTTReviewPanel({ isLoading, isUnauth, PTTReviewData }) {
+  return (
+    <PanelWrapper isLoading={isLoading} isUnauth={isUnauth} loadingFallback={<LoadingPanel title="努力爬文中..." height="100%" pt={8} />}>
+      {!PTTReviewData ? <PanelPlaceholder title="無相關貼文資訊" h="100%" pt="8" /> : <PTTContentRowContainer info={PTTReviewData} height="150px" />}
+    </PanelWrapper>
+  );
+}
+
 const syllabusTitle = {
   intro: "概述",
   objective: "目標",
@@ -393,83 +460,6 @@ function CourseDetailInfoContainer({ course }) {
     { title: "開課學期", value: course.semester },
     { title: "授課語言", value: info_view_map.language.map[course.language] },
   ];
-
-  const renderNTURatingPanel = useCallback(() => {
-    if (isLoadingRatingData || isAuth0Loading) {
-      return <LoadingPanel title="查詢評價中..." height="100%" pt={8} />;
-    }
-    if (!isAuthenticated) {
-      return <UnauthenticatedPanel />;
-    }
-    if (!NTURatingData) {
-      return (
-        <Flex h="100%" flexDirection="column" alignItems="center">
-          <PanelPlaceholder title="無評價資訊" h="100%" pt="8" />
-          <Button
-            mt="4"
-            colorScheme="blue"
-            variant="outline"
-            size="sm"
-            rightIcon={<IoMdOpen />}
-            onClick={() => window.open("https://rating.myntu.me/?referrer=ntucourse_neo", "_blank")}
-          >
-            前往 NTURating 撰寫評價
-          </Button>
-        </Flex>
-      );
-    }
-    return (
-      <Flex h="100%" flexDirection="column" alignItems="start">
-        <Text fontSize="md" fontWeight="600" color="gray.700">
-          NTURating 上共有 {NTURatingData.count} 筆評價
-        </Text>
-        <HStack w="100%" justify="space-between" my="2">
-          <Stat>
-            <StatLabel>甜度</StatLabel>
-            <StatNumber>{NTURatingData.sweety}</StatNumber>
-            <StatHelpText>平均值</StatHelpText>
-          </Stat>
-          <Stat>
-            <StatLabel>涼度</StatLabel>
-            <StatNumber>{NTURatingData.breeze}</StatNumber>
-            <StatHelpText>平均值</StatHelpText>
-          </Stat>
-          <Stat>
-            <StatLabel>紮實度</StatLabel>
-            <StatNumber>{NTURatingData.workload}</StatNumber>
-            <StatHelpText>平均值</StatHelpText>
-          </Stat>
-          <Stat>
-            <StatLabel>品質</StatLabel>
-            <StatNumber>{NTURatingData.quality}</StatNumber>
-            <StatHelpText>平均值</StatHelpText>
-          </Stat>
-        </HStack>
-        <Button
-          colorScheme="blue"
-          variant="outline"
-          size="sm"
-          rightIcon={<IoMdOpen />}
-          onClick={() => window.open(NTURatingData.url + "?referrer=ntucourse_neo", "_blank")}
-        >
-          前往 NTURating 查看該課程評價
-        </Button>
-      </Flex>
-    );
-  }, [NTURatingData, isLoadingRatingData, isAuth0Loading, isAuthenticated]);
-
-  const renderPTTReviewPanel = useCallback(() => {
-    if (isLoadingPTTReviewData || isAuth0Loading) {
-      return <LoadingPanel title="努力爬文中..." height="100%" pt={8} />;
-    }
-    if (!isAuthenticated) {
-      return <UnauthenticatedPanel />;
-    }
-    if (!PTTReviewData) {
-      return <PanelPlaceholder title="無相關貼文資訊" h="100%" pt="8" />;
-    }
-    return <PTTContentRowContainer info={PTTReviewData} height="150px" />;
-  }, [isLoadingPTTReviewData, isAuth0Loading, isAuthenticated, PTTReviewData]);
 
   const renderPTTExamPanel = useCallback(() => {
     if (isLoadingPTTExamData || isAuth0Loading) {
@@ -784,8 +774,12 @@ function CourseDetailInfoContainer({ course }) {
               </TabList>
             </HStack>
             <TabPanels>
-              <TabPanel>{renderPTTReviewPanel()}</TabPanel>
-              <TabPanel>{renderNTURatingPanel()}</TabPanel>
+              <TabPanel>
+                <PTTReviewPanel isLoading={isLoadingPTTReviewData || isAuth0Loading} isUnauth={!isAuthenticated} PTTReviewData={PTTReviewData} />
+              </TabPanel>
+              <TabPanel>
+                <NTURatingPanel isLoading={isLoadingRatingData || isAuth0Loading} isUnauth={!isAuthenticated} NTURatingData={NTURatingData} />
+              </TabPanel>
             </TabPanels>
           </Tabs>
           <DataSourceTag source="PTT NTUCourse, NTURating" />
