@@ -315,6 +315,82 @@ function SyllabusPanel({ isLoading, isUnauth, SyllabusData }) {
   );
 }
 
+function GradePolicyPanel({ isLoading, isUnauth, SyllabusData }) {
+  return (
+    <PanelWrapper isLoading={isLoading} isUnauth={isUnauth} loadingFallback={<LoadingPanel title="查看配分中..." height="100%" pt={8} />}>
+      {!SyllabusData || !SyllabusData.grade ? (
+        <PanelPlaceholder title="無評分相關資訊" h="100%" pt="8" />
+      ) : (
+        <Flex my="4" flexDirection={{ base: "column", lg: "row" }} justifyContent="space-evenly" alignItems="center">
+          <Box w="200px" h="200px">
+            <PieChart
+              lineWidth={50}
+              label={({ dataEntry }) => dataEntry.value + "%"}
+              labelPosition={75}
+              data={SyllabusData.grade}
+              labelStyle={() => ({
+                fill: "white",
+                fontSize: "10px",
+                fontFamily: "sans-serif",
+              })}
+            />
+          </Box>
+          <VStack mt={{ base: 4, lg: 0 }} align="start">
+            {SyllabusData.grade.map((item, index) => {
+              const line = item.comment.split("\n");
+              const content = line.map((item, index) => {
+                return (
+                  <Text key={"SyllabusDataContent" + index} mb="1" fontSize="md" fontWeight="400" color="gray.700">
+                    {item.trim()}
+                  </Text>
+                );
+              });
+              return (
+                <Popover key={"SyllabusData" + index}>
+                  <PopoverTrigger>
+                    <HStack justify="start" cursor="pointer">
+                      <Icon as={FaCircle} size="20px" color={item.color} />
+                      <Text fontSize="lg" fontWeight="800" color={item.color}>
+                        {item.value}%
+                      </Text>
+                      <Text fontSize="md" fontWeight="600" color="gray.700">
+                        {item.title}
+                      </Text>
+                    </HStack>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <PopoverArrow />
+                    <PopoverCloseButton />
+                    <PopoverHeader>
+                      <HStack>
+                        <Text fontSize="lg" fontWeight="800" color={item.color}>
+                          {item.value}%
+                        </Text>
+                        <Text fontSize="md" fontWeight="600" color="gray.700">
+                          {item.title}
+                        </Text>
+                      </HStack>
+                    </PopoverHeader>
+                    <PopoverBody>
+                      {item.comment === "" ? (
+                        <Text fontSize="md" fontWeight="400" color="gray.700">
+                          無詳細資訊
+                        </Text>
+                      ) : (
+                        content
+                      )}
+                    </PopoverBody>
+                  </PopoverContent>
+                </Popover>
+              );
+            })}
+          </VStack>
+        </Flex>
+      )}
+    </PanelWrapper>
+  );
+}
+
 const syllabusTitle = {
   intro: "概述",
   objective: "目標",
@@ -506,82 +582,6 @@ function CourseDetailInfoContainer({ course }) {
     { title: "開課學期", value: course.semester },
     { title: "授課語言", value: info_view_map.language.map[course.language] },
   ];
-
-  const renderGradePolicyPanel = useCallback(() => {
-    if (isLoadingSyllabusData) {
-      return <LoadingPanel title="查看配分中..." height="100%" pt={8} />;
-    }
-    if (!SyllabusData || !SyllabusData.grade) {
-      return <PanelPlaceholder title="無評分相關資訊" h="100%" pt="8" />;
-    }
-    return (
-      <Flex my="4" flexDirection={{ base: "column", lg: "row" }} justifyContent="space-evenly" alignItems="center">
-        <Box w="200px" h="200px">
-          <PieChart
-            lineWidth={50}
-            label={({ dataEntry }) => dataEntry.value + "%"}
-            labelPosition={75}
-            data={SyllabusData.grade}
-            labelStyle={() => ({
-              fill: "white",
-              fontSize: "10px",
-              fontFamily: "sans-serif",
-            })}
-          />
-        </Box>
-        <VStack mt={{ base: 4, lg: 0 }} align="start">
-          {SyllabusData.grade.map((item, index) => {
-            const line = item.comment.split("\n");
-            const content = line.map((item, index) => {
-              return (
-                <Text key={"SyllabusDataContent" + index} mb="1" fontSize="md" fontWeight="400" color="gray.700">
-                  {item.trim()}
-                </Text>
-              );
-            });
-            return (
-              <Popover key={"SyllabusData" + index}>
-                <PopoverTrigger>
-                  <HStack justify="start" cursor="pointer">
-                    <Icon as={FaCircle} size="20px" color={item.color} />
-                    <Text fontSize="lg" fontWeight="800" color={item.color}>
-                      {item.value}%
-                    </Text>
-                    <Text fontSize="md" fontWeight="600" color="gray.700">
-                      {item.title}
-                    </Text>
-                  </HStack>
-                </PopoverTrigger>
-                <PopoverContent>
-                  <PopoverArrow />
-                  <PopoverCloseButton />
-                  <PopoverHeader>
-                    <HStack>
-                      <Text fontSize="lg" fontWeight="800" color={item.color}>
-                        {item.value}%
-                      </Text>
-                      <Text fontSize="md" fontWeight="600" color="gray.700">
-                        {item.title}
-                      </Text>
-                    </HStack>
-                  </PopoverHeader>
-                  <PopoverBody>
-                    {item.comment === "" ? (
-                      <Text fontSize="md" fontWeight="400" color="gray.700">
-                        無詳細資訊
-                      </Text>
-                    ) : (
-                      content
-                    )}
-                  </PopoverBody>
-                </PopoverContent>
-              </Popover>
-            );
-          })}
-        </VStack>
-      </Flex>
-    );
-  }, [isLoadingSyllabusData, SyllabusData]);
 
   return (
     <Flex w="100%" minH="83vh" pt={{ base: "150px", lg: 0 }} flexDirection={{ base: "column", lg: "row" }} flexWrap="wrap" justify={"center"}>
@@ -849,7 +849,7 @@ function CourseDetailInfoContainer({ course }) {
           <Text fontSize="2xl" fontWeight="800" color="gray.700">
             評分方式
           </Text>
-          {renderGradePolicyPanel()}
+          <GradePolicyPanel isLoading={isLoadingSyllabusData} isUnauth={null} SyllabusData={SyllabusData} />
           <DataSourceTag source="臺大課程網" />
         </Flex>
       </Flex>
