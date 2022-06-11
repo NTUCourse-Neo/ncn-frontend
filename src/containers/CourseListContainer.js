@@ -244,63 +244,6 @@ function CourseListContainer({ courseTable, courses, loading }) {
     );
   }
 
-  if (isMobile) {
-    return (
-      <>
-        <Flex flexDirection="column" justifyContent="center" alignItems="start" w="100%" py="2" px="2">
-          <Flex w="100%" justifyContent="space-between" alignItems="center">
-            <Flex flexDirection="column" alignItems="start">
-              <Text fontSize="md" fontWeight="bold" color="gray.600">
-                已選 {courseListForSort.length} 課程
-              </Text>
-              <HStack mt="2">
-                <Button
-                  size="sm"
-                  variant="solid"
-                  colorScheme="teal"
-                  disabled={!isEdited()}
-                  onClick={() => {
-                    handleSaveCourseTable();
-                  }}
-                  isLoading={isLoading}
-                >
-                  儲存
-                </Button>
-                <Button
-                  ml="2"
-                  size="sm"
-                  variant="ghost"
-                  colorScheme="blue"
-                  disabled={!isEdited()}
-                  onClick={() => {
-                    setCourseListForSort(Object.keys(courses));
-                    setPrepareToRemoveCourseId([]);
-                  }}
-                >
-                  重設
-                </Button>
-              </HStack>
-            </Flex>
-            <Collapse in={isEdited()}>
-              <Flex alignItems="center" justifyContent="center" flexDirection="column">
-                <Tag colorScheme="yellow" variant="solid">
-                  <TagLeftIcon boxSize="12px" as={FaExclamationTriangle} />
-                  變更未儲存
-                </Tag>
-              </Flex>
-            </Collapse>
-          </Flex>
-        </Flex>
-        <SortableContainer onSortEnd={onSortEnd} lockAxis="y" useDragHandle helperClass="sortableHelper">
-          {courseListForSort.map((key, index) => {
-            const course = courses[key];
-            return <SortableElement key={key} index={index} course={course} courseIdx={index} helperClass="sortableHelper" />;
-          })}
-        </SortableContainer>
-      </>
-    );
-  }
-
   return (
     <>
       <Flex flexDirection="row" justifyContent="start" alignItems="center" w="100%" py="2" px="2">
@@ -341,7 +284,7 @@ function CourseListContainer({ courseTable, courses, loading }) {
           儲存
         </Button>
       </Flex>
-      <SortableContainer onSortEnd={onSortEnd} lockAxis="y" useDragHandle>
+      <SortableContainer onSortEnd={onSortEnd} lockAxis="y" useDragHandle helperClass="sortableHelper">
         {courseListForSort.map((key, index) => {
           const course = courses[key];
           return <SortableElement key={key} index={index} course={course} courseIdx={index} helperClass="sortableHelper" />;
