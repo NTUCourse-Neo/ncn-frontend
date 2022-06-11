@@ -14,6 +14,7 @@ import {
   MenuList,
   MenuDivider,
   useToast,
+  Stack,
 } from "@chakra-ui/react";
 import CourseDetailInfoContainer from "containers/CourseDetailInfoContainer";
 import { useState, useEffect } from "react";
@@ -392,35 +393,42 @@ function CourseInfoContainer({ code }) {
     return (
       <>
         <Flex pt="64px" w="100%" justifyContent={"center"} position={{ base: "fixed", lg: "static" }} zIndex={{ base: 100, lg: 0 }} bg="white">
-          <HStack my="2" mx="4%" spacing="4" w="100%" align="center">
-            <Tag size="md" colorScheme="blue">
-              <Text fontWeight="800" fontSize={{ base: "md", lg: "lg" }}>
-                {course.id}
-              </Text>
-            </Tag>
-            <Text fontSize={{ base: "xl", lg: "3xl" }} fontWeight="800" color="gray.700">
-              {course.course_name}
-            </Text>
-            <Text fontSize={{ base: "md", lg: "2xl" }} fontWeight="500" color="gray.500">
-              {course.teacher}
-            </Text>
-            <CopyToClipboard text={"https://course.myntu.me/courseinfo/" + course._id}>
-              <Button
-                rightIcon={<Icon as={BiCopy} color={copyWord.color} />}
-                variant="ghost"
-                size="xs"
-                bg={copyWord.bg}
-                color={copyWord.color}
-                onClick={() => setCopiedLinkClicks(copiedLinkClicks + 1)}
-                display={{ base: "inline-block", lg: "none" }}
-              >
-                {copyWord.word}
-              </Button>
-            </CopyToClipboard>
-            <Text fontWeight="500" fontSize={{ base: "sm", lg: "md" }} color="gray.300">
+          <HStack my="2" mx="4%" spacing="4" w="100%" align="center" pt={2} pb={1}>
+            <Stack direction={{ base: "column", lg: "row" }}>
+              <HStack>
+                <Tag size="md" colorScheme="blue" w="fit-content">
+                  <Text fontWeight="800" fontSize={{ base: "md", lg: "lg" }}>
+                    {course.id}
+                  </Text>
+                </Tag>
+                <CopyToClipboard text={"https://course.myntu.me/courseinfo/" + course._id}>
+                  <Button
+                    rightIcon={<Icon as={BiCopy} color={copyWord.color} />}
+                    variant="ghost"
+                    size="xs"
+                    bg={copyWord.bg}
+                    color={copyWord.color}
+                    onClick={() => setCopiedLinkClicks(copiedLinkClicks + 1)}
+                    display={{ base: "inline-block", lg: "none" }}
+                  >
+                    {copyWord.word}
+                  </Button>
+                </CopyToClipboard>
+              </HStack>
+              <HStack>
+                <Text fontSize={{ base: "xl", lg: "3xl" }} fontWeight="800" color="gray.700">
+                  {course.course_name}
+                </Text>
+                <Text fontSize={{ base: "md", lg: "2xl" }} fontWeight="500" color="gray.500">
+                  {course.teacher}
+                </Text>
+              </HStack>
+            </Stack>
+            <Spacer display={{ base: "inline-block", lg: "none" }} />
+            <Text fontWeight="500" fontSize={{ base: "sm", lg: "md" }} color="gray.200">
               {Moment(refreshTime).format("HH:mm")} 更新
             </Text>
-            <Spacer />
+            <Spacer display={{ base: "none", lg: "inline-block" }} />
             <HStack spacing="2" display={{ base: "none", lg: "flex" }}>
               <ButtonGroup isAttached>
                 <Button
