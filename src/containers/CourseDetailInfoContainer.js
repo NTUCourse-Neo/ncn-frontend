@@ -69,6 +69,17 @@ function LoadingPanel({ title, ...restProps }) {
   );
 }
 
+function PanelPlaceholder({ title = "暫無資訊", isEmpty = true, ...restProps }) {
+  return (
+    <Flex w="100%" flexDirection="column" justifyContent="center" alignItems="center" {...restProps}>
+      <Icon as={isEmpty ? FaQuestionCircle : FaExclamationTriangle} boxSize="32px" color="gray.500" />
+      <Text mt="2" fontSize="lg" fontWeight="800" color="gray.500" textAlign="center">
+        {title}
+      </Text>
+    </Flex>
+  );
+}
+
 function UnauthenticatedPanel({ ...restProps }) {
   const { loginWithRedirect } = useAuth0();
   return (
@@ -287,17 +298,6 @@ function CourseDetailInfoContainer({ course }) {
     { title: "授課語言", value: info_view_map.language.map[course.language] },
   ];
 
-  const renderFallback = useCallback((title = "暫無資訊", type = "empty", height, pt = "0") => {
-    return (
-      <Flex w="100%" h={height} pt={pt} flexDirection="column" justifyContent="center" alignItems="center">
-        <Icon as={type === "empty" ? FaQuestionCircle : FaExclamationTriangle} boxSize="32px" color="gray.500" />
-        <Text mt="2" fontSize="lg" fontWeight="800" color="gray.500" textAlign="center">
-          {title}
-        </Text>
-      </Flex>
-    );
-  }, []);
-
   const renderCourseEnrollPanel = useCallback(() => {
     if (isLoadingEnrollInfo || isAuth0Loading) {
       return <LoadingPanel title="努力取得資訊中..." height="100%" pt={8} />;
@@ -306,7 +306,7 @@ function CourseDetailInfoContainer({ course }) {
       return <UnauthenticatedPanel />;
     }
     if (!CourseEnrollStatus) {
-      return renderFallback("無法取得課程即時資訊", { FaExclamationTriangle }, "100%", "8");
+      return <PanelPlaceholder title="無法取得課程即時資訊" isEmpty={false} h="100%" pt="8" />;
     }
     return (
       <Flex w="100%" mt="4" flexDirection="row" justifyContent="center" alignItems={{ base: "start", lg: "center" }} flexWrap="wrap">
@@ -332,7 +332,7 @@ function CourseDetailInfoContainer({ course }) {
         </Stat>
       </Flex>
     );
-  }, [isLoadingEnrollInfo, isAuth0Loading, isAuthenticated, CourseEnrollStatus, renderFallback]);
+  }, [isLoadingEnrollInfo, isAuth0Loading, isAuthenticated, CourseEnrollStatus]);
 
   const renderSignupPanel = useCallback(
     () => {
@@ -345,7 +345,7 @@ function CourseDetailInfoContainer({ course }) {
       if (SignUpPostData.length === 0) {
         return (
           <Flex w="100%" h="100%" mt="4" flexDirection="column" justifyContent="center" alignItems={{ base: "start", lg: "center" }}>
-            {renderFallback("無加簽相關資訊", "empty", "100%", "0")}
+            <PanelPlaceholder title="無加簽相關資訊" h="100%" pt="0" />
             <HStack w="100%" pr="8" mt="8" justify="end">
               <SignUpReportForm
                 courseId={course._id}
@@ -389,7 +389,7 @@ function CourseDetailInfoContainer({ course }) {
       );
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [signUpCardIdx, SignUpPostData, isLoadingSignUpPostData, isAuth0Loading, isAuthenticated, setSignUpCardIdx, renderFallback]
+    [signUpCardIdx, SignUpPostData, isLoadingSignUpPostData, isAuth0Loading, isAuthenticated, setSignUpCardIdx]
   );
 
   const renderNTURatingPanel = useCallback(() => {
@@ -402,7 +402,7 @@ function CourseDetailInfoContainer({ course }) {
     if (!NTURatingData) {
       return (
         <Flex h="100%" flexDirection="column" alignItems="center">
-          {renderFallback("無評價資訊", "empty", "100%", "8")}
+          <PanelPlaceholder title="無評價資訊" h="100%" pt="8" />
           <Button
             mt="4"
             colorScheme="blue"
@@ -454,7 +454,7 @@ function CourseDetailInfoContainer({ course }) {
         </Button>
       </Flex>
     );
-  }, [NTURatingData, isLoadingRatingData, isAuth0Loading, isAuthenticated, renderFallback]);
+  }, [NTURatingData, isLoadingRatingData, isAuth0Loading, isAuthenticated]);
 
   const renderPTTReviewPanel = useCallback(() => {
     if (isLoadingPTTReviewData || isAuth0Loading) {
@@ -464,10 +464,10 @@ function CourseDetailInfoContainer({ course }) {
       return <UnauthenticatedPanel />;
     }
     if (!PTTReviewData) {
-      return renderFallback("無相關貼文資訊", "empty", "100%", "8");
+      return <PanelPlaceholder title="無相關貼文資訊" h="100%" pt="8" />;
     }
     return <PTTContentRowContainer info={PTTReviewData} height="150px" />;
-  }, [isLoadingPTTReviewData, isAuth0Loading, isAuthenticated, renderFallback, PTTReviewData]);
+  }, [isLoadingPTTReviewData, isAuth0Loading, isAuthenticated, PTTReviewData]);
 
   const renderPTTExamPanel = useCallback(() => {
     if (isLoadingPTTExamData || isAuth0Loading) {
@@ -477,17 +477,17 @@ function CourseDetailInfoContainer({ course }) {
       return <UnauthenticatedPanel />;
     }
     if (!PTTExamData) {
-      return renderFallback("無相關貼文資訊", "empty", "100%", "8");
+      return <PanelPlaceholder title="無相關貼文資訊" h="100%" pt="8" />;
     }
     return <PTTContentRowContainer info={PTTExamData} height="150px" />;
-  }, [isLoadingPTTExamData, isAuth0Loading, isAuthenticated, renderFallback, PTTExamData]);
+  }, [isLoadingPTTExamData, isAuth0Loading, isAuthenticated, PTTExamData]);
 
   const renderSyllabusDataPanel = useCallback(() => {
     if (isLoadingSyllubusData) {
       return <LoadingPanel title="載入中..." height="100%" pt={8} />;
     }
     if (!SyllubusData) {
-      return renderFallback("無課程大綱資訊", "empty", "100%", "8");
+      return <PanelPlaceholder title="無課程大綱資訊" h="100%" pt="8" />;
     }
     return (
       <Flex w="100%" my="4" flexDirection="column" justifyContent="start" alignItems="start" wordBreak="break-all" overflow="auto">
@@ -518,14 +518,14 @@ function CourseDetailInfoContainer({ course }) {
         })}
       </Flex>
     );
-  }, [isLoadingSyllubusData, SyllubusData, renderFallback]);
+  }, [isLoadingSyllubusData, SyllubusData]);
 
   const renderGradePolicyPanel = useCallback(() => {
     if (isLoadingSyllubusData) {
       return <LoadingPanel title="查看配分中..." height="100%" pt={8} />;
     }
     if (!SyllubusData || !SyllubusData.grade) {
-      return renderFallback("無評分相關資訊", "empty", "100%", "8");
+      return <PanelPlaceholder title="無評分相關資訊" h="100%" pt="8" />;
     }
     return (
       <Flex my="4" flexDirection={{ base: "column", lg: "row" }} justifyContent="space-evenly" alignItems="center">
@@ -594,7 +594,7 @@ function CourseDetailInfoContainer({ course }) {
         </VStack>
       </Flex>
     );
-  }, [isLoadingSyllubusData, SyllubusData, renderFallback]);
+  }, [isLoadingSyllubusData, SyllubusData]);
 
   return (
     <Flex w="100%" minH="83vh" pt={{ base: "150px", lg: 0 }} flexDirection={{ base: "column", lg: "row" }} flexWrap="wrap" justify={"center"}>
