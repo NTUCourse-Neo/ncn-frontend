@@ -1,7 +1,7 @@
 import { React, useEffect, useState } from "react";
 import "components/CourseTableCard/CourseTableCard.css";
 import { arrayMoveImmutable as arrayMove } from "array-move";
-import { Flex, Text, Button, IconButton, Badge, Tag, useToast, ScaleFade, TagLeftIcon, Spacer, Stack, useBreakpointValue } from "@chakra-ui/react";
+import { Flex, Text, Button, IconButton, Badge, Tag, useToast, ScaleFade, TagLeftIcon, Spacer, useBreakpointValue } from "@chakra-ui/react";
 import { FaPlus, FaTrash, FaExclamationTriangle, FaInfoCircle } from "react-icons/fa";
 import { FadeLoader } from "react-spinners";
 import { MdDragHandle } from "react-icons/md";
@@ -20,10 +20,10 @@ function ListRowElement({ course, courseIdx, prepareToRemoveCourseId, handleDele
   return (
     <Flex
       flexDirection="row"
-      justifyContent="center"
+      justifyContent="start"
       alignItems="center"
       h="100%"
-      w="100%"
+      w={{ base: "100%", lg: "fit-content" }}
       py="2"
       px="2"
       bg="gray.100"
@@ -38,8 +38,8 @@ function ListRowElement({ course, courseIdx, prepareToRemoveCourseId, handleDele
             {courseIdx + 1}
           </Text>
         </Tag>
-        <Stack direction={{ base: "column", md: "row" }} alignItems={{ base: "start", md: "center" }} ml={{ base: 2, md: 0 }}>
-          <Badge colorScheme="blue" size={useBreakpointValue({ base: "md", md: "lg" }) ?? "md"} mx={{ base: 0, md: 2 }} mb={{ base: -1, md: 0 }}>
+        <Flex direction={{ base: "column", md: "row" }} alignItems={{ base: "start", md: "center" }} ml={{ base: 2, md: 0 }} flexShrink={1}>
+          <Badge colorScheme="blue" size={useBreakpointValue({ base: "md", md: "lg" }) ?? "md"} mx={{ base: 0, md: 2 }}>
             {course.id}
           </Badge>
           <Text
@@ -48,11 +48,11 @@ function ListRowElement({ course, courseIdx, prepareToRemoveCourseId, handleDele
             fontSize={{ base: "lg", md: "xl" }}
             fontWeight="bold"
             isTruncated
-            maxW={{ base: "120px", md: "300px" }}
+            maxW={{ base: "120px", md: "8vw" }}
           >
             {course.course_name}
           </Text>
-        </Stack>
+        </Flex>
         <IconButton
           display={{ base: "none", md: "block" }}
           ml={3}
@@ -107,7 +107,11 @@ const SortableElement = sortableElement(({ course, courseIdx, prepareToRemoveCou
 ));
 
 const SortableContainer = sortableContainer(({ children }) => {
-  return <Flex flexDirection="column">{children}</Flex>;
+  return (
+    <Flex flexDirection="column" overflow={"visible"}>
+      {children}
+    </Flex>
+  );
 });
 
 function CourseListContainer({ courseTable, courses, loading }) {
