@@ -58,7 +58,6 @@ function CourseInfoContainer({ code }) {
   const [notFound, setNotFound] = useState(false);
   const [copiedLinkClicks, setCopiedLinkClicks] = useState(0);
   const [copyWord, setCopyWord] = useState(copyWordList.find((word) => word.count <= copiedLinkClicks));
-  const [refreshTime] = useState(new Date());
   Moment.locale("zh-tw");
 
   const [addingCourse, setAddingCourse] = useState(false);
@@ -426,7 +425,7 @@ function CourseInfoContainer({ code }) {
             </Stack>
             <Spacer display={{ base: "inline-block", lg: "none" }} />
             <Text fontWeight="500" fontSize={{ base: "sm", lg: "md" }} color="gray.200">
-              {Moment(refreshTime).format("HH:mm")} 更新
+              {Moment(new Date()).format("HH:mm")} 更新
             </Text>
             <Spacer display={{ base: "none", lg: "inline-block" }} />
             <HStack spacing="2" display={{ base: "none", lg: "flex" }}>
