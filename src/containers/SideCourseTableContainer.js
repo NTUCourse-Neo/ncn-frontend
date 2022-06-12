@@ -105,7 +105,7 @@ function CourseTableNameEditor({ isOpen, onOpen, onClose, handleSave, defaultNam
   );
 }
 
-function SideCourseTableContainer({ isDisplay, setIsDisplay, agreeToCreateTableWithoutLogin, setIsLoginWarningOpen }) {
+function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarningOpen }) {
   const navigate = useNavigate();
   const { user, isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const toast = useToast();
@@ -312,70 +312,72 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, agreeToCreateTableW
     }
   };
 
-  const renderSideCourseTableContent = () => {
-    if ((courseTable === null || expired === true) && !(loading || isLoading)) {
-      return (
-        <Flex flexDirection="column" justifyContent="center" alignItems="center" h="100%" w="100%">
-          <Flex flexDirection="row" justifyContent="center" alignItems="center">
-            <FaRegHandPointUp size="3vh" style={{ color: "gray" }} />
-            <FaRegMeh size="3vh" style={{ color: "gray" }} />
-            <FaRegHandPointDown size="3vh" style={{ color: "gray" }} />
-          </Flex>
-          <Text fontSize="2xl" fontWeight="bold" color="gray">
-            {expired ? "您的課表已過期" : "尚無課表"}
-          </Text>
-          <Button
-            colorScheme="teal"
-            leftIcon={<FaPlusSquare />}
-            onClick={() => {
-              if (isAuthenticated || agreeToCreateTableWithoutLogin) {
-                handleCreateTable();
-              } else {
-                setIsLoginWarningOpen(true);
-              }
-            }}
-          >
-            新增課表
-          </Button>
-        </Flex>
-      );
-    }
+  if ((courseTable === null || expired === true) && !(loading || isLoading)) {
     return (
-      <Box overflow="auto" w="100%" mt={{ base: 0, lg: 4 }}>
-        <Flex flexDirection="column">
-          <Tabs>
-            <Flex flexDirection="row" justifyContent="start" alignItems="center" mb="2" ml="4">
-              {courseTable ? (
-                <Flex alignItems="center" flexWrap="wrap">
-                  <Text fontWeight="700" fontSize={["xl", "2xl", "3xl"]} color="gray.600" mr="4">
-                    {courseTable.name}
-                  </Text>
-                  <CourseTableNameEditor isOpen={isOpen} onClose={onClose} onOpen={onOpen} handleSave={handleSave} defaultName={courseTable.name} />
-                  <Spacer mx="8" />
-                  <TabList>
-                    <Tab>時間表</Tab>
-                    <Tab>清單</Tab>
-                  </TabList>
-                </Flex>
-              ) : (
-                <SkeletonText width="15vw" mt="2" h="2" noOfLines={3} />
-              )}
-            </Flex>
-            <TabPanels>
-              <TabPanel>
-                <Flex flexDirection="row" justifyContent="start" alignItems="center" overflowX={"auto"}>
-                  <CourseTableContainer courseTimeMap={courseTimeMap} courses={courses} loading={loading || isLoading} />
-                </Flex>
-              </TabPanel>
-              <TabPanel>
-                <CourseListContainer courseTable={courseTable} courses={courses} loading={loading || isLoading} />
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
+      <Flex flexDirection="column" justifyContent="center" alignItems="center" h="100%" w="100%">
+        <Flex flexDirection="row" justifyContent="center" alignItems="center">
+          <FaRegHandPointUp size="3vh" style={{ color: "gray" }} />
+          <FaRegMeh size="3vh" style={{ color: "gray" }} />
+          <FaRegHandPointDown size="3vh" style={{ color: "gray" }} />
         </Flex>
-      </Box>
+        <Text fontSize="2xl" fontWeight="bold" color="gray">
+          {expired ? "您的課表已過期" : "尚無課表"}
+        </Text>
+        <Button
+          colorScheme="teal"
+          leftIcon={<FaPlusSquare />}
+          onClick={() => {
+            if (isAuthenticated || agreeToCreateTableWithoutLogin) {
+              handleCreateTable();
+            } else {
+              setIsLoginWarningOpen(true);
+            }
+          }}
+        >
+          新增課表
+        </Button>
+      </Flex>
     );
-  };
+  }
+
+  return (
+    <Box overflow="auto" w="100%" mt={{ base: 0, lg: 4 }}>
+      <Flex flexDirection="column">
+        <Tabs>
+          <Flex flexDirection="row" justifyContent="start" alignItems="center" mb="2" ml="4">
+            {courseTable ? (
+              <Flex alignItems="center" flexWrap="wrap">
+                <Text fontWeight="700" fontSize={["xl", "2xl", "3xl"]} color="gray.600" mr="4">
+                  {courseTable.name}
+                </Text>
+                <CourseTableNameEditor isOpen={isOpen} onClose={onClose} onOpen={onOpen} handleSave={handleSave} defaultName={courseTable.name} />
+                <Spacer mx="8" />
+                <TabList>
+                  <Tab>時間表</Tab>
+                  <Tab>清單</Tab>
+                </TabList>
+              </Flex>
+            ) : (
+              <SkeletonText width="15vw" mt="2" h="2" noOfLines={3} />
+            )}
+          </Flex>
+          <TabPanels>
+            <TabPanel>
+              <Flex flexDirection="row" justifyContent="start" alignItems="center" overflowX={"auto"}>
+                <CourseTableContainer courseTimeMap={courseTimeMap} courses={courses} loading={loading || isLoading} />
+              </Flex>
+            </TabPanel>
+            <TabPanel>
+              <CourseListContainer courseTable={courseTable} courses={courses} loading={loading || isLoading} />
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+      </Flex>
+    </Box>
+  );
+}
+
+function SideCourseTableContainer({ isDisplay, setIsDisplay, agreeToCreateTableWithoutLogin, setIsLoginWarningOpen }) {
   return (
     <Flex flexDirection={{ base: "column", lg: "row" }} h="100%" w="100%">
       <Flex justifyContent="center" alignItems="center">
@@ -394,7 +396,7 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, agreeToCreateTableW
           variant="ghost"
         />
       </Flex>
-      {renderSideCourseTableContent()}
+      <SideCourseTableContent agreeToCreateTableWithoutLogin={agreeToCreateTableWithoutLogin} setIsLoginWarningOpen={setIsLoginWarningOpen} />
     </Flex>
   );
 }
