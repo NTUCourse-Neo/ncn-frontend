@@ -171,7 +171,6 @@ function CourseResultViewContainer() {
             <CourseInfoRowContainer selectedCourses={coursesInTable} displayTable={displayTable} />
           </Flex>
           <Flex
-            w="100%"
             alignItems="center"
             justifyContent={{ base: "center", lg: "start" }}
             ml={{ base: "0", lg: displayTable ? "24vw" : "48vw" }}
