@@ -68,8 +68,7 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, agree
   const [loading, setLoading] = useState(true);
   const [expired, setExpired] = useState(false);
 
-  // will set courseTimeMap in this function
-  const extract_course_info = (courses) => {
+  const parseCoursesToTimeMap = (courses) => {
     const parsed = [];
     let timeMap = {};
     Object.keys(courses).forEach((key) => {
@@ -79,8 +78,6 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, agree
       timeMap = parseCourseTime(courses[key], timeMap);
       parsed.push(courses[key]._id);
     });
-    // console.log(course_time_tmp);
-    // TODO: only return course_time_tmp.time_map, other data is not needed
     return timeMap;
   };
 
@@ -173,7 +170,7 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, agree
           const courseResult = await dispatch(fetchCourseTableCoursesByIds(courseTable.courses));
           // set states: coursesIds, courseTimeMap, courses
           setCourseIds(courseTable.courses);
-          setCourseTimeMap(extract_course_info(convertArrayToObject(courseResult, "_id")));
+          setCourseTimeMap(parseCoursesToTimeMap(convertArrayToObject(courseResult, "_id")));
           setCourses(convertArrayToObject(courseResult, "_id"));
         } catch (e) {
           toast({
