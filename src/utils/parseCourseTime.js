@@ -18,4 +18,17 @@ const parseCourseTime = (course, initTimeMap) => {
   return timeMap;
 };
 
-export default parseCourseTime;
+const parseCoursesToTimeMap = (courses) => {
+  const parsed = [];
+  let timeMap = {};
+  Object.keys(courses).forEach((key) => {
+    if (parsed.includes(courses[key]._id)) {
+      return;
+    }
+    timeMap = parseCourseTime(courses[key], timeMap);
+    parsed.push(courses[key]._id);
+  });
+  return timeMap;
+};
+
+export { parseCourseTime, parseCoursesToTimeMap };

@@ -20,7 +20,7 @@ import {
   SET_DISPLAY_TAGS,
   SET_HOVER_COURSE,
 } from "constants/action-types";
-import parseCourseTime from "utils/parseCourseTime";
+import { parseCourseTime } from "utils/parseCourseTime";
 
 const initState = {
   search_ids: [], // array of course_id

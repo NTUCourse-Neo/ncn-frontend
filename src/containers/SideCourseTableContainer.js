@@ -39,7 +39,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
 import CourseListContainer from "containers/CourseListContainer";
-import parseCourseTime from "utils/parseCourseTime";
+import { parseCoursesToTimeMap } from "utils/parseCourseTime";
 
 const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
@@ -67,19 +67,6 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, agree
 
   const [loading, setLoading] = useState(true);
   const [expired, setExpired] = useState(false);
-
-  const parseCoursesToTimeMap = (courses) => {
-    const parsed = [];
-    let timeMap = {};
-    Object.keys(courses).forEach((key) => {
-      if (parsed.includes(courses[key]._id)) {
-        return;
-      }
-      timeMap = parseCourseTime(courses[key], timeMap);
-      parsed.push(courses[key]._id);
-    });
-    return timeMap;
-  };
 
   const convertArrayToObject = (array, key) => {
     const initialValue = {};
