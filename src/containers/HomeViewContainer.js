@@ -104,6 +104,102 @@ const newsCard = [
   </Flex>,
 ];
 
+function MobileWarningModal({ isOpen, onOpen, onClose }) {
+  return (
+    <AlertDialog motionPreset="slideInBottom" onClose={onClose} isOpen={isOpen} size="sm" isCentered>
+      <AlertDialogOverlay />
+      <AlertDialogContent>
+        <AlertDialogHeader>溫馨提醒</AlertDialogHeader>
+        <AlertDialogBody>
+          <Text fontWeight="400" color="gray.600">
+            行動裝置介面仍在調整測試中。建議使用電腦瀏覽，能讓您獲得更好的選課體驗。
+          </Text>
+          <Text mt="2" fontWeight="700" color="gray.600">
+            我們正在努力讓 NTUCourse Neo 更加進步，若有任何建議歡迎至
+            <Button leftIcon={<DiscordIcon />} color="#5865F2" size="sm" variant="ghost" onClick={() => window.open("https://discord.gg/M7NrenYEbS")}>
+              Discord
+            </Button>
+            告訴我們 🙏
+          </Text>
+        </AlertDialogBody>
+        <AlertDialogFooter>
+          <Button
+            onClick={() => {
+              onClose();
+              localStorage.setItem("NCN_NO_MOBILE_WARNING", true);
+            }}
+            variant="ghost"
+          >
+            不要再提醒我
+          </Button>
+          <Button
+            colorScheme="blue"
+            ml={3}
+            onClick={() => {
+              onClose();
+            }}
+          >
+            好
+          </Button>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
+
+function NewRegisterModal({ isOpen, onOpen, onClose, isLoading, newUser }) {
+  const navigate = useNavigate();
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} size="lg" closeOnOverlayClick={false} closeOnEsc={false}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>🎉 歡迎新朋友</ModalHeader>
+        <ModalBody>
+          <Flex justifyContent="center" alignItems="center" flexDirection="column" h="100%">
+            {isLoading ? (
+              <Flex flexDirection="row" justifyContent="center" alignItems="center">
+                <BeatLoader color="teal" size={10} />
+                <Text fontSize="3xl" fontWeight="800" color="gray.600" ml={4}>
+                  資料同步中...
+                </Text>
+              </Flex>
+            ) : (
+              <Text fontSize="3xl" fontWeight="800" color="gray.600">
+                哈囉 {newUser ? newUser.name : ""} !
+              </Text>
+            )}
+            <Spacer my="2" />
+            <Text fontSize="xl">
+              感謝您註冊 NTUCourse-Neo 🥰 <br /> 為了讓我們更認識你，請完成你的個人資料。
+            </Text>
+            <Spacer my="4" />
+            <Text fontSize="sm" color="gray.400">
+              或點選稍後再說，可至個人資料頁面編輯資料。
+            </Text>
+          </Flex>
+        </ModalBody>
+        <ModalFooter>
+          <Button variant="ghost" mr={3} onClick={onClose} isLoading={isLoading} spinner={<BeatLoader size={8} color="gray" />}>
+            稍後再說
+          </Button>
+          <Button
+            colorScheme="blue"
+            rightIcon={<FaArrowRight />}
+            isLoading={isLoading}
+            spinner={<BeatLoader size={8} color="white" />}
+            onClick={() => {
+              onClose();
+              navigate("user/info");
+            }}
+          >
+            前往設定
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  );
+}
+
 function HomeViewContainer() {
   const toast = useToast();
   const navigate = useNavigate();
@@ -118,66 +214,12 @@ function HomeViewContainer() {
 
   const scroll_config = { duration: 1000, delay: 50, smooth: true, offset: -60 };
 
-  const handleGoToUserInfoPage = () => {
-    onClose();
-    navigate("user/info");
-  };
-
   useEffect(() => {
     if (isMobile && !localStorage.getItem("NCN_NO_MOBILE_WARNING")) {
       onWarningOpen();
     }
     setPageMeta({ title: `首頁 | NTUCourse Neo`, desc: `首頁 | NTUCourse Neo，全新的臺大選課網站。` });
   }, [isMobile, onWarningOpen]);
-
-  const renderMobileWarning = () => {
-    return (
-      <AlertDialog motionPreset="slideInBottom" onClose={onWarningClose} isOpen={isWarningOpen} size="sm" isCentered>
-        <AlertDialogOverlay />
-        <AlertDialogContent>
-          <AlertDialogHeader>溫馨提醒</AlertDialogHeader>
-          <AlertDialogBody>
-            <Text fontWeight="400" color="gray.600">
-              行動裝置介面仍在調整測試中。建議使用電腦瀏覽，能讓您獲得更好的選課體驗。
-            </Text>
-            <Text mt="2" fontWeight="700" color="gray.600">
-              我們正在努力讓 NTUCourse Neo 更加進步，若有任何建議歡迎至
-              <Button
-                leftIcon={<DiscordIcon />}
-                color="#5865F2"
-                size="sm"
-                variant="ghost"
-                onClick={() => window.open("https://discord.gg/M7NrenYEbS")}
-              >
-                Discord
-              </Button>
-              告訴我們 🙏
-            </Text>
-          </AlertDialogBody>
-          <AlertDialogFooter>
-            <Button
-              onClick={() => {
-                onWarningClose();
-                localStorage.setItem("NCN_NO_MOBILE_WARNING", true);
-              }}
-              variant="ghost"
-            >
-              不要再提醒我
-            </Button>
-            <Button
-              colorScheme="blue"
-              ml={3}
-              onClick={() => {
-                onWarningClose();
-              }}
-            >
-              好
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    );
-  };
 
   // refactor API call to redux action later
   useEffect(() => {
@@ -229,63 +271,10 @@ function HomeViewContainer() {
     registerNewUserToDB();
   }, [user, isLoading, isAuthenticated]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const renderNewRegisterModal = () => {
-    return (
-      <>
-        <Modal isOpen={isOpen} onClose={onClose} size="lg" closeOnOverlayClick={false} closeOnEsc={false}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>🎉 歡迎新朋友</ModalHeader>
-            <ModalBody>
-              <Flex justifyContent="center" alignItems="center" flexDirection="column" h="100%">
-                {isRegistering ? (
-                  <Flex flexDirection="row" justifyContent="center" alignItems="center">
-                    <BeatLoader color="teal" size={10} />
-                    <Text fontSize="3xl" fontWeight="800" color="gray.600" ml={4}>
-                      資料同步中...
-                    </Text>
-                  </Flex>
-                ) : (
-                  <Text fontSize="3xl" fontWeight="800" color="gray.600">
-                    哈囉 {user ? user.name : ""} !
-                  </Text>
-                )}
-                <Spacer my="2" />
-                <Text fontSize="xl">
-                  感謝您註冊 NTUCourse-Neo 🥰 <br /> 為了讓我們更認識你，請完成你的個人資料。
-                </Text>
-                <Spacer my="4" />
-                <Text fontSize="sm" color="gray.400">
-                  或點選稍後再說，可至個人資料頁面編輯資料。
-                </Text>
-              </Flex>
-            </ModalBody>
-            <ModalFooter>
-              <Button variant="ghost" mr={3} onClick={onClose} isLoading={isRegistering} spinner={<BeatLoader size={8} color="gray" />}>
-                稍後再說
-              </Button>
-              <Button
-                colorScheme="blue"
-                rightIcon={<FaArrowRight />}
-                isLoading={isRegistering}
-                spinner={<BeatLoader size={8} color="white" />}
-                onClick={() => {
-                  handleGoToUserInfoPage();
-                }}
-              >
-                前往設定
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-      </>
-    );
-  };
-
   return (
     <Box maxW="screen-md" mx="auto" overflow="visible" px="64px" pt="64px">
-      {renderNewRegisterModal()}
-      {renderMobileWarning()}
+      <NewRegisterModal isOpen={isOpen} onOpen={onOpen} onClose={onClose} isLoading={isRegistering} newUser={user} />
+      <MobileWarningModal isOpen={isWarningOpen} onClose={onWarningClose} onOpen={onWarningOpen} />
       <Flex justifyContent="space-between" mb={4} grow="1" flexDirection="column" alignItems="center">
         <Spacer />
         <Flex justifyContent={["center", "space-between"]} flexDirection={{ base: "column-reverse", lg: "row" }} alignItems="center" w="90vw">
