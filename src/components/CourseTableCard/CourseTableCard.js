@@ -58,7 +58,7 @@ function CourseBox({ courseId, courseData, isOpen, hoverId }) {
   );
 }
 
-function CourseTableCard({ courseTime, courseData, day, interval, grow, hoverId, isHover }) {
+function CourseTableCard({ courseTime, courseData, day, interval, hoverId, isHover }) {
   const dispatch = useDispatch();
   const course_table = useSelector((state) => state.course_table);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -163,7 +163,7 @@ function CourseTableCard({ courseTime, courseData, day, interval, grow, hoverId,
   // set state and force re-render
   useEffect(() => {
     setCourseOrder(courseTime);
-  }, [courseTime, courseData, day, interval, grow, hoverId, isHover]); // depend on all props
+  }, [courseTime, courseData, day, interval, hoverId, isHover]); // depend on all props
 
   // debugger
   // useEffect(()=>{console.log('CourseTableCard--courseOrder: ', courseOrder);},[courseOrder])
@@ -177,7 +177,7 @@ function CourseTableCard({ courseTime, courseData, day, interval, grow, hoverId,
         borderRadius="lg"
         boxShadow="lg"
         p="2"
-        w={grow ? "100%" : { base: "14vw", md: "12vw", lg: "4vw" }}
+        w={"100%"}
         h="3vh"
         mb="1"
         border="2px"
@@ -206,7 +206,7 @@ function CourseTableCard({ courseTime, courseData, day, interval, grow, hoverId,
       >
         <PopoverTrigger>
           <Flex
-            w={grow ? "100%" : { base: "14vw", md: "12vw", lg: "4vw" }}
+            w={"100%"}
             justifyContent="center"
             alignItems="center"
             flexDirection="column"

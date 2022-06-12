@@ -14,11 +14,10 @@ function CourseTableContainer({ courses, loading, courseTimes }) {
   const hoveredCourseTime = useSelector((state) => state.hoveredCourseTime);
 
   const renderCourseTableCard = useCallback(
-    (course, hover, day, interval, grow) => {
+    (course, hover, day, interval) => {
       if (course.time_map[day][interval].includes(hover.time_map[day][interval][0])) {
         return (
           <CourseTableCard
-            grow={grow}
             hoverId={hover.time_map[day][interval][0]}
             courseTime={course.time_map[day][interval]}
             courseData={courses}
@@ -30,14 +29,13 @@ function CourseTableContainer({ courses, loading, courseTimes }) {
       return (
         <>
           <CourseTableCard
-            grow={grow}
             isHover
             courseTime={course.time_map[day][interval]}
             courseData={hover.course_data}
             interval={interval}
             day={weekdays_map[day]}
           />
-          <CourseTableCard grow={grow} courseTime={course.time_map[day][interval]} courseData={courses} interval={interval} day={weekdays_map[day]} />
+          <CourseTableCard courseTime={course.time_map[day][interval]} courseData={courses} interval={interval} day={weekdays_map[day]} />
         </>
       );
     },
@@ -45,7 +43,7 @@ function CourseTableContainer({ courses, loading, courseTimes }) {
   );
 
   const renderIntervalContent = useCallback(
-    (days, interval, i, grow) => {
+    (days, interval, i) => {
       return days.map((day, j) => {
         if (loading) {
           return (
@@ -58,31 +56,18 @@ function CourseTableContainer({ courses, loading, courseTimes }) {
         }
         if (courseTimes.time_map && day in courseTimes.time_map && interval in courseTimes.time_map[day]) {
           if (hoveredCourse && hoveredCourseTime && day in hoveredCourseTime.time_map && interval in hoveredCourseTime.time_map[day]) {
-            return <Td key={`${day}-${i}-${j}`}>{renderCourseTableCard(courseTimes, hoveredCourseTime, day, interval, grow)}</Td>;
+            return <Td key={`${day}-${i}-${j}`}>{renderCourseTableCard(courseTimes, hoveredCourseTime, day, interval)}</Td>;
           }
           return (
             <Td key={`${day}-${i}-${j}`}>
-              <CourseTableCard
-                grow={grow}
-                courseTime={courseTimes.time_map[day][interval]}
-                courseData={courses}
-                interval={interval}
-                day={weekdays_map[day]}
-              />
+              <CourseTableCard courseTime={courseTimes.time_map[day][interval]} courseData={courses} interval={interval} day={weekdays_map[day]} />
             </Td>
           );
         }
         if (hoveredCourse && hoveredCourseTime && day in hoveredCourseTime.time_map && interval in hoveredCourseTime.time_map[day]) {
           return (
             <Td key={`${day}-${i}-${j}`}>
-              <CourseTableCard
-                grow={grow}
-                isHover
-                courseTime={[]}
-                courseData={hoveredCourseTime.course_data}
-                interval={interval}
-                day={weekdays_map[day]}
-              />
+              <CourseTableCard isHover courseTime={[]} courseData={hoveredCourseTime.course_data} interval={interval} day={weekdays_map[day]} />
             </Td>
           );
         }
@@ -128,9 +113,9 @@ function CourseTableContainer({ courses, loading, courseTimes }) {
       <Tbody>
         {interval.map((interval, i) => {
           if (activeDayCol === 0) {
-            return <Tr key={`${interval}-${i}`}>{renderIntervalContent(days, interval, i, false)}</Tr>;
+            return <Tr key={`${interval}-${i}`}>{renderIntervalContent(days, interval, i)}</Tr>;
           }
-          return <Tr key={`${interval}-${i}`}>{renderIntervalContent([activeDayCol], interval, i, true)}</Tr>;
+          return <Tr key={`${interval}-${i}`}>{renderIntervalContent([activeDayCol], interval, i)}</Tr>;
         })}
       </Tbody>
     </Table>
