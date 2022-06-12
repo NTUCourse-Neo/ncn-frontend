@@ -53,6 +53,58 @@ const TextInput = forwardRef((props, ref) => {
   );
 });
 
+function CourseTableNameEditor({ isOpen, onOpen, onClose, handleSave, defaultName }) {
+  const firstFieldRef = useRef(null);
+  return (
+    <Popover isOpen={isOpen} initialFocusRef={firstFieldRef} onOpen={onOpen} onClose={onClose}>
+      <PopoverTrigger>
+        <Button size="sm" variant="solid" colorScheme="gray" p="2">
+          <FaRegEdit size={22} />
+        </Button>
+      </PopoverTrigger>
+      <Flex zIndex={2000}>
+        <PopoverContent>
+          <FocusLock returnFocus persistentFocus={false}>
+            <PopoverArrow />
+            <PopoverCloseButton />
+            <PopoverHeader color="gray.500" fontWeight="700">
+              課表設定
+            </PopoverHeader>
+            <PopoverBody p={5}>
+              <Stack spacing={4}>
+                <TextInput
+                  label="課表名稱"
+                  id="table_name"
+                  ref={firstFieldRef}
+                  defaultValue={defaultName}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleSave(firstFieldRef.current.value);
+                    }
+                  }}
+                />
+                <ButtonGroup d="flex" justifyContent="flex-end">
+                  <Button variant="outline" onClick={onClose}>
+                    Cancel
+                  </Button>
+                  <Button
+                    colorScheme="teal"
+                    onClick={() => {
+                      handleSave(firstFieldRef.current.value);
+                    }}
+                  >
+                    Save
+                  </Button>
+                </ButtonGroup>
+              </Stack>
+            </PopoverBody>
+          </FocusLock>
+        </PopoverContent>
+      </Flex>
+    </Popover>
+  );
+}
+
 function SideCourseTableContainer({ isDisplay, setIsDisplay, agreeToCreateTableWithoutLogin, setIsLoginWarningOpen }) {
   const navigate = useNavigate();
   const { user, isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
@@ -67,6 +119,8 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, agreeToCreateTableW
 
   const [loading, setLoading] = useState(true);
   const [expired, setExpired] = useState(false);
+
+  const { onOpen, onClose, isOpen } = useDisclosure();
 
   const convertArrayToObject = (array, key) => {
     const initialValue = {};
@@ -223,11 +277,8 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, agreeToCreateTableW
     }
   };
 
-  const { onOpen, onClose, isOpen } = useDisclosure();
-  const firstFieldRef = useRef(null);
-  const handleSave = async () => {
+  const handleSave = async (new_table_name) => {
     onClose();
-    const new_table_name = firstFieldRef.current.value;
     try {
       const res_table = await dispatch(
         patchCourseTable(courseTable._id, new_table_name, courseTable.user_id, courseTable.expire_ts, courseTable.courses)
@@ -261,56 +312,6 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, agreeToCreateTableW
     }
   };
 
-  const renderEditName = () => {
-    return (
-      <Popover isOpen={isOpen} initialFocusRef={firstFieldRef} onOpen={onOpen} onClose={onClose}>
-        <PopoverTrigger>
-          <Button size="sm" variant="solid" colorScheme="gray" p="2">
-            <FaRegEdit size={22} />
-          </Button>
-        </PopoverTrigger>
-        <Flex zIndex={2000}>
-          <PopoverContent>
-            <FocusLock returnFocus persistentFocus={false}>
-              <PopoverArrow />
-              <PopoverCloseButton />
-              <PopoverHeader color="gray.500" fontWeight="700">
-                課表設定
-              </PopoverHeader>
-              <PopoverBody p={5}>
-                <Stack spacing={4}>
-                  <TextInput
-                    label="課表名稱"
-                    id="table_name"
-                    ref={firstFieldRef}
-                    defaultValue={courseTable.name}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        handleSave();
-                      }
-                    }}
-                  />
-                  <ButtonGroup d="flex" justifyContent="flex-end">
-                    <Button variant="outline" onClick={onClose}>
-                      Cancel
-                    </Button>
-                    <Button
-                      colorScheme="teal"
-                      onClick={() => {
-                        handleSave();
-                      }}
-                    >
-                      Save
-                    </Button>
-                  </ButtonGroup>
-                </Stack>
-              </PopoverBody>
-            </FocusLock>
-          </PopoverContent>
-        </Flex>
-      </Popover>
-    );
-  };
   const renderSideCourseTableContent = () => {
     if ((courseTable === null || expired === true) && !(loading || isLoading)) {
       return (
@@ -349,7 +350,7 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, agreeToCreateTableW
                   <Text fontWeight="700" fontSize={["xl", "2xl", "3xl"]} color="gray.600" mr="4">
                     {courseTable.name}
                   </Text>
-                  {renderEditName()}
+                  <CourseTableNameEditor isOpen={isOpen} onClose={onClose} onOpen={onOpen} handleSave={handleSave} defaultName={courseTable.name} />
                   <Spacer mx="8" />
                   <TabList>
                     <Tab>時間表</Tab>
