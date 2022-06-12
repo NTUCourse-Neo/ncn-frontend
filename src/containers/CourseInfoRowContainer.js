@@ -29,10 +29,14 @@ function CourseInfoRowContainer({ displayTable }) {
             w={{ base: "90vw", md: "100%" }}
             key={index}
             onMouseEnter={() => {
-              dispatch(setHoveredCourse(info));
+              if (displayTable) {
+                dispatch(setHoveredCourse(info));
+              }
             }}
             onMouseLeave={() => {
-              dispatch(setHoveredCourse(null));
+              if (displayTable) {
+                dispatch(setHoveredCourse(null));
+              }
             }}
           >
             <CourseInfoRow
