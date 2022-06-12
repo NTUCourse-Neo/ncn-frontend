@@ -101,8 +101,6 @@ function CourseResultViewContainer() {
   const [isLoginWarningOpen, setIsLoginWarningOpen] = useState(false);
   const [agreeToCreateTableWithoutLogin, setAgreeToCreateTableWithoutLogin] = useState(false);
 
-  const [coursesInTable, setCoursesInTable] = useState([]);
-
   useEffect(() => {
     if (isHigherThan1325) {
       dispatch(setBatchSize(25));
@@ -166,7 +164,7 @@ function CourseResultViewContainer() {
                 {search_loading ? "載入中" : `共找到 ${total_count} 筆結果`}
               </Text>
             </Flex>
-            <CourseInfoRowContainer selectedCourses={coursesInTable} displayTable={displayTable} />
+            <CourseInfoRowContainer displayTable={displayTable} />
           </Flex>
           <Flex
             alignItems="center"
@@ -221,7 +219,6 @@ function CourseResultViewContainer() {
             <SideCourseTableContainer
               isDisplay={displayTable}
               setIsDisplay={setDisplayTable}
-              setCourseIds={setCoursesInTable}
               setIsLoginWarningOpen={setIsLoginWarningOpen}
               agreeToCreateTableWithoutLogin={agreeToCreateTableWithoutLogin}
             />

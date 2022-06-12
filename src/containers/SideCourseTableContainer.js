@@ -53,7 +53,7 @@ const TextInput = forwardRef((props, ref) => {
   );
 });
 
-function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, agreeToCreateTableWithoutLogin, setIsLoginWarningOpen }) {
+function SideCourseTableContainer({ isDisplay, setIsDisplay, agreeToCreateTableWithoutLogin, setIsLoginWarningOpen }) {
   const navigate = useNavigate();
   const { user, isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const toast = useToast();
@@ -155,8 +155,7 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, agree
         // console.log("course_table: ",courseTable);
         try {
           const courseResult = await dispatch(fetchCourseTableCoursesByIds(courseTable.courses));
-          // set states: coursesIds, courseTimeMap, courses
-          setCourseIds(courseTable.courses);
+          // set states: courseTimeMap, courses
           setCourseTimeMap(parseCoursesToTimeMap(convertArrayToObject(courseResult, "_id")));
           setCourses(convertArrayToObject(courseResult, "_id"));
         } catch (e) {

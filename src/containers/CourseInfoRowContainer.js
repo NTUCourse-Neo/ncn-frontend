@@ -1,13 +1,18 @@
-import { React } from "react";
+import { useMemo } from "react";
 import CourseInfoRow from "components/CourseInfoRow";
 import { Box, Flex, Spacer, Accordion } from "@chakra-ui/react";
 import { useSelector, useDispatch } from "react-redux";
 import { setHoveredCourse } from "actions/index";
 
-function CourseInfoRowContainer({ selectedCourses, displayTable }) {
+function CourseInfoRowContainer({ displayTable }) {
   const userInfo = useSelector((state) => state.user);
   const displayTags = useSelector((state) => state.display_tags);
   const courseInfo = useSelector((state) => state.search_results);
+  const courseTable = useSelector((state) => state.course_table);
+  const selectedCourses = useMemo(() => {
+    return courseTable?.courses;
+  }, [courseTable]);
+
   const dispatch = useDispatch();
 
   // const hide_scroll_bar = {
@@ -34,7 +39,7 @@ function CourseInfoRowContainer({ selectedCourses, displayTable }) {
               id={info["id"]}
               index={index}
               courseInfo={info}
-              selected={selectedCourses.includes(info._id)}
+              selected={selectedCourses && selectedCourses.includes(info._id)}
               displayTags={displayTags}
               displayTable={displayTable}
               isfavorite={userInfo === null ? false : userInfo.db.favorites.includes(info._id)}
