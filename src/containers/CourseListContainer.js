@@ -227,7 +227,10 @@ function CourseListContainer({ courseTable, courses, loading }) {
       </Flex>
       <SortableContainer onSortEnd={onSortEnd} lockAxis="y" useDragHandle helperClass="sortableHelper">
         {courseListForSort.map((key, index) => {
-          const course = courses[key];
+          const course = courses?.[key];
+          if (!course) {
+            return null;
+          }
           return (
             <SortableElement
               key={key}
