@@ -2,9 +2,9 @@ import React from "react";
 import { Badge, Flex, Spacer, Text, VStack, Icon } from "@chakra-ui/react";
 import { IoMdOpen } from "react-icons/io";
 
-function PTTContentRowContainer({ info, height }) {
+function PTTContentRowContainer({ info, ...restProps }) {
   return (
-    <Flex w="100%" h={height} mb="0" overflow="auto" flexDirection="column">
+    <Flex w="100%" mb="0" overflow="auto" flexDirection="column" {...restProps}>
       <VStack>
         {info.map((data) => (
           <Flex
