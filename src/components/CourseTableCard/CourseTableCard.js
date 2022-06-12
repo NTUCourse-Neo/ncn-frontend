@@ -58,7 +58,7 @@ function CourseBox({ courseId, courseData, isOpen, hoverId }) {
   );
 }
 
-function CourseTableCard({ courseInitialOrder, courseData, day, interval, hoverId, isHover }) {
+function CourseTableCard({ courseInitialOrder, courseData, day, interval, hoverId }) {
   const dispatch = useDispatch();
   const course_table = useSelector((state) => state.course_table);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -163,34 +163,12 @@ function CourseTableCard({ courseInitialOrder, courseData, day, interval, hoverI
   // set state and force re-render
   useEffect(() => {
     setCourseOrder(courseInitialOrder);
-  }, [courseInitialOrder, courseData, day, interval, hoverId, isHover]); // depend on all props
+  }, [courseInitialOrder, courseData, day, interval, hoverId]); // depend on all props
 
   // debugger
   // useEffect(()=>{console.log('CourseTableCard--courseOrder: ', courseOrder);},[courseOrder])
   // useEffect(()=>{console.log('CourseTableCard--courseList: ', courseList);},[courseList])
   // useEffect(()=>{console.log('CourseTableCard--prepareToRemoveCourseId: ', prepareToRemoveCourseId);},[prepareToRemoveCourseId])
-
-  if (isHover) {
-    const course = courseData;
-    return (
-      <div style={{ boxSizing: "border-box", justifyContent: "center", alignItems: "center" }}>
-        <Button
-          borderRadius="lg"
-          boxShadow="lg"
-          w={"100%"}
-          p={0}
-          h="3vh"
-          border="2px"
-          borderColor={hash_to_color_hex(course._id, 0.7)}
-          borderStyle="dashed"
-        >
-          <Text fontSize="xs" width={"100%"} align="center" isTruncated>
-            {course.course_name}
-          </Text>
-        </Button>
-      </div>
-    );
-  }
 
   return (
     <>

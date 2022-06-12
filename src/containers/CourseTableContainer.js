@@ -1,9 +1,32 @@
-import { Table, Thead, Tbody, Tr, Th, Td, Flex, Center, Box, Text, Skeleton, Tooltip } from "@chakra-ui/react";
+import { Table, Thead, Tbody, Tr, Th, Td, Flex, Center, Box, Text, Skeleton, Tooltip, Button } from "@chakra-ui/react";
 import * as React from "react";
 import { useState, useCallback } from "react";
 import CourseTableCard from "components/CourseTableCard/CourseTableCard";
 import { weekdays_map } from "data/mapping_table";
 import { useSelector } from "react-redux";
+import { hash_to_color_hex } from "utils/colorAgent";
+
+function HoverCourseIndicator({ hoveredCourse }) {
+  const course = hoveredCourse;
+  return (
+    <div style={{ boxSizing: "border-box", justifyContent: "center", alignItems: "center" }}>
+      <Button
+        borderRadius="lg"
+        boxShadow="lg"
+        w={"100%"}
+        p={0}
+        h="3vh"
+        border="2px"
+        borderColor={hash_to_color_hex(course._id, 0.7)}
+        borderStyle="dashed"
+      >
+        <Text fontSize="xs" width={"100%"} align="center" isTruncated>
+          {course.course_name}
+        </Text>
+      </Button>
+    </div>
+  );
+}
 
 function CourseTableContainer({ courses, loading, courseTimeMap }) {
   const days = ["1", "2", "3", "4", "5"];
@@ -28,13 +51,7 @@ function CourseTableContainer({ courses, loading, courseTimeMap }) {
       }
       return (
         <>
-          <CourseTableCard
-            isHover
-            courseInitialOrder={courseTimeMap[day][interval]}
-            courseData={hoveredCourse}
-            interval={interval}
-            day={weekdays_map[day]}
-          />
+          <HoverCourseIndicator hoveredCourse={hoveredCourse} />
           <CourseTableCard courseInitialOrder={courseTimeMap[day][interval]} courseData={courses} interval={interval} day={weekdays_map[day]} />
         </>
       );
@@ -67,7 +84,7 @@ function CourseTableContainer({ courses, loading, courseTimeMap }) {
         if (hoveredCourse && hoveredCourseTimeMap && day in hoveredCourseTimeMap && interval in hoveredCourseTimeMap[day]) {
           return (
             <Td key={`${day}-${i}-${j}`}>
-              <CourseTableCard isHover courseInitialOrder={[]} courseData={hoveredCourse} interval={interval} day={weekdays_map[day]} />
+              <HoverCourseIndicator hoveredCourse={hoveredCourse} />
             </Td>
           );
         }
