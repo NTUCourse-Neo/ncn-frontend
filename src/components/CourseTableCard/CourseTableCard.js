@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { arrayMoveImmutable as arrayMove } from "array-move";
 import "components/CourseTableCard/CourseTableCard.css";
 import {
@@ -69,8 +69,8 @@ function CourseTableCard({ courseInitialOrder, courseData, day, interval, hoverI
         when open Popover, overwrite the courseList by courseOrder
         when click save, overwrite the courseOrder by courseList
     */
-  // initial state or sorting result
-  const [courseOrder, setCourseOrder] = useState(courseInitialOrder);
+  // initial order of courses
+  const courseOrder = courseInitialOrder;
   // temp state (buffer), used for decide the NEW course order / dispatch to server, when press "save"
   const [courseList, setCourseList] = useState([]);
   const [prepareToRemoveCourseId, setPrepareToRemoveCourseId] = useState([]);
@@ -159,16 +159,6 @@ function CourseTableCard({ courseInitialOrder, courseData, day, interval, hoverI
     setPrepareToRemoveCourseId([]);
     setCourseList([]);
   };
-
-  // set state and force re-render
-  useEffect(() => {
-    setCourseOrder(courseInitialOrder);
-  }, [courseInitialOrder, courseData, day, interval, hoverId]); // depend on all props
-
-  // debugger
-  // useEffect(()=>{console.log('CourseTableCard--courseOrder: ', courseOrder);},[courseOrder])
-  // useEffect(()=>{console.log('CourseTableCard--courseList: ', courseList);},[courseList])
-  // useEffect(()=>{console.log('CourseTableCard--prepareToRemoveCourseId: ', prepareToRemoveCourseId);},[prepareToRemoveCourseId])
 
   return (
     <>
