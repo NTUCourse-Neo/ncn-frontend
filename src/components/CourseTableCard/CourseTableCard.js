@@ -46,8 +46,8 @@ function CourseBox({ courseId, courseData, isOpen, hoverId }) {
           p="2"
           w="100%"
           h="3vh"
-          border={hoverId === courseId ? "2px" : ""}
-          borderColor={hash_to_color_hex(course._id, 0.5)}
+          border={"2px"}
+          borderColor={hoverId === courseId ? hash_to_color_hex(course._id, 0.5) : "transparent"}
         >
           <Text fontSize="xs" isTruncated>
             {` ${course.course_name} `}
