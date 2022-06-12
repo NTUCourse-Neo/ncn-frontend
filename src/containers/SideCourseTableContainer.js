@@ -62,7 +62,6 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, agree
   const userInfo = useSelector((state) => state.user);
 
   // some local states for handling course data
-  // const courseIds = props.courseIds;
   const [courses, setCourses] = useState({}); // dictionary of Course objects using courseId as key
   const [courseTimes, setCourseTimes] = useState({}); // coursesTime is a dictionary of courseIds and their corresponding time in time table
 
@@ -86,6 +85,7 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, agree
       course_time_tmp.parsed.push(courses[key]._id);
     });
     // console.log(course_time_tmp);
+    // TODO: only return course_time_tmp.time_map, other data is not needed
     return course_time_tmp;
   };
 
@@ -244,11 +244,6 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, agree
       }
     }
   };
-
-  // debugger
-  // useEffect(() => console.log('courseTimes: ',courseTimes), [courseTimes]);
-  // useEffect(() => console.log('courses: ',courses), [courses]);
-  // useEffect(() => console.log('courseIds: ',courseIds), [courseIds]);
 
   const { onOpen, onClose, isOpen } = useDisclosure();
   const firstFieldRef = useRef(null);

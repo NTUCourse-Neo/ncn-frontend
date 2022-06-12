@@ -101,8 +101,6 @@ function CourseResultViewContainer() {
   const [isLoginWarningOpen, setIsLoginWarningOpen] = useState(false);
   const [agreeToCreateTableWithoutLogin, setAgreeToCreateTableWithoutLogin] = useState(false);
 
-  // State for the course result row that is been hovered now.
-
   const [coursesInTable, setCoursesInTable] = useState([]);
 
   useEffect(() => {
@@ -223,7 +221,6 @@ function CourseResultViewContainer() {
             <SideCourseTableContainer
               isDisplay={displayTable}
               setIsDisplay={setDisplayTable}
-              courseIds={coursesInTable}
               setCourseIds={setCoursesInTable}
               setIsLoginWarningOpen={setIsLoginWarningOpen}
               agreeToCreateTableWithoutLogin={agreeToCreateTableWithoutLogin}
