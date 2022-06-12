@@ -173,22 +173,22 @@ function CourseTableCard({ courseTime, courseData, day, interval, hoverId, isHov
   if (isHover) {
     const course = courseData;
     return (
-      <Button
-        borderRadius="lg"
-        boxShadow="lg"
-        p="2"
-        w={"100%"}
-        h="3vh"
-        mb="1"
-        border="2px"
-        borderColor={hash_to_color_hex(course._id, 0.7)}
-        borderStyle="dashed"
-      >
-        <Text fontSize="xs" isTruncated>
-          {" "}
-          {course.course_name}{" "}
-        </Text>
-      </Button>
+      <div style={{ boxSizing: "border-box", justifyContent: "center", alignItems: "center" }}>
+        <Button
+          borderRadius="lg"
+          boxShadow="lg"
+          w={"100%"}
+          p={0}
+          h="3vh"
+          border="2px"
+          borderColor={hash_to_color_hex(course._id, 0.7)}
+          borderStyle="dashed"
+        >
+          <Text fontSize="xs" width={"100%"} align="center" isTruncated>
+            {course.course_name}
+          </Text>
+        </Button>
+      </div>
     );
   }
 
