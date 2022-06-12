@@ -10,7 +10,6 @@ import {
   Input,
   Button,
   useToast,
-  Icon,
   HStack,
   AlertDialog,
   AlertDialogBody,
@@ -45,6 +44,142 @@ import ReCAPTCHA from "react-google-recaptcha";
 import useCountDown from "react-countdown-hook";
 import setPageMeta from "utils/seo";
 
+function ConnectedAccountTags({ userInfo }) {
+  const connected_accounts = userInfo.auth0.identities;
+  return connected_accounts.map((account, index) => {
+    let user_name = null;
+    let icon = null;
+    if (account.provider.includes("google")) {
+      user_name = account.profileData ? account.profileData.name : userInfo.auth0.email;
+      icon = <FaGoogle />;
+    } else if (account.provider.includes("github")) {
+      user_name = account.profileData ? account.profileData.name : userInfo.auth0.name;
+      icon = <FaGithub />;
+    } else if (account.provider.includes("facebook")) {
+      icon = <FaFacebook />;
+      user_name = account.profileData ? account.profileData.name : userInfo.auth0.name;
+    }
+    if (!icon) {
+      return null;
+    }
+    return (
+      <Flex key={index} alignItems="center" justifyContent="center" borderRadius="lg" border="2px" borderColor="gray.300" p="2" px="4" mr="2">
+        <Flex w={6} h={6} color="gray.500" justifyContent={"center"} alignItems="center">
+          {icon}
+        </Flex>
+        <Text ml="2" fontWeight="800" color="gray.600">
+          {user_name}
+        </Text>
+      </Flex>
+    );
+  });
+}
+
+function DeleteDialog({ isAlertOpen, setIsAlertOpen, deleteMode, setDeleteMode }) {
+  const cancelRef = useRef();
+  const toast = useToast();
+  const dispatch = useDispatch();
+  const { user, logout, getAccessTokenSilently } = useAuth0();
+  const userInfo = useSelector((state) => state.user);
+
+  const [confirm, setConfirm] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const onClose = () => {
+    setIsAlertOpen(false);
+    setDeleteMode(null);
+    setConfirm("");
+  };
+
+  const clearUserProfile = async () => {
+    try {
+      const token = await getAccessTokenSilently();
+      await dispatch(deleteUserProfile(token, userInfo.db._id));
+      await dispatch(registerNewUser(token, user.email));
+    } catch (e) {
+      toast({
+        title: "刪除用戶資料失敗.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const clearUserAccount = async () => {
+    try {
+      const token = await getAccessTokenSilently();
+      await dispatch(deleteUserAccount(token, userInfo.db._id));
+    } catch (e) {
+      toast({
+        title: "刪除用戶帳號失敗.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const onDelete = async () => {
+    // do API calling...
+    setIsDeleting(true);
+    if (deleteMode === "User Profile") {
+      await clearUserProfile();
+      onClose();
+    } else if (deleteMode === "User Account") {
+      await clearUserAccount();
+      onClose();
+      logout();
+    } else {
+      onClose();
+    }
+    setIsDeleting(false);
+  };
+
+  const confirmMessage = `我確定`;
+
+  return (
+    <AlertDialog isOpen={isAlertOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
+      <AlertDialogOverlay>
+        <AlertDialogContent>
+          <AlertDialogHeader fontSize="lg" fontWeight="bold">
+            {deleteMode === "User Profile" ? "重設個人資料" : "徹底刪除帳號"}
+          </AlertDialogHeader>
+
+          <AlertDialogBody>
+            <Alert status="warning">
+              <AlertIcon boxSize="24px" as={FaExclamationTriangle} />
+              但咧，你確定嗎？此動作將無法回復！
+            </Alert>
+            <Divider mt="3" />
+            <Text fontSize="md" mt="2" color="gray.500" fontWeight="bold">
+              請輸入 "{confirmMessage}"
+            </Text>
+            <Input
+              mt="2"
+              variant="filled"
+              placeholder=""
+              onChange={(e) => {
+                setConfirm(e.currentTarget.value);
+              }}
+              isInvalid={confirm !== confirmMessage && confirm !== ""}
+            />
+          </AlertDialogBody>
+
+          <AlertDialogFooter>
+            <Button ref={cancelRef} onClick={onClose}>
+              Cancel
+            </Button>
+            <Button colorScheme="red" onClick={onDelete} ml={3} disabled={confirm !== confirmMessage} isLoading={isDeleting}>
+              Delete
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialogOverlay>
+    </AlertDialog>
+  );
+}
+
 function UserInfoContainer() {
   const navigate = useNavigate();
   const toast = useToast();
@@ -52,7 +187,7 @@ function UserInfoContainer() {
   const userInfo = useSelector((state) => state.user);
   const deptOptions = dept_list_bachelor_only.map((dept) => ({ value: dept.full_name, label: dept.code + " " + dept.full_name }));
 
-  const { user, isLoading, logout, getAccessTokenSilently } = useAuth0();
+  const { user, isLoading, getAccessTokenSilently } = useAuth0();
   const userLoading = isLoading || !userInfo;
 
   // states for updating userInfo
@@ -64,11 +199,8 @@ function UserInfoContainer() {
   const [saveLoading, setSaveLoading] = useState(false);
 
   // alert dialog states
-  const cancelRef = useRef();
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [deleteMode, setDeleteMode] = useState(null);
-  const [confirm, setConfirm] = useState("");
-  const [isDeleting, setIsDeleting] = useState(false);
 
   const [allowSendOTP, setAllowSendOTP] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
@@ -261,145 +393,6 @@ function UserInfoContainer() {
     }
   }, [userInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const clearUserProfile = async () => {
-    try {
-      const token = await getAccessTokenSilently();
-      await dispatch(deleteUserProfile(token, userInfo.db._id));
-      await dispatch(registerNewUser(token, user.email));
-    } catch (e) {
-      toast({
-        title: "刪除用戶資料失敗.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-
-  const clearUserAccount = async () => {
-    try {
-      const token = await getAccessTokenSilently();
-      await dispatch(deleteUserAccount(token, userInfo.db._id));
-    } catch (e) {
-      toast({
-        title: "刪除用戶帳號失敗.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-
-  const renderAlertDialog = () => {
-    //console.log('deleteMode: ', deleteMode);
-
-    const onClose = () => {
-      setIsAlertOpen(false);
-      setDeleteMode(null);
-      setConfirm("");
-    };
-
-    const onDelete = async () => {
-      // do API calling...
-      setIsDeleting(true);
-      if (deleteMode === "User Profile") {
-        await clearUserProfile();
-        onClose();
-      } else if (deleteMode === "User Account") {
-        await clearUserAccount();
-        onClose();
-        logout();
-      } else {
-        onClose();
-      }
-      setIsDeleting(false);
-    };
-
-    const confirmMessage = `我確定`;
-
-    return (
-      <AlertDialog isOpen={isAlertOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
-        <AlertDialogOverlay>
-          <AlertDialogContent>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              {deleteMode === "User Profile" ? "重設個人資料" : "徹底刪除帳號"}
-            </AlertDialogHeader>
-
-            <AlertDialogBody>
-              <Alert status="warning">
-                <AlertIcon boxSize="24px" as={FaExclamationTriangle} />
-                但咧，你確定嗎？此動作將無法回復！
-              </Alert>
-              <Divider mt="3" />
-              <Text fontSize="md" mt="2" color="gray.500" fontWeight="bold">
-                請輸入 "{confirmMessage}"
-              </Text>
-              <Input
-                mt="2"
-                variant="filled"
-                placeholder=""
-                onChange={(e) => {
-                  setConfirm(e.currentTarget.value);
-                }}
-                isInvalid={confirm !== confirmMessage && confirm !== ""}
-              />
-            </AlertDialogBody>
-
-            <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={onClose}>
-                Cancel
-              </Button>
-              <Button colorScheme="red" onClick={onDelete} ml={3} disabled={confirm !== confirmMessage} isLoading={isDeleting}>
-                Delete
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
-      </AlertDialog>
-    );
-  };
-
-  const renderConnectedSocialAccounts = () => {
-    // console.log("userInfo: ", userInfo.auth0);
-    const connected_accounts = userInfo.auth0.identities;
-    return connected_accounts.map((account, index) => {
-      // console.log("account: ",account);
-      if (account.provider.includes("google")) {
-        const user_name = account.profileData ? account.profileData.name : userInfo.auth0.email;
-        return (
-          <Flex key={index} alignItems="center" justifyContent="center" borderRadius="lg" border="2px" borderColor="gray.300" p="2" px="4" mr="2">
-            <Icon as={FaGoogle} w={6} h={6} color="gray.500" />
-            <Text ml="2" fontWeight="800" color="gray.600">
-              {user_name}
-            </Text>
-          </Flex>
-        );
-      }
-      if (account.provider.includes("github")) {
-        const user_name = account.profileData ? account.profileData.name : userInfo.auth0.name;
-        return (
-          <Flex key={index} alignItems="center" justifyContent="center" borderRadius="lg" border="2px" borderColor="gray.300" p="2" px="4" mr="2">
-            <Icon as={FaGithub} w={6} h={6} color="gray.500" />
-            <Text ml="2" fontWeight="800" color="gray.600">
-              {user_name}
-            </Text>
-          </Flex>
-        );
-      }
-      if (account.provider.includes("facebook")) {
-        const user_name = account.profileData ? account.profileData.name : userInfo.auth0.name;
-        return (
-          <Flex key={index} alignItems="center" justifyContent="center" borderRadius="lg" border="2px" borderColor="gray.300" p="2" px="4">
-            <Icon as={FaFacebook} w={6} h={6} color="gray.500" />
-            <Text ml="2" fontWeight="800" color="gray.600">
-              {user_name}
-            </Text>
-          </Flex>
-        );
-      }
-      return <></>;
-    });
-  };
   const renderStudentIdLinkSection = () => {
     if (otpSent) {
       return (
@@ -531,7 +524,7 @@ function UserInfoContainer() {
                 已綁定帳號
               </Text>
               <Flex w="100%" flexDirection="row" justifyContent="start" alignItems="start" flexWrap="wrap">
-                {renderConnectedSocialAccounts()}
+                <ConnectedAccountTags userInfo={userInfo} />
               </Flex>
             </Flex>
             <Avatar name={userInfo.db.name} size="2xl" src={user.picture} />
@@ -701,7 +694,7 @@ function UserInfoContainer() {
                 未來如需使用此服務需重新註冊。
               </Text>
             </HStack>
-            {renderAlertDialog()}
+            <DeleteDialog isAlertOpen={isAlertOpen} setIsAlertOpen={setIsAlertOpen} deleteMode={deleteMode} setDeleteMode={setDeleteMode} />
           </Flex>
         </Flex>
       </Flex>
