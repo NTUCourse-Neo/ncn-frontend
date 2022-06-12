@@ -5,21 +5,21 @@ import CourseTableCard from "components/CourseTableCard/CourseTableCard";
 import { weekdays_map } from "data/mapping_table";
 import { useSelector } from "react-redux";
 
-function CourseTableContainer({ courses, loading, courseTimes }) {
+function CourseTableContainer({ courses, loading, courseTimeMap }) {
   const days = ["1", "2", "3", "4", "5"];
   const interval = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "A", "B", "C", "D"];
   const [activeDayCol, setActiveDayCol] = useState(0);
 
   const hoveredCourse = useSelector((state) => state.hoveredCourse);
-  const hoveredCourseTime = useSelector((state) => state.hoveredCourseTime);
+  const hoveredCourseTimeMap = useSelector((state) => state.hoveredCourseTime);
 
   const renderCourseTableCard = useCallback(
-    (course, hover, day, interval) => {
-      if (course.time_map[day][interval].includes(hover.time_map[day][interval][0])) {
+    (courseTimeMap, hoveredCourse, hoverCourseTimeMap, day, interval) => {
+      if (courseTimeMap[day][interval].includes(hoverCourseTimeMap[day][interval][0])) {
         return (
           <CourseTableCard
-            hoverId={hover.time_map[day][interval][0]}
-            courseTime={course.time_map[day][interval]}
+            hoverId={hoverCourseTimeMap[day][interval][0]}
+            courseInitialOrder={courseTimeMap[day][interval]}
             courseData={courses}
             interval={interval}
             day={weekdays_map[day]}
@@ -30,12 +30,12 @@ function CourseTableContainer({ courses, loading, courseTimes }) {
         <>
           <CourseTableCard
             isHover
-            courseTime={course.time_map[day][interval]}
-            courseData={hover.course_data}
+            courseInitialOrder={courseTimeMap[day][interval]}
+            courseData={hoveredCourse}
             interval={interval}
             day={weekdays_map[day]}
           />
-          <CourseTableCard courseTime={course.time_map[day][interval]} courseData={courses} interval={interval} day={weekdays_map[day]} />
+          <CourseTableCard courseInitialOrder={courseTimeMap[day][interval]} courseData={courses} interval={interval} day={weekdays_map[day]} />
         </>
       );
     },
@@ -54,20 +54,20 @@ function CourseTableContainer({ courses, loading, courseTimes }) {
             </Td>
           );
         }
-        if (courseTimes.time_map && day in courseTimes.time_map && interval in courseTimes.time_map[day]) {
-          if (hoveredCourse && hoveredCourseTime && day in hoveredCourseTime.time_map && interval in hoveredCourseTime.time_map[day]) {
-            return <Td key={`${day}-${i}-${j}`}>{renderCourseTableCard(courseTimes, hoveredCourseTime, day, interval)}</Td>;
+        if (courseTimeMap && day in courseTimeMap && interval in courseTimeMap[day]) {
+          if (hoveredCourse && hoveredCourseTimeMap && day in hoveredCourseTimeMap && interval in hoveredCourseTimeMap[day]) {
+            return <Td key={`${day}-${i}-${j}`}>{renderCourseTableCard(courseTimeMap, hoveredCourse, hoveredCourseTimeMap, day, interval)}</Td>;
           }
           return (
             <Td key={`${day}-${i}-${j}`}>
-              <CourseTableCard courseTime={courseTimes.time_map[day][interval]} courseData={courses} interval={interval} day={weekdays_map[day]} />
+              <CourseTableCard courseInitialOrder={courseTimeMap[day][interval]} courseData={courses} interval={interval} day={weekdays_map[day]} />
             </Td>
           );
         }
-        if (hoveredCourse && hoveredCourseTime && day in hoveredCourseTime.time_map && interval in hoveredCourseTime.time_map[day]) {
+        if (hoveredCourse && hoveredCourseTimeMap && day in hoveredCourseTimeMap && interval in hoveredCourseTimeMap[day]) {
           return (
             <Td key={`${day}-${i}-${j}`}>
-              <CourseTableCard isHover courseTime={[]} courseData={hoveredCourseTime.course_data} interval={interval} day={weekdays_map[day]} />
+              <CourseTableCard isHover courseInitialOrder={[]} courseData={hoveredCourse} interval={interval} day={weekdays_map[day]} />
             </Td>
           );
         }
@@ -82,7 +82,7 @@ function CourseTableContainer({ courses, loading, courseTimes }) {
         );
       });
     },
-    [courseTimes, courses, hoveredCourse, hoveredCourseTime, loading, renderCourseTableCard]
+    [courseTimeMap, courses, hoveredCourse, hoveredCourseTimeMap, loading, renderCourseTableCard]
   );
 
   return (

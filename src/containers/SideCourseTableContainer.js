@@ -63,30 +63,25 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, agree
 
   // some local states for handling course data
   const [courses, setCourses] = useState({}); // dictionary of Course objects using courseId as key
-  const [courseTimes, setCourseTimes] = useState({}); // coursesTime is a dictionary of courseIds and their corresponding time in time table
+  const [courseTimeMap, setCourseTimeMap] = useState({});
 
   const [loading, setLoading] = useState(true);
   const [expired, setExpired] = useState(false);
 
-  // will set courseTimes in this function
+  // will set courseTimeMap in this function
   const extract_course_info = (courses) => {
-    let course_time_tmp = {};
-    if (!course_time_tmp.parsed) {
-      course_time_tmp.parsed = [];
-    }
-    if (!course_time_tmp.time_map) {
-      course_time_tmp.time_map = {};
-    }
+    const parsed = [];
+    let timeMap = {};
     Object.keys(courses).forEach((key) => {
-      if (course_time_tmp.parsed.includes(courses[key]._id)) {
+      if (parsed.includes(courses[key]._id)) {
         return;
       }
-      course_time_tmp = parseCourseTime(courses[key], course_time_tmp);
-      course_time_tmp.parsed.push(courses[key]._id);
+      timeMap = parseCourseTime(courses[key], timeMap);
+      parsed.push(courses[key]._id);
     });
     // console.log(course_time_tmp);
     // TODO: only return course_time_tmp.time_map, other data is not needed
-    return course_time_tmp;
+    return timeMap;
   };
 
   const convertArrayToObject = (array, key) => {
@@ -176,9 +171,9 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, agree
         // console.log("course_table: ",courseTable);
         try {
           const courseResult = await dispatch(fetchCourseTableCoursesByIds(courseTable.courses));
-          // set states: coursesIds, courseTimes, courses
+          // set states: coursesIds, courseTimeMap, courses
           setCourseIds(courseTable.courses);
-          setCourseTimes(extract_course_info(convertArrayToObject(courseResult, "_id")));
+          setCourseTimeMap(extract_course_info(convertArrayToObject(courseResult, "_id")));
           setCourses(convertArrayToObject(courseResult, "_id"));
         } catch (e) {
           toast({
@@ -385,7 +380,7 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, agree
             <TabPanels>
               <TabPanel>
                 <Flex flexDirection="row" justifyContent="start" alignItems="center" overflowX={"auto"}>
-                  <CourseTableContainer courseTimes={courseTimes} courses={courses} loading={loading || isLoading} />
+                  <CourseTableContainer courseTimeMap={courseTimeMap} courses={courses} loading={loading || isLoading} />
                 </Flex>
               </TabPanel>
               <TabPanel>

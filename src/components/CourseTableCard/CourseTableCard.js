@@ -58,7 +58,7 @@ function CourseBox({ courseId, courseData, isOpen, hoverId }) {
   );
 }
 
-function CourseTableCard({ courseTime, courseData, day, interval, hoverId, isHover }) {
+function CourseTableCard({ courseInitialOrder, courseData, day, interval, hoverId, isHover }) {
   const dispatch = useDispatch();
   const course_table = useSelector((state) => state.course_table);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -70,7 +70,7 @@ function CourseTableCard({ courseTime, courseData, day, interval, hoverId, isHov
         when click save, overwrite the courseOrder by courseList
     */
   // initial state or sorting result
-  const [courseOrder, setCourseOrder] = useState(courseTime);
+  const [courseOrder, setCourseOrder] = useState(courseInitialOrder);
   // temp state (buffer), used for decide the NEW course order / dispatch to server, when press "save"
   const [courseList, setCourseList] = useState([]);
   const [prepareToRemoveCourseId, setPrepareToRemoveCourseId] = useState([]);
@@ -162,8 +162,8 @@ function CourseTableCard({ courseTime, courseData, day, interval, hoverId, isHov
 
   // set state and force re-render
   useEffect(() => {
-    setCourseOrder(courseTime);
-  }, [courseTime, courseData, day, interval, hoverId, isHover]); // depend on all props
+    setCourseOrder(courseInitialOrder);
+  }, [courseInitialOrder, courseData, day, interval, hoverId, isHover]); // depend on all props
 
   // debugger
   // useEffect(()=>{console.log('CourseTableCard--courseOrder: ', courseOrder);},[courseOrder])

@@ -117,12 +117,7 @@ const reducer = (state = initState, action) => {
         return { ...state, hoveredCourse: null, hoveredCourseTime: null };
       }
       const course = action.payload;
-      const course_time_tmp = {
-        time_map: {},
-        parsed: [],
-        course_data: course,
-      };
-      const hoverCourseTime = parseCourseTime(course, course_time_tmp);
+      const hoverCourseTime = parseCourseTime(course, {});
       return { ...state, hoveredCourse: course, hoveredCourseTime: hoverCourseTime };
     }
     default:
