@@ -1,4 +1,4 @@
-import { React, useState, useEffect, useRef } from "react";
+import { React, useState, useEffect, useRef, useMemo } from "react";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import {
   Box,
@@ -76,6 +76,7 @@ function ConnectedAccountTags({ userInfo }) {
 }
 
 function DeleteDialog({ isAlertOpen, setIsAlertOpen, deleteMode, setDeleteMode }) {
+  const confirmMessage = `我確定`;
   const cancelRef = useRef();
   const toast = useToast();
   const dispatch = useDispatch();
@@ -135,8 +136,6 @@ function DeleteDialog({ isAlertOpen, setIsAlertOpen, deleteMode, setDeleteMode }
     }
     setIsDeleting(false);
   };
-
-  const confirmMessage = `我確定`;
 
   return (
     <AlertDialog isOpen={isAlertOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
@@ -216,66 +215,6 @@ function UserInfoContainer() {
   //   console.log('doubleMajor: ', doubleMajor);
   //   console.log('minor: ', minor);
   // },[name, studentId, major, doubleMajor, minor]);
-
-  const recOnChange = async (value) => {
-    let resp;
-    // console.log('Captcha value:', value);
-    if (value) {
-      try {
-        resp = await dispatch(verify_recaptcha(value));
-      } catch (err) {
-        // console.log(err);
-        recaptchaRef.current.reset();
-      }
-      if (resp.data.success) {
-        setAllowSendOTP(true);
-      } else {
-        setAllowSendOTP(false);
-        recaptchaRef.current.reset();
-      }
-    }
-  };
-
-  const handleSendOTP = async () => {
-    if (studentId === "") {
-      // console.log("Please input student id");
-      toast({
-        title: "Please input student id",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-    const token = await getAccessTokenSilently();
-    try {
-      await dispatch(request_otp_code(token, studentId));
-      setOtpSent(true);
-      setOtpInputStatus(1);
-      actions.start(300 * 1000);
-    } catch (err) {
-      toast({
-        title: "request otp code failed",
-        description: "請聯繫管理員><",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-
-  const handleVerifyOTP = async (otp) => {
-    try {
-      setOtpInputStatus(0);
-      const token = await getAccessTokenSilently();
-      await dispatch(use_otp_link_student_id(token, studentId, otp));
-      // refresh page or data
-      window.location.reload();
-    } catch (err) {
-      // console.log(err);
-      setOtpInputStatus(-1);
-    }
-  };
 
   // TODO
   const generateUpdateObject = () => {
@@ -393,12 +332,71 @@ function UserInfoContainer() {
     }
   }, [userInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const renderStudentIdLinkSection = () => {
+  const studentIdLinkSection = useMemo(() => {
+    const recOnChange = async (value) => {
+      let resp;
+      // console.log('Captcha value:', value);
+      if (value) {
+        try {
+          resp = await dispatch(verify_recaptcha(value));
+        } catch (err) {
+          // console.log(err);
+          recaptchaRef.current.reset();
+        }
+        if (resp.data.success) {
+          setAllowSendOTP(true);
+        } else {
+          setAllowSendOTP(false);
+          recaptchaRef.current.reset();
+        }
+      }
+    };
+
+    const handleSendOTP = async () => {
+      if (studentId === "") {
+        // console.log("Please input student id");
+        toast({
+          title: "Please input student id",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        return;
+      }
+      const token = await getAccessTokenSilently();
+      try {
+        await dispatch(request_otp_code(token, studentId));
+        setOtpSent(true);
+        setOtpInputStatus(1);
+        actions.start(300 * 1000);
+      } catch (err) {
+        toast({
+          title: "request otp code failed",
+          description: "請聯繫管理員><",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    };
+
+    const handleVerifyOTP = async (otp) => {
+      try {
+        setOtpInputStatus(0);
+        const token = await getAccessTokenSilently();
+        await dispatch(use_otp_link_student_id(token, studentId, otp));
+        // refresh page or data
+        window.location.reload();
+      } catch (err) {
+        // console.log(err);
+        setOtpInputStatus(-1);
+      }
+    };
     if (otpSent) {
       return (
         <Flex w="80%" alignItems="start" flexDirection="column">
           <Flex w="100%" flexDirection="row" justifyContent="start" alignItems="center" mb="2">
-            <Input w="50%" fontSize="lg" fontWeight="500" color="gray.600" defaultValue={userInfo.db.student_id} disabled />
+            <Input w="50%" fontSize="lg" fontWeight="500" color="gray.600" defaultValue={userInfo?.db?.student_id} disabled />
             <Button colorScheme="teal" mx="4" disabled>
               {"已送出驗證碼"}
             </Button>
@@ -431,7 +429,7 @@ function UserInfoContainer() {
         </Flex>
       );
     }
-    if (userInfo.db.student_id) {
+    if (userInfo?.db?.student_id) {
       return (
         <Flex w="80%" alignItems="start" flexDirection="column">
           <Flex w="100%" flexDirection="row" justifyContent="start" alignItems="center" mt="2">
@@ -451,11 +449,11 @@ function UserInfoContainer() {
             fontSize="lg"
             fontWeight="500"
             color="gray.600"
-            defaultValue={userInfo.db.student_id}
+            defaultValue={userInfo?.db?.student_id}
             onChange={(e) => {
               setStudentId(e.currentTarget.value);
             }}
-            disabled={userInfo.db.student_id !== ""}
+            disabled={userInfo?.db?.student_id !== ""}
           />
           <Collapse in={studentId !== ""}>
             <Button colorScheme="teal" mx="4" disabled={studentId === "" || !allowSendOTP} onClick={() => handleSendOTP()}>
@@ -468,7 +466,7 @@ function UserInfoContainer() {
         </Collapse>
       </Flex>
     );
-  };
+  }, [allowSendOTP, otpSent, otpInputStatus, studentId, timeLeft, userInfo, actions, dispatch, getAccessTokenSilently, toast]);
 
   if (userLoading) {
     return (
@@ -537,7 +535,7 @@ function UserInfoContainer() {
             <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">
               學號
             </Text>
-            {renderStudentIdLinkSection()}
+            {studentIdLinkSection}
             <Spacer my="1" />
             <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">
               主修
