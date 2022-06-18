@@ -493,6 +493,7 @@ function CourseResultViewContainer() {
                           <Flex flexDirection="column" px="4">
                             <Flex flexDirection="row" alignItems="center" justifyContent="center">
                               <Switch
+                                id="filter_toggle_time"
                                 size={isMobile ? "md" : "lg"}
                                 mr="2"
                                 isChecked={timeFilterOn}
@@ -516,6 +517,7 @@ function CourseResultViewContainer() {
                           <Flex flexDirection="column" px="4">
                             <Flex flexDirection="row" alignItems="center" justifyContent="center">
                               <Switch
+                                id="filter_toggle_department"
                                 size={isMobile ? "md" : "lg"}
                                 mr="2"
                                 isChecked={deptFilterOn}
@@ -535,6 +537,7 @@ function CourseResultViewContainer() {
                           <Flex flexDirection="column" px="4">
                             <Flex flexDirection="row" alignItems="center" justifyContent="center">
                               <Switch
+                                id="filter_toggle_category"
                                 size={isMobile ? "md" : "lg"}
                                 mr="2"
                                 isChecked={catFilterOn}
@@ -554,6 +557,7 @@ function CourseResultViewContainer() {
                           <Flex flexDirection="column" px="4">
                             <Flex flexDirection="row" alignItems="center" justifyContent="center">
                               <Switch
+                                id="filter_toggle_enroll"
                                 size={isMobile ? "md" : "lg"}
                                 mr="2"
                                 isChecked={enrollFilterOn}
@@ -703,6 +707,7 @@ function CourseResultViewContainer() {
               </Collapse>
             </Flex>
             <IconButton
+              id="toggle_filter_drawer"
               size="xs"
               variant="ghost"
               icon={displayFilter ? <FaChevronUp /> : <FaChevronDown />}

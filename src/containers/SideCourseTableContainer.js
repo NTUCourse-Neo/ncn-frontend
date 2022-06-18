@@ -449,6 +449,7 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, hover
         <IconButton
           h={isMobile ? "" : "100%"}
           w={isMobile ? "100%" : ""}
+          id="toggle_course_table_drawer"
           icon={isMobile ? <FaAngleDown size={24} /> : <FaAngleRight size={24} />}
           onClick={() => {
             setIsDisplay(!isDisplay);
