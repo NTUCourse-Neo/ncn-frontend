@@ -25,3 +25,6 @@ yarn-error.log*
 .env
 cypress.env.json
 .eslintcache
+
+cypress/videos
+cypress/screenshots
