@@ -424,6 +424,7 @@ function HomeViewContainer() {
           justifyContent="space-between"
           alignItems="center"
           css={{ gap: "2rem" }}
+          flexWrap="wrap"
         >
           <Flex w={{ base: "100%", lg: "65%" }} flexDirection={{ base: "column", md: "row" }} align={"center"}>
             <Icon mx="8" mb="4" as={FaGithub} boxSize="16" color="white" />
