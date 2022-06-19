@@ -5,7 +5,7 @@ import ncnLogo from "img/ncn_logo.png";
 import { DiscordIcon } from "components/CustomIcons";
 
 function Footer() {
-  const ver = "beta (20220306)";
+  const ver = "beta (20220619)";
   const handleOpenPage = (page) => {
     window.open(page, "_blank");
   };
