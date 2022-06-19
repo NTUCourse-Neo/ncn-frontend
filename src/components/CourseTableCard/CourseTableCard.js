@@ -36,25 +36,23 @@ function CourseBox({ courseId, courseData, isOpen, hoverId }) {
   }
 
   return (
-    <>
-      <Tooltip label={course.course_name} placement="top" hasArrow>
-        <Button
-          bg={hash_to_color_hex(course._id, isOpen ? 0.7 : 0.8)}
-          borderRadius="md"
-          boxShadow="lg"
-          mb="1"
-          p="2"
-          w="100%"
-          h="3vh"
-          border={"2px"}
-          borderColor={hoverId === courseId ? hash_to_color_hex(course._id, 0.5) : "transparent"}
-        >
-          <Text fontSize="xs" isTruncated>
-            {` ${course.course_name} `}
-          </Text>
-        </Button>
-      </Tooltip>
-    </>
+    <Tooltip label={course.course_name} placement="top" hasArrow>
+      <Button
+        bg={hash_to_color_hex(course._id, isOpen ? 0.7 : 0.8)}
+        borderRadius="md"
+        boxShadow="lg"
+        mb="1"
+        p="2"
+        w={{ base: "70px", md: "75px", lg: "100px" }}
+        h="3vh"
+        border={"2px"}
+        borderColor={hoverId === courseId ? hash_to_color_hex(course._id, 0.5) : "transparent"}
+      >
+        <Text fontSize="xs" isTruncated>
+          {` ${course.course_name} `}
+        </Text>
+      </Button>
+    </Tooltip>
   );
 }
 

@@ -13,7 +13,7 @@ function HoverCourseIndicator({ hoveredCourse }) {
       <Button
         borderRadius="lg"
         boxShadow="lg"
-        w={"100%"}
+        w={{ base: "70px", md: "75px", lg: "100px" }}
         p={0}
         h="3vh"
         border="2px"
