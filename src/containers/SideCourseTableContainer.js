@@ -43,6 +43,21 @@ import { parseCoursesToTimeMap } from "utils/parseCourseTime";
 
 const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
+const courseTableScrollBarCss = {
+  "&::-webkit-scrollbar": {
+    w: "2",
+    h: "2",
+  },
+  "&::-webkit-scrollbar-track": {
+    w: "6",
+    h: "6",
+  },
+  "&::-webkit-scrollbar-thumb": {
+    borderRadius: "10",
+    bg: `gray.300`,
+  },
+};
+
 // eslint-disable-next-line react/display-name
 const TextInput = forwardRef((props, ref) => {
   return (
@@ -341,7 +356,7 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
   }
 
   return (
-    <Box overflow="auto" w="100%" mt={{ base: 0, lg: 4 }}>
+    <Box overflow="auto" w="100%" mt={{ base: 0, lg: 4 }} __css={courseTableScrollBarCss}>
       <Flex flexDirection="column">
         <Tabs>
           <Flex flexDirection="row" justifyContent="start" alignItems="center" mb="2" ml="4">
@@ -363,7 +378,7 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
           </Flex>
           <TabPanels>
             <TabPanel>
-              <Flex flexDirection="row" justifyContent="start" alignItems="center" overflowX={"auto"}>
+              <Flex flexDirection="row" justifyContent="start" alignItems="center" overflowX={"auto"} __css={courseTableScrollBarCss}>
                 <CourseTableContainer courseTimeMap={courseTimeMap} courses={courses} loading={loading || isLoading} />
               </Flex>
             </TabPanel>
