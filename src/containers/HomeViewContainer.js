@@ -43,7 +43,7 @@ import { DiscordIcon } from "components/CustomIcons";
 const newsCard = [
   <Flex
     key="NTUCollaborationCard"
-    h={{ base: "200px", lg: "200px" }}
+    h={{ base: "280px", lg: "200px" }}
     overflowY={"auto"}
     w={["80vw", "80vw", "50vw", "25vw"]}
     justifyContent={["center", "start"]}
@@ -60,11 +60,11 @@ const newsCard = [
     </Text>
     <Text fontSize="md" fontWeight="500" color="gray.600">
       感謝教務處資訊組的大力推動，NTUCourse Neo 將與臺大合作開發新一代臺大課程網！
-      新一代課程網將以此專案為基礎開發，並整合其他臺大課程資訊服務，希望能帶給台大學生更現代化選課網站。
+      新一代課程網將以此專案為基礎開發，並整合其他臺大課程資訊服務，希望能帶給臺大學生更便利的選課體驗。
     </Text>
     <Flex flexDirection="column" flexGrow={1} justify="end" w="100%">
       <Flex justifyContent="space-between" alignItems="center" flexDirection="row">
-        <Text fontSize="sm" fontWeight="400" color="gray.500" mt="4">
+        <Text fontSize={{ base: "xs", lg: "sm" }} fontWeight="400" color="gray.500" mt="4">
           Team NTUCourse Neo - 20220628
         </Text>
         <Button
@@ -84,7 +84,7 @@ const newsCard = [
   </Flex>,
   <Flex
     key="RecrutingCard"
-    h={{ base: "200px", lg: "200px" }}
+    h={{ base: "250px", lg: "200px" }}
     overflowY={"auto"}
     w={["80vw", "80vw", "50vw", "25vw"]}
     justifyContent={["center", "start"]}
@@ -104,7 +104,7 @@ const newsCard = [
     </Text>
     <Flex flexDirection="column" flexGrow={1} justify="end" w="100%">
       <Flex justifyContent="space-between" alignItems="center" flexDirection="row">
-        <Text fontSize="sm" fontWeight="400" color="gray.500" mt="4">
+        <Text fontSize={{ base: "xs", lg: "sm" }} fontWeight="400" color="gray.500" mt="4">
           Team NTUCourse Neo - 20220303
         </Text>
         <Link to="/recruiting">
@@ -113,34 +113,6 @@ const newsCard = [
           </Button>
         </Link>
       </Flex>
-    </Flex>
-  </Flex>,
-  <Flex
-    key="1102 Updating"
-    h={{ base: "200px", lg: "200px" }}
-    overflowY={"auto"}
-    w={["80vw", "80vw", "50vw", "25vw"]}
-    justifyContent={["center", "start"]}
-    alignItems="start"
-    flexDirection="column"
-    bg="teal.200"
-    borderRadius="xl"
-    boxShadow="xl"
-    p="4"
-    mt="8"
-  >
-    <Text fontSize="xl" fontWeight="800" color="gray.700" mb="2">
-      🎉 已更新臺大 110-2 課表
-    </Text>
-    <Text fontSize="md" fontWeight="500" color="gray.600">
-      讚啦！我們已更新 110 學年度第二學期的課程囉！
-      <br />
-      現在就開始規劃課程吧！ 🥰
-    </Text>
-    <Flex flexDirection="column" flexGrow={1} justify="end" w="100%">
-      <Text fontSize="sm" fontWeight="400" color="gray.500" mt="4">
-        Team NTUCourse Neo - 20210115
-      </Text>
     </Flex>
   </Flex>,
 ];
@@ -528,7 +500,7 @@ function HomeViewContainer() {
           css={{ gap: "2rem" }}
         >
           <Flex flexDirection="column" align={{ base: "center", lg: "start" }} textAlign={{ base: "center", md: "start" }}>
-            <Text py={2} fontSize="4xl" color="gray.700" fontWeight="800">
+            <Text py={2} fontSize="3xl" color="gray.700" fontWeight="800">
               現在就開始體驗新世代的選課吧。
             </Text>
             <Text fontSize="lg" color="teal.500" fontWeight="500">
