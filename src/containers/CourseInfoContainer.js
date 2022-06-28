@@ -395,11 +395,13 @@ function CourseInfoContainer({ code }) {
           <HStack my="2" mx="4%" spacing="4" w="100%" align="center" pt={2} pb={1}>
             <Stack direction={{ base: "column", lg: "row" }}>
               <HStack>
-                <Tag size="md" colorScheme="blue" w="fit-content">
-                  <Text fontWeight="800" fontSize={{ base: "md", lg: "lg" }}>
-                    {course.id}
-                  </Text>
-                </Tag>
+                {course.id ? (
+                  <Tag size="md" colorScheme="blue" w="fit-content">
+                    <Text fontWeight="800" fontSize={{ base: "md", lg: "lg" }}>
+                      {course.id}
+                    </Text>
+                  </Tag>
+                ) : null}
                 <CopyToClipboard text={"https://course.myntu.me/courseinfo/" + course._id}>
                   <Button
                     rightIcon={<Icon as={BiCopy} color={copyWord.color} />}

@@ -623,17 +623,19 @@ function CourseDetailInfoContainer({ course }) {
                         無資訊
                       </Tag>
                     ) : (
-                      course.department.map((item, index) => {
-                        if (item.length > 0) {
-                          return (
-                            <Tag key={"department_" + index} colorScheme="blue" size="lg">
-                              {item}
-                            </Tag>
-                          );
-                        } else {
-                          return null;
-                        }
-                      })
+                      <Flex flexDirection={"row"} flexWrap="wrap">
+                        {course.department.map((item, index) => {
+                          if (item.length > 0) {
+                            return (
+                              <Tag key={"department_" + index} colorScheme="blue" size="lg" m={1}>
+                                {item}
+                              </Tag>
+                            );
+                          } else {
+                            return null;
+                          }
+                        })}
+                      </Flex>
                     )}
                   </HStack>
                 </StatNumber>
@@ -642,17 +644,19 @@ function CourseDetailInfoContainer({ course }) {
                 <StatLabel>學分</StatLabel>
                 <StatNumber>{course.credit}</StatNumber>
               </Stat>
-              <Stat>
-                <StatLabel>加簽方式</StatLabel>
-                <StatNumber>
-                  <HStack spacing="2">
-                    <Tag colorScheme="blue" size="lg" fontWeight="800" fontSize="xl">
-                      {course.enroll_method}
-                    </Tag>
-                    <Text>{info_view_map.enroll_method.map[course.enroll_method]}</Text>
-                  </HStack>
-                </StatNumber>
-              </Stat>
+              {course.enroll_method ? (
+                <Stat>
+                  <StatLabel>加簽方式</StatLabel>
+                  <StatNumber>
+                    <HStack spacing="2">
+                      <Tag colorScheme="blue" size="lg" fontWeight="800" fontSize="xl">
+                        {course.enroll_method}
+                      </Tag>
+                      <Text>{info_view_map.enroll_method.map[course.enroll_method]}</Text>
+                    </HStack>
+                  </StatNumber>
+                </Stat>
+              ) : null}
               <Stat>
                 <StatLabel>開課單位</StatLabel>
                 <StatNumber>{course.provider.toUpperCase()}</StatNumber>
