@@ -43,7 +43,7 @@ import { DiscordIcon } from "components/CustomIcons";
 const newsCard = [
   <Flex
     key="NTUCollaborationCard"
-    h={{ base: "280px", lg: "200px" }}
+    h={{ base: "220px", lg: "200px" }}
     overflowY={"auto"}
     w={["80vw", "80vw", "50vw", "25vw"]}
     justifyContent={["center", "start"]}
@@ -59,8 +59,7 @@ const newsCard = [
       🤩 嗨！臺大！
     </Text>
     <Text fontSize="md" fontWeight="500" color="gray.600">
-      感謝教務處資訊組的大力推動，NTUCourse Neo 將與臺大合作開發新一代臺大課程網！
-      新一代課程網將以此專案為基礎開發，並整合其他臺大課程資訊服務，希望能帶給臺大學生更便利的選課體驗。
+      經過教務處資訊組的大力推動，我們將以此專案為基礎與臺大合作開發新一代課程網！希望能帶給臺大學生更便利的選課體驗。
     </Text>
     <Flex flexDirection="column" flexGrow={1} justify="end" w="100%">
       <Flex justifyContent="space-between" alignItems="center" flexDirection="row">
@@ -84,7 +83,7 @@ const newsCard = [
   </Flex>,
   <Flex
     key="RecrutingCard"
-    h={{ base: "250px", lg: "200px" }}
+    h={{ base: "220px", lg: "200px" }}
     overflowY={"auto"}
     w={["80vw", "80vw", "50vw", "25vw"]}
     justifyContent={["center", "start"]}
