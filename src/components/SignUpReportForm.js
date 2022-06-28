@@ -19,8 +19,28 @@ import {
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { social_user_type_map } from "data/mapping_table";
-import { createSocialPost } from "actions/social";
 import { useAuth0 } from "@auth0/auth0-react";
+import instance from "api/axios";
+import handleAPIError from "utils/handleAPIError";
+
+const createSocialPost = async (token, course_id, post) => {
+  try {
+    await instance.post(
+      `/social/courses/${course_id}/posts`,
+      {
+        post: post,
+        // includes: content, post_type, user_type
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+  } catch (error) {
+    throw handleAPIError(error);
+  }
+};
 
 function SignUpReportForm({ courseId, haveSubmitted, submitCallback }) {
   const { onOpen, onClose, isOpen } = useDisclosure();
@@ -80,7 +100,7 @@ function SignUpReportForm({ courseId, haveSubmitted, submitCallback }) {
         },
         user_type: signUpCardForm.user_type,
       };
-      dispatch(createSocialPost(token, courseId, post));
+      await createSocialPost(token, courseId, post);
       toast({
         title: "發送成功",
         description: "感謝您的填寫！",

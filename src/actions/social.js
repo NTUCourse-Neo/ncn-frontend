@@ -16,25 +16,6 @@ const getSocialPostByPostId = (token, post_id) => async (dispatch) => {
   }
 };
 
-const createSocialPost = (token, course_id, post) => async (dispatch) => {
-  try {
-    await instance.post(
-      `/social/courses/${course_id}/posts`,
-      {
-        post: post,
-        // includes: content, post_type, user_type
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-  } catch (error) {
-    throw handleAPIError(error);
-  }
-};
-
 const reportSocialPost = (token, post_id, report) => async (dispatch) => {
   try {
     await instance.post(
@@ -85,4 +66,4 @@ const deleteSocialPost = (token, post_id) => async (dispatch) => {
   }
 };
 
-export { getSocialPostByPostId, createSocialPost, reportSocialPost, voteSocialPost, deleteSocialPost };
+export { getSocialPostByPostId, reportSocialPost, voteSocialPost, deleteSocialPost };
