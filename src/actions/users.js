@@ -1,5 +1,6 @@
 import { UPDATE_USER, LOG_OUT_SUCCESS } from "constants/action-types";
 import instance from "api/axios";
+import handleAPIError from "utils/handleAPIError";
 
 const linkCoursetableToUser = (token, course_table_id, user_id) => async (dispatch) => {
   try {
@@ -16,38 +17,7 @@ const linkCoursetableToUser = (token, course_table_id, user_id) => async (dispat
     );
     dispatch({ type: UPDATE_USER, payload: user });
   } catch (error) {
-    // console.log(Error("Error in linkCoursetableToUser: "+error))
-
-    if (error.response) {
-      // server did response, used for handle custom error msg
-      const error_obj = {
-        status_code: error.response.status,
-        backend_msg: error.response.data.message,
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    } else if (error.request) {
-      // The request was made but no response was received (server is downed)
-      const status = 521; // Server is down
-      const error_obj = {
-        status_code: status,
-        backend_msg: "no",
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      const status = 400; // Bad request
-      const error_obj = {
-        status_code: status,
-        backend_msg: "no",
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    }
+    throw handleAPIError(error);
   }
 };
 
@@ -63,36 +33,7 @@ const fetchUserById = (token, user_id) => async (dispatch) => {
     // user contains user in db & auth0, either null (not found) or an object.
     return user;
   } catch (error) {
-    if (error.response) {
-      // server did response, used for handle custom error msg
-      const error_obj = {
-        status_code: error.response.status,
-        backend_msg: error.response.data.message,
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    } else if (error.request) {
-      // The request was made but no response was received (server is downed)
-      const status = 521; // Server is down
-      const error_obj = {
-        status_code: status,
-        backend_msg: "no",
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      const status = 400; // Bad request
-      const error_obj = {
-        status_code: status,
-        backend_msg: "no",
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    }
+    throw handleAPIError(error);
   }
 };
 
@@ -112,38 +53,7 @@ const registerNewUser = (token, email) => async (dispatch) => {
     // either null (not found) or an object.
     return user;
   } catch (error) {
-    // console.log(Error("Error in registerNewUser: "+error))
-
-    if (error.response) {
-      // server did response, used for handle custom error msg
-      const error_obj = {
-        status_code: error.response.status,
-        backend_msg: error.response.data.message,
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    } else if (error.request) {
-      // The request was made but no response was received (server is downed)
-      const status = 521; // Server is down
-      const error_obj = {
-        status_code: status,
-        backend_msg: "no",
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      const status = 400; // Bad request
-      const error_obj = {
-        status_code: status,
-        backend_msg: "no",
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    }
+    throw handleAPIError(error);
   }
 };
 
@@ -162,38 +72,7 @@ const addFavoriteCourse = (token, new_favorite_list) => async (dispatch) => {
     );
     dispatch({ type: UPDATE_USER, payload: user });
   } catch (error) {
-    // console.log(Error("Error in addFavoriteCourse: "+error))
-
-    if (error.response) {
-      // server did response, used for handle custom error msg
-      const error_obj = {
-        status_code: error.response.status,
-        backend_msg: error.response.data.message,
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    } else if (error.request) {
-      // The request was made but no response was received (server is downed)
-      const status = 521; // Server is down
-      const error_obj = {
-        status_code: status,
-        backend_msg: "no",
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      const status = 400; // Bad request
-      const error_obj = {
-        status_code: status,
-        backend_msg: "no",
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    }
+    throw handleAPIError(error);
   }
 };
 
@@ -212,38 +91,7 @@ const patchUserInfo = (token, updateObject) => async (dispatch) => {
     );
     dispatch({ type: UPDATE_USER, payload: user });
   } catch (error) {
-    // console.log(Error("Error in patchUserInfo: "+error))
-
-    if (error.response) {
-      // server did response, used for handle custom error msg
-      const error_obj = {
-        status_code: error.response.status,
-        backend_msg: error.response.data.message,
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    } else if (error.request) {
-      // The request was made but no response was received (server is downed)
-      const status = 521; // Server is down
-      const error_obj = {
-        status_code: status,
-        backend_msg: "no",
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      const status = 400; // Bad request
-      const error_obj = {
-        status_code: status,
-        backend_msg: "no",
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    }
+    throw handleAPIError(error);
   }
 };
 
@@ -255,38 +103,7 @@ const deleteUserProfile = (token) => async (dispatch) => {
       },
     });
   } catch (error) {
-    // console.log(Error("Error in deleteUserProfile: "+error))
-
-    if (error.response) {
-      // server did response, used for handle custom error msg
-      const error_obj = {
-        status_code: error.response.status,
-        backend_msg: error.response.data.message,
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    } else if (error.request) {
-      // The request was made but no response was received (server is downed)
-      const status = 521; // Server is down
-      const error_obj = {
-        status_code: status,
-        backend_msg: "no",
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      const status = 400; // Bad request
-      const error_obj = {
-        status_code: status,
-        backend_msg: "no",
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    }
+    throw handleAPIError(error);
   }
 };
 
@@ -299,38 +116,7 @@ const deleteUserAccount = (token) => async (dispatch) => {
     });
     dispatch({ type: LOG_OUT_SUCCESS });
   } catch (error) {
-    // console.log(Error("Error in deleteUserAccount: "+error))
-
-    if (error.response) {
-      // server did response, used for handle custom error msg
-      const error_obj = {
-        status_code: error.response.status,
-        backend_msg: error.response.data.message,
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    } else if (error.request) {
-      // The request was made but no response was received (server is downed)
-      const status = 521; // Server is down
-      const error_obj = {
-        status_code: status,
-        backend_msg: "no",
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      const status = 400; // Bad request
-      const error_obj = {
-        status_code: status,
-        backend_msg: "no",
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    }
+    throw handleAPIError(error);
   }
 };
 

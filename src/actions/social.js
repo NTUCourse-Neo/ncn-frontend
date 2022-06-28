@@ -1,4 +1,5 @@
 import instance from "api/axios";
+import handleAPIError from "utils/handleAPIError";
 
 const getSocialPostByCourseId = (token, course_id) => async (dispatch) => {
   try {
@@ -11,38 +12,10 @@ const getSocialPostByCourseId = (token, course_id) => async (dispatch) => {
     });
     return posts;
   } catch (error) {
-    console.log(error.response.status);
     if (error.response && error.response.status === 404) {
       return [];
-    } else if (error.response) {
-      // server did response, used for handle custom error msg
-      const error_obj = {
-        status_code: error.response.status,
-        backend_msg: error.response.data.message,
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    } else if (error.request) {
-      // The request was made but no response was received (server is downed)
-      const status = 521; // Server is down
-      const error_obj = {
-        status_code: status,
-        backend_msg: "no",
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
     } else {
-      // Something happened in setting up the request that triggered an Error
-      const status = 400; // Bad request
-      const error_obj = {
-        status_code: status,
-        backend_msg: "no",
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
+      throw handleAPIError(error);
     }
   }
 };
@@ -58,36 +31,7 @@ const getSocialPostByPostId = (token, post_id) => async (dispatch) => {
     });
     return post;
   } catch (error) {
-    if (error.response) {
-      // server did response, used for handle custom error msg
-      const error_obj = {
-        status_code: error.response.status,
-        backend_msg: error.response.data.message,
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    } else if (error.request) {
-      // The request was made but no response was received (server is downed)
-      const status = 521; // Server is down
-      const error_obj = {
-        status_code: status,
-        backend_msg: "no",
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      const status = 400; // Bad request
-      const error_obj = {
-        status_code: status,
-        backend_msg: "no",
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    }
+    throw handleAPIError(error);
   }
 };
 
@@ -106,36 +50,7 @@ const createSocialPost = (token, course_id, post) => async (dispatch) => {
       }
     );
   } catch (error) {
-    if (error.response) {
-      // server did response, used for handle custom error msg
-      const error_obj = {
-        status_code: error.response.status,
-        backend_msg: error.response.data.message,
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    } else if (error.request) {
-      // The request was made but no response was received (server is downed)
-      const status = 521; // Server is down
-      const error_obj = {
-        status_code: status,
-        backend_msg: "no",
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      const status = 400; // Bad request
-      const error_obj = {
-        status_code: status,
-        backend_msg: "no",
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    }
+    throw handleAPIError(error);
   }
 };
 
@@ -154,36 +69,7 @@ const reportSocialPost = (token, post_id, report) => async (dispatch) => {
       }
     );
   } catch (error) {
-    if (error.response) {
-      // server did response, used for handle custom error msg
-      const error_obj = {
-        status_code: error.response.status,
-        backend_msg: error.response.data.message,
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    } else if (error.request) {
-      // The request was made but no response was received (server is downed)
-      const status = 521; // Server is down
-      const error_obj = {
-        status_code: status,
-        backend_msg: "no",
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      const status = 400; // Bad request
-      const error_obj = {
-        status_code: status,
-        backend_msg: "no",
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    }
+    throw handleAPIError(error);
   }
 };
 
@@ -202,36 +88,7 @@ const voteSocialPost = (token, post_id, type) => async (dispatch) => {
       }
     );
   } catch (error) {
-    if (error.response) {
-      // server did response, used for handle custom error msg
-      const error_obj = {
-        status_code: error.response.status,
-        backend_msg: error.response.data.message,
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    } else if (error.request) {
-      // The request was made but no response was received (server is downed)
-      const status = 521; // Server is down
-      const error_obj = {
-        status_code: status,
-        backend_msg: "no",
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      const status = 400; // Bad request
-      const error_obj = {
-        status_code: status,
-        backend_msg: "no",
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    }
+    throw handleAPIError(error);
   }
 };
 
@@ -243,36 +100,7 @@ const deleteSocialPost = (token, post_id) => async (dispatch) => {
       },
     });
   } catch (error) {
-    if (error.response) {
-      // server did response, used for handle custom error msg
-      const error_obj = {
-        status_code: error.response.status,
-        backend_msg: error.response.data.message,
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    } else if (error.request) {
-      // The request was made but no response was received (server is downed)
-      const status = 521; // Server is down
-      const error_obj = {
-        status_code: status,
-        backend_msg: "no",
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      const status = 400; // Bad request
-      const error_obj = {
-        status_code: status,
-        backend_msg: "no",
-        error_info: error.message,
-        error_detail: Error(error).stack,
-      };
-      throw error_obj;
-    }
+    throw handleAPIError(error);
   }
 };
 
