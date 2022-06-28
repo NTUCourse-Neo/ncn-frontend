@@ -27,7 +27,7 @@ import {
 import homeMainSvg from "img/home_main.svg";
 import HomeCard from "components/HomeCard";
 import { useAuth0 } from "@auth0/auth0-react";
-import { FaArrowDown, FaArrowRight, FaArrowUp, FaGithub, FaSortDown, FaSortUp } from "react-icons/fa";
+import { FaArrowDown, FaArrowRight, FaArrowUp, FaGithub, FaInfoCircle, FaSortDown, FaSortUp } from "react-icons/fa";
 import { animateScroll as scroll, scroller } from "react-scroll";
 import { Link, useNavigate } from "react-router-dom";
 import { BeatLoader } from "react-spinners";
@@ -42,8 +42,49 @@ import { DiscordIcon } from "components/CustomIcons";
 
 const newsCard = [
   <Flex
+    key="NTUCollaborationCard"
+    h={{ base: "200px", lg: "200px" }}
+    overflowY={"auto"}
+    w={["80vw", "80vw", "50vw", "25vw"]}
+    justifyContent={["center", "start"]}
+    alignItems="start"
+    flexDirection="column"
+    bg="teal.200"
+    borderRadius="xl"
+    boxShadow="xl"
+    p="4"
+    mt="8"
+  >
+    <Text fontSize="xl" fontWeight="800" color="gray.700" mb="2">
+      🤩 嗨！臺大！
+    </Text>
+    <Text fontSize="md" fontWeight="500" color="gray.600">
+      感謝教務處資訊組的大力推動，NTUCourse Neo 將與臺大合作開發新一代臺大課程網！
+      新一代課程網將以此專案為基礎開發，並整合其他臺大課程資訊服務，希望能帶給台大學生更現代化選課網站。
+    </Text>
+    <Flex flexDirection="column" flexGrow={1} justify="end" w="100%">
+      <Flex justifyContent="space-between" alignItems="center" flexDirection="row">
+        <Text fontSize="sm" fontWeight="400" color="gray.500" mt="4">
+          Team NTUCourse Neo - 20220628
+        </Text>
+        <Button
+          colorScheme="teal"
+          variant="solid"
+          size="sm"
+          mt="4"
+          leftIcon={<FaInfoCircle />}
+          onClick={() =>
+            window.open("https://www.facebook.com/NTUSA/posts/pfbid04j6dfUzvHFPJEK54FDreNnXKy5C7yBZghErKAPWe8yoWXUFRcVqshqyNydqnicMWl", "_blank")
+          }
+        >
+          瞭解更多
+        </Button>
+      </Flex>
+    </Flex>
+  </Flex>,
+  <Flex
     key="RecrutingCard"
-    h={{ base: "200px", lg: "180px" }}
+    h={{ base: "200px", lg: "200px" }}
     overflowY={"auto"}
     w={["80vw", "80vw", "50vw", "25vw"]}
     justifyContent={["center", "start"]}
@@ -76,7 +117,7 @@ const newsCard = [
   </Flex>,
   <Flex
     key="1102 Updating"
-    h={{ base: "200px", lg: "180px" }}
+    h={{ base: "200px", lg: "200px" }}
     overflowY={"auto"}
     w={["80vw", "80vw", "50vw", "25vw"]}
     justifyContent={["center", "start"]}
