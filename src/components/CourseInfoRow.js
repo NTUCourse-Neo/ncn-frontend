@@ -25,12 +25,12 @@ import {
 import { CourseDrawerContainer } from "containers/CourseDrawerContainer";
 import { FaPlus, FaHeart, FaInfoCircle } from "react-icons/fa";
 import { info_view_map } from "data/mapping_table";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { fetchCourseTable, patchCourseTable } from "actions/course_tables";
-import { addFavoriteCourse } from "actions/users";
 import { hash_to_color_hex } from "utils/colorAgent";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
+import { useUserData } from "components/Providers/UserProvider";
 
 const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
@@ -58,7 +58,7 @@ function DeptBadge({ course }) {
 function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayTable }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const userInfo = useSelector((state) => state.user);
+  const { user: userInfo, addFavoriteCourse } = useUserData();
 
   const [addingCourse, setAddingCourse] = useState(false);
   const [addingFavoriteCourse, setAddingFavoriteCourse] = useState(false);
@@ -191,7 +191,7 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
         // API call
         try {
           const token = await getAccessTokenSilently();
-          await dispatch(addFavoriteCourse(token, new_favorite_list, userInfo.db._id));
+          await addFavoriteCourse(token, new_favorite_list, userInfo.db._id);
           toast({
             title: `${op_name}最愛課程成功`,
             //description: `請稍後再試`,

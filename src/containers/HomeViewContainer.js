@@ -31,14 +31,13 @@ import { FaArrowDown, FaArrowRight, FaArrowUp, FaGithub, FaSortDown, FaSortUp } 
 import { animateScroll as scroll, scroller } from "react-scroll";
 import { Link, useNavigate } from "react-router-dom";
 import { BeatLoader } from "react-spinners";
-import { logIn } from "actions/index";
-import { fetchUserById, registerNewUser } from "actions/users";
 import { useDispatch } from "react-redux";
 import CourseDeadlineCountdown from "components/CourseDeadlineCountdown";
 import setPageMeta from "utils/seo";
 import { motion, AnimatePresence } from "framer-motion";
 import HomeFooterImg from "img/home_footer.svg";
 import { DiscordIcon } from "components/CustomIcons";
+import { useUserData } from "components/Providers/UserProvider";
 
 const newsCard = [
   <Flex
@@ -201,6 +200,7 @@ function NewRegisterModal({ isOpen, onOpen, onClose, isLoading, newUser }) {
 }
 
 function HomeViewContainer() {
+  const { logIn, fetchUserById, registerNewUser } = useUserData();
   const toast = useToast();
   const navigate = useNavigate();
   const { user, isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
@@ -228,7 +228,7 @@ function HomeViewContainer() {
         const token = await getAccessTokenSilently();
         let user_data;
         try {
-          user_data = await dispatch(fetchUserById(token, user.sub));
+          user_data = await fetchUserById(token, user.sub);
         } catch (error) {
           navigate(`/error/${error.status_code}`, { state: error });
           return;
@@ -242,7 +242,7 @@ function HomeViewContainer() {
           }
           try {
             const token = await getAccessTokenSilently();
-            await dispatch(registerNewUser(token, user.email));
+            await registerNewUser(token, user.email);
             setIsRegistering(false);
           } catch (e) {
             toast({
@@ -257,13 +257,13 @@ function HomeViewContainer() {
           // Re-fetch user data from server
           let new_user_data;
           try {
-            new_user_data = await dispatch(fetchUserById(token, user.sub));
+            new_user_data = await fetchUserById(token, user.sub);
           } catch (error) {
             navigate(`/error/${error.status_code}`, { state: error });
           }
-          dispatch(logIn(new_user_data));
+          logIn(new_user_data);
         } else {
-          dispatch(logIn(user_data));
+          logIn(user_data);
         }
       }
     };

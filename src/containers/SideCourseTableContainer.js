@@ -30,16 +30,16 @@ import {
 } from "@chakra-ui/react";
 import { FaRegEdit, FaRegHandPointDown, FaRegHandPointUp, FaRegMeh, FaPlusSquare, FaAngleDown } from "react-icons/fa";
 import CourseTableContainer from "containers/CourseTableContainer";
-import { logIn, updateCourseTable } from "actions/index";
+import { updateCourseTable } from "actions/index";
 import { fetchCourseTableCoursesByIds } from "actions/courses";
 import { createCourseTable, fetchCourseTable, patchCourseTable } from "actions/course_tables";
-import { linkCoursetableToUser, fetchUserById } from "actions/users";
 import { useDispatch, useSelector } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
 import CourseListContainer from "containers/CourseListContainer";
 import { parseCoursesToTimeMap } from "utils/parseCourseTime";
+import { useUserData } from "components/Providers/UserProvider";
 
 const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
@@ -126,7 +126,7 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
   const toast = useToast();
   const dispatch = useDispatch();
   const courseTable = useSelector((state) => state.course_table);
-  const userInfo = useSelector((state) => state.user);
+  const { logIn, user: userInfo, linkCoursetableToUser, fetchUserById } = useUserData();
 
   // some local states for handling course data
   const [courses, setCourses] = useState({}); // dictionary of Course objects using courseId as key
@@ -167,8 +167,8 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
       if (!isLoading && user) {
         try {
           const token = await getAccessTokenSilently();
-          const user_data = await dispatch(fetchUserById(token, user.sub));
-          await dispatch(logIn(user_data));
+          const user_data = await fetchUserById(token, user.sub);
+          await logIn(user_data);
           const course_tables = user_data.db.course_tables;
           if (course_tables.length === 0) {
             // user has no course table, set courseTable in redux null
@@ -262,7 +262,7 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
           await dispatch(createCourseTable(new_uuid, "我的課表", userInfo.db._id, "1102"));
           // console.log("New UUID is generated: ",new_uuid);
           const token = await getAccessTokenSilently();
-          await dispatch(linkCoursetableToUser(token, new_uuid, userInfo.db._id));
+          await linkCoursetableToUser(token, new_uuid, userInfo.db._id);
         } catch (e) {
           toast({
             title: `新增課表失敗`,

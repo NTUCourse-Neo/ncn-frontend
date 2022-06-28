@@ -18,11 +18,9 @@ import {
 } from "@chakra-ui/react";
 import CourseDetailInfoContainer from "containers/CourseDetailInfoContainer";
 import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { logIn } from "actions/";
+import { useDispatch } from "react-redux";
 import { fetchCourse } from "actions/courses";
 import { fetchCourseTable, patchCourseTable } from "actions/course_tables";
-import { fetchUserById, addFavoriteCourse } from "actions/users";
 import { useNavigate } from "react-router-dom";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import Moment from "moment";
@@ -35,6 +33,7 @@ import openPage from "utils/openPage";
 import ParrotGif from "img/parrot/parrot.gif";
 import ParrotUltraGif from "img/parrot/ultrafastparrot.gif";
 import { useAuth0 } from "@auth0/auth0-react";
+import { useUserData } from "components/Providers/UserProvider";
 
 const copyWordList = [
   { count: 100, word: "複製終結者!!", color: "purple.600", bg: "purple.50" },
@@ -50,6 +49,7 @@ const copyWordList = [
 const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
 function CourseInfoContainer({ code }) {
+  const { logIn, user: userInfo, fetchUserById, addFavoriteCourse } = useUserData();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const toast = useToast();
@@ -65,7 +65,6 @@ function CourseInfoContainer({ code }) {
   const [selected, setSelected] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const { user, isLoading, getAccessTokenSilently } = useAuth0();
-  const userInfo = useSelector((state) => state.user);
 
   // fetch Course Info at first
   useEffect(() => {
@@ -108,12 +107,12 @@ function CourseInfoContainer({ code }) {
           const token = await getAccessTokenSilently();
           let user_data;
           try {
-            user_data = await dispatch(fetchUserById(token, user.sub));
+            user_data = await fetchUserById(token, user.sub);
           } catch (error) {
             navigate(`/error/${error.status_code}`, { state: error });
             return;
           }
-          await dispatch(logIn(user_data));
+          await logIn(user_data);
 
           if (user_data.db.course_tables.length === 0) {
             uuid = null;
@@ -303,7 +302,7 @@ function CourseInfoContainer({ code }) {
         // API call
         try {
           const token = await getAccessTokenSilently();
-          await dispatch(addFavoriteCourse(token, new_favorite_list, userInfo.db._id));
+          await addFavoriteCourse(token, new_favorite_list, userInfo.db._id);
           toast({
             title: `${op_name}最愛課程成功`,
             //description: `請稍後再試`,

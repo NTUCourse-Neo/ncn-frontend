@@ -26,23 +26,58 @@ import {
 } from "@chakra-ui/react";
 import Select from "react-select";
 import { HashLoader } from "react-spinners";
-import { useDispatch, useSelector } from "react-redux";
 import { FaFacebook, FaGithub, FaGoogle, FaExclamationTriangle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { verify_recaptcha, logIn } from "actions/";
-import {
-  fetchUserById,
-  registerNewUser,
-  patchUserInfo,
-  deleteUserAccount,
-  deleteUserProfile,
-  request_otp_code,
-  use_otp_link_student_id,
-} from "actions/users";
 import { dept_list_bachelor_only } from "data/department";
 import ReCAPTCHA from "react-google-recaptcha";
 import useCountDown from "react-countdown-hook";
 import setPageMeta from "utils/seo";
+import instance from "api/axios";
+import handleAPIError from "utils/handleAPIError";
+import { useUserData } from "components/Providers/UserProvider";
+
+export const verify_recaptcha = async (captcha_token) => {
+  const resp = await instance.post(`/recaptcha`, { captcha_token: captcha_token });
+  return resp.data;
+};
+
+const deleteUserProfile = (token) => async (dispatch) => {
+  try {
+    await instance.delete(`/users/profile`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  } catch (error) {
+    throw handleAPIError(error);
+  }
+};
+
+const use_otp_link_student_id = async (token, student_id, otp_code) => {
+  const resp = await instance.post(
+    `/users/student_id/link`,
+    { student_id: student_id, otp_code: otp_code },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return resp.data;
+};
+
+const request_otp_code = async (token, student_id) => {
+  const resp = await instance.post(
+    `/users/student_id/link`,
+    { student_id: student_id },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return resp.data;
+};
 
 function ConnectedAccountTags({ userInfo }) {
   const connected_accounts = userInfo.auth0.identities;
@@ -76,12 +111,11 @@ function ConnectedAccountTags({ userInfo }) {
 }
 
 function DeleteDialog({ isAlertOpen, setIsAlertOpen, deleteMode, setDeleteMode }) {
+  const { registerNewUser, deleteUserAccount, user: userInfo } = useUserData();
   const confirmMessage = `我確定`;
   const cancelRef = useRef();
   const toast = useToast();
-  const dispatch = useDispatch();
   const { user, logout, getAccessTokenSilently } = useAuth0();
-  const userInfo = useSelector((state) => state.user);
 
   const [confirm, setConfirm] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
@@ -95,8 +129,8 @@ function DeleteDialog({ isAlertOpen, setIsAlertOpen, deleteMode, setDeleteMode }
   const clearUserProfile = async () => {
     try {
       const token = await getAccessTokenSilently();
-      await dispatch(deleteUserProfile(token, userInfo.db._id));
-      await dispatch(registerNewUser(token, user.email));
+      await deleteUserProfile(token, userInfo.db._id);
+      await registerNewUser(token, user.email);
     } catch (e) {
       toast({
         title: "刪除用戶資料失敗.",
@@ -110,7 +144,7 @@ function DeleteDialog({ isAlertOpen, setIsAlertOpen, deleteMode, setDeleteMode }
   const clearUserAccount = async () => {
     try {
       const token = await getAccessTokenSilently();
-      await dispatch(deleteUserAccount(token, userInfo.db._id));
+      await deleteUserAccount(token, userInfo.db._id);
     } catch (e) {
       toast({
         title: "刪除用戶帳號失敗.",
@@ -180,10 +214,9 @@ function DeleteDialog({ isAlertOpen, setIsAlertOpen, deleteMode, setDeleteMode }
 }
 
 function UserInfoContainer() {
+  const { patchUserInfo, fetchUserById, logIn, user: userInfo } = useUserData();
   const navigate = useNavigate();
   const toast = useToast();
-  const dispatch = useDispatch();
-  const userInfo = useSelector((state) => state.user);
   const deptOptions = dept_list_bachelor_only.map((dept) => ({ value: dept.full_name, label: dept.code + " " + dept.full_name }));
 
   const { user, isLoading, getAccessTokenSilently } = useAuth0();
@@ -279,7 +312,7 @@ function UserInfoContainer() {
     }
     try {
       const token = await getAccessTokenSilently();
-      await dispatch(patchUserInfo(token, updateObject));
+      await patchUserInfo(token, updateObject);
       toast({
         title: "更改用戶資料成功.",
         status: "success",
@@ -302,8 +335,8 @@ function UserInfoContainer() {
       if (!isLoading && user) {
         try {
           const token = await getAccessTokenSilently();
-          const user_data = await dispatch(fetchUserById(token, user.sub));
-          await dispatch(logIn(user_data));
+          const user_data = await fetchUserById(token, user.sub);
+          await logIn(user_data);
         } catch (error) {
           toast({
             title: "取得用戶資料失敗.",
@@ -338,7 +371,7 @@ function UserInfoContainer() {
       // console.log('Captcha value:', value);
       if (value) {
         try {
-          resp = await dispatch(verify_recaptcha(value));
+          resp = await verify_recaptcha(value);
         } catch (err) {
           // console.log(err);
           recaptchaRef.current.reset();
@@ -365,7 +398,7 @@ function UserInfoContainer() {
       }
       const token = await getAccessTokenSilently();
       try {
-        await dispatch(request_otp_code(token, studentId));
+        await request_otp_code(token, studentId);
         setOtpSent(true);
         setOtpInputStatus(1);
         actions.start(300 * 1000);
@@ -384,7 +417,7 @@ function UserInfoContainer() {
       try {
         setOtpInputStatus(0);
         const token = await getAccessTokenSilently();
-        await dispatch(use_otp_link_student_id(token, studentId, otp));
+        await use_otp_link_student_id(token, studentId, otp);
         // refresh page or data
         window.location.reload();
       } catch (err) {
@@ -466,7 +499,7 @@ function UserInfoContainer() {
         </Collapse>
       </Flex>
     );
-  }, [allowSendOTP, otpSent, otpInputStatus, studentId, timeLeft, userInfo, actions, dispatch, getAccessTokenSilently, toast]);
+  }, [allowSendOTP, otpSent, otpInputStatus, studentId, timeLeft, userInfo, actions, getAccessTokenSilently, toast]);
 
   if (userLoading) {
     return (

@@ -36,7 +36,7 @@ const initState = {
   search_filters_enable: { time: false, department: false, category: false, enroll_method: false }, // object of boolean, enable/disable filters
   search_filters: { time: [[], [], [], [], [], [], []], department: [], category: [], enroll_method: ["1", "2", "3"] }, // default value of filters
   course_table: null, // only one course table for now
-  user: null, // userInfo include {db, auth0}
+  user: null, // userInfo include {db, auth0} // deprecated, moved to UserProvider
   hoveredCourse: null, // course object
   hoveredCourseTime: null, // course time object
 };

@@ -5,20 +5,20 @@ import SkeletonRow from "components/SkeletonRow";
 import { HashLoader } from "react-spinners";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import { BeatLoader } from "react-spinners";
-import { logIn, updateCourseTable } from "actions/index";
+import { updateCourseTable } from "actions/index";
 import { fetchFavoriteCourses } from "actions/courses";
 import { fetchCourseTable } from "actions/course_tables";
-import { fetchUserById } from "actions/users";
 import setPageMeta from "utils/seo";
 import CourseInfoRow from "components/CourseInfoRow";
+import { useUserData } from "components/Providers/UserProvider";
 
 function UserMyPage() {
+  const { logIn, user: userInfo, fetchUserById } = useUserData();
   const toast = useToast();
   const { user, isLoading, getAccessTokenSilently } = useAuth0();
   const dispatch = useDispatch();
   const search_error = useSelector((state) => state.search_error);
   const courseTable = useSelector((state) => state.course_table);
-  const userInfo = useSelector((state) => state.user);
   const [favorite_list, setFavorite_list] = useState([]);
   const displayTags = useSelector((state) => state.display_tags);
   const [Loading, setLoading] = useState(true);
@@ -34,8 +34,8 @@ function UserMyPage() {
       if (!isLoading && user) {
         try {
           const token = await getAccessTokenSilently();
-          const user_data = await dispatch(fetchUserById(token, user.sub));
-          await dispatch(logIn(user_data));
+          const user_data = await fetchUserById(token, user.sub);
+          await logIn(user_data);
           const course_tables = user_data.db.course_tables;
           // console.log(course_tables);
           if (course_tables.length === 0) {

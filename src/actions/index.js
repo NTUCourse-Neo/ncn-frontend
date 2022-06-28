@@ -5,8 +5,6 @@ import {
   SET_FILTERS,
   SET_FILTERS_ENABLE,
   UPDATE_COURSE_TABLE,
-  LOG_IN_SUCCESS,
-  LOG_OUT_SUCCESS,
   SET_DISPLAY_TAGS,
   SET_HOVER_COURSE,
 } from "constants/action-types";
@@ -17,8 +15,6 @@ const setSearchColumn = (col_name) => ({ type: SET_SEARCH_COLUMN, payload: col_n
 const setSearchSettings = (setting_obj) => ({ type: SET_SEARCH_SETTINGS, payload: setting_obj });
 const setFilterEnable = (filter_name, enable) => ({ type: SET_FILTERS_ENABLE, filter_name: filter_name, payload: enable });
 const updateCourseTable = (course_table) => ({ type: UPDATE_COURSE_TABLE, payload: course_table });
-const logOut = () => ({ type: LOG_OUT_SUCCESS });
-const logIn = (user_data) => ({ type: LOG_IN_SUCCESS, payload: user_data });
 const setNewDisplayTags = (new_display_tags) => ({ type: SET_DISPLAY_TAGS, payload: new_display_tags });
 const setBatchSize = (new_batch_size) => ({ type: SET_BATCH_SIZE, payload: new_batch_size });
 const setHoveredCourse = (course) => ({ type: SET_HOVER_COURSE, payload: course });
@@ -29,11 +25,6 @@ const setHoveredCourse = (course) => ({ type: SET_HOVER_COURSE, payload: course 
 // when filter_name == 'category', arr of string (type of courses),
 // when filter_name == 'enroll_method', arr of string (type of enroll method)
 const setFilter = (filter_name, data) => ({ type: SET_FILTERS, filter_name: filter_name, payload: data });
-
-const verify_recaptcha = (captcha_token) => async (dispatch) => {
-  const resp = await instance.post(`/recaptcha`, { captcha_token: captcha_token });
-  return resp.data;
-};
 
 // add try catch block to handle timeout.
 const send_logs = (type, obj) => async (dispatch) => {
@@ -48,10 +39,7 @@ const send_logs = (type, obj) => async (dispatch) => {
 export {
   setSearchColumn,
   setSearchSettings,
-  logOut,
-  logIn,
   updateCourseTable,
-  verify_recaptcha,
   setNewDisplayTags,
   send_logs,
   setFilter,

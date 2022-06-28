@@ -3,9 +3,10 @@ import CourseInfoRow from "components/CourseInfoRow";
 import { Box, Flex, Spacer, Accordion } from "@chakra-ui/react";
 import { useSelector, useDispatch } from "react-redux";
 import { setHoveredCourse } from "actions/index";
+import { useUserData } from "components/Providers/UserProvider";
 
 function CourseInfoRowContainer({ displayTable }) {
-  const userInfo = useSelector((state) => state.user);
+  const { user: userInfo } = useUserData();
   const displayTags = useSelector((state) => state.display_tags);
   const courseInfo = useSelector((state) => state.search_results);
   const courseTable = useSelector((state) => state.course_table);
