@@ -35,49 +35,48 @@ const teams = [
   },
 ];
 
+function TeamMemberCard({ person }) {
+  return (
+    <Box w="400" p="8" bg="white" boxShadow="xl" borderRadius="xl">
+      <VStack spacing="4">
+        <HStack align="center" justify="center" spacing="4">
+          <Avatar src={person.img} name={person.name} size="2xl" />
+          <VStack spacing="2" alignItems="start">
+            <Spacer />
+            <Text fontSize="3xl" fontWeight="bold" color="gray.700">
+              {person.name}
+            </Text>
+            <Text fontSize="md" fontWeight="500" color="gray.500">
+              {person.dept}
+            </Text>
+            <Button
+              size="sm"
+              alignItems="center"
+              justifyContent="center"
+              spacing="2"
+              borderRadius="md"
+              borderWidth="2px"
+              px="3"
+              onClick={() => window.open(`https://www.github.com/${person.github}`, "_blank")}
+            >
+              <Icon as={FaGithub} size="2em" color="gray.500" mr="3" />
+              <Text fontSize="md" fontWeight="500" color="gray.500">
+                {person.github}
+              </Text>
+            </Button>
+          </VStack>
+        </HStack>
+      </VStack>
+    </Box>
+  );
+}
+
 function InfoPageContainer() {
   useEffect(() => {
     window.scrollTo(0, 0);
     setPageMeta({ title: `關於 | NTUCourse Neo`, desc: `關於頁面 | NTUCourse Neo，全新的臺大選課網站。` });
   }, []);
-  const handleOpenGithub = (github) => {
-    window.open(`https://www.github.com/${github}`, "_blank");
-  };
-  const renderTeamCard = (person) => {
-    return (
-      <Box w="400" p="8" bg="white" boxShadow="xl" borderRadius="xl">
-        <VStack spacing="4">
-          <HStack align="center" justify="center" spacing="4">
-            <Avatar src={person.img} name={person.name} size="2xl" />
-            <VStack spacing="2" alignItems="start">
-              <Spacer />
-              <Text fontSize="3xl" fontWeight="bold" color="gray.700">
-                {person.name}
-              </Text>
-              <Text fontSize="md" fontWeight="500" color="gray.500">
-                {person.dept}
-              </Text>
-              <Button
-                size="sm"
-                alignItems="center"
-                justifyContent="center"
-                spacing="2"
-                borderRadius="md"
-                borderWidth="2px"
-                px="3"
-                onClick={() => handleOpenGithub(person.github)}
-              >
-                <Icon as={FaGithub} size="2em" color="gray.500" mr="3" />
-                <Text fontSize="md" fontWeight="500" color="gray.500">
-                  {person.github}
-                </Text>
-              </Button>
-            </VStack>
-          </HStack>
-        </VStack>
-      </Box>
-    );
-  };
+
   return (
     <>
       <Flex direction="column" alignItems="center" px={["10", "20", "100", "200"]} pt="100px">
@@ -104,7 +103,9 @@ function InfoPageContainer() {
         </Text>
         <Divider />
         <HStack justifyContent="center" px={["4", "8", "16"]} wrap="wrap" css={{ gap: "2rem" }} py="16">
-          {teams.map((person) => renderTeamCard(person))}
+          {teams.map((member) => (
+            <TeamMemberCard key={member.github} person={member} />
+          ))}
         </HStack>
         <Text fontSize={["3xl", "4xl", "5xl"]} fontWeight="800" color="gray.700">
           簡報影片

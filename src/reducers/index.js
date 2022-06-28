@@ -18,7 +18,9 @@ import {
   LOG_OUT_SUCCESS,
   UPDATE_USER,
   SET_DISPLAY_TAGS,
+  SET_HOVER_COURSE,
 } from "constants/action-types";
+import { parseCourseTime } from "utils/parseCourseTime";
 
 const initState = {
   search_ids: [], // array of course_id
@@ -35,6 +37,8 @@ const initState = {
   search_filters: { time: [[], [], [], [], [], [], []], department: [], category: [], enroll_method: ["1", "2", "3"] }, // default value of filters
   course_table: null, // only one course table for now
   user: null, // userInfo include {db, auth0}
+  hoveredCourse: null, // course object
+  hoveredCourseTime: null, // course time object
 };
 
 const reducer = (state = initState, action) => {
@@ -108,6 +112,14 @@ const reducer = (state = initState, action) => {
       return { ...state, user: action.payload };
     case SET_DISPLAY_TAGS:
       return { ...state, display_tags: action.payload };
+    case SET_HOVER_COURSE: {
+      if (action.payload === null) {
+        return { ...state, hoveredCourse: null, hoveredCourseTime: null };
+      }
+      const course = action.payload;
+      const hoverCourseTime = parseCourseTime(course, {});
+      return { ...state, hoveredCourse: course, hoveredCourseTime: hoverCourseTime };
+    }
     default:
       return state;
   }

@@ -1,22 +1,48 @@
-import { Table, Thead, Tbody, Tr, Th, Td, Flex, Center, Box, Text, Skeleton, Tooltip } from "@chakra-ui/react";
+import { Table, Thead, Tbody, Tr, Th, Td, Flex, Center, Box, Text, Skeleton, Tooltip, Button } from "@chakra-ui/react";
 import * as React from "react";
 import { useState, useCallback } from "react";
 import CourseTableCard from "components/CourseTableCard/CourseTableCard";
 import { weekdays_map } from "data/mapping_table";
+import { useSelector } from "react-redux";
+import { hash_to_color_hex } from "utils/colorAgent";
 
-function CourseTableContainer({ courses, loading, courseTimes, hoveredCourse, hoveredCourseTime }) {
+function HoverCourseIndicator({ hoveredCourse }) {
+  const course = hoveredCourse;
+  return (
+    <div style={{ boxSizing: "border-box", justifyContent: "center", alignItems: "center" }}>
+      <Button
+        borderRadius="lg"
+        boxShadow="lg"
+        w={{ base: "70px", md: "75px", lg: "100px" }}
+        p={0}
+        h="3vh"
+        border="2px"
+        borderColor={hash_to_color_hex(course._id, 0.7)}
+        borderStyle="dashed"
+      >
+        <Text fontSize="xs" width={"100%"} align="center" isTruncated>
+          {course.course_name}
+        </Text>
+      </Button>
+    </div>
+  );
+}
+
+function CourseTableContainer({ courses, loading, courseTimeMap }) {
   const days = ["1", "2", "3", "4", "5"];
   const interval = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "A", "B", "C", "D"];
   const [activeDayCol, setActiveDayCol] = useState(0);
 
+  const hoveredCourse = useSelector((state) => state.hoveredCourse);
+  const hoveredCourseTimeMap = useSelector((state) => state.hoveredCourseTime);
+
   const renderCourseTableCard = useCallback(
-    (course, hover, day, interval, grow) => {
-      if (course.time_map[day][interval].includes(hover.time_map[day][interval][0])) {
+    (courseTimeMap, hoveredCourse, hoverCourseTimeMap, day, interval) => {
+      if (courseTimeMap[day][interval].includes(hoverCourseTimeMap[day][interval][0])) {
         return (
           <CourseTableCard
-            grow={grow}
-            hoverId={hover.time_map[day][interval][0]}
-            courseTime={course.time_map[day][interval]}
+            hoverId={hoverCourseTimeMap[day][interval][0]}
+            courseInitialOrder={courseTimeMap[day][interval]}
             courseData={courses}
             interval={interval}
             day={weekdays_map[day]}
@@ -25,15 +51,8 @@ function CourseTableContainer({ courses, loading, courseTimes, hoveredCourse, ho
       }
       return (
         <>
-          <CourseTableCard
-            grow={grow}
-            isHover
-            courseTime={course.time_map[day][interval]}
-            courseData={hover.course_data}
-            interval={interval}
-            day={weekdays_map[day]}
-          />
-          <CourseTableCard grow={grow} courseTime={course.time_map[day][interval]} courseData={courses} interval={interval} day={weekdays_map[day]} />
+          <HoverCourseIndicator hoveredCourse={hoveredCourse} />
+          <CourseTableCard courseInitialOrder={courseTimeMap[day][interval]} courseData={courses} interval={interval} day={weekdays_map[day]} />
         </>
       );
     },
@@ -41,7 +60,7 @@ function CourseTableContainer({ courses, loading, courseTimes, hoveredCourse, ho
   );
 
   const renderIntervalContent = useCallback(
-    (days, interval, i, grow) => {
+    (days, interval, i) => {
       return days.map((day, j) => {
         if (loading) {
           return (
@@ -52,33 +71,20 @@ function CourseTableContainer({ courses, loading, courseTimes, hoveredCourse, ho
             </Td>
           );
         }
-        if (courseTimes.time_map && day in courseTimes.time_map && interval in courseTimes.time_map[day]) {
-          if (hoveredCourse && hoveredCourseTime && day in hoveredCourseTime.time_map && interval in hoveredCourseTime.time_map[day]) {
-            return <Td key={`${day}-${i}-${j}`}>{renderCourseTableCard(courseTimes, hoveredCourseTime, day, interval, grow)}</Td>;
+        if (courseTimeMap && day in courseTimeMap && interval in courseTimeMap[day]) {
+          if (hoveredCourse && hoveredCourseTimeMap && day in hoveredCourseTimeMap && interval in hoveredCourseTimeMap[day]) {
+            return <Td key={`${day}-${i}-${j}`}>{renderCourseTableCard(courseTimeMap, hoveredCourse, hoveredCourseTimeMap, day, interval)}</Td>;
           }
           return (
             <Td key={`${day}-${i}-${j}`}>
-              <CourseTableCard
-                grow={grow}
-                courseTime={courseTimes.time_map[day][interval]}
-                courseData={courses}
-                interval={interval}
-                day={weekdays_map[day]}
-              />
+              <CourseTableCard courseInitialOrder={courseTimeMap[day][interval]} courseData={courses} interval={interval} day={weekdays_map[day]} />
             </Td>
           );
         }
-        if (hoveredCourse && hoveredCourseTime && day in hoveredCourseTime.time_map && interval in hoveredCourseTime.time_map[day]) {
+        if (hoveredCourse && hoveredCourseTimeMap && day in hoveredCourseTimeMap && interval in hoveredCourseTimeMap[day]) {
           return (
             <Td key={`${day}-${i}-${j}`}>
-              <CourseTableCard
-                grow={grow}
-                isHover
-                courseTime={[]}
-                courseData={hoveredCourseTime.course_data}
-                interval={interval}
-                day={weekdays_map[day]}
-              />
+              <HoverCourseIndicator hoveredCourse={hoveredCourse} />
             </Td>
           );
         }
@@ -93,7 +99,7 @@ function CourseTableContainer({ courses, loading, courseTimes, hoveredCourse, ho
         );
       });
     },
-    [courseTimes, courses, hoveredCourse, hoveredCourseTime, loading, renderCourseTableCard]
+    [courseTimeMap, courses, hoveredCourse, hoveredCourseTimeMap, loading, renderCourseTableCard]
   );
 
   return (
@@ -124,9 +130,9 @@ function CourseTableContainer({ courses, loading, courseTimes, hoveredCourse, ho
       <Tbody>
         {interval.map((interval, i) => {
           if (activeDayCol === 0) {
-            return <Tr key={`${interval}-${i}`}>{renderIntervalContent(days, interval, i, false)}</Tr>;
+            return <Tr key={`${interval}-${i}`}>{renderIntervalContent(days, interval, i)}</Tr>;
           }
-          return <Tr key={`${interval}-${i}`}>{renderIntervalContent([activeDayCol], interval, i, true)}</Tr>;
+          return <Tr key={`${interval}-${i}`}>{renderIntervalContent([activeDayCol], interval, i)}</Tr>;
         })}
       </Tbody>
     </Table>

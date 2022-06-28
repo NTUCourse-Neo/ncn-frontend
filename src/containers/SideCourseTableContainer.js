@@ -27,9 +27,8 @@ import {
   TabPanels,
   TabPanel,
   SkeletonText,
-  useMediaQuery,
 } from "@chakra-ui/react";
-import { FaRegEdit, FaAngleRight, FaRegHandPointDown, FaRegHandPointUp, FaRegMeh, FaPlusSquare, FaAngleDown } from "react-icons/fa";
+import { FaRegEdit, FaRegHandPointDown, FaRegHandPointUp, FaRegMeh, FaPlusSquare, FaAngleDown } from "react-icons/fa";
 import CourseTableContainer from "containers/CourseTableContainer";
 import { logIn, updateCourseTable } from "actions/index";
 import { fetchCourseTableCoursesByIds } from "actions/courses";
@@ -40,8 +39,24 @@ import { v4 as uuidv4 } from "uuid";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
 import CourseListContainer from "containers/CourseListContainer";
+import { parseCoursesToTimeMap } from "utils/parseCourseTime";
 
 const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
+
+const courseTableScrollBarCss = {
+  "&::-webkit-scrollbar": {
+    w: "2",
+    h: "2",
+  },
+  "&::-webkit-scrollbar-track": {
+    w: "6",
+    h: "6",
+  },
+  "&::-webkit-scrollbar-thumb": {
+    borderRadius: "10",
+    bg: `gray.300`,
+  },
+};
 
 // eslint-disable-next-line react/display-name
 const TextInput = forwardRef((props, ref) => {
@@ -53,62 +68,74 @@ const TextInput = forwardRef((props, ref) => {
   );
 });
 
-function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, hoveredCourse, agreeToCreateTableWithoutLogin, setIsLoginWarningOpen }) {
+function CourseTableNameEditor({ isOpen, onOpen, onClose, handleSave, defaultName }) {
+  const firstFieldRef = useRef(null);
+  return (
+    <Popover isOpen={isOpen} initialFocusRef={firstFieldRef} onOpen={onOpen} onClose={onClose}>
+      <PopoverTrigger>
+        <Button size="sm" variant="solid" colorScheme="gray" p="2">
+          <FaRegEdit size={22} />
+        </Button>
+      </PopoverTrigger>
+      <Flex zIndex={2000}>
+        <PopoverContent>
+          <FocusLock returnFocus persistentFocus={false}>
+            <PopoverArrow />
+            <PopoverCloseButton />
+            <PopoverHeader color="gray.500" fontWeight="700">
+              課表設定
+            </PopoverHeader>
+            <PopoverBody p={5}>
+              <Stack spacing={4}>
+                <TextInput
+                  label="課表名稱"
+                  id="table_name"
+                  ref={firstFieldRef}
+                  defaultValue={defaultName}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleSave(firstFieldRef.current.value);
+                    }
+                  }}
+                />
+                <ButtonGroup d="flex" justifyContent="flex-end">
+                  <Button variant="outline" onClick={onClose}>
+                    Cancel
+                  </Button>
+                  <Button
+                    colorScheme="teal"
+                    onClick={() => {
+                      handleSave(firstFieldRef.current.value);
+                    }}
+                  >
+                    Save
+                  </Button>
+                </ButtonGroup>
+              </Stack>
+            </PopoverBody>
+          </FocusLock>
+        </PopoverContent>
+      </Flex>
+    </Popover>
+  );
+}
+
+function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarningOpen }) {
   const navigate = useNavigate();
   const { user, isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const toast = useToast();
   const dispatch = useDispatch();
   const courseTable = useSelector((state) => state.course_table);
   const userInfo = useSelector((state) => state.user);
-  const [isMobile] = useMediaQuery("(max-width: 1000px)");
 
   // some local states for handling course data
-  // const courseIds = props.courseIds;
   const [courses, setCourses] = useState({}); // dictionary of Course objects using courseId as key
-  const [courseTimes, setCourseTimes] = useState({}); // coursesTime is a dictionary of courseIds and their corresponding time in time table
-  const [hoveredCourseTime, setHoveredCourseTime] = useState({}); // courseTime is a dictionary of courseIds and their corresponding time in time table
+  const [courseTimeMap, setCourseTimeMap] = useState({});
 
   const [loading, setLoading] = useState(true);
   const [expired, setExpired] = useState(false);
 
-  const parseCourseDateTime = (course, course_time_tmp) => {
-    // eslint-disable-next-line array-callback-return
-    course.time_loc_pair.map((time_loc_pair) => {
-      Object.keys(time_loc_pair.time).forEach((day) => {
-        // eslint-disable-next-line array-callback-return
-        time_loc_pair.time[day].map((time) => {
-          if (!(day in course_time_tmp.time_map)) {
-            course_time_tmp.time_map[day] = {};
-          }
-          if (!(time in course_time_tmp.time_map[day])) {
-            course_time_tmp.time_map[day][time] = [course._id];
-          } else {
-            course_time_tmp.time_map[day][time].push(course._id);
-          }
-        });
-      });
-    });
-  };
-
-  // will set courseTimes in this function
-  const extract_course_info = (courses) => {
-    const course_time_tmp = {};
-    if (!course_time_tmp.parsed) {
-      course_time_tmp.parsed = [];
-    }
-    if (!course_time_tmp.time_map) {
-      course_time_tmp.time_map = {};
-    }
-    Object.keys(courses).forEach((key) => {
-      if (course_time_tmp.parsed.includes(courses[key]._id)) {
-        return;
-      }
-      parseCourseDateTime(courses[key], course_time_tmp);
-      course_time_tmp.parsed.push(courses[key]._id);
-    });
-    // console.log(course_time_tmp);
-    return course_time_tmp;
-  };
+  const { onOpen, onClose, isOpen } = useDisclosure();
 
   const convertArrayToObject = (array, key) => {
     const initialValue = {};
@@ -197,9 +224,8 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, hover
         // console.log("course_table: ",courseTable);
         try {
           const courseResult = await dispatch(fetchCourseTableCoursesByIds(courseTable.courses));
-          // set states: coursesIds, courseTimes, courses
-          setCourseIds(courseTable.courses);
-          setCourseTimes(extract_course_info(convertArrayToObject(courseResult, "_id")));
+          // set states: courseTimeMap, courses
+          setCourseTimeMap(parseCoursesToTimeMap(convertArrayToObject(courseResult, "_id")));
           setCourses(convertArrayToObject(courseResult, "_id"));
         } catch (e) {
           toast({
@@ -225,20 +251,6 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, hover
       }
     }
   }, [courseTable]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    if (hoveredCourse) {
-      const tmp = {
-        time_map: {},
-        parsed: [],
-        course_data: hoveredCourse,
-      };
-      parseCourseDateTime(hoveredCourse, tmp);
-      setHoveredCourseTime(tmp);
-    } else {
-      setHoveredCourseTime(null);
-    }
-  }, [hoveredCourse]);
 
   const handleCreateTable = async () => {
     if (!isLoading) {
@@ -280,16 +292,8 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, hover
     }
   };
 
-  // debugger
-  // useEffect(() => console.log('courseTimes: ',courseTimes), [courseTimes]);
-  // useEffect(() => console.log('courses: ',courses), [courses]);
-  // useEffect(() => console.log('courseIds: ',courseIds), [courseIds]);
-
-  const { onOpen, onClose, isOpen } = useDisclosure();
-  const firstFieldRef = useRef(null);
-  const handleSave = async () => {
+  const handleSave = async (new_table_name) => {
     onClose();
-    const new_table_name = firstFieldRef.current.value;
     try {
       const res_table = await dispatch(
         patchCourseTable(courseTable._id, new_table_name, courseTable.user_id, courseTable.expire_ts, courseTable.courses)
@@ -323,133 +327,83 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, hover
     }
   };
 
-  const renderEditName = () => {
+  if ((courseTable === null || expired === true) && !(loading || isLoading)) {
     return (
-      <Popover isOpen={isOpen} initialFocusRef={firstFieldRef} onOpen={onOpen} onClose={onClose}>
-        <PopoverTrigger>
-          <Button size="sm" variant="solid" colorScheme="gray" p="2">
-            <FaRegEdit size={22} />
-          </Button>
-        </PopoverTrigger>
-        <Flex zIndex={2000}>
-          <PopoverContent>
-            <FocusLock returnFocus persistentFocus={false}>
-              <PopoverArrow />
-              <PopoverCloseButton />
-              <PopoverHeader color="gray.500" fontWeight="700">
-                課表設定
-              </PopoverHeader>
-              <PopoverBody p={5}>
-                <Stack spacing={4}>
-                  <TextInput
-                    label="課表名稱"
-                    id="table_name"
-                    ref={firstFieldRef}
-                    defaultValue={courseTable.name}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        handleSave();
-                      }
-                    }}
-                  />
-                  <ButtonGroup d="flex" justifyContent="flex-end">
-                    <Button variant="outline" onClick={onClose}>
-                      Cancel
-                    </Button>
-                    <Button
-                      colorScheme="teal"
-                      onClick={() => {
-                        handleSave();
-                      }}
-                    >
-                      Save
-                    </Button>
-                  </ButtonGroup>
-                </Stack>
-              </PopoverBody>
-            </FocusLock>
-          </PopoverContent>
+      <Flex flexDirection="column" justifyContent="center" alignItems="center" h="100%" w="100%">
+        <Flex flexDirection="row" justifyContent="center" alignItems="center">
+          <FaRegHandPointUp size="3vh" style={{ color: "gray" }} />
+          <FaRegMeh size="3vh" style={{ color: "gray" }} />
+          <FaRegHandPointDown size="3vh" style={{ color: "gray" }} />
         </Flex>
-      </Popover>
+        <Text fontSize="2xl" fontWeight="bold" color="gray">
+          {expired ? "您的課表已過期" : "尚無課表"}
+        </Text>
+        <Button
+          colorScheme="teal"
+          leftIcon={<FaPlusSquare />}
+          onClick={() => {
+            if (isAuthenticated || agreeToCreateTableWithoutLogin) {
+              handleCreateTable();
+            } else {
+              setIsLoginWarningOpen(true);
+            }
+          }}
+        >
+          新增課表
+        </Button>
+      </Flex>
     );
-  };
-  const renderSideCourseTableContent = () => {
-    if ((courseTable === null || expired === true) && !(loading || isLoading)) {
-      return (
-        <Flex flexDirection="column" justifyContent="center" alignItems="center" h="100%" w="100%">
-          <Flex flexDirection="row" justifyContent="center" alignItems="center">
-            <FaRegHandPointUp size="3vh" style={{ color: "gray" }} />
-            <FaRegMeh size="3vh" style={{ color: "gray" }} />
-            <FaRegHandPointDown size="3vh" style={{ color: "gray" }} />
-          </Flex>
-          <Text fontSize="2xl" fontWeight="bold" color="gray">
-            {expired ? "您的課表已過期" : "尚無課表"}
-          </Text>
-          <Button
-            colorScheme="teal"
-            leftIcon={<FaPlusSquare />}
-            onClick={() => {
-              if (isAuthenticated || agreeToCreateTableWithoutLogin) {
-                handleCreateTable();
-              } else {
-                setIsLoginWarningOpen(true);
-              }
-            }}
-          >
-            新增課表
-          </Button>
-        </Flex>
-      );
-    }
-    return (
-      <Box overflow="auto" w="100%" mt={isMobile ? "" : "4"}>
-        <Flex flexDirection="column">
-          <Tabs>
-            <Flex flexDirection="row" justifyContent="start" alignItems="center" mb="2" ml="4">
-              {courseTable ? (
-                <Flex alignItems="center" flexWrap="wrap">
-                  <Text fontWeight="700" fontSize={["xl", "2xl", "3xl"]} color="gray.600" mr="4">
-                    {courseTable.name}
-                  </Text>
-                  {renderEditName()}
-                  <Spacer mx="8" />
-                  <TabList>
-                    <Tab>時間表</Tab>
-                    <Tab>清單</Tab>
-                  </TabList>
-                </Flex>
-              ) : (
-                <SkeletonText width="15vw" mt="2" h="2" noOfLines={3} />
-              )}
-            </Flex>
-            <TabPanels>
-              <TabPanel>
-                <Flex flexDirection="row" justifyContent="start" alignItems="center" overflowX={"auto"}>
-                  <CourseTableContainer
-                    courseTimes={courseTimes}
-                    courses={courses}
-                    loading={loading || isLoading}
-                    hoveredCourseTime={hoveredCourseTime}
-                    hoveredCourse={hoveredCourse}
-                  />
-                </Flex>
-              </TabPanel>
-              <TabPanel>
-                <CourseListContainer courseTable={courseTable} courses={courses} loading={loading || isLoading} />
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
-        </Flex>
-      </Box>
-    );
-  };
+  }
+
   return (
-    <Flex flexDirection={isMobile ? "column" : "row"} h="100%" w="100%">
+    <Box overflow="auto" w="100%" mt={{ base: 0, lg: 4 }} __css={courseTableScrollBarCss}>
+      <Flex flexDirection="column">
+        <Tabs>
+          <Flex flexDirection="row" justifyContent="start" alignItems="center" mb="2" ml="4">
+            {courseTable ? (
+              <Flex alignItems="center" flexWrap="wrap">
+                <Text fontWeight="700" fontSize={["xl", "2xl", "3xl"]} color="gray.600" mr="4">
+                  {courseTable.name}
+                </Text>
+                <CourseTableNameEditor isOpen={isOpen} onClose={onClose} onOpen={onOpen} handleSave={handleSave} defaultName={courseTable.name} />
+                <Spacer mx="8" />
+                <TabList>
+                  <Tab>時間表</Tab>
+                  <Tab>清單</Tab>
+                </TabList>
+              </Flex>
+            ) : (
+              <SkeletonText width="15vw" mt="2" h="2" noOfLines={3} />
+            )}
+          </Flex>
+          <TabPanels>
+            <TabPanel>
+              <Flex flexDirection="row" justifyContent="start" alignItems="center" overflowX={"auto"} __css={courseTableScrollBarCss}>
+                <CourseTableContainer courseTimeMap={courseTimeMap} courses={courses} loading={loading || isLoading} />
+              </Flex>
+            </TabPanel>
+            <TabPanel>
+              <CourseListContainer courseTable={courseTable} courses={courses} loading={loading || isLoading} />
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+      </Flex>
+    </Box>
+  );
+}
+
+function SideCourseTableContainer({ isDisplay, setIsDisplay, agreeToCreateTableWithoutLogin, setIsLoginWarningOpen }) {
+  return (
+    <Flex flexDirection={{ base: "column", lg: "row" }} h="100%" w="100%">
       <Flex justifyContent="center" alignItems="center">
         <IconButton
-          h={isMobile ? "" : "100%"}
-          w={isMobile ? "100%" : ""}
-          icon={isMobile ? <FaAngleDown size={24} /> : <FaAngleRight size={24} />}
+          h={{ base: "", lg: "100%" }}
+          w={{ base: "100%", lg: "" }}
+          icon={
+            <Box transform={{ base: "none", lg: "rotate(270deg)" }}>
+              <FaAngleDown size={24} />
+            </Box>
+          }
           onClick={() => {
             setIsDisplay(!isDisplay);
           }}
@@ -457,7 +411,7 @@ function SideCourseTableContainer({ isDisplay, setIsDisplay, setCourseIds, hover
           variant="ghost"
         />
       </Flex>
-      {renderSideCourseTableContent()}
+      <SideCourseTableContent agreeToCreateTableWithoutLogin={agreeToCreateTableWithoutLogin} setIsLoginWarningOpen={setIsLoginWarningOpen} />
     </Flex>
   );
 }

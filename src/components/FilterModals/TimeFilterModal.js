@@ -9,7 +9,7 @@ import {
   ModalCloseButton,
   Button,
   Flex,
-  useMediaQuery,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import TimetableSelector from "components/FilterModals/components/TimetableSelector";
 import { useSelector, useDispatch } from "react-redux";
@@ -20,8 +20,6 @@ function TimeFilterModal({ selectedTime, setSelectedTime, toggle, title }) {
   const dispatch = useDispatch();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const time_state = useSelector((state) => state.search_filters.time);
-
-  const [isMobile] = useMediaQuery("(max-width: 760px)");
 
   const saveSelectedTime = () => {
     // turn 15x7 2D array (selectedTime) to 7x15 array
@@ -61,7 +59,7 @@ function TimeFilterModal({ selectedTime, setSelectedTime, toggle, title }) {
   return (
     <>
       <Button
-        size={isMobile ? "sm" : "md"}
+        size={useBreakpointValue({ base: "sm", md: "md" }) ?? "md"}
         isDisabled={!toggle}
         onClick={() => {
           onOpen();
@@ -77,43 +75,16 @@ function TimeFilterModal({ selectedTime, setSelectedTime, toggle, title }) {
           // when click "X", overwrite local state from redux state
           onClose();
         }}
-        size={isMobile ? "full" : "xl"}
+        size={useBreakpointValue({ base: "full", md: "xl" }) ?? "xl"}
         scrollBehavior="inside"
       >
         <ModalOverlay />
         <ModalContent maxW={{ base: "100vw", md: "90vw", lg: "50vw" }}>
           <ModalHeader>
             {title}
-            {isMobile ? (
-              <Flex flexDirection="row" justifyContent="start" alignItems="center" mt="2">
-                <Button
-                  size="sm"
-                  colorScheme="blue"
-                  mr={3}
-                  onClick={() => {
-                    onClose();
-                    saveSelectedTime();
-                  }}
-                >
-                  套用
-                </Button>
-                <Button size="sm" variant="ghost" onClick={resetSelectedTime}>
-                  重設
-                </Button>
-              </Flex>
-            ) : (
-              <></>
-            )}
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody overflow="auto" pt="0">
-            <TimetableSelector selectedTime={selectedTime} setSelectedTime={setSelectedTime} />
-          </ModalBody>
-          {isMobile ? (
-            <></>
-          ) : (
-            <ModalFooter>
+            <Flex flexDirection="row" justifyContent="start" alignItems="center" mt="2" display={{ base: "block", md: "none" }}>
               <Button
+                size="sm"
                 colorScheme="blue"
                 mr={3}
                 onClick={() => {
@@ -123,11 +94,30 @@ function TimeFilterModal({ selectedTime, setSelectedTime, toggle, title }) {
               >
                 套用
               </Button>
-              <Button variant="ghost" onClick={resetSelectedTime}>
+              <Button size="sm" variant="ghost" onClick={resetSelectedTime}>
                 重設
               </Button>
-            </ModalFooter>
-          )}
+            </Flex>
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody overflow="auto" pt="0">
+            <TimetableSelector selectedTime={selectedTime} setSelectedTime={setSelectedTime} />
+          </ModalBody>
+          <ModalFooter display={{ base: "none", md: "flex" }}>
+            <Button
+              colorScheme="blue"
+              mr={3}
+              onClick={() => {
+                onClose();
+                saveSelectedTime();
+              }}
+            >
+              套用
+            </Button>
+            <Button variant="ghost" onClick={resetSelectedTime}>
+              重設
+            </Button>
+          </ModalFooter>
         </ModalContent>
       </Modal>
     </>

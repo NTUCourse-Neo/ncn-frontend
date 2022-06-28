@@ -27,7 +27,7 @@ import {
 import homeMainSvg from "img/home_main.svg";
 import HomeCard from "components/HomeCard";
 import { useAuth0 } from "@auth0/auth0-react";
-import { FaArrowDown, FaArrowRight, FaArrowUp, FaGithub, FaSortDown, FaSortUp } from "react-icons/fa";
+import { FaArrowDown, FaArrowRight, FaArrowUp, FaGithub, FaInfoCircle, FaSortDown, FaSortUp } from "react-icons/fa";
 import { animateScroll as scroll, scroller } from "react-scroll";
 import { Link, useNavigate } from "react-router-dom";
 import { BeatLoader } from "react-spinners";
@@ -42,8 +42,48 @@ import { DiscordIcon } from "components/CustomIcons";
 
 const newsCard = [
   <Flex
+    key="NTUCollaborationCard"
+    h={{ base: "220px", lg: "200px" }}
+    overflowY={"auto"}
+    w={["80vw", "80vw", "50vw", "25vw"]}
+    justifyContent={["center", "start"]}
+    alignItems="start"
+    flexDirection="column"
+    bg="teal.200"
+    borderRadius="xl"
+    boxShadow="xl"
+    p="4"
+    mt="8"
+  >
+    <Text fontSize="xl" fontWeight="800" color="gray.700" mb="2">
+      🤩 嗨！臺大！
+    </Text>
+    <Text fontSize="md" fontWeight="500" color="gray.600">
+      經過教務處資訊組的大力推動，我們將以此專案為基礎與臺大合作開發新一代課程網！希望能帶給臺大學生更便利的選課體驗。
+    </Text>
+    <Flex flexDirection="column" flexGrow={1} justify="end" w="100%">
+      <Flex justifyContent="space-between" alignItems="center" flexDirection="row">
+        <Text fontSize={{ base: "xs", lg: "sm" }} fontWeight="400" color="gray.500" mt="4">
+          Team NTUCourse Neo - 20220628
+        </Text>
+        <Button
+          colorScheme="teal"
+          variant="solid"
+          size="sm"
+          mt="4"
+          leftIcon={<FaInfoCircle />}
+          onClick={() =>
+            window.open("https://www.facebook.com/NTUSA/posts/pfbid04j6dfUzvHFPJEK54FDreNnXKy5C7yBZghErKAPWe8yoWXUFRcVqshqyNydqnicMWl", "_blank")
+          }
+        >
+          瞭解更多
+        </Button>
+      </Flex>
+    </Flex>
+  </Flex>,
+  <Flex
     key="RecrutingCard"
-    h={{ base: "200px", lg: "180px" }}
+    h={{ base: "220px", lg: "200px" }}
     overflowY={"auto"}
     w={["80vw", "80vw", "50vw", "25vw"]}
     justifyContent={["center", "start"]}
@@ -63,7 +103,7 @@ const newsCard = [
     </Text>
     <Flex flexDirection="column" flexGrow={1} justify="end" w="100%">
       <Flex justifyContent="space-between" alignItems="center" flexDirection="row">
-        <Text fontSize="sm" fontWeight="400" color="gray.500" mt="4">
+        <Text fontSize={{ base: "xs", lg: "sm" }} fontWeight="400" color="gray.500" mt="4">
           Team NTUCourse Neo - 20220303
         </Text>
         <Link to="/recruiting">
@@ -74,35 +114,103 @@ const newsCard = [
       </Flex>
     </Flex>
   </Flex>,
-  <Flex
-    key="1102 Updating"
-    h={{ base: "200px", lg: "180px" }}
-    overflowY={"auto"}
-    w={["80vw", "80vw", "50vw", "25vw"]}
-    justifyContent={["center", "start"]}
-    alignItems="start"
-    flexDirection="column"
-    bg="teal.200"
-    borderRadius="xl"
-    boxShadow="xl"
-    p="4"
-    mt="8"
-  >
-    <Text fontSize="xl" fontWeight="800" color="gray.700" mb="2">
-      🎉 已更新臺大 110-2 課表
-    </Text>
-    <Text fontSize="md" fontWeight="500" color="gray.600">
-      讚啦！我們已更新 110 學年度第二學期的課程囉！
-      <br />
-      現在就開始規劃課程吧！ 🥰
-    </Text>
-    <Flex flexDirection="column" flexGrow={1} justify="end" w="100%">
-      <Text fontSize="sm" fontWeight="400" color="gray.500" mt="4">
-        Team NTUCourse Neo - 20210115
-      </Text>
-    </Flex>
-  </Flex>,
 ];
+
+function MobileWarningModal({ isOpen, onOpen, onClose }) {
+  return (
+    <AlertDialog motionPreset="slideInBottom" onClose={onClose} isOpen={isOpen} size="sm" isCentered>
+      <AlertDialogOverlay />
+      <AlertDialogContent>
+        <AlertDialogHeader>溫馨提醒</AlertDialogHeader>
+        <AlertDialogBody>
+          <Text fontWeight="400" color="gray.600">
+            行動裝置介面仍在調整測試中。建議使用電腦瀏覽，能讓您獲得更好的選課體驗。
+          </Text>
+          <Text mt="2" fontWeight="700" color="gray.600">
+            我們正在努力讓 NTUCourse Neo 更加進步，若有任何建議歡迎至
+            <Button leftIcon={<DiscordIcon />} color="#5865F2" size="sm" variant="ghost" onClick={() => window.open("https://discord.gg/M7NrenYEbS")}>
+              Discord
+            </Button>
+            告訴我們 🙏
+          </Text>
+        </AlertDialogBody>
+        <AlertDialogFooter>
+          <Button
+            onClick={() => {
+              onClose();
+              localStorage.setItem("NCN_NO_MOBILE_WARNING", true);
+            }}
+            variant="ghost"
+          >
+            不要再提醒我
+          </Button>
+          <Button
+            colorScheme="blue"
+            ml={3}
+            onClick={() => {
+              onClose();
+            }}
+          >
+            好
+          </Button>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
+
+function NewRegisterModal({ isOpen, onOpen, onClose, isLoading, newUser }) {
+  const navigate = useNavigate();
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} size="lg" closeOnOverlayClick={false} closeOnEsc={false}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>🎉 歡迎新朋友</ModalHeader>
+        <ModalBody>
+          <Flex justifyContent="center" alignItems="center" flexDirection="column" h="100%">
+            {isLoading ? (
+              <Flex flexDirection="row" justifyContent="center" alignItems="center">
+                <BeatLoader color="teal" size={10} />
+                <Text fontSize="3xl" fontWeight="800" color="gray.600" ml={4}>
+                  資料同步中...
+                </Text>
+              </Flex>
+            ) : (
+              <Text fontSize="3xl" fontWeight="800" color="gray.600">
+                哈囉 {newUser ? newUser.name : ""} !
+              </Text>
+            )}
+            <Spacer my="2" />
+            <Text fontSize="xl">
+              感謝您註冊 NTUCourse-Neo 🥰 <br /> 為了讓我們更認識你，請完成你的個人資料。
+            </Text>
+            <Spacer my="4" />
+            <Text fontSize="sm" color="gray.400">
+              或點選稍後再說，可至個人資料頁面編輯資料。
+            </Text>
+          </Flex>
+        </ModalBody>
+        <ModalFooter>
+          <Button variant="ghost" mr={3} onClick={onClose} isLoading={isLoading} spinner={<BeatLoader size={8} color="gray" />}>
+            稍後再說
+          </Button>
+          <Button
+            colorScheme="blue"
+            rightIcon={<FaArrowRight />}
+            isLoading={isLoading}
+            spinner={<BeatLoader size={8} color="white" />}
+            onClick={() => {
+              onClose();
+              navigate("user/info");
+            }}
+          >
+            前往設定
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  );
+}
 
 function HomeViewContainer() {
   const toast = useToast();
@@ -118,67 +226,12 @@ function HomeViewContainer() {
 
   const scroll_config = { duration: 1000, delay: 50, smooth: true, offset: -60 };
 
-  const handleGoToUserInfoPage = () => {
-    onClose();
-    navigate("user/info");
-  };
-
   useEffect(() => {
-    window.scrollTo(0, 0);
     if (isMobile && !localStorage.getItem("NCN_NO_MOBILE_WARNING")) {
       onWarningOpen();
     }
     setPageMeta({ title: `首頁 | NTUCourse Neo`, desc: `首頁 | NTUCourse Neo，全新的臺大選課網站。` });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const renderMobileWarning = () => {
-    return (
-      <AlertDialog motionPreset="slideInBottom" onClose={onWarningClose} isOpen={isWarningOpen} size="sm" isCentered>
-        <AlertDialogOverlay />
-        <AlertDialogContent>
-          <AlertDialogHeader>溫馨提醒</AlertDialogHeader>
-          <AlertDialogBody>
-            <Text fontWeight="400" color="gray.600">
-              行動裝置介面仍在調整測試中。建議使用電腦瀏覽，能讓您獲得更好的選課體驗。
-            </Text>
-            <Text mt="2" fontWeight="700" color="gray.600">
-              我們正在努力讓 NTUCourse Neo 更加進步，若有任何建議歡迎至
-              <Button
-                leftIcon={<DiscordIcon />}
-                color="#5865F2"
-                size="sm"
-                variant="ghost"
-                onClick={() => window.open("https://discord.gg/M7NrenYEbS")}
-              >
-                Discord
-              </Button>
-              告訴我們 🙏
-            </Text>
-          </AlertDialogBody>
-          <AlertDialogFooter>
-            <Button
-              onClick={() => {
-                onWarningClose();
-                localStorage.setItem("NCN_NO_MOBILE_WARNING", true);
-              }}
-              variant="ghost"
-            >
-              不要再提醒我
-            </Button>
-            <Button
-              colorScheme="blue"
-              ml={3}
-              onClick={() => {
-                onWarningClose();
-              }}
-            >
-              好
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    );
-  };
+  }, [isMobile, onWarningOpen]);
 
   // refactor API call to redux action later
   useEffect(() => {
@@ -230,63 +283,10 @@ function HomeViewContainer() {
     registerNewUserToDB();
   }, [user, isLoading, isAuthenticated]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const renderNewRegisterModal = () => {
-    return (
-      <>
-        <Modal isOpen={isOpen} onClose={onClose} size="lg" closeOnOverlayClick={false} closeOnEsc={false}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>🎉 歡迎新朋友</ModalHeader>
-            <ModalBody>
-              <Flex justifyContent="center" alignItems="center" flexDirection="column" h="100%">
-                {isRegistering ? (
-                  <Flex flexDirection="row" justifyContent="center" alignItems="center">
-                    <BeatLoader color="teal" size={10} />
-                    <Text fontSize="3xl" fontWeight="800" color="gray.600" ml={4}>
-                      資料同步中...
-                    </Text>
-                  </Flex>
-                ) : (
-                  <Text fontSize="3xl" fontWeight="800" color="gray.600">
-                    哈囉 {user ? user.name : ""} !
-                  </Text>
-                )}
-                <Spacer my="2" />
-                <Text fontSize="xl">
-                  感謝您註冊 NTUCourse-Neo 🥰 <br /> 為了讓我們更認識你，請完成你的個人資料。
-                </Text>
-                <Spacer my="4" />
-                <Text fontSize="sm" color="gray.400">
-                  或點選稍後再說，可至個人資料頁面編輯資料。
-                </Text>
-              </Flex>
-            </ModalBody>
-            <ModalFooter>
-              <Button variant="ghost" mr={3} onClick={onClose} isLoading={isRegistering} spinner={<BeatLoader size={8} color="gray" />}>
-                稍後再說
-              </Button>
-              <Button
-                colorScheme="blue"
-                rightIcon={<FaArrowRight />}
-                isLoading={isRegistering}
-                spinner={<BeatLoader size={8} color="white" />}
-                onClick={() => {
-                  handleGoToUserInfoPage();
-                }}
-              >
-                前往設定
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-      </>
-    );
-  };
-
   return (
     <Box maxW="screen-md" mx="auto" overflow="visible" px="64px" pt="64px">
-      {renderNewRegisterModal()}
-      {renderMobileWarning()}
+      <NewRegisterModal isOpen={isOpen} onOpen={onOpen} onClose={onClose} isLoading={isRegistering} newUser={user} />
+      <MobileWarningModal isOpen={isWarningOpen} onClose={onWarningClose} onOpen={onWarningOpen} />
       <Flex justifyContent="space-between" mb={4} grow="1" flexDirection="column" alignItems="center">
         <Spacer />
         <Flex justifyContent={["center", "space-between"]} flexDirection={{ base: "column-reverse", lg: "row" }} alignItems="center" w="90vw">
@@ -436,6 +436,7 @@ function HomeViewContainer() {
           justifyContent="space-between"
           alignItems="center"
           css={{ gap: "2rem" }}
+          flexWrap="wrap"
         >
           <Flex w={{ base: "100%", lg: "65%" }} flexDirection={{ base: "column", md: "row" }} align={"center"}>
             <Icon mx="8" mb="4" as={FaGithub} boxSize="16" color="white" />
@@ -498,7 +499,7 @@ function HomeViewContainer() {
           css={{ gap: "2rem" }}
         >
           <Flex flexDirection="column" align={{ base: "center", lg: "start" }} textAlign={{ base: "center", md: "start" }}>
-            <Text py={2} fontSize="4xl" color="gray.700" fontWeight="800">
+            <Text py={2} fontSize="3xl" color="gray.700" fontWeight="800">
               現在就開始體驗新世代的選課吧。
             </Text>
             <Text fontSize="lg" color="teal.500" fontWeight="500">

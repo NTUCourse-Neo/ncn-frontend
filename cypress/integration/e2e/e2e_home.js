@@ -22,9 +22,6 @@ describe("Home page e2e test", () => {
   });
   it("Navigate to recruiting page", () => {
     cy.visit("/");
-    cy.get("button").contains("加入我們").click();
-    cy.url().should("include", "/recruiting");
-    cy.go(-1);
     cy.get("button").contains("夥伴招募").click();
     cy.url().should("include", "/recruiting");
   });

@@ -1,7 +1,6 @@
-import { React, useEffect, useState } from "react";
-import { Box, Flex, Text, useToast, useMediaQuery } from "@chakra-ui/react";
+import { React, useEffect, useState, useMemo } from "react";
+import { Flex, Text, useToast, Box, Spacer, Accordion } from "@chakra-ui/react";
 import { useSelector, useDispatch } from "react-redux";
-import CourseInfoRowContainer from "containers/CourseInfoRowContainer";
 import SkeletonRow from "components/SkeletonRow";
 import { HashLoader } from "react-spinners";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
@@ -11,6 +10,7 @@ import { fetchFavoriteCourses } from "actions/courses";
 import { fetchCourseTable } from "actions/course_tables";
 import { fetchUserById } from "actions/users";
 import setPageMeta from "utils/seo";
+import CourseInfoRow from "components/CourseInfoRow";
 
 function UserMyPage() {
   const toast = useToast();
@@ -19,14 +19,14 @@ function UserMyPage() {
   const search_error = useSelector((state) => state.search_error);
   const courseTable = useSelector((state) => state.course_table);
   const userInfo = useSelector((state) => state.user);
-  const [hoveredCourse, setHoveredCourse] = useState(null); // eslint-disable-line no-unused-vars
   const [favorite_list, setFavorite_list] = useState([]);
-  const [coursesInTable, setCoursesInTable] = useState([]);
   const displayTags = useSelector((state) => state.display_tags);
   const [Loading, setLoading] = useState(true);
   const userLoading = isLoading || !userInfo;
 
-  const [isMobile] = useMediaQuery("(max-width: 760px)");
+  const selectedCourses = useMemo(() => {
+    return courseTable?.courses;
+  }, [courseTable]);
 
   // fetch userInfo
   useEffect(() => {
@@ -99,12 +99,6 @@ function UserMyPage() {
     }
   }, [userInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => {
-    if (courseTable) {
-      setCoursesInTable(courseTable.courses);
-    }
-  }, [courseTable]);
-
   if (userLoading) {
     return (
       <Box maxW="screen-md" h="95vh" mx="auto" overflow="visible" p="64px">
@@ -117,7 +111,7 @@ function UserMyPage() {
 
   return (
     <>
-      <Flex h={isMobile ? "90vh" : "95vh"} w="100vw">
+      <Flex h={{ base: "90vh", md: "95vh" }} w="100vw">
         <Flex w="100vw" direction="column" justifyContent="start" alignItems="center" overflow="auto" transition="all 500ms ease-in-out" pt="64px">
           <Flex flexDirection="row" alignItems="center" justifyContent="start">
             {Loading ? <BeatLoader size={8} color="teal" /> : <></>}
@@ -125,14 +119,25 @@ function UserMyPage() {
               {Loading ? "載入中" : `我的最愛課程 共有 ${favorite_list.length} 筆結果`}
             </Text>
           </Flex>
-          <CourseInfoRowContainer
-            w="70vw"
-            courseInfo={favorite_list}
-            setHoveredCourse={setHoveredCourse}
-            selectedCourses={coursesInTable}
-            displayTags={displayTags}
-            displayTable={false}
-          />
+          <Box w={{ base: "100%", md: "80%", lg: "70%" }}>
+            <Flex direction="column" alignItems={"center"}>
+              {favorite_list.map((info, index) => (
+                <Accordion allowToggle w={{ base: "90vw", md: "100%" }} key={index}>
+                  <CourseInfoRow
+                    id={info["id"]}
+                    index={index}
+                    courseInfo={info}
+                    selected={selectedCourses && selectedCourses.includes(info._id)}
+                    displayTags={displayTags}
+                    displayTable={false}
+                    isfavorite={userInfo === null ? false : userInfo.db.favorites.includes(info._id)}
+                  />
+                  <Spacer my={{ base: 2, md: 1 }} />
+                </Accordion>
+              ))}
+            </Flex>
+          </Box>
+
           <Box ml="48vw" transition="all 500ms ease-in-out">
             <SkeletonRow loading={Loading} error={search_error} />
           </Box>

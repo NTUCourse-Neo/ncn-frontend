@@ -1,4 +1,4 @@
-import { React, useState, useEffect, useRef } from "react";
+import { React, useState, useEffect, useRef, useMemo } from "react";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import {
   Box,
@@ -10,7 +10,6 @@ import {
   Input,
   Button,
   useToast,
-  Icon,
   HStack,
   AlertDialog,
   AlertDialogBody,
@@ -24,7 +23,6 @@ import {
   PinInput,
   PinInputField,
   Badge,
-  useMediaQuery,
 } from "@chakra-ui/react";
 import Select from "react-select";
 import { HashLoader } from "react-spinners";
@@ -46,6 +44,141 @@ import ReCAPTCHA from "react-google-recaptcha";
 import useCountDown from "react-countdown-hook";
 import setPageMeta from "utils/seo";
 
+function ConnectedAccountTags({ userInfo }) {
+  const connected_accounts = userInfo.auth0.identities;
+  return connected_accounts.map((account, index) => {
+    let user_name = null;
+    let icon = null;
+    if (account.provider.includes("google")) {
+      user_name = account.profileData ? account.profileData.name : userInfo.auth0.email;
+      icon = <FaGoogle />;
+    } else if (account.provider.includes("github")) {
+      user_name = account.profileData ? account.profileData.name : userInfo.auth0.name;
+      icon = <FaGithub />;
+    } else if (account.provider.includes("facebook")) {
+      icon = <FaFacebook />;
+      user_name = account.profileData ? account.profileData.name : userInfo.auth0.name;
+    }
+    if (!icon) {
+      return null;
+    }
+    return (
+      <Flex key={index} alignItems="center" justifyContent="center" borderRadius="lg" border="2px" borderColor="gray.300" p="2" px="4" mr="2">
+        <Flex w={6} h={6} color="gray.500" justifyContent={"center"} alignItems="center">
+          {icon}
+        </Flex>
+        <Text ml="2" fontWeight="800" color="gray.600">
+          {user_name}
+        </Text>
+      </Flex>
+    );
+  });
+}
+
+function DeleteDialog({ isAlertOpen, setIsAlertOpen, deleteMode, setDeleteMode }) {
+  const confirmMessage = `我確定`;
+  const cancelRef = useRef();
+  const toast = useToast();
+  const dispatch = useDispatch();
+  const { user, logout, getAccessTokenSilently } = useAuth0();
+  const userInfo = useSelector((state) => state.user);
+
+  const [confirm, setConfirm] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const onClose = () => {
+    setIsAlertOpen(false);
+    setDeleteMode(null);
+    setConfirm("");
+  };
+
+  const clearUserProfile = async () => {
+    try {
+      const token = await getAccessTokenSilently();
+      await dispatch(deleteUserProfile(token, userInfo.db._id));
+      await dispatch(registerNewUser(token, user.email));
+    } catch (e) {
+      toast({
+        title: "刪除用戶資料失敗.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const clearUserAccount = async () => {
+    try {
+      const token = await getAccessTokenSilently();
+      await dispatch(deleteUserAccount(token, userInfo.db._id));
+    } catch (e) {
+      toast({
+        title: "刪除用戶帳號失敗.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const onDelete = async () => {
+    // do API calling...
+    setIsDeleting(true);
+    if (deleteMode === "User Profile") {
+      await clearUserProfile();
+      onClose();
+    } else if (deleteMode === "User Account") {
+      await clearUserAccount();
+      onClose();
+      logout();
+    } else {
+      onClose();
+    }
+    setIsDeleting(false);
+  };
+
+  return (
+    <AlertDialog isOpen={isAlertOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
+      <AlertDialogOverlay>
+        <AlertDialogContent>
+          <AlertDialogHeader fontSize="lg" fontWeight="bold">
+            {deleteMode === "User Profile" ? "重設個人資料" : "徹底刪除帳號"}
+          </AlertDialogHeader>
+
+          <AlertDialogBody>
+            <Alert status="warning">
+              <AlertIcon boxSize="24px" as={FaExclamationTriangle} />
+              但咧，你確定嗎？此動作將無法回復！
+            </Alert>
+            <Divider mt="3" />
+            <Text fontSize="md" mt="2" color="gray.500" fontWeight="bold">
+              請輸入 "{confirmMessage}"
+            </Text>
+            <Input
+              mt="2"
+              variant="filled"
+              placeholder=""
+              onChange={(e) => {
+                setConfirm(e.currentTarget.value);
+              }}
+              isInvalid={confirm !== confirmMessage && confirm !== ""}
+            />
+          </AlertDialogBody>
+
+          <AlertDialogFooter>
+            <Button ref={cancelRef} onClick={onClose}>
+              Cancel
+            </Button>
+            <Button colorScheme="red" onClick={onDelete} ml={3} disabled={confirm !== confirmMessage} isLoading={isDeleting}>
+              Delete
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialogOverlay>
+    </AlertDialog>
+  );
+}
+
 function UserInfoContainer() {
   const navigate = useNavigate();
   const toast = useToast();
@@ -53,7 +186,7 @@ function UserInfoContainer() {
   const userInfo = useSelector((state) => state.user);
   const deptOptions = dept_list_bachelor_only.map((dept) => ({ value: dept.full_name, label: dept.code + " " + dept.full_name }));
 
-  const { user, isLoading, logout, getAccessTokenSilently } = useAuth0();
+  const { user, isLoading, getAccessTokenSilently } = useAuth0();
   const userLoading = isLoading || !userInfo;
 
   // states for updating userInfo
@@ -65,18 +198,13 @@ function UserInfoContainer() {
   const [saveLoading, setSaveLoading] = useState(false);
 
   // alert dialog states
-  const cancelRef = useRef();
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [deleteMode, setDeleteMode] = useState(null);
-  const [confirm, setConfirm] = useState("");
-  const [isDeleting, setIsDeleting] = useState(false);
 
   const [allowSendOTP, setAllowSendOTP] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
   const [timeLeft, actions] = useCountDown(0, 1000);
   const [otpInputStatus, setOtpInputStatus] = useState(0);
-
-  const [isMobile] = useMediaQuery("(max-width: 760px)");
 
   const recaptchaRef = useRef();
 
@@ -87,66 +215,6 @@ function UserInfoContainer() {
   //   console.log('doubleMajor: ', doubleMajor);
   //   console.log('minor: ', minor);
   // },[name, studentId, major, doubleMajor, minor]);
-
-  const recOnChange = async (value) => {
-    let resp;
-    // console.log('Captcha value:', value);
-    if (value) {
-      try {
-        resp = await dispatch(verify_recaptcha(value));
-      } catch (err) {
-        // console.log(err);
-        recaptchaRef.current.reset();
-      }
-      if (resp.data.success) {
-        setAllowSendOTP(true);
-      } else {
-        setAllowSendOTP(false);
-        recaptchaRef.current.reset();
-      }
-    }
-  };
-
-  const handleSendOTP = async () => {
-    if (studentId === "") {
-      // console.log("Please input student id");
-      toast({
-        title: "Please input student id",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-    const token = await getAccessTokenSilently();
-    try {
-      await dispatch(request_otp_code(token, studentId));
-      setOtpSent(true);
-      setOtpInputStatus(1);
-      actions.start(300 * 1000);
-    } catch (err) {
-      toast({
-        title: "request otp code failed",
-        description: "請聯繫管理員><",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-
-  const handleVerifyOTP = async (otp) => {
-    try {
-      setOtpInputStatus(0);
-      const token = await getAccessTokenSilently();
-      await dispatch(use_otp_link_student_id(token, studentId, otp));
-      // refresh page or data
-      window.location.reload();
-    } catch (err) {
-      // console.log(err);
-      setOtpInputStatus(-1);
-    }
-  };
 
   // TODO
   const generateUpdateObject = () => {
@@ -264,151 +332,71 @@ function UserInfoContainer() {
     }
   }, [userInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const clearUserProfile = async () => {
-    try {
-      const token = await getAccessTokenSilently();
-      await dispatch(deleteUserProfile(token, userInfo.db._id));
-      await dispatch(registerNewUser(token, user.email));
-    } catch (e) {
-      toast({
-        title: "刪除用戶資料失敗.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-
-  const clearUserAccount = async () => {
-    try {
-      const token = await getAccessTokenSilently();
-      await dispatch(deleteUserAccount(token, userInfo.db._id));
-    } catch (e) {
-      toast({
-        title: "刪除用戶帳號失敗.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-
-  const renderAlertDialog = () => {
-    //console.log('deleteMode: ', deleteMode);
-
-    const onClose = () => {
-      setIsAlertOpen(false);
-      setDeleteMode(null);
-      setConfirm("");
+  const studentIdLinkSection = useMemo(() => {
+    const recOnChange = async (value) => {
+      let resp;
+      // console.log('Captcha value:', value);
+      if (value) {
+        try {
+          resp = await dispatch(verify_recaptcha(value));
+        } catch (err) {
+          // console.log(err);
+          recaptchaRef.current.reset();
+        }
+        if (resp.data.success) {
+          setAllowSendOTP(true);
+        } else {
+          setAllowSendOTP(false);
+          recaptchaRef.current.reset();
+        }
+      }
     };
 
-    const onDelete = async () => {
-      // do API calling...
-      setIsDeleting(true);
-      if (deleteMode === "User Profile") {
-        await clearUserProfile();
-        onClose();
-      } else if (deleteMode === "User Account") {
-        await clearUserAccount();
-        onClose();
-        logout();
-      } else {
-        onClose();
+    const handleSendOTP = async () => {
+      if (studentId === "") {
+        // console.log("Please input student id");
+        toast({
+          title: "Please input student id",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        return;
       }
-      setIsDeleting(false);
+      const token = await getAccessTokenSilently();
+      try {
+        await dispatch(request_otp_code(token, studentId));
+        setOtpSent(true);
+        setOtpInputStatus(1);
+        actions.start(300 * 1000);
+      } catch (err) {
+        toast({
+          title: "request otp code failed",
+          description: "請聯繫管理員><",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
     };
 
-    const confirmMessage = `我確定`;
-
-    return (
-      <AlertDialog isOpen={isAlertOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
-        <AlertDialogOverlay>
-          <AlertDialogContent>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              {deleteMode === "User Profile" ? "重設個人資料" : "徹底刪除帳號"}
-            </AlertDialogHeader>
-
-            <AlertDialogBody>
-              <Alert status="warning">
-                <AlertIcon boxSize="24px" as={FaExclamationTriangle} />
-                但咧，你確定嗎？此動作將無法回復！
-              </Alert>
-              <Divider mt="3" />
-              <Text fontSize="md" mt="2" color="gray.500" fontWeight="bold">
-                請輸入 "{confirmMessage}"
-              </Text>
-              <Input
-                mt="2"
-                variant="filled"
-                placeholder=""
-                onChange={(e) => {
-                  setConfirm(e.currentTarget.value);
-                }}
-                isInvalid={confirm !== confirmMessage && confirm !== ""}
-              />
-            </AlertDialogBody>
-
-            <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={onClose}>
-                Cancel
-              </Button>
-              <Button colorScheme="red" onClick={onDelete} ml={3} disabled={confirm !== confirmMessage} isLoading={isDeleting}>
-                Delete
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
-      </AlertDialog>
-    );
-  };
-
-  const renderConnectedSocialAccounts = () => {
-    // console.log("userInfo: ", userInfo.auth0);
-    const connected_accounts = userInfo.auth0.identities;
-    return connected_accounts.map((account, index) => {
-      // console.log("account: ",account);
-      if (account.provider.includes("google")) {
-        const user_name = account.profileData ? account.profileData.name : userInfo.auth0.email;
-        return (
-          <Flex key={index} alignItems="center" justifyContent="center" borderRadius="lg" border="2px" borderColor="gray.300" p="2" px="4" mr="2">
-            <Icon as={FaGoogle} w={6} h={6} color="gray.500" />
-            <Text ml="2" fontWeight="800" color="gray.600">
-              {user_name}
-            </Text>
-          </Flex>
-        );
+    const handleVerifyOTP = async (otp) => {
+      try {
+        setOtpInputStatus(0);
+        const token = await getAccessTokenSilently();
+        await dispatch(use_otp_link_student_id(token, studentId, otp));
+        // refresh page or data
+        window.location.reload();
+      } catch (err) {
+        // console.log(err);
+        setOtpInputStatus(-1);
       }
-      if (account.provider.includes("github")) {
-        const user_name = account.profileData ? account.profileData.name : userInfo.auth0.name;
-        return (
-          <Flex key={index} alignItems="center" justifyContent="center" borderRadius="lg" border="2px" borderColor="gray.300" p="2" px="4" mr="2">
-            <Icon as={FaGithub} w={6} h={6} color="gray.500" />
-            <Text ml="2" fontWeight="800" color="gray.600">
-              {user_name}
-            </Text>
-          </Flex>
-        );
-      }
-      if (account.provider.includes("facebook")) {
-        const user_name = account.profileData ? account.profileData.name : userInfo.auth0.name;
-        return (
-          <Flex key={index} alignItems="center" justifyContent="center" borderRadius="lg" border="2px" borderColor="gray.300" p="2" px="4">
-            <Icon as={FaFacebook} w={6} h={6} color="gray.500" />
-            <Text ml="2" fontWeight="800" color="gray.600">
-              {user_name}
-            </Text>
-          </Flex>
-        );
-      }
-      return <></>;
-    });
-  };
-  const renderStudentIdLinkSection = () => {
+    };
     if (otpSent) {
       return (
         <Flex w="80%" alignItems="start" flexDirection="column">
           <Flex w="100%" flexDirection="row" justifyContent="start" alignItems="center" mb="2">
-            <Input w="50%" fontSize="lg" fontWeight="500" color="gray.600" defaultValue={userInfo.db.student_id} disabled />
+            <Input w="50%" fontSize="lg" fontWeight="500" color="gray.600" defaultValue={userInfo?.db?.student_id} disabled />
             <Button colorScheme="teal" mx="4" disabled>
               {"已送出驗證碼"}
             </Button>
@@ -441,7 +429,7 @@ function UserInfoContainer() {
         </Flex>
       );
     }
-    if (userInfo.db.student_id) {
+    if (userInfo?.db?.student_id) {
       return (
         <Flex w="80%" alignItems="start" flexDirection="column">
           <Flex w="100%" flexDirection="row" justifyContent="start" alignItems="center" mt="2">
@@ -461,11 +449,11 @@ function UserInfoContainer() {
             fontSize="lg"
             fontWeight="500"
             color="gray.600"
-            defaultValue={userInfo.db.student_id}
+            defaultValue={userInfo?.db?.student_id}
             onChange={(e) => {
               setStudentId(e.currentTarget.value);
             }}
-            disabled={userInfo.db.student_id !== ""}
+            disabled={userInfo?.db?.student_id !== ""}
           />
           <Collapse in={studentId !== ""}>
             <Button colorScheme="teal" mx="4" disabled={studentId === "" || !allowSendOTP} onClick={() => handleSendOTP()}>
@@ -478,7 +466,7 @@ function UserInfoContainer() {
         </Collapse>
       </Flex>
     );
-  };
+  }, [allowSendOTP, otpSent, otpInputStatus, studentId, timeLeft, userInfo, actions, dispatch, getAccessTokenSilently, toast]);
 
   if (userLoading) {
     return (
@@ -490,7 +478,7 @@ function UserInfoContainer() {
     );
   }
   return (
-    <Box maxW={isMobile ? "100vw" : "60vw"} mx="auto" overflow="visible" px={isMobile ? "32px" : "64px"} pt="64px">
+    <Box maxW={{ base: "100vw", md: "60vw" }} mx="auto" overflow="visible" px={{ base: "32px", md: "64px" }} pt="64px">
       <Flex justifyContent="space-between" mb={4} grow="1" flexDirection="column" alignItems="center">
         <Text fontSize={["xl", "3xl"]} fontWeight="700" color="gray.600" my="8">
           ✌️ 歡迎回來，{userInfo.db.name}
@@ -534,7 +522,7 @@ function UserInfoContainer() {
                 已綁定帳號
               </Text>
               <Flex w="100%" flexDirection="row" justifyContent="start" alignItems="start" flexWrap="wrap">
-                {renderConnectedSocialAccounts()}
+                <ConnectedAccountTags userInfo={userInfo} />
               </Flex>
             </Flex>
             <Avatar name={userInfo.db.name} size="2xl" src={user.picture} />
@@ -547,7 +535,7 @@ function UserInfoContainer() {
             <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">
               學號
             </Text>
-            {renderStudentIdLinkSection()}
+            {studentIdLinkSection}
             <Spacer my="1" />
             <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">
               主修
@@ -557,7 +545,7 @@ function UserInfoContainer() {
               {major === null ? (
                 <></>
               ) : (
-                <Box w={isMobile ? "100%" : "20vw"}>
+                <Box w={{ base: "100%", md: "20vw" }}>
                   <Select
                     className="basic-single"
                     classNamePrefix="select"
@@ -580,7 +568,7 @@ function UserInfoContainer() {
               {doubleMajor === null ? (
                 <></>
               ) : (
-                <Box w={isMobile ? "100%" : "20vw"}>
+                <Box w={{ base: "100%", md: "20vw" }}>
                   <Select
                     className="basic-single"
                     classNamePrefix="select"
@@ -603,7 +591,7 @@ function UserInfoContainer() {
               {minor === null ? (
                 <></>
               ) : (
-                <Box w={isMobile ? "100%" : "20vw"}>
+                <Box w={{ base: "100%", md: "20vw" }}>
                   <Select
                     isMulti
                     w="100%"
@@ -704,7 +692,7 @@ function UserInfoContainer() {
                 未來如需使用此服務需重新註冊。
               </Text>
             </HStack>
-            {renderAlertDialog()}
+            <DeleteDialog isAlertOpen={isAlertOpen} setIsAlertOpen={setIsAlertOpen} deleteMode={deleteMode} setDeleteMode={setDeleteMode} />
           </Flex>
         </Flex>
       </Flex>

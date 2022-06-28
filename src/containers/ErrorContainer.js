@@ -1,4 +1,4 @@
-import { Center, Image, Text, Button, HStack } from "@chakra-ui/react";
+import { Flex, Image, Text, Button, HStack } from "@chakra-ui/react";
 import { FaHeartbeat, FaCheckCircle } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -22,9 +22,8 @@ function ErrorContainer({ code }) {
   const error_message = error_msgs[Math.floor(Math.random() * error_msgs.length)];
   const [isReportingError, setIsReportingError] = useState(false);
   const { loading, user, isAuthenticated } = useAuth0();
-  const [uuid, setUuid] = useState(uuidv4()); // eslint-disable-line no-unused-vars
+  const uuid = uuidv4(); // eslint-disable-line no-unused-vars
 
-  console.log("states: ", error_page_states);
   useEffect(() => {
     async function redirect_and_send_logs() {
       if (!error_page_states) {
@@ -48,7 +47,16 @@ function ErrorContainer({ code }) {
   }, [user, loading]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <Center flexDirection="column" justifyItems="center" maxW="60vw" mx="auto" overflow="visible" p="64px" h="95vh">
+    <Flex
+      flexDirection="column"
+      alignItems="center"
+      justifyItems="center"
+      maxW={{ base: "100vw", md: "80vw", lg: "70vw" }}
+      mx="auto"
+      overflow="visible"
+      p="64px"
+      h="95vh"
+    >
       <Image mt="5vh" src={error_img_src} w="auto" h="80%" />
       <a href="https://youtu.be/yKrR5IHwT0k" target="_blank" rel="noreferrer noopener">
         <Text fontSize="4xl" color="gray.500" mt="2vh">
@@ -76,7 +84,7 @@ function ErrorContainer({ code }) {
           {"Tracking ID: " + uuid}
         </Text>
       )}
-    </Center>
+    </Flex>
   );
 }
 

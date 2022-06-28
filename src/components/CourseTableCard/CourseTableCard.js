@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { arrayMoveImmutable as arrayMove } from "array-move";
 import "components/CourseTableCard/CourseTableCard.css";
 import {
@@ -36,29 +36,27 @@ function CourseBox({ courseId, courseData, isOpen, hoverId }) {
   }
 
   return (
-    <>
-      <Tooltip label={course.course_name} placement="top" hasArrow>
-        <Button
-          bg={hash_to_color_hex(course._id, isOpen ? 0.7 : 0.8)}
-          borderRadius="md"
-          boxShadow="lg"
-          mb="1"
-          p="2"
-          w="100%"
-          h="3vh"
-          border={hoverId === courseId ? "2px" : ""}
-          borderColor={hash_to_color_hex(course._id, 0.5)}
-        >
-          <Text fontSize="xs" isTruncated>
-            {` ${course.course_name} `}
-          </Text>
-        </Button>
-      </Tooltip>
-    </>
+    <Tooltip label={course.course_name} placement="top" hasArrow>
+      <Button
+        bg={hash_to_color_hex(course._id, isOpen ? 0.7 : 0.8)}
+        borderRadius="md"
+        boxShadow="lg"
+        mb="1"
+        p="2"
+        w={{ base: "70px", md: "75px", lg: "100px" }}
+        h="3vh"
+        border={"2px"}
+        borderColor={hoverId === courseId ? hash_to_color_hex(course._id, 0.5) : "transparent"}
+      >
+        <Text fontSize="xs" isTruncated>
+          {` ${course.course_name} `}
+        </Text>
+      </Button>
+    </Tooltip>
   );
 }
 
-function CourseTableCard({ courseTime, courseData, day, interval, grow, hoverId, isHover }) {
+function CourseTableCard({ courseInitialOrder, courseData, day, interval, hoverId }) {
   const dispatch = useDispatch();
   const course_table = useSelector((state) => state.course_table);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -69,8 +67,8 @@ function CourseTableCard({ courseTime, courseData, day, interval, grow, hoverId,
         when open Popover, overwrite the courseList by courseOrder
         when click save, overwrite the courseOrder by courseList
     */
-  // initial state or sorting result
-  const [courseOrder, setCourseOrder] = useState(courseTime);
+  // initial order of courses
+  const courseOrder = courseInitialOrder;
   // temp state (buffer), used for decide the NEW course order / dispatch to server, when press "save"
   const [courseList, setCourseList] = useState([]);
   const [prepareToRemoveCourseId, setPrepareToRemoveCourseId] = useState([]);
@@ -160,38 +158,6 @@ function CourseTableCard({ courseTime, courseData, day, interval, grow, hoverId,
     setCourseList([]);
   };
 
-  // set state and force re-render
-  useEffect(() => {
-    setCourseOrder(courseTime);
-  }, [courseTime, courseData, day, interval, grow, hoverId, isHover]); // depend on all props
-
-  // debugger
-  // useEffect(()=>{console.log('CourseTableCard--courseOrder: ', courseOrder);},[courseOrder])
-  // useEffect(()=>{console.log('CourseTableCard--courseList: ', courseList);},[courseList])
-  // useEffect(()=>{console.log('CourseTableCard--prepareToRemoveCourseId: ', prepareToRemoveCourseId);},[prepareToRemoveCourseId])
-
-  if (isHover) {
-    const course = courseData;
-    return (
-      <Button
-        borderRadius="lg"
-        boxShadow="lg"
-        p="2"
-        w={grow ? "100%" : { base: "14vw", md: "12vw", lg: "4vw" }}
-        h="3vh"
-        mb="1"
-        border="2px"
-        borderColor={hash_to_color_hex(course._id, 0.7)}
-        borderStyle="dashed"
-      >
-        <Text fontSize="xs" isTruncated>
-          {" "}
-          {course.course_name}{" "}
-        </Text>
-      </Button>
-    );
-  }
-
   return (
     <>
       <Popover
@@ -206,7 +172,7 @@ function CourseTableCard({ courseTime, courseData, day, interval, grow, hoverId,
       >
         <PopoverTrigger>
           <Flex
-            w={grow ? "100%" : { base: "14vw", md: "12vw", lg: "4vw" }}
+            w={"100%"}
             justifyContent="center"
             alignItems="center"
             flexDirection="column"

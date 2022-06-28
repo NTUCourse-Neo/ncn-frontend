@@ -11,7 +11,7 @@ import {
   Heading,
   Divider,
   Flex,
-  useMediaQuery,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
 import { type_list, code_map } from "data/course_type";
@@ -23,7 +23,6 @@ function CategoryFilterModal({ title, isEnabled, selectedType, setSelectedType }
   const dispatch = useDispatch();
   const search_filters = useSelector((state) => state.search_filters);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [isMobile] = useMediaQuery("(max-width: 760px)");
 
   const onOpenModal = () => {
     // overwrite local states by redux store
@@ -99,7 +98,7 @@ function CategoryFilterModal({ title, isEnabled, selectedType, setSelectedType }
   return (
     <>
       <Button
-        size={isMobile ? "sm" : "md"}
+        size={useBreakpointValue({ base: "sm", md: "md" }) ?? "md"}
         isDisabled={!isEnabled}
         onClick={() => {
           onOpenModal();
@@ -112,38 +111,34 @@ function CategoryFilterModal({ title, isEnabled, selectedType, setSelectedType }
         onClose={() => {
           onCancelEditing();
         }}
-        size={isMobile ? "full" : "xl"}
+        size={useBreakpointValue({ base: "full", md: "xl" }) ?? "xl"}
         scrollBehavior="inside"
       >
         <ModalOverlay />
         <ModalContent maxW={{ base: "100vw", md: "90vw", lg: "50vw" }}>
           <ModalHeader>
             {title}
-            {isMobile ? (
-              <Flex flexDirection="row" justifyContent="start" alignItems="center" mt="2">
-                <Button
-                  size="sm"
-                  colorScheme="blue"
-                  mr={3}
-                  onClick={() => {
-                    onSaveEditing();
-                  }}
-                >
-                  套用
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => {
-                    onResetEditing();
-                  }}
-                >
-                  重設
-                </Button>
-              </Flex>
-            ) : (
-              <></>
-            )}
+            <Flex flexDirection="row" justifyContent="start" alignItems="center" mt="2" display={{ base: "block", md: "none" }}>
+              <Button
+                size="sm"
+                colorScheme="blue"
+                mr={3}
+                onClick={() => {
+                  onSaveEditing();
+                }}
+              >
+                套用
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => {
+                  onResetEditing();
+                }}
+              >
+                重設
+              </Button>
+            </Flex>
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody overflow="auto" pt="0">
@@ -163,29 +158,25 @@ function CategoryFilterModal({ title, isEnabled, selectedType, setSelectedType }
             <Divider />
             {modalBody}
           </ModalBody>
-          {isMobile ? (
-            <></>
-          ) : (
-            <ModalFooter>
-              <Button
-                colorScheme="blue"
-                mr={3}
-                onClick={() => {
-                  onSaveEditing();
-                }}
-              >
-                套用
-              </Button>
-              <Button
-                variant="ghost"
-                onClick={() => {
-                  onResetEditing();
-                }}
-              >
-                重設
-              </Button>
-            </ModalFooter>
-          )}
+          <ModalFooter display={{ base: "none", md: "flex" }}>
+            <Button
+              colorScheme="blue"
+              mr={3}
+              onClick={() => {
+                onSaveEditing();
+              }}
+            >
+              套用
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                onResetEditing();
+              }}
+            >
+              重設
+            </Button>
+          </ModalFooter>
         </ModalContent>
       </Modal>
     </>
