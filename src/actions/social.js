@@ -1,25 +1,6 @@
 import instance from "api/axios";
 import handleAPIError from "utils/handleAPIError";
 
-const getSocialPostByCourseId = (token, course_id) => async (dispatch) => {
-  try {
-    const {
-      data: { posts },
-    } = await instance.get(`/social/courses/${course_id}/posts`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return posts;
-  } catch (error) {
-    if (error.response && error.response.status === 404) {
-      return [];
-    } else {
-      throw handleAPIError(error);
-    }
-  }
-};
-
 const getSocialPostByPostId = (token, post_id) => async (dispatch) => {
   try {
     const {
@@ -104,4 +85,4 @@ const deleteSocialPost = (token, post_id) => async (dispatch) => {
   }
 };
 
-export { getSocialPostByCourseId, getSocialPostByPostId, createSocialPost, reportSocialPost, voteSocialPost, deleteSocialPost };
+export { getSocialPostByPostId, createSocialPost, reportSocialPost, voteSocialPost, deleteSocialPost };

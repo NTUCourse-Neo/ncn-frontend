@@ -38,12 +38,32 @@ import { info_view_map } from "data/mapping_table";
 import PTTContentRowContainer from "containers/PTTContentRowContainer";
 import { useDispatch } from "react-redux";
 import { getCourseEnrollInfo, getNTURatingData, getPTTData, getCourseSyllabusData } from "actions/courses";
-import { getSocialPostByCourseId } from "actions/social";
 import ParrotGif from "img/parrot/parrot.gif";
 import { hash_to_color_hex_with_hue } from "utils/colorAgent";
 import SignUpCard from "components/SignUpCard";
 import { useAuth0 } from "@auth0/auth0-react";
 import SignUpReportForm from "components/SignUpReportForm";
+import instance from "api/axios";
+import handleAPIError from "utils/handleAPIError";
+
+const getSocialPostByCourseId = async (token, course_id) => {
+  try {
+    const {
+      data: { posts },
+    } = await instance.get(`/social/courses/${course_id}/posts`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return posts;
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      return [];
+    } else {
+      throw handleAPIError(error);
+    }
+  }
+};
 
 function DataSourceTag({ source }) {
   return (
@@ -536,7 +556,7 @@ function CourseDetailInfoContainer({ course }) {
     const token = await getAccessTokenSilently();
     let data;
     try {
-      data = await dispatch(getSocialPostByCourseId(token, course._id));
+      data = await getSocialPostByCourseId(token, course._id);
     } catch (error) {
       setIsLoadingSignUpPostData(false);
       toast({
