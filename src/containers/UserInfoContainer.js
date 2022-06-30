@@ -32,7 +32,7 @@ import { dept_list_bachelor_only } from "data/department";
 import ReCAPTCHA from "react-google-recaptcha";
 import useCountDown from "react-countdown-hook";
 import setPageMeta from "utils/seo";
-import instance from "api/axios";
+import instance from "queries/axiosInstance";
 import handleAPIError from "utils/handleAPIError";
 import { useUserData } from "components/Providers/UserProvider";
 
@@ -41,7 +41,7 @@ export const verify_recaptcha = async (captcha_token) => {
   return resp.data;
 };
 
-const deleteUserProfile = (token) => async (dispatch) => {
+const deleteUserProfile = async (token) => {
   try {
     await instance.delete(`/users/profile`, {
       headers: {

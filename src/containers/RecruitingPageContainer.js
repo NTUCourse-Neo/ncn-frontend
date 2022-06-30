@@ -22,7 +22,7 @@ import {
 import ReCAPTCHA from "react-google-recaptcha";
 import { FaCheckCircle } from "react-icons/fa";
 import { useDispatch } from "react-redux";
-import send_logs from "utils/send_logs";
+import sendLogs from "utils/sendLogs";
 import setPageMeta from "utils/seo";
 import hiringPeopleSvg from "img/hiring_people.svg";
 import hiringCollabSvg from "img/hiring_collab.svg";
@@ -96,7 +96,7 @@ function RecruitingPageContainer() {
     };
     // API call
     try {
-      await send_logs("info", form);
+      await sendLogs("info", form);
       setIsSubmiting(false);
       toast({
         title: "我們收到囉！",

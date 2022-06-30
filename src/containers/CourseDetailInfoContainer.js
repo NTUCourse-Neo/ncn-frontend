@@ -43,7 +43,7 @@ import { hash_to_color_hex_with_hue } from "utils/colorAgent";
 import SignUpCard from "components/SignUpCard";
 import { useAuth0 } from "@auth0/auth0-react";
 import SignUpReportForm from "components/SignUpReportForm";
-import instance from "api/axios";
+import instance from "queries/axiosInstance";
 import handleAPIError from "utils/handleAPIError";
 
 const getSocialPostByCourseId = async (token, course_id) => {

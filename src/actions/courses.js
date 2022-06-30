@@ -8,7 +8,7 @@ import {
   INCREMENT_OFFSET,
   UPDATE_TOTAL_COUNT,
 } from "constants/action-types";
-import instance from "api/axios";
+import instance from "queries/axiosInstance";
 import handleAPIError from "utils/handleAPIError";
 
 const fetchSearchIDs = (searchString, paths, filters_enable, filter_obj, batch_size, strict_match_bool) => async (dispatch) => {

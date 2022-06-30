@@ -20,7 +20,7 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { social_user_type_map } from "data/mapping_table";
 import { useAuth0 } from "@auth0/auth0-react";
-import instance from "api/axios";
+import instance from "queries/axiosInstance";
 import handleAPIError from "utils/handleAPIError";
 
 const createSocialPost = async (token, course_id, post) => {

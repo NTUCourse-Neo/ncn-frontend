@@ -1,5 +1,5 @@
 import { UPDATE_COURSE_TABLE } from "constants/action-types";
-import instance from "api/axios";
+import instance from "queries/axiosInstance";
 import handleAPIError from "utils/handleAPIError";
 
 const createCourseTable = (course_table_id, course_table_name, user_id, semester) => async (dispatch) => {

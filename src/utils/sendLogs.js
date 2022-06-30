@@ -1,9 +1,9 @@
-import instance from "api/axios";
+import instance from "queries/axiosInstance";
 import handleAPIError from "utils/handleAPIError";
 import dotenv from "dotenv-defaults";
 dotenv.config();
 
-const send_logs = async (type, obj) => {
+const sendLogs = async (type, obj) => {
   if (process.env.REACT_APP_ENV === "prod") {
     try {
       const resp = await instance.post(`/logs/${type}`, obj);
@@ -16,4 +16,4 @@ const send_logs = async (type, obj) => {
   }
 };
 
-export default send_logs;
+export default sendLogs;

@@ -26,7 +26,7 @@ import { FaThumbsUp, FaThumbsDown, FaInfoCircle, FaClock } from "react-icons/fa"
 import { useAuth0 } from "@auth0/auth0-react";
 import { social_user_type_map } from "data/mapping_table";
 import Moment from "moment";
-import instance from "api/axios";
+import instance from "queries/axiosInstance";
 import handleAPIError from "utils/handleAPIError";
 
 const getSocialPostByPostId = async (token, post_id) => {
