@@ -43,27 +43,7 @@ import { hash_to_color_hex_with_hue } from "utils/colorAgent";
 import SignUpCard from "components/SignUpCard";
 import { useAuth0 } from "@auth0/auth0-react";
 import SignUpReportForm from "components/SignUpReportForm";
-import instance from "queries/axiosInstance";
-import handleAPIError from "utils/handleAPIError";
-
-const getSocialPostByCourseId = async (token, course_id) => {
-  try {
-    const {
-      data: { posts },
-    } = await instance.get(`/social/courses/${course_id}/posts`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return posts;
-  } catch (error) {
-    if (error.response && error.response.status === 404) {
-      return [];
-    } else {
-      throw handleAPIError(error);
-    }
-  }
-};
+import { getSocialPostByCourseId } from "queries/social";
 
 function DataSourceTag({ source }) {
   return (

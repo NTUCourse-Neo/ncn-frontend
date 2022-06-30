@@ -26,73 +26,7 @@ import { FaThumbsUp, FaThumbsDown, FaInfoCircle, FaClock } from "react-icons/fa"
 import { useAuth0 } from "@auth0/auth0-react";
 import { social_user_type_map } from "data/mapping_table";
 import Moment from "moment";
-import instance from "queries/axiosInstance";
-import handleAPIError from "utils/handleAPIError";
-
-const getSocialPostByPostId = async (token, post_id) => {
-  try {
-    const {
-      data: { post },
-    } = await instance.get(`/social/posts/${post_id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return post;
-  } catch (error) {
-    throw handleAPIError(error);
-  }
-};
-
-const reportSocialPost = async (token, post_id, report) => {
-  try {
-    await instance.post(
-      `/social/posts/${post_id}/report`,
-      {
-        report: report,
-        // includes: content, post_type, user_type
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-  } catch (error) {
-    throw handleAPIError(error);
-  }
-};
-
-const voteSocialPost = async (token, post_id, type) => {
-  try {
-    await instance.patch(
-      `/social/posts/${post_id}/votes`,
-      {
-        type: type,
-        // includes: content, post_type, user_type
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-  } catch (error) {
-    throw handleAPIError(error);
-  }
-};
-
-const deleteSocialPost = async (token, post_id) => {
-  try {
-    await instance.delete(`/social/posts/${post_id}/`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-  } catch (error) {
-    throw handleAPIError(error);
-  }
-};
+import { getSocialPostByPostId, reportSocialPost, voteSocialPost, deleteSocialPost } from "queries/social";
 
 // prop.post
 // {

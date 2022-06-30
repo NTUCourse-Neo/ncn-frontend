@@ -20,27 +20,7 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { social_user_type_map } from "data/mapping_table";
 import { useAuth0 } from "@auth0/auth0-react";
-import instance from "queries/axiosInstance";
-import handleAPIError from "utils/handleAPIError";
-
-const createSocialPost = async (token, course_id, post) => {
-  try {
-    await instance.post(
-      `/social/courses/${course_id}/posts`,
-      {
-        post: post,
-        // includes: content, post_type, user_type
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-  } catch (error) {
-    throw handleAPIError(error);
-  }
-};
+import { createSocialPost } from "queries/social";
 
 function SignUpReportForm({ courseId, haveSubmitted, submitCallback }) {
   const { onOpen, onClose, isOpen } = useDisclosure();
