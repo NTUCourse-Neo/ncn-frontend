@@ -32,48 +32,9 @@ import { dept_list_bachelor_only } from "data/department";
 import ReCAPTCHA from "react-google-recaptcha";
 import useCountDown from "react-countdown-hook";
 import setPageMeta from "utils/seo";
-import instance from "queries/axiosInstance";
-import handleAPIError from "utils/handleAPIError";
+import { deleteUserProfile, use_otp_link_student_id, request_otp_code } from "queries/user";
 import { useUserData } from "components/Providers/UserProvider";
 import { verifyRecaptcha } from "queries/verifyRecaptcha";
-
-const deleteUserProfile = async (token) => {
-  try {
-    await instance.delete(`/users/profile`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-  } catch (error) {
-    throw handleAPIError(error);
-  }
-};
-
-const use_otp_link_student_id = async (token, student_id, otp_code) => {
-  const resp = await instance.post(
-    `/users/student_id/link`,
-    { student_id: student_id, otp_code: otp_code },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-  return resp.data;
-};
-
-const request_otp_code = async (token, student_id) => {
-  const resp = await instance.post(
-    `/users/student_id/link`,
-    { student_id: student_id },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-  return resp.data;
-};
 
 function ConnectedAccountTags({ userInfo }) {
   const connected_accounts = userInfo.auth0.identities;
