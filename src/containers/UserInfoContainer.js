@@ -35,11 +35,7 @@ import setPageMeta from "utils/seo";
 import instance from "queries/axiosInstance";
 import handleAPIError from "utils/handleAPIError";
 import { useUserData } from "components/Providers/UserProvider";
-
-export const verify_recaptcha = async (captcha_token) => {
-  const resp = await instance.post(`/recaptcha`, { captcha_token: captcha_token });
-  return resp.data;
-};
+import { verifyRecaptcha } from "queries/verifyRecaptcha";
 
 const deleteUserProfile = async (token) => {
   try {
@@ -371,7 +367,7 @@ function UserInfoContainer() {
       // console.log('Captcha value:', value);
       if (value) {
         try {
-          resp = await verify_recaptcha(value);
+          resp = await verifyRecaptcha(value);
         } catch (err) {
           // console.log(err);
           recaptchaRef.current.reset();

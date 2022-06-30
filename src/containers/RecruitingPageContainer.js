@@ -27,7 +27,7 @@ import setPageMeta from "utils/seo";
 import hiringPeopleSvg from "img/hiring_people.svg";
 import hiringCollabSvg from "img/hiring_collab.svg";
 import hiringOfficeSvg from "img/hiring_office.svg";
-import { verify_recaptcha } from "containers/UserInfoContainer";
+import { verifyRecaptcha } from "queries/verifyRecaptcha";
 
 function RecruitingPageContainer() {
   const toast = useToast();
@@ -57,7 +57,7 @@ function RecruitingPageContainer() {
     // console.log('Captcha value:', value);
     if (value) {
       try {
-        resp = await verify_recaptcha(value);
+        resp = await verifyRecaptcha(value);
       } catch (err) {
         // console.log(err);
         recaptchaRef.current.reset();
