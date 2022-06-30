@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { send_logs } from "actions";
+import send_logs from "utils/send_logs";
 import { BounceLoader } from "react-spinners";
 import { v4 as uuidv4 } from "uuid";
 import setPageMeta from "utils/seo";
@@ -38,7 +38,7 @@ function ErrorContainer({ code }) {
           user_id: isAuthenticated ? user.sub : "guest",
           agent: navigator.userAgent,
         };
-        await dispatch(send_logs("error", error_obj));
+        await send_logs("error", error_obj);
         setIsReportingError(false);
       }
     }

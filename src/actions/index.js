@@ -8,7 +8,6 @@ import {
   SET_DISPLAY_TAGS,
   SET_HOVER_COURSE,
 } from "constants/action-types";
-import instance from "api/axios";
 
 // normal actions
 const setSearchColumn = (col_name) => ({ type: SET_SEARCH_COLUMN, payload: col_name });
@@ -26,24 +25,4 @@ const setHoveredCourse = (course) => ({ type: SET_HOVER_COURSE, payload: course 
 // when filter_name == 'enroll_method', arr of string (type of enroll method)
 const setFilter = (filter_name, data) => ({ type: SET_FILTERS, filter_name: filter_name, payload: data });
 
-// add try catch block to handle timeout.
-const send_logs = (type, obj) => async (dispatch) => {
-  if (process.env.REACT_APP_ENV === "prod") {
-    const resp = await instance.post(`/logs/${type}`, obj);
-    return resp.data;
-  } else {
-    console.log("[INFO] Logs are not sent to server in development mode.");
-  }
-};
-
-export {
-  setSearchColumn,
-  setSearchSettings,
-  updateCourseTable,
-  setNewDisplayTags,
-  send_logs,
-  setFilter,
-  setFilterEnable,
-  setBatchSize,
-  setHoveredCourse,
-};
+export { setSearchColumn, setSearchSettings, updateCourseTable, setNewDisplayTags, setFilter, setFilterEnable, setBatchSize, setHoveredCourse };
