@@ -37,6 +37,7 @@ import { useNavigate } from "react-router-dom";
 import CourseListContainer from "containers/CourseListContainer";
 import { parseCoursesToTimeMap } from "utils/parseCourseTime";
 import { useUserData } from "components/Providers/UserProvider";
+import { useCourseTable } from "components/Providers/CourseTableProvider";
 
 const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
@@ -121,8 +122,8 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
   const navigate = useNavigate();
   const { user, isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const toast = useToast();
-  const { courseTable, fetchCourseTable, setCourseTable, fetchCourseTableCoursesByIds, createCourseTable, patchCourseTable } =
-    useCourseSearchingContext();
+  const { fetchCourseTableCoursesByIds } = useCourseSearchingContext();
+  const { courseTable, fetchCourseTable, setCourseTable, createCourseTable, patchCourseTable } = useCourseTable();
   const { logIn, user: userInfo, linkCoursetableToUser, fetchUserById } = useUserData();
 
   // some local states for handling course data
@@ -168,7 +169,6 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
           await logIn(user_data);
           const course_tables = user_data.db.course_tables;
           if (course_tables.length === 0) {
-            // user has no course table, set courseTable in redux null
             setCourseTable(null);
             setLoading(false);
           } else {

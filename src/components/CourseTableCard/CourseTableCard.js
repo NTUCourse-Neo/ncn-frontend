@@ -25,7 +25,7 @@ import {
 } from "@chakra-ui/react";
 import { hash_to_color_hex } from "utils/colorAgent";
 import { FaExclamationTriangle } from "react-icons/fa";
-import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
+import { useCourseTable } from "components/Providers/CourseTableProvider";
 import SortablePopover from "components/CourseTableCard/SortablePopover";
 
 function CourseBox({ courseId, courseData, isOpen, hoverId }) {
@@ -56,15 +56,9 @@ function CourseBox({ courseId, courseData, isOpen, hoverId }) {
 }
 
 function CourseTableCard({ courseInitialOrder, courseData, day, interval, hoverId }) {
-  const { courseTable, patchCourseTable } = useCourseSearchingContext();
+  const { courseTable, patchCourseTable } = useCourseTable();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
-
-  /*
-        state design concept:
-        when open Popover, overwrite the courseList by courseOrder
-        when click save, overwrite the courseOrder by courseList
-    */
   // initial order of courses
   const courseOrder = courseInitialOrder;
   // temp state (buffer), used for decide the NEW course order / dispatch to server, when press "save"
@@ -73,10 +67,8 @@ function CourseTableCard({ courseInitialOrder, courseData, day, interval, hoverI
 
   const handleDelete = (courseId) => {
     if (prepareToRemoveCourseId.includes(courseId)) {
-      // If the course is in the prepareToRemoveCourseId, remove it from the list.
       setPrepareToRemoveCourseId(prepareToRemoveCourseId.filter((id) => id !== courseId));
     } else {
-      // If the course is not in the prepareToRemoveCourseId, add it to the list.
       setPrepareToRemoveCourseId([...prepareToRemoveCourseId, courseId]);
     }
   };

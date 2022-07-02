@@ -14,15 +14,11 @@ const CourseSearchingContext = createContext({
   searchSettings: { show_selected_courses: false, only_show_not_conflicted_courses: false, sync_add_to_nol: false, strict_search_mode: false }, // object of settings
   searchFiltersEnable: { time: false, department: false, category: false, enroll_method: false }, // object of boolean, enable/disable filters
   searchFilters: { time: [[], [], [], [], [], [], []], department: [], category: [], enroll_method: ["1", "2", "3"] }, // default value of filters
-  courseTable: null, // only one course table for now
   setBatchSize: () => {},
   setSearchSettings: () => {},
   setSearchColumns: () => {},
   setSearchFiltersEnable: () => {},
   setSearchFilters: () => {},
-  createCourseTable: () => {},
-  fetchCourseTable: () => {},
-  patchCourseTable: () => {},
   fetchSearchIDs: () => {},
   fetchSearchResults: () => {},
   fetchCourse: () => {},
@@ -56,67 +52,6 @@ function CourseSearchingProvider(props) {
     category: [],
     enroll_method: ["1", "2", "3"],
   });
-  const [courseTable, setCourseTable] = useState(null);
-
-  const createCourseTable = async (course_table_id, course_table_name, user_id, semester) => {
-    try {
-      const {
-        data: { course_table },
-      } = await instance.post(`/course_tables/`, { id: course_table_id, name: course_table_name, user_id: user_id, semester: semester });
-      setCourseTable(course_table);
-      return course_table;
-    } catch (error) {
-      throw handleAPIError(error);
-    }
-  };
-
-  const fetchCourseTable = async (course_table_id) => {
-    try {
-      const {
-        data: { course_table },
-      } = await instance.get(`/course_tables/${course_table_id}`);
-      setCourseTable(course_table);
-      return course_table;
-    } catch (error) {
-      if (error.response) {
-        if (error.response.status === 403 || error.response.status === 404) {
-          // expired course_table
-          setCourseTable(null);
-          return null;
-        }
-      } else {
-        throw handleAPIError(error);
-      }
-    }
-  };
-
-  const patchCourseTable = async (course_table_id, course_table_name, user_id, expire_ts, courses) => {
-    // filter out "" in courses
-    const new_courses = courses.filter((course) => course !== "");
-    try {
-      const {
-        data: { course_table },
-      } = await instance.patch(`/course_tables/${course_table_id}`, {
-        name: course_table_name,
-        user_id: user_id,
-        expire_ts: expire_ts,
-        courses: new_courses,
-      });
-      setCourseTable(course_table);
-      return course_table;
-    } catch (error) {
-      // need to let frontend handle error, so change to return null
-      if (error.response) {
-        if (error.response.status === 403 && error.response.data.message === "Course table is expired") {
-          // expired course_table
-          setCourseTable(null);
-          return null;
-        }
-      } else {
-        throw handleAPIError(error);
-      }
-    }
-  };
 
   const fetchSearchIDs = async (searchString, paths, filters_enable, filter_obj, batchSize, strict_match_bool) => {
     setSearchLoading(true);
@@ -319,16 +254,11 @@ function CourseSearchingProvider(props) {
         searchSettings,
         searchFiltersEnable,
         searchFilters,
-        courseTable,
         setBatchSize,
         setSearchSettings,
-        setCourseTable,
         setSearchColumns,
         setSearchFiltersEnable,
         setSearchFilters,
-        createCourseTable,
-        fetchCourseTable,
-        patchCourseTable,
         fetchSearchIDs,
         fetchSearchResults,
         fetchCourse,

@@ -8,7 +8,7 @@ import { MdDragHandle } from "react-icons/md";
 import { hash_to_color_hex } from "utils/colorAgent";
 import { getNolAddUrl } from "utils/getNolUrls";
 import openPage from "utils/openPage";
-import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
+import { useCourseTable } from "components/Providers/CourseTableProvider";
 import { sortableContainer, sortableElement, sortableHandle } from "react-sortable-hoc";
 import { useNavigate } from "react-router-dom";
 
@@ -114,7 +114,7 @@ const SortableContainer = sortableContainer(({ children }) => {
 });
 
 function CourseListContainer({ courseTable, courses, loading }) {
-  const { patchCourseTable } = useCourseSearchingContext();
+  const { patchCourseTable } = useCourseTable();
   const toast = useToast();
   const [courseListForSort, setCourseListForSort] = useState(Object.keys(courses));
   const [prepareToRemoveCourseId, setPrepareToRemoveCourseId] = useState([]);

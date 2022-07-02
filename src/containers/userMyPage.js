@@ -8,14 +8,16 @@ import setPageMeta from "utils/seo";
 import CourseInfoRow from "components/CourseInfoRow";
 import { useUserData } from "components/Providers/UserProvider";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
-import { useDisplayTagsContext } from "components/Providers/DisplayTagsProvider";
+import { useDisplayTags } from "components/Providers/DisplayTagsProvider";
+import { useCourseTable } from "components/Providers/CourseTableProvider";
 
 function UserMyPage() {
   const { logIn, user: userInfo, fetchUserById } = useUserData();
   const toast = useToast();
   const { user, isLoading, getAccessTokenSilently } = useAuth0();
-  const { searchError, courseTable, setCourseTable, fetchCourseTable, fetchFavoriteCourses } = useCourseSearchingContext();
-  const { displayTags } = useDisplayTagsContext();
+  const { searchError, fetchFavoriteCourses } = useCourseSearchingContext();
+  const { courseTable, setCourseTable, fetchCourseTable } = useCourseTable();
+  const { displayTags } = useDisplayTags();
   const [favorite_list, setFavorite_list] = useState([]);
   const [Loading, setLoading] = useState(true);
   const userLoading = isLoading || !userInfo;
@@ -35,7 +37,6 @@ function UserMyPage() {
           const course_tables = user_data.db.course_tables;
           // console.log(course_tables);
           if (course_tables.length === 0) {
-            // user has no course table, set courseTable in redux null
             setCourseTable(null);
           } else {
             // pick the first table

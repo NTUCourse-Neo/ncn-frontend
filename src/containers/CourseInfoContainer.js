@@ -32,6 +32,7 @@ import ParrotUltraGif from "img/parrot/ultrafastparrot.gif";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useUserData } from "components/Providers/UserProvider";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
+import { useCourseTable } from "components/Providers/CourseTableProvider";
 
 const copyWordList = [
   { count: 100, word: "複製終結者!!", color: "purple.600", bg: "purple.50" },
@@ -48,7 +49,8 @@ const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
 function CourseInfoContainer({ code }) {
   const { logIn, user: userInfo, fetchUserById, addFavoriteCourse } = useUserData();
-  const { fetchCourse, fetchCourseTable, patchCourseTable } = useCourseSearchingContext();
+  const { fetchCourse } = useCourseSearchingContext();
+  const { fetchCourseTable, patchCourseTable } = useCourseTable();
   const navigate = useNavigate();
   const toast = useToast();
 

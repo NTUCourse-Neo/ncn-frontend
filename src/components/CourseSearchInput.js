@@ -39,7 +39,7 @@ import { mapStateToTimeTable, mapStateToIntervals } from "utils/timeTableConvert
 import { info_view_map } from "data/mapping_table";
 import { useMount } from "react-use";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
-import { useDisplayTagsContext } from "components/Providers/DisplayTagsProvider";
+import { useDisplayTags } from "components/Providers/DisplayTagsProvider";
 
 function CourseSearchInputTextArea() {
   const navigate = useNavigate();
@@ -217,7 +217,7 @@ function CourseSearchInput({ displayPanel }) {
   const toast = useToast();
   const { searchFilters, searchSettings, searchFiltersEnable, setSearchFiltersEnable, setSearchSettings, setSearchFilters } =
     useCourseSearchingContext();
-  const { displayTags, setDisplayTags } = useDisplayTagsContext();
+  const { displayTags, setDisplayTags } = useDisplayTags();
   const available_tags = ["required", "total_slot", "enroll_method", "area"];
 
   // filters local states

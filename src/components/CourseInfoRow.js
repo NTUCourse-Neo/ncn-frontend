@@ -29,7 +29,7 @@ import { hash_to_color_hex } from "utils/colorAgent";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
 import { useUserData } from "components/Providers/UserProvider";
-import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
+import { useCourseTable } from "components/Providers/CourseTableProvider";
 
 const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
@@ -55,7 +55,7 @@ function DeptBadge({ course }) {
 }
 
 function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayTable }) {
-  const { fetchCourseTable, patchCourseTable } = useCourseSearchingContext();
+  const { fetchCourseTable, patchCourseTable } = useCourseTable();
   const navigate = useNavigate();
   const { user: userInfo, addFavoriteCourse } = useUserData();
 

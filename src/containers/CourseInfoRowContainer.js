@@ -4,12 +4,14 @@ import { Box, Flex, Spacer, Accordion } from "@chakra-ui/react";
 import { useUserData } from "components/Providers/UserProvider";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { setHoveredCourseData } from "utils/hoverCourse";
-import { useDisplayTagsContext } from "components/Providers/DisplayTagsProvider";
+import { useDisplayTags } from "components/Providers/DisplayTagsProvider";
+import { useCourseTable } from "components/Providers/CourseTableProvider";
 
 function CourseInfoRowContainer({ displayTable }) {
   const { user: userInfo } = useUserData();
-  const { searchResult: courseInfo, courseTable } = useCourseSearchingContext();
-  const { displayTags } = useDisplayTagsContext();
+  const { searchResult: courseInfo } = useCourseSearchingContext();
+  const { displayTags } = useDisplayTags();
+  const { courseTable } = useCourseTable();
   const selectedCourses = useMemo(() => {
     return courseTable?.courses;
   }, [courseTable]);
