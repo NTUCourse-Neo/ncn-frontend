@@ -30,7 +30,7 @@ import {
 } from "@chakra-ui/react";
 import { FaRegEdit, FaRegHandPointDown, FaRegHandPointUp, FaRegMeh, FaPlusSquare, FaAngleDown } from "react-icons/fa";
 import CourseTableContainer from "containers/CourseTableContainer";
-import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
+import { fetchCourseTableCoursesByIds } from "queries/course";
 import { v4 as uuidv4 } from "uuid";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
@@ -125,7 +125,6 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
   const navigate = useNavigate();
   const { user, isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const toast = useToast();
-  const { fetchCourseTableCoursesByIds } = useCourseSearchingContext();
   const { courseTable, setCourseTable } = useCourseTable();
   const { setUser, user: userInfo } = useUserData();
 

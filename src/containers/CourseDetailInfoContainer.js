@@ -42,7 +42,7 @@ import SignUpCard from "components/SignUpCard";
 import { useAuth0 } from "@auth0/auth0-react";
 import SignUpReportForm from "components/SignUpReportForm";
 import { getSocialPostByCourseId } from "queries/social";
-import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
+import { getCourseEnrollInfo, getNTURatingData, getPTTData, getCourseSyllabusData } from "queries/course";
 
 function DataSourceTag({ source }) {
   return (
@@ -401,7 +401,6 @@ const syllabusTitle = {
 
 function CourseDetailInfoContainer({ course }) {
   const toast = useToast();
-  const { getCourseEnrollInfo, getNTURatingData, getPTTData, getCourseSyllabusData } = useCourseSearchingContext();
   const { getAccessTokenSilently, isLoading: isAuth0Loading, isAuthenticated } = useAuth0();
 
   // Course live data

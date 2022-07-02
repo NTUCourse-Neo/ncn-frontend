@@ -41,6 +41,7 @@ import { useMount } from "react-use";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { useDisplayTags } from "components/Providers/DisplayTagsProvider";
 import handleAPIError from "utils/handleAPIError";
+import { fetchSearchIDs, fetchSearchResults } from "queries/course";
 
 function CourseSearchInputTextArea() {
   const navigate = useNavigate();
@@ -53,8 +54,6 @@ function CourseSearchInputTextArea() {
     searchFiltersEnable,
     searchSettings,
     setSearchColumns,
-    fetchSearchIDs,
-    fetchSearchResults,
     setSearchResult,
     setSearchLoading,
     setSearchError,

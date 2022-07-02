@@ -31,7 +31,7 @@ import ParrotGif from "img/parrot/parrot.gif";
 import ParrotUltraGif from "img/parrot/ultrafastparrot.gif";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useUserData } from "components/Providers/UserProvider";
-import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
+import { fetchCourse } from "queries/course";
 import { useCourseTable } from "components/Providers/CourseTableProvider";
 import handleAPIError from "utils/handleAPIError";
 import { fetchUserById, addFavoriteCourse } from "queries/user";
@@ -52,7 +52,6 @@ const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
 function CourseInfoContainer({ code }) {
   const { setUser, user: userInfo } = useUserData();
-  const { fetchCourse } = useCourseSearchingContext();
   const { setCourseTable } = useCourseTable();
   const navigate = useNavigate();
   const toast = useToast();

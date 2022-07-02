@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import useOnScreen from "hooks/useOnScreen";
 import { useToast } from "@chakra-ui/react";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
+import { fetchSearchResults } from "queries/course";
 
 export default function usePagination(ref) {
   const reachedBottom = useOnScreen(ref);
@@ -14,7 +15,6 @@ export default function usePagination(ref) {
     offset,
     batchSize,
     searchIds,
-    fetchSearchResults,
     setSearchLoading,
     setSearchError,
     setOffset,
