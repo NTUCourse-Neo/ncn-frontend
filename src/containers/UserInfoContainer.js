@@ -82,6 +82,7 @@ function DeleteDialog({ isAlertOpen, setIsAlertOpen, deleteMode, setDeleteMode }
   const cancelRef = useRef();
   const toast = useToast();
   const { user, logout, getAccessTokenSilently } = useAuth0();
+  const navigate = useNavigate();
 
   const [confirm, setConfirm] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
@@ -127,6 +128,7 @@ function DeleteDialog({ isAlertOpen, setIsAlertOpen, deleteMode, setDeleteMode }
     setIsDeleting(true);
     if (deleteMode === "User Profile") {
       await clearUserProfile();
+      navigate("/");
       onClose();
     } else if (deleteMode === "User Account") {
       await clearUserAccount();
