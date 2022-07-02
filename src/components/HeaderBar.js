@@ -23,7 +23,7 @@ import BeatLoader from "react-spinners/BeatLoader";
 import { useUserData } from "components/Providers/UserProvider";
 
 function SignInButton() {
-  const { logOut } = useUserData();
+  const { setUser } = useUserData();
   const { loginWithRedirect, user, isAuthenticated, isLoading, logout } = useAuth0();
 
   if (isLoading) {
@@ -79,7 +79,7 @@ function SignInButton() {
               m="2"
               mr="4"
               onClick={() => {
-                logOut();
+                setUser(null);
                 logout();
               }}
             >

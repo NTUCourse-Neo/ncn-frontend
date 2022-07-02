@@ -211,7 +211,7 @@ function NewRegisterModal({ isOpen, onOpen, onClose, isLoading, newUser }) {
 }
 
 function HomeViewContainer() {
-  const { logIn, fetchUserById, registerNewUser } = useUserData();
+  const { setUser, fetchUserById, registerNewUser } = useUserData();
   const toast = useToast();
   const navigate = useNavigate();
   const { user, isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
@@ -271,9 +271,9 @@ function HomeViewContainer() {
           } catch (error) {
             navigate(`/error/${error.status_code}`, { state: error });
           }
-          logIn(new_user_data);
+          setUser(new_user_data);
         } else {
-          logIn(user_data);
+          setUser(user_data);
         }
       }
     };

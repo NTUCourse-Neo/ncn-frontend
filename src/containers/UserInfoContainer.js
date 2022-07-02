@@ -171,7 +171,7 @@ function DeleteDialog({ isAlertOpen, setIsAlertOpen, deleteMode, setDeleteMode }
 }
 
 function UserInfoContainer() {
-  const { patchUserInfo, fetchUserById, logIn, user: userInfo } = useUserData();
+  const { patchUserInfo, fetchUserById, setUser, user: userInfo } = useUserData();
   const navigate = useNavigate();
   const toast = useToast();
   const deptOptions = dept_list_bachelor_only.map((dept) => ({ value: dept.full_name, label: dept.code + " " + dept.full_name }));
@@ -293,7 +293,7 @@ function UserInfoContainer() {
         try {
           const token = await getAccessTokenSilently();
           const user_data = await fetchUserById(token, user.sub);
-          await logIn(user_data);
+          await setUser(user_data);
         } catch (error) {
           toast({
             title: "取得用戶資料失敗.",

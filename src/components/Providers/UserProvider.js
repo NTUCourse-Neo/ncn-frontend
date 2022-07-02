@@ -4,8 +4,7 @@ import handleAPIError from "utils/handleAPIError";
 
 const UserDataContext = createContext({
   user: null,
-  logIn: () => {},
-  logOut: () => {},
+  setUser: () => {},
   linkCoursetableToUser: async () => {},
   addFavoriteCourse: async () => {},
   patchUserInfo: async () => {},
@@ -17,12 +16,6 @@ const UserDataContext = createContext({
 function UserDataProvider(props) {
   const [user, setUser] = useState(null);
 
-  const logIn = (user) => {
-    setUser(user);
-  };
-  const logOut = () => {
-    setUser(null);
-  };
   const linkCoursetableToUser = async (token, course_table_id, user_id) => {
     try {
       const {
@@ -132,8 +125,7 @@ function UserDataProvider(props) {
     <UserDataContext.Provider
       value={{
         user,
-        logIn,
-        logOut,
+        setUser,
         linkCoursetableToUser,
         addFavoriteCourse,
         patchUserInfo,

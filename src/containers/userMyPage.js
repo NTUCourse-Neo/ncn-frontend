@@ -12,7 +12,7 @@ import { useDisplayTags } from "components/Providers/DisplayTagsProvider";
 import { useCourseTable } from "components/Providers/CourseTableProvider";
 
 function UserMyPage() {
-  const { logIn, user: userInfo, fetchUserById } = useUserData();
+  const { setUser, user: userInfo, fetchUserById } = useUserData();
   const toast = useToast();
   const { user, isLoading, getAccessTokenSilently } = useAuth0();
   const { searchError, fetchFavoriteCourses } = useCourseSearchingContext();
@@ -33,7 +33,7 @@ function UserMyPage() {
         try {
           const token = await getAccessTokenSilently();
           const user_data = await fetchUserById(token, user.sub);
-          await logIn(user_data);
+          await setUser(user_data);
           const course_tables = user_data.db.course_tables;
           // console.log(course_tables);
           if (course_tables.length === 0) {

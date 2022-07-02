@@ -48,7 +48,7 @@ const copyWordList = [
 const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
 function CourseInfoContainer({ code }) {
-  const { logIn, user: userInfo, fetchUserById, addFavoriteCourse } = useUserData();
+  const { setUser, user: userInfo, fetchUserById, addFavoriteCourse } = useUserData();
   const { fetchCourse } = useCourseSearchingContext();
   const { fetchCourseTable, patchCourseTable } = useCourseTable();
   const navigate = useNavigate();
@@ -112,7 +112,7 @@ function CourseInfoContainer({ code }) {
             navigate(`/error/${error.status_code}`, { state: error });
             return;
           }
-          await logIn(user_data);
+          await setUser(user_data);
 
           if (user_data.db.course_tables.length === 0) {
             uuid = null;

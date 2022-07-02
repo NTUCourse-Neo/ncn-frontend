@@ -124,7 +124,7 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
   const toast = useToast();
   const { fetchCourseTableCoursesByIds } = useCourseSearchingContext();
   const { courseTable, fetchCourseTable, setCourseTable, createCourseTable, patchCourseTable } = useCourseTable();
-  const { logIn, user: userInfo, linkCoursetableToUser, fetchUserById } = useUserData();
+  const { setUser, user: userInfo, linkCoursetableToUser, fetchUserById } = useUserData();
 
   // some local states for handling course data
   const [courses, setCourses] = useState({}); // dictionary of Course objects using courseId as key
@@ -166,7 +166,7 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
         try {
           const token = await getAccessTokenSilently();
           const user_data = await fetchUserById(token, user.sub);
-          await logIn(user_data);
+          await setUser(user_data);
           const course_tables = user_data.db.course_tables;
           if (course_tables.length === 0) {
             setCourseTable(null);
