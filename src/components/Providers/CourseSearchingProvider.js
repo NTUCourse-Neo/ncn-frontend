@@ -16,7 +16,7 @@ const CourseSearchingContext = createContext({
   searchSettings: { show_selected_courses: false, only_show_not_conflicted_courses: false, sync_add_to_nol: false, strict_search_mode: false }, // object of settings
   searchFiltersEnable: { time: false, department: false, category: false, enroll_method: false }, // object of boolean, enable/disable filters
   searchFilters: { time: [[], [], [], [], [], [], []], department: [], category: [], enroll_method: ["1", "2", "3"] }, // default value of filters
-  course_table: null, // only one course table for now
+  courseTable: null, // only one course table for now
   hoveredCourse: null, // course object
   hoveredCourseTimeMap: null, // course time object
   setBatchSize: () => {},
@@ -63,7 +63,7 @@ function CourseSearchingProvider(props) {
     category: [],
     enroll_method: ["1", "2", "3"],
   });
-  const [course_table, setCourseTable] = useState(null);
+  const [courseTable, setCourseTable] = useState(null);
   const [hoveredCourse, setHoveredCourse] = useState(null);
   const [hoveredCourseTimeMap, setHoveredCourseTimeMap] = useState(null);
 
@@ -119,8 +119,7 @@ function CourseSearchingProvider(props) {
       if (error.response) {
         if (error.response.status === 403 || error.response.status === 404) {
           // expired course_table
-          // if fetch expired course_table, return null and handle it by frontend logic
-          setCourseTable(course_table);
+          setCourseTable(null);
           return null;
         }
       } else {
@@ -148,8 +147,7 @@ function CourseSearchingProvider(props) {
       if (error.response) {
         if (error.response.status === 403 && error.response.data.message === "Course table is expired") {
           // expired course_table
-          // if fetch expired course_table, return null and handle it by frontend logic
-          setCourseTable(course_table);
+          setCourseTable(null);
           return null;
         }
       } else {
@@ -360,7 +358,7 @@ function CourseSearchingProvider(props) {
         searchSettings,
         searchFiltersEnable,
         searchFilters,
-        course_table,
+        courseTable,
         hoveredCourse,
         hoveredCourseTimeMap,
         setBatchSize,

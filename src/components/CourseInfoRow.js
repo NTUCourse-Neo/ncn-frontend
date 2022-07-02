@@ -86,9 +86,9 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
 
       if (uuid) {
         // fetch course table from server
-        let course_table;
+        let courseTable;
         try {
-          course_table = await fetchCourseTable(uuid);
+          courseTable = await fetchCourseTable(uuid);
         } catch (error) {
           toast({
             title: "取得課表資料失敗",
@@ -99,7 +99,7 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
           setAddingCourse(false);
           return;
         }
-        if (course_table === null) {
+        if (courseTable === null) {
           // get course_tables/:id return null (expired)
           // show error and break the function
           toast({
@@ -113,12 +113,12 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
           // fetch course table success
           let res_table;
           let operation_str;
-          if (course_table.courses.includes(course._id)) {
+          if (courseTable.courses.includes(course._id)) {
             // course is already in course table, remove it.
             operation_str = "刪除";
-            const new_courses = course_table.courses.filter((id) => id !== course._id);
+            const new_courses = courseTable.courses.filter((id) => id !== course._id);
             try {
-              res_table = await patchCourseTable(uuid, course_table.name, course_table.user_id, course_table.expire_ts, new_courses);
+              res_table = await patchCourseTable(uuid, courseTable.name, courseTable.user_id, courseTable.expire_ts, new_courses);
             } catch (error) {
               toast({
                 title: `刪除 ${course.course_name} 失敗`,
@@ -132,9 +132,9 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
           } else {
             // course is not in course table, add it.
             operation_str = "新增";
-            const new_courses = [...course_table.courses, course._id];
+            const new_courses = [...courseTable.courses, course._id];
             try {
-              res_table = await patchCourseTable(uuid, course_table.name, course_table.user_id, course_table.expire_ts, new_courses);
+              res_table = await patchCourseTable(uuid, courseTable.name, courseTable.user_id, courseTable.expire_ts, new_courses);
             } catch (error) {
               toast({
                 title: `新增 ${course.course_name} 失敗`,
@@ -149,7 +149,7 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
           if (res_table) {
             toast({
               title: `已${operation_str} ${course.course_name}`,
-              description: `課表: ${course_table.name}`,
+              description: `課表: ${courseTable.name}`,
               status: "success",
               duration: 3000,
               isClosable: true,

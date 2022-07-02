@@ -121,14 +121,8 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
   const navigate = useNavigate();
   const { user, isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const toast = useToast();
-  const {
-    course_table: courseTable,
-    fetchCourseTable,
-    setCourseTable,
-    fetchCourseTableCoursesByIds,
-    createCourseTable,
-    patchCourseTable,
-  } = useCourseSearchingContext();
+  const { courseTable, fetchCourseTable, setCourseTable, fetchCourseTableCoursesByIds, createCourseTable, patchCourseTable } =
+    useCourseSearchingContext();
   const { logIn, user: userInfo, linkCoursetableToUser, fetchUserById } = useUserData();
 
   // some local states for handling course data
@@ -224,7 +218,6 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
   useEffect(() => {
     const fetchCoursesDataById = async (_callback) => {
       if (courseTable) {
-        // console.log("course_table: ",courseTable);
         try {
           const courseResult = await fetchCourseTableCoursesByIds(courseTable.courses);
           // set states: courseTimeMap, courses

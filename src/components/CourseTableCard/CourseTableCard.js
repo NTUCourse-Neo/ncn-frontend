@@ -56,7 +56,7 @@ function CourseBox({ courseId, courseData, isOpen, hoverId }) {
 }
 
 function CourseTableCard({ courseInitialOrder, courseData, day, interval, hoverId }) {
-  const { course_table, patchCourseTable } = useCourseSearchingContext();
+  const { courseTable, patchCourseTable } = useCourseSearchingContext();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
 
@@ -94,7 +94,7 @@ function CourseTableCard({ courseInitialOrder, courseData, day, interval, hoverI
   const fetchIndexByIds = (ids_array) => {
     const index_arr = [];
     ids_array.forEach((id) => {
-      index_arr.push(course_table.courses.indexOf(id));
+      index_arr.push(courseTable.courses.indexOf(id));
     });
     return index_arr;
   };
@@ -102,8 +102,8 @@ function CourseTableCard({ courseInitialOrder, courseData, day, interval, hoverI
   const saveChanges = async () => {
     // get indice need to reorder from courseOrder
     const index_arr = fetchIndexByIds(courseOrder);
-    // do reorder, generate new course_table.courses to be patched
-    const new_courses = [...course_table.courses];
+    // do reorder, generate new courseTable.courses to be patched
+    const new_courses = [...courseTable.courses];
     for (let i = 0; i < courseList.length; i++) {
       const target_index = index_arr[i];
       const target_id = courseList[i];
@@ -116,7 +116,7 @@ function CourseTableCard({ courseInitialOrder, courseData, day, interval, hoverI
     }
     let res_table;
     try {
-      res_table = await patchCourseTable(course_table._id, course_table.name, course_table.user_id, course_table.expire_ts, new_courses);
+      res_table = await patchCourseTable(courseTable._id, courseTable.name, courseTable.user_id, courseTable.expire_ts, new_courses);
     } catch (error) {
       toast({
         title: "更改志願序失敗!",

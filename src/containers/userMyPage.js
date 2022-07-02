@@ -13,7 +13,7 @@ function UserMyPage() {
   const { logIn, user: userInfo, fetchUserById } = useUserData();
   const toast = useToast();
   const { user, isLoading, getAccessTokenSilently } = useAuth0();
-  const { searchError, course_table: courseTable, displayTags, setCourseTable, fetchCourseTable, fetchFavoriteCourses } = useCourseSearchingContext();
+  const { searchError, courseTable, displayTags, setCourseTable, fetchCourseTable, fetchFavoriteCourses } = useCourseSearchingContext();
   const [favorite_list, setFavorite_list] = useState([]);
   const [Loading, setLoading] = useState(true);
   const userLoading = isLoading || !userInfo;
