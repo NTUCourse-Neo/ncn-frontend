@@ -4,7 +4,8 @@ import { useState, useCallback } from "react";
 import CourseTableCard from "components/CourseTableCard/CourseTableCard";
 import { weekdays_map } from "data/mapping_table";
 import { hash_to_color_hex } from "utils/colorAgent";
-import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
+import { hoverCourseState } from "utils/hoverCourse";
+import { useSnapshot } from "valtio";
 
 function HoverCourseIndicator({ hoveredCourse }) {
   const course = hoveredCourse;
@@ -32,7 +33,7 @@ function CourseTableContainer({ courses, loading, courseTimeMap }) {
   const days = ["1", "2", "3", "4", "5"];
   const interval = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "A", "B", "C", "D"];
   const [activeDayCol, setActiveDayCol] = useState(0);
-  const { hoveredCourse, hoveredCourseTimeMap } = useCourseSearchingContext();
+  const { hoveredCourse, hoveredCourseTimeMap } = useSnapshot(hoverCourseState);
 
   const renderCourseTableCard = useCallback(
     (courseTimeMap, hoveredCourse, hoverCourseTimeMap, day, interval) => {

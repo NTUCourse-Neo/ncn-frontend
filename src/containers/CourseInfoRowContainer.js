@@ -3,10 +3,11 @@ import CourseInfoRow from "components/CourseInfoRow";
 import { Box, Flex, Spacer, Accordion } from "@chakra-ui/react";
 import { useUserData } from "components/Providers/UserProvider";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
+import { setHoveredCourseData } from "utils/hoverCourse";
 
 function CourseInfoRowContainer({ displayTable }) {
   const { user: userInfo } = useUserData();
-  const { displayTags, searchResult: courseInfo, courseTable, setHoveredCourseData } = useCourseSearchingContext();
+  const { displayTags, searchResult: courseInfo, courseTable } = useCourseSearchingContext();
   const selectedCourses = useMemo(() => {
     return courseTable?.courses;
   }, [courseTable]);

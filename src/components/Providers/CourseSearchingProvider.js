@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState } from "react";
 import instance from "queries/axiosInstance";
 import handleAPIError from "utils/handleAPIError";
-import { parseCourseTime } from "utils/parseCourseTime";
 
 const CourseSearchingContext = createContext({
   searchIds: [],
@@ -17,14 +16,11 @@ const CourseSearchingContext = createContext({
   searchFiltersEnable: { time: false, department: false, category: false, enroll_method: false }, // object of boolean, enable/disable filters
   searchFilters: { time: [[], [], [], [], [], [], []], department: [], category: [], enroll_method: ["1", "2", "3"] }, // default value of filters
   courseTable: null, // only one course table for now
-  hoveredCourse: null, // course object
-  hoveredCourseTimeMap: null, // course time object
   setBatchSize: () => {},
   setSearchSettings: () => {},
   setSearchColumn: () => {},
   setFilterEnable: () => {},
   setNewDisplayTags: () => {},
-  setHoveredCourseData: () => {},
   setFilter: () => {},
   createCourseTable: () => {},
   fetchCourseTable: () => {},
@@ -64,8 +60,6 @@ function CourseSearchingProvider(props) {
     enroll_method: ["1", "2", "3"],
   });
   const [courseTable, setCourseTable] = useState(null);
-  const [hoveredCourse, setHoveredCourse] = useState(null);
-  const [hoveredCourseTimeMap, setHoveredCourseTimeMap] = useState(null);
 
   const setSearchColumn = (col_name) => {
     if (searchColumns.includes(col_name)) {
@@ -81,16 +75,6 @@ function CourseSearchingProvider(props) {
   };
   const setNewDisplayTags = (new_display_tags) => {
     setDisplayTags(new_display_tags);
-  };
-  const setHoveredCourseData = (course) => {
-    if (course === null) {
-      setHoveredCourse(null);
-      setHoveredCourseTimeMap(null);
-    } else {
-      const hoverCourseTime = parseCourseTime(course, {});
-      setHoveredCourse(course);
-      setHoveredCourseTimeMap(hoverCourseTime);
-    }
   };
   const setFilter = (filter_name, data) => {
     setSearchFilters({ ...searchFilters, [filter_name]: data });
@@ -359,15 +343,12 @@ function CourseSearchingProvider(props) {
         searchFiltersEnable,
         searchFilters,
         courseTable,
-        hoveredCourse,
-        hoveredCourseTimeMap,
         setBatchSize,
         setSearchSettings,
         setCourseTable,
         setSearchColumn,
         setFilterEnable,
         setNewDisplayTags,
-        setHoveredCourseData,
         setFilter,
         createCourseTable,
         fetchCourseTable,
