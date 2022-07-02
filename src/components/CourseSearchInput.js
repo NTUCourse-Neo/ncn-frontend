@@ -43,16 +43,21 @@ import { useCourseSearchingContext } from "components/Providers/CourseSearchingP
 function CourseSearchInputTextArea() {
   const navigate = useNavigate();
   const toast = useToast();
-  const { searchColumns, searchFilters, batchSize, strict_match, searchFiltersEnable, setSearchColumn, fetchSearchIDs } = useCourseSearchingContext();
+  const { searchColumns, searchFilters, batchSize, strict_match, searchFiltersEnable, setSearchColumns, fetchSearchIDs } =
+    useCourseSearchingContext();
 
   const [search, setSearch] = useState("");
   useMount(() => {
     setSearch("");
   });
 
-  // TODO: buggy?
   const toggle_search_column = (e) => {
-    setSearchColumn(e.currentTarget.value);
+    const col_name = e.currentTarget.value;
+    if (searchColumns.includes(col_name)) {
+      setSearchColumns(searchColumns.filter((col) => col !== col_name));
+    } else {
+      setSearchColumns([...searchColumns, col_name]);
+    }
   };
 
   const startSearch = () => {
