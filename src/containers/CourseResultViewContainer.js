@@ -84,7 +84,7 @@ function CourseResultViewContainer() {
   const topRef = useRef();
   const bottomRef = useRef();
   usePagination(bottomRef);
-  const { search_ids, search_loading, search_error, total_count, setBatchSize } = useCourseSearchingContext();
+  const { searchIds, searchLoading, searchError, totalCount, setBatchSize } = useCourseSearchingContext();
 
   const [isMobile, isHigherThan1325] = useMediaQuery(["(max-width: 1000px)", "(min-height: 1325px)"]);
 
@@ -104,7 +104,7 @@ function CourseResultViewContainer() {
   useEffect(() => {
     topRef.current.focus();
     setDisplayFilter(false);
-  }, [search_ids]);
+  }, [searchIds]);
 
   // if isMobile, when show Alert Modal, set displayTable to false to prevent ugly overlapping
   useEffect(() => {
@@ -153,9 +153,9 @@ function CourseResultViewContainer() {
             transition="all 500ms ease-in-out"
           >
             <Flex flexDirection="row" alignItems="center" justifyContent="start">
-              {search_loading ? <BeatLoader size={8} color="teal" /> : <></>}
+              {searchLoading ? <BeatLoader size={8} color="teal" /> : <></>}
               <Text fontSize="md" fontWeight="medium" color="gray.400" my="2" ml="1">
-                {search_loading ? "載入中" : `共找到 ${total_count} 筆結果`}
+                {searchLoading ? "載入中" : `共找到 ${totalCount} 筆結果`}
               </Text>
             </Flex>
             <CourseInfoRowContainer displayTable={displayTable} />
@@ -166,7 +166,7 @@ function CourseResultViewContainer() {
             ml={{ base: "0", lg: displayTable ? "24vw" : "48vw" }}
             transition="all 500ms ease-in-out"
           >
-            <SkeletonRow loading={search_loading} error={search_error} />
+            <SkeletonRow loading={searchLoading} error={searchError} />
           </Flex>
           <div ref={bottomRef} />
         </Box>

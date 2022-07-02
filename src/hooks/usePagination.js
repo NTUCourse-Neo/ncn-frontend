@@ -5,17 +5,17 @@ import { useCourseSearchingContext } from "components/Providers/CourseSearchingP
 
 export default function usePagination(ref) {
   const reachedBottom = useOnScreen(ref);
-  const { search_results, total_count, search_settings, search_filters_enable, search_filters, offset, batch_size, search_ids, fetchSearchResults } =
+  const { searchResult, totalCount, searchSettings, searchFiltersEnable, searchFilters, offset, batchSize, searchIds, fetchSearchResults } =
     useCourseSearchingContext();
   const toast = useToast();
 
   useEffect(() => {
     // console.log('reachedBottom: ',reachedBottom);
-    if (reachedBottom && search_results.length !== 0) {
+    if (reachedBottom && searchResult.length !== 0) {
       // fetch next batch of search results
-      if (search_results.length < total_count) {
+      if (searchResult.length < totalCount) {
         try {
-          fetchSearchResults(search_ids, search_filters_enable, search_filters, batch_size, offset, search_settings.strict_search_mode);
+          fetchSearchResults(searchIds, searchFiltersEnable, searchFilters, batchSize, offset, searchSettings.strict_search_mode);
         } catch (error) {
           toast({
             title: "獲取課程資訊失敗",

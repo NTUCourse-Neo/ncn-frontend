@@ -4,18 +4,18 @@ import handleAPIError from "utils/handleAPIError";
 import { parseCourseTime } from "utils/parseCourseTime";
 
 const CourseSearchingContext = createContext({
-  search_ids: [],
-  search_results: [],
-  search_loading: false,
-  search_error: null,
-  total_count: 0, // total number of results
-  batch_size: 20,
+  searchIds: [],
+  searchResult: [],
+  searchLoading: false,
+  searchError: null,
+  totalCount: 0, // total number of results
+  batchSize: 20,
   offset: 0,
-  display_tags: [],
-  search_columns: ["course_name", "teacher"], // array of column names, default is all columns
-  search_settings: { show_selected_courses: false, only_show_not_conflicted_courses: false, sync_add_to_nol: false, strict_search_mode: false }, // object of settings
-  search_filters_enable: { time: false, department: false, category: false, enroll_method: false }, // object of boolean, enable/disable filters
-  search_filters: { time: [[], [], [], [], [], [], []], department: [], category: [], enroll_method: ["1", "2", "3"] }, // default value of filters
+  displayTags: [],
+  searchColumns: ["course_name", "teacher"], // array of column names, default is all columns
+  searchSettings: { show_selected_courses: false, only_show_not_conflicted_courses: false, sync_add_to_nol: false, strict_search_mode: false }, // object of settings
+  searchFiltersEnable: { time: false, department: false, category: false, enroll_method: false }, // object of boolean, enable/disable filters
+  searchFilters: { time: [[], [], [], [], [], [], []], department: [], category: [], enroll_method: ["1", "2", "3"] }, // default value of filters
   course_table: null, // only one course table for now
   hoveredCourse: null, // course object
   hoveredCourseTimeMap: null, // course time object
@@ -41,23 +41,23 @@ const CourseSearchingContext = createContext({
 });
 
 function CourseSearchingProvider(props) {
-  const [search_ids, setSearchIds] = useState([]);
-  const [search_results, setSearchResult] = useState([]);
-  const [search_loading, setSearchLoading] = useState(false);
-  const [search_error, setSearchError] = useState(null);
-  const [total_count, setTotalCount] = useState(0);
-  const [batch_size, setBatchSize] = useState(20);
+  const [searchIds, setSearchIds] = useState([]);
+  const [searchResult, setSearchResult] = useState([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [searchError, setSearchError] = useState(null);
+  const [totalCount, setTotalCount] = useState(0);
+  const [batchSize, setBatchSize] = useState(20);
   const [offset, setOffset] = useState(0);
-  const [display_tags, setDisplayTags] = useState([]);
-  const [search_columns, setSearchColumns] = useState(["course_name", "teacher"]);
-  const [search_settings, setSearchSettings] = useState({
+  const [displayTags, setDisplayTags] = useState([]);
+  const [searchColumns, setSearchColumns] = useState(["course_name", "teacher"]);
+  const [searchSettings, setSearchSettings] = useState({
     show_selected_courses: false,
     only_show_not_conflicted_courses: false,
     sync_add_to_nol: false,
     strict_search_mode: false,
   });
-  const [search_filters_enable, setSearchFiltersEnable] = useState({ time: false, department: false, category: false, enroll_method: false });
-  const [search_filters, setSearchFilters] = useState({
+  const [searchFiltersEnable, setSearchFiltersEnable] = useState({ time: false, department: false, category: false, enroll_method: false });
+  const [searchFilters, setSearchFilters] = useState({
     time: [[], [], [], [], [], [], []],
     department: [],
     category: [],
@@ -68,16 +68,16 @@ function CourseSearchingProvider(props) {
   const [hoveredCourseTimeMap, setHoveredCourseTimeMap] = useState(null);
 
   const setSearchColumn = (col_name) => {
-    if (search_columns.includes(col_name)) {
+    if (searchColumns.includes(col_name)) {
       // remove column_name from columns
-      setSearchColumns(search_columns.filter((col) => col !== col_name));
+      setSearchColumns(searchColumns.filter((col) => col !== col_name));
     } else {
       // add column_name to columns
-      setSearchColumns([...search_columns, col_name]);
+      setSearchColumns([...searchColumns, col_name]);
     }
   };
   const setFilterEnable = (filter_name, enable) => {
-    setSearchFiltersEnable({ ...search_filters_enable, [filter_name]: enable });
+    setSearchFiltersEnable({ ...searchFiltersEnable, [filter_name]: enable });
   };
   const setNewDisplayTags = (new_display_tags) => {
     setDisplayTags(new_display_tags);
@@ -93,7 +93,7 @@ function CourseSearchingProvider(props) {
     }
   };
   const setFilter = (filter_name, data) => {
-    setSearchFilters({ ...search_filters, [filter_name]: data });
+    setSearchFilters({ ...searchFilters, [filter_name]: data });
   };
 
   const createCourseTable = async (course_table_id, course_table_name, user_id, semester) => {
@@ -158,7 +158,7 @@ function CourseSearchingProvider(props) {
     }
   };
 
-  const fetchSearchIDs = async (searchString, paths, filters_enable, filter_obj, batch_size, strict_match_bool) => {
+  const fetchSearchIDs = async (searchString, paths, filters_enable, filter_obj, batchSize, strict_match_bool) => {
     setSearchLoading(true);
 
     try {
@@ -185,12 +185,12 @@ function CourseSearchingProvider(props) {
         }
         const {
           data: { courses, total_count },
-        } = await instance.post(`/courses/ids`, { ids: ids, filter: search_filter, batch_size: batch_size, offset: 0 });
+        } = await instance.post(`/courses/ids`, { ids: ids, filter: search_filter, batch_size: batchSize, offset: 0 });
         setSearchResult(courses);
         setSearchLoading(false);
         setSearchError(null);
         // increment offset
-        setOffset(batch_size);
+        setOffset(batchSize);
         // update total_results count
         setTotalCount(total_count);
       } catch (error) {
@@ -209,7 +209,7 @@ function CourseSearchingProvider(props) {
     }
   };
 
-  const fetchSearchResults = async (ids_arr, filters_enable, filter_obj, batch_size, offset, strict_match_bool) => {
+  const fetchSearchResults = async (ids_arr, filters_enable, filter_obj, batchSize, offset, strict_match_bool) => {
     setSearchLoading(true);
 
     try {
@@ -228,13 +228,13 @@ function CourseSearchingProvider(props) {
       }
       const {
         data: { courses },
-      } = await instance.post(`/courses/ids`, { ids: ids_arr, filter: search_filter, batch_size: batch_size, offset: offset });
+      } = await instance.post(`/courses/ids`, { ids: ids_arr, filter: search_filter, batch_size: batchSize, offset: offset });
       // console.log(courses); // checking receive array of courses
-      setSearchResult([...search_results, ...courses]);
+      setSearchResult([...searchResult, ...courses]);
       setSearchLoading(false);
       setSearchError(null);
       // increment offset
-      setOffset(offset + batch_size);
+      setOffset(offset + batchSize);
       return courses;
     } catch (error) {
       setSearchLoading(false);
@@ -247,11 +247,11 @@ function CourseSearchingProvider(props) {
   const fetchCourse = async (id) => {
     try {
       const search_filter = { time: null, department: null, category: null, enroll_method: null, strict_match: false };
-      const batch_size = 1;
+      const batchSize = 1;
       const offset = 0;
       const {
         data: { courses },
-      } = await instance.post(`/courses/ids`, { ids: [id], filter: search_filter, batch_size: batch_size, offset: offset });
+      } = await instance.post(`/courses/ids`, { ids: [id], filter: search_filter, batch_size: batchSize, offset: offset });
       const [course] = courses;
       return course;
     } catch (error) {
@@ -319,11 +319,11 @@ function CourseSearchingProvider(props) {
   const fetchCourseTableCoursesByIds = async (ids_arr) => {
     try {
       const search_filter = { strict_match: false, time: null, department: null, category: null, enroll_method: null };
-      const batch_size = 15000; // max batch size
+      const batchSize = 15000; // max batch size
       const offset = 0;
       const {
         data: { courses },
-      } = await instance.post(`/courses/ids`, { ids: ids_arr, filter: search_filter, batch_size: batch_size, offset: offset });
+      } = await instance.post(`/courses/ids`, { ids: ids_arr, filter: search_filter, batch_size: batchSize, offset: offset });
       return courses;
     } catch (error) {
       throw handleAPIError(error);
@@ -334,11 +334,11 @@ function CourseSearchingProvider(props) {
   const fetchFavoriteCourses = async (ids_arr) => {
     try {
       const search_filter = { strict_match: false, time: null, department: null, category: null, enroll_method: null };
-      const batch_size = 15000;
+      const batchSize = 15000;
       const offset = 0;
       const {
         data: { courses },
-      } = await instance.post(`/courses/ids`, { ids: ids_arr, filter: search_filter, batch_size: batch_size, offset: offset });
+      } = await instance.post(`/courses/ids`, { ids: ids_arr, filter: search_filter, batch_size: batchSize, offset: offset });
       return courses;
     } catch (error) {
       throw handleAPIError(error);
@@ -348,18 +348,18 @@ function CourseSearchingProvider(props) {
   return (
     <CourseSearchingContext.Provider
       value={{
-        search_ids,
-        search_results,
-        search_loading,
-        search_error,
-        total_count,
-        batch_size,
+        searchIds,
+        searchResult,
+        searchLoading,
+        searchError,
+        totalCount,
+        batchSize,
         offset,
-        display_tags,
-        search_columns,
-        search_settings,
-        search_filters_enable,
-        search_filters,
+        displayTags,
+        searchColumns,
+        searchSettings,
+        searchFiltersEnable,
+        searchFilters,
         course_table,
         hoveredCourse,
         hoveredCourseTimeMap,

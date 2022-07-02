@@ -13,14 +13,7 @@ function UserMyPage() {
   const { logIn, user: userInfo, fetchUserById } = useUserData();
   const toast = useToast();
   const { user, isLoading, getAccessTokenSilently } = useAuth0();
-  const {
-    search_error,
-    course_table: courseTable,
-    display_tags: displayTags,
-    setCourseTable,
-    fetchCourseTable,
-    fetchFavoriteCourses,
-  } = useCourseSearchingContext();
+  const { searchError, course_table: courseTable, displayTags, setCourseTable, fetchCourseTable, fetchFavoriteCourses } = useCourseSearchingContext();
   const [favorite_list, setFavorite_list] = useState([]);
   const [Loading, setLoading] = useState(true);
   const userLoading = isLoading || !userInfo;
@@ -140,7 +133,7 @@ function UserMyPage() {
           </Box>
 
           <Box ml="48vw" transition="all 500ms ease-in-out">
-            <SkeletonRow loading={Loading} error={search_error} />
+            <SkeletonRow loading={Loading} error={searchError} />
           </Box>
         </Flex>
       </Flex>

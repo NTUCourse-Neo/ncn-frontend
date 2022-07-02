@@ -16,7 +16,7 @@ import { mapStateToTimeTable } from "utils/timeTableConverter";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 
 function TimeFilterModal({ selectedTime, setSelectedTime, toggle, title }) {
-  const { search_filters, setFilter } = useCourseSearchingContext();
+  const { searchFilters, setFilter } = useCourseSearchingContext();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const saveSelectedTime = () => {
@@ -62,7 +62,7 @@ function TimeFilterModal({ selectedTime, setSelectedTime, toggle, title }) {
         onClick={() => {
           onOpen();
           // because this modal will not re-render, so manually reload from redux state
-          setSelectedTime(mapStateToTimeTable(search_filters.time));
+          setSelectedTime(mapStateToTimeTable(searchFilters.time));
         }}
       >
         {title}

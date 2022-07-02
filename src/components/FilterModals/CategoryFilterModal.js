@@ -19,12 +19,12 @@ import React, { useMemo } from "react";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 
 function CategoryFilterModal({ title, isEnabled, selectedType, setSelectedType }) {
-  const { search_filters, setFilter } = useCourseSearchingContext();
+  const { searchFilters, setFilter } = useCourseSearchingContext();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const onOpenModal = () => {
     // overwrite local states by redux store
-    setSelectedType(search_filters.category);
+    setSelectedType(searchFilters.category);
     onOpen();
   };
 
@@ -32,7 +32,7 @@ function CategoryFilterModal({ title, isEnabled, selectedType, setSelectedType }
     // fire when click "X" or outside of modal
     // overwrite local state by redux state
     onClose();
-    setSelectedType(search_filters.category);
+    setSelectedType(searchFilters.category);
   };
 
   const onSaveEditing = () => {

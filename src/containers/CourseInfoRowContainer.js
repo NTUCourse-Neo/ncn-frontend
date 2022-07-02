@@ -6,7 +6,7 @@ import { useCourseSearchingContext } from "components/Providers/CourseSearchingP
 
 function CourseInfoRowContainer({ displayTable }) {
   const { user: userInfo } = useUserData();
-  const { display_tags: displayTags, search_results: courseInfo, course_table: courseTable, setHoveredCourseData } = useCourseSearchingContext();
+  const { displayTags, searchResult: courseInfo, course_table: courseTable, setHoveredCourseData } = useCourseSearchingContext();
   const selectedCourses = useMemo(() => {
     return courseTable?.courses;
   }, [courseTable]);

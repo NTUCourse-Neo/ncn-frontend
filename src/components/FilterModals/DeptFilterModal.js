@@ -20,12 +20,12 @@ import FilterElement from "components/FilterModals/components/FilterElement";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 
 function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
-  const { search_filters, setFilter } = useCourseSearchingContext();
+  const { searchFilters, setFilter } = useCourseSearchingContext();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const onOpenModal = () => {
     // overwrite local states by redux store
-    setSelectedDept(search_filters.department);
+    setSelectedDept(searchFilters.department);
     onOpen();
   };
 
@@ -33,7 +33,7 @@ function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
     // fire when click "X" or outside of modal
     // overwrite local state by redux state
     onClose();
-    setSelectedDept(search_filters.department);
+    setSelectedDept(searchFilters.department);
   };
 
   const onSaveEditing = () => {
