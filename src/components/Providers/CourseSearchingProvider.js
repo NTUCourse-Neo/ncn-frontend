@@ -20,7 +20,7 @@ const CourseSearchingContext = createContext({
   setSearchSettings: () => {},
   setSearchColumns: () => {},
   setSearchFiltersEnable: () => {},
-  setNewDisplayTags: () => {},
+  setDisplayTags: () => {},
   setFilter: () => {},
   createCourseTable: () => {},
   fetchCourseTable: () => {},
@@ -61,9 +61,6 @@ function CourseSearchingProvider(props) {
   });
   const [courseTable, setCourseTable] = useState(null);
 
-  const setNewDisplayTags = (new_display_tags) => {
-    setDisplayTags(new_display_tags);
-  };
   const setFilter = (filter_name, data) => {
     setSearchFilters({ ...searchFilters, [filter_name]: data });
   };
@@ -336,7 +333,7 @@ function CourseSearchingProvider(props) {
         setCourseTable,
         setSearchColumns,
         setSearchFiltersEnable,
-        setNewDisplayTags,
+        setDisplayTags,
         setFilter,
         createCourseTable,
         fetchCourseTable,

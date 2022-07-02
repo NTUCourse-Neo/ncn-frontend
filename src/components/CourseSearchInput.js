@@ -214,7 +214,7 @@ function SettingSwitch({ label, setterFunc, defaultValue, isDisabled }) {
 
 function CourseSearchInput({ displayPanel }) {
   const toast = useToast();
-  const { searchFilters, searchSettings, searchFiltersEnable, displayTags, setSearchFiltersEnable, setSearchSettings, setNewDisplayTags, setFilter } =
+  const { searchFilters, searchSettings, searchFiltersEnable, displayTags, setSearchFiltersEnable, setSearchSettings, setDisplayTags, setFilter } =
     useCourseSearchingContext();
   const available_tags = ["required", "total_slot", "enroll_method", "area"];
 
@@ -477,10 +477,10 @@ function CourseSearchInput({ displayPanel }) {
                             onClick={
                               selected
                                 ? () => {
-                                    setNewDisplayTags([...displayTags.filter((t) => t !== tag)]);
+                                    setDisplayTags([...displayTags.filter((t) => t !== tag)]);
                                   }
                                 : () => {
-                                    setNewDisplayTags([...displayTags, tag]);
+                                    setDisplayTags([...displayTags, tag]);
                                   }
                             }
                             transition="all 200ms ease-in-out"
