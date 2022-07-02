@@ -114,7 +114,7 @@ const SortableContainer = sortableContainer(({ children }) => {
 });
 
 function CourseListContainer({ courseTable, courses, loading }) {
-  const { patchCourseTable } = useCourseTable();
+  const { patchCourseTable, setCourseTable } = useCourseTable();
   const toast = useToast();
   const [courseListForSort, setCourseListForSort] = useState(Object.keys(courses));
   const [prepareToRemoveCourseId, setPrepareToRemoveCourseId] = useState([]);
@@ -141,19 +141,21 @@ function CourseListContainer({ courseTable, courses, loading }) {
       // remove the course_id in the prepareToRemoveCourseId from the courseListForSort
       const newCourseListForSort = courseListForSort.filter((id) => !prepareToRemoveCourseId.includes(id));
       const res_table = await patchCourseTable(courseTable._id, courseTable.name, courseTable.user_id, courseTable.expire_ts, newCourseListForSort);
-
-      if (res_table) {
-        toast({
-          title: "編輯課表成功",
-          description: "課程更動已儲存",
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-        setCourseListForSort(res_table.courses);
-        setPrepareToRemoveCourseId([]);
-      }
+      setCourseTable(res_table);
+      toast({
+        title: "編輯課表成功",
+        description: "課程更動已儲存",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      setCourseListForSort(res_table.courses);
+      setPrepareToRemoveCourseId([]);
     } catch (err) {
+      if (err?.response?.status === 403 || err?.response?.status === 404) {
+        // expired
+        setCourseTable(null);
+      }
       toast({
         title: `編輯課表失敗`,
         description: `請稍後再試`,

@@ -56,7 +56,7 @@ function CourseBox({ courseId, courseData, isOpen, hoverId }) {
 }
 
 function CourseTableCard({ courseInitialOrder, courseData, day, interval, hoverId }) {
-  const { courseTable, patchCourseTable } = useCourseTable();
+  const { courseTable, patchCourseTable, setCourseTable } = useCourseTable();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   // initial order of courses
@@ -109,7 +109,12 @@ function CourseTableCard({ courseInitialOrder, courseData, day, interval, hoverI
     let res_table;
     try {
       res_table = await patchCourseTable(courseTable._id, courseTable.name, courseTable.user_id, courseTable.expire_ts, new_courses);
+      setCourseTable(res_table);
     } catch (error) {
+      if (error?.response?.status === 403 || error?.response?.status === 404) {
+        // expired
+        setCourseTable(null);
+      }
       toast({
         title: "更改志願序失敗!",
         description: "請檢查網路連線，或聯絡系統管理員。",

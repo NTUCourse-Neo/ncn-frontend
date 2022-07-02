@@ -38,6 +38,7 @@ import CourseListContainer from "containers/CourseListContainer";
 import { parseCoursesToTimeMap } from "utils/parseCourseTime";
 import { useUserData } from "components/Providers/UserProvider";
 import { useCourseTable } from "components/Providers/CourseTableProvider";
+import handleAPIError from "utils/handleAPIError";
 
 const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
@@ -151,9 +152,16 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
       let course_table;
       try {
         course_table = await fetchCourseTable(uuid);
-      } catch (error) {
-        // navigate to error page
-        navigate(`/error/${error.status_code}`, { state: error });
+        setCourseTable(course_table);
+      } catch (e) {
+        if (e?.response?.status === 403 || e?.response?.status === 404) {
+          // expired
+          setCourseTable(null);
+        } else {
+          // navigate to error page
+          const error = handleAPIError(e);
+          navigate(`/error/${error.status_code}`, { state: error });
+        }
       }
       if (course_table === null) {
         setExpired(true);
@@ -174,9 +182,16 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
           } else {
             // pick the first table
             try {
-              await fetchCourseTable(course_tables[0]);
-            } catch (error) {
-              navigate(`/error/${error.status_code}`, { state: error });
+              const updatedCourseTable = await fetchCourseTable(course_tables[0]);
+              setCourseTable(updatedCourseTable);
+            } catch (e) {
+              if (e?.response?.status === 403 || e?.response?.status === 404) {
+                // expired
+                setCourseTable(null);
+              } else {
+                const error = handleAPIError(e);
+                navigate(`/error/${error.status_code}`, { state: error });
+              }
             }
           }
         } catch (e) {
@@ -255,7 +270,8 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
       if (user) {
         // hasLogIn
         try {
-          await createCourseTable(new_uuid, "我的課表", userInfo.db._id, "1102");
+          const updatedCourseTable = await createCourseTable(new_uuid, "我的課表", userInfo.db._id, "1102");
+          setCourseTable(updatedCourseTable);
           // console.log("New UUID is generated: ",new_uuid);
           const token = await getAccessTokenSilently();
           const updatedUser = await linkCoursetableToUser(token, new_uuid, userInfo.db._id);
@@ -273,6 +289,7 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
         // Guest mode
         try {
           const new_course_table = await createCourseTable(new_uuid, "我的課表", null, "1102");
+          setCourseTable(new_course_table);
           // console.log("New UUID is generated: ",new_uuid);
           localStorage.setItem(LOCAL_STORAGE_KEY, new_course_table._id);
           setExpired(false);
@@ -293,16 +310,18 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
     onClose();
     try {
       const res_table = await patchCourseTable(courseTable._id, new_table_name, courseTable.user_id, courseTable.expire_ts, courseTable.courses);
-
-      if (res_table) {
-        toast({
-          title: `變更課表名稱成功`,
-          description: `課表名稱已更新為 ${new_table_name}`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-      } else {
+      setCourseTable(res_table);
+      toast({
+        title: `變更課表名稱成功`,
+        description: `課表名稱已更新為 ${new_table_name}`,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (e) {
+      if (e?.response?.status === 403 || e?.response?.status === 404) {
+        // expired
+        setCourseTable(null);
         toast({
           title: `變更課表名稱失敗`,
           description: `課表已過期`,
@@ -311,8 +330,8 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
           isClosable: true,
         });
         setExpired(true);
+        return;
       }
-    } catch (e) {
       toast({
         title: `變更課表名稱失敗`,
         description: `請聯繫客服(?)`,

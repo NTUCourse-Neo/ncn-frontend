@@ -41,8 +41,14 @@ function UserMyPage() {
           } else {
             // pick the first table
             try {
-              await fetchCourseTable(course_tables[0]);
+              const course_table = await fetchCourseTable(course_tables[0]);
+              setCourseTable(course_table);
             } catch (e) {
+              if (e?.response?.status === 403 || e?.response?.status === 404) {
+                // expired
+                setCourseTable(null);
+                return;
+              }
               toast({
                 title: "取得課表資料失敗.",
                 status: "error",

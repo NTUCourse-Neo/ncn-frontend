@@ -55,7 +55,7 @@ function DeptBadge({ course }) {
 }
 
 function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayTable }) {
-  const { fetchCourseTable, patchCourseTable } = useCourseTable();
+  const { fetchCourseTable, patchCourseTable, setCourseTable } = useCourseTable();
   const navigate = useNavigate();
   const { user: userInfo, addFavoriteCourse, setUser } = useUserData();
 
@@ -89,7 +89,12 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
         let courseTable;
         try {
           courseTable = await fetchCourseTable(uuid);
+          setCourseTable(courseTable);
         } catch (error) {
+          if (error?.response?.status === 403 || error?.response?.status === 404) {
+            // expired
+            setCourseTable(null);
+          }
           toast({
             title: "取得課表資料失敗",
             status: "error",
@@ -119,7 +124,12 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
             const new_courses = courseTable.courses.filter((id) => id !== course._id);
             try {
               res_table = await patchCourseTable(uuid, courseTable.name, courseTable.user_id, courseTable.expire_ts, new_courses);
+              setCourseTable(res_table);
             } catch (error) {
+              if (error?.response?.status === 403 || error?.response?.status === 404) {
+                // expired
+                setCourseTable(null);
+              }
               toast({
                 title: `刪除 ${course.course_name} 失敗`,
                 status: "error",
@@ -135,7 +145,12 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
             const new_courses = [...courseTable.courses, course._id];
             try {
               res_table = await patchCourseTable(uuid, courseTable.name, courseTable.user_id, courseTable.expire_ts, new_courses);
+              setCourseTable(res_table);
             } catch (error) {
+              if (error?.response?.status === 403 || error?.response?.status === 404) {
+                // expired
+                setCourseTable(null);
+              }
               toast({
                 title: `新增 ${course.course_name} 失敗`,
                 status: "error",
