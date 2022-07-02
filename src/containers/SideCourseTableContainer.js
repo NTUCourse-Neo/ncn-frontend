@@ -258,7 +258,8 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
           await createCourseTable(new_uuid, "我的課表", userInfo.db._id, "1102");
           // console.log("New UUID is generated: ",new_uuid);
           const token = await getAccessTokenSilently();
-          await linkCoursetableToUser(token, new_uuid, userInfo.db._id);
+          const updatedUser = await linkCoursetableToUser(token, new_uuid, userInfo.db._id);
+          setUser(updatedUser);
         } catch (e) {
           toast({
             title: `新增課表失敗`,

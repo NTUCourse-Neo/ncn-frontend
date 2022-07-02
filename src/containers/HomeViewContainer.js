@@ -37,6 +37,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import HomeFooterImg from "img/home_footer.svg";
 import { DiscordIcon } from "components/CustomIcons";
 import { useUserData } from "components/Providers/UserProvider";
+import handleAPIError from "utils/handleAPIError";
 
 const newsCard = [
   <Flex
@@ -239,7 +240,8 @@ function HomeViewContainer() {
         let user_data;
         try {
           user_data = await fetchUserById(token, user.sub);
-        } catch (error) {
+        } catch (e) {
+          const error = handleAPIError(e);
           navigate(`/error/${error.status_code}`, { state: error });
           return;
         }
@@ -268,7 +270,8 @@ function HomeViewContainer() {
           let new_user_data;
           try {
             new_user_data = await fetchUserById(token, user.sub);
-          } catch (error) {
+          } catch (e) {
+            const error = handleAPIError(e);
             navigate(`/error/${error.status_code}`, { state: error });
           }
           setUser(new_user_data);

@@ -33,6 +33,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useUserData } from "components/Providers/UserProvider";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { useCourseTable } from "components/Providers/CourseTableProvider";
+import handleAPIError from "utils/handleAPIError";
 
 const copyWordList = [
   { count: 100, word: "複製終結者!!", color: "purple.600", bg: "purple.50" },
@@ -108,7 +109,8 @@ function CourseInfoContainer({ code }) {
           let user_data;
           try {
             user_data = await fetchUserById(token, user.sub);
-          } catch (error) {
+          } catch (e) {
+            const error = handleAPIError(e);
             navigate(`/error/${error.status_code}`, { state: error });
             return;
           }
@@ -302,7 +304,8 @@ function CourseInfoContainer({ code }) {
         // API call
         try {
           const token = await getAccessTokenSilently();
-          await addFavoriteCourse(token, new_favorite_list, userInfo.db._id);
+          const updatedUser = await addFavoriteCourse(token, new_favorite_list, userInfo.db._id);
+          setUser(updatedUser);
           toast({
             title: `${op_name}最愛課程成功`,
             //description: `請稍後再試`,

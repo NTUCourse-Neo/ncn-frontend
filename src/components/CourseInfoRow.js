@@ -57,7 +57,7 @@ function DeptBadge({ course }) {
 function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayTable }) {
   const { fetchCourseTable, patchCourseTable } = useCourseTable();
   const navigate = useNavigate();
-  const { user: userInfo, addFavoriteCourse } = useUserData();
+  const { user: userInfo, addFavoriteCourse, setUser } = useUserData();
 
   const [addingCourse, setAddingCourse] = useState(false);
   const [addingFavoriteCourse, setAddingFavoriteCourse] = useState(false);
@@ -190,7 +190,8 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
         // API call
         try {
           const token = await getAccessTokenSilently();
-          await addFavoriteCourse(token, new_favorite_list, userInfo.db._id);
+          const updatedUser = await addFavoriteCourse(token, new_favorite_list, userInfo.db._id);
+          setUser(updatedUser);
           toast({
             title: `${op_name}最愛課程成功`,
             //description: `請稍後再試`,

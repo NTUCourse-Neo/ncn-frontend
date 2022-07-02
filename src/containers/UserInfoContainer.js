@@ -35,6 +35,7 @@ import setPageMeta from "utils/seo";
 import { deleteUserProfile, use_otp_link_student_id, request_otp_code } from "queries/user";
 import { useUserData } from "components/Providers/UserProvider";
 import { verifyRecaptcha } from "queries/verifyRecaptcha";
+import handleAPIError from "utils/handleAPIError";
 
 function ConnectedAccountTags({ userInfo }) {
   const connected_accounts = userInfo.auth0.identities;
@@ -68,7 +69,7 @@ function ConnectedAccountTags({ userInfo }) {
 }
 
 function DeleteDialog({ isAlertOpen, setIsAlertOpen, deleteMode, setDeleteMode }) {
-  const { registerNewUser, deleteUserAccount, user: userInfo } = useUserData();
+  const { registerNewUser, deleteUserAccount, setUser, user: userInfo } = useUserData();
   const confirmMessage = `我確定`;
   const cancelRef = useRef();
   const toast = useToast();
@@ -102,6 +103,7 @@ function DeleteDialog({ isAlertOpen, setIsAlertOpen, deleteMode, setDeleteMode }
     try {
       const token = await getAccessTokenSilently();
       await deleteUserAccount(token, userInfo.db._id);
+      setUser(null);
     } catch (e) {
       toast({
         title: "刪除用戶帳號失敗.",
@@ -269,7 +271,8 @@ function UserInfoContainer() {
     }
     try {
       const token = await getAccessTokenSilently();
-      await patchUserInfo(token, updateObject);
+      const updatedUser = await patchUserInfo(token, updateObject);
+      setUser(updatedUser);
       toast({
         title: "更改用戶資料成功.",
         status: "success",
@@ -294,7 +297,7 @@ function UserInfoContainer() {
           const token = await getAccessTokenSilently();
           const user_data = await fetchUserById(token, user.sub);
           await setUser(user_data);
-        } catch (error) {
+        } catch (e) {
           toast({
             title: "取得用戶資料失敗.",
             description: "請聯繫客服(?)",
@@ -302,6 +305,7 @@ function UserInfoContainer() {
             duration: 9000,
             isClosable: true,
           });
+          const error = handleAPIError(e);
           navigate(`/error/${error.status_code}`, { state: error });
           // Other subsequent actions?
         }
