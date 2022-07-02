@@ -35,6 +35,7 @@ import { useCourseSearchingContext } from "components/Providers/CourseSearchingP
 import { useCourseTable } from "components/Providers/CourseTableProvider";
 import handleAPIError from "utils/handleAPIError";
 import { fetchUserById, addFavoriteCourse } from "queries/user";
+import { fetchCourseTable, patchCourseTable } from "queries/courseTable";
 
 const copyWordList = [
   { count: 100, word: "複製終結者!!", color: "purple.600", bg: "purple.50" },
@@ -52,7 +53,7 @@ const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 function CourseInfoContainer({ code }) {
   const { setUser, user: userInfo } = useUserData();
   const { fetchCourse } = useCourseSearchingContext();
-  const { fetchCourseTable, patchCourseTable, setCourseTable } = useCourseTable();
+  const { setCourseTable } = useCourseTable();
   const navigate = useNavigate();
   const toast = useToast();
 

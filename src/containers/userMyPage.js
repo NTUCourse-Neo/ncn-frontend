@@ -11,13 +11,14 @@ import { useCourseSearchingContext } from "components/Providers/CourseSearchingP
 import { useDisplayTags } from "components/Providers/DisplayTagsProvider";
 import { useCourseTable } from "components/Providers/CourseTableProvider";
 import { fetchUserById } from "queries/user";
+import { fetchCourseTable } from "queries/courseTable";
 
 function UserMyPage() {
   const { setUser, user: userInfo } = useUserData();
   const toast = useToast();
   const { user, isLoading, getAccessTokenSilently } = useAuth0();
   const { searchError, fetchFavoriteCourses } = useCourseSearchingContext();
-  const { courseTable, setCourseTable, fetchCourseTable } = useCourseTable();
+  const { courseTable, setCourseTable } = useCourseTable();
   const { displayTags } = useDisplayTags();
   const [favorite_list, setFavorite_list] = useState([]);
   const [Loading, setLoading] = useState(true);

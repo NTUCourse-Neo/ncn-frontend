@@ -40,6 +40,7 @@ import { useUserData } from "components/Providers/UserProvider";
 import { useCourseTable } from "components/Providers/CourseTableProvider";
 import handleAPIError from "utils/handleAPIError";
 import { linkCoursetableToUser, fetchUserById } from "queries/user";
+import { createCourseTable, patchCourseTable, fetchCourseTable } from "queries/courseTable";
 
 const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
@@ -125,7 +126,7 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
   const { user, isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const toast = useToast();
   const { fetchCourseTableCoursesByIds } = useCourseSearchingContext();
-  const { courseTable, fetchCourseTable, setCourseTable, createCourseTable, patchCourseTable } = useCourseTable();
+  const { courseTable, setCourseTable } = useCourseTable();
   const { setUser, user: userInfo } = useUserData();
 
   // some local states for handling course data

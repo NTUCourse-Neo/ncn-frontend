@@ -27,6 +27,7 @@ import { hash_to_color_hex } from "utils/colorAgent";
 import { FaExclamationTriangle } from "react-icons/fa";
 import { useCourseTable } from "components/Providers/CourseTableProvider";
 import SortablePopover from "components/CourseTableCard/SortablePopover";
+import { patchCourseTable } from "queries/courseTable";
 
 function CourseBox({ courseId, courseData, isOpen, hoverId }) {
   const course = courseData?.[courseId];
@@ -56,7 +57,7 @@ function CourseBox({ courseId, courseData, isOpen, hoverId }) {
 }
 
 function CourseTableCard({ courseInitialOrder, courseData, day, interval, hoverId }) {
-  const { courseTable, patchCourseTable, setCourseTable } = useCourseTable();
+  const { courseTable, setCourseTable } = useCourseTable();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   // initial order of courses

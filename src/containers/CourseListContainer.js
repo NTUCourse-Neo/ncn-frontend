@@ -11,6 +11,7 @@ import openPage from "utils/openPage";
 import { useCourseTable } from "components/Providers/CourseTableProvider";
 import { sortableContainer, sortableElement, sortableHandle } from "react-sortable-hoc";
 import { useNavigate } from "react-router-dom";
+import { patchCourseTable } from "queries/courseTable";
 
 const DragHandle = sortableHandle(() => <MdDragHandle cursor="row-resize" size="20" color="gray" />);
 
@@ -114,7 +115,7 @@ const SortableContainer = sortableContainer(({ children }) => {
 });
 
 function CourseListContainer({ courseTable, courses, loading }) {
-  const { patchCourseTable, setCourseTable } = useCourseTable();
+  const { setCourseTable } = useCourseTable();
   const toast = useToast();
   const [courseListForSort, setCourseListForSort] = useState(Object.keys(courses));
   const [prepareToRemoveCourseId, setPrepareToRemoveCourseId] = useState([]);

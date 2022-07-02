@@ -31,6 +31,7 @@ import { useNavigate } from "react-router-dom";
 import { useUserData } from "components/Providers/UserProvider";
 import { useCourseTable } from "components/Providers/CourseTableProvider";
 import { addFavoriteCourse } from "queries/user";
+import { fetchCourseTable, patchCourseTable } from "queries/courseTable";
 
 const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
@@ -56,7 +57,7 @@ function DeptBadge({ course }) {
 }
 
 function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayTable }) {
-  const { fetchCourseTable, patchCourseTable, setCourseTable } = useCourseTable();
+  const { setCourseTable } = useCourseTable();
   const navigate = useNavigate();
   const { user: userInfo, setUser } = useUserData();
 
