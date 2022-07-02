@@ -214,7 +214,7 @@ function SettingSwitch({ label, setterFunc, defaultValue, isDisabled }) {
 
 function CourseSearchInput({ displayPanel }) {
   const toast = useToast();
-  const { searchFilters, searchSettings, searchFiltersEnable, displayTags, setFilterEnable, setSearchSettings, setNewDisplayTags, setFilter } =
+  const { searchFilters, searchSettings, searchFiltersEnable, displayTags, setSearchFiltersEnable, setSearchSettings, setNewDisplayTags, setFilter } =
     useCourseSearchingContext();
   const available_tags = ["required", "total_slot", "enroll_method", "area"];
 
@@ -284,7 +284,7 @@ function CourseSearchInput({ displayPanel }) {
                         isChecked={timeFilterOn}
                         onChange={(e) => {
                           setTimeFilterOn(e.currentTarget.checked);
-                          setFilterEnable("time", e.currentTarget.checked);
+                          setSearchFiltersEnable({ ...searchFiltersEnable, time: e.currentTarget.checked });
                         }}
                       />
                       <TimeFilterModal
@@ -307,7 +307,7 @@ function CourseSearchInput({ displayPanel }) {
                         isChecked={deptFilterOn}
                         onChange={(e) => {
                           setDeptFilterOn(e.currentTarget.checked);
-                          setFilterEnable("department", e.currentTarget.checked);
+                          setSearchFiltersEnable({ ...searchFiltersEnable, department: e.currentTarget.checked });
                         }}
                       />
                       <DeptFilterModal
@@ -326,7 +326,7 @@ function CourseSearchInput({ displayPanel }) {
                         isChecked={catFilterOn}
                         onChange={(e) => {
                           setCatFilterOn(e.currentTarget.checked);
-                          setFilterEnable("category", e.currentTarget.checked);
+                          setSearchFiltersEnable({ ...searchFiltersEnable, category: e.currentTarget.checked });
                         }}
                       />
                       <CategoryFilterModal
@@ -345,7 +345,7 @@ function CourseSearchInput({ displayPanel }) {
                         isChecked={enrollFilterOn}
                         onChange={(e) => {
                           setEnrollFilterOn(e.currentTarget.checked);
-                          setFilterEnable("enroll_method", e.currentTarget.checked);
+                          setSearchFiltersEnable({ ...searchFiltersEnable, enroll_method: e.currentTarget.checked });
                         }}
                       />
                       <Menu closeOnSelect={false} mx="2">
