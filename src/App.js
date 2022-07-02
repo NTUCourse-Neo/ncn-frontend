@@ -17,6 +17,7 @@ import ReactGA from "react-ga";
 import RecruitingPageContainer from "containers/RecruitingPageContainer";
 import { UserDataProvider } from "components/Providers/UserProvider";
 import { CourseSearchingProvider } from "components/Providers/CourseSearchingProvider";
+import { DisplayTagsProvider } from "components/Providers/DisplayTagsProvider";
 
 dotenv.config();
 
@@ -63,11 +64,13 @@ function App(props) {
       <ChakraProvider theme={theme}>
         <CourseSearchingProvider>
           <UserDataProvider>
-            <Box w="100vw" h={{ base: "100%", lg: "" }}>
-              <HeaderBar useColorModeValue={useColorModeValue} />
-              {content(props.route)}
-              <Footer />
-            </Box>
+            <DisplayTagsProvider>
+              <Box w="100vw" h={{ base: "100%", lg: "" }}>
+                <HeaderBar useColorModeValue={useColorModeValue} />
+                {content(props.route)}
+                <Footer />
+              </Box>
+            </DisplayTagsProvider>
           </UserDataProvider>
         </CourseSearchingProvider>
       </ChakraProvider>

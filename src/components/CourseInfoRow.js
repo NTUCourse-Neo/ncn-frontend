@@ -313,7 +313,7 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
                 <Tooltip hasArrow placement="top" label={info_view_map[tag].name} bg="gray.600" color="white" key={index}>
                   <Tag mx="2px" variant="subtle" colorScheme={info_view_map[tag].color} hidden={courseInfo[tag] === -1}>
                     <TagLeftIcon boxSize="12px" as={info_view_map[tag].logo} />
-                    <TagLabel>{"map" in info_view_map[tag] ? info_view_map[tag].map[courseInfo[tag]] : courseInfo[tag]}</TagLabel>
+                    <TagLabel>{info_view_map?.[tag]?.map?.[courseInfo?.[tag]] ?? courseInfo?.[tag] ?? "未知"}</TagLabel>
                   </Tag>
                 </Tooltip>
               );

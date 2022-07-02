@@ -8,12 +8,14 @@ import setPageMeta from "utils/seo";
 import CourseInfoRow from "components/CourseInfoRow";
 import { useUserData } from "components/Providers/UserProvider";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
+import { useDisplayTagsContext } from "components/Providers/DisplayTagsProvider";
 
 function UserMyPage() {
   const { logIn, user: userInfo, fetchUserById } = useUserData();
   const toast = useToast();
   const { user, isLoading, getAccessTokenSilently } = useAuth0();
-  const { searchError, courseTable, displayTags, setCourseTable, fetchCourseTable, fetchFavoriteCourses } = useCourseSearchingContext();
+  const { searchError, courseTable, setCourseTable, fetchCourseTable, fetchFavoriteCourses } = useCourseSearchingContext();
+  const { displayTags } = useDisplayTagsContext();
   const [favorite_list, setFavorite_list] = useState([]);
   const [Loading, setLoading] = useState(true);
   const userLoading = isLoading || !userInfo;
