@@ -38,6 +38,7 @@ import HomeFooterImg from "img/home_footer.svg";
 import { DiscordIcon } from "components/CustomIcons";
 import { useUserData } from "components/Providers/UserProvider";
 import handleAPIError from "utils/handleAPIError";
+import { fetchUserById, registerNewUser } from "queries/user";
 
 const newsCard = [
   <Flex
@@ -212,7 +213,7 @@ function NewRegisterModal({ isOpen, onOpen, onClose, isLoading, newUser }) {
 }
 
 function HomeViewContainer() {
-  const { setUser, fetchUserById, registerNewUser } = useUserData();
+  const { setUser } = useUserData();
   const toast = useToast();
   const navigate = useNavigate();
   const { user, isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();

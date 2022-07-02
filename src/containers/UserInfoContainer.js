@@ -32,7 +32,15 @@ import { dept_list_bachelor_only } from "data/department";
 import ReCAPTCHA from "react-google-recaptcha";
 import useCountDown from "react-countdown-hook";
 import setPageMeta from "utils/seo";
-import { deleteUserProfile, use_otp_link_student_id, request_otp_code } from "queries/user";
+import {
+  deleteUserProfile,
+  use_otp_link_student_id,
+  request_otp_code,
+  patchUserInfo,
+  fetchUserById,
+  registerNewUser,
+  deleteUserAccount,
+} from "queries/user";
 import { useUserData } from "components/Providers/UserProvider";
 import { verifyRecaptcha } from "queries/verifyRecaptcha";
 import handleAPIError from "utils/handleAPIError";
@@ -69,7 +77,7 @@ function ConnectedAccountTags({ userInfo }) {
 }
 
 function DeleteDialog({ isAlertOpen, setIsAlertOpen, deleteMode, setDeleteMode }) {
-  const { registerNewUser, deleteUserAccount, setUser, user: userInfo } = useUserData();
+  const { setUser, user: userInfo } = useUserData();
   const confirmMessage = `我確定`;
   const cancelRef = useRef();
   const toast = useToast();
@@ -173,7 +181,7 @@ function DeleteDialog({ isAlertOpen, setIsAlertOpen, deleteMode, setDeleteMode }
 }
 
 function UserInfoContainer() {
-  const { patchUserInfo, fetchUserById, setUser, user: userInfo } = useUserData();
+  const { setUser, user: userInfo } = useUserData();
   const navigate = useNavigate();
   const toast = useToast();
   const deptOptions = dept_list_bachelor_only.map((dept) => ({ value: dept.full_name, label: dept.code + " " + dept.full_name }));

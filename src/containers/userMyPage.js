@@ -10,9 +10,10 @@ import { useUserData } from "components/Providers/UserProvider";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { useDisplayTags } from "components/Providers/DisplayTagsProvider";
 import { useCourseTable } from "components/Providers/CourseTableProvider";
+import { fetchUserById } from "queries/user";
 
 function UserMyPage() {
-  const { setUser, user: userInfo, fetchUserById } = useUserData();
+  const { setUser, user: userInfo } = useUserData();
   const toast = useToast();
   const { user, isLoading, getAccessTokenSilently } = useAuth0();
   const { searchError, fetchFavoriteCourses } = useCourseSearchingContext();

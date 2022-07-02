@@ -39,6 +39,7 @@ import { parseCoursesToTimeMap } from "utils/parseCourseTime";
 import { useUserData } from "components/Providers/UserProvider";
 import { useCourseTable } from "components/Providers/CourseTableProvider";
 import handleAPIError from "utils/handleAPIError";
+import { linkCoursetableToUser, fetchUserById } from "queries/user";
 
 const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
@@ -125,7 +126,7 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
   const toast = useToast();
   const { fetchCourseTableCoursesByIds } = useCourseSearchingContext();
   const { courseTable, fetchCourseTable, setCourseTable, createCourseTable, patchCourseTable } = useCourseTable();
-  const { setUser, user: userInfo, linkCoursetableToUser, fetchUserById } = useUserData();
+  const { setUser, user: userInfo } = useUserData();
 
   // some local states for handling course data
   const [courses, setCourses] = useState({}); // dictionary of Course objects using courseId as key
