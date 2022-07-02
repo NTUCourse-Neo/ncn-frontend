@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import sendLogs from "utils/sendLogs";
+import sendLogs from "queries/sendLogs";
 import { BounceLoader } from "react-spinners";
 import { v4 as uuidv4 } from "uuid";
 import setPageMeta from "utils/seo";

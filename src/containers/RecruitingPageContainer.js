@@ -22,7 +22,7 @@ import {
 import ReCAPTCHA from "react-google-recaptcha";
 import { FaCheckCircle } from "react-icons/fa";
 import { useDispatch } from "react-redux";
-import sendLogs from "utils/sendLogs";
+import sendLogs from "queries/sendLogs";
 import setPageMeta from "utils/seo";
 import hiringPeopleSvg from "img/hiring_people.svg";
 import hiringCollabSvg from "img/hiring_collab.svg";
