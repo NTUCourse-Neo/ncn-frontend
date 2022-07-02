@@ -20,7 +20,7 @@ import FilterElement from "components/FilterModals/components/FilterElement";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 
 function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
-  const { searchFilters, setFilter } = useCourseSearchingContext();
+  const { searchFilters, setSearchFilters } = useCourseSearchingContext();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const onOpenModal = () => {
@@ -39,7 +39,7 @@ function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
   const onSaveEditing = () => {
     // fire when click "Save"
     // overwrite redux state by local state
-    setFilter("department", selectedDept);
+    setSearchFilters({ ...searchFilters, department: selectedDept });
     onClose();
   };
 

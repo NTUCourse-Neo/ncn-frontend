@@ -214,8 +214,16 @@ function SettingSwitch({ label, setterFunc, defaultValue, isDisabled }) {
 
 function CourseSearchInput({ displayPanel }) {
   const toast = useToast();
-  const { searchFilters, searchSettings, searchFiltersEnable, displayTags, setSearchFiltersEnable, setSearchSettings, setDisplayTags, setFilter } =
-    useCourseSearchingContext();
+  const {
+    searchFilters,
+    searchSettings,
+    searchFiltersEnable,
+    displayTags,
+    setSearchFiltersEnable,
+    setSearchSettings,
+    setDisplayTags,
+    setSearchFilters,
+  } = useCourseSearchingContext();
   const available_tags = ["required", "total_slot", "enroll_method", "area"];
 
   // filters local states
@@ -244,13 +252,11 @@ function CourseSearchInput({ displayPanel }) {
     const idx = searchFilters.enroll_method.indexOf(new_enroll_method);
     if (idx === -1) {
       //add
-      setFilter("enroll_method", [...searchFilters.enroll_method, new_enroll_method]);
+      setSearchFilters({ ...searchFilters, enroll_method: [...searchFilters.enroll_method, new_enroll_method] });
     } else {
       // remove
-      setFilter(
-        "enroll_method",
-        searchFilters.enroll_method.filter((item) => item !== new_enroll_method)
-      );
+
+      setSearchFilters({ ...searchFilters, enroll_method: searchFilters.enroll_method.filter((item) => item !== new_enroll_method) });
     }
   };
 

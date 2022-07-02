@@ -21,7 +21,7 @@ const CourseSearchingContext = createContext({
   setSearchColumns: () => {},
   setSearchFiltersEnable: () => {},
   setDisplayTags: () => {},
-  setFilter: () => {},
+  setSearchFilters: () => {},
   createCourseTable: () => {},
   fetchCourseTable: () => {},
   patchCourseTable: () => {},
@@ -60,10 +60,6 @@ function CourseSearchingProvider(props) {
     enroll_method: ["1", "2", "3"],
   });
   const [courseTable, setCourseTable] = useState(null);
-
-  const setFilter = (filter_name, data) => {
-    setSearchFilters({ ...searchFilters, [filter_name]: data });
-  };
 
   const createCourseTable = async (course_table_id, course_table_name, user_id, semester) => {
     try {
@@ -334,7 +330,7 @@ function CourseSearchingProvider(props) {
         setSearchColumns,
         setSearchFiltersEnable,
         setDisplayTags,
-        setFilter,
+        setSearchFilters,
         createCourseTable,
         fetchCourseTable,
         patchCourseTable,

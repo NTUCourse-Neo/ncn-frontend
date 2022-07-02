@@ -19,7 +19,7 @@ import React, { useMemo } from "react";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 
 function CategoryFilterModal({ title, isEnabled, selectedType, setSelectedType }) {
-  const { searchFilters, setFilter } = useCourseSearchingContext();
+  const { searchFilters, setSearchFilters } = useCourseSearchingContext();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const onOpenModal = () => {
@@ -38,7 +38,7 @@ function CategoryFilterModal({ title, isEnabled, selectedType, setSelectedType }
   const onSaveEditing = () => {
     // fire when click "Save"
     // overwrite redux state by local state
-    setFilter("category", selectedType);
+    setSearchFilters({ ...searchFilters, category: selectedType });
     onClose();
   };
 
