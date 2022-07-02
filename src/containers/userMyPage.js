@@ -142,7 +142,7 @@ function UserMyPage() {
           </Box>
 
           <Box ml="48vw" transition="all 500ms ease-in-out">
-            <SkeletonRow loading={Loading} error={searchError} />
+            <SkeletonRow loading={Loading} />
           </Box>
         </Flex>
       </Flex>

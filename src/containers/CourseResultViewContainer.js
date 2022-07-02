@@ -166,7 +166,7 @@ function CourseResultViewContainer() {
             ml={{ base: "0", lg: displayTable ? "24vw" : "48vw" }}
             transition="all 500ms ease-in-out"
           >
-            <SkeletonRow loading={searchLoading} error={searchError} />
+            <SkeletonRow />
           </Flex>
           <div ref={bottomRef} />
         </Box>

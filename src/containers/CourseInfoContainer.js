@@ -84,7 +84,8 @@ function CourseInfoContainer({ code }) {
             desc: `${course_obj.course_name} 課程的詳細資訊 | NTUCourse Neo，全新的臺大選課網站。`,
           });
         }
-      } catch (error) {
+      } catch (e) {
+        const error = handleAPIError(e);
         navigate(`/error/${error.status_code}`, { state: error });
         return;
       }

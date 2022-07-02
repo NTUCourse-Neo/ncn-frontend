@@ -2,11 +2,14 @@ import React from "react";
 import { Flex, useToast, Text } from "@chakra-ui/react";
 import { HashLoader } from "react-spinners";
 import { FaSadTear } from "react-icons/fa";
+import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 
-function SkeletonRow({ loading, error }) {
+function SkeletonRow({ loading }) {
+  const { searchLoading, searchError } = useCourseSearchingContext();
+  const isLoading = loading ?? searchLoading;
   const toast = useToast();
 
-  if (loading) {
+  if (isLoading) {
     return (
       <Flex p="4">
         <HashLoader size="60px" color="teal" />
@@ -14,7 +17,7 @@ function SkeletonRow({ loading, error }) {
     );
   }
 
-  if (error) {
+  if (searchError) {
     toast({
       title: "錯誤",
       description: "😢 哭阿，發生錯誤了，請稍後再試一次。",

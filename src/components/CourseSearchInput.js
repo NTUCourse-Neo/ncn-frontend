@@ -40,12 +40,27 @@ import { info_view_map } from "data/mapping_table";
 import { useMount } from "react-use";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { useDisplayTags } from "components/Providers/DisplayTagsProvider";
+import handleAPIError from "utils/handleAPIError";
 
 function CourseSearchInputTextArea() {
   const navigate = useNavigate();
   const toast = useToast();
-  const { searchColumns, searchFilters, batchSize, strict_match, searchFiltersEnable, setSearchColumns, fetchSearchIDs } =
-    useCourseSearchingContext();
+  const {
+    setSearchIds,
+    searchColumns,
+    searchFilters,
+    batchSize,
+    searchFiltersEnable,
+    searchSettings,
+    setSearchColumns,
+    fetchSearchIDs,
+    fetchSearchResults,
+    setSearchResult,
+    setSearchLoading,
+    setSearchError,
+    setOffset,
+    setTotalCount,
+  } = useCourseSearchingContext();
 
   const [search, setSearch] = useState("");
   useMount(() => {
@@ -61,7 +76,7 @@ function CourseSearchInputTextArea() {
     }
   };
 
-  const startSearch = () => {
+  const startSearch = async () => {
     // console.log(searchColumns);
     if (searchColumns.length === 0) {
       toast({
@@ -74,8 +89,23 @@ function CourseSearchInputTextArea() {
       return;
     }
     try {
-      fetchSearchIDs(search, searchColumns, searchFiltersEnable, searchFilters, batchSize, strict_match);
-    } catch (error) {
+      setSearchLoading(true);
+      setSearchResult([]);
+      const ids = await fetchSearchIDs(search, searchColumns);
+      setSearchIds(ids);
+      await fetchSearchResults(ids, searchFiltersEnable, searchFilters, batchSize, 0, searchSettings.strict_search_mode, {
+        onSuccess: ({ courses, totalCount }) => {
+          setSearchResult(courses);
+          setSearchLoading(false);
+          setSearchError(null);
+          setOffset(batchSize);
+          setTotalCount(totalCount);
+        },
+      });
+    } catch (e) {
+      setSearchLoading(false);
+      setSearchError(e);
+      const error = handleAPIError(e);
       if (error.status_code >= 500) {
         navigate(`/error/${error.status_code}`, { state: error });
       } else {
