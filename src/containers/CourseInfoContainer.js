@@ -18,9 +18,6 @@ import {
 } from "@chakra-ui/react";
 import CourseDetailInfoContainer from "containers/CourseDetailInfoContainer";
 import { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { fetchCourse } from "actions/courses";
-import { fetchCourseTable, patchCourseTable } from "actions/course_tables";
 import { useNavigate } from "react-router-dom";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import Moment from "moment";
@@ -34,6 +31,7 @@ import ParrotGif from "img/parrot/parrot.gif";
 import ParrotUltraGif from "img/parrot/ultrafastparrot.gif";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useUserData } from "components/Providers/UserProvider";
+import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 
 const copyWordList = [
   { count: 100, word: "複製終結者!!", color: "purple.600", bg: "purple.50" },
@@ -50,7 +48,7 @@ const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
 function CourseInfoContainer({ code }) {
   const { logIn, user: userInfo, fetchUserById, addFavoriteCourse } = useUserData();
-  const dispatch = useDispatch();
+  const { fetchCourse, fetchCourseTable, patchCourseTable } = useCourseSearchingContext();
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -71,7 +69,7 @@ function CourseInfoContainer({ code }) {
     const fetchCourseObject = async (course_code) => {
       let course_obj;
       try {
-        course_obj = await dispatch(fetchCourse(course_code));
+        course_obj = await fetchCourse(course_code);
         //console.log(course_obj);
         if (course_obj === undefined) {
           setNotFound(true);
@@ -147,7 +145,7 @@ function CourseInfoContainer({ code }) {
       if (uuid) {
         let course_table;
         try {
-          course_table = await dispatch(fetchCourseTable(uuid));
+          course_table = await fetchCourseTable(uuid);
         } catch (error) {
           toast({
             title: "取得課表資料失敗",
@@ -198,7 +196,7 @@ function CourseInfoContainer({ code }) {
         // fetch course table from server
         let course_table;
         try {
-          course_table = await dispatch(fetchCourseTable(uuid));
+          course_table = await fetchCourseTable(uuid);
         } catch (error) {
           toast({
             title: "取得課表資料失敗",
@@ -229,7 +227,7 @@ function CourseInfoContainer({ code }) {
             operation_str = "刪除";
             const new_courses = course_table.courses.filter((id) => id !== course._id);
             try {
-              res_table = await dispatch(patchCourseTable(uuid, course_table.name, course_table.user_id, course_table.expire_ts, new_courses));
+              res_table = await patchCourseTable(uuid, course_table.name, course_table.user_id, course_table.expire_ts, new_courses);
             } catch (error) {
               toast({
                 title: `刪除 ${course.course_name} 失敗`,
@@ -245,7 +243,7 @@ function CourseInfoContainer({ code }) {
             operation_str = "新增";
             const new_courses = [...course_table.courses, course._id];
             try {
-              res_table = await dispatch(patchCourseTable(uuid, course_table.name, course_table.user_id, course_table.expire_ts, new_courses));
+              res_table = await patchCourseTable(uuid, course_table.name, course_table.user_id, course_table.expire_ts, new_courses);
             } catch (error) {
               toast({
                 title: `新增 ${course.course_name} 失敗`,

@@ -1,22 +1,13 @@
 import { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
 import useOnScreen from "hooks/useOnScreen";
 import { useToast } from "@chakra-ui/react";
-import { fetchSearchResults } from "actions/courses";
+import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 
 export default function usePagination(ref) {
   const reachedBottom = useOnScreen(ref);
-  const dispatch = useDispatch();
+  const { search_results, total_count, search_settings, search_filters_enable, search_filters, offset, batch_size, search_ids, fetchSearchResults } =
+    useCourseSearchingContext();
   const toast = useToast();
-
-  const search_results = useSelector((state) => state.search_results);
-  const total_count = useSelector((state) => state.total_count);
-  const search_settings = useSelector((state) => state.search_settings);
-  const search_filters_enable = useSelector((state) => state.search_filters_enable);
-  const search_filters = useSelector((state) => state.search_filters);
-  const offset = useSelector((state) => state.offset);
-  const batch_size = useSelector((state) => state.batch_size);
-  const search_ids = useSelector((state) => state.search_ids);
 
   useEffect(() => {
     // console.log('reachedBottom: ',reachedBottom);
@@ -24,7 +15,7 @@ export default function usePagination(ref) {
       // fetch next batch of search results
       if (search_results.length < total_count) {
         try {
-          dispatch(fetchSearchResults(search_ids, search_filters_enable, search_filters, batch_size, offset, search_settings.strict_search_mode));
+          fetchSearchResults(search_ids, search_filters_enable, search_filters, batch_size, offset, search_settings.strict_search_mode);
         } catch (error) {
           toast({
             title: "獲取課程資訊失敗",

@@ -1,20 +1,15 @@
 import { useMemo } from "react";
 import CourseInfoRow from "components/CourseInfoRow";
 import { Box, Flex, Spacer, Accordion } from "@chakra-ui/react";
-import { useSelector, useDispatch } from "react-redux";
-import { setHoveredCourse } from "actions/index";
 import { useUserData } from "components/Providers/UserProvider";
+import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 
 function CourseInfoRowContainer({ displayTable }) {
   const { user: userInfo } = useUserData();
-  const displayTags = useSelector((state) => state.display_tags);
-  const courseInfo = useSelector((state) => state.search_results);
-  const courseTable = useSelector((state) => state.course_table);
+  const { display_tags: displayTags, search_results: courseInfo, course_table: courseTable, setHoveredCourseData } = useCourseSearchingContext();
   const selectedCourses = useMemo(() => {
     return courseTable?.courses;
   }, [courseTable]);
-
-  const dispatch = useDispatch();
 
   // const hide_scroll_bar = {
   //     '::-webkit-scrollbar': {
@@ -31,12 +26,12 @@ function CourseInfoRowContainer({ displayTable }) {
             key={index}
             onMouseEnter={() => {
               if (displayTable) {
-                dispatch(setHoveredCourse(info));
+                setHoveredCourseData(info);
               }
             }}
             onMouseLeave={() => {
               if (displayTable) {
-                dispatch(setHoveredCourse(null));
+                setHoveredCourseData(null);
               }
             }}
           >

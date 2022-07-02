@@ -24,8 +24,7 @@ import CourseInfoRowContainer from "containers/CourseInfoRowContainer";
 import CourseSearchInput from "components/CourseSearchInput";
 import SkeletonRow from "components/SkeletonRow";
 import SideCourseTableContainer from "containers/SideCourseTableContainer";
-import { setBatchSize } from "actions/index";
-import { useSelector, useDispatch } from "react-redux";
+import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { useAuth0 } from "@auth0/auth0-react";
 import setPageMeta from "utils/seo";
 import usePagination from "hooks/usePagination";
@@ -85,12 +84,7 @@ function CourseResultViewContainer() {
   const topRef = useRef();
   const bottomRef = useRef();
   usePagination(bottomRef);
-
-  const dispatch = useDispatch();
-  const search_ids = useSelector((state) => state.search_ids);
-  const search_loading = useSelector((state) => state.search_loading);
-  const search_error = useSelector((state) => state.search_error);
-  const total_count = useSelector((state) => state.total_count);
+  const { search_ids, search_loading, search_error, total_count, setBatchSize } = useCourseSearchingContext();
 
   const [isMobile, isHigherThan1325] = useMediaQuery(["(max-width: 1000px)", "(min-height: 1325px)"]);
 
@@ -103,9 +97,9 @@ function CourseResultViewContainer() {
 
   useEffect(() => {
     if (isHigherThan1325) {
-      dispatch(setBatchSize(25));
+      setBatchSize(25);
     }
-  }, [isHigherThan1325, dispatch]);
+  }, [isHigherThan1325, setBatchSize]);
 
   useEffect(() => {
     topRef.current.focus();

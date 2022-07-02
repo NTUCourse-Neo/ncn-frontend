@@ -25,8 +25,7 @@ import {
 } from "@chakra-ui/react";
 import { hash_to_color_hex } from "utils/colorAgent";
 import { FaExclamationTriangle } from "react-icons/fa";
-import { useSelector, useDispatch } from "react-redux";
-import { patchCourseTable } from "actions/course_tables";
+import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import SortablePopover from "components/CourseTableCard/SortablePopover";
 
 function CourseBox({ courseId, courseData, isOpen, hoverId }) {
@@ -57,8 +56,7 @@ function CourseBox({ courseId, courseData, isOpen, hoverId }) {
 }
 
 function CourseTableCard({ courseInitialOrder, courseData, day, interval, hoverId }) {
-  const dispatch = useDispatch();
-  const course_table = useSelector((state) => state.course_table);
+  const { course_table, patchCourseTable } = useCourseSearchingContext();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
 
@@ -118,7 +116,7 @@ function CourseTableCard({ courseInitialOrder, courseData, day, interval, hoverI
     }
     let res_table;
     try {
-      res_table = await dispatch(patchCourseTable(course_table._id, course_table.name, course_table.user_id, course_table.expire_ts, new_courses));
+      res_table = await patchCourseTable(course_table._id, course_table.name, course_table.user_id, course_table.expire_ts, new_courses);
     } catch (error) {
       toast({
         title: "更改志願序失敗!",

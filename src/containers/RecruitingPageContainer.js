@@ -21,7 +21,6 @@ import {
 } from "@chakra-ui/react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { FaCheckCircle } from "react-icons/fa";
-import { useDispatch } from "react-redux";
 import sendLogs from "queries/sendLogs";
 import setPageMeta from "utils/seo";
 import hiringPeopleSvg from "img/hiring_people.svg";
@@ -31,7 +30,6 @@ import { verifyRecaptcha } from "queries/verifyRecaptcha";
 
 function RecruitingPageContainer() {
   const toast = useToast();
-  const dispatch = useDispatch();
   const [isChecked, setIsChecked] = useState(false);
   const [isSubmiting, setIsSubmiting] = useState(false);
   const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);

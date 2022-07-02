@@ -14,15 +14,13 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { college_map } from "data/college";
 import { dept_list_bachelor_only } from "data/department";
 import FilterElement from "components/FilterModals/components/FilterElement";
-import { setFilter } from "actions";
+import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 
 function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
-  const dispatch = useDispatch();
-  const search_filters = useSelector((state) => state.search_filters);
+  const { search_filters, setFilter } = useCourseSearchingContext();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const onOpenModal = () => {
@@ -41,7 +39,7 @@ function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
   const onSaveEditing = () => {
     // fire when click "Save"
     // overwrite redux state by local state
-    dispatch(setFilter("department", selectedDept));
+    setFilter("department", selectedDept);
     onClose();
   };
 

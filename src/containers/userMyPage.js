@@ -1,26 +1,27 @@
 import { React, useEffect, useState, useMemo } from "react";
 import { Flex, Text, useToast, Box, Spacer, Accordion } from "@chakra-ui/react";
-import { useSelector, useDispatch } from "react-redux";
 import SkeletonRow from "components/SkeletonRow";
 import { HashLoader } from "react-spinners";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import { BeatLoader } from "react-spinners";
-import { updateCourseTable } from "actions/index";
-import { fetchFavoriteCourses } from "actions/courses";
-import { fetchCourseTable } from "actions/course_tables";
 import setPageMeta from "utils/seo";
 import CourseInfoRow from "components/CourseInfoRow";
 import { useUserData } from "components/Providers/UserProvider";
+import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 
 function UserMyPage() {
   const { logIn, user: userInfo, fetchUserById } = useUserData();
   const toast = useToast();
   const { user, isLoading, getAccessTokenSilently } = useAuth0();
-  const dispatch = useDispatch();
-  const search_error = useSelector((state) => state.search_error);
-  const courseTable = useSelector((state) => state.course_table);
+  const {
+    search_error,
+    course_table: courseTable,
+    display_tags: displayTags,
+    setCourseTable,
+    fetchCourseTable,
+    fetchFavoriteCourses,
+  } = useCourseSearchingContext();
   const [favorite_list, setFavorite_list] = useState([]);
-  const displayTags = useSelector((state) => state.display_tags);
   const [Loading, setLoading] = useState(true);
   const userLoading = isLoading || !userInfo;
 
@@ -40,11 +41,11 @@ function UserMyPage() {
           // console.log(course_tables);
           if (course_tables.length === 0) {
             // user has no course table, set courseTable in redux null
-            dispatch(updateCourseTable(null));
+            setCourseTable(null);
           } else {
             // pick the first table
             try {
-              await dispatch(fetchCourseTable(course_tables[0]));
+              await fetchCourseTable(course_tables[0]);
             } catch (e) {
               toast({
                 title: "取得課表資料失敗.",
@@ -77,7 +78,7 @@ function UserMyPage() {
       // console.log(userInfo);
       if (userInfo.db.favorites.length >= 0) {
         try {
-          const courses = await dispatch(fetchFavoriteCourses(userInfo.db.favorites));
+          const courses = await fetchFavoriteCourses(userInfo.db.favorites);
           // console.log(courses);
           setFavorite_list(courses);
         } catch (e) {

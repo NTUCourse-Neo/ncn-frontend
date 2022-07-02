@@ -25,12 +25,11 @@ import {
 import { CourseDrawerContainer } from "containers/CourseDrawerContainer";
 import { FaPlus, FaHeart, FaInfoCircle } from "react-icons/fa";
 import { info_view_map } from "data/mapping_table";
-import { useDispatch } from "react-redux";
-import { fetchCourseTable, patchCourseTable } from "actions/course_tables";
 import { hash_to_color_hex } from "utils/colorAgent";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
 import { useUserData } from "components/Providers/UserProvider";
+import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 
 const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
@@ -56,7 +55,7 @@ function DeptBadge({ course }) {
 }
 
 function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayTable }) {
-  const dispatch = useDispatch();
+  const { fetchCourseTable, patchCourseTable } = useCourseSearchingContext();
   const navigate = useNavigate();
   const { user: userInfo, addFavoriteCourse } = useUserData();
 
@@ -89,7 +88,7 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
         // fetch course table from server
         let course_table;
         try {
-          course_table = await dispatch(fetchCourseTable(uuid));
+          course_table = await fetchCourseTable(uuid);
         } catch (error) {
           toast({
             title: "取得課表資料失敗",
@@ -119,7 +118,7 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
             operation_str = "刪除";
             const new_courses = course_table.courses.filter((id) => id !== course._id);
             try {
-              res_table = await dispatch(patchCourseTable(uuid, course_table.name, course_table.user_id, course_table.expire_ts, new_courses));
+              res_table = await patchCourseTable(uuid, course_table.name, course_table.user_id, course_table.expire_ts, new_courses);
             } catch (error) {
               toast({
                 title: `刪除 ${course.course_name} 失敗`,
@@ -135,7 +134,7 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
             operation_str = "新增";
             const new_courses = [...course_table.courses, course._id];
             try {
-              res_table = await dispatch(patchCourseTable(uuid, course_table.name, course_table.user_id, course_table.expire_ts, new_courses));
+              res_table = await patchCourseTable(uuid, course_table.name, course_table.user_id, course_table.expire_ts, new_courses);
             } catch (error) {
               toast({
                 title: `新增 ${course.course_name} 失敗`,

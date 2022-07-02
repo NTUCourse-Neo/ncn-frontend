@@ -36,14 +36,13 @@ import { IoMdOpen } from "react-icons/io";
 import BetaBadge from "components/BetaBadge";
 import { info_view_map } from "data/mapping_table";
 import PTTContentRowContainer from "containers/PTTContentRowContainer";
-import { useDispatch } from "react-redux";
-import { getCourseEnrollInfo, getNTURatingData, getPTTData, getCourseSyllabusData } from "actions/courses";
 import ParrotGif from "img/parrot/parrot.gif";
 import { hash_to_color_hex_with_hue } from "utils/colorAgent";
 import SignUpCard from "components/SignUpCard";
 import { useAuth0 } from "@auth0/auth0-react";
 import SignUpReportForm from "components/SignUpReportForm";
 import { getSocialPostByCourseId } from "queries/social";
+import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 
 function DataSourceTag({ source }) {
   return (
@@ -402,7 +401,7 @@ const syllabusTitle = {
 
 function CourseDetailInfoContainer({ course }) {
   const toast = useToast();
-  const dispatch = useDispatch();
+  const { getCourseEnrollInfo, getNTURatingData, getPTTData, getCourseSyllabusData } = useCourseSearchingContext();
   const { getAccessTokenSilently, isLoading: isAuth0Loading, isAuthenticated } = useAuth0();
 
   // Course live data
@@ -432,7 +431,7 @@ function CourseDetailInfoContainer({ course }) {
     const token = await getAccessTokenSilently();
     let data;
     try {
-      data = await dispatch(getCourseEnrollInfo(token, course.id));
+      data = await getCourseEnrollInfo(token, course.id);
     } catch (error) {
       setIsLoadingEnrollInfo(false);
       toast({
@@ -452,7 +451,7 @@ function CourseDetailInfoContainer({ course }) {
     const token = await getAccessTokenSilently();
     let data;
     try {
-      data = await dispatch(getNTURatingData(token, course._id));
+      data = await getNTURatingData(token, course._id);
     } catch (error) {
       setIsLoadingRatingData(false);
       toast({
@@ -472,7 +471,7 @@ function CourseDetailInfoContainer({ course }) {
     const token = await getAccessTokenSilently();
     let data;
     try {
-      data = await dispatch(getPTTData(token, course._id, "review"));
+      data = await getPTTData(token, course._id, "review");
     } catch (error) {
       setIsLoadingPTTReviewData(false);
       toast({
@@ -492,7 +491,7 @@ function CourseDetailInfoContainer({ course }) {
     const token = await getAccessTokenSilently();
     let data;
     try {
-      data = await dispatch(getPTTData(token, course._id, "exam"));
+      data = await getPTTData(token, course._id, "exam");
     } catch (error) {
       setIsLoadingPTTExamData(false);
       toast({
@@ -511,7 +510,7 @@ function CourseDetailInfoContainer({ course }) {
     setIsLoadingSyllabusData(true);
     let data;
     try {
-      data = await dispatch(getCourseSyllabusData(course._id));
+      data = await getCourseSyllabusData(course._id);
     } catch (error) {
       setIsLoadingSyllabusData(false);
       toast({

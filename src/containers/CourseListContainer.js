@@ -5,11 +5,10 @@ import { Flex, Text, Button, IconButton, Badge, Tag, useToast, ScaleFade, TagLef
 import { FaPlus, FaTrash, FaExclamationTriangle, FaInfoCircle } from "react-icons/fa";
 import { FadeLoader } from "react-spinners";
 import { MdDragHandle } from "react-icons/md";
-import { patchCourseTable } from "actions/course_tables";
 import { hash_to_color_hex } from "utils/colorAgent";
 import { getNolAddUrl } from "utils/getNolUrls";
 import openPage from "utils/openPage";
-import { useDispatch } from "react-redux";
+import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { sortableContainer, sortableElement, sortableHandle } from "react-sortable-hoc";
 import { useNavigate } from "react-router-dom";
 
@@ -115,7 +114,7 @@ const SortableContainer = sortableContainer(({ children }) => {
 });
 
 function CourseListContainer({ courseTable, courses, loading }) {
-  const dispatch = useDispatch();
+  const { patchCourseTable } = useCourseSearchingContext();
   const toast = useToast();
   const [courseListForSort, setCourseListForSort] = useState(Object.keys(courses));
   const [prepareToRemoveCourseId, setPrepareToRemoveCourseId] = useState([]);
@@ -141,9 +140,8 @@ function CourseListContainer({ courseTable, courses, loading }) {
     try {
       // remove the course_id in the prepareToRemoveCourseId from the courseListForSort
       const newCourseListForSort = courseListForSort.filter((id) => !prepareToRemoveCourseId.includes(id));
-      const res_table = await dispatch(
-        patchCourseTable(courseTable._id, courseTable.name, courseTable.user_id, courseTable.expire_ts, newCourseListForSort)
-      );
+      const res_table = await patchCourseTable(courseTable._id, courseTable.name, courseTable.user_id, courseTable.expire_ts, newCourseListForSort);
+
       if (res_table) {
         toast({
           title: "編輯課表成功",

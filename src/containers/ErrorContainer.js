@@ -1,6 +1,5 @@
 import { Flex, Image, Text, Button, HStack } from "@chakra-ui/react";
 import { FaHeartbeat, FaCheckCircle } from "react-icons/fa";
-import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -12,7 +11,6 @@ import setPageMeta from "utils/seo";
 function ErrorContainer({ code }) {
   const error_page_states = useLocation().state;
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const handleOpenPage = (page) => {
     window.open(page, "_blank");
   };

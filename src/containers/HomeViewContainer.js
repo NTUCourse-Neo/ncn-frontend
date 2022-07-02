@@ -31,7 +31,6 @@ import { FaArrowDown, FaArrowRight, FaArrowUp, FaGithub, FaInfoCircle, FaSortDow
 import { animateScroll as scroll, scroller } from "react-scroll";
 import { Link, useNavigate } from "react-router-dom";
 import { BeatLoader } from "react-spinners";
-import { useDispatch } from "react-redux";
 import CourseDeadlineCountdown from "components/CourseDeadlineCountdown";
 import setPageMeta from "utils/seo";
 import { motion, AnimatePresence } from "framer-motion";
@@ -218,7 +217,6 @@ function HomeViewContainer() {
   const { user, isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isWarningOpen, onOpen: onWarningOpen, onClose: onWarningClose } = useDisclosure();
-  const dispatch = useDispatch();
 
   const [isRegistering, setIsRegistering] = useState(false);
   const [isMobile] = useMediaQuery("(max-width: 760px)");

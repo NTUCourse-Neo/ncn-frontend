@@ -30,10 +30,7 @@ import {
 } from "@chakra-ui/react";
 import { FaRegEdit, FaRegHandPointDown, FaRegHandPointUp, FaRegMeh, FaPlusSquare, FaAngleDown } from "react-icons/fa";
 import CourseTableContainer from "containers/CourseTableContainer";
-import { updateCourseTable } from "actions/index";
-import { fetchCourseTableCoursesByIds } from "actions/courses";
-import { createCourseTable, fetchCourseTable, patchCourseTable } from "actions/course_tables";
-import { useDispatch, useSelector } from "react-redux";
+import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { v4 as uuidv4 } from "uuid";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
@@ -124,8 +121,14 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
   const navigate = useNavigate();
   const { user, isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const toast = useToast();
-  const dispatch = useDispatch();
-  const courseTable = useSelector((state) => state.course_table);
+  const {
+    course_table: courseTable,
+    fetchCourseTable,
+    setCourseTable,
+    fetchCourseTableCoursesByIds,
+    createCourseTable,
+    patchCourseTable,
+  } = useCourseSearchingContext();
   const { logIn, user: userInfo, linkCoursetableToUser, fetchUserById } = useUserData();
 
   // some local states for handling course data
@@ -152,7 +155,7 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
     const courseTableInit = async (uuid) => {
       let course_table;
       try {
-        course_table = await dispatch(fetchCourseTable(uuid));
+        course_table = await fetchCourseTable(uuid);
       } catch (error) {
         // navigate to error page
         navigate(`/error/${error.status_code}`, { state: error });
@@ -172,12 +175,12 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
           const course_tables = user_data.db.course_tables;
           if (course_tables.length === 0) {
             // user has no course table, set courseTable in redux null
-            dispatch(updateCourseTable(null));
+            setCourseTable(null);
             setLoading(false);
           } else {
             // pick the first table
             try {
-              await dispatch(fetchCourseTable(course_tables[0]));
+              await fetchCourseTable(course_tables[0]);
             } catch (error) {
               navigate(`/error/${error.status_code}`, { state: error });
             }
@@ -223,7 +226,7 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
       if (courseTable) {
         // console.log("course_table: ",courseTable);
         try {
-          const courseResult = await dispatch(fetchCourseTableCoursesByIds(courseTable.courses));
+          const courseResult = await fetchCourseTableCoursesByIds(courseTable.courses);
           // set states: courseTimeMap, courses
           setCourseTimeMap(parseCoursesToTimeMap(convertArrayToObject(courseResult, "_id")));
           setCourses(convertArrayToObject(courseResult, "_id"));
@@ -259,7 +262,7 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
       if (user) {
         // hasLogIn
         try {
-          await dispatch(createCourseTable(new_uuid, "我的課表", userInfo.db._id, "1102"));
+          await createCourseTable(new_uuid, "我的課表", userInfo.db._id, "1102");
           // console.log("New UUID is generated: ",new_uuid);
           const token = await getAccessTokenSilently();
           await linkCoursetableToUser(token, new_uuid, userInfo.db._id);
@@ -275,7 +278,7 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
       } else {
         // Guest mode
         try {
-          const new_course_table = await dispatch(createCourseTable(new_uuid, "我的課表", null, "1102"));
+          const new_course_table = await createCourseTable(new_uuid, "我的課表", null, "1102");
           // console.log("New UUID is generated: ",new_uuid);
           localStorage.setItem(LOCAL_STORAGE_KEY, new_course_table._id);
           setExpired(false);
@@ -295,9 +298,8 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
   const handleSave = async (new_table_name) => {
     onClose();
     try {
-      const res_table = await dispatch(
-        patchCourseTable(courseTable._id, new_table_name, courseTable.user_id, courseTable.expire_ts, courseTable.courses)
-      );
+      const res_table = await patchCourseTable(courseTable._id, new_table_name, courseTable.user_id, courseTable.expire_ts, courseTable.courses);
+
       if (res_table) {
         toast({
           title: `變更課表名稱成功`,

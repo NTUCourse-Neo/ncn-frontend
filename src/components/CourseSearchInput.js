@@ -31,36 +31,29 @@ import {
 } from "@chakra-ui/react";
 import { Search2Icon, ChevronDownIcon } from "@chakra-ui/icons";
 import { FaSearch, FaPlus, FaMinus, FaChevronDown } from "react-icons/fa";
-import { setSearchColumn, setSearchSettings, setFilter, setFilterEnable, setNewDisplayTags } from "actions/index";
-import { fetchSearchIDs } from "actions/courses";
 import TimeFilterModal from "components/FilterModals/TimeFilterModal";
 import DeptFilterModal from "components/FilterModals/DeptFilterModal";
 import CategoryFilterModal from "components/FilterModals/CategoryFilterModal";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { mapStateToTimeTable, mapStateToIntervals } from "utils/timeTableConverter";
 import { info_view_map } from "data/mapping_table";
 import { useMount } from "react-use";
+import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 
 function CourseSearchInputTextArea() {
   const navigate = useNavigate();
   const toast = useToast();
-
-  const search_columns = useSelector((state) => state.search_columns);
-  const search_filters = useSelector((state) => state.search_filters);
-  const batch_size = useSelector((state) => state.batch_size);
-  const strict_match = useSelector((state) => state.search_settings.strict_search_mode);
-  const search_filters_enable = useSelector((state) => state.search_filters_enable);
+  const { search_columns, search_filters, batch_size, strict_match, search_filters_enable, setSearchColumn, fetchSearchIDs } =
+    useCourseSearchingContext();
 
   const [search, setSearch] = useState("");
   useMount(() => {
     setSearch("");
   });
 
-  const dispatch = useDispatch();
-
+  // TODO: buggy?
   const toggle_search_column = (e) => {
-    dispatch(setSearchColumn(e.currentTarget.value));
+    setSearchColumn(e.currentTarget.value);
   };
 
   const startSearch = () => {
@@ -76,7 +69,7 @@ function CourseSearchInputTextArea() {
       return;
     }
     try {
-      dispatch(fetchSearchIDs(search, search_columns, search_filters_enable, search_filters, batch_size, strict_match));
+      fetchSearchIDs(search, search_columns, search_filters_enable, search_filters, batch_size, strict_match);
     } catch (error) {
       if (error.status_code >= 500) {
         navigate(`/error/${error.status_code}`, { state: error });
@@ -216,14 +209,10 @@ function SettingSwitch({ label, setterFunc, defaultValue, isDisabled }) {
 }
 
 function CourseSearchInput({ displayPanel }) {
-  const dispatch = useDispatch();
   const toast = useToast();
-
+  const { search_filters, search_settings, search_filters_enable, display_tags, setFilterEnable, setSearchSettings, setNewDisplayTags, setFilter } =
+    useCourseSearchingContext();
   const available_tags = ["required", "total_slot", "enroll_method", "area"];
-  const search_filters = useSelector((state) => state.search_filters);
-  const search_settings = useSelector((state) => state.search_settings);
-  const search_filters_enable = useSelector((state) => state.search_filters_enable);
-  const display_tags = useSelector((state) => state.display_tags);
 
   // filters local states
   const [selectedTime, setSelectedTime] = useState(mapStateToTimeTable(search_filters.time));
@@ -251,14 +240,12 @@ function CourseSearchInput({ displayPanel }) {
     const idx = search_filters.enroll_method.indexOf(new_enroll_method);
     if (idx === -1) {
       //add
-      dispatch(setFilter("enroll_method", [...search_filters.enroll_method, new_enroll_method]));
+      setFilter("enroll_method", [...search_filters.enroll_method, new_enroll_method]);
     } else {
       // remove
-      dispatch(
-        setFilter(
-          "enroll_method",
-          search_filters.enroll_method.filter((item) => item !== new_enroll_method)
-        )
+      setFilter(
+        "enroll_method",
+        search_filters.enroll_method.filter((item) => item !== new_enroll_method)
       );
     }
   };
@@ -293,7 +280,7 @@ function CourseSearchInput({ displayPanel }) {
                         isChecked={timeFilterOn}
                         onChange={(e) => {
                           setTimeFilterOn(e.currentTarget.checked);
-                          dispatch(setFilterEnable("time", e.currentTarget.checked));
+                          setFilterEnable("time", e.currentTarget.checked);
                         }}
                       />
                       <TimeFilterModal
@@ -316,7 +303,7 @@ function CourseSearchInput({ displayPanel }) {
                         isChecked={deptFilterOn}
                         onChange={(e) => {
                           setDeptFilterOn(e.currentTarget.checked);
-                          dispatch(setFilterEnable("department", e.currentTarget.checked));
+                          setFilterEnable("department", e.currentTarget.checked);
                         }}
                       />
                       <DeptFilterModal
@@ -335,7 +322,7 @@ function CourseSearchInput({ displayPanel }) {
                         isChecked={catFilterOn}
                         onChange={(e) => {
                           setCatFilterOn(e.currentTarget.checked);
-                          dispatch(setFilterEnable("category", e.currentTarget.checked));
+                          setFilterEnable("category", e.currentTarget.checked);
                         }}
                       />
                       <CategoryFilterModal
@@ -354,7 +341,7 @@ function CourseSearchInput({ displayPanel }) {
                         isChecked={enrollFilterOn}
                         onChange={(e) => {
                           setEnrollFilterOn(e.currentTarget.checked);
-                          dispatch(setFilterEnable("enroll_method", e.currentTarget.checked));
+                          setFilterEnable("enroll_method", e.currentTarget.checked);
                         }}
                       />
                       <Menu closeOnSelect={false} mx="2">
@@ -450,14 +437,12 @@ function CourseSearchInput({ displayPanel }) {
                       colorScheme="teal"
                       size={useBreakpointValue({ base: "sm", lg: "md" }) ?? "sm"}
                       onClick={() => {
-                        dispatch(
-                          setSearchSettings({
-                            show_selected_courses: show_selected_courses,
-                            only_show_not_conflicted_courses: only_show_not_conflicted_courses,
-                            sync_add_to_nol: sync_add_to_nol,
-                            strict_search_mode: strict_search_mode,
-                          })
-                        );
+                        setSearchSettings({
+                          show_selected_courses: show_selected_courses,
+                          only_show_not_conflicted_courses: only_show_not_conflicted_courses,
+                          sync_add_to_nol: sync_add_to_nol,
+                          strict_search_mode: strict_search_mode,
+                        });
                         toast({
                           title: "設定已儲存",
                           description: "讚啦",
@@ -488,10 +473,10 @@ function CourseSearchInput({ displayPanel }) {
                             onClick={
                               selected
                                 ? () => {
-                                    dispatch(setNewDisplayTags([...display_tags.filter((t) => t !== tag)]));
+                                    setNewDisplayTags([...display_tags.filter((t) => t !== tag)]);
                                   }
                                 : () => {
-                                    dispatch(setNewDisplayTags([...display_tags, tag]));
+                                    setNewDisplayTags([...display_tags, tag]);
                                   }
                             }
                             transition="all 200ms ease-in-out"
