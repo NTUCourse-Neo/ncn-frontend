@@ -14,15 +14,11 @@ describe("Home page e2e test", () => {
   });
   it("Navigate to about page", () => {
     cy.visit("/");
-    cy.get("button").contains("了解更多").click();
+    cy.get(".css-jhyrsx").contains("了解更多").click();
+    cy.get(".css-crqlo0", { timeout: 30000 });
     cy.url().should("include", "/about");
     cy.go(-1);
     cy.get("button").contains("關於").click();
     cy.url().should("include", "/about");
-  });
-  it("Navigate to recruiting page", () => {
-    cy.visit("/");
-    cy.get("button").contains("夥伴招募").click();
-    cy.url().should("include", "/recruiting");
   });
 });
