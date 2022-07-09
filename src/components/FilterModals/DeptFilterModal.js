@@ -53,7 +53,9 @@ function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
     () => (
       <>
         {Object.keys(college_map).map((college_key, index) => {
-          const departments = dept_list_bachelor_only.filter((dept) => dept.code[0] === college_key);
+          const departments = dept_list_bachelor_only.filter(
+            (dept) => dept.code[0] === college_key
+          );
           if (departments.length === 0) {
             return null;
           }
@@ -120,7 +122,13 @@ function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
         <ModalContent maxW={{ base: "100vw", md: "90vw", lg: "50vw" }}>
           <ModalHeader>
             {title}
-            <Flex flexDirection="row" justifyContent="start" alignItems="center" mt="2" display={{ base: "block", md: "none" }}>
+            <Flex
+              flexDirection="row"
+              justifyContent="start"
+              alignItems="center"
+              mt="2"
+              display={{ base: "block", md: "none" }}
+            >
               <Button
                 size="sm"
                 colorScheme="blue"
@@ -153,7 +161,9 @@ function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
                   name={dept.full_name}
                   selected={true}
                   onClick={() => {
-                    setSelectedDept(selectedDept.filter((code) => code !== dept.code));
+                    setSelectedDept(
+                      selectedDept.filter((code) => code !== dept.code)
+                    );
                   }}
                 />
               ))}

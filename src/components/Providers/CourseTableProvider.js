@@ -8,7 +8,12 @@ const CourseTableContext = createContext({
 function CourseTableProvider(props) {
   const [courseTable, setCourseTable] = useState(null);
 
-  return <CourseTableContext.Provider value={{ courseTable, setCourseTable }} {...props} />;
+  return (
+    <CourseTableContext.Provider
+      value={{ courseTable, setCourseTable }}
+      {...props}
+    />
+  );
 }
 
 function useCourseTable() {

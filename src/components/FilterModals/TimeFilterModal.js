@@ -22,7 +22,23 @@ function TimeFilterModal({ selectedTime, setSelectedTime, toggle, title }) {
   const saveSelectedTime = () => {
     // turn 15x7 2D array (selectedTime) to 7x15 array
     const timeTable = [[], [], [], [], [], [], []];
-    const intervals = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "A", "B", "C", "D"];
+    const intervals = [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "A",
+      "B",
+      "C",
+      "D",
+    ];
     for (let i = 0; i < intervals.length; i++) {
       const interval = intervals[i];
       for (let j = 0; j < 7; j++) {
@@ -80,7 +96,13 @@ function TimeFilterModal({ selectedTime, setSelectedTime, toggle, title }) {
         <ModalContent maxW={{ base: "100vw", md: "90vw", lg: "50vw" }}>
           <ModalHeader>
             {title}
-            <Flex flexDirection="row" justifyContent="start" alignItems="center" mt="2" display={{ base: "block", md: "none" }}>
+            <Flex
+              flexDirection="row"
+              justifyContent="start"
+              alignItems="center"
+              mt="2"
+              display={{ base: "block", md: "none" }}
+            >
               <Button
                 size="sm"
                 colorScheme="blue"
@@ -99,7 +121,10 @@ function TimeFilterModal({ selectedTime, setSelectedTime, toggle, title }) {
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody overflow="auto" pt="0">
-            <TimetableSelector selectedTime={selectedTime} setSelectedTime={setSelectedTime} />
+            <TimetableSelector
+              selectedTime={selectedTime}
+              setSelectedTime={setSelectedTime}
+            />
           </ModalBody>
           <ModalFooter display={{ base: "none", md: "flex" }}>
             <Button

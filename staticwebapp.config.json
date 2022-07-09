@@ -7,10 +7,10 @@
     }
   ],
   "navigationFallback": {
-      "rewrite": "index.html",
-      "exclude": ["/static/images/*.{png,jpg,gif}", "/static/css/*"]
+    "rewrite": "index.html",
+    "exclude": ["/static/images/*.{png,jpg,gif}", "/static/css/*"]
   },
   "mimeTypes": {
-      ".json": "text/json"
+    ".json": "text/json"
   }
 }

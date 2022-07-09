@@ -34,18 +34,20 @@ import { FaSearch, FaPlus, FaMinus, FaChevronDown } from "react-icons/fa";
 import TimeFilterModal from "components/FilterModals/TimeFilterModal";
 import DeptFilterModal from "components/FilterModals/DeptFilterModal";
 import CategoryFilterModal from "components/FilterModals/CategoryFilterModal";
-import { useNavigate } from "react-router-dom";
-import { mapStateToTimeTable, mapStateToIntervals } from "utils/timeTableConverter";
+import {
+  mapStateToTimeTable,
+  mapStateToIntervals,
+} from "utils/timeTableConverter";
 import { info_view_map } from "data/mapping_table";
 import { useMount } from "react-use";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { useDisplayTags } from "components/Providers/DisplayTagsProvider";
-import handleAPIError from "utils/handleAPIError";
 import { fetchSearchIDs, fetchSearchResults } from "queries/course";
+import { useRouter } from "next/router";
 
 function CourseSearchInputTextArea() {
-  const navigate = useNavigate();
   const toast = useToast();
+  const router = useRouter();
   const {
     setSearchIds,
     searchColumns,
@@ -92,21 +94,28 @@ function CourseSearchInputTextArea() {
       setSearchResult([]);
       const ids = await fetchSearchIDs(search, searchColumns);
       setSearchIds(ids);
-      await fetchSearchResults(ids, searchFiltersEnable, searchFilters, batchSize, 0, searchSettings.strict_search_mode, {
-        onSuccess: ({ courses, totalCount }) => {
-          setSearchResult(courses);
-          setSearchLoading(false);
-          setSearchError(null);
-          setOffset(batchSize);
-          setTotalCount(totalCount);
-        },
-      });
+      await fetchSearchResults(
+        ids,
+        searchFiltersEnable,
+        searchFilters,
+        batchSize,
+        0,
+        searchSettings.strict_search_mode,
+        {
+          onSuccess: ({ courses, totalCount }) => {
+            setSearchResult(courses);
+            setSearchLoading(false);
+            setSearchError(null);
+            setOffset(batchSize);
+            setTotalCount(totalCount);
+          },
+        }
+      );
     } catch (e) {
       setSearchLoading(false);
       setSearchError(e);
-      const error = handleAPIError(e);
-      if (error.status_code >= 500) {
-        navigate(`/error/${error.status_code}`, { state: error });
+      if (e.status >= 500) {
+        router.push(`/404`);
       } else {
         toast({
           title: "搜尋失敗",
@@ -121,13 +130,22 @@ function CourseSearchInputTextArea() {
 
   return (
     <Flex flexDirection="column">
-      <Flex flexDirection="row" alignItems="center" justifyContent={["start", "start", "center", "center"]} flexWrap="wrap" css={{ gap: "10px" }}>
+      <Flex
+        flexDirection="row"
+        alignItems="center"
+        justifyContent={["start", "start", "center", "center"]}
+        flexWrap="wrap"
+        css={{ gap: "10px" }}
+      >
         <Menu closeOnSelect={false} mx="2">
           <MenuButton as={Button} size={"md"} rightIcon={<ChevronDownIcon />}>
             搜尋欄位
           </MenuButton>
           <MenuList>
-            <MenuOptionGroup defaultValue={["course_name", "teacher"]} type="checkbox">
+            <MenuOptionGroup
+              defaultValue={["course_name", "teacher"]}
+              type="checkbox"
+            >
               <MenuItemOption
                 value="course_name"
                 onClick={(e) => {
@@ -244,26 +262,47 @@ function SettingSwitch({ label, setterFunc, defaultValue, isDisabled }) {
 
 function CourseSearchInput({ displayPanel }) {
   const toast = useToast();
-  const { searchFilters, searchSettings, searchFiltersEnable, setSearchFiltersEnable, setSearchSettings, setSearchFilters } =
-    useCourseSearchingContext();
+  const {
+    searchFilters,
+    searchSettings,
+    searchFiltersEnable,
+    setSearchFiltersEnable,
+    setSearchSettings,
+    setSearchFilters,
+  } = useCourseSearchingContext();
   const { displayTags, setDisplayTags } = useDisplayTags();
   const available_tags = ["required", "total_slot", "enroll_method", "area"];
 
   // filters local states
-  const [selectedTime, setSelectedTime] = useState(mapStateToTimeTable(searchFilters.time));
+  const [selectedTime, setSelectedTime] = useState(
+    mapStateToTimeTable(searchFilters.time)
+  );
   const [selectedDept, setSelectedDept] = useState(searchFilters.department);
   const [selectedType, setSelectedType] = useState(searchFilters.category);
 
   const [timeFilterOn, setTimeFilterOn] = useState(searchFiltersEnable.time);
-  const [deptFilterOn, setDeptFilterOn] = useState(searchFiltersEnable.department);
+  const [deptFilterOn, setDeptFilterOn] = useState(
+    searchFiltersEnable.department
+  );
   const [catFilterOn, setCatFilterOn] = useState(searchFiltersEnable.category);
-  const [enrollFilterOn, setEnrollFilterOn] = useState(searchFiltersEnable.enroll_method);
+  const [enrollFilterOn, setEnrollFilterOn] = useState(
+    searchFiltersEnable.enroll_method
+  );
 
   // searchSettings local states
-  const [show_selected_courses, set_show_selected_courses] = useState(searchSettings.show_selected_courses);
-  const [only_show_not_conflicted_courses, set_only_show_not_conflicted_courses] = useState(searchSettings.only_show_not_conflicted_courses);
-  const [sync_add_to_nol, set_sync_add_to_nol] = useState(searchSettings.sync_add_to_nol);
-  const [strict_search_mode, set_strict_search_mode] = useState(searchSettings.strict_search_mode);
+  const [show_selected_courses, set_show_selected_courses] = useState(
+    searchSettings.show_selected_courses
+  );
+  const [
+    only_show_not_conflicted_courses,
+    set_only_show_not_conflicted_courses,
+  ] = useState(searchSettings.only_show_not_conflicted_courses);
+  const [sync_add_to_nol, set_sync_add_to_nol] = useState(
+    searchSettings.sync_add_to_nol
+  );
+  const [strict_search_mode, set_strict_search_mode] = useState(
+    searchSettings.strict_search_mode
+  );
 
   useMount(() => {
     setSelectedTime(mapStateToTimeTable(searchFilters.time));
@@ -275,11 +314,19 @@ function CourseSearchInput({ displayPanel }) {
     const idx = searchFilters.enroll_method.indexOf(new_enroll_method);
     if (idx === -1) {
       //add
-      setSearchFilters({ ...searchFilters, enroll_method: [...searchFilters.enroll_method, new_enroll_method] });
+      setSearchFilters({
+        ...searchFilters,
+        enroll_method: [...searchFilters.enroll_method, new_enroll_method],
+      });
     } else {
       // remove
 
-      setSearchFilters({ ...searchFilters, enroll_method: searchFilters.enroll_method.filter((item) => item !== new_enroll_method) });
+      setSearchFilters({
+        ...searchFilters,
+        enroll_method: searchFilters.enroll_method.filter(
+          (item) => item !== new_enroll_method
+        ),
+      });
     }
   };
 
@@ -291,12 +338,20 @@ function CourseSearchInput({ displayPanel }) {
           <Tabs>
             <TabList>
               <Tab>
-                <Text color="gray.700" fontSize={{ base: "md", lg: "xl" }} fontWeight="700">
+                <Text
+                  color="gray.700"
+                  fontSize={{ base: "md", lg: "xl" }}
+                  fontWeight="700"
+                >
                   篩選
                 </Text>
               </Tab>
               <Tab>
-                <Text color="gray.700" fontSize={{ base: "md", lg: "xl" }} fontWeight="700">
+                <Text
+                  color="gray.700"
+                  fontSize={{ base: "md", lg: "xl" }}
+                  fontWeight="700"
+                >
                   設定
                 </Text>
               </Tab>
@@ -306,21 +361,32 @@ function CourseSearchInput({ displayPanel }) {
                 {/* Filters: time, department, type of courses */}
                 <Flex flexDirection="row" flexWrap="wrap" css={{ gap: "10px" }}>
                   <Flex flexDirection="column" px="4">
-                    <Flex flexDirection="row" alignItems="center" justifyContent="center">
+                    <Flex
+                      flexDirection="row"
+                      alignItems="center"
+                      justifyContent="center"
+                    >
                       <Switch
-                        size={useBreakpointValue({ base: "md", lg: "lg" }) ?? "md"}
+                        size={
+                          useBreakpointValue({ base: "md", lg: "lg" }) ?? "md"
+                        }
                         mr="2"
                         isChecked={timeFilterOn}
                         onChange={(e) => {
                           setTimeFilterOn(e.currentTarget.checked);
-                          setSearchFiltersEnable({ ...searchFiltersEnable, time: e.currentTarget.checked });
+                          setSearchFiltersEnable({
+                            ...searchFiltersEnable,
+                            time: e.currentTarget.checked,
+                          });
                         }}
                       />
                       <TimeFilterModal
                         title={
                           mapStateToIntervals(searchFilters.time) === 0
                             ? "未選擇課程時間"
-                            : "已選擇 " + mapStateToIntervals(searchFilters.time) + " 節次"
+                            : "已選擇 " +
+                              mapStateToIntervals(searchFilters.time) +
+                              " 節次"
                         }
                         toggle={timeFilterOn}
                         selectedTime={selectedTime}
@@ -329,18 +395,31 @@ function CourseSearchInput({ displayPanel }) {
                     </Flex>
                   </Flex>
                   <Flex flexDirection="column" px="4">
-                    <Flex flexDirection="row" alignItems="center" justifyContent="center">
+                    <Flex
+                      flexDirection="row"
+                      alignItems="center"
+                      justifyContent="center"
+                    >
                       <Switch
-                        size={useBreakpointValue({ base: "md", lg: "lg" }) ?? "md"}
+                        size={
+                          useBreakpointValue({ base: "md", lg: "lg" }) ?? "md"
+                        }
                         mr="2"
                         isChecked={deptFilterOn}
                         onChange={(e) => {
                           setDeptFilterOn(e.currentTarget.checked);
-                          setSearchFiltersEnable({ ...searchFiltersEnable, department: e.currentTarget.checked });
+                          setSearchFiltersEnable({
+                            ...searchFiltersEnable,
+                            department: e.currentTarget.checked,
+                          });
                         }}
                       />
                       <DeptFilterModal
-                        title={selectedDept.length === 0 ? "未選擇開課系所" : "已選擇 " + selectedDept.length + " 系所"}
+                        title={
+                          selectedDept.length === 0
+                            ? "未選擇開課系所"
+                            : "已選擇 " + selectedDept.length + " 系所"
+                        }
                         isEnabled={deptFilterOn}
                         selectedDept={selectedDept}
                         setSelectedDept={setSelectedDept}
@@ -348,18 +427,31 @@ function CourseSearchInput({ displayPanel }) {
                     </Flex>
                   </Flex>
                   <Flex flexDirection="column" px="4">
-                    <Flex flexDirection="row" alignItems="center" justifyContent="center">
+                    <Flex
+                      flexDirection="row"
+                      alignItems="center"
+                      justifyContent="center"
+                    >
                       <Switch
-                        size={useBreakpointValue({ base: "md", lg: "lg" }) ?? "md"}
+                        size={
+                          useBreakpointValue({ base: "md", lg: "lg" }) ?? "md"
+                        }
                         mr="2"
                         isChecked={catFilterOn}
                         onChange={(e) => {
                           setCatFilterOn(e.currentTarget.checked);
-                          setSearchFiltersEnable({ ...searchFiltersEnable, category: e.currentTarget.checked });
+                          setSearchFiltersEnable({
+                            ...searchFiltersEnable,
+                            category: e.currentTarget.checked,
+                          });
                         }}
                       />
                       <CategoryFilterModal
-                        title={selectedType.length === 0 ? "未選擇課程類別" : "已選擇 " + selectedType.length + " 類別"}
+                        title={
+                          selectedType.length === 0
+                            ? "未選擇課程類別"
+                            : "已選擇 " + selectedType.length + " 類別"
+                        }
                         isEnabled={catFilterOn}
                         selectedType={selectedType}
                         setSelectedType={setSelectedType}
@@ -367,19 +459,30 @@ function CourseSearchInput({ displayPanel }) {
                     </Flex>
                   </Flex>
                   <Flex flexDirection="column" px="4">
-                    <Flex flexDirection="row" alignItems="center" justifyContent="center">
+                    <Flex
+                      flexDirection="row"
+                      alignItems="center"
+                      justifyContent="center"
+                    >
                       <Switch
-                        size={useBreakpointValue({ base: "md", lg: "lg" }) ?? "md"}
+                        size={
+                          useBreakpointValue({ base: "md", lg: "lg" }) ?? "md"
+                        }
                         mr="2"
                         isChecked={enrollFilterOn}
                         onChange={(e) => {
                           setEnrollFilterOn(e.currentTarget.checked);
-                          setSearchFiltersEnable({ ...searchFiltersEnable, enroll_method: e.currentTarget.checked });
+                          setSearchFiltersEnable({
+                            ...searchFiltersEnable,
+                            enroll_method: e.currentTarget.checked,
+                          });
                         }}
                       />
                       <Menu closeOnSelect={false} mx="2">
                         <MenuButton
-                          size={useBreakpointValue({ base: "sm", md: "md" }) ?? "md"}
+                          size={
+                            useBreakpointValue({ base: "sm", md: "md" }) ?? "md"
+                          }
                           as={Button}
                           rightIcon={<FaChevronDown />}
                           disabled={!enrollFilterOn}
@@ -387,7 +490,10 @@ function CourseSearchInput({ displayPanel }) {
                           加選方式
                         </MenuButton>
                         <MenuList>
-                          <MenuOptionGroup value={searchFilters.enroll_method} type="checkbox">
+                          <MenuOptionGroup
+                            value={searchFilters.enroll_method}
+                            type="checkbox"
+                          >
                             <MenuItemOption
                               key="1"
                               value="1"
@@ -440,11 +546,29 @@ function CourseSearchInput({ displayPanel }) {
               <TabPanel>
                 {/* Settings */}
                 <Flex flexDirection="row" flexWrap="wrap" css={{ gap: "10px" }}>
-                  <Flex w={{ base: "100%", lg: "50%" }} flexDirection="column" p="4" mr={{ base: 0, lg: 4 }} borderWidth="2px" borderRadius="lg">
-                    <Text fontSize="lg" color="gray.500" fontWeight="700" mb="4">
+                  <Flex
+                    w={{ base: "100%", lg: "50%" }}
+                    flexDirection="column"
+                    p="4"
+                    mr={{ base: 0, lg: 4 }}
+                    borderWidth="2px"
+                    borderRadius="lg"
+                  >
+                    <Text
+                      fontSize="lg"
+                      color="gray.500"
+                      fontWeight="700"
+                      mb="4"
+                    >
                       課表設定
                     </Text>
-                    <Flex w="100%" flexDirection="row" alignItems="center" flexWrap="wrap" css={{ gap: "6px" }}>
+                    <Flex
+                      w="100%"
+                      flexDirection="row"
+                      alignItems="center"
+                      flexWrap="wrap"
+                      css={{ gap: "6px" }}
+                    >
                       <SettingSwitch
                         label="篩選條件嚴格搜尋"
                         setterFunc={set_strict_search_mode}
@@ -463,16 +587,24 @@ function CourseSearchInput({ displayPanel }) {
                         defaultValue={only_show_not_conflicted_courses}
                         isDisabled={true}
                       />
-                      <SettingSwitch label="同步新增至課程網" setterFunc={set_sync_add_to_nol} defaultValue={sync_add_to_nol} isDisabled={true} />
+                      <SettingSwitch
+                        label="同步新增至課程網"
+                        setterFunc={set_sync_add_to_nol}
+                        defaultValue={sync_add_to_nol}
+                        isDisabled={true}
+                      />
                     </Flex>
                     <Button
                       mt={2}
                       colorScheme="teal"
-                      size={useBreakpointValue({ base: "sm", lg: "md" }) ?? "sm"}
+                      size={
+                        useBreakpointValue({ base: "sm", lg: "md" }) ?? "sm"
+                      }
                       onClick={() => {
                         setSearchSettings({
                           show_selected_courses: show_selected_courses,
-                          only_show_not_conflicted_courses: only_show_not_conflicted_courses,
+                          only_show_not_conflicted_courses:
+                            only_show_not_conflicted_courses,
                           sync_add_to_nol: sync_add_to_nol,
                           strict_search_mode: strict_search_mode,
                         });
@@ -488,11 +620,27 @@ function CourseSearchInput({ displayPanel }) {
                       套用
                     </Button>
                   </Flex>
-                  <Flex flexDirection="column" p="4" borderWidth="2px" borderRadius="lg">
-                    <Text fontSize="lg" color="gray.500" fontWeight="700" mb="4">
+                  <Flex
+                    flexDirection="column"
+                    p="4"
+                    borderWidth="2px"
+                    borderRadius="lg"
+                  >
+                    <Text
+                      fontSize="lg"
+                      color="gray.500"
+                      fontWeight="700"
+                      mb="4"
+                    >
                       自訂顯示欄位
                     </Text>
-                    <Flex w="100%" flexDirection="row" alignItems="center" flexWrap="wrap" css={{ gap: "4px" }}>
+                    <Flex
+                      w="100%"
+                      flexDirection="row"
+                      alignItems="center"
+                      flexWrap="wrap"
+                      css={{ gap: "4px" }}
+                    >
                       {available_tags.map((tag) => {
                         // console.log(displayTags)
                         const selected = displayTags.includes(tag);
@@ -506,7 +654,9 @@ function CourseSearchInput({ displayPanel }) {
                             onClick={
                               selected
                                 ? () => {
-                                    setDisplayTags([...displayTags.filter((t) => t !== tag)]);
+                                    setDisplayTags([
+                                      ...displayTags.filter((t) => t !== tag),
+                                    ]);
                                   }
                                 : () => {
                                     setDisplayTags([...displayTags, tag]);
@@ -514,7 +664,11 @@ function CourseSearchInput({ displayPanel }) {
                             }
                             transition="all 200ms ease-in-out"
                           >
-                            <TagLeftIcon key={tag + "-Icon"} boxSize="12px" as={selected ? FaMinus : FaPlus} />
+                            <TagLeftIcon
+                              key={tag + "-Icon"}
+                              boxSize="12px"
+                              as={selected ? FaMinus : FaPlus}
+                            />
                             {info_view_map[tag].name}
                           </Tag>
                         );

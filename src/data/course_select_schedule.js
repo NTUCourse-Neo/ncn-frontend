@@ -20,7 +20,10 @@ const status_map = [
     color: "red.200",
   },
 ];
-const ntu_course_select_url = ["https://if192.aca.ntu.edu.tw/index.php", "https://if177.aca.ntu.edu.tw/index.php"];
+const ntu_course_select_url = [
+  "https://if192.aca.ntu.edu.tw/index.php",
+  "https://if177.aca.ntu.edu.tw/index.php",
+];
 const course_select_schedule = [
   {
     name: "初選第一階段",

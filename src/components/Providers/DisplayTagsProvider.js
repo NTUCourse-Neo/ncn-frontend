@@ -7,7 +7,11 @@ const DisplayTagsContext = createContext({
 
 function DisplayTagsProvider(props) {
   const [displayTags, setDisplayTags] = useState([]);
-  return <DisplayTagsContext.Provider value={{ displayTags, setDisplayTags }}>{props.children}</DisplayTagsContext.Provider>;
+  return (
+    <DisplayTagsContext.Provider value={{ displayTags, setDisplayTags }}>
+      {props.children}
+    </DisplayTagsContext.Provider>
+  );
 }
 
 function useDisplayTags() {
