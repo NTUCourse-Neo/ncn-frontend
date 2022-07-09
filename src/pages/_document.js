@@ -5,6 +5,7 @@ export default class Document extends NextDocument {
     return (
       <Html lang="en">
         <Head>
+          <link rel="manifest" href="/manifest.json" />
           <meta property="og:title" content="NTUCourse Neo" />
           <meta property="og:description" content="全新設計的台大選課網站。" />
           <meta property="og:type" content="website" />
