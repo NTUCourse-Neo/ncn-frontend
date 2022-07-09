@@ -31,14 +31,15 @@ jobs:
           api_location: "" # Api source code path - optional
           output_location: "build" # Built app content directory - optional
         env:
-          REACT_APP_API_ENDPOINT: ${{ secrets.AZURE_API_ENDPOINT }}
-          REACT_APP_API_VERSION: "v1"
-          REACT_APP_ENV: "prod"
-          REACT_APP_AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
-          REACT_APP_AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID }}
-          REACT_APP_SELF_API_AUDIENCE: ${{ secrets.SELF_API_AUDIENCE }}
-          REACT_APP_RECAPTCHA_CLIENT_KEY: ${{ secrets.RECAPTCHA_CLIENT_KEY }}
-          REACT_APP_GA_TRACKING_ID: ${{ secrets.GA_TRACKING_ID }}
+          NEXT_PUBLIC_API_ENDPOINT: ${{ secrets.AZURE_API_ENDPOINT }}
+          NEXT_PUBLIC_API_VERSION: "v1"
+          NEXT_PUBLIC_ENV: "prod"
+          AUTH0_SELF_API_AUDIENCE: ${{ secrets.SELF_API_AUDIENCE }}
+          AUTH0_SECRET: use [openssl rand -hex 32] to generate a 32 bytes value'
+          AUTH0_BASE_URL: ${{ secrets.AUTH0_BASE_URL_V2 }}
+          AUTH0_ISSUER_BASE_URL: ${{ secrets.AUTH0_ISSUER_BASE_URL_V2 }}
+          AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID_V2 }}
+          AUTH0_CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET_V2 }}
           ###### End of Repository/Build Configurations ######
 
   close_pull_request_job:
