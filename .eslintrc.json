@@ -41,5 +41,6 @@
         "react/no-unstable-nested-components": "warn"
       }
     }
-  ]
+  ],
+  "ignorePatterns": ["cypress/*"]
 }
