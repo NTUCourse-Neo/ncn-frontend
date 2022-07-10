@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy Node.js app to Azure Web App - ncn-frontend-v2
+name: Azure Web App deploy - ncn-frontend-v2
 
 on:
   push:
@@ -20,12 +20,22 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: '16.x'
+      
+      - name: Enable NextJS caching
+        id: enable-cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.npm
+            ${{ github.workspace}}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
 
-      - name: npm install, build, and test
+      - name: yarn install, build, and test
         run: |
           yarn
-          yarn build --if-present
-          npm run test --if-present
+          yarn build
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
