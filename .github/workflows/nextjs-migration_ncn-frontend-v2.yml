@@ -37,11 +37,14 @@ jobs:
           yarn
           yarn build
 
+      - name: zip artifact for deployment
+        run: zip -r rel.zip *
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
           name: node-app
-          path: .
+          path: rel.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -55,6 +58,9 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: node-app
+
+      - name: unzip artifact for deployment
+        run: unzip rel.zip
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
