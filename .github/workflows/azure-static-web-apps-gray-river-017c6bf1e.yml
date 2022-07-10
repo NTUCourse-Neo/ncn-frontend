@@ -20,7 +20,7 @@ jobs:
           submodules: true
       - name: Enable NextJS caching
         id: enable-cache
-        uses: action/cache@v2
+        uses: actions/cache@v2
         with:
           path: |
             ~/.npm
