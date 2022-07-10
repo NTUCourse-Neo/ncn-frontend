@@ -39,7 +39,6 @@ import { fetchCourseTable, patchCourseTable } from "queries/courseTable";
 import Head from "next/head";
 import { useUser } from "@auth0/nextjs-auth0";
 import handleFetch from "utils/CustomFetch";
-import { fetchSearchIDs } from "queries/course";
 
 const copyWordList = [
   { count: 100, word: "複製終結者!!", color: "purple.600", bg: "purple.50" },
@@ -54,13 +53,7 @@ const copyWordList = [
 
 const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
-export async function getStaticPaths() {
-  const allIds = await fetchSearchIDs("", ["course_name", "teacher"]);
-  const paths = allIds.map((id) => ({ params: { courseId: id } }));
-  return { paths, fallback: false };
-}
-
-export async function getStaticProps({ params }) {
+export async function getServerSideProps({ params }) {
   const { courseId } = params;
   const course = await fetchCourse(courseId);
   return {
@@ -68,10 +61,6 @@ export async function getStaticProps({ params }) {
       code: courseId,
       course,
     },
-    // Next.js will attempt to re-generate the page:
-    // - When a request comes in
-    // - At most once every 10 seconds
-    revalidate: 10, // In seconds
   };
 }
 
