@@ -60,7 +60,10 @@ jobs:
           name: node-app
 
       - name: unzip artifact for deployment
-        run: unzip rel.zip
+        run: |
+          unzip rel.zip
+          yarn
+          yarn build
 
       - name: "Deploy to Azure Web App"
         id: deploy-to-webapp
