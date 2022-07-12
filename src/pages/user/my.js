@@ -8,21 +8,20 @@ import { fetchFavoriteCourses } from "queries/course";
 import { useDisplayTags } from "components/Providers/DisplayTagsProvider";
 import { useCourseTable } from "components/Providers/CourseTableProvider";
 import { fetchCourseTable } from "queries/courseTable";
-import { useUser, withPageAuthRequired } from "@auth0/nextjs-auth0";
+import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import handleFetch from "utils/CustomFetch";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
-function UserMyPage() {
+export default function UserMyPage({ user }) {
   const { setUser, user: userInfo } = useUserData();
   const toast = useToast();
-  const { user, isLoading } = useUser();
   const { courseTable, setCourseTable } = useCourseTable();
   const { displayTags } = useDisplayTags();
   const [favorite_list, setFavorite_list] = useState([]);
   const [Loading, setLoading] = useState(true);
   const router = useRouter();
-  const userLoading = isLoading || !userInfo;
+  const userLoading = !userInfo;
 
   const selectedCourses = useMemo(() => {
     return courseTable?.courses;
@@ -30,11 +29,12 @@ function UserMyPage() {
 
   // fetch userInfo
   useEffect(() => {
+    // fetch on render
     const fetchUserInfo = async () => {
-      if (!isLoading && user) {
+      if (user) {
         try {
           const user_data = await handleFetch("/api/user", {
-            user_id: user.sub,
+            user_id: user?.sub,
           });
           await setUser(user_data);
           const course_tables = user_data.db.course_tables;
@@ -192,7 +192,4 @@ function UserMyPage() {
   );
 }
 
-export default withPageAuthRequired(UserMyPage, {
-  onRedirecting: () => <h1>Redirect...</h1>,
-  returnTo: "/user/my",
-});
+export const getServerSideProps = withPageAuthRequired();

@@ -101,11 +101,7 @@ function CourseInfoPage({ code, course }) {
               user_id: user.sub,
             });
           } catch (e) {
-            if (e?.response?.data?.msg === "access_token_expired") {
-              router.push("/api/auth/login");
-            } else {
-              router.push("/404");
-            }
+            router.push("/api/auth/login");
           }
           await setUser(user_data);
 

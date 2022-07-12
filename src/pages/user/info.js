@@ -94,7 +94,7 @@ function DeleteDialog({
   deleteMode,
   setDeleteMode,
 }) {
-  const { setUser, user: userInfo } = useUserData();
+  const { setUser } = useUserData();
   const confirmMessage = `我確定`;
   const cancelRef = useRef();
   const toast = useToast();
@@ -114,7 +114,7 @@ function DeleteDialog({
     try {
       await handleFetch("/api/user/deleteProfile", {});
       await handleFetch("/api/user/register", {
-        email: user.email,
+        email: user?.email,
       });
     } catch (e) {
       toast({
@@ -215,7 +215,7 @@ function DeleteDialog({
   );
 }
 
-function UserInfoPage() {
+export default function UserInfoPage({ user }) {
   const { setUser, user: userInfo } = useUserData();
   const router = useRouter();
   const toast = useToast();
@@ -224,8 +224,7 @@ function UserInfoPage() {
     label: dept.code + " " + dept.full_name,
   }));
 
-  const { user, isLoading } = useUser();
-  const userLoading = isLoading || !userInfo;
+  const userLoading = !userInfo;
 
   // states for updating userInfo
   const [name, setName] = useState(userInfo ? userInfo.db.name : null);
@@ -328,11 +327,12 @@ function UserInfoPage() {
   };
 
   useEffect(() => {
+    // fetch on render
     const fetchUserInfo = async () => {
-      if (!isLoading && user) {
+      if (user) {
         try {
           const user_data = await handleFetch("/api/user", {
-            user_id: user.sub,
+            user_id: user?.sub,
           });
           await setUser(user_data);
         } catch (e) {
@@ -685,7 +685,4 @@ function UserInfoPage() {
   );
 }
 
-export default withPageAuthRequired(UserInfoPage, {
-  onRedirecting: () => <div>Redirecting you to the login...</div>,
-  returnTo: "/user/info",
-});
+export const getServerSideProps = withPageAuthRequired();
