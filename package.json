@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start -p $PORT",
+    "start": "node_modules/next/dist/bin/next start -p $PORT",
     "postinstall": "next build",
     "lint": "next lint",
     "lint-fix": "next lint . --cache --fix"
