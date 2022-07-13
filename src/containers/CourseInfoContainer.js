@@ -18,11 +18,6 @@ import {
 } from "@chakra-ui/react";
 import CourseDetailInfoContainer from "containers/CourseDetailInfoContainer";
 import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { logIn } from "actions/";
-import { fetchCourse } from "actions/courses";
-import { fetchCourseTable, patchCourseTable } from "actions/course_tables";
-import { fetchUserById, addFavoriteCourse } from "actions/users";
 import { useNavigate } from "react-router-dom";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import Moment from "moment";
@@ -35,6 +30,12 @@ import openPage from "utils/openPage";
 import ParrotGif from "img/parrot/parrot.gif";
 import ParrotUltraGif from "img/parrot/ultrafastparrot.gif";
 import { useAuth0 } from "@auth0/auth0-react";
+import { useUserData } from "components/Providers/UserProvider";
+import { fetchCourse } from "queries/course";
+import { useCourseTable } from "components/Providers/CourseTableProvider";
+import handleAPIError from "utils/handleAPIError";
+import { fetchUserById, addFavoriteCourse } from "queries/user";
+import { fetchCourseTable, patchCourseTable } from "queries/courseTable";
 
 const copyWordList = [
   { count: 100, word: "複製終結者!!", color: "purple.600", bg: "purple.50" },
@@ -50,7 +51,8 @@ const copyWordList = [
 const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
 function CourseInfoContainer({ code }) {
-  const dispatch = useDispatch();
+  const { setUser, user: userInfo } = useUserData();
+  const { setCourseTable } = useCourseTable();
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -65,14 +67,13 @@ function CourseInfoContainer({ code }) {
   const [selected, setSelected] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const { user, isLoading, getAccessTokenSilently } = useAuth0();
-  const userInfo = useSelector((state) => state.user);
 
   // fetch Course Info at first
   useEffect(() => {
     const fetchCourseObject = async (course_code) => {
       let course_obj;
       try {
-        course_obj = await dispatch(fetchCourse(course_code));
+        course_obj = await fetchCourse(course_code);
         //console.log(course_obj);
         if (course_obj === undefined) {
           setNotFound(true);
@@ -84,7 +85,8 @@ function CourseInfoContainer({ code }) {
             desc: `${course_obj.course_name} 課程的詳細資訊 | NTUCourse Neo，全新的臺大選課網站。`,
           });
         }
-      } catch (error) {
+      } catch (e) {
+        const error = handleAPIError(e);
         navigate(`/error/${error.status_code}`, { state: error });
         return;
       }
@@ -108,12 +110,13 @@ function CourseInfoContainer({ code }) {
           const token = await getAccessTokenSilently();
           let user_data;
           try {
-            user_data = await dispatch(fetchUserById(token, user.sub));
-          } catch (error) {
+            user_data = await fetchUserById(token, user.sub);
+          } catch (e) {
+            const error = handleAPIError(e);
             navigate(`/error/${error.status_code}`, { state: error });
             return;
           }
-          await dispatch(logIn(user_data));
+          await setUser(user_data);
 
           if (user_data.db.course_tables.length === 0) {
             uuid = null;
@@ -146,10 +149,15 @@ function CourseInfoContainer({ code }) {
         uuid = localStorage.getItem(LOCAL_STORAGE_KEY);
       }
       if (uuid) {
-        let course_table;
+        let courseTable;
         try {
-          course_table = await dispatch(fetchCourseTable(uuid));
+          courseTable = await fetchCourseTable(uuid);
+          setCourseTable(courseTable);
         } catch (error) {
+          if (error?.response?.status === 403 || error?.response?.status === 404) {
+            // expired
+            setCourseTable(null);
+          }
           toast({
             title: "取得課表資料失敗",
             status: "error",
@@ -161,7 +169,7 @@ function CourseInfoContainer({ code }) {
           return;
         }
         // determine init state
-        if (course_table && course_table.courses.includes(code)) {
+        if (courseTable && courseTable.courses.includes(code)) {
           setSelected(true);
         } else {
           setSelected(false);
@@ -197,10 +205,15 @@ function CourseInfoContainer({ code }) {
 
       if (uuid) {
         // fetch course table from server
-        let course_table;
+        let courseTable;
         try {
-          course_table = await dispatch(fetchCourseTable(uuid));
+          courseTable = await fetchCourseTable(uuid);
+          setCourseTable(courseTable);
         } catch (error) {
+          if (error?.response?.status === 403 || error?.response?.status === 404) {
+            // expired
+            setCourseTable(null);
+          }
           toast({
             title: "取得課表資料失敗",
             status: "error",
@@ -211,7 +224,7 @@ function CourseInfoContainer({ code }) {
           return;
         }
 
-        if (course_table === null) {
+        if (courseTable === null) {
           // get course_tables/:id return null (expired)
           // show error and break the function
           toast({
@@ -225,13 +238,18 @@ function CourseInfoContainer({ code }) {
           // fetch course table success
           let res_table;
           let operation_str;
-          if (course_table.courses.includes(course._id)) {
+          if (courseTable.courses.includes(course._id)) {
             // course is already in course table, remove it.
             operation_str = "刪除";
-            const new_courses = course_table.courses.filter((id) => id !== course._id);
+            const new_courses = courseTable.courses.filter((id) => id !== course._id);
             try {
-              res_table = await dispatch(patchCourseTable(uuid, course_table.name, course_table.user_id, course_table.expire_ts, new_courses));
+              res_table = await patchCourseTable(uuid, courseTable.name, courseTable.user_id, courseTable.expire_ts, new_courses);
+              setCourseTable(res_table);
             } catch (error) {
+              if (error?.response?.status === 403 || error?.response?.status === 404) {
+                // expired
+                setCourseTable(null);
+              }
               toast({
                 title: `刪除 ${course.course_name} 失敗`,
                 status: "error",
@@ -244,10 +262,15 @@ function CourseInfoContainer({ code }) {
           } else {
             // course is not in course table, add it.
             operation_str = "新增";
-            const new_courses = [...course_table.courses, course._id];
+            const new_courses = [...courseTable.courses, course._id];
             try {
-              res_table = await dispatch(patchCourseTable(uuid, course_table.name, course_table.user_id, course_table.expire_ts, new_courses));
+              res_table = await patchCourseTable(uuid, courseTable.name, courseTable.user_id, courseTable.expire_ts, new_courses);
+              setCourseTable(res_table);
             } catch (error) {
+              if (error?.response?.status === 403 || error?.response?.status === 404) {
+                // expired
+                setCourseTable(null);
+              }
               toast({
                 title: `新增 ${course.course_name} 失敗`,
                 status: "error",
@@ -261,7 +284,7 @@ function CourseInfoContainer({ code }) {
           if (res_table) {
             toast({
               title: `已${operation_str} ${course.course_name}`,
-              description: `課表: ${course_table.name}`,
+              description: `課表: ${courseTable.name}`,
               status: "success",
               duration: 3000,
               isClosable: true,
@@ -303,7 +326,8 @@ function CourseInfoContainer({ code }) {
         // API call
         try {
           const token = await getAccessTokenSilently();
-          await dispatch(addFavoriteCourse(token, new_favorite_list, userInfo.db._id));
+          const updatedUser = await addFavoriteCourse(token, new_favorite_list, userInfo.db._id);
+          setUser(updatedUser);
           toast({
             title: `${op_name}最愛課程成功`,
             //description: `請稍後再試`,

@@ -24,10 +24,9 @@ import {
 import { useState } from "react";
 import { FaThumbsUp, FaThumbsDown, FaInfoCircle, FaClock } from "react-icons/fa";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useDispatch } from "react-redux";
-import { deleteSocialPost, getSocialPostByPostId, reportSocialPost, voteSocialPost } from "actions/social";
 import { social_user_type_map } from "data/mapping_table";
 import Moment from "moment";
+import { getSocialPostByPostId, reportSocialPost, voteSocialPost, deleteSocialPost } from "queries/social";
 
 // prop.post
 // {
@@ -45,7 +44,6 @@ import Moment from "moment";
 
 function SignUpCard({ post, SignUpPostData, setSignUpPostData, fetchSignUpPostData }) {
   const is_owner = post.is_owner;
-  const dispatch = useDispatch();
   const toast = useToast();
   const { getAccessTokenSilently } = useAuth0();
   const [isVotingPost, setIsVotingPost] = useState(0);
@@ -59,7 +57,7 @@ function SignUpCard({ post, SignUpPostData, setSignUpPostData, fetchSignUpPostDa
     const token = await getAccessTokenSilently();
     let data;
     try {
-      data = await dispatch(getSocialPostByPostId(token, post_id));
+      data = await getSocialPostByPostId(token, post_id);
     } catch (error) {
       toast({
         title: "無法處理評分",
@@ -82,7 +80,7 @@ function SignUpCard({ post, SignUpPostData, setSignUpPostData, fetchSignUpPostDa
     setIsVotingPost(vote_type);
     const token = await getAccessTokenSilently();
     try {
-      await dispatch(voteSocialPost(token, post_id, vote_type));
+      await voteSocialPost(token, post_id, vote_type);
     } catch (error) {
       setIsVotingPost(0);
       toast({
@@ -102,7 +100,7 @@ function SignUpCard({ post, SignUpPostData, setSignUpPostData, fetchSignUpPostDa
     setIsDeletingPost(true);
     const token = await getAccessTokenSilently();
     try {
-      await dispatch(deleteSocialPost(token, post_id));
+      await deleteSocialPost(token, post_id);
     } catch (error) {
       setIsDeletingPost(false);
       toast({
@@ -122,11 +120,9 @@ function SignUpCard({ post, SignUpPostData, setSignUpPostData, fetchSignUpPostDa
     setIsReportingPost(true);
     const token = await getAccessTokenSilently();
     try {
-      await dispatch(
-        reportSocialPost(token, post_id, {
-          reason: content,
-        })
-      );
+      await reportSocialPost(token, post_id, {
+        reason: content,
+      });
     } catch (error) {
       setIsReportingPost(false);
       toast({

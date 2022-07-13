@@ -31,41 +31,53 @@ import {
 } from "@chakra-ui/react";
 import { Search2Icon, ChevronDownIcon } from "@chakra-ui/icons";
 import { FaSearch, FaPlus, FaMinus, FaChevronDown } from "react-icons/fa";
-import { setSearchColumn, setSearchSettings, setFilter, setFilterEnable, setNewDisplayTags } from "actions/index";
-import { fetchSearchIDs } from "actions/courses";
 import TimeFilterModal from "components/FilterModals/TimeFilterModal";
 import DeptFilterModal from "components/FilterModals/DeptFilterModal";
 import CategoryFilterModal from "components/FilterModals/CategoryFilterModal";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { mapStateToTimeTable, mapStateToIntervals } from "utils/timeTableConverter";
 import { info_view_map } from "data/mapping_table";
 import { useMount } from "react-use";
+import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
+import { useDisplayTags } from "components/Providers/DisplayTagsProvider";
+import handleAPIError from "utils/handleAPIError";
+import { fetchSearchIDs, fetchSearchResults } from "queries/course";
 
 function CourseSearchInputTextArea() {
   const navigate = useNavigate();
   const toast = useToast();
-
-  const search_columns = useSelector((state) => state.search_columns);
-  const search_filters = useSelector((state) => state.search_filters);
-  const batch_size = useSelector((state) => state.batch_size);
-  const strict_match = useSelector((state) => state.search_settings.strict_search_mode);
-  const search_filters_enable = useSelector((state) => state.search_filters_enable);
+  const {
+    setSearchIds,
+    searchColumns,
+    searchFilters,
+    batchSize,
+    searchFiltersEnable,
+    searchSettings,
+    setSearchColumns,
+    setSearchResult,
+    setSearchLoading,
+    setSearchError,
+    setOffset,
+    setTotalCount,
+  } = useCourseSearchingContext();
 
   const [search, setSearch] = useState("");
   useMount(() => {
     setSearch("");
   });
 
-  const dispatch = useDispatch();
-
   const toggle_search_column = (e) => {
-    dispatch(setSearchColumn(e.currentTarget.value));
+    const col_name = e.currentTarget.value;
+    if (searchColumns.includes(col_name)) {
+      setSearchColumns(searchColumns.filter((col) => col !== col_name));
+    } else {
+      setSearchColumns([...searchColumns, col_name]);
+    }
   };
 
-  const startSearch = () => {
-    // console.log(search_columns);
-    if (search_columns.length === 0) {
+  const startSearch = async () => {
+    // console.log(searchColumns);
+    if (searchColumns.length === 0) {
       toast({
         title: "搜尋失敗",
         description: "您必須指定至少一個搜尋欄位",
@@ -76,8 +88,23 @@ function CourseSearchInputTextArea() {
       return;
     }
     try {
-      dispatch(fetchSearchIDs(search, search_columns, search_filters_enable, search_filters, batch_size, strict_match));
-    } catch (error) {
+      setSearchLoading(true);
+      setSearchResult([]);
+      const ids = await fetchSearchIDs(search, searchColumns);
+      setSearchIds(ids);
+      await fetchSearchResults(ids, searchFiltersEnable, searchFilters, batchSize, 0, searchSettings.strict_search_mode, {
+        onSuccess: ({ courses, totalCount }) => {
+          setSearchResult(courses);
+          setSearchLoading(false);
+          setSearchError(null);
+          setOffset(batchSize);
+          setTotalCount(totalCount);
+        },
+      });
+    } catch (e) {
+      setSearchLoading(false);
+      setSearchError(e);
+      const error = handleAPIError(e);
       if (error.status_code >= 500) {
         navigate(`/error/${error.status_code}`, { state: error });
       } else {
@@ -216,50 +243,43 @@ function SettingSwitch({ label, setterFunc, defaultValue, isDisabled }) {
 }
 
 function CourseSearchInput({ displayPanel }) {
-  const dispatch = useDispatch();
   const toast = useToast();
-
+  const { searchFilters, searchSettings, searchFiltersEnable, setSearchFiltersEnable, setSearchSettings, setSearchFilters } =
+    useCourseSearchingContext();
+  const { displayTags, setDisplayTags } = useDisplayTags();
   const available_tags = ["required", "total_slot", "enroll_method", "area"];
-  const search_filters = useSelector((state) => state.search_filters);
-  const search_settings = useSelector((state) => state.search_settings);
-  const search_filters_enable = useSelector((state) => state.search_filters_enable);
-  const display_tags = useSelector((state) => state.display_tags);
 
   // filters local states
-  const [selectedTime, setSelectedTime] = useState(mapStateToTimeTable(search_filters.time));
-  const [selectedDept, setSelectedDept] = useState(search_filters.department);
-  const [selectedType, setSelectedType] = useState(search_filters.category);
+  const [selectedTime, setSelectedTime] = useState(mapStateToTimeTable(searchFilters.time));
+  const [selectedDept, setSelectedDept] = useState(searchFilters.department);
+  const [selectedType, setSelectedType] = useState(searchFilters.category);
 
-  const [timeFilterOn, setTimeFilterOn] = useState(search_filters_enable.time);
-  const [deptFilterOn, setDeptFilterOn] = useState(search_filters_enable.department);
-  const [catFilterOn, setCatFilterOn] = useState(search_filters_enable.category);
-  const [enrollFilterOn, setEnrollFilterOn] = useState(search_filters_enable.enroll_method);
+  const [timeFilterOn, setTimeFilterOn] = useState(searchFiltersEnable.time);
+  const [deptFilterOn, setDeptFilterOn] = useState(searchFiltersEnable.department);
+  const [catFilterOn, setCatFilterOn] = useState(searchFiltersEnable.category);
+  const [enrollFilterOn, setEnrollFilterOn] = useState(searchFiltersEnable.enroll_method);
 
-  // search_settings local states
-  const [show_selected_courses, set_show_selected_courses] = useState(search_settings.show_selected_courses);
-  const [only_show_not_conflicted_courses, set_only_show_not_conflicted_courses] = useState(search_settings.only_show_not_conflicted_courses);
-  const [sync_add_to_nol, set_sync_add_to_nol] = useState(search_settings.sync_add_to_nol);
-  const [strict_search_mode, set_strict_search_mode] = useState(search_settings.strict_search_mode);
+  // searchSettings local states
+  const [show_selected_courses, set_show_selected_courses] = useState(searchSettings.show_selected_courses);
+  const [only_show_not_conflicted_courses, set_only_show_not_conflicted_courses] = useState(searchSettings.only_show_not_conflicted_courses);
+  const [sync_add_to_nol, set_sync_add_to_nol] = useState(searchSettings.sync_add_to_nol);
+  const [strict_search_mode, set_strict_search_mode] = useState(searchSettings.strict_search_mode);
 
   useMount(() => {
-    setSelectedTime(mapStateToTimeTable(search_filters.time));
+    setSelectedTime(mapStateToTimeTable(searchFilters.time));
   });
 
   const set_enroll_method = (e) => {
     // console.log(e.currentTarget.value)
     const new_enroll_method = e.currentTarget.value;
-    const idx = search_filters.enroll_method.indexOf(new_enroll_method);
+    const idx = searchFilters.enroll_method.indexOf(new_enroll_method);
     if (idx === -1) {
       //add
-      dispatch(setFilter("enroll_method", [...search_filters.enroll_method, new_enroll_method]));
+      setSearchFilters({ ...searchFilters, enroll_method: [...searchFilters.enroll_method, new_enroll_method] });
     } else {
       // remove
-      dispatch(
-        setFilter(
-          "enroll_method",
-          search_filters.enroll_method.filter((item) => item !== new_enroll_method)
-        )
-      );
+
+      setSearchFilters({ ...searchFilters, enroll_method: searchFilters.enroll_method.filter((item) => item !== new_enroll_method) });
     }
   };
 
@@ -293,14 +313,14 @@ function CourseSearchInput({ displayPanel }) {
                         isChecked={timeFilterOn}
                         onChange={(e) => {
                           setTimeFilterOn(e.currentTarget.checked);
-                          dispatch(setFilterEnable("time", e.currentTarget.checked));
+                          setSearchFiltersEnable({ ...searchFiltersEnable, time: e.currentTarget.checked });
                         }}
                       />
                       <TimeFilterModal
                         title={
-                          mapStateToIntervals(search_filters.time) === 0
+                          mapStateToIntervals(searchFilters.time) === 0
                             ? "未選擇課程時間"
-                            : "已選擇 " + mapStateToIntervals(search_filters.time) + " 節次"
+                            : "已選擇 " + mapStateToIntervals(searchFilters.time) + " 節次"
                         }
                         toggle={timeFilterOn}
                         selectedTime={selectedTime}
@@ -316,7 +336,7 @@ function CourseSearchInput({ displayPanel }) {
                         isChecked={deptFilterOn}
                         onChange={(e) => {
                           setDeptFilterOn(e.currentTarget.checked);
-                          dispatch(setFilterEnable("department", e.currentTarget.checked));
+                          setSearchFiltersEnable({ ...searchFiltersEnable, department: e.currentTarget.checked });
                         }}
                       />
                       <DeptFilterModal
@@ -335,7 +355,7 @@ function CourseSearchInput({ displayPanel }) {
                         isChecked={catFilterOn}
                         onChange={(e) => {
                           setCatFilterOn(e.currentTarget.checked);
-                          dispatch(setFilterEnable("category", e.currentTarget.checked));
+                          setSearchFiltersEnable({ ...searchFiltersEnable, category: e.currentTarget.checked });
                         }}
                       />
                       <CategoryFilterModal
@@ -354,7 +374,7 @@ function CourseSearchInput({ displayPanel }) {
                         isChecked={enrollFilterOn}
                         onChange={(e) => {
                           setEnrollFilterOn(e.currentTarget.checked);
-                          dispatch(setFilterEnable("enroll_method", e.currentTarget.checked));
+                          setSearchFiltersEnable({ ...searchFiltersEnable, enroll_method: e.currentTarget.checked });
                         }}
                       />
                       <Menu closeOnSelect={false} mx="2">
@@ -367,7 +387,7 @@ function CourseSearchInput({ displayPanel }) {
                           加選方式
                         </MenuButton>
                         <MenuList>
-                          <MenuOptionGroup value={search_filters.enroll_method} type="checkbox">
+                          <MenuOptionGroup value={searchFilters.enroll_method} type="checkbox">
                             <MenuItemOption
                               key="1"
                               value="1"
@@ -450,14 +470,12 @@ function CourseSearchInput({ displayPanel }) {
                       colorScheme="teal"
                       size={useBreakpointValue({ base: "sm", lg: "md" }) ?? "sm"}
                       onClick={() => {
-                        dispatch(
-                          setSearchSettings({
-                            show_selected_courses: show_selected_courses,
-                            only_show_not_conflicted_courses: only_show_not_conflicted_courses,
-                            sync_add_to_nol: sync_add_to_nol,
-                            strict_search_mode: strict_search_mode,
-                          })
-                        );
+                        setSearchSettings({
+                          show_selected_courses: show_selected_courses,
+                          only_show_not_conflicted_courses: only_show_not_conflicted_courses,
+                          sync_add_to_nol: sync_add_to_nol,
+                          strict_search_mode: strict_search_mode,
+                        });
                         toast({
                           title: "設定已儲存",
                           description: "讚啦",
@@ -477,7 +495,7 @@ function CourseSearchInput({ displayPanel }) {
                     <Flex w="100%" flexDirection="row" alignItems="center" flexWrap="wrap" css={{ gap: "4px" }}>
                       {available_tags.map((tag) => {
                         // console.log(displayTags)
-                        const selected = display_tags.includes(tag);
+                        const selected = displayTags.includes(tag);
                         return (
                           <Tag
                             key={tag}
@@ -488,10 +506,10 @@ function CourseSearchInput({ displayPanel }) {
                             onClick={
                               selected
                                 ? () => {
-                                    dispatch(setNewDisplayTags([...display_tags.filter((t) => t !== tag)]));
+                                    setDisplayTags([...displayTags.filter((t) => t !== tag)]);
                                   }
                                 : () => {
-                                    dispatch(setNewDisplayTags([...display_tags, tag]));
+                                    setDisplayTags([...displayTags, tag]);
                                   }
                             }
                             transition="all 200ms ease-in-out"

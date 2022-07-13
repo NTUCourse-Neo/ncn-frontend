@@ -12,14 +12,12 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 import TimetableSelector from "components/FilterModals/components/TimetableSelector";
-import { useSelector, useDispatch } from "react-redux";
-import { setFilter } from "actions";
 import { mapStateToTimeTable } from "utils/timeTableConverter";
+import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 
 function TimeFilterModal({ selectedTime, setSelectedTime, toggle, title }) {
-  const dispatch = useDispatch();
+  const { searchFilters, setSearchFilters } = useCourseSearchingContext();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const time_state = useSelector((state) => state.search_filters.time);
 
   const saveSelectedTime = () => {
     // turn 15x7 2D array (selectedTime) to 7x15 array
@@ -33,7 +31,7 @@ function TimeFilterModal({ selectedTime, setSelectedTime, toggle, title }) {
         }
       }
     }
-    dispatch(setFilter("time", timeTable));
+    setSearchFilters({ ...searchFilters, time: timeTable });
   };
 
   const resetSelectedTime = () => {
@@ -64,7 +62,7 @@ function TimeFilterModal({ selectedTime, setSelectedTime, toggle, title }) {
         onClick={() => {
           onOpen();
           // because this modal will not re-render, so manually reload from redux state
-          setSelectedTime(mapStateToTimeTable(time_state));
+          setSelectedTime(mapStateToTimeTable(searchFilters.time));
         }}
       >
         {title}

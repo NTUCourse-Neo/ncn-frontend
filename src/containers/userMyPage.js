@@ -1,26 +1,25 @@
 import { React, useEffect, useState, useMemo } from "react";
 import { Flex, Text, useToast, Box, Spacer, Accordion } from "@chakra-ui/react";
-import { useSelector, useDispatch } from "react-redux";
 import SkeletonRow from "components/SkeletonRow";
 import { HashLoader } from "react-spinners";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import { BeatLoader } from "react-spinners";
-import { logIn, updateCourseTable } from "actions/index";
-import { fetchFavoriteCourses } from "actions/courses";
-import { fetchCourseTable } from "actions/course_tables";
-import { fetchUserById } from "actions/users";
 import setPageMeta from "utils/seo";
 import CourseInfoRow from "components/CourseInfoRow";
+import { useUserData } from "components/Providers/UserProvider";
+import { fetchFavoriteCourses } from "queries/course";
+import { useDisplayTags } from "components/Providers/DisplayTagsProvider";
+import { useCourseTable } from "components/Providers/CourseTableProvider";
+import { fetchUserById } from "queries/user";
+import { fetchCourseTable } from "queries/courseTable";
 
 function UserMyPage() {
+  const { setUser, user: userInfo } = useUserData();
   const toast = useToast();
   const { user, isLoading, getAccessTokenSilently } = useAuth0();
-  const dispatch = useDispatch();
-  const search_error = useSelector((state) => state.search_error);
-  const courseTable = useSelector((state) => state.course_table);
-  const userInfo = useSelector((state) => state.user);
+  const { courseTable, setCourseTable } = useCourseTable();
+  const { displayTags } = useDisplayTags();
   const [favorite_list, setFavorite_list] = useState([]);
-  const displayTags = useSelector((state) => state.display_tags);
   const [Loading, setLoading] = useState(true);
   const userLoading = isLoading || !userInfo;
 
@@ -34,18 +33,23 @@ function UserMyPage() {
       if (!isLoading && user) {
         try {
           const token = await getAccessTokenSilently();
-          const user_data = await dispatch(fetchUserById(token, user.sub));
-          await dispatch(logIn(user_data));
+          const user_data = await fetchUserById(token, user.sub);
+          await setUser(user_data);
           const course_tables = user_data.db.course_tables;
           // console.log(course_tables);
           if (course_tables.length === 0) {
-            // user has no course table, set courseTable in redux null
-            dispatch(updateCourseTable(null));
+            setCourseTable(null);
           } else {
             // pick the first table
             try {
-              await dispatch(fetchCourseTable(course_tables[0]));
+              const course_table = await fetchCourseTable(course_tables[0]);
+              setCourseTable(course_table);
             } catch (e) {
+              if (e?.response?.status === 403 || e?.response?.status === 404) {
+                // expired
+                setCourseTable(null);
+                return;
+              }
               toast({
                 title: "取得課表資料失敗.",
                 status: "error",
@@ -77,7 +81,7 @@ function UserMyPage() {
       // console.log(userInfo);
       if (userInfo.db.favorites.length >= 0) {
         try {
-          const courses = await dispatch(fetchFavoriteCourses(userInfo.db.favorites));
+          const courses = await fetchFavoriteCourses(userInfo.db.favorites);
           // console.log(courses);
           setFavorite_list(courses);
         } catch (e) {
@@ -139,7 +143,7 @@ function UserMyPage() {
           </Box>
 
           <Box ml="48vw" transition="all 500ms ease-in-out">
-            <SkeletonRow loading={Loading} error={search_error} />
+            <SkeletonRow loading={Loading} />
           </Box>
         </Flex>
       </Flex>

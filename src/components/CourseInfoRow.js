@@ -25,12 +25,13 @@ import {
 import { CourseDrawerContainer } from "containers/CourseDrawerContainer";
 import { FaPlus, FaHeart, FaInfoCircle } from "react-icons/fa";
 import { info_view_map } from "data/mapping_table";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchCourseTable, patchCourseTable } from "actions/course_tables";
-import { addFavoriteCourse } from "actions/users";
 import { hash_to_color_hex } from "utils/colorAgent";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
+import { useUserData } from "components/Providers/UserProvider";
+import { useCourseTable } from "components/Providers/CourseTableProvider";
+import { addFavoriteCourse } from "queries/user";
+import { fetchCourseTable, patchCourseTable } from "queries/courseTable";
 
 const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
@@ -56,9 +57,9 @@ function DeptBadge({ course }) {
 }
 
 function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayTable }) {
-  const dispatch = useDispatch();
+  const { setCourseTable } = useCourseTable();
   const navigate = useNavigate();
-  const userInfo = useSelector((state) => state.user);
+  const { user: userInfo, setUser } = useUserData();
 
   const [addingCourse, setAddingCourse] = useState(false);
   const [addingFavoriteCourse, setAddingFavoriteCourse] = useState(false);
@@ -87,10 +88,15 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
 
       if (uuid) {
         // fetch course table from server
-        let course_table;
+        let courseTable;
         try {
-          course_table = await dispatch(fetchCourseTable(uuid));
+          courseTable = await fetchCourseTable(uuid);
+          setCourseTable(courseTable);
         } catch (error) {
+          if (error?.response?.status === 403 || error?.response?.status === 404) {
+            // expired
+            setCourseTable(null);
+          }
           toast({
             title: "取得課表資料失敗",
             status: "error",
@@ -100,7 +106,7 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
           setAddingCourse(false);
           return;
         }
-        if (course_table === null) {
+        if (courseTable === null) {
           // get course_tables/:id return null (expired)
           // show error and break the function
           toast({
@@ -114,13 +120,18 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
           // fetch course table success
           let res_table;
           let operation_str;
-          if (course_table.courses.includes(course._id)) {
+          if (courseTable.courses.includes(course._id)) {
             // course is already in course table, remove it.
             operation_str = "刪除";
-            const new_courses = course_table.courses.filter((id) => id !== course._id);
+            const new_courses = courseTable.courses.filter((id) => id !== course._id);
             try {
-              res_table = await dispatch(patchCourseTable(uuid, course_table.name, course_table.user_id, course_table.expire_ts, new_courses));
+              res_table = await patchCourseTable(uuid, courseTable.name, courseTable.user_id, courseTable.expire_ts, new_courses);
+              setCourseTable(res_table);
             } catch (error) {
+              if (error?.response?.status === 403 || error?.response?.status === 404) {
+                // expired
+                setCourseTable(null);
+              }
               toast({
                 title: `刪除 ${course.course_name} 失敗`,
                 status: "error",
@@ -133,10 +144,15 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
           } else {
             // course is not in course table, add it.
             operation_str = "新增";
-            const new_courses = [...course_table.courses, course._id];
+            const new_courses = [...courseTable.courses, course._id];
             try {
-              res_table = await dispatch(patchCourseTable(uuid, course_table.name, course_table.user_id, course_table.expire_ts, new_courses));
+              res_table = await patchCourseTable(uuid, courseTable.name, courseTable.user_id, courseTable.expire_ts, new_courses);
+              setCourseTable(res_table);
             } catch (error) {
+              if (error?.response?.status === 403 || error?.response?.status === 404) {
+                // expired
+                setCourseTable(null);
+              }
               toast({
                 title: `新增 ${course.course_name} 失敗`,
                 status: "error",
@@ -150,7 +166,7 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
           if (res_table) {
             toast({
               title: `已${operation_str} ${course.course_name}`,
-              description: `課表: ${course_table.name}`,
+              description: `課表: ${courseTable.name}`,
               status: "success",
               duration: 3000,
               isClosable: true,
@@ -191,7 +207,8 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
         // API call
         try {
           const token = await getAccessTokenSilently();
-          await dispatch(addFavoriteCourse(token, new_favorite_list, userInfo.db._id));
+          const updatedUser = await addFavoriteCourse(token, new_favorite_list, userInfo.db._id);
+          setUser(updatedUser);
           toast({
             title: `${op_name}最愛課程成功`,
             //description: `請稍後再試`,
@@ -314,7 +331,7 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTags, displayT
                 <Tooltip hasArrow placement="top" label={info_view_map[tag].name} bg="gray.600" color="white" key={index}>
                   <Tag mx="2px" variant="subtle" colorScheme={info_view_map[tag].color} hidden={courseInfo[tag] === -1}>
                     <TagLeftIcon boxSize="12px" as={info_view_map[tag].logo} />
-                    <TagLabel>{"map" in info_view_map[tag] ? info_view_map[tag].map[courseInfo[tag]] : courseInfo[tag]}</TagLabel>
+                    <TagLabel>{info_view_map?.[tag]?.map?.[courseInfo?.[tag]] ?? courseInfo?.[tag] ?? "未知"}</TagLabel>
                   </Tag>
                 </Tooltip>
               );

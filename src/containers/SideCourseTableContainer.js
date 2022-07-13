@@ -30,16 +30,17 @@ import {
 } from "@chakra-ui/react";
 import { FaRegEdit, FaRegHandPointDown, FaRegHandPointUp, FaRegMeh, FaPlusSquare, FaAngleDown } from "react-icons/fa";
 import CourseTableContainer from "containers/CourseTableContainer";
-import { logIn, updateCourseTable } from "actions/index";
-import { fetchCourseTableCoursesByIds } from "actions/courses";
-import { createCourseTable, fetchCourseTable, patchCourseTable } from "actions/course_tables";
-import { linkCoursetableToUser, fetchUserById } from "actions/users";
-import { useDispatch, useSelector } from "react-redux";
+import { fetchCourseTableCoursesByIds } from "queries/course";
 import { v4 as uuidv4 } from "uuid";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
 import CourseListContainer from "containers/CourseListContainer";
 import { parseCoursesToTimeMap } from "utils/parseCourseTime";
+import { useUserData } from "components/Providers/UserProvider";
+import { useCourseTable } from "components/Providers/CourseTableProvider";
+import handleAPIError from "utils/handleAPIError";
+import { linkCoursetableToUser, fetchUserById } from "queries/user";
+import { createCourseTable, patchCourseTable, fetchCourseTable } from "queries/courseTable";
 
 const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
@@ -124,9 +125,8 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
   const navigate = useNavigate();
   const { user, isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const toast = useToast();
-  const dispatch = useDispatch();
-  const courseTable = useSelector((state) => state.course_table);
-  const userInfo = useSelector((state) => state.user);
+  const { courseTable, setCourseTable } = useCourseTable();
+  const { setUser, user: userInfo } = useUserData();
 
   // some local states for handling course data
   const [courses, setCourses] = useState({}); // dictionary of Course objects using courseId as key
@@ -152,10 +152,17 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
     const courseTableInit = async (uuid) => {
       let course_table;
       try {
-        course_table = await dispatch(fetchCourseTable(uuid));
-      } catch (error) {
-        // navigate to error page
-        navigate(`/error/${error.status_code}`, { state: error });
+        course_table = await fetchCourseTable(uuid);
+        setCourseTable(course_table);
+      } catch (e) {
+        if (e?.response?.status === 403 || e?.response?.status === 404) {
+          // expired
+          setCourseTable(null);
+        } else {
+          // navigate to error page
+          const error = handleAPIError(e);
+          navigate(`/error/${error.status_code}`, { state: error });
+        }
       }
       if (course_table === null) {
         setExpired(true);
@@ -167,19 +174,25 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
       if (!isLoading && user) {
         try {
           const token = await getAccessTokenSilently();
-          const user_data = await dispatch(fetchUserById(token, user.sub));
-          await dispatch(logIn(user_data));
+          const user_data = await fetchUserById(token, user.sub);
+          await setUser(user_data);
           const course_tables = user_data.db.course_tables;
           if (course_tables.length === 0) {
-            // user has no course table, set courseTable in redux null
-            dispatch(updateCourseTable(null));
+            setCourseTable(null);
             setLoading(false);
           } else {
             // pick the first table
             try {
-              await dispatch(fetchCourseTable(course_tables[0]));
-            } catch (error) {
-              navigate(`/error/${error.status_code}`, { state: error });
+              const updatedCourseTable = await fetchCourseTable(course_tables[0]);
+              setCourseTable(updatedCourseTable);
+            } catch (e) {
+              if (e?.response?.status === 403 || e?.response?.status === 404) {
+                // expired
+                setCourseTable(null);
+              } else {
+                const error = handleAPIError(e);
+                navigate(`/error/${error.status_code}`, { state: error });
+              }
             }
           }
         } catch (e) {
@@ -221,9 +234,8 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
   useEffect(() => {
     const fetchCoursesDataById = async (_callback) => {
       if (courseTable) {
-        // console.log("course_table: ",courseTable);
         try {
-          const courseResult = await dispatch(fetchCourseTableCoursesByIds(courseTable.courses));
+          const courseResult = await fetchCourseTableCoursesByIds(courseTable.courses);
           // set states: courseTimeMap, courses
           setCourseTimeMap(parseCoursesToTimeMap(convertArrayToObject(courseResult, "_id")));
           setCourses(convertArrayToObject(courseResult, "_id"));
@@ -259,10 +271,12 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
       if (user) {
         // hasLogIn
         try {
-          await dispatch(createCourseTable(new_uuid, "我的課表", userInfo.db._id, "1102"));
+          const updatedCourseTable = await createCourseTable(new_uuid, "我的課表", userInfo.db._id, "1102");
+          setCourseTable(updatedCourseTable);
           // console.log("New UUID is generated: ",new_uuid);
           const token = await getAccessTokenSilently();
-          await dispatch(linkCoursetableToUser(token, new_uuid, userInfo.db._id));
+          const updatedUser = await linkCoursetableToUser(token, new_uuid, userInfo.db._id);
+          setUser(updatedUser);
         } catch (e) {
           toast({
             title: `新增課表失敗`,
@@ -275,7 +289,8 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
       } else {
         // Guest mode
         try {
-          const new_course_table = await dispatch(createCourseTable(new_uuid, "我的課表", null, "1102"));
+          const new_course_table = await createCourseTable(new_uuid, "我的課表", null, "1102");
+          setCourseTable(new_course_table);
           // console.log("New UUID is generated: ",new_uuid);
           localStorage.setItem(LOCAL_STORAGE_KEY, new_course_table._id);
           setExpired(false);
@@ -295,18 +310,19 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
   const handleSave = async (new_table_name) => {
     onClose();
     try {
-      const res_table = await dispatch(
-        patchCourseTable(courseTable._id, new_table_name, courseTable.user_id, courseTable.expire_ts, courseTable.courses)
-      );
-      if (res_table) {
-        toast({
-          title: `變更課表名稱成功`,
-          description: `課表名稱已更新為 ${new_table_name}`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-      } else {
+      const res_table = await patchCourseTable(courseTable._id, new_table_name, courseTable.user_id, courseTable.expire_ts, courseTable.courses);
+      setCourseTable(res_table);
+      toast({
+        title: `變更課表名稱成功`,
+        description: `課表名稱已更新為 ${new_table_name}`,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (e) {
+      if (e?.response?.status === 403 || e?.response?.status === 404) {
+        // expired
+        setCourseTable(null);
         toast({
           title: `變更課表名稱失敗`,
           description: `課表已過期`,
@@ -315,8 +331,8 @@ function SideCourseTableContent({ agreeToCreateTableWithoutLogin, setIsLoginWarn
           isClosable: true,
         });
         setExpired(true);
+        return;
       }
-    } catch (e) {
       toast({
         title: `變更課表名稱失敗`,
         description: `請聯繫客服(?)`,

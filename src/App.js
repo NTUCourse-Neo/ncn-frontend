@@ -15,6 +15,10 @@ import CourseInfoContainer from "containers/CourseInfoContainer";
 import { useParams } from "react-router-dom";
 import ReactGA from "react-ga";
 import RecruitingPageContainer from "containers/RecruitingPageContainer";
+import { UserDataProvider } from "components/Providers/UserProvider";
+import { CourseSearchingProvider } from "components/Providers/CourseSearchingProvider";
+import { DisplayTagsProvider } from "components/Providers/DisplayTagsProvider";
+import { CourseTableProvider } from "components/Providers/CourseTableProvider";
 
 dotenv.config();
 
@@ -59,11 +63,19 @@ function App(props) {
       cacheLocation={"localstorage"}
     >
       <ChakraProvider theme={theme}>
-        <Box w="100vw" h={{ base: "100%", lg: "" }}>
-          <HeaderBar useColorModeValue={useColorModeValue} />
-          {content(props.route)}
-          <Footer />
-        </Box>
+        <CourseSearchingProvider>
+          <CourseTableProvider>
+            <UserDataProvider>
+              <DisplayTagsProvider>
+                <Box w="100vw" h={{ base: "100%", lg: "" }}>
+                  <HeaderBar useColorModeValue={useColorModeValue} />
+                  {content(props.route)}
+                  <Footer />
+                </Box>
+              </DisplayTagsProvider>
+            </UserDataProvider>
+          </CourseTableProvider>
+        </CourseSearchingProvider>
       </ChakraProvider>
     </Auth0Provider>
   );

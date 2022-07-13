@@ -5,13 +5,13 @@ import { Flex, Text, Button, IconButton, Badge, Tag, useToast, ScaleFade, TagLef
 import { FaPlus, FaTrash, FaExclamationTriangle, FaInfoCircle } from "react-icons/fa";
 import { FadeLoader } from "react-spinners";
 import { MdDragHandle } from "react-icons/md";
-import { patchCourseTable } from "actions/course_tables";
 import { hash_to_color_hex } from "utils/colorAgent";
 import { getNolAddUrl } from "utils/getNolUrls";
 import openPage from "utils/openPage";
-import { useDispatch } from "react-redux";
+import { useCourseTable } from "components/Providers/CourseTableProvider";
 import { sortableContainer, sortableElement, sortableHandle } from "react-sortable-hoc";
 import { useNavigate } from "react-router-dom";
+import { patchCourseTable } from "queries/courseTable";
 
 const DragHandle = sortableHandle(() => <MdDragHandle cursor="row-resize" size="20" color="gray" />);
 
@@ -115,7 +115,7 @@ const SortableContainer = sortableContainer(({ children }) => {
 });
 
 function CourseListContainer({ courseTable, courses, loading }) {
-  const dispatch = useDispatch();
+  const { setCourseTable } = useCourseTable();
   const toast = useToast();
   const [courseListForSort, setCourseListForSort] = useState(Object.keys(courses));
   const [prepareToRemoveCourseId, setPrepareToRemoveCourseId] = useState([]);
@@ -141,21 +141,22 @@ function CourseListContainer({ courseTable, courses, loading }) {
     try {
       // remove the course_id in the prepareToRemoveCourseId from the courseListForSort
       const newCourseListForSort = courseListForSort.filter((id) => !prepareToRemoveCourseId.includes(id));
-      const res_table = await dispatch(
-        patchCourseTable(courseTable._id, courseTable.name, courseTable.user_id, courseTable.expire_ts, newCourseListForSort)
-      );
-      if (res_table) {
-        toast({
-          title: "編輯課表成功",
-          description: "課程更動已儲存",
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-        setCourseListForSort(res_table.courses);
-        setPrepareToRemoveCourseId([]);
-      }
+      const res_table = await patchCourseTable(courseTable._id, courseTable.name, courseTable.user_id, courseTable.expire_ts, newCourseListForSort);
+      setCourseTable(res_table);
+      toast({
+        title: "編輯課表成功",
+        description: "課程更動已儲存",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      setCourseListForSort(res_table.courses);
+      setPrepareToRemoveCourseId([]);
     } catch (err) {
+      if (err?.response?.status === 403 || err?.response?.status === 404) {
+        // expired
+        setCourseTable(null);
+      }
       toast({
         title: `編輯課表失敗`,
         description: `請稍後再試`,

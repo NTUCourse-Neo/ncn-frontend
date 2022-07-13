@@ -17,15 +17,13 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
 import { social_user_type_map } from "data/mapping_table";
-import { createSocialPost } from "actions/social";
 import { useAuth0 } from "@auth0/auth0-react";
+import { createSocialPost } from "queries/social";
 
 function SignUpReportForm({ courseId, haveSubmitted, submitCallback }) {
   const { onOpen, onClose, isOpen } = useDisclosure();
   const toast = useToast();
-  const dispatch = useDispatch();
   const { getAccessTokenSilently } = useAuth0();
   const [sendingForm, setSendingForm] = useState(false);
   const [signUpCardForm, setSignUpCardForm] = useState({
@@ -80,7 +78,7 @@ function SignUpReportForm({ courseId, haveSubmitted, submitCallback }) {
         },
         user_type: signUpCardForm.user_type,
       };
-      dispatch(createSocialPost(token, courseId, post));
+      await createSocialPost(token, courseId, post);
       toast({
         title: "發送成功",
         description: "感謝您的填寫！",

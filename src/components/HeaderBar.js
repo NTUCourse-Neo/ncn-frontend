@@ -20,11 +20,10 @@ import { FaCheck, FaExclamation, FaBook, FaInfoCircle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import BeatLoader from "react-spinners/BeatLoader";
-import { logOut } from "actions/";
-import { useDispatch } from "react-redux";
+import { useUserData } from "components/Providers/UserProvider";
 
 function SignInButton() {
-  const dispatch = useDispatch();
+  const { setUser } = useUserData();
   const { loginWithRedirect, user, isAuthenticated, isLoading, logout } = useAuth0();
 
   if (isLoading) {
@@ -80,7 +79,7 @@ function SignInButton() {
               m="2"
               mr="4"
               onClick={() => {
-                dispatch(logOut());
+                setUser(null);
                 logout();
               }}
             >

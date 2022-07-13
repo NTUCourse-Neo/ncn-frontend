@@ -14,20 +14,18 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { college_map } from "data/college";
 import { dept_list_bachelor_only } from "data/department";
 import FilterElement from "components/FilterModals/components/FilterElement";
-import { setFilter } from "actions";
+import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 
 function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
-  const dispatch = useDispatch();
-  const search_filters = useSelector((state) => state.search_filters);
+  const { searchFilters, setSearchFilters } = useCourseSearchingContext();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const onOpenModal = () => {
     // overwrite local states by redux store
-    setSelectedDept(search_filters.department);
+    setSelectedDept(searchFilters.department);
     onOpen();
   };
 
@@ -35,13 +33,13 @@ function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
     // fire when click "X" or outside of modal
     // overwrite local state by redux state
     onClose();
-    setSelectedDept(search_filters.department);
+    setSelectedDept(searchFilters.department);
   };
 
   const onSaveEditing = () => {
     // fire when click "Save"
     // overwrite redux state by local state
-    dispatch(setFilter("department", selectedDept));
+    setSearchFilters({ ...searchFilters, department: selectedDept });
     onClose();
   };
 

@@ -21,16 +21,15 @@ import {
 } from "@chakra-ui/react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { FaCheckCircle } from "react-icons/fa";
-import { useDispatch } from "react-redux";
-import { send_logs, verify_recaptcha } from "actions";
+import sendLogs from "queries/sendLogs";
 import setPageMeta from "utils/seo";
 import hiringPeopleSvg from "img/hiring_people.svg";
 import hiringCollabSvg from "img/hiring_collab.svg";
 import hiringOfficeSvg from "img/hiring_office.svg";
+import { verifyRecaptcha } from "queries/verifyRecaptcha";
 
 function RecruitingPageContainer() {
   const toast = useToast();
-  const dispatch = useDispatch();
   const [isChecked, setIsChecked] = useState(false);
   const [isSubmiting, setIsSubmiting] = useState(false);
   const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
@@ -56,7 +55,7 @@ function RecruitingPageContainer() {
     // console.log('Captcha value:', value);
     if (value) {
       try {
-        resp = await dispatch(verify_recaptcha(value));
+        resp = await verifyRecaptcha(value);
       } catch (err) {
         // console.log(err);
         recaptchaRef.current.reset();
@@ -95,7 +94,7 @@ function RecruitingPageContainer() {
     };
     // API call
     try {
-      await dispatch(send_logs("info", form));
+      await sendLogs("info", form);
       setIsSubmiting(false);
       toast({
         title: "我們收到囉！",

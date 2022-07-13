@@ -26,23 +26,24 @@ import {
 } from "@chakra-ui/react";
 import Select from "react-select";
 import { HashLoader } from "react-spinners";
-import { useDispatch, useSelector } from "react-redux";
 import { FaFacebook, FaGithub, FaGoogle, FaExclamationTriangle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { verify_recaptcha, logIn } from "actions/";
-import {
-  fetchUserById,
-  registerNewUser,
-  patchUserInfo,
-  deleteUserAccount,
-  deleteUserProfile,
-  request_otp_code,
-  use_otp_link_student_id,
-} from "actions/users";
 import { dept_list_bachelor_only } from "data/department";
 import ReCAPTCHA from "react-google-recaptcha";
 import useCountDown from "react-countdown-hook";
 import setPageMeta from "utils/seo";
+import {
+  deleteUserProfile,
+  use_otp_link_student_id,
+  request_otp_code,
+  patchUserInfo,
+  fetchUserById,
+  registerNewUser,
+  deleteUserAccount,
+} from "queries/user";
+import { useUserData } from "components/Providers/UserProvider";
+import { verifyRecaptcha } from "queries/verifyRecaptcha";
+import handleAPIError from "utils/handleAPIError";
 
 function ConnectedAccountTags({ userInfo }) {
   const connected_accounts = userInfo.auth0.identities;
@@ -76,12 +77,12 @@ function ConnectedAccountTags({ userInfo }) {
 }
 
 function DeleteDialog({ isAlertOpen, setIsAlertOpen, deleteMode, setDeleteMode }) {
+  const { setUser, user: userInfo } = useUserData();
   const confirmMessage = `我確定`;
   const cancelRef = useRef();
   const toast = useToast();
-  const dispatch = useDispatch();
   const { user, logout, getAccessTokenSilently } = useAuth0();
-  const userInfo = useSelector((state) => state.user);
+  const navigate = useNavigate();
 
   const [confirm, setConfirm] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
@@ -95,8 +96,8 @@ function DeleteDialog({ isAlertOpen, setIsAlertOpen, deleteMode, setDeleteMode }
   const clearUserProfile = async () => {
     try {
       const token = await getAccessTokenSilently();
-      await dispatch(deleteUserProfile(token, userInfo.db._id));
-      await dispatch(registerNewUser(token, user.email));
+      await deleteUserProfile(token, userInfo.db._id);
+      await registerNewUser(token, user.email);
     } catch (e) {
       toast({
         title: "刪除用戶資料失敗.",
@@ -110,7 +111,8 @@ function DeleteDialog({ isAlertOpen, setIsAlertOpen, deleteMode, setDeleteMode }
   const clearUserAccount = async () => {
     try {
       const token = await getAccessTokenSilently();
-      await dispatch(deleteUserAccount(token, userInfo.db._id));
+      await deleteUserAccount(token, userInfo.db._id);
+      setUser(null);
     } catch (e) {
       toast({
         title: "刪除用戶帳號失敗.",
@@ -126,6 +128,7 @@ function DeleteDialog({ isAlertOpen, setIsAlertOpen, deleteMode, setDeleteMode }
     setIsDeleting(true);
     if (deleteMode === "User Profile") {
       await clearUserProfile();
+      navigate("/");
       onClose();
     } else if (deleteMode === "User Account") {
       await clearUserAccount();
@@ -180,10 +183,9 @@ function DeleteDialog({ isAlertOpen, setIsAlertOpen, deleteMode, setDeleteMode }
 }
 
 function UserInfoContainer() {
+  const { setUser, user: userInfo } = useUserData();
   const navigate = useNavigate();
   const toast = useToast();
-  const dispatch = useDispatch();
-  const userInfo = useSelector((state) => state.user);
   const deptOptions = dept_list_bachelor_only.map((dept) => ({ value: dept.full_name, label: dept.code + " " + dept.full_name }));
 
   const { user, isLoading, getAccessTokenSilently } = useAuth0();
@@ -279,7 +281,8 @@ function UserInfoContainer() {
     }
     try {
       const token = await getAccessTokenSilently();
-      await dispatch(patchUserInfo(token, updateObject));
+      const updatedUser = await patchUserInfo(token, updateObject);
+      setUser(updatedUser);
       toast({
         title: "更改用戶資料成功.",
         status: "success",
@@ -302,9 +305,9 @@ function UserInfoContainer() {
       if (!isLoading && user) {
         try {
           const token = await getAccessTokenSilently();
-          const user_data = await dispatch(fetchUserById(token, user.sub));
-          await dispatch(logIn(user_data));
-        } catch (error) {
+          const user_data = await fetchUserById(token, user.sub);
+          await setUser(user_data);
+        } catch (e) {
           toast({
             title: "取得用戶資料失敗.",
             description: "請聯繫客服(?)",
@@ -312,6 +315,7 @@ function UserInfoContainer() {
             duration: 9000,
             isClosable: true,
           });
+          const error = handleAPIError(e);
           navigate(`/error/${error.status_code}`, { state: error });
           // Other subsequent actions?
         }
@@ -338,7 +342,7 @@ function UserInfoContainer() {
       // console.log('Captcha value:', value);
       if (value) {
         try {
-          resp = await dispatch(verify_recaptcha(value));
+          resp = await verifyRecaptcha(value);
         } catch (err) {
           // console.log(err);
           recaptchaRef.current.reset();
@@ -365,7 +369,7 @@ function UserInfoContainer() {
       }
       const token = await getAccessTokenSilently();
       try {
-        await dispatch(request_otp_code(token, studentId));
+        await request_otp_code(token, studentId);
         setOtpSent(true);
         setOtpInputStatus(1);
         actions.start(300 * 1000);
@@ -384,7 +388,7 @@ function UserInfoContainer() {
       try {
         setOtpInputStatus(0);
         const token = await getAccessTokenSilently();
-        await dispatch(use_otp_link_student_id(token, studentId, otp));
+        await use_otp_link_student_id(token, studentId, otp);
         // refresh page or data
         window.location.reload();
       } catch (err) {
@@ -466,7 +470,7 @@ function UserInfoContainer() {
         </Collapse>
       </Flex>
     );
-  }, [allowSendOTP, otpSent, otpInputStatus, studentId, timeLeft, userInfo, actions, dispatch, getAccessTokenSilently, toast]);
+  }, [allowSendOTP, otpSent, otpInputStatus, studentId, timeLeft, userInfo, actions, getAccessTokenSilently, toast]);
 
   if (userLoading) {
     return (

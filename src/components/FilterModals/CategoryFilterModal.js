@@ -13,20 +13,18 @@ import {
   Flex,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import { useDispatch, useSelector } from "react-redux";
 import { type_list, code_map } from "data/course_type";
 import FilterElement from "components/FilterModals/components/FilterElement";
-import { setFilter } from "actions";
 import React, { useMemo } from "react";
+import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 
 function CategoryFilterModal({ title, isEnabled, selectedType, setSelectedType }) {
-  const dispatch = useDispatch();
-  const search_filters = useSelector((state) => state.search_filters);
+  const { searchFilters, setSearchFilters } = useCourseSearchingContext();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const onOpenModal = () => {
     // overwrite local states by redux store
-    setSelectedType(search_filters.category);
+    setSelectedType(searchFilters.category);
     onOpen();
   };
 
@@ -34,13 +32,13 @@ function CategoryFilterModal({ title, isEnabled, selectedType, setSelectedType }
     // fire when click "X" or outside of modal
     // overwrite local state by redux state
     onClose();
-    setSelectedType(search_filters.category);
+    setSelectedType(searchFilters.category);
   };
 
   const onSaveEditing = () => {
     // fire when click "Save"
     // overwrite redux state by local state
-    dispatch(setFilter("category", selectedType));
+    setSearchFilters({ ...searchFilters, category: selectedType });
     onClose();
   };
 

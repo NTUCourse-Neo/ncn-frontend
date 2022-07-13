@@ -24,8 +24,7 @@ import CourseInfoRowContainer from "containers/CourseInfoRowContainer";
 import CourseSearchInput from "components/CourseSearchInput";
 import SkeletonRow from "components/SkeletonRow";
 import SideCourseTableContainer from "containers/SideCourseTableContainer";
-import { setBatchSize } from "actions/index";
-import { useSelector, useDispatch } from "react-redux";
+import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { useAuth0 } from "@auth0/auth0-react";
 import setPageMeta from "utils/seo";
 import usePagination from "hooks/usePagination";
@@ -85,12 +84,7 @@ function CourseResultViewContainer() {
   const topRef = useRef();
   const bottomRef = useRef();
   usePagination(bottomRef);
-
-  const dispatch = useDispatch();
-  const search_ids = useSelector((state) => state.search_ids);
-  const search_loading = useSelector((state) => state.search_loading);
-  const search_error = useSelector((state) => state.search_error);
-  const total_count = useSelector((state) => state.total_count);
+  const { searchIds, searchLoading, searchError, totalCount, setBatchSize } = useCourseSearchingContext();
 
   const [isMobile, isHigherThan1325] = useMediaQuery(["(max-width: 1000px)", "(min-height: 1325px)"]);
 
@@ -103,14 +97,14 @@ function CourseResultViewContainer() {
 
   useEffect(() => {
     if (isHigherThan1325) {
-      dispatch(setBatchSize(25));
+      setBatchSize(25);
     }
-  }, [isHigherThan1325, dispatch]);
+  }, [isHigherThan1325, setBatchSize]);
 
   useEffect(() => {
     topRef.current.focus();
     setDisplayFilter(false);
-  }, [search_ids]);
+  }, [searchIds]);
 
   // if isMobile, when show Alert Modal, set displayTable to false to prevent ugly overlapping
   useEffect(() => {
@@ -159,9 +153,9 @@ function CourseResultViewContainer() {
             transition="all 500ms ease-in-out"
           >
             <Flex flexDirection="row" alignItems="center" justifyContent="start">
-              {search_loading ? <BeatLoader size={8} color="teal" /> : <></>}
+              {searchLoading ? <BeatLoader size={8} color="teal" /> : <></>}
               <Text fontSize="md" fontWeight="medium" color="gray.400" my="2" ml="1">
-                {search_loading ? "載入中" : `共找到 ${total_count} 筆結果`}
+                {searchLoading ? "載入中" : `共找到 ${totalCount} 筆結果`}
               </Text>
             </Flex>
             <CourseInfoRowContainer displayTable={displayTable} />
@@ -172,7 +166,7 @@ function CourseResultViewContainer() {
             ml={{ base: "0", lg: displayTable ? "24vw" : "48vw" }}
             transition="all 500ms ease-in-out"
           >
-            <SkeletonRow loading={search_loading} error={search_error} />
+            <SkeletonRow />
           </Flex>
           <div ref={bottomRef} />
         </Box>

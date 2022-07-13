@@ -25,9 +25,9 @@ import {
 } from "@chakra-ui/react";
 import { hash_to_color_hex } from "utils/colorAgent";
 import { FaExclamationTriangle } from "react-icons/fa";
-import { useSelector, useDispatch } from "react-redux";
-import { patchCourseTable } from "actions/course_tables";
+import { useCourseTable } from "components/Providers/CourseTableProvider";
 import SortablePopover from "components/CourseTableCard/SortablePopover";
+import { patchCourseTable } from "queries/courseTable";
 
 function CourseBox({ courseId, courseData, isOpen, hoverId }) {
   const course = courseData?.[courseId];
@@ -57,16 +57,9 @@ function CourseBox({ courseId, courseData, isOpen, hoverId }) {
 }
 
 function CourseTableCard({ courseInitialOrder, courseData, day, interval, hoverId }) {
-  const dispatch = useDispatch();
-  const course_table = useSelector((state) => state.course_table);
+  const { courseTable, setCourseTable } = useCourseTable();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
-
-  /*
-        state design concept:
-        when open Popover, overwrite the courseList by courseOrder
-        when click save, overwrite the courseOrder by courseList
-    */
   // initial order of courses
   const courseOrder = courseInitialOrder;
   // temp state (buffer), used for decide the NEW course order / dispatch to server, when press "save"
@@ -75,10 +68,8 @@ function CourseTableCard({ courseInitialOrder, courseData, day, interval, hoverI
 
   const handleDelete = (courseId) => {
     if (prepareToRemoveCourseId.includes(courseId)) {
-      // If the course is in the prepareToRemoveCourseId, remove it from the list.
       setPrepareToRemoveCourseId(prepareToRemoveCourseId.filter((id) => id !== courseId));
     } else {
-      // If the course is not in the prepareToRemoveCourseId, add it to the list.
       setPrepareToRemoveCourseId([...prepareToRemoveCourseId, courseId]);
     }
   };
@@ -96,7 +87,7 @@ function CourseTableCard({ courseInitialOrder, courseData, day, interval, hoverI
   const fetchIndexByIds = (ids_array) => {
     const index_arr = [];
     ids_array.forEach((id) => {
-      index_arr.push(course_table.courses.indexOf(id));
+      index_arr.push(courseTable.courses.indexOf(id));
     });
     return index_arr;
   };
@@ -104,8 +95,8 @@ function CourseTableCard({ courseInitialOrder, courseData, day, interval, hoverI
   const saveChanges = async () => {
     // get indice need to reorder from courseOrder
     const index_arr = fetchIndexByIds(courseOrder);
-    // do reorder, generate new course_table.courses to be patched
-    const new_courses = [...course_table.courses];
+    // do reorder, generate new courseTable.courses to be patched
+    const new_courses = [...courseTable.courses];
     for (let i = 0; i < courseList.length; i++) {
       const target_index = index_arr[i];
       const target_id = courseList[i];
@@ -118,8 +109,13 @@ function CourseTableCard({ courseInitialOrder, courseData, day, interval, hoverI
     }
     let res_table;
     try {
-      res_table = await dispatch(patchCourseTable(course_table._id, course_table.name, course_table.user_id, course_table.expire_ts, new_courses));
+      res_table = await patchCourseTable(courseTable._id, courseTable.name, courseTable.user_id, courseTable.expire_ts, new_courses);
+      setCourseTable(res_table);
     } catch (error) {
+      if (error?.response?.status === 403 || error?.response?.status === 404) {
+        // expired
+        setCourseTable(null);
+      }
       toast({
         title: "更改志願序失敗!",
         description: "請檢查網路連線，或聯絡系統管理員。",

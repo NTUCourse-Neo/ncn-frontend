@@ -1,31 +1,45 @@
 import { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
 import useOnScreen from "hooks/useOnScreen";
 import { useToast } from "@chakra-ui/react";
-import { fetchSearchResults } from "actions/courses";
+import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
+import { fetchSearchResults } from "queries/course";
 
 export default function usePagination(ref) {
   const reachedBottom = useOnScreen(ref);
-  const dispatch = useDispatch();
+  const {
+    searchResult,
+    totalCount,
+    searchSettings,
+    searchFiltersEnable,
+    searchFilters,
+    offset,
+    batchSize,
+    searchIds,
+    setSearchLoading,
+    setSearchError,
+    setOffset,
+    setSearchResult,
+  } = useCourseSearchingContext();
   const toast = useToast();
-
-  const search_results = useSelector((state) => state.search_results);
-  const total_count = useSelector((state) => state.total_count);
-  const search_settings = useSelector((state) => state.search_settings);
-  const search_filters_enable = useSelector((state) => state.search_filters_enable);
-  const search_filters = useSelector((state) => state.search_filters);
-  const offset = useSelector((state) => state.offset);
-  const batch_size = useSelector((state) => state.batch_size);
-  const search_ids = useSelector((state) => state.search_ids);
 
   useEffect(() => {
     // console.log('reachedBottom: ',reachedBottom);
-    if (reachedBottom && search_results.length !== 0) {
+    if (reachedBottom && searchResult.length !== 0) {
       // fetch next batch of search results
-      if (search_results.length < total_count) {
+      if (searchResult.length < totalCount) {
         try {
-          dispatch(fetchSearchResults(search_ids, search_filters_enable, search_filters, batch_size, offset, search_settings.strict_search_mode));
+          setSearchLoading(true);
+          fetchSearchResults(searchIds, searchFiltersEnable, searchFilters, batchSize, offset, searchSettings.strict_search_mode, {
+            onSuccess: ({ courses, ...rest }) => {
+              setSearchResult([...searchResult, ...courses]);
+              setSearchError(null);
+              setOffset(offset + batchSize);
+              setSearchLoading(false);
+            },
+          });
         } catch (error) {
+          setSearchError(error);
+          setSearchLoading(false);
           toast({
             title: "獲取課程資訊失敗",
             description: "請檢查網路連線",
