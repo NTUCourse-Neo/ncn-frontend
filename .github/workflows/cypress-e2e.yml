@@ -13,7 +13,7 @@ jobs:
           browser: chrome
           record: true
           build: yarn build
-          start: export PORT=3000 && yarn start
+          start: yarn next:start
           wait-on: "http://localhost:3000"
           wait-on-timeout: 120
         env:
