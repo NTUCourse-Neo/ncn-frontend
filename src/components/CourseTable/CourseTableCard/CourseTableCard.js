@@ -42,7 +42,7 @@ function CourseBox({ courseId, courseData, isOpen, hoverId }) {
         boxShadow="lg"
         mb="1"
         p="2"
-        w={{ base: "70px", md: "75px", lg: "100px" }}
+        w="100%"
         h="3vh"
         border={"2px"}
         borderColor={

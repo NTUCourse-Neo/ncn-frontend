@@ -26,6 +26,7 @@ function HoverCourseIndicator({ hoveredCourse }) {
   return (
     <div
       style={{
+        width: "100%",
         boxSizing: "border-box",
         justifyContent: "center",
         alignItems: "center",
@@ -34,7 +35,7 @@ function HoverCourseIndicator({ hoveredCourse }) {
       <Button
         borderRadius="lg"
         boxShadow="lg"
-        w={{ base: "70px", md: "75px", lg: "100px" }}
+        w="100%"
         p={0}
         h="3vh"
         border="2px"
@@ -71,41 +72,19 @@ function CourseTableContainer({ courses, loading, courseTimeMap }) {
   const [activeDayCol, setActiveDayCol] = useState(0);
   const { hoveredCourse, hoveredCourseTimeMap } = useSnapshot(hoverCourseState);
 
-  const renderCourseTableCard = useCallback(
-    (courseTimeMap, hoveredCourse, hoverCourseTimeMap, day, interval) => {
-      if (
-        courseTimeMap[day][interval].includes(
-          hoverCourseTimeMap[day][interval][0]
-        )
-      ) {
-        return (
-          <CourseTableCard
-            hoverId={hoverCourseTimeMap[day][interval][0]}
-            courseInitialOrder={courseTimeMap[day][interval]}
-            courseData={courses}
-            interval={interval}
-            day={weekdays_map[day]}
-          />
-        );
-      }
-      return (
-        <>
-          <HoverCourseIndicator hoveredCourse={hoveredCourse} />
-          <CourseTableCard
-            courseInitialOrder={courseTimeMap[day][interval]}
-            courseData={courses}
-            interval={interval}
-            day={weekdays_map[day]}
-          />
-        </>
-      );
-    },
-    [courses]
-  );
-
   const renderIntervalContent = useCallback(
     (days, interval, i) => {
+      const fullWidth = days.length === 1;
       return days.map((day, j) => {
+        const intervalCourseIds = courseTimeMap?.[day]?.[interval];
+        const intervalHoveredCourseIds =
+          hoveredCourse && hoveredCourseTimeMap?.[day]?.[interval];
+        // hover course has been in courseTable already, show solid border in this case
+        const isOverlapped = intervalCourseIds
+          ? courseTimeMap?.[day]?.[interval].includes(
+              hoveredCourseTimeMap?.[day]?.[interval]?.[0]
+            )
+          : false;
         if (loading) {
           return (
             <Td key={`${day}-${i}-${j}`}>
@@ -115,77 +94,58 @@ function CourseTableContainer({ courses, loading, courseTimeMap }) {
             </Td>
           );
         }
-        if (
-          courseTimeMap &&
-          day in courseTimeMap &&
-          interval in courseTimeMap[day]
-        ) {
-          if (
-            hoveredCourse &&
-            hoveredCourseTimeMap &&
-            day in hoveredCourseTimeMap &&
-            interval in hoveredCourseTimeMap[day]
-          ) {
-            return (
-              <Td key={`${day}-${i}-${j}`}>
-                {renderCourseTableCard(
-                  courseTimeMap,
-                  hoveredCourse,
-                  hoveredCourseTimeMap,
-                  day,
-                  interval
-                )}
-              </Td>
-            );
-          }
+        // no courses & hoverCourse
+        if (!intervalCourseIds && !intervalHoveredCourseIds) {
           return (
             <Td key={`${day}-${i}-${j}`}>
-              <CourseTableCard
-                courseInitialOrder={courseTimeMap[day][interval]}
-                courseData={courses}
-                interval={interval}
-                day={weekdays_map[day]}
-              />
-            </Td>
-          );
-        }
-        if (
-          hoveredCourse &&
-          hoveredCourseTimeMap &&
-          day in hoveredCourseTimeMap &&
-          interval in hoveredCourseTimeMap[day]
-        ) {
-          return (
-            <Td key={`${day}-${i}-${j}`}>
-              <HoverCourseIndicator hoveredCourse={hoveredCourse} />
+              <Flex
+                w={
+                  fullWidth ? "100%" : { base: "70px", md: "75px", lg: "100px" }
+                }
+                h="4vh"
+                mb="1"
+                justifyContent="center"
+                alignItems="center"
+              >
+                <Text color="gray.300" fontSize="5xl" fontWeight="700">
+                  {interval}
+                </Text>
+              </Flex>
             </Td>
           );
         }
         return (
           <Td key={`${day}-${i}-${j}`}>
             <Flex
-              w="100%"
-              h="3vh"
+              w={fullWidth ? "100%" : { base: "70px", md: "75px", lg: "100px" }}
+              h="4vh"
               mb="1"
+              direction={"column"}
               justifyContent="center"
               alignItems="center"
             >
-              <Text color="gray.300" fontSize="5xl" fontWeight="700">
-                {interval}
-              </Text>
+              {intervalHoveredCourseIds && !isOverlapped ? (
+                <HoverCourseIndicator hoveredCourse={hoveredCourse} />
+              ) : null}
+              {intervalCourseIds ? (
+                <CourseTableCard
+                  courseInitialOrder={courseTimeMap[day][interval]}
+                  courseData={courses}
+                  interval={interval}
+                  day={weekdays_map[day]}
+                  hoverId={
+                    isOverlapped
+                      ? hoveredCourseTimeMap?.[day]?.[interval]?.[0] ?? ""
+                      : ""
+                  }
+                />
+              ) : null}
             </Flex>
           </Td>
         );
       });
     },
-    [
-      courseTimeMap,
-      courses,
-      hoveredCourse,
-      hoveredCourseTimeMap,
-      loading,
-      renderCourseTableCard,
-    ]
+    [courseTimeMap, courses, hoveredCourse, hoveredCourseTimeMap, loading]
   );
 
   return (
