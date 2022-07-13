@@ -14,7 +14,7 @@ import Link from "next/link";
 import { DiscordIcon } from "components/CustomIcons";
 
 function Footer() {
-  const ver = "beta (20220619)";
+  const ver = "beta (20220713)";
   const handleOpenPage = (page) => {
     window.open(page, "_blank");
   };
