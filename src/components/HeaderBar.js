@@ -14,6 +14,8 @@ import {
   HStack,
   AvatarBadge,
   Badge,
+  Center,
+  Image,
 } from "@chakra-ui/react";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import Link from "next/link";
@@ -187,15 +189,31 @@ function HeaderBar() {
     >
       <Flex justifyContent="center" alignItems="center">
         <Link href="/">
-          <Button variant={"unstyled"}>
-            <Heading
-              fontSize={{ base: "xl", md: "2xl" }}
-              fontWeight="700"
-              color="gray.600"
+          <>
+            <Button
+              variant={"unstyled"}
+              display={{ base: "none", md: "inline-block" }}
             >
-              NTUCourse Neo
-            </Heading>
-          </Button>
+              <Heading
+                fontSize={{ base: "xl", md: "2xl" }}
+                fontWeight="700"
+                color="gray.600"
+              >
+                NTUCourse Neo
+              </Heading>
+            </Button>
+            <Center>
+              <Image
+                src={`/img/ncn_logo.png`}
+                alt="ncnLogo"
+                boxSize="10"
+                display={{ base: "inline-block", md: "none" }}
+                htmlHeight="20px"
+                htmlWidth="20px"
+                borderRadius={"5px"}
+              />
+            </Center>
+          </>
         </Link>
         <Link href="/course">
           <Button
