@@ -43,11 +43,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
 
-      - name: yarn install, build, and test
-        run: |
-          yarn
-          yarn build
-
       - name: zip artifact for deployment
         run: zip -r --symlinks rel.zip *
 
@@ -71,8 +66,10 @@ jobs:
           name: node-app
 
       - name: unzip artifact for deployment
+        run: unzip rel.zip
+
+      - name: yarn install, build, and test
         run: |
-          unzip rel.zip
           yarn
           yarn build
 
