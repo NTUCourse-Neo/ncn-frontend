@@ -32,5 +32,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# eslint
 .eslintcache
+
+# cypress
 cypress.env.json
+cypress/videos/

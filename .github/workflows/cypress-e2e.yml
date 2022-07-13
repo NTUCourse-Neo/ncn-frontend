@@ -7,13 +7,13 @@ jobs:
       - name: 🛎 Checkout
         uses: actions/checkout@v2
       - name: 🧪 Cypress run (Chrome)
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v4
         with:
-          spec: cypress/integration/e2e/*
+          spec: cypress/e2e/e2e/*
           browser: chrome
           record: true
           build: yarn build
-          start: yarn dev
+          start: node_modules/next/dist/bin/next start -p 3000
           wait-on: "http://localhost:3000"
           wait-on-timeout: 120
         env:

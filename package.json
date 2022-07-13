@@ -8,7 +8,8 @@
     "start": "node_modules/next/dist/bin/next start -p $PORT",
     "postinstall": "next build",
     "lint": "next lint",
-    "lint-fix": "next lint . --cache --fix"
+    "lint-fix": "next lint . --cache --fix",
+    "e2e": "npx cypress run --spec 'cypress/e2e/e2e/*'"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": "eslint --cache --fix"
