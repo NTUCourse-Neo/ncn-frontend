@@ -188,20 +188,16 @@ function HeaderBar() {
       px={{ base: 6, md: 14 }}
     >
       <Flex justifyContent="center" alignItems="center">
-        <Link href="/">
-          <>
-            <Button
-              variant={"unstyled"}
+        <Link href="/" passHref>
+          <Button variant={"unstyled"}>
+            <Heading
+              fontSize={{ base: "xl", md: "2xl" }}
+              fontWeight="700"
+              color="gray.600"
               display={{ base: "none", md: "inline-block" }}
             >
-              <Heading
-                fontSize={{ base: "xl", md: "2xl" }}
-                fontWeight="700"
-                color="gray.600"
-              >
-                NTUCourse Neo
-              </Heading>
-            </Button>
+              NTUCourse Neo
+            </Heading>
             <Center>
               <Image
                 src={`/img/ncn_logo.png`}
@@ -213,14 +209,14 @@ function HeaderBar() {
                 borderRadius={"5px"}
               />
             </Center>
-          </>
+          </Button>
         </Link>
         <Link href="/course">
           <Button
             colorScheme="blue"
             variant="ghost"
             size="md"
-            ml={{ base: 0, md: 6 }}
+            ml={{ base: 4, md: 6 }}
             leftIcon={<FaBook />}
           >
             課程
