@@ -13,7 +13,7 @@ jobs:
           browser: chrome
           record: true
           build: yarn build
-          start: node_modules/next/dist/bin/next start -p 3000
+          start: export PORT=3000 && yarn start
           wait-on: "http://localhost:3000"
           wait-on-timeout: 120
         env:
@@ -31,3 +31,5 @@ jobs:
           CYPRESS_API_ENDPOINT: ${{ secrets.AZURE_API_ENDPOINT }}
           CYPRESS_API_VERSION: "v1"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: "End"
+        run: "unset PORT"
