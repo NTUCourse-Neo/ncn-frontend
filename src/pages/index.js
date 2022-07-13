@@ -14,13 +14,6 @@ import {
   ModalBody,
   useDisclosure,
   useToast,
-  useMediaQuery,
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
   IconButton,
   Icon,
   Tooltip,
@@ -149,62 +142,7 @@ const newsCard = [
   </Flex>,
 ];
 
-function MobileWarningModal({ isOpen, onOpen, onClose }) {
-  return (
-    <AlertDialog
-      motionPreset="slideInBottom"
-      onClose={onClose}
-      isOpen={isOpen}
-      size="sm"
-      isCentered
-    >
-      <AlertDialogOverlay />
-      <AlertDialogContent>
-        <AlertDialogHeader>溫馨提醒</AlertDialogHeader>
-        <AlertDialogBody>
-          <Text fontWeight="400" color="gray.600">
-            行動裝置介面仍在調整測試中。建議使用電腦瀏覽，能讓您獲得更好的選課體驗。
-          </Text>
-          <Text mt="2" fontWeight="700" color="gray.600">
-            我們正在努力讓 NTUCourse Neo 更加進步，若有任何建議歡迎至
-            <Button
-              leftIcon={<DiscordIcon />}
-              color="#5865F2"
-              size="sm"
-              variant="ghost"
-              onClick={() => window.open("https://discord.gg/M7NrenYEbS")}
-            >
-              Discord
-            </Button>
-            告訴我們 🙏
-          </Text>
-        </AlertDialogBody>
-        <AlertDialogFooter>
-          <Button
-            onClick={() => {
-              onClose();
-              localStorage.setItem("NCN_NO_MOBILE_WARNING", true);
-            }}
-            variant="ghost"
-          >
-            不要再提醒我
-          </Button>
-          <Button
-            colorScheme="blue"
-            ml={3}
-            onClick={() => {
-              onClose();
-            }}
-          >
-            好
-          </Button>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  );
-}
-
-function NewRegisterModal({ isOpen, onOpen, onClose, isLoading, newUser }) {
+function NewRegisterModal({ isOpen, onClose, isLoading, newUser }) {
   const router = useRouter();
   return (
     <Modal
@@ -285,14 +223,8 @@ function HomePage() {
   const router = useRouter();
   const { user, isLoading } = useUser();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const {
-    isOpen: isWarningOpen,
-    onOpen: onWarningOpen,
-    onClose: onWarningClose,
-  } = useDisclosure();
 
   const [isRegistering, setIsRegistering] = useState(false);
-  const [isMobile] = useMediaQuery("(max-width: 760px)");
   const [displayingCard, setDisplayingCard] = useState(0);
 
   const scroll_config = {
@@ -301,12 +233,6 @@ function HomePage() {
     smooth: true,
     offset: -60,
   };
-
-  useEffect(() => {
-    if (isMobile && !localStorage.getItem("NCN_NO_MOBILE_WARNING")) {
-      onWarningOpen();
-    }
-  }, [isMobile, onWarningOpen]);
 
   useEffect(() => {
     const registerNewUserToDB = async () => {
@@ -376,15 +302,9 @@ function HomePage() {
       <Box maxW="screen-md" mx="auto" overflow="visible" px="64px" pt="64px">
         <NewRegisterModal
           isOpen={isOpen}
-          onOpen={onOpen}
           onClose={onClose}
           isLoading={isRegistering}
           newUser={user}
-        />
-        <MobileWarningModal
-          isOpen={isWarningOpen}
-          onClose={onWarningClose}
-          onOpen={onWarningOpen}
         />
         <Flex
           justifyContent="space-between"
