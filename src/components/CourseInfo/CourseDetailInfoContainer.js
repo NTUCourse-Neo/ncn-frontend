@@ -14,7 +14,6 @@ import {
   Box,
   Button,
   Tag,
-  Image,
   VStack,
   StatHelpText,
   Divider,
@@ -51,6 +50,7 @@ import { getCourseSyllabusData } from "queries/course";
 import handleFetch from "utils/CustomFetch";
 import { useUser } from "@auth0/nextjs-auth0";
 import { useRouter } from "next/router";
+import Image from "next/image";
 
 function DataSourceTag({ source }) {
   return (
@@ -73,7 +73,13 @@ function LoadingPanel({ title, ...restProps }) {
       {...restProps}
     >
       <VStack>
-        <Image alt="" src={"/img/parrot/parrot.gif"} h="32px" />
+        <Image
+          alt=""
+          src={"/img/parrot/parrot.gif"}
+          height={32}
+          width={32}
+          layout="fixed"
+        />
         <Text
           fontSize="lg"
           fontWeight="800"

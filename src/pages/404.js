@@ -16,7 +16,7 @@ export default function ErrorPage() {
       overflow="visible"
       p="64px"
     >
-      <Image mt="5vh" src={`https://http.cat/404`} />
+      <Image alt="" mt="5vh" src={`https://http.cat/404`} />
       <Text fontSize="4xl" color="gray.500" mt="2vh">
         Oops, something went wrong 😥
       </Text>

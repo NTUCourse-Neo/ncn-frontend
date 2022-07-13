@@ -7,7 +7,6 @@ import {
   Spacer,
   Icon,
   Flex,
-  Image,
   Menu,
   MenuItem,
   MenuButton,
@@ -16,6 +15,7 @@ import {
   useToast,
   Stack,
 } from "@chakra-ui/react";
+import Image from "next/image";
 import CourseDetailInfoContainer from "components/CourseInfo/CourseDetailInfoContainer";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
@@ -388,7 +388,9 @@ function CourseInfoPage({ code, course }) {
         >
           <HStack>
             <Image
-              w="64px"
+              width={64}
+              height={64}
+              layout="fixed"
               src={"/img/parrot/ultrafastparrot.gif"}
               alt="Loading Parrot"
             />

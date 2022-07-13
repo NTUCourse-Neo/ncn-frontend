@@ -2,7 +2,6 @@ import { React, useEffect, useState } from "react";
 import {
   Box,
   Flex,
-  Image,
   Spacer,
   Button,
   Text,
@@ -38,6 +37,7 @@ import { DiscordIcon } from "components/CustomIcons";
 import { useUserData } from "components/Providers/UserProvider";
 import { useUser } from "@auth0/nextjs-auth0";
 import handleFetch from "utils/CustomFetch";
+import Image from "next/image";
 
 const newsCard = [
   <Flex
@@ -409,11 +409,15 @@ function HomePage() {
               </Flex>
             </Flex>
             <Spacer />
-            <Image
-              src={`/img/home_main.svg`}
-              alt="home_main"
-              w={["80vw", "50vw"]}
-            />
+            <Box w={["80vw", "50vw"]}>
+              <Image
+                src={`/img/home_main.svg`}
+                alt="home_main"
+                layout="responsive"
+                height={7}
+                width={10}
+              />
+            </Box>
           </Flex>
           <Spacer my={10} />
           <Button
@@ -639,7 +643,12 @@ function HomePage() {
                 </Button>
               </Link>
             </Flex>
-            <Image alt="" src={`/img/home_footer.svg`} h="256px" />
+            <Image
+              alt=""
+              src={`/img/home_footer.svg`}
+              height="256px"
+              width="256px"
+            />
           </Flex>
         </Flex>
       </Box>
