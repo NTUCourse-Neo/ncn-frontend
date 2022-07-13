@@ -51,7 +51,7 @@ function CourseBox({ courseId, courseData, isOpen, hoverId }) {
             : "transparent"
         }
       >
-        <Text fontSize="xs" isTruncated>
+        <Text fontSize="xs" isTruncated noOfLines={1}>
           {` ${course.course_name} `}
         </Text>
       </Button>

@@ -68,7 +68,7 @@ function ListRowElement({
       >
         <DragHandle />
         <Tag
-          size={"lg"}
+          size={useBreakpointValue({ base: "md", md: "lg" }) ?? "md"}
           variant="solid"
           bg={hash_to_color_hex(course._id, 0.8)}
           mx="2"
@@ -99,8 +99,9 @@ function ListRowElement({
             }
             fontSize={{ base: "lg", md: "xl" }}
             fontWeight="bold"
+            noOfLines={1}
             isTruncated
-            maxW={{ base: "120px", md: "8vw" }}
+            maxW={{ base: "120px", md: "50vw", lg: "16vw" }}
           >
             {course.course_name}
           </Text>

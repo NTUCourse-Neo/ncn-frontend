@@ -478,6 +478,7 @@ function CourseInfoPage({ code, course }) {
                   color="gray.700"
                   maxW={{ base: "100px", md: "30vw" }}
                   isTruncated
+                  noOfLines={1}
                 >
                   {course.course_name}
                 </Text>

@@ -42,7 +42,13 @@ function HoverCourseIndicator({ hoveredCourse }) {
         borderColor={hash_to_color_hex(course._id, 0.7)}
         borderStyle="dashed"
       >
-        <Text fontSize="xs" width={"100%"} align="center" isTruncated>
+        <Text
+          fontSize="xs"
+          width={"100%"}
+          align="center"
+          isTruncated
+          noOfLines={1}
+        >
           {course.course_name}
         </Text>
       </Button>

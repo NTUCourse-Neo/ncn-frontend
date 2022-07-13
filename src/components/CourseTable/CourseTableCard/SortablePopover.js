@@ -56,6 +56,7 @@ const SortableElement = sortableElement(
           }
           mx="1"
           fontWeight="700"
+          noOfLines={1}
           isTruncated
         >
           {course.course_name}

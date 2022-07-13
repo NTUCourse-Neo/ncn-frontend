@@ -536,6 +536,7 @@ function CourseInfoRow({
                   ml={{ base: 0, md: 8 }}
                   size="lg"
                   w="150px"
+                  noOfLines={1}
                   isTruncated
                 >
                   {courseInfo.time_loc}

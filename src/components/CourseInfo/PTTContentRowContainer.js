@@ -31,6 +31,7 @@ function PTTContentRowContainer({ info, ...restProps }) {
               color="gray.700"
               fontWeight="500"
               textAlign="start"
+              noOfLines={1}
               isTruncated
             >
               {data.title}
@@ -43,6 +44,7 @@ function PTTContentRowContainer({ info, ...restProps }) {
               color="gray.400"
               fontWeight="500"
               textAlign="start"
+              noOfLines={1}
               isTruncated
             >
               - {data.author}
