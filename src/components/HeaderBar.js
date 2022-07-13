@@ -15,6 +15,7 @@ import {
   AvatarBadge,
   Badge,
   Center,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import Link from "next/link";
@@ -24,11 +25,13 @@ import { useUser } from "@auth0/nextjs-auth0";
 import BeatLoader from "react-spinners/BeatLoader";
 import { useUserData } from "components/Providers/UserProvider";
 import Image from "next/image";
+import ThemeToggleButton from "components/ThemeToggleButton";
 
 function SignInButton() {
   const { setUser } = useUserData();
   const { user, isLoading } = useUser();
   const router = useRouter();
+  const textColor = useColorModeValue("gray.600", "gray.300");
 
   if (isLoading) {
     return (
@@ -99,10 +102,10 @@ function SignInButton() {
               >
                 {user.email_verified ? "已驗證" : "未驗證"}
               </Badge>
-              <Text fontSize="sm" color="gray.600" fontWeight="700">
+              <Text fontSize="sm" color={textColor} fontWeight="700">
                 {user.name}
               </Text>
-              <Text fontSize="xs" color="gray.500" fontWeight="500">
+              <Text fontSize="xs" color={textColor} fontWeight="500">
                 {user.email}
               </Text>
             </Flex>
@@ -217,6 +220,7 @@ function HeaderBar() {
             size="md"
             ml={{ base: 4, md: 6 }}
             leftIcon={<FaBook />}
+            color={useColorModeValue("link.light", "link.dark")}
           >
             課程
           </Button>
@@ -231,12 +235,13 @@ function HeaderBar() {
             ml="30px"
             display={{ base: "none", md: "inline-block" }}
           >
-            <HStack>
+            <HStack color={useColorModeValue("link.light", "link.dark")}>
               <FaInfoCircle />
               <Text>關於</Text>
             </HStack>
           </Button>
         </Link>
+        <ThemeToggleButton />
         <SignInButton />
       </Flex>
     </Flex>

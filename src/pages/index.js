@@ -16,6 +16,7 @@ import {
   IconButton,
   Icon,
   Tooltip,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import {
   FaArrowDown,
@@ -325,7 +326,7 @@ function HomePage() {
                 align={{ base: "center", lg: "start" }}
                 fontSize={["4xl", "6xl"]}
                 fontWeight="800"
-                color="gray.700"
+                color={useColorModeValue("heading.light", "heading.dark")}
               >
                 Course Schedule
               </Text>
@@ -333,7 +334,7 @@ function HomePage() {
                 align={{ base: "center", lg: "start" }}
                 fontSize={["4xl", "6xl"]}
                 fontWeight="extrabold"
-                color="gray.700"
+                color={useColorModeValue("heading.light", "heading.dark")}
                 mt={-4}
                 mb={2}
               >
@@ -343,7 +344,7 @@ function HomePage() {
                 align={{ base: "center", lg: "start" }}
                 fontSize={["xl", "3xl"]}
                 fontWeight="500"
-                color="gray.500"
+                color={useColorModeValue("text.light", "text.dark")}
               >
                 修課安排不再是難事。
               </Text>
@@ -385,7 +386,8 @@ function HomePage() {
                 <Flex flexDirection={"column"} justify="start" mt="10">
                   <IconButton
                     ml="2"
-                    icon={<FaSortUp color="gray.500" />}
+                    color={useColorModeValue("heading.light", "heading.dark")}
+                    icon={<FaSortUp />}
                     variant="ghost"
                     size="sm"
                     onClick={() =>
@@ -394,7 +396,8 @@ function HomePage() {
                   />
                   <IconButton
                     ml="2"
-                    icon={<FaSortDown color="gray.500" />}
+                    color={useColorModeValue("heading.light", "heading.dark")}
+                    icon={<FaSortDown />}
                     variant="ghost"
                     size="sm"
                     onClick={() =>
@@ -423,6 +426,7 @@ function HomePage() {
           <Button
             variant="ghost"
             size="lg"
+            color={useColorModeValue("heading.light", "heading.dark")}
             onClick={() => scroller.scrollTo("card1", scroll_config)}
             leftIcon={<FaArrowDown />}
           >
@@ -437,12 +441,13 @@ function HomePage() {
               "讓我們的篩選功能，快速滿足你各式各樣的需求！",
             ]}
             img="https://imgur.com/jC8IUuw.gif"
-            bg="gray.100"
-          ></HomeCard>
+            bg={useColorModeValue("gray.100", "gray.600")}
+          />
           <Spacer my={10} />
           <Button
             variant="ghost"
             size="lg"
+            color={useColorModeValue("heading.light", "heading.dark")}
             onClick={() => scroller.scrollTo("card2", scroll_config)}
             leftIcon={<FaArrowDown />}
           >
@@ -457,12 +462,13 @@ function HomePage() {
               "提醒您，一般課表有儲存期限，若要永久保存，請先註冊登入喔 😘",
             ]}
             img="https://i.imgur.com/CJhqamD.png"
-            bg="gray.100"
-          ></HomeCard>
+            bg={useColorModeValue("gray.100", "gray.600")}
+          />
           <Spacer my={10} />
           <Button
             variant="ghost"
             size="lg"
+            color={useColorModeValue("heading.light", "heading.dark")}
             onClick={() => scroller.scrollTo("card3", scroll_config)}
             leftIcon={<FaArrowDown />}
           >
@@ -476,12 +482,13 @@ function HomePage() {
               "你只需要好好挑選適合的課程，剩下的交給我們。👌",
             ]}
             img="https://i.imgur.com/oA2qanv.png"
-            bg="gray.100"
-          ></HomeCard>
+            bg={useColorModeValue("gray.100", "gray.600")}
+          />
           <Spacer my={10} />
           <Button
             variant="ghost"
             size="lg"
+            color={useColorModeValue("heading.light", "heading.dark")}
             onClick={() => scroller.scrollTo("card4", scroll_config)}
             leftIcon={<FaArrowDown />}
           >
@@ -495,12 +502,13 @@ function HomePage() {
               "就是這麼簡單，一塊蛋糕 🍰",
             ]}
             img="https://i.imgur.com/nxjAycJ.png"
-            bg="gray.100"
-          ></HomeCard>
+            bg={useColorModeValue("gray.100", "gray.600")}
+          />
           <Spacer my={10} />
           <Button
             variant="ghost"
             size="lg"
+            color={useColorModeValue("heading.light", "heading.dark")}
             onClick={() => scroller.scrollTo("card5", scroll_config)}
             leftIcon={<FaArrowDown />}
           >
@@ -514,12 +522,13 @@ function HomePage() {
               "除了記在腦袋佔記憶體外，你還可以利用最愛功能收藏喜歡的課程，建立你的畢業前必修課程清單，讓你不再錯過任何一堂課！",
             ]}
             img="https://imgur.com/IHw3FG1.gif"
-            bg="gray.100"
-          ></HomeCard>
+            bg={useColorModeValue("gray.100", "gray.600")}
+          />
           <Spacer mt="10" mb="10" />
           <Button
             variant="ghost"
             size="lg"
+            color={useColorModeValue("heading.light", "heading.dark")}
             onClick={() => scroll.scrollTo(0)}
             leftIcon={<FaArrowUp />}
           >
@@ -606,10 +615,11 @@ function HomePage() {
               flexDirection={{ base: "column", md: "row" }}
             >
               <Button
-                variant="solid"
+                variant={"solid"}
                 size="lg"
                 onClick={() => window.open("https://discord.gg/M7NrenYEbS")}
-                color="#5865F2"
+                bg={"white"}
+                color={"#5865F2"}
                 leftIcon={<DiscordIcon />}
               >
                 Join #NTUCourse-Neo
@@ -618,7 +628,6 @@ function HomePage() {
           </Flex>
           <Flex
             w="100vw"
-            bg="white"
             px="8"
             pt="8"
             justifyContent="space-around"
@@ -631,7 +640,12 @@ function HomePage() {
               align={{ base: "center", lg: "start" }}
               textAlign={{ base: "center", md: "start" }}
             >
-              <Text py={2} fontSize="3xl" color="gray.700" fontWeight="800">
+              <Text
+                py={2}
+                fontSize="3xl"
+                color={useColorModeValue("text.light", "text.dark")}
+                fontWeight="800"
+              >
                 現在就開始體驗新世代的選課吧。
               </Text>
               <Text fontSize="lg" color="teal.500" fontWeight="500">

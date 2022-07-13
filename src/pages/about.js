@@ -12,6 +12,7 @@ import {
   Icon,
   Button,
   Tooltip,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { FaGithub } from "react-icons/fa";
 import { SiNotion, SiDiscord } from "react-icons/si";
@@ -47,16 +48,30 @@ const teams = [
 
 function TeamMemberCard({ person }) {
   return (
-    <Box w="400" p="8" bg="white" boxShadow="xl" borderRadius="xl">
+    <Box
+      w="400"
+      p="8"
+      bg={useColorModeValue("white", "gray.500")}
+      boxShadow="xl"
+      borderRadius="xl"
+    >
       <VStack spacing="4">
         <HStack align="center" justify="center" spacing="4">
           <Avatar src={person.img} name={person.name} size="2xl" />
           <VStack spacing="2" alignItems="start">
             <Spacer />
-            <Text fontSize="3xl" fontWeight="bold" color="gray.700">
+            <Text
+              fontSize="3xl"
+              fontWeight="bold"
+              color={useColorModeValue("heading.light", "heading.dark")}
+            >
               {person.name}
             </Text>
-            <Text fontSize="md" fontWeight="500" color="gray.500">
+            <Text
+              fontSize="md"
+              fontWeight="500"
+              color={useColorModeValue("text.light", "text.dark")}
+            >
               {person.dept}
             </Text>
             <Button
@@ -71,8 +86,17 @@ function TeamMemberCard({ person }) {
                 window.open(`https://www.github.com/${person.github}`, "_blank")
               }
             >
-              <Icon as={FaGithub} size="2em" color="gray.500" mr="3" />
-              <Text fontSize="md" fontWeight="500" color="gray.500">
+              <Icon
+                as={FaGithub}
+                size="2em"
+                color={useColorModeValue("gray.500", "gray.300")}
+                mr="3"
+              />
+              <Text
+                fontSize="md"
+                fontWeight="500"
+                color={useColorModeValue("gray.500", "gray.300")}
+              >
                 {person.github}
               </Text>
             </Button>
@@ -102,7 +126,7 @@ function AboutPage() {
         <Text
           fontSize={["3xl", "4xl", "5xl"]}
           fontWeight="800"
-          color="gray.700"
+          color={useColorModeValue("heading.light", "heading.dark")}
         >
           關於
         </Text>
@@ -112,39 +136,26 @@ function AboutPage() {
           alignItems="start"
           px={["4", "8", "32"]}
           py="16"
+          color={useColorModeValue("text.light", "text.dark")}
         >
-          <Text
-            fontSize={["lg", "xl", "2xl"]}
-            fontWeight="400"
-            color="gray.500"
-            mb="4"
-          >
+          <Text fontSize={["lg", "xl", "2xl"]} fontWeight="400" mb="4">
             NTUCourse Neo
             是一個專屬於台大學生的選課工具，您是否曾經覺得台大課程網搜尋課程篩選不好用，或是介面不夠精簡令人眼花撩亂，抑或是加入課表時瘋狂彈出的視窗很煩呢？
           </Text>
-          <Text
-            fontSize={["lg", "xl", "2xl"]}
-            fontWeight="400"
-            color="gray.500"
-            mb="4"
-          >
+          <Text fontSize={["lg", "xl", "2xl"]} fontWeight="400" mb="4">
             We are here to help!
             我們提供多樣篩選條件，讓用戶可以更快速的找到想要的課程，也提供了互動式課表，讓同學們安排下學期的課程時不用再狂切視窗了！
             🥴
             除此之外，還能更方便的排序選課優先順序、一鍵匯入台大課程網，大幅減少同學們花費在找課選課排志願序的時間！
           </Text>
-          <Text
-            fontSize={["lg", "xl", "2xl"]}
-            fontWeight="400"
-            color="gray.500"
-          >
+          <Text fontSize={["lg", "xl", "2xl"]} fontWeight="400">
             希望 NTUCourse Neo 可以讓你我的選課都更加直覺，好用。
           </Text>
         </Flex>
         <Text
           fontSize={["3xl", "4xl", "5xl"]}
           fontWeight="800"
-          color="gray.700"
+          color={useColorModeValue("heading.light", "heading.dark")}
         >
           團隊
         </Text>
@@ -163,7 +174,7 @@ function AboutPage() {
         <Text
           fontSize={["3xl", "4xl", "5xl"]}
           fontWeight="800"
-          color="gray.700"
+          color={useColorModeValue("heading.light", "heading.dark")}
         >
           簡報影片
         </Text>
@@ -181,7 +192,7 @@ function AboutPage() {
         <Text
           fontSize={["3xl", "4xl", "5xl"]}
           fontWeight="800"
-          color="gray.700"
+          color={useColorModeValue("heading.light", "heading.dark")}
         >
           Powered by...
         </Text>
@@ -221,19 +232,28 @@ function AboutPage() {
             height="50px"
           />
         </Flex>
-        <HStack spacing={4} mb="4" wrap="wrap">
-          <Text fontSize="2xl" fontWeight="500" color="gray.700">
+        <HStack
+          spacing={4}
+          mb="4"
+          wrap="wrap"
+          color={useColorModeValue("text.light", "text.dark")}
+        >
+          <Text fontSize="2xl" fontWeight="500">
             with the help of...
           </Text>
-          <Icon as={FaGithub} w="8" h="8" color="gray.700" />
-          <Icon as={SiDiscord} w="8" h="8" color="gray.700" />
-          <Icon as={SiNotion} w="8" h="8" color="gray.700" />
-          <Text fontSize="2xl" fontWeight="500" color="gray.700">
+          <Icon as={FaGithub} w="8" h="8" />
+          <Icon as={SiDiscord} w="8" h="8" />
+          <Icon as={SiNotion} w="8" h="8" />
+          <Text fontSize="2xl" fontWeight="500">
             + our 🔥 and 💖 !{" "}
           </Text>
         </HStack>
-        <HStack spacing={2} mb="4">
-          <Text fontSize="2xl" fontWeight="500" color="gray.700">
+        <HStack
+          spacing={2}
+          mb="4"
+          color={useColorModeValue("text.light", "text.dark")}
+        >
+          <Text fontSize="2xl" fontWeight="500">
             ... and don't forget our
           </Text>
           <Tooltip

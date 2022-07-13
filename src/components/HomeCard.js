@@ -1,6 +1,14 @@
 import { React } from "react";
-import { Box, Flex, Heading, Text, Image } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Heading,
+  Text,
+  Image,
+  useColorModeValue,
+} from "@chakra-ui/react";
 function HomeCard({ bg, desc, img, title, children }) {
+  const textColor = useColorModeValue("gray.500", "gray.400");
   return (
     <Box
       className="initialBox"
@@ -20,7 +28,7 @@ function HomeCard({ bg, desc, img, title, children }) {
           as="h1"
           fontSize={["xl", "2xl", "3xl", "5xl"]}
           fontWeight="800"
-          color="gray.700"
+          color={useColorModeValue("gray.700", "gray.300")}
           mb="8"
         >
           {title}
@@ -46,7 +54,7 @@ function HomeCard({ bg, desc, img, title, children }) {
                   key={index}
                   fontSize={["md", "lg", "lg", "3xl"]}
                   fontWeight="400"
-                  color="gray.600"
+                  color={textColor}
                   mb={4}
                 >
                   {item}

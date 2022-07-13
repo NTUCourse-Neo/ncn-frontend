@@ -7,6 +7,7 @@ import {
   HStack,
   Icon,
   Center,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { FaCodeBranch, FaGithub, FaHeartbeat } from "react-icons/fa";
 import Link from "next/link";
@@ -27,7 +28,7 @@ function Footer() {
       px="4"
       py={{ base: 2, md: 4 }}
       borderTop="1px solid"
-      borderColor="gray.200"
+      borderColor={useColorModeValue("gray.200", "gray.700")}
       zIndex="9999"
       css={{ gap: "10px" }}
     >
