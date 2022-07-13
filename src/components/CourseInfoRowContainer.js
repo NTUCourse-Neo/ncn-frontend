@@ -1,6 +1,12 @@
 import { useMemo } from "react";
 import CourseInfoRow from "components/CourseInfoRow";
-import { Box, Flex, Spacer, Accordion } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Spacer,
+  Accordion,
+  useBreakpointValue,
+} from "@chakra-ui/react";
 import { useUserData } from "components/Providers/UserProvider";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { setHoveredCourseData } from "utils/hoverCourse";
@@ -15,6 +21,7 @@ function CourseInfoRowContainer({ displayTable }) {
   const selectedCourses = useMemo(() => {
     return courseTable?.courses;
   }, [courseTable]);
+  const isDesktop = useBreakpointValue({ base: false, lg: true });
 
   // const hide_scroll_bar = {
   //     '::-webkit-scrollbar': {
@@ -30,12 +37,12 @@ function CourseInfoRowContainer({ displayTable }) {
             w={{ base: "90vw", md: "100%" }}
             key={index}
             onMouseEnter={() => {
-              if (displayTable) {
+              if (displayTable && isDesktop) {
                 setHoveredCourseData(info);
               }
             }}
             onMouseLeave={() => {
-              if (displayTable) {
+              if (displayTable && isDesktop) {
                 setHoveredCourseData(null);
               }
             }}
