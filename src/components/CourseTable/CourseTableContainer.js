@@ -100,7 +100,9 @@ function CourseTableContainer({ courses, loading, courseTimeMap }) {
             <Td key={`${day}-${i}-${j}`}>
               <Flex
                 w={
-                  fullWidth ? "100%" : { base: "70px", md: "75px", lg: "100px" }
+                  fullWidth
+                    ? "100%"
+                    : { base: "70px", md: "110px", lg: "100px" }
                 }
                 h="4vh"
                 mb="1"
@@ -117,7 +119,9 @@ function CourseTableContainer({ courses, loading, courseTimeMap }) {
         return (
           <Td key={`${day}-${i}-${j}`}>
             <Flex
-              w={fullWidth ? "100%" : { base: "70px", md: "75px", lg: "100px" }}
+              w={
+                fullWidth ? "100%" : { base: "70px", md: "110px", lg: "100px" }
+              }
               h="4vh"
               mb="1"
               direction={"column"}
