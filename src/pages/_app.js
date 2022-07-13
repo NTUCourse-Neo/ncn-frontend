@@ -6,11 +6,12 @@ import { CourseTableProvider } from "components/Providers/CourseTableProvider";
 import HeaderBar from "components/HeaderBar";
 import Footer from "components/Footer";
 import { UserProvider as Auth0UserProvider } from "@auth0/nextjs-auth0";
+import theme from "styles/theme";
 
 function MyApp({ Component, pageProps }) {
   return (
     <Auth0UserProvider>
-      <ChakraProvider>
+      <ChakraProvider theme={theme}>
         <CourseSearchingProvider>
           <CourseTableProvider>
             <UserDataProvider>
