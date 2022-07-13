@@ -15,7 +15,6 @@ import {
   AvatarBadge,
   Badge,
   Center,
-  Image,
 } from "@chakra-ui/react";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import Link from "next/link";
@@ -24,6 +23,7 @@ import { FaCheck, FaExclamation, FaBook, FaInfoCircle } from "react-icons/fa";
 import { useUser } from "@auth0/nextjs-auth0";
 import BeatLoader from "react-spinners/BeatLoader";
 import { useUserData } from "components/Providers/UserProvider";
+import Image from "next/image";
 
 function SignInButton() {
   const { setUser } = useUserData();
@@ -198,14 +198,13 @@ function HeaderBar() {
             >
               NTUCourse Neo
             </Heading>
-            <Center>
+            <Center display={{ base: "inline-block", md: "none" }}>
               <Image
                 src={`/img/ncn_logo.png`}
                 alt="ncnLogo"
-                boxSize="10"
-                display={{ base: "inline-block", md: "none" }}
-                htmlHeight="20px"
-                htmlWidth="20px"
+                width={30}
+                height={30}
+                layout="fixed"
                 borderRadius={"5px"}
               />
             </Center>

@@ -4,7 +4,6 @@ import {
   Text,
   Button,
   ButtonGroup,
-  Image,
   HStack,
   Icon,
   Center,
@@ -12,6 +11,7 @@ import {
 import { FaCodeBranch, FaGithub, FaHeartbeat } from "react-icons/fa";
 import Link from "next/link";
 import { DiscordIcon } from "components/CustomIcons";
+import Image from "next/image";
 
 function Footer() {
   const ver = "beta (20220713)";
@@ -36,10 +36,10 @@ function Footer() {
           <Image
             src={`/img/ncn_logo.png`}
             alt="ncnLogo"
-            boxSize="6"
             display={{ base: "inline-block", md: "none" }}
-            htmlHeight="20px"
-            htmlWidth="20px"
+            height="30px"
+            width="30px"
+            layout="fixed"
           />
         </Center>
       </Link>
