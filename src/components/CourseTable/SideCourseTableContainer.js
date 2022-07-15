@@ -27,6 +27,7 @@ import {
   TabPanels,
   TabPanel,
   SkeletonText,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import {
   FaRegEdit,
@@ -146,6 +147,7 @@ function SideCourseTableContent({
   agreeToCreateTableWithoutLogin,
   setIsLoginWarningOpen,
 }) {
+  const headingColor = useColorModeValue("heading.light", "heading.dark");
   const router = useRouter();
   const { user, isLoading } = useUser();
   const toast = useToast();
@@ -448,7 +450,7 @@ function SideCourseTableContent({
                 <Text
                   fontWeight="700"
                   fontSize={["xl", "2xl", "3xl"]}
-                  color="gray.600"
+                  color={headingColor}
                   mr="4"
                 >
                   {courseTable.name}

@@ -12,6 +12,7 @@ import {
   Spacer,
   IconButton,
   Button,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { hash_to_color_hex } from "utils/colorAgent";
 import { FaTrashAlt } from "react-icons/fa";
@@ -34,16 +35,16 @@ const DragHandle = sortableHandle(() => (
 const SortableElement = sortableElement(
   ({ course, prepareToRemoveCourseId, handlePrepareToDelete }) => {
     const router = useRouter();
+    const badgeColor = useColorModeValue(
+      hash_to_color_hex(course._id, 0.9),
+      hash_to_color_hex(course._id, 0.8)
+    );
+    const textColor = useColorModeValue("gray.500", "gray.400");
+    const removeColor = useColorModeValue("red.700", "red.300");
     return (
       <Flex className={styles.sortableHelper} alignItems="center" my="1">
         <DragHandle />
-        <Badge
-          ml="4"
-          mr="1"
-          variant="solid"
-          bg={hash_to_color_hex(course._id, 0.9)}
-          color="gray.600"
-        >
+        <Badge ml="4" mr="1" variant="solid" bg={badgeColor} color="gray.600">
           {course.id}
         </Badge>
         <Text
@@ -51,8 +52,8 @@ const SortableElement = sortableElement(
           fontSize="lg"
           color={
             prepareToRemoveCourseId.includes(course._id)
-              ? "red.700"
-              : "gray.500"
+              ? removeColor
+              : textColor
           }
           mx="1"
           fontWeight="700"

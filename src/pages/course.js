@@ -270,7 +270,7 @@ function CoursePage() {
             zIndex={{ base: "10000", lg: "1" }}
             w={{ base: "100vw", lg: "45vw", xl: "40vw" }}
             h={{ base: "90vh", lg: "70vh" }}
-            bg="gray.200"
+            bg={useColorModeValue("card.light", "card.dark")}
             mt="128px"
             borderRadius="lg"
             boxShadow="xl"

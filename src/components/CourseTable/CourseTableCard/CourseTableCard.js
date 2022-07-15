@@ -21,6 +21,7 @@ import {
   TagLeftIcon,
   ScaleFade,
   useToast,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { hash_to_color_hex } from "utils/colorAgent";
 import { FaExclamationTriangle } from "react-icons/fa";
@@ -30,6 +31,10 @@ import { patchCourseTable } from "queries/courseTable";
 
 function CourseBox({ courseId, courseData, isOpen, hoverId }) {
   const course = courseData?.[courseId];
+  const bgColor = useColorModeValue(
+    hash_to_color_hex(course._id, isOpen ? 0.7 : 0.8),
+    hash_to_color_hex(course._id, isOpen ? 0.4 : 0.4)
+  );
   if (!course) {
     return <></>;
   }
@@ -37,7 +42,7 @@ function CourseBox({ courseId, courseData, isOpen, hoverId }) {
   return (
     <Tooltip label={course.course_name} placement="top" hasArrow>
       <Button
-        bg={hash_to_color_hex(course._id, isOpen ? 0.7 : 0.8)}
+        bg={bgColor}
         borderRadius="md"
         boxShadow="lg"
         mb="1"

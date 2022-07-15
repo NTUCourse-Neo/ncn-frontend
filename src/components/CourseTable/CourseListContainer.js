@@ -13,6 +13,7 @@ import {
   TagLeftIcon,
   Spacer,
   useBreakpointValue,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import {
   FaPlus,
@@ -45,6 +46,8 @@ function ListRowElement({
   handleDelete,
 }) {
   const router = useRouter();
+  const textColor = useColorModeValue("heading.light", "heading.dark");
+  const removeColor = useColorModeValue("red.700", "red.300");
   return (
     <Flex
       flexDirection="row"
@@ -54,7 +57,7 @@ function ListRowElement({
       w="100%"
       py="2"
       px="2"
-      bg="gray.100"
+      bg={useColorModeValue("gray.100", "gray.600")}
       my="1"
       borderRadius="lg"
       zIndex="1000"
@@ -94,8 +97,8 @@ function ListRowElement({
             as={prepareToRemoveCourseId.includes(course._id) ? "del" : ""}
             color={
               prepareToRemoveCourseId.includes(course._id)
-                ? "red.700"
-                : "gray.500"
+                ? removeColor
+                : textColor
             }
             fontSize={{ base: "lg", md: "xl" }}
             fontWeight="bold"
