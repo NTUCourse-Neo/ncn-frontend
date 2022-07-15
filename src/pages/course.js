@@ -237,7 +237,7 @@ function CoursePage() {
           position="absolute"
           top={{ base: "85vh", lg: "80vh" }}
           left={{ base: "70vw", md: "85vw", lg: "90vw" }}
-          bg="gray.100"
+          bg={useColorModeValue("gray.100", "gray.600")}
           boxShadow="md"
           py="1"
           px="4"
@@ -249,12 +249,17 @@ function CoursePage() {
           }}
           transition="all 200ms"
         >
-          <Icon mr="1" as={FaRegCalendarAlt} boxSize="4" color="teal.500" />
+          <Icon
+            mr="1"
+            as={FaRegCalendarAlt}
+            boxSize="4"
+            color={useColorModeValue("teal.500", "teal.300")}
+          />
           <Text
             my="2"
             fontWeight={800}
             fontSize={{ base: "md", lg: "lg" }}
-            color="gray.600"
+            color={useColorModeValue("text.light", "text.dark")}
           >
             課表
           </Text>
