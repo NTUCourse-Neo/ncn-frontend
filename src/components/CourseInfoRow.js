@@ -243,7 +243,7 @@ function CourseInfoRow({
   const tooltipText = useColorModeValue("white", "black");
   const selectedColor = useColorModeValue(
     hash_to_color_hex(courseInfo._id, 0.95),
-    `${hash_to_color_hex(courseInfo._id, 0.45)}90`
+    `${hash_to_color_hex(courseInfo._id, 0.3)}`
   );
   const { setCourseTable } = useCourseTable();
   const router = useRouter();

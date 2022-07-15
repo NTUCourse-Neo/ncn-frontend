@@ -12,6 +12,7 @@ import {
   Divider,
   Flex,
   useBreakpointValue,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { type_list, code_map } from "data/course_type";
 import FilterElement from "components/FilterModals/components/FilterElement";
@@ -24,6 +25,7 @@ function CategoryFilterModal({
   selectedType,
   setSelectedType,
 }) {
+  const headingColor = useColorModeValue("heading.light", "heading.dark");
   const { searchFilters, setSearchFilters } = useCourseSearchingContext();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -71,10 +73,9 @@ function CategoryFilterModal({
                 position="sticky"
                 top="0"
                 mt={index === 0 ? 0 : 6}
-                bgColor="white"
                 zIndex="50"
               >
-                <Heading fontSize="2xl" color="gray.600">
+                <Heading fontSize="2xl" color={headingColor}>
                   {code_map[code_map_key].name}
                 </Heading>
                 <Divider />
@@ -97,7 +98,7 @@ function CategoryFilterModal({
         })}
       </React.Fragment>
     ),
-    [selectedType, setSelectedType]
+    [selectedType, setSelectedType, headingColor]
   );
 
   return (

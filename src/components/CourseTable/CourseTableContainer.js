@@ -128,7 +128,7 @@ function CourseTableContainer({ courses, loading, courseTimeMap }) {
               w={
                 fullWidth ? "100%" : { base: "70px", md: "110px", lg: "100px" }
               }
-              h="4vh"
+              minH="4vh"
               mb="1"
               direction={"column"}
               justifyContent="center"

@@ -28,6 +28,7 @@ import {
   FormLabel,
   useBreakpointValue,
   Tag,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { Search2Icon, ChevronDownIcon } from "@chakra-ui/icons";
 import { FaSearch, FaPlus, FaMinus, FaChevronDown } from "react-icons/fa";
@@ -136,6 +137,7 @@ function CourseSearchInputTextArea() {
         justifyContent={["start", "start", "center", "center"]}
         flexWrap="wrap"
         css={{ gap: "10px" }}
+        bg={useColorModeValue("white", "gray.800")}
       >
         <Menu closeOnSelect={false} mx="2">
           <MenuButton as={Button} size={"md"} rightIcon={<ChevronDownIcon />}>
@@ -232,6 +234,7 @@ function CourseSearchInputTextArea() {
 }
 
 function SettingSwitch({ label, setterFunc, defaultValue, isDisabled }) {
+  const textColor = useColorModeValue("gray.500", "text.dark");
   if (isDisabled) {
     return <></>;
   }
@@ -246,7 +249,7 @@ function SettingSwitch({ label, setterFunc, defaultValue, isDisabled }) {
         }}
         isDisabled={isDisabled}
       />
-      <FormLabel htmlFor={label} mb="0" fontWeight="500" color="gray.600">
+      <FormLabel htmlFor={label} mb="0" fontWeight="500" color={textColor}>
         {label}
         {isDisabled ? (
           <Badge ml="2" colorScheme="blue">
@@ -334,12 +337,17 @@ function CourseSearchInput({ displayPanel }) {
     <>
       <CourseSearchInputTextArea />
       <Collapse in={displayPanel} animateOpacity>
-        <Box w="100%" py="8px" mt="4">
+        <Box
+          w="100%"
+          py="8px"
+          mt="4"
+          bg={useColorModeValue("white", "gray.800")}
+        >
           <Tabs>
             <TabList>
               <Tab>
                 <Text
-                  color="gray.700"
+                  color={useColorModeValue("heading.light", "heading.dark")}
                   fontSize={{ base: "md", lg: "xl" }}
                   fontWeight="700"
                 >
@@ -348,7 +356,7 @@ function CourseSearchInput({ displayPanel }) {
               </Tab>
               <Tab>
                 <Text
-                  color="gray.700"
+                  color={useColorModeValue("heading.light", "heading.dark")}
                   fontSize={{ base: "md", lg: "xl" }}
                   fontWeight="700"
                 >
@@ -556,7 +564,7 @@ function CourseSearchInput({ displayPanel }) {
                   >
                     <Text
                       fontSize="lg"
-                      color="gray.500"
+                      color={useColorModeValue("gray.500", "text.dark")}
                       fontWeight="700"
                       mb="4"
                     >
@@ -628,7 +636,7 @@ function CourseSearchInput({ displayPanel }) {
                   >
                     <Text
                       fontSize="lg"
-                      color="gray.500"
+                      color={useColorModeValue("gray.500", "text.dark")}
                       fontWeight="700"
                       mb="4"
                     >

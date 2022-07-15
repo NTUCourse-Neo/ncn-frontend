@@ -17,6 +17,7 @@ import {
   Alert,
   AlertIcon,
   Icon,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { BeatLoader } from "react-spinners";
 import {
@@ -172,9 +173,10 @@ function CoursePage() {
             direction="column"
             position="sticky"
             top="0"
-            bgColor="white"
             zIndex="100"
             boxShadow="md"
+            borderBottom={useColorModeValue("gray.200", "gray.100")}
+            bg={useColorModeValue("white", "gray.800")}
           >
             <Flex w="100%" px="10vw" py="4" direction="column">
               <CourseSearchInput displayPanel={displayFilter} />

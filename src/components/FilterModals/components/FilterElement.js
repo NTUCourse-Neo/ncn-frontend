@@ -1,10 +1,10 @@
-import { Button, Badge } from "@chakra-ui/react";
+import { Button, Badge, useColorModeValue } from "@chakra-ui/react";
 
 // Buttons in filter modal
 function FilterElement({ id, name, selected, onClick }) {
   return (
     <Button
-      colorScheme="teal"
+      colorScheme={"teal"}
       variant={!selected ? "outline" : "solid"}
       size="sm"
       minW="100px"
@@ -12,7 +12,7 @@ function FilterElement({ id, name, selected, onClick }) {
       onClick={onClick}
       _hover={!selected ? { bg: "teal.100" } : { bg: "red.700" }}
     >
-      <Badge mx="2" colorScheme="blue">
+      <Badge mx="2" colorScheme={useColorModeValue("teal", "black")}>
         {id}
       </Badge>
       {name}

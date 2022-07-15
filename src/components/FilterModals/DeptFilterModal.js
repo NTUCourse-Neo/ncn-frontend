@@ -12,6 +12,7 @@ import {
   Divider,
   Flex,
   useBreakpointValue,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { college_map } from "data/college";
@@ -20,6 +21,7 @@ import FilterElement from "components/FilterModals/components/FilterElement";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 
 function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
+  const headingColor = useColorModeValue("heading.light", "heading.dark");
   const { searchFilters, setSearchFilters } = useCourseSearchingContext();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -70,10 +72,9 @@ function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
                 position="sticky"
                 top="0"
                 mt={index === 0 ? 0 : 6}
-                bgColor="white"
                 zIndex="50"
               >
-                <Heading fontSize="2xl" color="gray.600">
+                <Heading fontSize="2xl" color={headingColor}>
                   {college_key + " " + college_map[college_key].name}
                 </Heading>
                 <Divider />
@@ -96,7 +97,7 @@ function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
         })}
       </>
     ),
-    [selectedDept, setSelectedDept]
+    [selectedDept, setSelectedDept, headingColor]
   );
 
   return (
