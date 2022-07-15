@@ -219,8 +219,8 @@ function CoursePage() {
           </Flex>
           <Flex
             alignItems="center"
+            w={displayTable ? "60%" : "100%"}
             justifyContent={{ base: "center", lg: "start" }}
-            ml={{ base: "0", lg: displayTable ? "24vw" : "48vw" }}
             transition="all 500ms ease-in-out"
           >
             <SkeletonRow />
