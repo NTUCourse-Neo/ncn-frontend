@@ -441,7 +441,7 @@ function HomePage() {
               "讓我們的篩選功能，快速滿足你各式各樣的需求！",
             ]}
             img="https://imgur.com/jC8IUuw.gif"
-            bg={useColorModeValue("gray.100", "gray.600")}
+            bg={useColorModeValue("card.light", "card.dark")}
           />
           <Spacer my={10} />
           <Button
@@ -462,7 +462,7 @@ function HomePage() {
               "提醒您，一般課表有儲存期限，若要永久保存，請先註冊登入喔 😘",
             ]}
             img="https://i.imgur.com/CJhqamD.png"
-            bg={useColorModeValue("gray.100", "gray.600")}
+            bg={useColorModeValue("card.light", "card.dark")}
           />
           <Spacer my={10} />
           <Button
@@ -482,7 +482,7 @@ function HomePage() {
               "你只需要好好挑選適合的課程，剩下的交給我們。👌",
             ]}
             img="https://i.imgur.com/oA2qanv.png"
-            bg={useColorModeValue("gray.100", "gray.600")}
+            bg={useColorModeValue("card.light", "card.dark")}
           />
           <Spacer my={10} />
           <Button
@@ -502,7 +502,7 @@ function HomePage() {
               "就是這麼簡單，一塊蛋糕 🍰",
             ]}
             img="https://i.imgur.com/nxjAycJ.png"
-            bg={useColorModeValue("gray.100", "gray.600")}
+            bg={useColorModeValue("card.light", "card.dark")}
           />
           <Spacer my={10} />
           <Button
@@ -522,7 +522,7 @@ function HomePage() {
               "除了記在腦袋佔記憶體外，你還可以利用最愛功能收藏喜歡的課程，建立你的畢業前必修課程清單，讓你不再錯過任何一堂課！",
             ]}
             img="https://imgur.com/IHw3FG1.gif"
-            bg={useColorModeValue("gray.100", "gray.600")}
+            bg={useColorModeValue("card.light", "card.dark")}
           />
           <Spacer mt="10" mb="10" />
           <Button

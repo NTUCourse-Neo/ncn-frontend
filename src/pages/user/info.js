@@ -19,6 +19,7 @@ import {
   Alert,
   AlertIcon,
   Badge,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import Select from "react-select";
 import { HashLoader } from "react-spinners";
@@ -37,6 +38,8 @@ import Head from "next/head";
 
 function ConnectedAccountTags({ userInfo }) {
   const connected_accounts = userInfo.auth0.identities;
+  const cardColor = useColorModeValue("white", "gray.600");
+  const textColor = useColorModeValue("text.light", "text.dark");
   return connected_accounts.map((account, index) => {
     let user_name = null;
     let icon = null;
@@ -70,17 +73,13 @@ function ConnectedAccountTags({ userInfo }) {
         p="2"
         px="4"
         mr="2"
+        bg={cardColor}
+        color={textColor}
       >
-        <Flex
-          w={6}
-          h={6}
-          color="gray.500"
-          justifyContent={"center"}
-          alignItems="center"
-        >
+        <Flex w={6} h={6} justifyContent={"center"} alignItems="center">
           {icon}
         </Flex>
-        <Text ml="2" fontWeight="800" color="gray.600">
+        <Text ml="2" fontWeight="800">
           {user_name}
         </Text>
       </Flex>
@@ -181,7 +180,12 @@ function DeleteDialog({
               但咧，你確定嗎？此動作將無法回復！
             </Alert>
             <Divider mt="3" />
-            <Text fontSize="md" mt="2" color="gray.500" fontWeight="bold">
+            <Text
+              fontSize="md"
+              mt="2"
+              color={useColorModeValue("text.light", "text.dark")}
+              fontWeight="bold"
+            >
               請輸入 "{confirmMessage}"
             </Text>
             <Input
@@ -217,6 +221,10 @@ function DeleteDialog({
 
 export default function UserInfoPage({ user }) {
   const { setUser, user: userInfo } = useUserData();
+  const textColor = useColorModeValue("text.light", "text.dark");
+  const cardColor = useColorModeValue("gray.50", "gray.700");
+  const borderColor = useColorModeValue("gray.300", "gray.900");
+  const dangerZoneColor = useColorModeValue("white", "red.200");
   const router = useRouter();
   const toast = useToast();
   const deptOptions = dept_list_bachelor_only.map((dept) => ({
@@ -405,7 +413,7 @@ export default function UserInfoPage({ user }) {
           <Text
             fontSize={["xl", "3xl"]}
             fontWeight="700"
-            color="gray.600"
+            color={textColor}
             my="8"
           >
             ✌️ 歡迎回來，{userInfo.db.name}
@@ -417,11 +425,12 @@ export default function UserInfoPage({ user }) {
             justifyContent="start"
             alignItems="start"
             p="4"
-            borderRadius="lg"
+            borderRadius="xl"
             border="1px"
-            borderColor="gray.200"
+            borderColor={borderColor}
+            bg={cardColor}
           >
-            <Text fontSize="2xl" fontWeight="700" color="gray.600">
+            <Text fontSize="2xl" fontWeight="700" color={textColor}>
               個人資料
             </Text>
             <Divider mt="1" mb="4" />
@@ -440,32 +449,32 @@ export default function UserInfoPage({ user }) {
                 alignItems="start"
                 px="4"
               >
-                <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">
+                <Text my="4" fontSize="xl" fontWeight="700" color={textColor}>
                   姓名
                 </Text>
                 <Input
                   w="50%"
                   fontSize="lg"
                   fontWeight="500"
-                  color="gray.600"
+                  color={textColor}
                   defaultValue={userInfo.db.name}
                   onChange={(e) => {
                     setName(e.currentTarget.value);
                   }}
                 />
                 <Spacer my="1" />
-                <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">
+                <Text my="4" fontSize="xl" fontWeight="700" color={textColor}>
                   Email
                 </Text>
                 <Input
                   w="50%"
                   fontSize="lg"
                   fontWeight="500"
-                  color="gray.600"
+                  color={textColor}
                   defaultValue={userInfo.db.email}
                   disabled
                 />
-                <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">
+                <Text my="4" fontSize="xl" fontWeight="700" color={textColor}>
                   已綁定帳號
                 </Text>
                 <Flex
@@ -480,7 +489,7 @@ export default function UserInfoPage({ user }) {
               </Flex>
               <Avatar name={userInfo.db.name} size="2xl" src={user.picture} />
             </Flex>
-            <Text fontSize="2xl" fontWeight="700" color="gray.600" mt="5">
+            <Text fontSize="2xl" fontWeight="700" color={textColor} mt="5">
               學業
             </Text>
             <Divider mt="1" mb="4" />
@@ -491,7 +500,7 @@ export default function UserInfoPage({ user }) {
               alignItems="start"
               px="4"
             >
-              <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">
+              <Text my="4" fontSize="xl" fontWeight="700" color={textColor}>
                 主修
               </Text>
               <Flex w="100%" alignItems="center">
@@ -499,7 +508,7 @@ export default function UserInfoPage({ user }) {
                 {major === null ? (
                   <></>
                 ) : (
-                  <Box w={{ base: "100%", md: "20vw" }}>
+                  <Box w={{ base: "100%", md: "20vw" }} color={textColor}>
                     <Select
                       className="basic-single"
                       classNamePrefix="select"
@@ -509,7 +518,6 @@ export default function UserInfoPage({ user }) {
                           : { value: major, label: major }
                       }
                       isSearchable={TextTrackCue}
-                      name="color"
                       options={deptOptions}
                       onChange={(e) => {
                         setMajor(e.value);
@@ -518,7 +526,7 @@ export default function UserInfoPage({ user }) {
                   </Box>
                 )}
               </Flex>
-              <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">
+              <Text my="4" fontSize="xl" fontWeight="700" color={textColor}>
                 雙主修
               </Text>
               <Flex w="100%" alignItems="center">
@@ -526,7 +534,7 @@ export default function UserInfoPage({ user }) {
                 {doubleMajor === null ? (
                   <></>
                 ) : (
-                  <Box w={{ base: "100%", md: "20vw" }}>
+                  <Box w={{ base: "100%", md: "20vw" }} color={textColor}>
                     <Select
                       className="basic-single"
                       classNamePrefix="select"
@@ -536,7 +544,6 @@ export default function UserInfoPage({ user }) {
                           : { value: doubleMajor, label: doubleMajor }
                       }
                       isSearchable={TextTrackCue}
-                      name="color"
                       options={[
                         { value: "", label: " 請選擇 " },
                         ...deptOptions,
@@ -548,7 +555,7 @@ export default function UserInfoPage({ user }) {
                   </Box>
                 )}
               </Flex>
-              <Text my="4" fontSize="xl" fontWeight="700" color="gray.600">
+              <Text my="4" fontSize="xl" fontWeight="700" color={textColor}>
                 輔系
               </Text>
               <Flex w="100%" alignItems="center">
@@ -556,7 +563,7 @@ export default function UserInfoPage({ user }) {
                 {minor === null ? (
                   <></>
                 ) : (
-                  <Box w={{ base: "100%", md: "20vw" }}>
+                  <Box w={{ base: "100%", md: "20vw" }} color={textColor}>
                     <Select
                       isMulti
                       w="100%"
@@ -578,7 +585,7 @@ export default function UserInfoPage({ user }) {
               </Flex>
             </Flex>
             <HStack spacing={4} alignItems="center" mt="5">
-              <Text fontSize="2xl" fontWeight="700" color="gray.600">
+              <Text fontSize="2xl" fontWeight="700" color={textColor}>
                 課程
               </Text>
               <Badge colorScheme="blue" variant="subtle" fontSize="sm" mx="2">
@@ -595,7 +602,7 @@ export default function UserInfoPage({ user }) {
             >
               匯入修課紀錄
             </Button>
-            <Divider mt="1" m="8" />
+            <Divider mt="1" mb="8" />
             <Button
               colorScheme="teal"
               size="md"
@@ -622,6 +629,7 @@ export default function UserInfoPage({ user }) {
             borderRadius="lg"
             border="1px"
             borderColor="red.600"
+            bg={dangerZoneColor}
           >
             <Text fontSize="2xl" fontWeight="700" color="red.600" mt="2">
               危險區域
@@ -637,6 +645,7 @@ export default function UserInfoPage({ user }) {
                 <Button
                   colorScheme="red"
                   variant="outline"
+                  color="red.500"
                   size="md"
                   my="4"
                   onClick={() => {
@@ -656,6 +665,7 @@ export default function UserInfoPage({ user }) {
                 <Button
                   colorScheme="red"
                   variant="outline"
+                  color="red.500"
                   size="md"
                   my="4"
                   onClick={() => {

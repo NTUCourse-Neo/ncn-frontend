@@ -18,6 +18,10 @@ const colors = {
     light: "#4A5568",
     dark: "#A0AEC0",
   },
+  card: {
+    light: "#EDF2F7",
+    dark: "#4A5568",
+  },
 };
 
 const theme = extendTheme({ config, colors });
