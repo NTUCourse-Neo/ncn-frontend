@@ -15,6 +15,7 @@ import {
   Input,
   Select,
   useDisclosure,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { social_user_type_map } from "data/mapping_table";
@@ -22,6 +23,7 @@ import handleFetch from "utils/CustomFetch";
 import { useRouter } from "next/router";
 
 function SignUpReportForm({ courseId, haveSubmitted, submitCallback }) {
+  const headingColor = useColorModeValue("heading.light", "heading.dark");
   const { onOpen, onClose, isOpen } = useDisclosure();
   const router = useRouter();
   const toast = useToast();
@@ -124,7 +126,7 @@ function SignUpReportForm({ courseId, haveSubmitted, submitCallback }) {
             mb="2"
             fontSize="md"
             fontWeight="800"
-            color="gray.700"
+            color={headingColor}
             textAlign="center"
           >
             提供加簽相關資訊
@@ -133,7 +135,7 @@ function SignUpReportForm({ courseId, haveSubmitted, submitCallback }) {
             <Text
               fontSize="sm"
               fontWeight="800"
-              color="gray.700"
+              color={headingColor}
               textAlign="center"
             >
               我是...
@@ -162,7 +164,7 @@ function SignUpReportForm({ courseId, haveSubmitted, submitCallback }) {
             <Text
               fontSize="sm"
               fontWeight="800"
-              color="gray.700"
+              color={headingColor}
               textAlign="center"
             >
               加簽人數
@@ -184,7 +186,7 @@ function SignUpReportForm({ courseId, haveSubmitted, submitCallback }) {
             <Text
               fontSize="sm"
               fontWeight="800"
-              color="gray.700"
+              color={headingColor}
               textAlign="center"
             >
               加簽時間
@@ -206,7 +208,7 @@ function SignUpReportForm({ courseId, haveSubmitted, submitCallback }) {
             <Text
               fontSize="sm"
               fontWeight="800"
-              color="gray.700"
+              color={headingColor}
               textAlign="center"
             >
               加簽方式
@@ -227,7 +229,7 @@ function SignUpReportForm({ courseId, haveSubmitted, submitCallback }) {
           <Text
             fontSize="sm"
             fontWeight="800"
-            color="gray.700"
+            color={headingColor}
             textAlign="center"
           >
             更多資訊

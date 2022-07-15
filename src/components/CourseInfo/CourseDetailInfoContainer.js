@@ -27,6 +27,7 @@ import {
   PopoverBody,
   Spacer,
   IconButton,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
 import { PieChart } from "react-minimal-pie-chart";
@@ -56,7 +57,11 @@ function DataSourceTag({ source }) {
   return (
     <HStack spacing="2">
       <FaRss color="gray" size="12" />
-      <Text fontSize="sm" textAlign="center" color="gray.500">
+      <Text
+        fontSize="sm"
+        textAlign="center"
+        color={useColorModeValue("gray.500", "gray.400")}
+      >
         資料來源: {source}
       </Text>
     </HStack>
@@ -191,6 +196,7 @@ function SignUpPanel({
   signUpCardIdx,
   setSignUpCardIdx,
 }) {
+  const textColor = useColorModeValue("text.light", "text.dark");
   return (
     <PanelWrapper
       isLoading={isLoading}
@@ -259,7 +265,7 @@ function SignUpPanel({
               <Text
                 fontSize="sm"
                 fontWeight="800"
-                color="gray.700"
+                color={textColor}
                 textAlign="center"
               >
                 {signUpCardIdx + 1}/{SignUpPostData.length}
@@ -441,6 +447,8 @@ function PTTExamPanel({ isLoading, isUnauth, PTTExamData }) {
 }
 
 function SyllabusPanel({ isLoading, isUnauth, SyllabusData }) {
+  const headingColor = useColorModeValue("heading.light", "heading.dark");
+  const textColor = useColorModeValue("text.light", "text.dark");
   return (
     <PanelWrapper isLoading={isLoading} isUnauth={isUnauth}>
       {!SyllabusData ? (
@@ -464,7 +472,7 @@ function SyllabusPanel({ isLoading, isUnauth, SyllabusData }) {
                   mb="0.5"
                   fontSize="md"
                   fontWeight="400"
-                  color="gray.600"
+                  color={textColor}
                 >
                   {item.trim()}
                 </Text>
@@ -473,7 +481,7 @@ function SyllabusPanel({ isLoading, isUnauth, SyllabusData }) {
 
             return (
               <React.Fragment key={syllabusTitle[key]}>
-                <Text fontSize="lg" fontWeight="600" color="gray.700">
+                <Text fontSize="lg" fontWeight="600" color={headingColor}>
                   {syllabusTitle[key]}
                 </Text>
                 {SyllabusData.syllabus[key] !== "" ? (
@@ -498,6 +506,8 @@ function SyllabusPanel({ isLoading, isUnauth, SyllabusData }) {
 }
 
 function GradePolicyPanel({ isLoading, isUnauth, SyllabusData }) {
+  const headingColor = useColorModeValue("heading.light", "heading.dark");
+  const textColor = useColorModeValue("text.light", "text.dark");
   return (
     <PanelWrapper
       isLoading={isLoading}
@@ -538,7 +548,7 @@ function GradePolicyPanel({ isLoading, isUnauth, SyllabusData }) {
                     mb="1"
                     fontSize="md"
                     fontWeight="400"
-                    color="gray.700"
+                    color={textColor}
                   >
                     {item.trim()}
                   </Text>
@@ -552,7 +562,7 @@ function GradePolicyPanel({ isLoading, isUnauth, SyllabusData }) {
                       <Text fontSize="lg" fontWeight="800" color={item.color}>
                         {item.value}%
                       </Text>
-                      <Text fontSize="md" fontWeight="600" color="gray.700">
+                      <Text fontSize="md" fontWeight="600" color={headingColor}>
                         {item.title}
                       </Text>
                     </HStack>
@@ -807,6 +817,8 @@ function CourseDetailInfoContainer({ course }) {
     { title: "開課學期", value: course.semester },
     { title: "授課語言", value: info_view_map.language.map[course.language] },
   ];
+  const headingColor = useColorModeValue("heading.light", "heading.dark");
+  const textColor = useColorModeValue("text.light", "text.dark");
 
   return (
     <Flex
@@ -821,7 +833,7 @@ function CourseDetailInfoContainer({ course }) {
       <Flex w={{ base: "100%", lg: "30%" }} flexDirection={"column"}>
         {/* Box1 */}
         <Flex
-          bg="gray.100"
+          bg={useColorModeValue("gray.100", "gray.600")}
           my="1vh"
           px="6"
           py="4"
@@ -830,7 +842,7 @@ function CourseDetailInfoContainer({ course }) {
           flexGrow={1}
           flexShrink={1}
         >
-          <Text fontSize="2xl" fontWeight="800" color="gray.700">
+          <Text fontSize="2xl" fontWeight="800" color={headingColor}>
             詳細資料
           </Text>
           <Flex
@@ -927,12 +939,12 @@ function CourseDetailInfoContainer({ course }) {
             <Text
               fontSize="md"
               textAlign="center"
-              color="gray.700"
+              color={headingColor}
               fontWeight="700"
             >
               修課限制
             </Text>
-            <Text fontSize="sm" color="gray.600" align="start">
+            <Text fontSize="sm" color={textColor} align="start">
               {course.limit}
             </Text>
           </VStack>
@@ -940,17 +952,17 @@ function CourseDetailInfoContainer({ course }) {
             <Text
               fontSize="md"
               textAlign="center"
-              color="gray.700"
+              color={headingColor}
               fontWeight="700"
             >
               備註
             </Text>
-            <Text fontSize="sm" color="gray.600" align="start">
+            <Text fontSize="sm" color={textColor} align="start">
               {course.note}
             </Text>
           </VStack>
           <Divider mt="4" mb="4" borderColor="gray.300" />
-          <Text fontSize="lg" color="gray.700" fontWeight="700">
+          <Text fontSize="lg" color={headingColor} fontWeight="700">
             節次資訊
           </Text>
           <Text fontSize="sm" color="gray.600">
@@ -959,7 +971,7 @@ function CourseDetailInfoContainer({ course }) {
         </Flex>
         {/* Box2 */}
         <Flex
-          bg="gray.100"
+          bg={useColorModeValue("gray.100", "gray.600")}
           my="1vh"
           px="6"
           py="4"
@@ -971,17 +983,13 @@ function CourseDetailInfoContainer({ course }) {
         >
           <Tabs variant="soft-rounded" size="sm">
             <HStack spacing="4">
-              <Text fontSize="2xl" fontWeight="800" color="gray.700">
+              <Text fontSize="2xl" fontWeight="800" color={headingColor}>
                 選課資訊
               </Text>
               <TabList>
                 <Tab>
                   <Icon mr="2" w="2" as={FaCircle} color="red.600" />
                   即時
-                </Tab>
-                <Tab isDisabled cursor="not-allowed">
-                  歷史
-                  <BetaBadge content="coming soon" size="xs" />
                 </Tab>
               </TabList>
             </HStack>
@@ -1007,7 +1015,7 @@ function CourseDetailInfoContainer({ course }) {
       >
         {/* Box3 */}
         <Flex
-          bg="gray.100"
+          bg={useColorModeValue("gray.100", "gray.600")}
           my="1vh"
           px="6"
           py="4"
@@ -1016,7 +1024,7 @@ function CourseDetailInfoContainer({ course }) {
           flexGrow={1}
           flexShrink={1}
         >
-          <Text fontSize="2xl" fontWeight="800" color="gray.700">
+          <Text fontSize="2xl" fontWeight="800" color={headingColor}>
             加簽資訊
             <BetaBadge content="beta" size="sm" />
           </Text>
@@ -1033,7 +1041,7 @@ function CourseDetailInfoContainer({ course }) {
         </Flex>
         {/* Box4 */}
         <Flex
-          bg="gray.100"
+          bg={useColorModeValue("gray.100", "gray.600")}
           my="1vh"
           px="6"
           py="4"
@@ -1045,13 +1053,13 @@ function CourseDetailInfoContainer({ course }) {
         >
           <Tabs h="100%" variant="soft-rounded" size="sm">
             <HStack spacing="4">
-              <Text fontSize="2xl" fontWeight="800" color="gray.700">
+              <Text fontSize="2xl" fontWeight="800" color={headingColor}>
                 評價
                 <BetaBadge content="preview" size="sm" />
               </Text>
               <TabList>
-                <Tab>PTT</Tab>
-                <Tab>NTURating</Tab>
+                <Tab color={textColor}>PTT</Tab>
+                <Tab color={textColor}>NTURating</Tab>
               </TabList>
             </HStack>
             <TabPanels>
@@ -1075,7 +1083,7 @@ function CourseDetailInfoContainer({ course }) {
         </Flex>
         {/* Box5 */}
         <Flex
-          bg="gray.100"
+          bg={useColorModeValue("gray.100", "gray.600")}
           my="1vh"
           px="6"
           py="4"
@@ -1087,7 +1095,7 @@ function CourseDetailInfoContainer({ course }) {
         >
           <Tabs variant="soft-rounded" size="sm">
             <HStack spacing="4">
-              <Text fontSize="2xl" fontWeight="800" color="gray.700">
+              <Text fontSize="2xl" fontWeight="800" color={headingColor}>
                 考古題資訊
                 <BetaBadge content="preview" size="sm" />
               </Text>
@@ -1112,7 +1120,7 @@ function CourseDetailInfoContainer({ course }) {
       <Flex w={{ base: "100%", lg: "30%" }} flexDirection={"column"}>
         {/* Box6 */}
         <Flex
-          bg="gray.100"
+          bg={useColorModeValue("gray.100", "gray.600")}
           h={{ base: "", md: "55vh" }}
           my="1vh"
           px="6"
@@ -1124,7 +1132,7 @@ function CourseDetailInfoContainer({ course }) {
           flexShrink={1}
         >
           <VStack h="95%" align="start">
-            <Text fontSize="2xl" fontWeight="800" color="gray.700">
+            <Text fontSize="2xl" fontWeight="800" color={headingColor}>
               課程大綱
             </Text>
             <SyllabusPanel
@@ -1137,8 +1145,8 @@ function CourseDetailInfoContainer({ course }) {
         </Flex>
         {/* Box7 */}
         <Flex
+          bg={useColorModeValue("gray.100", "gray.600")}
           h={{ base: "", md: "31vh" }}
-          bg="gray.100"
           my="1vh"
           px="6"
           py="4"
@@ -1148,7 +1156,7 @@ function CourseDetailInfoContainer({ course }) {
           flexGrow={1}
           flexShrink={1}
         >
-          <Text fontSize="2xl" fontWeight="800" color="gray.700">
+          <Text fontSize="2xl" fontWeight="800" color={headingColor}>
             評分方式
           </Text>
           <GradePolicyPanel

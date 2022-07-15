@@ -14,6 +14,7 @@ import {
   MenuDivider,
   useToast,
   Stack,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import Image from "next/image";
 import CourseDetailInfoContainer from "components/CourseInfo/CourseDetailInfoContainer";
@@ -65,6 +66,8 @@ export async function getServerSideProps({ params }) {
 }
 
 function CourseInfoPage({ code, course }) {
+  const bgcolor = useColorModeValue("white", "gray.800");
+  const headingColor = useColorModeValue("heading.light", "heading.dark");
   const { setUser, user: userInfo } = useUserData();
   const { setCourseTable } = useCourseTable();
   const router = useRouter();
@@ -437,7 +440,7 @@ function CourseInfoPage({ code, course }) {
           justifyContent={"center"}
           position={{ base: "fixed", lg: "static" }}
           zIndex={{ base: 100, lg: 0 }}
-          bg="white"
+          bg={bgcolor}
         >
           <HStack
             my="2"
@@ -477,7 +480,7 @@ function CourseInfoPage({ code, course }) {
                 <Text
                   fontSize={{ base: "xl", lg: "3xl" }}
                   fontWeight="800"
-                  color="gray.700"
+                  color={headingColor}
                   maxW={{ base: "100px", md: "30vw" }}
                   isTruncated
                   noOfLines={1}

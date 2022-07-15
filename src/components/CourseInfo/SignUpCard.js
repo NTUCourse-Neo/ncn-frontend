@@ -20,6 +20,7 @@ import {
   Textarea,
   useToast,
   useDisclosure,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import {
@@ -226,7 +227,7 @@ function SignUpCard({
       justifyContent="space-around"
       alignItems="start"
       flexDirection={{ base: "column", md: "row" }}
-      bg="gray.200"
+      bg={useColorModeValue("gray.200", "gray.700")}
       borderRadius="lg"
       boxShadow="lg"
     >
@@ -256,7 +257,11 @@ function SignUpCard({
       <VStack mt={{ base: 4, md: 0 }} w={{ base: "100%", md: "70%" }} h="100%">
         <VStack w="100%" h="100%" justify="start" align="start">
           <HStack w="100%">
-            <Text fontSize="sm" fontWeight="600" color="gray.800">
+            <Text
+              fontSize="sm"
+              fontWeight="600"
+              color={useColorModeValue("gray.800", "gray.300")}
+            >
               更多資訊
             </Text>
             <Tooltip
@@ -296,7 +301,7 @@ function SignUpCard({
             <Text
               fontSize="md"
               fontWeight="600"
-              color="gray.600"
+              color={useColorModeValue("gray.600", "gray.400")}
               overflow="auto"
               wordBreak="break-all"
             >
@@ -325,7 +330,7 @@ function SignUpCard({
             {post.upvotes}
           </Button>
           <Button
-            colorScheme="orange"
+            colorScheme={useColorModeValue("orange", "red")}
             variant={post.self_vote_status === -1 ? "solid" : "ghost"}
             size="xs"
             leftIcon={<FaThumbsDown />}

@@ -1,8 +1,18 @@
 import React from "react";
-import { Badge, Flex, Spacer, Text, VStack, Icon } from "@chakra-ui/react";
+import {
+  Badge,
+  Flex,
+  Spacer,
+  Text,
+  VStack,
+  Icon,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import { IoMdOpen } from "react-icons/io";
 
 function PTTContentRowContainer({ info, ...restProps }) {
+  const rowColor = useColorModeValue("blue.50", "#2B6CB030");
+  const textColor = useColorModeValue("text.light", "text.dark");
   return (
     <Flex w="100%" mb="0" overflow="auto" flexDirection="column" {...restProps}>
       <VStack>
@@ -14,7 +24,7 @@ function PTTContentRowContainer({ info, ...restProps }) {
             my="1"
             w="100%"
             h="10"
-            bg="blue.50"
+            bg={rowColor}
             justifyContent="start"
             alignItems="center"
             borderRadius="lg"
@@ -28,7 +38,7 @@ function PTTContentRowContainer({ info, ...restProps }) {
               w="50%"
               mr="2"
               fontSize="md"
-              color="gray.700"
+              color={textColor}
               fontWeight="500"
               textAlign="start"
               noOfLines={1}
