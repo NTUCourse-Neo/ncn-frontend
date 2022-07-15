@@ -22,6 +22,7 @@ import {
   Text,
   HStack,
   ButtonGroup,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { FaPlus, FaHeart, FaInfoCircle } from "react-icons/fa";
 import { info_view_map } from "data/mapping_table";
@@ -69,6 +70,7 @@ function DeptBadge({ course }) {
 }
 
 function DrawerDataTag({ fieldName, label }) {
+  const textColor = useColorModeValue("text.light", "text.dark");
   if (label === "" || label === null || label === undefined) {
     return <></>;
   }
@@ -83,7 +85,7 @@ function DrawerDataTag({ fieldName, label }) {
       <Badge variant="solid" colorScheme="gray">
         {fieldName}
       </Badge>
-      <Heading as="h3" color="gray.600" fontSize="sm" ml="4px">
+      <Heading as="h3" color={textColor} fontSize="sm" ml="4px">
         {label}
       </Heading>
     </Flex>
@@ -142,10 +144,20 @@ function CourseDrawerContainer({ courseInfo }) {
           justifyContent="start"
           p="2"
         >
-          <Heading as="h3" color="gray.600" fontSize="lg" ml="4px" mb="1">
+          <Heading
+            as="h3"
+            color={useColorModeValue("heading.light", "heading.dark")}
+            fontSize="lg"
+            ml="4px"
+            mb="1"
+          >
             修課限制
           </Heading>
-          <Text fontSize="sm" color="gray.800" mx="4px">
+          <Text
+            fontSize="sm"
+            color={useColorModeValue("text.light", "text.dark")}
+            mx="4px"
+          >
             {courseInfo.limit === "" ? "無" : courseInfo.limit}
           </Text>
         </Flex>
@@ -156,10 +168,20 @@ function CourseDrawerContainer({ courseInfo }) {
           justifyContent="start"
           p="2"
         >
-          <Heading as="h3" color="gray.600" fontSize="lg" ml="4px" mb="1">
+          <Heading
+            as="h3"
+            color={useColorModeValue("heading.light", "heading.dark")}
+            fontSize="lg"
+            ml="4px"
+            mb="1"
+          >
             備註
           </Heading>
-          <Text fontSize="sm" color="gray.800" mx="4px">
+          <Text
+            fontSize="sm"
+            color={useColorModeValue("text.light", "text.dark")}
+            mx="4px"
+          >
             {courseInfo.note === "" ? "無" : courseInfo.note}
           </Text>
         </Flex>
@@ -214,6 +236,15 @@ function CourseInfoRow({
   displayTags,
   displayTable,
 }) {
+  const rowColor = useColorModeValue("card.light", "card.dark");
+  const textColor = useColorModeValue("text.light", "text.dark");
+  const headingColor = useColorModeValue("heading.light", "heading.dark");
+  const tooltipBg = useColorModeValue("gray.600", "gray.300");
+  const tooltipText = useColorModeValue("white", "black");
+  const selectedColor = useColorModeValue(
+    hash_to_color_hex(courseInfo._id, 0.95),
+    `${hash_to_color_hex(courseInfo._id, 0.45)}90`
+  );
   const { setCourseTable } = useCourseTable();
   const router = useRouter();
   const { user: userInfo, setUser } = useUserData();
@@ -423,7 +454,7 @@ function CourseInfoRow({
 
   return (
     <AccordionItem
-      bg={selected ? hash_to_color_hex(courseInfo._id, 0.95) : "gray.100"}
+      bg={selected ? selectedColor : rowColor}
       borderRadius="md"
       transition="all ease-in-out 500ms"
     >
@@ -457,8 +488,8 @@ function CourseInfoRow({
                 hasArrow
                 placement="top"
                 label="課程流水號"
-                bg="gray.600"
-                color="white"
+                bg={tooltipBg}
+                color={tooltipText}
               >
                 <Badge variant="outline" mr="4px">
                   {courseInfo.id}
@@ -470,14 +501,14 @@ function CourseInfoRow({
               <Heading
                 as="h3"
                 size={useBreakpointValue({ base: "sm", md: "md" }) ?? "sm"}
-                color="gray.600"
+                color={headingColor}
               >
                 {courseInfo.course_name}
               </Heading>
               <Heading
                 as="h3"
                 size={useBreakpointValue({ base: "xs", md: "sm" }) ?? "xs"}
-                color="gray.500"
+                color={textColor}
                 fontWeight="500"
                 display={{ base: "inline-block", md: "none" }}
               >
@@ -489,8 +520,8 @@ function CourseInfoRow({
                 hasArrow
                 placement="top"
                 label="課程流水號"
-                bg="gray.600"
-                color="white"
+                bg={tooltipBg}
+                color={tooltipText}
               >
                 <Badge
                   variant="outline"
@@ -503,8 +534,8 @@ function CourseInfoRow({
                 hasArrow
                 placement="top"
                 label={courseInfo.credit + " 學分"}
-                bg="gray.600"
-                color="white"
+                bg={tooltipBg}
+                color={tooltipText}
               >
                 <Badge variant="outline" mx={{ base: 0, md: 4 }}>
                   {courseInfo.credit}
@@ -517,7 +548,7 @@ function CourseInfoRow({
             <Heading
               as="h3"
               size="sm"
-              color="gray.500"
+              color={textColor}
               fontWeight="500"
               display={{ base: "none", md: "flex" }}
             >
@@ -528,8 +559,8 @@ function CourseInfoRow({
                 hasArrow
                 placement="top"
                 label={courseInfo.time_loc}
-                bg="gray.600"
-                color="white"
+                bg={tooltipBg}
+                color={tooltipText}
               >
                 <Badge
                   variant="outline"
@@ -584,8 +615,8 @@ function CourseInfoRow({
                     hasArrow
                     placement="top"
                     label={tooltip_str}
-                    bg="gray.600"
-                    color="white"
+                    bg={tooltipBg}
+                    color={tooltipText}
                     key={index}
                   >
                     <Tag
@@ -608,8 +639,8 @@ function CourseInfoRow({
                   hasArrow
                   placement="top"
                   label={info_view_map[tag].name}
-                  bg="gray.600"
-                  color="white"
+                  bg={tooltipBg}
+                  color={tooltipText}
                   key={index}
                 >
                   <Tag
