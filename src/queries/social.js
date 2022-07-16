@@ -1,9 +1,10 @@
 import instance from "queries/axiosInstance";
+const api_version = "v1";
 
 const getSocialPostByPostId = async (token, post_id) => {
   const {
     data: { post },
-  } = await instance.get(`/social/posts/${post_id}`, {
+  } = await instance.get(`${api_version}/social/posts/${post_id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -13,7 +14,7 @@ const getSocialPostByPostId = async (token, post_id) => {
 
 const reportSocialPost = async (token, post_id, report) => {
   await instance.post(
-    `/social/posts/${post_id}/report`,
+    `${api_version}/social/posts/${post_id}/report`,
     {
       report: report,
       // includes: content, post_type, user_type
@@ -28,7 +29,7 @@ const reportSocialPost = async (token, post_id, report) => {
 
 const voteSocialPost = async (token, post_id, type) => {
   await instance.patch(
-    `/social/posts/${post_id}/votes`,
+    `${api_version}/social/posts/${post_id}/votes`,
     {
       type: type,
       // includes: content, post_type, user_type
@@ -42,7 +43,7 @@ const voteSocialPost = async (token, post_id, type) => {
 };
 
 const deleteSocialPost = async (token, post_id) => {
-  await instance.delete(`/social/posts/${post_id}/`, {
+  await instance.delete(`${api_version}/social/posts/${post_id}/`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -51,7 +52,7 @@ const deleteSocialPost = async (token, post_id) => {
 
 const createSocialPost = async (token, course_id, post) => {
   await instance.post(
-    `/social/courses/${course_id}/posts`,
+    `${api_version}/social/courses/${course_id}/posts`,
     {
       post: post,
       // includes: content, post_type, user_type
@@ -67,7 +68,7 @@ const createSocialPost = async (token, course_id, post) => {
 const getSocialPostByCourseId = async (token, course_id) => {
   const {
     data: { posts },
-  } = await instance.get(`/social/courses/${course_id}/posts`, {
+  } = await instance.get(`${api_version}/social/courses/${course_id}/posts`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

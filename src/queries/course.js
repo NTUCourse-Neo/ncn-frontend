@@ -1,9 +1,10 @@
 import instance from "queries/axiosInstance";
+const api_version = "v2";
 
 export const fetchSearchIDs = async (searchString, paths) => {
   const {
     data: { ids },
-  } = await instance.post(`/courses/search`, {
+  } = await instance.post(`${api_version}/courses/search`, {
     query: searchString,
     paths: paths,
   });
@@ -35,7 +36,7 @@ export const fetchSearchResults = async (
   }
   const {
     data: { courses, total_count },
-  } = await instance.post(`/courses/ids`, {
+  } = await instance.post(`${api_version}/courses/ids`, {
     ids: ids_arr,
     filter: search_filter,
     batch_size: batchSize,
@@ -58,7 +59,7 @@ export const fetchCourse = async (id) => {
   const offset = 0;
   const {
     data: { courses },
-  } = await instance.post(`/courses/ids`, {
+  } = await instance.post(`${api_version}/courses/ids`, {
     ids: [id],
     filter: search_filter,
     batch_size: batchSize,
@@ -71,7 +72,7 @@ export const fetchCourse = async (id) => {
 export const getCourseEnrollInfo = async (token, course_id) => {
   const {
     data: { course_status },
-  } = await instance.get(`/courses/${course_id}/enrollinfo`, {
+  } = await instance.get(`${api_version}/courses/${course_id}/enrollinfo`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -82,7 +83,7 @@ export const getCourseEnrollInfo = async (token, course_id) => {
 export const getNTURatingData = async (token, course_id) => {
   const {
     data: { course_rating },
-  } = await instance.get(`/courses/${course_id}/rating`, {
+  } = await instance.get(`${api_version}/courses/${course_id}/rating`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -93,7 +94,7 @@ export const getNTURatingData = async (token, course_id) => {
 export const getPTTData = async (token, course_id, type) => {
   const {
     data: { course_rating },
-  } = await instance.get(`/courses/${course_id}/ptt/${type}`, {
+  } = await instance.get(`${api_version}/courses/${course_id}/ptt/${type}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -104,7 +105,7 @@ export const getPTTData = async (token, course_id, type) => {
 export const getCourseSyllabusData = async (course_id) => {
   const {
     data: { course_syllabus },
-  } = await instance.get(`/courses/${course_id}/syllabus`);
+  } = await instance.get(`${api_version}/courses/${course_id}/syllabus`);
   return course_syllabus;
 };
 
@@ -121,7 +122,7 @@ export const fetchCourseTableCoursesByIds = async (ids_arr) => {
   const offset = 0;
   const {
     data: { courses },
-  } = await instance.post(`/courses/ids`, {
+  } = await instance.post(`${api_version}/courses/ids`, {
     ids: ids_arr,
     filter: search_filter,
     batch_size: batchSize,
@@ -143,7 +144,7 @@ export const fetchFavoriteCourses = async (ids_arr) => {
   const offset = 0;
   const {
     data: { courses },
-  } = await instance.post(`/courses/ids`, {
+  } = await instance.post(`${api_version}/courses/ids`, {
     ids: ids_arr,
     filter: search_filter,
     batch_size: batchSize,

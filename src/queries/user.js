@@ -1,7 +1,8 @@
 import instance from "queries/axiosInstance";
+const api_version = "v2";
 
 export const deleteUserProfile = async (token) => {
-  await instance.delete(`/users/profile`, {
+  await instance.delete(`${api_version}/users/profile`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -16,7 +17,7 @@ export const linkCoursetableToUser = async (
   const {
     data: { user },
   } = await instance.post(
-    `/users/${user_id}/course_table`,
+    `${api_version}/users/${user_id}/course_table`,
     { course_table_id: course_table_id },
     {
       headers: {
@@ -31,7 +32,7 @@ export const addFavoriteCourse = async (token, new_favorite_list) => {
   const {
     data: { user },
   } = await instance.patch(
-    `/users/`,
+    `${api_version}/users/`,
     { user: { favorites: new_favorite_list } },
     {
       headers: {
@@ -46,7 +47,7 @@ export const patchUserInfo = async (token, updateObject) => {
   const {
     data: { user },
   } = await instance.patch(
-    `/users/`,
+    `${api_version}/users/`,
     { user: updateObject },
     {
       headers: {
@@ -58,7 +59,7 @@ export const patchUserInfo = async (token, updateObject) => {
 };
 
 export const deleteUserAccount = async (token) => {
-  await instance.delete(`/users/account`, {
+  await instance.delete(`${api_version}/users/account`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -68,7 +69,7 @@ export const deleteUserAccount = async (token) => {
 export const fetchUserById = async (token, user_id) => {
   const {
     data: { user },
-  } = await instance.get(`/users/${user_id}`, {
+  } = await instance.get(`${api_version}/users/${user_id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -81,7 +82,7 @@ export const registerNewUser = async (token, email) => {
   const {
     data: { user },
   } = await instance.post(
-    `/users/`,
+    `${api_version}/users/`,
     { user: { email: email } },
     {
       headers: {

@@ -1,4 +1,5 @@
 import instance from "queries/axiosInstance";
+const api_version = "v2";
 
 export const createCourseTable = async (
   course_table_id,
@@ -8,7 +9,7 @@ export const createCourseTable = async (
 ) => {
   const {
     data: { course_table },
-  } = await instance.post(`/course_tables/`, {
+  } = await instance.post(`${api_version}/course_tables/`, {
     id: course_table_id,
     name: course_table_name,
     user_id: user_id,
@@ -20,7 +21,7 @@ export const createCourseTable = async (
 export const fetchCourseTable = async (course_table_id) => {
   const {
     data: { course_table },
-  } = await instance.get(`/course_tables/${course_table_id}`);
+  } = await instance.get(`${api_version}/course_tables/${course_table_id}`);
   return course_table;
 };
 
@@ -35,7 +36,7 @@ export const patchCourseTable = async (
   const new_courses = courses.filter((course) => course !== "");
   const {
     data: { course_table },
-  } = await instance.patch(`/course_tables/${course_table_id}`, {
+  } = await instance.patch(`${api_version}/course_tables/${course_table_id}`, {
     name: course_table_name,
     user_id: user_id,
     expire_ts: expire_ts,
