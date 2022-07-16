@@ -236,58 +236,19 @@ export default function UserInfoPage({ user }) {
 
   // states for updating userInfo
   const [name, setName] = useState(userInfo ? userInfo.db.name : null);
-  const [major, setMajor] = useState(
-    userInfo ? userInfo.db.department.major : null
-  );
+  const [major, setMajor] = useState(userInfo ? userInfo.db.major : null);
   const [doubleMajor, setDoubleMajor] = useState(
-    userInfo ? userInfo.db.department.d_major : null
+    userInfo ? userInfo.db.d_major : null
   );
-  const [minor, setMinor] = useState(
-    userInfo ? userInfo.db.department.minors : null
-  ); // arr
+  const [minor, setMinor] = useState(userInfo ? userInfo.db.minors : null); // arr
   const [saveLoading, setSaveLoading] = useState(false);
 
   // alert dialog states
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [deleteMode, setDeleteMode] = useState(null);
 
-  const generateUpdateObject = () => {
-    const updateObject = {};
-    if (name !== userInfo.db.name) {
-      updateObject.name = name;
-    }
-    const new_department = {};
-    if (major !== userInfo.db.department.major) {
-      new_department.major = major;
-    } else {
-      new_department.major = userInfo.db.department.major;
-    }
-    if (doubleMajor !== userInfo.db.department.d_major) {
-      new_department.d_major = doubleMajor;
-    } else {
-      new_department.d_major = userInfo.db.department.d_major;
-    }
-    if (minor !== userInfo.db.department.minors) {
-      new_department.minors = minor;
-    } else {
-      new_department.minors = userInfo.db.department.minors;
-    }
-
-    if (new_department !== userInfo.db.department) {
-      updateObject.department = new_department;
-    }
-    // console.log('updateObject: ', updateObject);
-    return updateObject;
-  };
-
-  // TODO
   const updateUserInfo = async () => {
-    const updateObject = generateUpdateObject();
-    if (
-      (updateObject.department.major === updateObject.department.d_major &&
-        updateObject.department.major !== "") ||
-      updateObject.department.minors.includes(updateObject.department.major)
-    ) {
+    if ((major === doubleMajor && major !== "") || minor.includes(major)) {
       toast({
         title: "更改用戶資料失敗.",
         description: "主修不能跟雙主修或輔系一樣",
@@ -297,9 +258,7 @@ export default function UserInfoPage({ user }) {
       });
       return;
     }
-    if (
-      updateObject.department.minors.includes(updateObject.department.d_major)
-    ) {
+    if (minor.includes(doubleMajor)) {
       toast({
         title: "更改用戶資料失敗.",
         description: "雙主修不能出現在輔系",
@@ -311,7 +270,16 @@ export default function UserInfoPage({ user }) {
     }
     try {
       const updatedUser = await handleFetch("/api/user/patch", {
-        updated_obj: updateObject,
+        newUser: {
+          ...userInfo,
+          db: {
+            ...userInfo.db,
+            name: name,
+            major: major,
+            d_major: doubleMajor,
+            minors: minor,
+          },
+        },
       });
       setUser(updatedUser);
       toast({
@@ -367,9 +335,9 @@ export default function UserInfoPage({ user }) {
   useEffect(() => {
     if (userInfo) {
       setName(userInfo.db.name);
-      setMajor(userInfo.db.department.major);
-      setDoubleMajor(userInfo.db.department.d_major);
-      setMinor(userInfo.db.department.minors);
+      setMajor(userInfo.db.major);
+      setDoubleMajor(userInfo.db.d_major);
+      setMinor(userInfo.db.minors);
     }
   }, [userInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 

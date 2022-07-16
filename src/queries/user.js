@@ -43,12 +43,12 @@ export const addFavoriteCourse = async (token, new_favorite_list) => {
   return user;
 };
 
-export const patchUserInfo = async (token, updateObject) => {
+export const patchUserInfo = async (token, newUser) => {
   const {
     data: { user },
   } = await instance.patch(
     `${api_version}/users/`,
-    { user: updateObject },
+    { user: newUser },
     {
       headers: {
         Authorization: `Bearer ${token}`,

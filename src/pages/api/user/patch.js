@@ -4,12 +4,12 @@ import { assertNotNil } from "utils/assert";
 
 export default withApiAuthRequired(async function handler(req, res) {
   try {
-    const { updated_obj } = req.body;
+    const { newUser } = req.body;
     const { accessToken } = await getAccessToken(req, res);
-    if (!assertNotNil(updated_obj)) {
+    if (!assertNotNil(newUser)) {
       res.status(400).json({ error: "Missing user_id" });
     } else {
-      const user_data = await patchUserInfo(accessToken, updated_obj);
+      const user_data = await patchUserInfo(accessToken, newUser);
       return res.status(200).json(user_data);
     }
   } catch (error) {
