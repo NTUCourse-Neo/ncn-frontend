@@ -1,12 +1,13 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
+# For production environment
 
 name: Azure Web App deploy - ncn-frontend-v2
 
 on:
   push:
     branches:
-      - nextjs-migration
+      - master
   workflow_dispatch:
 
 env:
