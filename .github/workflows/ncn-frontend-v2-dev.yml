@@ -79,6 +79,6 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: "ncn-frontend-v2-dev"
-          slot-name: "Dev"
+          slot-name: "Production"
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_EEEE4CF99BDD4E84809AEE36522214C4 }}
           package: .
