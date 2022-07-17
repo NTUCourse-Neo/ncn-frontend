@@ -2,7 +2,7 @@
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 # For staging environment
 
-name: Azure Web App deploy - ncn-frontend-v2
+name: Azure Web App deploy - ncn-frontend-v2-dev
 
 on:
   pull_request:
