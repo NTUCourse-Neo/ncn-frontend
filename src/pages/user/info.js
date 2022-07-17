@@ -228,27 +228,53 @@ export default function UserInfoPage({ user }) {
   const router = useRouter();
   const toast = useToast();
   const deptOptions = dept_list_bachelor_only.map((dept) => ({
-    value: dept.full_name,
-    label: dept.code + " " + dept.full_name,
+    value: dept.code,
+    label: `${dept.code} ${dept.full_name}`,
   }));
-
+  const departmentMap = dept_list_bachelor_only.reduce((acc, department) => {
+    return { ...acc, [department.code]: department.full_name };
+  }, {});
+  const [saveLoading, setSaveLoading] = useState(false);
   const userLoading = !userInfo;
 
   // states for updating userInfo
-  const [name, setName] = useState(userInfo ? userInfo.db.name : null);
-  const [major, setMajor] = useState(userInfo ? userInfo.db.major : null);
+  const [name, setName] = useState(userInfo?.db?.name ?? "");
+  const [major, setMajor] = useState(userInfo?.db?.major?.id ?? null);
   const [doubleMajor, setDoubleMajor] = useState(
-    userInfo ? userInfo.db.d_major : null
+    userInfo?.db?.d_major?.id ?? null
   );
-  const [minor, setMinor] = useState(userInfo ? userInfo.db.minors : null); // arr
-  const [saveLoading, setSaveLoading] = useState(false);
+  const [minor, setMinor] = useState(
+    userInfo?.db?.minors.map((d) => d.id) ?? []
+  );
+
+  useEffect(() => {
+    if (userInfo) {
+      setName(userInfo?.db?.name ?? "");
+      setMajor(userInfo?.db?.major?.id ?? null);
+      setDoubleMajor(userInfo?.db?.d_major?.id ?? null);
+      setMinor(userInfo?.db?.minors.map((d) => d.id) ?? []);
+    }
+  }, [userInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // alert dialog states
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [deleteMode, setDeleteMode] = useState(null);
 
   const updateUserInfo = async () => {
-    if ((major === doubleMajor && major !== "") || minor.includes(major)) {
+    if (!major) {
+      toast({
+        title: "更改用戶資料失敗.",
+        description: "主修不能為空",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+    if (
+      (major.id === doubleMajor.id && major.id !== "") ||
+      minor.includes(major.id)
+    ) {
       toast({
         title: "更改用戶資料失敗.",
         description: "主修不能跟雙主修或輔系一樣",
@@ -327,15 +353,6 @@ export default function UserInfoPage({ user }) {
 
     fetchUserInfo();
   }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    if (userInfo) {
-      setName(userInfo.db.name);
-      setMajor(userInfo.db.major);
-      setDoubleMajor(userInfo.db.d_major);
-      setMinor(userInfo.db.minors);
-    }
-  }, [userInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (userLoading) {
     return (
@@ -468,84 +485,68 @@ export default function UserInfoPage({ user }) {
                 主修
               </Text>
               <Flex w="100%" alignItems="center">
-                {/* react selector */}
-                {major === null ? (
-                  <></>
-                ) : (
-                  <Box w={{ base: "100%", md: "20vw" }} color={textColor}>
-                    <Select
-                      className="basic-single"
-                      classNamePrefix="select"
-                      defaultValue={
-                        major === ""
-                          ? { value: "", label: "請選擇" }
-                          : { value: major, label: major }
-                      }
-                      isSearchable={TextTrackCue}
-                      options={deptOptions}
-                      onChange={(e) => {
-                        setMajor(e.value);
-                      }}
-                    />
-                  </Box>
-                )}
+                <Box w={{ base: "100%", md: "20vw" }} color={textColor}>
+                  <Select
+                    className="basic-single"
+                    classNamePrefix="select"
+                    defaultValue={{
+                      value: major,
+                      label: departmentMap?.[major] ?? "請擇",
+                    }}
+                    isSearchable={TextTrackCue}
+                    options={[{ value: null, label: "請選擇" }, ...deptOptions]}
+                    onChange={(e) => {
+                      setMajor(e.value);
+                    }}
+                  />
+                </Box>
               </Flex>
               <Text my="4" fontSize="xl" fontWeight="700" color={textColor}>
                 雙主修
               </Text>
               <Flex w="100%" alignItems="center">
-                {/* react selector */}
-                {doubleMajor === null ? (
-                  <></>
-                ) : (
-                  <Box w={{ base: "100%", md: "20vw" }} color={textColor}>
-                    <Select
-                      className="basic-single"
-                      classNamePrefix="select"
-                      defaultValue={
-                        doubleMajor === ""
-                          ? { value: "", label: " 請選擇 " }
-                          : { value: doubleMajor, label: doubleMajor }
-                      }
-                      isSearchable={TextTrackCue}
-                      options={[
-                        { value: "", label: " 請選擇 " },
-                        ...deptOptions,
-                      ]}
-                      onChange={(e) => {
-                        setDoubleMajor(e.value);
-                      }}
-                    />
-                  </Box>
-                )}
+                <Box w={{ base: "100%", md: "20vw" }} color={textColor}>
+                  <Select
+                    className="basic-single"
+                    classNamePrefix="select"
+                    defaultValue={{
+                      value: doubleMajor,
+                      label: departmentMap?.[doubleMajor] ?? "請擇",
+                    }}
+                    isSearchable={TextTrackCue}
+                    options={[{ value: null, label: "請選擇" }, ...deptOptions]}
+                    onChange={(e) => {
+                      setMajor(e.value);
+                    }}
+                  />
+                </Box>
               </Flex>
               <Text my="4" fontSize="xl" fontWeight="700" color={textColor}>
                 輔系
               </Text>
               <Flex w="100%" alignItems="center">
-                {/* react selector */}
-                {minor === null ? (
-                  <></>
-                ) : (
-                  <Box w={{ base: "100%", md: "20vw" }} color={textColor}>
-                    <Select
-                      isMulti
-                      w="100%"
-                      className="basic-single"
-                      classNamePrefix="select"
-                      defaultValue={minor.map((dept) => ({
-                        value: dept,
-                        label: dept,
-                      }))}
-                      isSearchable={TextTrackCue}
-                      name="color"
-                      options={deptOptions}
-                      onChange={(e) => {
-                        setMinor(e.map((dept) => dept.value));
-                      }}
-                    />
-                  </Box>
-                )}
+                <Box w={{ base: "100%", md: "20vw" }} color={textColor}>
+                  <Select
+                    isMulti
+                    w="100%"
+                    className="basic-single"
+                    classNamePrefix="select"
+                    defaultValue={
+                      minor
+                        ? minor.map((dept) => ({
+                            value: dept,
+                            label: departmentMap?.[dept] ?? "請選擇",
+                          }))
+                        : []
+                    }
+                    isSearchable={TextTrackCue}
+                    name="color"
+                    options={deptOptions}
+                    onChange={(e) => {
+                      setMinor(e.map((dept) => dept.value));
+                    }}
+                  />
+                </Box>
               </Flex>
             </Flex>
             <HStack spacing={4} alignItems="center" mt="5">
