@@ -271,14 +271,10 @@ export default function UserInfoPage({ user }) {
     try {
       const updatedUser = await handleFetch("/api/user/patch", {
         newUser: {
-          ...userInfo,
-          db: {
-            ...userInfo.db,
-            name: name,
-            major: major,
-            d_major: doubleMajor,
-            minors: minor,
-          },
+          name: name,
+          major: major,
+          d_major: doubleMajor,
+          minors: minor,
         },
       });
       setUser(updatedUser);
