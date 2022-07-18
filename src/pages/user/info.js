@@ -235,7 +235,8 @@ export default function UserInfoPage({ user }) {
     return { ...acc, [department.code]: department.full_name };
   }, {});
   const [saveLoading, setSaveLoading] = useState(false);
-  const userLoading = !userInfo;
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [deleteMode, setDeleteMode] = useState(null);
 
   // states for updating userInfo
   const [name, setName] = useState(userInfo?.db?.name ?? "");
@@ -256,10 +257,6 @@ export default function UserInfoPage({ user }) {
     }
   }, [userInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // alert dialog states
-  const [isAlertOpen, setIsAlertOpen] = useState(false);
-  const [deleteMode, setDeleteMode] = useState(null);
-
   const updateUserInfo = async () => {
     if (!major) {
       toast({
@@ -272,8 +269,8 @@ export default function UserInfoPage({ user }) {
       return;
     }
     if (
-      (major.id === doubleMajor.id && major.id !== "") ||
-      minor.includes(major.id)
+      (major === doubleMajor && major && doubleMajor) ||
+      minor.includes(major)
     ) {
       toast({
         title: "更改用戶資料失敗.",
@@ -354,7 +351,7 @@ export default function UserInfoPage({ user }) {
     fetchUserInfo();
   }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (userLoading) {
+  if (!userInfo) {
     return (
       <Box maxW="screen-md" h="95vh" mx="auto" overflow="visible" p="64px">
         <Flex
@@ -490,8 +487,12 @@ export default function UserInfoPage({ user }) {
                     className="basic-single"
                     classNamePrefix="select"
                     defaultValue={{
-                      value: major,
-                      label: departmentMap?.[major] ?? "請擇",
+                      value: userInfo?.db?.major?.id ?? null,
+                      label: departmentMap?.[userInfo?.db?.major?.id]
+                        ? `${userInfo?.db?.major?.id} ${
+                            departmentMap?.[userInfo?.db?.major?.id]
+                          }`
+                        : "請選擇",
                     }}
                     isSearchable={TextTrackCue}
                     options={[{ value: null, label: "請選擇" }, ...deptOptions]}
@@ -510,13 +511,17 @@ export default function UserInfoPage({ user }) {
                     className="basic-single"
                     classNamePrefix="select"
                     defaultValue={{
-                      value: doubleMajor,
-                      label: departmentMap?.[doubleMajor] ?? "請擇",
+                      value: userInfo?.db?.d_major?.id ?? null,
+                      label: departmentMap?.[userInfo?.db?.d_major?.id]
+                        ? `${userInfo?.db?.d_major?.id} ${
+                            departmentMap?.[userInfo?.db?.d_major?.id]
+                          }`
+                        : "請選擇",
                     }}
                     isSearchable={TextTrackCue}
                     options={[{ value: null, label: "請選擇" }, ...deptOptions]}
                     onChange={(e) => {
-                      setMajor(e.value);
+                      setDoubleMajor(e.value);
                     }}
                   />
                 </Box>
@@ -532,11 +537,18 @@ export default function UserInfoPage({ user }) {
                     className="basic-single"
                     classNamePrefix="select"
                     defaultValue={
-                      minor
-                        ? minor.map((dept) => ({
-                            value: dept,
-                            label: departmentMap?.[dept] ?? "請選擇",
-                          }))
+                      userInfo?.db?.minors
+                        ? userInfo?.db?.minors
+                            .map((dept) => ({
+                              value: dept?.id ?? null,
+                              label: departmentMap?.[dept?.id]
+                                ? `${dept?.id} ${departmentMap?.[dept?.id]}`
+                                : null,
+                            }))
+                            .filter(
+                              (option) =>
+                                option.value !== null && option.label !== null
+                            )
                         : []
                     }
                     isSearchable={TextTrackCue}

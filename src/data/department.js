@@ -1,3 +1,4 @@
+// IMPORTANT: Should keep these data consistent with DB's department table
 const dept_list = [
   {
     code: "0020",
