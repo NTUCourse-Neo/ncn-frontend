@@ -35,19 +35,17 @@ import { fetchCourseTable, patchCourseTable } from "queries/courseTable";
 import { useRouter } from "next/router";
 import { useUser } from "@auth0/nextjs-auth0";
 import handleFetch from "utils/CustomFetch";
+import { useDisplayTags } from "components/Providers/DisplayTagsProvider";
+import parseCourseSchedlue from "utils/parseCourseSchedule";
 
 const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
 function DeptBadge({ course }) {
-  if (
-    !course.department ||
-    course.department.length === 0 ||
-    (course.department.length === 1 && course.department[0].length === 0)
-  ) {
+  if (!course.department || course.department.length === 0) {
     return <></>;
   }
   if (course.department.length > 1) {
-    const dept_str = course.department.join(", ");
+    const dept_str = course.department.map((d) => d.name_full).join(", ");
     return (
       <Tooltip
         hasArrow
@@ -64,7 +62,7 @@ function DeptBadge({ course }) {
   }
   return (
     <Badge colorScheme="blue" variant="solid" mr="4px">
-      {course?.department[0] ?? ""}
+      {course?.department?.[0]?.name_full ?? ""}
     </Badge>
   );
 }
@@ -109,9 +107,9 @@ function CourseDrawerContainer({ courseInfo }) {
         flexWrap="wrap"
         css={{ gap: ".5rem" }}
       >
-        <DrawerDataTag fieldName={"課程識別碼"} label={courseInfo.course_id} />
-        <DrawerDataTag fieldName={"課號"} label={courseInfo.course_code} />
-        <DrawerDataTag fieldName={"班次"} label={courseInfo.class_id} />
+        <DrawerDataTag fieldName={"課程識別碼"} label={courseInfo.identifier} />
+        <DrawerDataTag fieldName={"課號"} label={courseInfo.code} />
+        <DrawerDataTag fieldName={"班次"} label={courseInfo.class} />
         <DrawerDataTag
           fieldName={info_view_map.enroll_method.name}
           label={info_view_map.enroll_method.map[courseInfo.enroll_method]}
@@ -158,7 +156,7 @@ function CourseDrawerContainer({ courseInfo }) {
             color={useColorModeValue("text.light", "text.dark")}
             mx="4px"
           >
-            {courseInfo.limit === "" ? "無" : courseInfo.limit}
+            {courseInfo?.limitation ?? "無"}
           </Text>
         </Flex>
         <Flex
@@ -182,7 +180,9 @@ function CourseDrawerContainer({ courseInfo }) {
             color={useColorModeValue("text.light", "text.dark")}
             mx="4px"
           >
-            {courseInfo.note === "" ? "無" : courseInfo.note}
+            {courseInfo.note === "" || !courseInfo.note
+              ? "無"
+              : courseInfo.note}
           </Text>
         </Flex>
       </Flex>
@@ -196,22 +196,15 @@ function CourseDrawerContainer({ courseInfo }) {
         css={{ gap: "2px" }}
       >
         <ButtonGroup size="sm" isAttached variant="outline" colorScheme="blue">
-          {["ceiba", "cool"].map((linkName) => {
-            const url = courseInfo.url?.[linkName];
-            if (!url || url === "") {
-              return null;
-            }
-            return (
-              <Button
-                key={`${linkName}`}
-                size="sm"
-                mr="-px"
-                onClick={() => openPage(url)}
-              >
-                {linkName.toUpperCase()}
-              </Button>
-            );
-          })}
+          {courseInfo?.cool_url ? (
+            <Button
+              size="sm"
+              mr="-px"
+              onClick={() => openPage(courseInfo.cool_url)}
+            >
+              {"NTU COOL"}
+            </Button>
+          ) : null}
         </ButtonGroup>
         <ButtonGroup>
           <Button
@@ -229,23 +222,18 @@ function CourseDrawerContainer({ courseInfo }) {
   );
 }
 
-function CourseInfoRow({
-  courseInfo,
-  selected,
-  isfavorite,
-  displayTags,
-  displayTable,
-}) {
+function CourseInfoRow({ courseInfo, selected, isfavorite, displayTable }) {
   const rowColor = useColorModeValue("card.light", "card.dark");
   const textColor = useColorModeValue("text.light", "text.dark");
   const headingColor = useColorModeValue("heading.light", "heading.dark");
   const tooltipBg = useColorModeValue("gray.600", "gray.300");
   const tooltipText = useColorModeValue("white", "black");
   const selectedColor = useColorModeValue(
-    hash_to_color_hex(courseInfo._id, 0.95),
-    `${hash_to_color_hex(courseInfo._id, 0.3)}`
+    hash_to_color_hex(courseInfo.id, 0.95),
+    `${hash_to_color_hex(courseInfo.id, 0.3)}`
   );
   const { setCourseTable } = useCourseTable();
+  const { displayTags } = useDisplayTags();
   const router = useRouter();
   const { user: userInfo, setUser } = useUserData();
 
@@ -287,7 +275,7 @@ function CourseInfoRow({
             // expired
             setCourseTable(null);
             toast({
-              title: `新增 ${course.course_name} 失敗`,
+              title: `新增 ${course.name} 失敗`,
               description: `您的課表已過期，請重新建立課表`,
               status: "error",
               duration: 3000,
@@ -307,11 +295,11 @@ function CourseInfoRow({
           // fetch course table success
           let res_table;
           let operation_str;
-          if (courseTable.courses.includes(course._id)) {
+          if (courseTable.courses.includes(course.id)) {
             // course is already in course table, remove it.
             operation_str = "刪除";
             const new_courses = courseTable.courses.filter(
-              (id) => id !== course._id
+              (id) => id !== course.id
             );
             try {
               res_table = await patchCourseTable(
@@ -331,7 +319,7 @@ function CourseInfoRow({
                 setCourseTable(null);
               }
               toast({
-                title: `刪除 ${course.course_name} 失敗`,
+                title: `刪除 ${course.name} 失敗`,
                 status: "error",
                 duration: 3000,
                 isClosable: true,
@@ -342,7 +330,7 @@ function CourseInfoRow({
           } else {
             // course is not in course table, add it.
             operation_str = "新增";
-            const new_courses = [...courseTable.courses, course._id];
+            const new_courses = [...courseTable.courses, course.id];
             try {
               res_table = await patchCourseTable(
                 uuid,
@@ -361,7 +349,7 @@ function CourseInfoRow({
                 setCourseTable(null);
               }
               toast({
-                title: `新增 ${course.course_name} 失敗`,
+                title: `新增 ${course.name} 失敗`,
                 status: "error",
                 duration: 3000,
                 isClosable: true,
@@ -372,7 +360,7 @@ function CourseInfoRow({
           }
           if (res_table) {
             toast({
-              title: `已${operation_str} ${course.course_name}`,
+              title: `已${operation_str} ${course.name}`,
               description: `課表: ${courseTable.name}`,
               status: "success",
               duration: 3000,
@@ -384,7 +372,7 @@ function CourseInfoRow({
       } else {
         // do not have course table id in local storage
         toast({
-          title: `新增 ${course.course_name} 失敗`,
+          title: `新增 ${course.name} 失敗`,
           description: `尚未建立課表`,
           status: "error",
           duration: 3000,
@@ -492,7 +480,7 @@ function CourseInfoRow({
                 color={tooltipText}
               >
                 <Badge variant="outline" mr="4px">
-                  {courseInfo.id}
+                  {courseInfo.serial}
                 </Badge>
               </Tooltip>
               <DeptBadge course={courseInfo} />
@@ -503,7 +491,7 @@ function CourseInfoRow({
                 size={useBreakpointValue({ base: "sm", md: "md" }) ?? "sm"}
                 color={headingColor}
               >
-                {courseInfo.course_name}
+                {courseInfo.name}
               </Heading>
               <Heading
                 as="h3"
@@ -527,18 +515,18 @@ function CourseInfoRow({
                   variant="outline"
                   display={{ base: "inline-block", md: "none" }}
                 >
-                  {courseInfo.id}
+                  {courseInfo.serial}
                 </Badge>
               </Tooltip>
               <Tooltip
                 hasArrow
                 placement="top"
-                label={courseInfo.credit + " 學分"}
+                label={courseInfo.credits + " 學分"}
                 bg={tooltipBg}
                 color={tooltipText}
               >
                 <Badge variant="outline" mx={{ base: 0, md: 4 }}>
-                  {courseInfo.credit}
+                  {courseInfo.credits}
                 </Badge>
               </Tooltip>
               <Flex display={{ base: "inline-block", md: "none" }}>
@@ -558,7 +546,7 @@ function CourseInfoRow({
               <Tooltip
                 hasArrow
                 placement="top"
-                label={courseInfo.time_loc}
+                label={parseCourseSchedlue(courseInfo) ?? null}
                 bg={tooltipBg}
                 color={tooltipText}
               >
@@ -570,7 +558,7 @@ function CourseInfoRow({
                   noOfLines={1}
                   isTruncated
                 >
-                  {courseInfo.time_loc}
+                  {parseCourseSchedlue(courseInfo) ?? null}
                 </Badge>
               </Tooltip>
             </Collapse>
@@ -584,31 +572,18 @@ function CourseInfoRow({
             css={{ gap: "2px" }}
           >
             {displayTags.map((tag, index) => {
-              if (tag === "area") {
+              if (tag === "areas") {
                 let display_str = "";
                 let tooltip_str = "";
-                if (courseInfo.area.length === 0) {
+                if (courseInfo.areas.length === 0) {
                   display_str = "無";
                   tooltip_str = info_view_map[tag].name + ": 無";
-                } else if (courseInfo.area.length > 1) {
-                  display_str = "多個領域";
-                  tooltip_str = courseInfo.area
-                    .map((area) => info_view_map[tag].map[area].full_name)
-                    .join(", ");
-                } else if (courseInfo[tag][0] === "g") {
-                  display_str =
-                    "通識 " + info_view_map[tag].map[courseInfo[tag][0]].code;
-                  tooltip_str =
-                    info_view_map[tag].name +
-                    ": " +
-                    info_view_map[tag].map[courseInfo[tag][0]].full_name;
                 } else {
-                  display_str =
-                    info_view_map[tag].map[courseInfo[tag][0]].full_name;
-                  tooltip_str =
-                    info_view_map[tag].name +
-                    ":" +
-                    info_view_map[tag].map[courseInfo[tag][0]].full_name;
+                  display_str = "多個領域";
+                  tooltip_str = courseInfo.areas
+                    .map((area) => area.area.name ?? null)
+                    .filter((x) => x !== null)
+                    .join(", ");
                 }
                 return (
                   <Tooltip
@@ -623,7 +598,7 @@ function CourseInfoRow({
                       mx="2px"
                       variant="subtle"
                       colorScheme={info_view_map[tag].color}
-                      hidden={courseInfo[tag] === -1}
+                      hidden={!courseInfo[tag]}
                     >
                       <TagLeftIcon
                         boxSize="12px"
@@ -647,7 +622,7 @@ function CourseInfoRow({
                     mx="2px"
                     variant="subtle"
                     colorScheme={info_view_map[tag].color}
-                    hidden={courseInfo[tag] === -1}
+                    hidden={!courseInfo[tag]}
                   >
                     <TagLeftIcon boxSize="12px" as={info_view_map[tag].logo} />
                     <TagLabel>
@@ -671,7 +646,7 @@ function CourseInfoRow({
             colorScheme="blue"
             variant="ghost"
             onClick={() => {
-              router.push(`/courseinfo/${courseInfo._id}`);
+              router.push(`/courseinfo/${courseInfo.id}`);
             }}
           >
             <HStack>
@@ -684,7 +659,7 @@ function CourseInfoRow({
             ml={{ base: 0, md: "20px" }}
             variant={isfavorite ? "solid" : "outline"}
             colorScheme={"red"}
-            onClick={() => handleAddFavorite(courseInfo._id)}
+            onClick={() => handleAddFavorite(courseInfo.id)}
             isLoading={addingFavoriteCourse}
           >
             <Box>

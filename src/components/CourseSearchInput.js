@@ -274,7 +274,7 @@ function CourseSearchInput({ displayPanel }) {
     setSearchFilters,
   } = useCourseSearchingContext();
   const { displayTags, setDisplayTags } = useDisplayTags();
-  const available_tags = ["required", "total_slot", "enroll_method", "area"];
+  const available_tags = ["requirement", "slot", "enroll_method", "areas"];
 
   // filters local states
   const [selectedTime, setSelectedTime] = useState(

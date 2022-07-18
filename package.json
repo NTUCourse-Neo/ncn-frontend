@@ -26,6 +26,7 @@
     "color-hash": "^2.0.1",
     "focus-visible": "^5.2.0",
     "framer-motion": "^6",
+    "lodash": "^4.17.21",
     "moment": "^2.29.3",
     "next": "12.2.0",
     "randomcolor": "^0.6.2",
