@@ -39,7 +39,7 @@ function HoverCourseIndicator({ hoveredCourse }) {
         p={0}
         h="3vh"
         border="2px"
-        borderColor={hash_to_color_hex(course._id, 0.7)}
+        borderColor={hash_to_color_hex(course.id, 0.7)}
         borderStyle="dashed"
       >
         <Text
@@ -49,7 +49,7 @@ function HoverCourseIndicator({ hoveredCourse }) {
           isTruncated
           noOfLines={1}
         >
-          {course.course_name}
+          {course.name}
         </Text>
       </Button>
     </div>

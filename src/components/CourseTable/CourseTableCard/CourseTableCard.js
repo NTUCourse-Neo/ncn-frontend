@@ -32,15 +32,15 @@ import { patchCourseTable } from "queries/courseTable";
 function CourseBox({ courseId, courseData, isOpen, hoverId }) {
   const course = courseData?.[courseId];
   const bgColor = useColorModeValue(
-    hash_to_color_hex(course._id, isOpen ? 0.7 : 0.8),
-    hash_to_color_hex(course._id, isOpen ? 0.4 : 0.4)
+    hash_to_color_hex(course.id, isOpen ? 0.7 : 0.8),
+    hash_to_color_hex(course.id, isOpen ? 0.4 : 0.4)
   );
   if (!course) {
     return <></>;
   }
 
   return (
-    <Tooltip label={course.course_name} placement="top" hasArrow>
+    <Tooltip label={course.name} placement="top" hasArrow>
       <Button
         bg={bgColor}
         borderRadius="md"
@@ -52,12 +52,12 @@ function CourseBox({ courseId, courseData, isOpen, hoverId }) {
         border={"2px"}
         borderColor={
           hoverId === courseId
-            ? hash_to_color_hex(course._id, 0.5)
+            ? hash_to_color_hex(course.id, 0.5)
             : "transparent"
         }
       >
         <Text fontSize="xs" isTruncated noOfLines={1}>
-          {` ${course.course_name} `}
+          {` ${course.name} `}
         </Text>
       </Button>
     </Tooltip>

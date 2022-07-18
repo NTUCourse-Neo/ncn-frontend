@@ -267,9 +267,9 @@ function SideCourseTableContent({
           );
           // set states: courseTimeMap, courses
           setCourseTimeMap(
-            parseCoursesToTimeMap(convertArrayToObject(courseResult, "_id"))
+            parseCoursesToTimeMap(convertArrayToObject(courseResult, "id"))
           );
-          setCourses(convertArrayToObject(courseResult, "_id"));
+          setCourses(convertArrayToObject(courseResult, "id"));
         } catch (e) {
           toast({
             title: "取得課表課程資料失敗.",

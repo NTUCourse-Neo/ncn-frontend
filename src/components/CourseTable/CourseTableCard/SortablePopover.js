@@ -36,8 +36,8 @@ const SortableElement = sortableElement(
   ({ course, prepareToRemoveCourseId, handlePrepareToDelete }) => {
     const router = useRouter();
     const badgeColor = useColorModeValue(
-      hash_to_color_hex(course._id, 0.9),
-      hash_to_color_hex(course._id, 0.8)
+      hash_to_color_hex(course.id, 0.9),
+      hash_to_color_hex(course.id, 0.8)
     );
     const textColor = useColorModeValue("gray.500", "gray.400");
     const removeColor = useColorModeValue("red.700", "red.300");
@@ -45,13 +45,13 @@ const SortableElement = sortableElement(
       <Flex className={styles.sortableHelper} alignItems="center" my="1">
         <DragHandle />
         <Badge ml="4" mr="1" variant="solid" bg={badgeColor} color="gray.600">
-          {course.id}
+          {course.serial}
         </Badge>
         <Text
-          as={prepareToRemoveCourseId.includes(course._id) ? "del" : ""}
+          as={prepareToRemoveCourseId.includes(course.id) ? "del" : ""}
           fontSize="lg"
           color={
-            prepareToRemoveCourseId.includes(course._id)
+            prepareToRemoveCourseId.includes(course.id)
               ? removeColor
               : textColor
           }
@@ -60,7 +60,7 @@ const SortableElement = sortableElement(
           noOfLines={1}
           isTruncated
         >
-          {course.course_name}
+          {course.name}
         </Text>
         <Button
           variant="ghost"
@@ -68,20 +68,20 @@ const SortableElement = sortableElement(
           leftIcon={<FaInfoCircle />}
           size="sm"
           onClick={() => {
-            router.push(`/courseinfo/${course._id}`);
+            router.push(`/courseinfo/${course.id}`);
           }}
         />
         <Spacer />
         <IconButton
           aria-label="Delete"
           variant={
-            prepareToRemoveCourseId.includes(course._id) ? "solid" : "outline"
+            prepareToRemoveCourseId.includes(course.id) ? "solid" : "outline"
           }
           icon={<FaTrashAlt />}
           size="sm"
           colorScheme="red"
           onClick={() => {
-            handlePrepareToDelete(course._id);
+            handlePrepareToDelete(course.id);
           }}
         />
       </Flex>
