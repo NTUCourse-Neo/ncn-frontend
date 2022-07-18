@@ -419,6 +419,7 @@ function HomePage() {
                 layout="responsive"
                 height={7}
                 width={10}
+                priority={true}
               />
             </Box>
           </Flex>
