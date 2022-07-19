@@ -156,25 +156,23 @@ export default function UserMyPage({ user }) {
           </Flex>
           <Box w={{ base: "100%", md: "80%", lg: "70%" }}>
             <Flex direction="column" alignItems={"center"}>
-              {favorite_list.map((info, index) => (
+              {favorite_list.map((course, index) => (
                 <Accordion
                   allowToggle
                   w={{ base: "90vw", md: "100%" }}
                   key={index}
                 >
                   <CourseInfoRow
-                    id={info["id"]}
-                    index={index}
-                    courseInfo={info}
+                    courseInfo={course}
                     selected={
-                      selectedCourses && selectedCourses.includes(info._id)
+                      selectedCourses && selectedCourses.includes(course.id)
                     }
                     displayTags={displayTags}
                     displayTable={false}
                     isfavorite={
                       userInfo === null
                         ? false
-                        : userInfo.db.favorites.includes(info._id)
+                        : userInfo.db.favorites.includes(course.id)
                     }
                   />
                   <Spacer my={{ base: 2, md: 1 }} />
