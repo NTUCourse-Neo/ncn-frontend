@@ -305,14 +305,14 @@ function SideCourseTableContent({
           const updatedCourseTable = await createCourseTable(
             new_uuid,
             "我的課表",
-            userInfo.db._id,
+            userInfo.db.id,
             "1102"
           );
           setCourseTable(updatedCourseTable);
           // console.log("New UUID is generated: ",new_uuid);
           const updatedUser = await handleFetch("/api/user/linkCourseTable", {
             table_id: new_uuid,
-            user_id: userInfo.db._id,
+            user_id: userInfo.db.id,
           });
           setUser(updatedUser);
         } catch (e) {

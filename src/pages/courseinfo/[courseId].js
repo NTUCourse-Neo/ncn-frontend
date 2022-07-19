@@ -343,7 +343,7 @@ function CourseInfoPage({ code, course }) {
         try {
           const updatedUser = await handleFetch(`/api/user/addFavoriteCourse`, {
             new_favorite_list,
-            user_id: userInfo.db._id,
+            user_id: userInfo.db.id,
           });
           setUser(updatedUser);
           toast({
