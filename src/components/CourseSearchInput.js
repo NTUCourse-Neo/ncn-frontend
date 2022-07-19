@@ -43,7 +43,7 @@ import { info_view_map } from "data/mapping_table";
 import { useMount } from "react-use";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { useDisplayTags } from "components/Providers/DisplayTagsProvider";
-import { fetchSearchIDs } from "queries/course";
+import { fetchSearchResult } from "queries/course";
 import { useRouter } from "next/router";
 
 function CourseSearchInputTextArea(props) {
@@ -95,7 +95,7 @@ function CourseSearchInputTextArea(props) {
       setSearchLoading(true);
       setSearchResult([]);
       setSearch(searchText);
-      await fetchSearchIDs(
+      await fetchSearchResult(
         searchText,
         searchColumns,
         searchFiltersEnable,

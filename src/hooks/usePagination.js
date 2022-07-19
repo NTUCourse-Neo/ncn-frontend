@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useToast } from "@chakra-ui/react";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
-import { fetchSearchIDs } from "queries/course";
+import { fetchSearchResult } from "queries/course";
 import { useInView } from "react-intersection-observer";
 
 export default function usePagination() {
@@ -33,7 +33,7 @@ export default function usePagination() {
       if (searchResult.length < totalCount) {
         try {
           setSearchLoading(true);
-          fetchSearchIDs(
+          fetchSearchResult(
             search,
             searchColumns,
             searchFiltersEnable,

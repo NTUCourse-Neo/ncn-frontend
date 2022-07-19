@@ -1,7 +1,7 @@
 import instance from "queries/axiosInstance";
 const api_version = "v2";
 
-export const fetchSearchIDs = async (
+export const fetchSearchResult = async (
   searchString,
   paths,
   filters_enable,
