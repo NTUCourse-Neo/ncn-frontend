@@ -3,7 +3,7 @@ const api_version = "v2";
 
 export const fetchSearchResult = async (
   searchString,
-  paths,
+  fields,
   filters_enable,
   filter_obj,
   batchSize,
@@ -12,7 +12,6 @@ export const fetchSearchResult = async (
   options
 ) => {
   const { onSuccess = ({ courses, totalCount }) => {} } = options;
-  // TODO: add paths feature
   const filter = {
     time: filters_enable.time ? filter_obj.time : null,
     department: filters_enable.department ? filter_obj.department : null,
@@ -26,6 +25,7 @@ export const fetchSearchResult = async (
     data: { courses, total_count },
   } = await instance.post(`${api_version}/courses/search`, {
     keyword: searchString,
+    fields: fields,
     filter: filter,
     batch_size: batchSize,
     offset: offset,

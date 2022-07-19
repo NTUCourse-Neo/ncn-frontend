@@ -146,12 +146,9 @@ function CourseSearchInputTextArea(props) {
             搜尋欄位
           </MenuButton>
           <MenuList>
-            <MenuOptionGroup
-              defaultValue={["course_name", "teacher"]}
-              type="checkbox"
-            >
+            <MenuOptionGroup defaultValue={["name", "teacher"]} type="checkbox">
               <MenuItemOption
-                value="course_name"
+                value="name"
                 onClick={(e) => {
                   toggle_search_column(e);
                 }}
@@ -167,31 +164,28 @@ function CourseSearchInputTextArea(props) {
                 教師
               </MenuItemOption>
               <MenuItemOption
-                value="id"
+                value="serial"
                 onClick={(e) => {
                   toggle_search_column(e);
                 }}
-                isDisabled
               >
-                流水號 <Badge colorScheme="blue">即將推出</Badge>
+                流水號
               </MenuItemOption>
               <MenuItemOption
-                value="course_code"
+                value="code"
                 onClick={(e) => {
                   toggle_search_column(e);
                 }}
-                isDisabled
               >
-                課號 <Badge colorScheme="blue">即將推出</Badge>
+                課號
               </MenuItemOption>
               <MenuItemOption
-                value="course_id"
+                value="identifier"
                 onClick={(e) => {
                   toggle_search_column(e);
                 }}
-                isDisabled
               >
-                課程識別碼 <Badge colorScheme="blue">即將推出</Badge>
+                課程識別碼
               </MenuItemOption>
             </MenuOptionGroup>
           </MenuList>
