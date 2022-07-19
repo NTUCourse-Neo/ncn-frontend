@@ -461,7 +461,7 @@ function CourseInfoPage({ code, course }) {
                   </Tag>
                 ) : null}
                 <CopyToClipboard
-                  text={`https://course.myntu.me/courseinfo/${course.id}`}
+                  text={`${process.env.NEXT_PUBLIC_BASE_URL}/courseinfo/${course.id}`}
                 >
                   <Button
                     rightIcon={<Icon as={BiCopy} color={copyWord.color} />}
@@ -555,7 +555,7 @@ function CourseInfoPage({ code, course }) {
                 課程網資訊
               </Button>
               <CopyToClipboard
-                text={`https://course.myntu.me/courseinfo/${course.id}`}
+                text={`${process.env.NEXT_PUBLIC_BASE_URL}/courseinfo/${course.id}`}
               >
                 <Button
                   rightIcon={<Icon as={BiCopy} color={copyWord.color} />}
