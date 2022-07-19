@@ -41,11 +41,11 @@ import parseCourseSchedlue from "utils/parseCourseSchedule";
 const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
 function DeptBadge({ course }) {
-  if (!course.department || course.department.length === 0) {
+  if (!course.departments || course.departments.length === 0) {
     return <></>;
   }
-  if (course.department.length > 1) {
-    const dept_str = course.department.map((d) => d.name_full).join(", ");
+  if (course.departments.length > 1) {
+    const dept_str = course.departments.map((d) => d.name_full).join(", ");
     return (
       <Tooltip
         hasArrow
@@ -62,7 +62,7 @@ function DeptBadge({ course }) {
   }
   return (
     <Badge colorScheme="blue" variant="solid" mr="4px">
-      {course?.department?.[0]?.name_full ?? ""}
+      {course?.departments?.[0]?.name_full ?? ""}
     </Badge>
   );
 }

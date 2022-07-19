@@ -224,7 +224,7 @@ function CourseInfoPage({ code, course }) {
           // get course_tables/:id return null (expired)
           // show error and break the function
           toast({
-            title: `新增 ${course.course_name} 失敗`,
+            title: `新增 ${course.name} 失敗`,
             description: `您的課表已過期，請重新建立課表`,
             status: "error",
             duration: 3000,
@@ -234,11 +234,11 @@ function CourseInfoPage({ code, course }) {
           // fetch course table success
           let res_table;
           let operation_str;
-          if (courseTable.courses.includes(course._id)) {
+          if (courseTable.courses.includes(course.id)) {
             // course is already in course table, remove it.
             operation_str = "刪除";
             const new_courses = courseTable.courses.filter(
-              (id) => id !== course._id
+              (id) => id !== course.id
             );
             try {
               res_table = await patchCourseTable(
@@ -258,7 +258,7 @@ function CourseInfoPage({ code, course }) {
                 setCourseTable(null);
               }
               toast({
-                title: `刪除 ${course.course_name} 失敗`,
+                title: `刪除 ${course.name} 失敗`,
                 status: "error",
                 duration: 3000,
                 isClosable: true,
@@ -269,7 +269,7 @@ function CourseInfoPage({ code, course }) {
           } else {
             // course is not in course table, add it.
             operation_str = "新增";
-            const new_courses = [...courseTable.courses, course._id];
+            const new_courses = [...courseTable.courses, course.id];
             try {
               res_table = await patchCourseTable(
                 uuid,
@@ -288,7 +288,7 @@ function CourseInfoPage({ code, course }) {
                 setCourseTable(null);
               }
               toast({
-                title: `新增 ${course.course_name} 失敗`,
+                title: `新增 ${course.name} 失敗`,
                 status: "error",
                 duration: 3000,
                 isClosable: true,
@@ -299,7 +299,7 @@ function CourseInfoPage({ code, course }) {
           }
           if (res_table) {
             toast({
-              title: `已${operation_str} ${course.course_name}`,
+              title: `已${operation_str} ${course.name}`,
               description: `課表: ${courseTable.name}`,
               status: "success",
               duration: 3000,
@@ -312,7 +312,7 @@ function CourseInfoPage({ code, course }) {
       } else {
         // do not have course table id in local storage
         toast({
-          title: `新增 ${course.course_name} 失敗`,
+          title: `新增 ${course.name} 失敗`,
           description: `尚未建立課表`,
           status: "error",
           duration: 3000,
@@ -428,10 +428,10 @@ function CourseInfoPage({ code, course }) {
     return (
       <>
         <Head>
-          <title>{`${course.course_name} - 課程資訊 | NTUCourse Neo`}</title>
+          <title>{`${course.name} - 課程資訊 | NTUCourse Neo`}</title>
           <meta
             name="description"
-            content={`${course.course_name} 課程的詳細資訊 | NTUCourse Neo，全新的臺大選課網站。`}
+            content={`${course.name} 課程的詳細資訊 | NTUCourse Neo，全新的臺大選課網站。`}
           />
         </Head>
         <Flex
@@ -453,15 +453,15 @@ function CourseInfoPage({ code, course }) {
           >
             <Stack direction={{ base: "column", lg: "row" }}>
               <HStack>
-                {course.id ? (
+                {course.serial ? (
                   <Tag size="md" colorScheme="blue" w="fit-content">
                     <Text fontWeight="800" fontSize={{ base: "md", lg: "lg" }}>
-                      {course.id}
+                      {course.serial}
                     </Text>
                   </Tag>
                 ) : null}
                 <CopyToClipboard
-                  text={"https://course.myntu.me/courseinfo/" + course._id}
+                  text={`https://course.myntu.me/courseinfo/${course.id}`}
                 >
                   <Button
                     rightIcon={<Icon as={BiCopy} color={copyWord.color} />}
@@ -485,7 +485,7 @@ function CourseInfoPage({ code, course }) {
                   isTruncated
                   noOfLines={1}
                 >
-                  {course.course_name}
+                  {course.name}
                 </Text>
                 <Text
                   fontSize={{ base: "md", lg: "2xl" }}
@@ -541,7 +541,7 @@ function CourseInfoPage({ code, course }) {
                 isLoading={addingFavoriteCourse}
                 disabled={!userInfo}
                 onClick={() => {
-                  handleAddFavorite(course._id);
+                  handleAddFavorite(course.id);
                 }}
               >
                 {isFavorite ? "已加入最愛" : "加入最愛"}
@@ -555,7 +555,7 @@ function CourseInfoPage({ code, course }) {
                 課程網資訊
               </Button>
               <CopyToClipboard
-                text={"https://course.myntu.me/courseinfo/" + course._id}
+                text={`https://course.myntu.me/courseinfo/${course.id}`}
               >
                 <Button
                   rightIcon={<Icon as={BiCopy} color={copyWord.color} />}
@@ -610,7 +610,7 @@ function CourseInfoPage({ code, course }) {
                   icon={isFavorite ? <FaMinus /> : <FaHeart />}
                   disabled={!userInfo}
                   onClick={() => {
-                    handleAddFavorite(course._id);
+                    handleAddFavorite(course.id);
                   }}
                 >
                   {isFavorite ? "從最愛移除" : "加入最愛"}

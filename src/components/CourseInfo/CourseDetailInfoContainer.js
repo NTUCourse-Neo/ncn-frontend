@@ -52,6 +52,7 @@ import handleFetch from "utils/CustomFetch";
 import { useUser } from "@auth0/nextjs-auth0";
 import { useRouter } from "next/router";
 import Image from "next/image";
+import parseCourseSchedlue from "utils/parseCourseSchedule";
 
 function DataSourceTag({ source }) {
   return (
@@ -219,7 +220,7 @@ function SignUpPanel({
           <PanelPlaceholder title="無加簽相關資訊" h="100%" pt="0" />
           <HStack w="100%" pr="8" mt="8" justify="end">
             <SignUpReportForm
-              courseId={course._id}
+              courseId={course.id}
               haveSubmitted={SignUpPostData.some((obj) => obj.is_owner)}
               submitCallback={fetchSignUpPostData}
             />
@@ -273,7 +274,7 @@ function SignUpPanel({
             </HStack>
             <Spacer />
             <SignUpReportForm
-              courseId={course._id}
+              courseId={course.id}
               haveSubmitted={SignUpPostData.some((obj) => obj.is_owner)}
               submitCallback={fetchSignUpPostData}
             />
@@ -641,7 +642,7 @@ function CourseDetailInfoContainer({ course }) {
     let data;
     try {
       data = await handleFetch("/api/course/enrollInfo", {
-        courseId: course.id,
+        courseId: course.serial,
       });
     } catch (error) {
       setIsLoadingEnrollInfo(false);
@@ -665,7 +666,7 @@ function CourseDetailInfoContainer({ course }) {
     let data;
     try {
       data = await handleFetch("/api/course/ntuRating", {
-        courseId: course._id,
+        courseId: course.id,
       });
     } catch (error) {
       console.log(error);
@@ -690,7 +691,7 @@ function CourseDetailInfoContainer({ course }) {
     let data;
     try {
       data = await handleFetch("/api/course/ptt", {
-        courseId: course._id,
+        courseId: course.id,
         type: "review",
       });
     } catch (error) {
@@ -715,7 +716,7 @@ function CourseDetailInfoContainer({ course }) {
     let data;
     try {
       data = await handleFetch("/api/course/ptt", {
-        courseId: course._id,
+        courseId: course.id,
         type: "exam",
       });
     } catch (error) {
@@ -739,7 +740,7 @@ function CourseDetailInfoContainer({ course }) {
     setIsLoadingSyllabusData(true);
     let data;
     try {
-      data = await getCourseSyllabusData(course._id);
+      data = await getCourseSyllabusData(course.id);
     } catch (error) {
       setIsLoadingSyllabusData(false);
       toast({
@@ -767,7 +768,7 @@ function CourseDetailInfoContainer({ course }) {
     let data;
     try {
       data = await handleFetch("/api/social/getByCourseId", {
-        course_id: course._id,
+        course_id: course.id,
       });
     } catch (error) {
       setIsLoadingSignUpPostData(false);
@@ -806,14 +807,17 @@ function CourseDetailInfoContainer({ course }) {
   }, [isAuth0Loading, user]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const course_codes_1 = [
-    { title: "流水號", value: course.id },
-    { title: "課號", value: course.course_code },
-    { title: "課程識別碼", value: course.course_id },
-    { title: "班次", value: course.class_id ? course.class_id : "無" },
+    { title: "流水號", value: course.serial },
+    { title: "課號", value: course.code },
+    { title: "課程識別碼", value: course.identifier },
+    { title: "班次", value: course?.class ?? "無" },
   ];
   const course_codes_2 = [
-    { title: "人數上限", value: course.total_slot },
-    { title: "必選修", value: info_view_map.required.map[course.required] },
+    { title: "人數上限", value: course.slot },
+    {
+      title: "必選修",
+      value: info_view_map.requirement.map[course.requirement],
+    },
     { title: "開課學期", value: course.semester },
     { title: "授課語言", value: info_view_map.language.map[course.language] },
   ];
@@ -877,27 +881,23 @@ function CourseDetailInfoContainer({ course }) {
                 <StatLabel>系所</StatLabel>
                 <StatNumber>
                   <HStack spacing="2">
-                    {course.department[0] === "" ? (
+                    {course.departments.length === 0 ? (
                       <Tag colorScheme="blackAlpha" size="lg">
                         無資訊
                       </Tag>
                     ) : (
                       <Flex flexDirection={"row"} flexWrap="wrap">
-                        {course.department.map((item, index) => {
-                          if (item.length > 0) {
-                            return (
-                              <Tag
-                                key={"department_" + index}
-                                colorScheme="blue"
-                                size="lg"
-                                m={1}
-                              >
-                                {item}
-                              </Tag>
-                            );
-                          } else {
-                            return null;
-                          }
+                        {course.departments.map((department, index) => {
+                          return (
+                            <Tag
+                              key={"department_" + index}
+                              colorScheme="blue"
+                              size="lg"
+                              m={1}
+                            >
+                              {department.name_full}
+                            </Tag>
+                          );
                         })}
                       </Flex>
                     )}
@@ -906,7 +906,7 @@ function CourseDetailInfoContainer({ course }) {
               </Stat>
               <Stat>
                 <StatLabel>學分</StatLabel>
-                <StatNumber>{course.credit}</StatNumber>
+                <StatNumber>{course.credits}</StatNumber>
               </Stat>
               {course.enroll_method ? (
                 <Stat>
@@ -935,38 +935,42 @@ function CourseDetailInfoContainer({ course }) {
             </Flex>
           </Flex>
           <Divider mt="4" mb="4" borderColor="gray.300" />
-          <VStack mt="2" align="start">
-            <Text
-              fontSize="md"
-              textAlign="center"
-              color={headingColor}
-              fontWeight="700"
-            >
-              修課限制
-            </Text>
-            <Text fontSize="sm" color={textColor} align="start">
-              {course.limit}
-            </Text>
-          </VStack>
-          <VStack mt="2" align="start">
-            <Text
-              fontSize="md"
-              textAlign="center"
-              color={headingColor}
-              fontWeight="700"
-            >
-              備註
-            </Text>
-            <Text fontSize="sm" color={textColor} align="start">
-              {course.note}
-            </Text>
-          </VStack>
+          {course?.limitation && (
+            <VStack mt="2" align="start">
+              <Text
+                fontSize="md"
+                textAlign="center"
+                color={headingColor}
+                fontWeight="700"
+              >
+                修課限制
+              </Text>
+              <Text fontSize="sm" color={textColor} align="start">
+                {course.limitation}
+              </Text>
+            </VStack>
+          )}
+          {course?.note && (
+            <VStack mt="2" align="start">
+              <Text
+                fontSize="md"
+                textAlign="center"
+                color={headingColor}
+                fontWeight="700"
+              >
+                備註
+              </Text>
+              <Text fontSize="sm" color={textColor} align="start">
+                {course.note}
+              </Text>
+            </VStack>
+          )}
           <Divider mt="4" mb="4" borderColor="gray.300" />
           <Text fontSize="lg" color={headingColor} fontWeight="700">
             節次資訊
           </Text>
           <Text fontSize="sm" color="gray.600">
-            {course.time_loc}
+            {parseCourseSchedlue(course) ?? "無資訊"}
           </Text>
         </Flex>
         {/* Box2 */}

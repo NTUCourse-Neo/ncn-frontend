@@ -25,10 +25,10 @@ export default function parseCourseSchedlue(course) {
         return null;
       }
       const [weekday, location] = key.split("@");
-      return `${weekday} (${scheduleGroup
+      return `${weekday} ${scheduleGroup
         .map((s) => s?.interval ?? null)
         .filter((x) => x !== null)
-        .join(", ")}) ${location}`;
+        .join(", ")} (${location})`;
     })
     .filter((x) => x !== null)
     .join(", ");
