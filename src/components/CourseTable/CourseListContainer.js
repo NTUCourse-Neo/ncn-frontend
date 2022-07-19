@@ -219,7 +219,7 @@ function CourseListContainer({ courseTable, courses, loading }) {
         (id) => !prepareToRemoveCourseId.includes(id)
       );
       const res_table = await patchCourseTable(
-        courseTable._id,
+        courseTable.id,
         courseTable.name,
         courseTable.user_id,
         courseTable.expire_ts,

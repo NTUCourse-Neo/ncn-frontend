@@ -129,7 +129,7 @@ function CourseTableCard({
     let res_table;
     try {
       res_table = await patchCourseTable(
-        courseTable._id,
+        courseTable.id,
         courseTable.name,
         courseTable.user_id,
         courseTable.expire_ts,

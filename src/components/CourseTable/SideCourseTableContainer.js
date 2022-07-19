@@ -338,7 +338,7 @@ function SideCourseTableContent({
           );
           setCourseTable(new_course_table);
           // console.log("New UUID is generated: ",new_uuid);
-          localStorage.setItem(LOCAL_STORAGE_KEY, new_course_table._id);
+          localStorage.setItem(LOCAL_STORAGE_KEY, new_course_table.id);
           setExpired(false);
         } catch (error) {
           toast({
@@ -357,7 +357,7 @@ function SideCourseTableContent({
     onClose();
     try {
       const res_table = await patchCourseTable(
-        courseTable._id,
+        courseTable.id,
         new_table_name,
         courseTable.user_id,
         courseTable.expire_ts,
