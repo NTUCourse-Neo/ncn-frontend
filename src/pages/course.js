@@ -100,7 +100,7 @@ function CoursePage() {
   //   });
   const topRef = useRef();
   const bottomRef = usePagination();
-  const { searchIds, searchLoading, searchError, totalCount, setBatchSize } =
+  const { searchLoading, totalCount, setBatchSize } =
     useCourseSearchingContext();
 
   const [isMobile, isHigherThan1325] = useMediaQuery([
@@ -122,10 +122,10 @@ function CoursePage() {
     }
   }, [isHigherThan1325, setBatchSize]);
 
-  useEffect(() => {
+  const searchCallback = () => {
     topRef.current.focus();
     setDisplayFilter(false);
-  }, [searchIds]);
+  };
 
   // if isMobile, when show Alert Modal, set displayTable to false to prevent ugly overlapping
   useEffect(() => {
@@ -179,7 +179,10 @@ function CoursePage() {
             bg={useColorModeValue("white", "gray.800")}
           >
             <Flex w="100%" px="10vw" py="4" direction="column">
-              <CourseSearchInput displayPanel={displayFilter} />
+              <CourseSearchInput
+                displayPanel={displayFilter}
+                searchCallback={searchCallback}
+              />
             </Flex>
             <IconButton
               size="xs"

@@ -43,14 +43,14 @@ import { info_view_map } from "data/mapping_table";
 import { useMount } from "react-use";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { useDisplayTags } from "components/Providers/DisplayTagsProvider";
-import { fetchSearchIDs, fetchSearchResults } from "queries/course";
+import { fetchSearchIDs } from "queries/course";
 import { useRouter } from "next/router";
 
-function CourseSearchInputTextArea() {
+function CourseSearchInputTextArea(props) {
+  const { searchCallback = () => {} } = props;
   const toast = useToast();
   const router = useRouter();
   const {
-    setSearchIds,
     searchColumns,
     searchFilters,
     batchSize,
@@ -62,9 +62,10 @@ function CourseSearchInputTextArea() {
     setSearchError,
     setOffset,
     setTotalCount,
+    setSearch,
   } = useCourseSearchingContext();
 
-  const [search, setSearch] = useState("");
+  const [searchText, setSearchText] = useState("");
   useMount(() => {
     setSearch("");
   });
@@ -93,10 +94,10 @@ function CourseSearchInputTextArea() {
     try {
       setSearchLoading(true);
       setSearchResult([]);
-      const ids = await fetchSearchIDs(search, searchColumns);
-      setSearchIds(ids);
-      await fetchSearchResults(
-        ids,
+      setSearch(searchText);
+      await fetchSearchIDs(
+        searchText,
+        searchColumns,
         searchFiltersEnable,
         searchFilters,
         batchSize,
@@ -105,10 +106,11 @@ function CourseSearchInputTextArea() {
         {
           onSuccess: ({ courses, totalCount }) => {
             setSearchResult(courses);
+            setTotalCount(totalCount);
+            setOffset(batchSize);
             setSearchLoading(false);
             setSearchError(null);
-            setOffset(batchSize);
-            setTotalCount(totalCount);
+            searchCallback();
           },
         }
       );
@@ -203,9 +205,9 @@ function CourseSearchInputTextArea() {
             size="md"
             focusBorderColor="teal.500"
             placeholder="直接搜尋可顯示全部課程"
-            value={search}
+            value={searchText}
             onChange={(e) => {
-              setSearch(e.target.value);
+              setSearchText(e.target.value);
             }}
             onKeyPress={(e) => {
               if (e.key === "Enter") {
@@ -263,7 +265,7 @@ function SettingSwitch({ label, setterFunc, defaultValue, isDisabled }) {
   );
 }
 
-function CourseSearchInput({ displayPanel }) {
+function CourseSearchInput({ displayPanel, searchCallback }) {
   const toast = useToast();
   const {
     searchFilters,
@@ -335,7 +337,7 @@ function CourseSearchInput({ displayPanel }) {
 
   return (
     <>
-      <CourseSearchInputTextArea />
+      <CourseSearchInputTextArea searchCallback={searchCallback} />
       <Collapse in={displayPanel} animateOpacity>
         <Box
           w="100%"

@@ -1,18 +1,9 @@
 import instance from "queries/axiosInstance";
 const api_version = "v2";
 
-export const fetchSearchIDs = async (searchString, paths) => {
-  const {
-    data: { ids },
-  } = await instance.post(`${api_version}/courses/search`, {
-    query: searchString,
-    paths: paths,
-  });
-  return ids;
-};
-
-export const fetchSearchResults = async (
-  ids_arr,
+export const fetchSearchIDs = async (
+  searchString,
+  paths,
   filters_enable,
   filter_obj,
   batchSize,
@@ -21,30 +12,26 @@ export const fetchSearchResults = async (
   options
 ) => {
   const { onSuccess = ({ courses, totalCount }) => {} } = options;
-  const search_filter = { ...filter_obj, strict_match: strict_match_bool };
-  if (filters_enable.time === false) {
-    search_filter.time = null;
-  }
-  if (filters_enable.department === false) {
-    search_filter.department = null;
-  }
-  if (filters_enable.category === false) {
-    search_filter.category = null;
-  }
-  if (filters_enable.enroll_method === false) {
-    search_filter.enroll_method = null;
-  }
+  // TODO: add paths feature
+  const filter = {
+    time: filters_enable.time ? filter_obj.time : null,
+    department: filters_enable.department ? filter_obj.department : null,
+    category: filters_enable.category ? filter_obj.category : null,
+    enroll_method: filters_enable.enroll_method
+      ? filter_obj.enroll_method
+      : null,
+    strict_match: strict_match_bool,
+  };
   const {
     data: { courses, total_count },
-  } = await instance.post(`${api_version}/courses/ids`, {
-    ids: ids_arr,
-    filter: search_filter,
+  } = await instance.post(`${api_version}/courses/search`, {
+    keyword: searchString,
+    filter: filter,
     batch_size: batchSize,
     offset: offset,
   });
-  // console.log(courses); // checking receive array of courses
   onSuccess({ courses, totalCount: total_count });
-  return courses;
+  return { courses, total_count };
 };
 
 export const fetchCourse = async (id) => {

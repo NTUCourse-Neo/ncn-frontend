@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState } from "react";
 
 const CourseSearchingContext = createContext({
-  searchIds: [],
+  search: "",
   searchResult: [],
   searchLoading: false,
   searchError: null,
@@ -27,12 +27,12 @@ const CourseSearchingContext = createContext({
     category: [],
     enroll_method: ["1", "2", "3"],
   }, // default value of filters
+  setSearch: () => {},
   setSearchLoading: () => {},
   setSearchResult: () => {},
   setSearchError: () => {},
   setOffset: () => {},
   setTotalCount: () => {},
-  setSearchIds: () => {},
   setBatchSize: () => {},
   setSearchSettings: () => {},
   setSearchColumns: () => {},
@@ -41,7 +41,7 @@ const CourseSearchingContext = createContext({
 });
 
 function CourseSearchingProvider(props) {
-  const [searchIds, setSearchIds] = useState([]);
+  const [search, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState(null);
@@ -74,7 +74,7 @@ function CourseSearchingProvider(props) {
   return (
     <CourseSearchingContext.Provider
       value={{
-        searchIds,
+        search,
         searchResult,
         searchLoading,
         searchError,
@@ -85,6 +85,7 @@ function CourseSearchingProvider(props) {
         searchSettings,
         searchFiltersEnable,
         searchFilters,
+        setSearch,
         setBatchSize,
         setSearchSettings,
         setSearchColumns,
@@ -95,7 +96,6 @@ function CourseSearchingProvider(props) {
         setSearchError,
         setOffset,
         setTotalCount,
-        setSearchIds,
       }}
       {...props}
     />
