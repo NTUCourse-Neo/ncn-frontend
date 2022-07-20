@@ -1,7 +1,10 @@
 import ColorHash from "color-hash";
 import RandomColor from "randomcolor";
-const hash_to_color_hex = (str, lightness) => {
-  const colorhash = new ColorHash({ lightness: lightness });
+const hash_to_color_hex = (str, lightness, saturation = 0.5) => {
+  const colorhash = new ColorHash({
+    lightness: lightness,
+    saturation: saturation,
+  });
   return colorhash.hex(str);
 };
 

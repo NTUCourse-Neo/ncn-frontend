@@ -12,6 +12,7 @@ import {
   Skeleton,
   Tooltip,
   Button,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import * as React from "react";
 import { useState, useCallback } from "react";
@@ -39,7 +40,7 @@ function HoverCourseIndicator({ hoveredCourse }) {
         p={0}
         h="3vh"
         border="2px"
-        borderColor={hash_to_color_hex(course._id, 0.7)}
+        borderColor={hash_to_color_hex(course._id, 0.8)}
         borderStyle="dashed"
       >
         <Text
@@ -77,7 +78,6 @@ function CourseTableContainer({ courses, loading, courseTimeMap }) {
   ];
   const [activeDayCol, setActiveDayCol] = useState(0);
   const { hoveredCourse, hoveredCourseTimeMap } = useSnapshot(hoverCourseState);
-
   const renderIntervalContent = useCallback(
     (days, interval, i) => {
       const fullWidth = days.length === 1;
@@ -115,7 +115,12 @@ function CourseTableContainer({ courses, loading, courseTimeMap }) {
                 justifyContent="center"
                 alignItems="center"
               >
-                <Text color="gray.300" fontSize="5xl" fontWeight="700">
+                <Text
+                  color={useColorModeValue("gray.300", "gray.600")} // eslint-disable-line
+                  fontSize="5xl"
+                  fontWeight="700"
+                >
+                  {" "}
                   {interval}
                 </Text>
               </Flex>

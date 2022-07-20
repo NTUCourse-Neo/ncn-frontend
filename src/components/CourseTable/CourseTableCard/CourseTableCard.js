@@ -32,8 +32,8 @@ import { patchCourseTable } from "queries/courseTable";
 function CourseBox({ courseId, courseData, isOpen, hoverId }) {
   const course = courseData?.[courseId];
   const bgColor = useColorModeValue(
-    hash_to_color_hex(course._id, isOpen ? 0.7 : 0.8),
-    hash_to_color_hex(course._id, isOpen ? 0.4 : 0.4)
+    hash_to_color_hex(course._id, 0.8, 0.6),
+    hash_to_color_hex(course._id, 0.2, 0.3)
   );
   if (!course) {
     return <></>;
@@ -52,7 +52,7 @@ function CourseBox({ courseId, courseData, isOpen, hoverId }) {
         border={"2px"}
         borderColor={
           hoverId === courseId
-            ? hash_to_color_hex(course._id, 0.5)
+            ? hash_to_color_hex(course._id, 0.8)
             : "transparent"
         }
       >

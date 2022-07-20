@@ -133,7 +133,7 @@ function CourseDrawerContainer({ courseInfo }) {
         justifyContent="start"
         borderRadius="md"
         border="2px"
-        borderColor="gray.200"
+        borderColor={useColorModeValue("gray.200", "gray.700")}
         flexWrap="wrap"
         css={{ gap: "4px" }}
       >
@@ -242,8 +242,8 @@ function CourseInfoRow({
   const tooltipBg = useColorModeValue("gray.600", "gray.300");
   const tooltipText = useColorModeValue("white", "black");
   const selectedColor = useColorModeValue(
-    hash_to_color_hex(courseInfo._id, 0.95),
-    `${hash_to_color_hex(courseInfo._id, 0.3)}`
+    hash_to_color_hex(courseInfo._id, 0.92, 0.3),
+    hash_to_color_hex(courseInfo._id, 0.2, 0.1)
   );
   const { setCourseTable } = useCourseTable();
   const router = useRouter();

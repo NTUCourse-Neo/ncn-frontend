@@ -235,9 +235,6 @@ function CourseSearchInputTextArea() {
 
 function SettingSwitch({ label, setterFunc, defaultValue, isDisabled }) {
   const textColor = useColorModeValue("gray.500", "text.dark");
-  if (isDisabled) {
-    return <></>;
-  }
   return (
     <Flex alignItems="center" diisplay={{ base: "none", lg: "inline-block" }}>
       <Switch
@@ -593,12 +590,6 @@ function CourseSearchInput({ displayPanel }) {
                         label="只顯示未衝堂課程"
                         setterFunc={set_only_show_not_conflicted_courses}
                         defaultValue={only_show_not_conflicted_courses}
-                        isDisabled={true}
-                      />
-                      <SettingSwitch
-                        label="同步新增至課程網"
-                        setterFunc={set_sync_add_to_nol}
-                        defaultValue={sync_add_to_nol}
                         isDisabled={true}
                       />
                     </Flex>

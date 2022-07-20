@@ -154,6 +154,7 @@ function CoursePage() {
         justifyContent="center"
         alignItems="center"
         overflow="hidden"
+        bg={useColorModeValue("white", "black")}
       >
         <Box
           display="flex"

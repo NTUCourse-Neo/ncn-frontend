@@ -161,7 +161,8 @@ function SignInButton() {
         </MenuList>
       </Menu>
       <Button
-        colorScheme="yellow"
+        bg={useColorModeValue("yellow.300", "yellow.600")} // eslint-disable-line
+        color={useColorModeValue("gray.800", "gray.800")} // eslint-disable-line
         rightIcon={<ChevronRightIcon />}
         size="md"
         ml="10px"
@@ -183,7 +184,7 @@ function HeaderBar() {
       position="fixed"
       w="100%"
       h="64px"
-      bg="teal.300"
+      bg={useColorModeValue("teal.light", "teal.dark")}
       flexDirection="row"
       justifyContent="space-between"
       alignItems="center"
@@ -196,7 +197,7 @@ function HeaderBar() {
             <Heading
               fontSize={{ base: "xl", md: "2xl" }}
               fontWeight="700"
-              color="gray.600"
+              color={useColorModeValue("heading.light", "heading.dark")}
               display={{ base: "none", md: "inline-block" }}
             >
               NTUCourse Neo
@@ -215,7 +216,6 @@ function HeaderBar() {
         </Link>
         <Link href="/course">
           <Button
-            colorScheme="blue"
             variant="ghost"
             size="md"
             ml={{ base: 4, md: 6 }}
@@ -229,13 +229,13 @@ function HeaderBar() {
       <Flex justifyContent="center" alignItems="center">
         <Link href="/about">
           <Button
-            colorScheme="blue"
             variant="ghost"
             size="md"
             ml="30px"
             display={{ base: "none", md: "inline-block" }}
+            color={useColorModeValue("link.light", "link.dark")}
           >
-            <HStack color={useColorModeValue("link.light", "link.dark")}>
+            <HStack>
               <FaInfoCircle />
               <Text>關於</Text>
             </HStack>

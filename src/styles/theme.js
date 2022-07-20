@@ -8,19 +8,23 @@ const config = {
 const colors = {
   link: {
     light: "#2B6CB0",
-    dark: "#2B6CB0",
+    dark: "#90CDF4",
   },
   heading: {
     light: "#2D3748",
-    dark: "#CBD5E0",
+    dark: "#E2E8F0",
   },
   text: {
     light: "#4A5568",
-    dark: "#A0AEC0",
+    dark: "#CBD5E0",
   },
   card: {
     light: "#EDF2F7",
-    dark: "#4A5568",
+    dark: "#1A202C",
+  },
+  teal: {
+    light: "#81E6D9",
+    dark: "#1A202C",
   },
 };
 

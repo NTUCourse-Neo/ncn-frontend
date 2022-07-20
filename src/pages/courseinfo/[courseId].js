@@ -41,6 +41,7 @@ import Head from "next/head";
 import { useUser } from "@auth0/nextjs-auth0";
 import handleFetch from "utils/CustomFetch";
 
+const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 const copyWordList = [
   { count: 100, word: "複製終結者!!", color: "purple.600", bg: "purple.50" },
   { count: 50, word: "終極複製!!", color: "red.600", bg: "red.50" },
@@ -49,10 +50,11 @@ const copyWordList = [
   { count: 3, word: "三倍複製!", color: "green.600", bg: "green.50" },
   { count: 2, word: "雙倍複製!", color: "green.600", bg: "green.50" },
   { count: 1, word: "已複製", color: "green.600", bg: "green.50" },
-  { count: 0, word: "複製連結", color: "gray.600", bg: "white" },
+  {
+    count: 0,
+    word: "複製連結",
+  },
 ];
-
-const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
 export async function getServerSideProps({ params }) {
   const { courseId } = params;
@@ -66,17 +68,13 @@ export async function getServerSideProps({ params }) {
 }
 
 function CourseInfoPage({ code, course }) {
-  const bgcolor = useColorModeValue("white", "gray.800");
+  const bgcolor = useColorModeValue("white", "black");
   const headingColor = useColorModeValue("heading.light", "heading.dark");
   const { setUser, user: userInfo } = useUserData();
   const { setCourseTable } = useCourseTable();
   const router = useRouter();
   const toast = useToast();
 
-  const [copiedLinkClicks, setCopiedLinkClicks] = useState(0);
-  const [copyWord, setCopyWord] = useState(
-    copyWordList.find((word) => word.count <= copiedLinkClicks)
-  );
   Moment.locale("zh-tw");
 
   const [addingCourse, setAddingCourse] = useState(false);
@@ -84,6 +82,10 @@ function CourseInfoPage({ code, course }) {
   const [selected, setSelected] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const { user, isLoading } = useUser();
+  const [copiedLinkClicks, setCopiedLinkClicks] = useState(0);
+  const [copyWord, setCopyWord] = useState(
+    copyWordList.find((word) => word.count <= copiedLinkClicks)
+  );
 
   useEffect(() => {
     setCopyWord(copyWordList.find((word) => word.count <= copiedLinkClicks));
@@ -464,11 +466,24 @@ function CourseInfoPage({ code, course }) {
                   text={"https://course.myntu.me/courseinfo/" + course._id}
                 >
                   <Button
-                    rightIcon={<Icon as={BiCopy} color={copyWord.color} />}
+                    rightIcon={
+                      <Icon
+                        as={BiCopy}
+                        color={
+                          copyWord.count === 0
+                            ? useColorModeValue("gray.700", "gray.100") // eslint-disable-line
+                            : copyWord.color
+                        }
+                      />
+                    }
                     variant="ghost"
                     size="xs"
-                    bg={copyWord.bg}
-                    color={copyWord.color}
+                    bg={useColorModeValue("white", "gray.800")} // eslint-disable-line
+                    color={
+                      copyWord.count === 0
+                        ? useColorModeValue("gray.700", "gray.100") // eslint-disable-line
+                        : copyWord.color
+                    }
                     onClick={() => setCopiedLinkClicks(copiedLinkClicks + 1)}
                     display={{ base: "inline-block", lg: "none" }}
                   >
@@ -552,17 +567,30 @@ function CourseInfoPage({ code, course }) {
                 rightIcon={<IoMdOpen />}
                 onClick={() => window.open(getNolUrl(course), "_blank")}
               >
-                課程網資訊
+                課程頁面
               </Button>
               <CopyToClipboard
                 text={"https://course.myntu.me/courseinfo/" + course._id}
               >
                 <Button
-                  rightIcon={<Icon as={BiCopy} color={copyWord.color} />}
+                  rightIcon={
+                    <Icon
+                      as={BiCopy}
+                      color={
+                        copyWord.count === 0
+                          ? useColorModeValue("gray.700", "gray.100") // eslint-disable-line
+                          : copyWord.color
+                      }
+                    />
+                  }
                   variant="ghost"
                   size="md"
-                  bg={copyWord.bg}
-                  color={copyWord.color}
+                  bg={useColorModeValue("white", "gray.900")} // eslint-disable-line
+                  color={
+                    copyWord.count === 0
+                      ? useColorModeValue("gray.700", "gray.100") // eslint-disable-line
+                      : copyWord.color
+                  }
                   onClick={() => setCopiedLinkClicks(copiedLinkClicks + 1)}
                 >
                   {copyWord.word}
@@ -620,7 +648,7 @@ function CourseInfoPage({ code, course }) {
                   icon={<IoMdOpen />}
                   onClick={() => window.open(getNolUrl(course), "_blank")}
                 >
-                  課程網資訊
+                  課程頁面
                 </MenuItem>
               </MenuList>
             </Menu>
