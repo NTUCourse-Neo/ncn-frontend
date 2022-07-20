@@ -230,10 +230,12 @@ function SideCourseTableContent({
   }, [user, isLoading]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    setCourseTimeMap(
-      parseCoursesToTimeMap(convertArrayToObject(courseTable.courses, "id"))
-    );
-    setCourses(convertArrayToObject(courseTable.courses, "id"));
+    if (courseTable?.courses) {
+      setCourseTimeMap(
+        parseCoursesToTimeMap(convertArrayToObject(courseTable.courses, "id"))
+      );
+      setCourses(convertArrayToObject(courseTable.courses, "id"));
+    }
   }, [courseTable]);
 
   const handleCreateTable = async () => {
