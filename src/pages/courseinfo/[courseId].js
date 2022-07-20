@@ -84,7 +84,7 @@ function CourseInfoPage({ code, course }) {
   const [selected, setSelected] = useState(false);
   const { user, isLoading } = useUser();
   const isFavorite = useMemo(
-    () => userInfo?.db?.favorites.includes(course.id) ?? false,
+    () => userInfo?.db?.favorites.map((c) => c.id).includes(course.id) ?? false,
     [userInfo, course.id]
   );
 
@@ -318,7 +318,7 @@ function CourseInfoPage({ code, course }) {
     if (!isLoading) {
       if (user) {
         setAddingFavoriteCourse(true);
-        const favorite_list = [...userInfo.db.favorites];
+        const favorite_list = userInfo.db.favorites.map((c) => c.id);
         try {
           if (favorite_list.includes(course_id)) {
             const updatedFavorite = await handleFetch(

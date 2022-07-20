@@ -23,69 +23,13 @@ import {
 } from "@chakra-ui/react";
 import Select from "react-select";
 import { HashLoader } from "react-spinners";
-import {
-  FaFacebook,
-  FaGithub,
-  FaGoogle,
-  FaExclamationTriangle,
-} from "react-icons/fa";
+import { FaExclamationTriangle } from "react-icons/fa";
 import { useRouter } from "next/router";
 import { useUser, withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { dept_list_bachelor_only } from "data/department";
 import { useUserData } from "components/Providers/UserProvider";
 import handleFetch from "utils/CustomFetch";
 import Head from "next/head";
-
-function ConnectedAccountTags({ userInfo }) {
-  const connected_accounts = userInfo.auth0.identities;
-  const cardColor = useColorModeValue("white", "gray.600");
-  const textColor = useColorModeValue("text.light", "text.dark");
-  return connected_accounts.map((account, index) => {
-    let user_name = null;
-    let icon = null;
-    if (account.provider.includes("google")) {
-      user_name = account.profileData
-        ? account.profileData.name
-        : userInfo.auth0.email;
-      icon = <FaGoogle />;
-    } else if (account.provider.includes("github")) {
-      user_name = account.profileData
-        ? account.profileData.name
-        : userInfo.auth0.name;
-      icon = <FaGithub />;
-    } else if (account.provider.includes("facebook")) {
-      icon = <FaFacebook />;
-      user_name = account.profileData
-        ? account.profileData.name
-        : userInfo.auth0.name;
-    }
-    if (!icon) {
-      return null;
-    }
-    return (
-      <Flex
-        key={index}
-        alignItems="center"
-        justifyContent="center"
-        borderRadius="lg"
-        border="2px"
-        borderColor="gray.300"
-        p="2"
-        px="4"
-        mr="2"
-        bg={cardColor}
-        color={textColor}
-      >
-        <Flex w={6} h={6} justifyContent={"center"} alignItems="center">
-          {icon}
-        </Flex>
-        <Text ml="2" fontWeight="800">
-          {user_name}
-        </Text>
-      </Flex>
-    );
-  });
-}
 
 function DeleteDialog({
   isAlertOpen,
@@ -452,18 +396,6 @@ export default function UserInfoPage({ user }) {
                   defaultValue={userInfo.db.email}
                   disabled
                 />
-                <Text my="4" fontSize="xl" fontWeight="700" color={textColor}>
-                  已綁定帳號
-                </Text>
-                <Flex
-                  w="100%"
-                  flexDirection="row"
-                  justifyContent="start"
-                  alignItems="start"
-                  flexWrap="wrap"
-                >
-                  <ConnectedAccountTags userInfo={userInfo} />
-                </Flex>
               </Flex>
               <Avatar name={userInfo.db.name} size="2xl" src={user.picture} />
             </Flex>

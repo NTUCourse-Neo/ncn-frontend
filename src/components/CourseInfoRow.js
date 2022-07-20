@@ -387,7 +387,7 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTable }) {
     if (!isLoading) {
       if (user) {
         setAddingFavoriteCourse(true);
-        const favorite_list = [...userInfo.db.favorites];
+        const favorite_list = (userInfo?.db?.favorites ?? []).map((c) => c.id);
         try {
           if (favorite_list.includes(course_id)) {
             const updatedFavorite = await handleFetch(

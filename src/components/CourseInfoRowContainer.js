@@ -54,7 +54,7 @@ function CourseInfoRowContainer({ displayTable }) {
               isfavorite={
                 userInfo === null
                   ? false
-                  : userInfo.db.favorites.includes(course.id)
+                  : userInfo.db.favorites.map((c) => c.id).includes(course.id)
               }
             />
             <Spacer my={{ base: 2, md: 1 }} />

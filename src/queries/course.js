@@ -90,13 +90,3 @@ export const fetchCourseTableCoursesByIds = async (ids_arr) => {
   });
   return courses;
 };
-
-// used in userMyPage initialization, to fetch all favorite courses object by user's favorite courses ids
-export const fetchFavoriteCourses = async (ids_arr) => {
-  const {
-    data: { courses },
-  } = await instance.post(`${api_version}/courses/ids`, {
-    ids: ids_arr,
-  });
-  return courses;
-};
