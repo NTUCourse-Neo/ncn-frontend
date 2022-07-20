@@ -80,13 +80,3 @@ export const getCourseSyllabusData = async (course_id) => {
   } = await instance.get(`${api_version}/courses/${course_id}/syllabus`);
   return course_syllabus;
 };
-
-// used in SideCourseTableContainer initialization, to fetch all course objects by ids
-export const fetchCourseTableCoursesByIds = async (ids_arr) => {
-  const {
-    data: { courses },
-  } = await instance.post(`${api_version}/courses/ids`, {
-    ids: ids_arr,
-  });
-  return courses;
-};

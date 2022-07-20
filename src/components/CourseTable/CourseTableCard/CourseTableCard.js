@@ -106,7 +106,7 @@ function CourseTableCard({
   const fetchIndexByIds = (ids_array) => {
     const index_arr = [];
     ids_array.forEach((id) => {
-      index_arr.push(courseTable.courses.indexOf(id));
+      index_arr.push(courseTable.courses.map((c) => c.id).indexOf(id));
     });
     return index_arr;
   };
@@ -115,7 +115,7 @@ function CourseTableCard({
     // get indice need to reorder from courseOrder
     const index_arr = fetchIndexByIds(courseOrder);
     // do reorder, generate new courseTable.courses to be patched
-    const new_courses = [...courseTable.courses];
+    const new_courses = courseTable.courses.map((course) => course.id);
     for (let i = 0; i < courseList.length; i++) {
       const target_index = index_arr[i];
       const target_id = courseList[i];

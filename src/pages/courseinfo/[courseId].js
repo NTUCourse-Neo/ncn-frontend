@@ -153,7 +153,10 @@ function CourseInfoPage({ code, course }) {
           return;
         }
         // determine init state
-        if (courseTable && courseTable.courses.includes(code)) {
+        if (
+          courseTable &&
+          courseTable.courses.map((c) => c.id).includes(code)
+        ) {
           setSelected(true);
         } else {
           setSelected(false);
@@ -225,12 +228,12 @@ function CourseInfoPage({ code, course }) {
           // fetch course table success
           let res_table;
           let operation_str;
-          if (courseTable.courses.includes(course.id)) {
+          if (courseTable.courses.map((c) => c.id).includes(course.id)) {
             // course is already in course table, remove it.
             operation_str = "刪除";
-            const new_courses = courseTable.courses.filter(
-              (id) => id !== course.id
-            );
+            const new_courses = courseTable.courses
+              .map((c) => c.id)
+              .filter((id) => id !== course.id);
             try {
               res_table = await patchCourseTable(
                 uuid,
@@ -260,7 +263,10 @@ function CourseInfoPage({ code, course }) {
           } else {
             // course is not in course table, add it.
             operation_str = "新增";
-            const new_courses = [...courseTable.courses, course.id];
+            const new_courses = [
+              ...courseTable.courses.map((c) => c.id),
+              course.id,
+            ];
             try {
               res_table = await patchCourseTable(
                 uuid,

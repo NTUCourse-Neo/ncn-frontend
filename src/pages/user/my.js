@@ -20,7 +20,7 @@ export default function UserMyPage({ user }) {
   const router = useRouter();
 
   const selectedCourses = useMemo(() => {
-    return courseTable?.courses;
+    return courseTable?.courses.map((c) => c.id);
   }, [courseTable]);
 
   const favoriteList = useMemo(() => userInfo?.db?.favorites ?? [], [userInfo]);

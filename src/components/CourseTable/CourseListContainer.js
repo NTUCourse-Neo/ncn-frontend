@@ -233,7 +233,7 @@ function CourseListContainer({ courseTable, courses, loading }) {
         duration: 3000,
         isClosable: true,
       });
-      setCourseListForSort(res_table.courses);
+      setCourseListForSort(res_table.courses.map((c) => c.id));
       setPrepareToRemoveCourseId([]);
     } catch (err) {
       if (err?.response?.status === 403 || err?.response?.status === 404) {

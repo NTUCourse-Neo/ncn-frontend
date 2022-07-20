@@ -17,7 +17,7 @@ function CourseInfoRowContainer({ displayTable }) {
   const { searchResult: courseInfo } = useCourseSearchingContext();
   const { courseTable } = useCourseTable();
   const selectedCourses = useMemo(() => {
-    return courseTable?.courses ?? [];
+    return courseTable?.courses ? courseTable?.courses.map((c) => c.id) : [];
   }, [courseTable]);
   const isDesktop = useBreakpointValue({ base: false, lg: true });
 
