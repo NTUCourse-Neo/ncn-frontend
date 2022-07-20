@@ -388,43 +388,54 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTable }) {
       if (user) {
         setAddingFavoriteCourse(true);
         const favorite_list = [...userInfo.db.favorites];
-        let new_favorite_list;
-        let op_name;
-        if (favorite_list.includes(course_id)) {
-          // remove course from favorite list
-          new_favorite_list = favorite_list.filter((id) => id !== course_id);
-          op_name = "刪除";
-        } else {
-          // add course to favorite list
-          new_favorite_list = [...favorite_list, course_id];
-          op_name = "新增";
-        }
-        // API call
         try {
-          const updatedUser = await handleFetch(`/api/user/addFavoriteCourse`, {
-            new_favorite_list,
-            user_id: userInfo.db.id,
-          });
-          setUser(updatedUser);
+          if (favorite_list.includes(course_id)) {
+            const updatedFavorite = await handleFetch(
+              `/api/user/removeFavoriteCourse`,
+              {
+                course_id: course_id,
+              }
+            );
+            setUser({
+              ...userInfo,
+              db: {
+                ...userInfo.db,
+                favorites: updatedFavorite,
+              },
+            });
+          } else {
+            const updatedFavorite = await handleFetch(
+              `/api/user/addFavoriteCourse`,
+              {
+                course_id: course_id,
+              }
+            );
+            setUser({
+              ...userInfo,
+              db: {
+                ...userInfo.db,
+                favorites: updatedFavorite,
+              },
+            });
+          }
+          setAddingFavoriteCourse(false);
           toast({
-            title: `${op_name}最愛課程成功`,
-            //description: `請稍後再試`,
+            title: `更改最愛課程成功`,
             status: "success",
             duration: 3000,
             isClosable: true,
           });
-          setAddingFavoriteCourse(false);
-        } catch (e) {
-          // toast error
+        } catch (error) {
+          console.log(error);
           toast({
-            title: `${op_name}最愛課程失敗`,
+            title: `更改最愛課程失敗`,
             description: `請稍後再試`,
             status: "error",
             duration: 3000,
             isClosable: true,
           });
           setAddingFavoriteCourse(false);
-          if (e?.response?.data?.msg === "access_token_expired") {
+          if (error?.response?.data?.msg === "access_token_expired") {
             router.push("/api/auth/login");
           }
         }

@@ -18,7 +18,7 @@ import {
 } from "@chakra-ui/react";
 import Image from "next/image";
 import CourseDetailInfoContainer from "components/CourseInfo/CourseDetailInfoContainer";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/router";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import Moment from "moment";
@@ -82,8 +82,11 @@ function CourseInfoPage({ code, course }) {
   const [addingCourse, setAddingCourse] = useState(false);
   const [addingFavoriteCourse, setAddingFavoriteCourse] = useState(false);
   const [selected, setSelected] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false);
   const { user, isLoading } = useUser();
+  const isFavorite = useMemo(
+    () => userInfo?.db?.favorites.includes(course.id) ?? false,
+    [userInfo, course.id]
+  );
 
   useEffect(() => {
     setCopyWord(copyWordList.find((word) => word.count <= copiedLinkClicks));
@@ -114,24 +117,12 @@ function CourseInfoPage({ code, course }) {
             // use the first one
             uuid = user_data.db.course_tables[0];
           }
-          // determine isFavorite init state
-          if (user_data.db.favorites.includes(code)) {
-            setIsFavorite(true);
-          } else {
-            setIsFavorite(false);
-          }
         } else {
           if (userInfo.db.course_tables.length === 0) {
             uuid = null;
           } else {
             // use the first one
             uuid = userInfo.db.course_tables[0];
-          }
-          // determine isFavorite init state
-          if (userInfo.db.favorites.includes(code)) {
-            setIsFavorite(true);
-          } else {
-            setIsFavorite(false);
           }
         }
       } else {
@@ -328,44 +319,53 @@ function CourseInfoPage({ code, course }) {
       if (user) {
         setAddingFavoriteCourse(true);
         const favorite_list = [...userInfo.db.favorites];
-        let new_favorite_list;
-        let op_name;
-        if (favorite_list.includes(course_id)) {
-          // remove course from favorite list
-          new_favorite_list = favorite_list.filter((id) => id !== course_id);
-          op_name = "刪除";
-        } else {
-          // add course to favorite list
-          new_favorite_list = [...favorite_list, course_id];
-          op_name = "新增";
-        }
-        // API call
         try {
-          const updatedUser = await handleFetch(`/api/user/addFavoriteCourse`, {
-            new_favorite_list,
-            user_id: userInfo.db.id,
-          });
-          setUser(updatedUser);
+          if (favorite_list.includes(course_id)) {
+            const updatedFavorite = await handleFetch(
+              `/api/user/removeFavoriteCourse`,
+              {
+                course_id: course_id,
+              }
+            );
+            setUser({
+              ...userInfo,
+              db: {
+                ...userInfo.db,
+                favorites: updatedFavorite,
+              },
+            });
+          } else {
+            const updatedFavorite = await handleFetch(
+              `/api/user/addFavoriteCourse`,
+              {
+                course_id: course_id,
+              }
+            );
+            setUser({
+              ...userInfo,
+              db: {
+                ...userInfo.db,
+                favorites: updatedFavorite,
+              },
+            });
+          }
+          setAddingFavoriteCourse(false);
           toast({
-            title: `${op_name}最愛課程成功`,
-            //description: `請稍後再試`,
+            title: `更改最愛課程成功`,
             status: "success",
             duration: 3000,
             isClosable: true,
           });
-          setAddingFavoriteCourse(false);
-          setIsFavorite(!isFavorite);
-        } catch (e) {
-          // toast error
+        } catch (error) {
           toast({
-            title: `${op_name}最愛課程失敗`,
+            title: `更改最愛課程失敗`,
             description: `請稍後再試`,
             status: "error",
             duration: 3000,
             isClosable: true,
           });
           setAddingFavoriteCourse(false);
-          if (e?.response?.data?.msg === "access_token_expired") {
+          if (error?.response?.data?.msg === "access_token_expired") {
             router.push("/api/auth/login");
           }
         }

@@ -1,4 +1,4 @@
-import { addFavoriteCourse } from "queries/user";
+import { removeFavoriteCourse } from "queries/user";
 import { getAccessToken, withApiAuthRequired } from "@auth0/nextjs-auth0";
 import { assertNotNil } from "utils/assert";
 
@@ -9,7 +9,7 @@ export default withApiAuthRequired(async function handler(req, res) {
     if (!assertNotNil(course_id)) {
       res.status(400).json({ error: "Missing user_id" });
     } else {
-      const updatedFavoriteList = await addFavoriteCourse(
+      const updatedFavoriteList = await removeFavoriteCourse(
         accessToken,
         course_id
       );

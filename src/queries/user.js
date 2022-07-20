@@ -28,19 +28,30 @@ export const linkCoursetableToUser = async (
   return user;
 };
 
-export const addFavoriteCourse = async (token, new_favorite_list) => {
+export const addFavoriteCourse = async (token, courseId) => {
   const {
-    data: { user },
-  } = await instance.patch(
-    `${api_version}/users/`,
-    { user: { favorites: new_favorite_list } },
+    data: { favorites: newFavoriteList },
+  } = await instance.put(
+    `${api_version}/users/favorites/${courseId}`,
+    {},
     {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     }
   );
-  return user;
+  return newFavoriteList;
+};
+
+export const removeFavoriteCourse = async (token, courseId) => {
+  const {
+    data: { favorites: newFavoriteList },
+  } = await instance.delete(`${api_version}/users/favorites/${courseId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return newFavoriteList;
 };
 
 export const patchUserInfo = async (token, newUser) => {
