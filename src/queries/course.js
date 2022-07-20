@@ -35,24 +35,9 @@ export const fetchSearchResult = async (
 };
 
 export const fetchCourse = async (id) => {
-  const search_filter = {
-    time: null,
-    department: null,
-    category: null,
-    enroll_method: null,
-    strict_match: false,
-  };
-  const batchSize = 1;
-  const offset = 0;
   const {
-    data: { courses },
-  } = await instance.post(`${api_version}/courses/ids`, {
-    ids: [id],
-    filter: search_filter,
-    batch_size: batchSize,
-    offset: offset,
-  });
-  const [course] = courses;
+    data: { course },
+  } = await instance.get(`${api_version}/courses/${id}`);
   return course;
 };
 
@@ -98,44 +83,20 @@ export const getCourseSyllabusData = async (course_id) => {
 
 // used in SideCourseTableContainer initialization, to fetch all course objects by ids
 export const fetchCourseTableCoursesByIds = async (ids_arr) => {
-  const search_filter = {
-    strict_match: false,
-    time: null,
-    department: null,
-    category: null,
-    enroll_method: null,
-  };
-  const batchSize = 15000; // max batch size
-  const offset = 0;
   const {
     data: { courses },
   } = await instance.post(`${api_version}/courses/ids`, {
     ids: ids_arr,
-    filter: search_filter,
-    batch_size: batchSize,
-    offset: offset,
   });
   return courses;
 };
 
 // used in userMyPage initialization, to fetch all favorite courses object by user's favorite courses ids
 export const fetchFavoriteCourses = async (ids_arr) => {
-  const search_filter = {
-    strict_match: false,
-    time: null,
-    department: null,
-    category: null,
-    enroll_method: null,
-  };
-  const batchSize = 15000;
-  const offset = 0;
   const {
     data: { courses },
   } = await instance.post(`${api_version}/courses/ids`, {
     ids: ids_arr,
-    filter: search_filter,
-    batch_size: batchSize,
-    offset: offset,
   });
   return courses;
 };
