@@ -6,7 +6,6 @@ module.exports = defineConfig({
   projectId: "79x2jm",
   env: {
     API_ENDPOINT: "",
-    API_VERSION: "",
   },
   e2e: {
     // We've imported your old cypress plugins here.
