@@ -141,13 +141,14 @@ function CourseInfoPage({ code, course }) {
           ) {
             // expired
             setCourseTable(null);
+          } else {
+            toast({
+              title: "取得課表資料失敗",
+              status: "error",
+              duration: 3000,
+              isClosable: true,
+            });
           }
-          toast({
-            title: "取得課表資料失敗",
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
           setAddingCourse(false);
           setAddingFavoriteCourse(false);
           return;

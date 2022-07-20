@@ -452,7 +452,7 @@ function SyllabusPanel({ isLoading, isUnauth, SyllabusData }) {
   const textColor = useColorModeValue("text.light", "text.dark");
   return (
     <PanelWrapper isLoading={isLoading} isUnauth={isUnauth}>
-      {!SyllabusData ? (
+      {!SyllabusData || !SyllabusData?.syllabus ? (
         <PanelPlaceholder title="無課程大綱資訊" h="100%" pt="8" />
       ) : (
         <Flex
@@ -464,7 +464,7 @@ function SyllabusPanel({ isLoading, isUnauth, SyllabusData }) {
           wordBreak="break-all"
           overflow="auto"
         >
-          {Object.keys(SyllabusData.syllabus).map((key) => {
+          {Object.keys(SyllabusData?.syllabus ?? {}).map((key) => {
             const line = SyllabusData.syllabus[key].split("\n");
             const content = line.map((item, index) => {
               return (

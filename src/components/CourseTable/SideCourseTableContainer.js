@@ -218,11 +218,12 @@ function SideCourseTableContent({
     };
 
     if (!isLoading) {
-      const uuid = getTableKey(user).then((uuid) => {
+      getTableKey(user).then((uuid) => {
         if (uuid) {
           setLoading(true);
           getCourseTable(uuid);
         } else {
+          setCourseTable(null);
           setLoading(false);
         }
       });

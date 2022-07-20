@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
 
 const UserDataContext = createContext({
   user: null,
@@ -7,10 +7,6 @@ const UserDataContext = createContext({
 
 function UserDataProvider(props) {
   const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    console.log("user: ", user);
-  }, [user]);
 
   return (
     <UserDataContext.Provider
