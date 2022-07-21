@@ -29,7 +29,7 @@ import { useUser, withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { dept_list_bachelor_only } from "data/department";
 import handleFetch from "utils/CustomFetch";
 import Head from "next/head";
-import { useUserInfo } from "hooks/useUserInfo";
+import useUserInfo from "hooks/useUserInfo";
 import { useSWRConfig } from "swr";
 
 function DeleteDialog({

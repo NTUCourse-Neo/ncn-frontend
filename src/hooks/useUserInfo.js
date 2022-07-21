@@ -2,7 +2,7 @@ import useSWR, { useSWRConfig } from "swr";
 import handleFetch from "utils/CustomFetch";
 import { useEffect } from "react";
 
-export function useUserInfo(userId, onError = () => {}) {
+export default function useUserInfo(userId, onError = () => {}) {
   const { mutate } = useSWRConfig();
   const { data: user, error } = useSWR(
     userId ? `/api/user` : null,
@@ -19,7 +19,7 @@ export function useUserInfo(userId, onError = () => {}) {
 
   useEffect(() => {
     console.log("SWR USER: ", user);
-    console.log("SWR error: ", error);
+    console.log("SWR loading: ", !error && !user);
   }, [user, error]);
 
   return {

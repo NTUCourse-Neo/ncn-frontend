@@ -3,80 +3,71 @@ import { Flex, Text, useToast, Box, Spacer, Accordion } from "@chakra-ui/react";
 import SkeletonRow from "components/SkeletonRow";
 import { HashLoader, BeatLoader } from "react-spinners";
 import CourseInfoRow from "components/CourseInfoRow";
-import { useUserData } from "components/Providers/UserProvider";
 import { useDisplayTags } from "components/Providers/DisplayTagsProvider";
 import { useCourseTable } from "components/Providers/CourseTableProvider";
 import { fetchCourseTable } from "queries/courseTable";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
-import handleFetch from "utils/CustomFetch";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import useUserInfo from "hooks/useUserInfo";
 
 export default function UserMyPage({ user }) {
-  const { setUser, user: userInfo } = useUserData();
+  const { userInfo, isLoading } = useUserInfo(user?.sub, (e) => {
+    toast({
+      title: "取得用戶資料失敗.",
+      description: "請聯繫客服(?)",
+      status: "error",
+      duration: 9000,
+      isClosable: true,
+    });
+    if (e?.response?.status === 401) {
+      router.push("/api/auth/login");
+    }
+  });
   const toast = useToast();
   const { courseTable, setCourseTable } = useCourseTable();
   const { displayTags } = useDisplayTags();
   const router = useRouter();
-
   const selectedCourses = useMemo(() => {
     return courseTable?.courses.map((c) => c.id);
   }, [courseTable]);
+  const favoriteList = useMemo(() => userInfo?.favorites ?? [], [userInfo]);
 
-  const favoriteList = useMemo(() => userInfo?.db?.favorites ?? [], [userInfo]);
-
-  // fetch userInfo
+  // TODO: refactor when use swr to delete courseTableProvider
   useEffect(() => {
     // fetch on render
-    const fetchUserInfo = async () => {
-      if (user) {
-        try {
-          const user_data = await handleFetch("/api/user", {
-            user_id: user?.sub,
-          });
-          await setUser(user_data);
-          const course_tables = user_data.db.course_tables;
-          // console.log(course_tables);
-          if (course_tables.length === 0) {
-            setCourseTable(null);
-          } else {
-            // pick the first table
-            try {
-              const course_table = await fetchCourseTable(course_tables[0]);
-              setCourseTable(course_table);
-            } catch (e) {
-              if (e?.response?.status === 403 || e?.response?.status === 404) {
-                // expired
-                setCourseTable(null);
-                return;
-              }
-              toast({
-                title: "取得課表資料失敗.",
-                status: "error",
-                duration: 9000,
-                isClosable: true,
-              });
+    const fetchUserCourseTable = async () => {
+      if (userInfo) {
+        const course_tables = userInfo.course_tables;
+        // console.log(course_tables);
+        if (course_tables.length === 0) {
+          setCourseTable(null);
+        } else {
+          // pick the first table
+          try {
+            const course_table = await fetchCourseTable(course_tables[0]);
+            setCourseTable(course_table);
+          } catch (e) {
+            if (e?.response?.status === 403 || e?.response?.status === 404) {
+              // expired
+              setCourseTable(null);
+              return;
             }
-          }
-        } catch (e) {
-          toast({
-            title: "取得用戶資料失敗.",
-            description: "請聯繫客服(?)",
-            status: "error",
-            duration: 9000,
-            isClosable: true,
-          });
-          if (e?.response?.data?.msg === "access_token_expired") {
-            router.push("/api/auth/login");
+            toast({
+              title: "取得課表資料失敗.",
+              status: "error",
+              duration: 9000,
+              isClosable: true,
+            });
           }
         }
       }
     };
 
-    fetchUserInfo();
-  }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
+    fetchUserCourseTable();
+  }, [userInfo, setCourseTable, toast]);
 
-  if (!userInfo) {
+  if (isLoading) {
     return (
       <Box maxW="screen-md" h="95vh" mx="auto" overflow="visible" p="64px">
         <Flex
@@ -142,7 +133,9 @@ export default function UserMyPage({ user }) {
                     isfavorite={
                       userInfo === null
                         ? false
-                        : userInfo.db.favorites.includes(course.id)
+                        : userInfo.favorites
+                            .map((c) => c.id)
+                            .includes(course.id)
                     }
                   />
                   <Spacer my={{ base: 2, md: 1 }} />
