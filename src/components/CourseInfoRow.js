@@ -597,18 +597,27 @@ function CourseInfoRow({
                     .join(", ");
                 } else if (courseInfo[tag][0] === "g") {
                   display_str =
-                    "通識 " + info_view_map[tag].map[courseInfo[tag][0]].code;
-                  tooltip_str =
-                    info_view_map[tag].name +
-                    ": " +
-                    info_view_map[tag].map[courseInfo[tag][0]].full_name;
+                    "通識 " +
+                      info_view_map[tag].map?.[courseInfo?.[tag]?.[0]]?.code ??
+                    "";
+                  tooltip_str = info_view_map[tag].map[courseInfo?.[tag]?.[0]]
+                    ?.full_name
+                    ? info_view_map[tag].name +
+                      ": " +
+                      info_view_map[tag].map[courseInfo?.[tag]?.[0]]?.full_name
+                    : "";
                 } else {
                   display_str =
-                    info_view_map[tag].map[courseInfo[tag][0]].full_name;
-                  tooltip_str =
-                    info_view_map[tag].name +
-                    ":" +
-                    info_view_map[tag].map[courseInfo[tag][0]].full_name;
+                    info_view_map[tag].map[courseInfo[tag][0]]?.full_name ?? "";
+                  tooltip_str = info_view_map[tag].map[courseInfo?.[tag]?.[0]]
+                    ?.full_name
+                    ? info_view_map[tag].name +
+                      ":" +
+                      info_view_map[tag].map[courseInfo?.[tag]?.[0]]?.full_name
+                    : "";
+                }
+                if (display_str === "" && tooltip_str === "") {
+                  return null;
                 }
                 return (
                   <Tooltip
