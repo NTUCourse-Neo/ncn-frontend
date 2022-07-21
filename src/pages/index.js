@@ -127,13 +127,19 @@ const newsCard = [
         >
           Team NTUCourse Neo - 20220303
         </Text>
-        <Tooltip label="暫時關閉囉><" placement="top">
+        <Tooltip
+          label="暫時關閉囉><"
+          placement="top"
+          shouldWrapChildren
+          hasArrow
+        >
           <Button
             colorScheme="teal"
             variant="solid"
             size="sm"
             mt="4"
             rightIcon={<FaArrowRight />}
+            disabled
           >
             加入我們
           </Button>
