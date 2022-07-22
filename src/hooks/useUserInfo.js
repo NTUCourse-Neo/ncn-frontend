@@ -1,6 +1,6 @@
 import useSWR, { useSWRConfig } from "swr";
 import handleFetch from "utils/CustomFetch";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
 
 export default function useUserInfo(userId, options) {
@@ -33,12 +33,6 @@ export default function useUserInfo(userId, options) {
       },
     }
   );
-
-  useEffect(() => {
-    // console.log("SWR USER: ", user);
-    console.log("SWR user loading: ", isLoading);
-    // console.log("SWR error: ", error);
-  }, [user, error, isLoading]);
 
   return {
     userInfo: user?.db ?? null,

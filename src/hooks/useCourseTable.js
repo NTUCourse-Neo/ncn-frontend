@@ -1,5 +1,5 @@
 import useSWR, { useSWRConfig } from "swr";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { fetchCourseTable } from "queries/courseTable";
 
 export default function useCourseTable(courseTableId, options) {
@@ -31,13 +31,6 @@ export default function useCourseTable(courseTableId, options) {
       },
     }
   );
-
-  useEffect(() => {
-    // console.log("SWR COURSE TABLE: ", courseTable);
-    console.log("SWR course table loading: ", isLoading);
-    // console.log("SWR error: ", error);
-    // console.log("SWR isExpired: ", isExpired);
-  }, [courseTable, error, isExpired, isLoading]);
 
   return {
     courseTable,
