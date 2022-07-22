@@ -29,8 +29,9 @@ import { info_view_map } from "data/mapping_table";
 import { hash_to_color_hex } from "utils/colorAgent";
 import openPage from "utils/openPage";
 import { getNolAddUrl } from "utils/getNolUrls";
-import { useCourseTable } from "components/Providers/CourseTableProvider";
-import { fetchCourseTable, patchCourseTable } from "queries/courseTable";
+import useCourseTable from "hooks/useCourseTable";
+import { patchCourseTable } from "queries/courseTable";
+import useNeoLocalStorage from "hooks/useNeoLocalStorage";
 import { useRouter } from "next/router";
 import { useUser } from "@auth0/nextjs-auth0";
 import handleFetch from "utils/CustomFetch";
@@ -232,11 +233,19 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTable }) {
     hash_to_color_hex(courseInfo.id, 0.95),
     `${hash_to_color_hex(courseInfo.id, 0.3)}`
   );
-  const { setCourseTable } = useCourseTable();
   const { displayTags } = useDisplayTags();
   const router = useRouter();
+  const { neoLocalCourseTableKey } = useNeoLocalStorage();
   const { user } = useUser();
   const { userInfo, refetch, isLoading } = useUserInfo(user?.sub);
+  const courseTableKey = userInfo
+    ? userInfo?.course_tables?.[0] ?? null
+    : neoLocalCourseTableKey;
+  const {
+    courseTable,
+    isLoading: isCourseTableLoading,
+    refetch: refetchCourseTable,
+  } = useCourseTable(courseTableKey);
 
   const [addingCourse, setAddingCourse] = useState(false);
   const [addingFavoriteCourse, setAddingFavoriteCourse] = useState(false);
@@ -244,122 +253,50 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTable }) {
   const toast = useToast();
 
   const addCourseToTable = async (course) => {
-    if (!isLoading) {
+    if (!isLoading && !isCourseTableLoading) {
       setAddingCourse(true);
-      const uuid = userInfo
-        ? userInfo?.course_tables?.[0] ?? null
-        : localStorage?.getItem(LOCAL_STORAGE_KEY) ?? null;
-
-      if (uuid) {
-        // fetch course table from server
-        let courseTable;
+      if (courseTableKey && courseTable) {
+        let operation_str;
         try {
-          courseTable = await fetchCourseTable(uuid);
-          setCourseTable(courseTable);
-        } catch (error) {
-          if (
-            error?.response?.status === 403 ||
-            error?.response?.status === 404
-          ) {
-            // expired
-            setCourseTable(null);
-            toast({
-              title: `新增 ${course.name} 失敗`,
-              description: `您的課表已過期，請重新建立課表`,
-              status: "error",
-              duration: 3000,
-              isClosable: true,
-            });
+          if (courseTable.courses.map((c) => c.id).includes(course.id)) {
+            // course is already in course table, remove it.
+            operation_str = "刪除";
+            await patchCourseTable(
+              courseTableKey,
+              courseTable.name,
+              courseTable.user_id,
+              courseTable.expire_ts,
+              courseTable.courses
+                .map((c) => c.id)
+                .filter((id) => id !== course.id)
+            );
+            refetchCourseTable();
+          } else {
+            // course is not in course table, add it.
+            operation_str = "新增";
+            await patchCourseTable(
+              courseTableKey,
+              courseTable.name,
+              courseTable.user_id,
+              courseTable.expire_ts,
+              [...courseTable.courses.map((c) => c.id), course.id]
+            );
+            refetchCourseTable();
           }
           toast({
-            title: "取得課表資料失敗",
+            title: `已${operation_str} ${course.name}`,
+            description: `課表: ${courseTable.name}`,
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+          });
+        } catch (e) {
+          toast({
+            title: `新增 ${course.name} 失敗`,
             status: "error",
             duration: 3000,
             isClosable: true,
           });
-          setAddingCourse(false);
-          return;
-        }
-        if (courseTable) {
-          // fetch course table success
-          let res_table;
-          let operation_str;
-          if (courseTable.courses.map((c) => c.id).includes(course.id)) {
-            // course is already in course table, remove it.
-            operation_str = "刪除";
-            const new_courses = courseTable.courses
-              .map((c) => c.id)
-              .filter((id) => id !== course.id);
-            try {
-              res_table = await patchCourseTable(
-                uuid,
-                courseTable.name,
-                courseTable.user_id,
-                courseTable.expire_ts,
-                new_courses
-              );
-              setCourseTable(res_table);
-            } catch (error) {
-              if (
-                error?.response?.status === 403 ||
-                error?.response?.status === 404
-              ) {
-                // expired
-                setCourseTable(null);
-              }
-              toast({
-                title: `刪除 ${course.name} 失敗`,
-                status: "error",
-                duration: 3000,
-                isClosable: true,
-              });
-              setAddingCourse(false);
-              return;
-            }
-          } else {
-            // course is not in course table, add it.
-            operation_str = "新增";
-            const new_courses = [
-              ...courseTable.courses.map((c) => c.id),
-              course.id,
-            ];
-            try {
-              res_table = await patchCourseTable(
-                uuid,
-                courseTable.name,
-                courseTable.user_id,
-                courseTable.expire_ts,
-                new_courses
-              );
-              setCourseTable(res_table);
-            } catch (error) {
-              if (
-                error?.response?.status === 403 ||
-                error?.response?.status === 404
-              ) {
-                // expired
-                setCourseTable(null);
-              }
-              toast({
-                title: `新增 ${course.name} 失敗`,
-                status: "error",
-                duration: 3000,
-                isClosable: true,
-              });
-              setAddingCourse(false);
-              return;
-            }
-          }
-          if (res_table) {
-            toast({
-              title: `已${operation_str} ${course.name}`,
-              description: `課表: ${courseTable.name}`,
-              status: "success",
-              duration: 3000,
-              isClosable: true,
-            });
-          }
-          // ELSE TOAST?
         }
       } else {
         // do not have course table id in local storage

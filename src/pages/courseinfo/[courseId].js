@@ -35,8 +35,9 @@ import { getNolAddUrl, getNolUrl } from "utils/getNolUrls";
 import openPage from "utils/openPage";
 import useUserInfo from "hooks/useUserInfo";
 import { fetchCourse } from "queries/course";
-import { useCourseTable } from "components/Providers/CourseTableProvider";
-import { fetchCourseTable, patchCourseTable } from "queries/courseTable";
+import useCourseTable from "hooks/useCourseTable";
+import useNeoLocalStorage from "hooks/useNeoLocalStorage";
+import { patchCourseTable } from "queries/courseTable";
 import Head from "next/head";
 import { useUser } from "@auth0/nextjs-auth0";
 import handleFetch from "utils/CustomFetch";
@@ -70,7 +71,15 @@ function CourseInfoPage({ code, course }) {
   const headingColor = useColorModeValue("heading.light", "heading.dark");
   const { user } = useUser();
   const { userInfo, refetch, isLoading } = useUserInfo(user?.sub);
-  const { setCourseTable } = useCourseTable();
+  const { neoLocalCourseTableKey } = useNeoLocalStorage();
+  const courseTableKey = userInfo
+    ? userInfo?.course_tables?.[0] ?? null
+    : neoLocalCourseTableKey;
+  const {
+    courseTable,
+    isLoading: isCourseTableLoading,
+    refetch: refetchCourseTable,
+  } = useCourseTable(courseTableKey);
   const router = useRouter();
   const toast = useToast();
 
@@ -80,9 +89,10 @@ function CourseInfoPage({ code, course }) {
   );
   Moment.locale("zh-tw");
 
-  const [addingCourse, setAddingCourse] = useState(false);
-  const [addingFavoriteCourse, setAddingFavoriteCourse] = useState(false);
-  const [selected, setSelected] = useState(false);
+  const selected = useMemo(
+    () => (courseTable?.courses ?? []).map((c) => c.id).includes(code),
+    [courseTable, code]
+  );
   const isFavorite = useMemo(
     () => userInfo?.favorites.map((c) => c.id).includes(course.id) ?? false,
     [userInfo, course.id]
@@ -92,179 +102,52 @@ function CourseInfoPage({ code, course }) {
     setCopyWord(copyWordList.find((word) => word.count <= copiedLinkClicks));
   }, [copiedLinkClicks]);
 
-  // get selected & isFavorite init state
-  useEffect(() => {
-    const getInitState = async () => {
-      setAddingCourse(true);
-      setAddingFavoriteCourse(true);
-      const uuid = !userInfo
-        ? localStorage?.getItem(LOCAL_STORAGE_KEY) ?? null
-        : userInfo?.course_tables?.[0] ?? null;
-      if (uuid) {
-        let courseTable;
-        try {
-          courseTable = await fetchCourseTable(uuid);
-          setCourseTable(courseTable);
-        } catch (error) {
-          if (
-            error?.response?.status === 403 ||
-            error?.response?.status === 404
-          ) {
-            // expired
-            setCourseTable(null);
-          } else {
-            toast({
-              title: "取得課表資料失敗",
-              status: "error",
-              duration: 3000,
-              isClosable: true,
-            });
-          }
-          setAddingCourse(false);
-          setAddingFavoriteCourse(false);
-          return;
-        }
-        // determine init state
-        if (
-          courseTable &&
-          courseTable.courses.map((c) => c.id).includes(code)
-        ) {
-          setSelected(true);
-        } else {
-          setSelected(false);
-        }
-      }
-
-      setAddingCourse(false);
-      setAddingFavoriteCourse(false);
-    };
-
-    if (!isLoading) {
-      getInitState();
-    }
-  }, [isLoading]); // eslint-disable-line react-hooks/exhaustive-deps
-
   const handleAddCourse = async (course) => {
-    if (!isLoading) {
-      setAddingCourse(true);
-      const uuid = !userInfo
-        ? localStorage?.getItem(LOCAL_STORAGE_KEY) ?? null
-        : userInfo?.course_tables?.[0] ?? null;
-      if (uuid) {
-        // fetch course table from server
-        let courseTable;
+    if (!isLoading && !isCourseTableLoading) {
+      if (courseTableKey) {
+        // fetch course table success
+        let operation_str;
         try {
-          courseTable = await fetchCourseTable(uuid);
-          setCourseTable(courseTable);
-        } catch (error) {
-          if (
-            error?.response?.status === 403 ||
-            error?.response?.status === 404
-          ) {
-            // expired
-            setCourseTable(null);
-          }
-          toast({
-            title: "取得課表資料失敗",
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-          setAddingCourse(false);
-          return;
-        }
-
-        if (!courseTable) {
-          // get course_tables/:id return null (expired)
-          // show error and break the function
-          toast({
-            title: `新增 ${course.name} 失敗`,
-            description: `您的課表已過期，請重新建立課表`,
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        } else {
-          // fetch course table success
-          let res_table;
-          let operation_str;
           if (courseTable.courses.map((c) => c.id).includes(course.id)) {
             // course is already in course table, remove it.
             operation_str = "刪除";
-            const new_courses = courseTable.courses
-              .map((c) => c.id)
-              .filter((id) => id !== course.id);
-            try {
-              res_table = await patchCourseTable(
-                uuid,
-                courseTable.name,
-                courseTable.user_id,
-                courseTable.expire_ts,
-                new_courses
-              );
-              setCourseTable(res_table);
-            } catch (error) {
-              if (
-                error?.response?.status === 403 ||
-                error?.response?.status === 404
-              ) {
-                // expired
-                setCourseTable(null);
-              }
-              toast({
-                title: `刪除 ${course.name} 失敗`,
-                status: "error",
-                duration: 3000,
-                isClosable: true,
-              });
-              setAddingCourse(false);
-              return;
-            }
+            await patchCourseTable(
+              courseTableKey,
+              courseTable.name,
+              courseTable.user_id,
+              courseTable.expire_ts,
+              courseTable.courses
+                .map((c) => c.id)
+                .filter((id) => id !== course.id)
+            );
+            refetchCourseTable();
           } else {
             // course is not in course table, add it.
             operation_str = "新增";
-            const new_courses = [
-              ...courseTable.courses.map((c) => c.id),
-              course.id,
-            ];
-            try {
-              res_table = await patchCourseTable(
-                uuid,
-                courseTable.name,
-                courseTable.user_id,
-                courseTable.expire_ts,
-                new_courses
-              );
-              setCourseTable(res_table);
-            } catch (error) {
-              if (
-                error?.response?.status === 403 ||
-                error?.response?.status === 404
-              ) {
-                // expired
-                setCourseTable(null);
-              }
-              toast({
-                title: `新增 ${course.name} 失敗`,
-                status: "error",
-                duration: 3000,
-                isClosable: true,
-              });
-              setAddingCourse(false);
-              return;
-            }
+            await patchCourseTable(
+              courseTableKey,
+              courseTable.name,
+              courseTable.user_id,
+              courseTable.expire_ts,
+              [...courseTable.courses.map((c) => c.id), course.id]
+            );
+            refetchCourseTable();
           }
-          if (res_table) {
-            toast({
-              title: `已${operation_str} ${course.name}`,
-              description: `課表: ${courseTable.name}`,
-              status: "success",
-              duration: 3000,
-              isClosable: true,
-            });
-            setSelected(!selected);
-          }
-          // ELSE TOAST?
+          toast({
+            title: `已${operation_str} ${course.name}`,
+            description: `課表: ${courseTable.name}`,
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+          });
+        } catch (e) {
+          toast({
+            title: `新增 ${course.name} 失敗`,
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+          return;
         }
       } else {
         // do not have course table id in local storage
@@ -276,14 +159,12 @@ function CourseInfoPage({ code, course }) {
           isClosable: true,
         });
       }
-      setAddingCourse(false);
     }
   };
 
   const handleAddFavorite = async (course_id) => {
     if (!isLoading) {
       if (userInfo) {
-        setAddingFavoriteCourse(true);
         const favorite_list = userInfo.favorites.map((c) => c.id);
         try {
           if (favorite_list.includes(course_id)) {
@@ -296,7 +177,6 @@ function CourseInfoPage({ code, course }) {
             });
           }
           refetch();
-          setAddingFavoriteCourse(false);
           toast({
             title: `更改最愛課程成功`,
             status: "success",
@@ -311,8 +191,7 @@ function CourseInfoPage({ code, course }) {
             duration: 3000,
             isClosable: true,
           });
-          setAddingFavoriteCourse(false);
-          if (error?.response?.data?.msg === "access_token_expired") {
+          if (error?.response?.status === 401) {
             router.push("/api/auth/login");
           }
         }
@@ -461,7 +340,7 @@ function CourseInfoPage({ code, course }) {
                   colorScheme={selected ? "red" : "blue"}
                   variant="outline"
                   leftIcon={selected ? <FaMinus /> : <FaPlus />}
-                  isLoading={addingCourse || isLoading}
+                  isLoading={isLoading || isCourseTableLoading}
                   onClick={() => {
                     handleAddCourse(course);
                   }}
@@ -485,7 +364,7 @@ function CourseInfoPage({ code, course }) {
                 colorScheme="red"
                 variant={isFavorite ? "solid" : "outline"}
                 leftIcon={<FaHeart />}
-                isLoading={addingFavoriteCourse}
+                isLoading={isLoading || isCourseTableLoading}
                 disabled={!userInfo}
                 onClick={() => {
                   handleAddFavorite(course.id);
@@ -518,7 +397,7 @@ function CourseInfoPage({ code, course }) {
             </HStack>
             <Menu>
               <MenuButton
-                isLoading={addingCourse || isLoading || addingFavoriteCourse}
+                isLoading={isLoading || isCourseTableLoading}
                 as={Button}
                 rightIcon={<FaAngleDown />}
                 display={{ base: "inline-block", lg: "none" }}

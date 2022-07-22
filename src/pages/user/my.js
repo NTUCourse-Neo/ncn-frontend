@@ -1,14 +1,13 @@
-import { React, useEffect, useMemo } from "react";
+import { React, useMemo } from "react";
 import { Flex, Text, useToast, Box, Spacer, Accordion } from "@chakra-ui/react";
 import SkeletonRow from "components/SkeletonRow";
 import { HashLoader, BeatLoader } from "react-spinners";
 import CourseInfoRow from "components/CourseInfoRow";
 import { useDisplayTags } from "components/Providers/DisplayTagsProvider";
-import { useCourseTable } from "components/Providers/CourseTableProvider";
-import { fetchCourseTable } from "queries/courseTable";
+import useCourseTable from "hooks/useCourseTable";
+import useNeoLocalStorage from "hooks/useNeoLocalStorage";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import Head from "next/head";
-import { useRouter } from "next/router";
 import useUserInfo from "hooks/useUserInfo";
 
 export default function UserMyPage({ user }) {
@@ -24,47 +23,17 @@ export default function UserMyPage({ user }) {
     },
   });
   const toast = useToast();
-  const { courseTable, setCourseTable } = useCourseTable();
+  const { neoLocalCourseTableKey } = useNeoLocalStorage();
+  const courseTableKey = userInfo
+    ? userInfo?.course_tables?.[0] ?? null
+    : neoLocalCourseTableKey;
+  const { courseTable } = useCourseTable(courseTableKey);
+
   const { displayTags } = useDisplayTags();
-  const router = useRouter();
   const selectedCourses = useMemo(() => {
     return courseTable?.courses.map((c) => c.id);
   }, [courseTable]);
   const favoriteList = useMemo(() => userInfo?.favorites ?? [], [userInfo]);
-
-  // TODO: refactor when use swr to delete courseTableProvider
-  useEffect(() => {
-    // fetch on render
-    const fetchUserCourseTable = async () => {
-      if (userInfo) {
-        const course_tables = userInfo.course_tables;
-        // console.log(course_tables);
-        if (course_tables.length === 0) {
-          setCourseTable(null);
-        } else {
-          // pick the first table
-          try {
-            const course_table = await fetchCourseTable(course_tables[0]);
-            setCourseTable(course_table);
-          } catch (e) {
-            if (e?.response?.status === 403 || e?.response?.status === 404) {
-              // expired
-              setCourseTable(null);
-              return;
-            }
-            toast({
-              title: "取得課表資料失敗.",
-              status: "error",
-              duration: 9000,
-              isClosable: true,
-            });
-          }
-        }
-      }
-    };
-
-    fetchUserCourseTable();
-  }, [userInfo, setCourseTable, toast]);
 
   if (isLoading) {
     return (

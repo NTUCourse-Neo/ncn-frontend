@@ -26,7 +26,10 @@ import { MdDragHandle } from "react-icons/md";
 import { hash_to_color_hex } from "utils/colorAgent";
 import { getNolAddUrl } from "utils/getNolUrls";
 import openPage from "utils/openPage";
-import { useCourseTable } from "components/Providers/CourseTableProvider";
+import useCourseTable from "hooks/useCourseTable";
+import useUserInfo from "hooks/useUserInfo";
+import { useUser } from "@auth0/nextjs-auth0";
+import useNeoLocalStorage from "hooks/useNeoLocalStorage";
 import {
   sortableContainer,
   sortableElement,
@@ -185,7 +188,13 @@ const SortableContainer = sortableContainer(({ children }) => {
 });
 
 function CourseListContainer({ courseTable, courses, loading }) {
-  const { setCourseTable } = useCourseTable();
+  const { neoLocalCourseTableKey } = useNeoLocalStorage();
+  const { user } = useUser();
+  const { userInfo } = useUserInfo(user?.sub);
+  const courseTableKey = userInfo
+    ? userInfo?.course_tables?.[0] ?? null
+    : neoLocalCourseTableKey;
+  const { refetch } = useCourseTable(courseTableKey);
   const toast = useToast();
   const [courseListForSort, setCourseListForSort] = useState(
     Object.keys(courses)
@@ -195,18 +204,15 @@ function CourseListContainer({ courseTable, courses, loading }) {
 
   // TODO: Redundant?
   useEffect(() => {
-    //console.log('new list for sort', Object.keys(courses));
     setCourseListForSort(Object.keys(courses));
   }, [courses]);
 
   const handleDelete = (courseId) => {
     if (prepareToRemoveCourseId.includes(courseId)) {
-      // If the course is in the prepareToRemoveCourseId, remove it from the list.
       setPrepareToRemoveCourseId(
         prepareToRemoveCourseId.filter((id) => id !== courseId)
       );
     } else {
-      // If the course is not in the prepareToRemoveCourseId, add it to the list.
       setPrepareToRemoveCourseId([...prepareToRemoveCourseId, courseId]);
     }
   };
@@ -214,18 +220,14 @@ function CourseListContainer({ courseTable, courses, loading }) {
   const handleSaveCourseTable = async () => {
     setIsLoading(true);
     try {
-      // remove the course_id in the prepareToRemoveCourseId from the courseListForSort
-      const newCourseListForSort = courseListForSort.filter(
-        (id) => !prepareToRemoveCourseId.includes(id)
-      );
       const res_table = await patchCourseTable(
         courseTable.id,
         courseTable.name,
         courseTable.user_id,
         courseTable.expire_ts,
-        newCourseListForSort
+        courseListForSort.filter((id) => !prepareToRemoveCourseId.includes(id))
       );
-      setCourseTable(res_table);
+      refetch();
       toast({
         title: "編輯課表成功",
         description: "課程更動已儲存",
@@ -236,10 +238,6 @@ function CourseListContainer({ courseTable, courses, loading }) {
       setCourseListForSort(res_table.courses.map((c) => c.id));
       setPrepareToRemoveCourseId([]);
     } catch (err) {
-      if (err?.response?.status === 403 || err?.response?.status === 404) {
-        // expired
-        setCourseTable(null);
-      }
       toast({
         title: `編輯課表失敗`,
         description: `請稍後再試`,
@@ -251,9 +249,7 @@ function CourseListContainer({ courseTable, courses, loading }) {
     setIsLoading(false);
   };
 
-  // TODO: refactor logic
   const isEdited = () => {
-    // return true if the popup data is different from the original data.
     return (
       !courseListForSort.every(
         (course, index) => course === Object.keys(courses)[index]

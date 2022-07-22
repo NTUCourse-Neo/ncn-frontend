@@ -25,7 +25,10 @@ import {
 } from "@chakra-ui/react";
 import { hash_to_color_hex } from "utils/colorAgent";
 import { FaExclamationTriangle } from "react-icons/fa";
-import { useCourseTable } from "components/Providers/CourseTableProvider";
+import useCourseTable from "hooks/useCourseTable";
+import useUserInfo from "hooks/useUserInfo";
+import { useUser } from "@auth0/nextjs-auth0";
+import useNeoLocalStorage from "hooks/useNeoLocalStorage";
 import SortablePopover from "components/CourseTable/CourseTableCard/SortablePopover";
 import { patchCourseTable } from "queries/courseTable";
 
@@ -71,7 +74,14 @@ function CourseTableCard({
   interval,
   hoverId,
 }) {
-  const { courseTable, setCourseTable } = useCourseTable();
+  const { neoLocalCourseTableKey } = useNeoLocalStorage();
+  const { user } = useUser();
+  const { userInfo } = useUserInfo(user?.sub);
+  const courseTableKey = userInfo
+    ? userInfo?.course_tables?.[0] ?? null
+    : neoLocalCourseTableKey;
+  const { courseTable, refetch: refetchCourseTable } =
+    useCourseTable(courseTableKey);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   // initial order of courses
@@ -126,29 +136,23 @@ function CourseTableCard({
         new_courses[target_index] = "";
       }
     }
-    let res_table;
     try {
-      res_table = await patchCourseTable(
+      await patchCourseTable(
         courseTable.id,
         courseTable.name,
         courseTable.user_id,
         courseTable.expire_ts,
         new_courses
       );
-      setCourseTable(res_table);
+      refetchCourseTable();
+      toast({
+        title: `Saved!`,
+        description: `更改志願序成功`,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
     } catch (error) {
-      if (error?.response?.status === 403 || error?.response?.status === 404) {
-        // expired
-        setCourseTable(null);
-        toast({
-          title: `課表已過期!`,
-          description: `更改志願序失敗`,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-        return;
-      }
       toast({
         title: "更改志願序失敗!",
         description: "請檢查網路連線，或聯絡系統管理員。",
@@ -157,16 +161,6 @@ function CourseTableCard({
         isClosable: true,
       });
       return;
-    }
-    if (res_table) {
-      // patch success
-      toast({
-        title: `Saved!`,
-        description: `更改志願序成功`,
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
     }
     leavePopover();
   };

@@ -10,12 +10,19 @@ import {
 import useUserInfo from "hooks/useUserInfo";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { setHoveredCourseData } from "utils/hoverCourse";
-import { useCourseTable } from "components/Providers/CourseTableProvider";
+import useCourseTable from "hooks/useCourseTable";
+import { useUser } from "@auth0/nextjs-auth0";
+import useNeoLocalStorage from "hooks/useNeoLocalStorage";
 
 function CourseInfoRowContainer({ displayTable }) {
-  const { userInfo } = useUserInfo();
+  const { neoLocalCourseTableKey } = useNeoLocalStorage();
+  const { user } = useUser();
+  const { userInfo } = useUserInfo(user?.sub);
   const { searchResult: courseInfo } = useCourseSearchingContext();
-  const { courseTable } = useCourseTable();
+  const courseTableKey = userInfo
+    ? userInfo?.course_tables?.[0] ?? null
+    : neoLocalCourseTableKey;
+  const { courseTable } = useCourseTable(courseTableKey);
   const selectedCourses = useMemo(() => {
     return courseTable?.courses ? courseTable?.courses.map((c) => c.id) : [];
   }, [courseTable]);

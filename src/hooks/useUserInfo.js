@@ -1,9 +1,10 @@
 import useSWR, { useSWRConfig } from "swr";
 import handleFetch from "utils/CustomFetch";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 export default function useUserInfo(userId, options) {
+  const [isLoading, setIsLoading] = useState(false);
   const onSuccessCallback = options?.onSuccessCallback;
   const onErrorCallback = options?.onErrorCallback;
   const router = useRouter();
@@ -11,17 +12,20 @@ export default function useUserInfo(userId, options) {
   const { data: user, error } = useSWR(
     userId ? `/api/user` : null,
     async (url) => {
+      setIsLoading(true);
       const userData = await handleFetch(url, {
         user_id: userId,
       });
+      setIsLoading(false);
       return userData;
     },
     {
       onSuccess: async (data, key, config) => {
+        setIsLoading(false);
         await onSuccessCallback?.(data, key, config);
-        mutate("/api/user");
       },
       onError: (err, key, config) => {
+        setIsLoading(false);
         if (err?.response?.status === 401) {
           router.push("/api/auth/login");
         }
@@ -31,14 +35,14 @@ export default function useUserInfo(userId, options) {
   );
 
   useEffect(() => {
-    console.log("SWR USER: ", user);
-    console.log("SWR loading: ", !error && !user);
-    console.log("SWR error: ", error);
-  }, [user, error]);
+    // console.log("SWR USER: ", user);
+    console.log("SWR user loading: ", isLoading);
+    // console.log("SWR error: ", error);
+  }, [user, error, isLoading]);
 
   return {
     userInfo: user?.db ?? null,
-    isLoading: !error && !user,
+    isLoading,
     error: error,
     refetch: () => {
       mutate(`/api/user`);

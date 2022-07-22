@@ -1,7 +1,6 @@
 import { ChakraProvider, Box } from "@chakra-ui/react";
 import { CourseSearchingProvider } from "components/Providers/CourseSearchingProvider";
 import { DisplayTagsProvider } from "components/Providers/DisplayTagsProvider";
-import { CourseTableProvider } from "components/Providers/CourseTableProvider";
 import HeaderBar from "components/HeaderBar";
 import Footer from "components/Footer";
 import { UserProvider as Auth0UserProvider } from "@auth0/nextjs-auth0";
@@ -12,15 +11,13 @@ function MyApp({ Component, pageProps }) {
     <Auth0UserProvider>
       <ChakraProvider theme={theme}>
         <CourseSearchingProvider>
-          <CourseTableProvider>
-            <DisplayTagsProvider>
-              <Box w="100vw" h={{ base: "100%", lg: "" }}>
-                <HeaderBar />
-                <Component {...pageProps} />
-                <Footer />
-              </Box>
-            </DisplayTagsProvider>
-          </CourseTableProvider>
+          <DisplayTagsProvider>
+            <Box w="100vw" h={{ base: "100%", lg: "" }}>
+              <HeaderBar />
+              <Component {...pageProps} />
+              <Footer />
+            </Box>
+          </DisplayTagsProvider>
         </CourseSearchingProvider>
       </ChakraProvider>
     </Auth0UserProvider>
