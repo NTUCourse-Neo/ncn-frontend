@@ -29,7 +29,6 @@ import { info_view_map } from "data/mapping_table";
 import { hash_to_color_hex } from "utils/colorAgent";
 import openPage from "utils/openPage";
 import { getNolAddUrl } from "utils/getNolUrls";
-import { useUserData } from "components/Providers/UserProvider";
 import { useCourseTable } from "components/Providers/CourseTableProvider";
 import { fetchCourseTable, patchCourseTable } from "queries/courseTable";
 import { useRouter } from "next/router";
@@ -37,6 +36,7 @@ import { useUser } from "@auth0/nextjs-auth0";
 import handleFetch from "utils/CustomFetch";
 import { useDisplayTags } from "components/Providers/DisplayTagsProvider";
 import parseCourseSchedlue from "utils/parseCourseSchedule";
+import useUserInfo from "hooks/useUserInfo";
 
 const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
@@ -235,31 +235,20 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTable }) {
   const { setCourseTable } = useCourseTable();
   const { displayTags } = useDisplayTags();
   const router = useRouter();
-  const { user: userInfo, setUser } = useUserData();
+  const { user } = useUser();
+  const { userInfo, refetch, isLoading } = useUserInfo(user?.sub);
 
   const [addingCourse, setAddingCourse] = useState(false);
   const [addingFavoriteCourse, setAddingFavoriteCourse] = useState(false);
 
   const toast = useToast();
-  const { user, isLoading } = useUser();
 
   const addCourseToTable = async (course) => {
     if (!isLoading) {
       setAddingCourse(true);
-
-      let uuid;
-      if (user) {
-        // user mode
-        if (userInfo.db.course_tables.length === 0) {
-          uuid = null;
-        } else {
-          // use the first one
-          uuid = userInfo.db.course_tables[0];
-        }
-      } else {
-        // guest mode
-        uuid = localStorage.getItem(LOCAL_STORAGE_KEY);
-      }
+      const uuid = userInfo
+        ? userInfo?.course_tables?.[0] ?? null
+        : localStorage?.getItem(LOCAL_STORAGE_KEY) ?? null;
 
       if (uuid) {
         // fetch course table from server
@@ -390,36 +379,18 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTable }) {
     if (!isLoading) {
       if (user) {
         setAddingFavoriteCourse(true);
-        const favorite_list = (userInfo?.db?.favorites ?? []).map((c) => c.id);
+        const favorite_list = (userInfo?.favorites ?? []).map((c) => c.id);
         try {
           if (favorite_list.includes(course_id)) {
-            const updatedFavorite = await handleFetch(
-              `/api/user/removeFavoriteCourse`,
-              {
-                course_id: course_id,
-              }
-            );
-            setUser({
-              ...userInfo,
-              db: {
-                ...userInfo.db,
-                favorites: updatedFavorite,
-              },
+            await handleFetch(`/api/user/removeFavoriteCourse`, {
+              course_id: course_id,
             });
+            refetch();
           } else {
-            const updatedFavorite = await handleFetch(
-              `/api/user/addFavoriteCourse`,
-              {
-                course_id: course_id,
-              }
-            );
-            setUser({
-              ...userInfo,
-              db: {
-                ...userInfo.db,
-                favorites: updatedFavorite,
-              },
+            await handleFetch(`/api/user/addFavoriteCourse`, {
+              course_id: course_id,
             });
+            refetch();
           }
           setAddingFavoriteCourse(false);
           toast({
