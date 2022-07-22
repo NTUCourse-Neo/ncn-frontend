@@ -12,14 +12,16 @@ import { useRouter } from "next/router";
 import useUserInfo from "hooks/useUserInfo";
 
 export default function UserMyPage({ user }) {
-  const { userInfo, isLoading } = useUserInfo(user?.sub, (e, k, c) => {
-    toast({
-      title: "取得用戶資料失敗.",
-      description: "請聯繫客服(?)",
-      status: "error",
-      duration: 9000,
-      isClosable: true,
-    });
+  const { userInfo, isLoading } = useUserInfo(user?.sub, {
+    onErrorCallback: (e, k, c) => {
+      toast({
+        title: "取得用戶資料失敗.",
+        description: "請聯繫客服(?)",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    },
   });
   const toast = useToast();
   const { courseTable, setCourseTable } = useCourseTable();

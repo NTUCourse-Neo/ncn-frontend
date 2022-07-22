@@ -23,12 +23,10 @@ import { useRouter } from "next/router";
 import { FaCheck, FaExclamation, FaBook, FaInfoCircle } from "react-icons/fa";
 import { useUser } from "@auth0/nextjs-auth0";
 import BeatLoader from "react-spinners/BeatLoader";
-import { useUserData } from "components/Providers/UserProvider";
 import Image from "next/image";
 import ThemeToggleButton from "components/ThemeToggleButton";
 
 function SignInButton() {
-  const { setUser } = useUserData();
   const { user, isLoading } = useUser();
   const router = useRouter();
   const textColor = useColorModeValue("gray.600", "gray.300");
@@ -116,7 +114,6 @@ function SignInButton() {
               m="2"
               mr="4"
               onClick={() => {
-                setUser(null);
                 router.push("/api/auth/logout");
               }}
             >

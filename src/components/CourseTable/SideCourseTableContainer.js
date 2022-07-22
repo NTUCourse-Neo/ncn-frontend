@@ -43,7 +43,6 @@ import { v4 as uuidv4 } from "uuid";
 import { useUser } from "@auth0/nextjs-auth0";
 import { useRouter } from "next/router";
 import { parseCoursesToTimeMap } from "utils/parseCourseTime";
-import { useUserData } from "components/Providers/UserProvider";
 import { useCourseTable } from "components/Providers/CourseTableProvider";
 import {
   createCourseTable,
@@ -51,6 +50,7 @@ import {
   fetchCourseTable,
 } from "queries/courseTable";
 import handleFetch from "utils/CustomFetch";
+import useUserInfo from "hooks/useUserInfo";
 
 const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
@@ -148,10 +148,10 @@ function SideCourseTableContent({
 }) {
   const headingColor = useColorModeValue("heading.light", "heading.dark");
   const router = useRouter();
-  const { user, isLoading } = useUser();
+  const { user } = useUser();
   const toast = useToast();
   const { courseTable, setCourseTable } = useCourseTable();
-  const { setUser, user: userInfo } = useUserData();
+  const { userInfo, isLoading, refetch } = useUserInfo(user?.sub);
 
   // some local states for handling course data
   const [courses, setCourses] = useState({}); // dictionary of Course objects using courseId as key
@@ -174,22 +174,6 @@ function SideCourseTableContent({
 
   // trigger when mounting, fetch local storage course_id
   useEffect(() => {
-    const getTableKey = async (user) => {
-      if (!user) {
-        return localStorage?.getItem(LOCAL_STORAGE_KEY) ?? null;
-      }
-      try {
-        const user_data = await handleFetch("/api/user", {
-          user_id: user.sub,
-        });
-        await setUser(user_data);
-        const course_tables = user_data.db.course_tables;
-        return course_tables?.[0] ?? null;
-      } catch (e) {
-        console.log(e);
-        return null;
-      }
-    };
     const getCourseTable = async (uuid) => {
       try {
         const course_table = await fetchCourseTable(uuid);
@@ -218,17 +202,18 @@ function SideCourseTableContent({
     };
 
     if (!isLoading) {
-      getTableKey(user).then((uuid) => {
-        if (uuid) {
-          setLoading(true);
-          getCourseTable(uuid);
-        } else {
-          setCourseTable(null);
-          setLoading(false);
-        }
-      });
+      const uuid = !userInfo
+        ? localStorage?.getItem(LOCAL_STORAGE_KEY) ?? null
+        : userInfo?.course_tables?.[0] ?? null;
+      if (uuid) {
+        setLoading(true);
+        getCourseTable(uuid);
+      } else {
+        setCourseTable(null);
+        setLoading(false);
+      }
     }
-  }, [user, isLoading]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [user, isLoading, userInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (courseTable?.courses) {
@@ -249,16 +234,16 @@ function SideCourseTableContent({
           const updatedCourseTable = await createCourseTable(
             new_uuid,
             "我的課表",
-            userInfo.db.id,
+            userInfo.id,
             "1102"
           );
           setCourseTable(updatedCourseTable);
           // console.log("New UUID is generated: ",new_uuid);
           const updatedUser = await handleFetch("/api/user/linkCourseTable", {
             table_id: new_uuid,
-            user_id: userInfo.db.id,
+            user_id: userInfo.id,
           });
-          setUser(updatedUser);
+          refetch();
         } catch (e) {
           toast({
             title: `新增課表失敗`,

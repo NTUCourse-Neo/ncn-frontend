@@ -180,15 +180,17 @@ export default function UserInfoPage({ user }) {
   const [saveLoading, setSaveLoading] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [deleteMode, setDeleteMode] = useState(null);
-  const { userInfo, isLoading, refetch } = useUserInfo(user?.sub, (e, k, c) => {
-    toast({
-      title: "取得用戶資料失敗.",
-      description: "請聯繫客服(?)",
-      status: "error",
-      duration: 9000,
-      isClosable: true,
-    });
-    router.push("/404");
+  const { userInfo, isLoading, refetch } = useUserInfo(user?.sub, {
+    onErrorCallback: (e, k, c) => {
+      toast({
+        title: "取得用戶資料失敗.",
+        description: "請聯繫客服(?)",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+      router.push("/404");
+    },
   });
 
   // states for updating userInfo

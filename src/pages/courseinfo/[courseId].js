@@ -33,7 +33,7 @@ import {
 import { BiCopy } from "react-icons/bi";
 import { getNolAddUrl, getNolUrl } from "utils/getNolUrls";
 import openPage from "utils/openPage";
-import { useUserData } from "components/Providers/UserProvider";
+import useUserInfo from "hooks/useUserInfo";
 import { fetchCourse } from "queries/course";
 import { useCourseTable } from "components/Providers/CourseTableProvider";
 import { fetchCourseTable, patchCourseTable } from "queries/courseTable";
@@ -68,7 +68,8 @@ export async function getServerSideProps({ params }) {
 function CourseInfoPage({ code, course }) {
   const bgcolor = useColorModeValue("white", "gray.800");
   const headingColor = useColorModeValue("heading.light", "heading.dark");
-  const { setUser, user: userInfo } = useUserData();
+  const { user } = useUser();
+  const { userInfo, refetch, isLoading } = useUserInfo(user?.sub);
   const { setCourseTable } = useCourseTable();
   const router = useRouter();
   const toast = useToast();
@@ -82,9 +83,8 @@ function CourseInfoPage({ code, course }) {
   const [addingCourse, setAddingCourse] = useState(false);
   const [addingFavoriteCourse, setAddingFavoriteCourse] = useState(false);
   const [selected, setSelected] = useState(false);
-  const { user, isLoading } = useUser();
   const isFavorite = useMemo(
-    () => userInfo?.db?.favorites.map((c) => c.id).includes(course.id) ?? false,
+    () => userInfo?.favorites.map((c) => c.id).includes(course.id) ?? false,
     [userInfo, course.id]
   );
 
@@ -97,38 +97,9 @@ function CourseInfoPage({ code, course }) {
     const getInitState = async () => {
       setAddingCourse(true);
       setAddingFavoriteCourse(true);
-      let uuid;
-      if (user) {
-        // user mode, if no userInfo, log in first
-        if (!userInfo) {
-          let user_data;
-          try {
-            user_data = await handleFetch(`/api/user`, {
-              user_id: user.sub,
-            });
-          } catch (e) {
-            router.push("/api/auth/login");
-          }
-          await setUser(user_data);
-
-          if (user_data.db.course_tables.length === 0) {
-            uuid = null;
-          } else {
-            // use the first one
-            uuid = user_data.db.course_tables[0];
-          }
-        } else {
-          if (userInfo.db.course_tables.length === 0) {
-            uuid = null;
-          } else {
-            // use the first one
-            uuid = userInfo.db.course_tables[0];
-          }
-        }
-      } else {
-        // guest mode
-        uuid = localStorage.getItem(LOCAL_STORAGE_KEY);
-      }
+      const uuid = !userInfo
+        ? localStorage?.getItem(LOCAL_STORAGE_KEY) ?? null
+        : userInfo?.course_tables?.[0] ?? null;
       if (uuid) {
         let courseTable;
         try {
@@ -176,21 +147,9 @@ function CourseInfoPage({ code, course }) {
   const handleAddCourse = async (course) => {
     if (!isLoading) {
       setAddingCourse(true);
-
-      let uuid;
-      if (user) {
-        // user mode
-        if (userInfo.db.course_tables.length === 0) {
-          uuid = null;
-        } else {
-          // use the first one
-          uuid = userInfo.db.course_tables[0];
-        }
-      } else {
-        // guest mode
-        uuid = localStorage.getItem(LOCAL_STORAGE_KEY);
-      }
-
+      const uuid = !userInfo
+        ? localStorage?.getItem(LOCAL_STORAGE_KEY) ?? null
+        : userInfo?.course_tables?.[0] ?? null;
       if (uuid) {
         // fetch course table from server
         let courseTable;
@@ -215,7 +174,7 @@ function CourseInfoPage({ code, course }) {
           return;
         }
 
-        if (courseTable === null) {
+        if (!courseTable) {
           // get course_tables/:id return null (expired)
           // show error and break the function
           toast({
@@ -323,39 +282,20 @@ function CourseInfoPage({ code, course }) {
 
   const handleAddFavorite = async (course_id) => {
     if (!isLoading) {
-      if (user) {
+      if (userInfo) {
         setAddingFavoriteCourse(true);
-        const favorite_list = userInfo.db.favorites.map((c) => c.id);
+        const favorite_list = userInfo.favorites.map((c) => c.id);
         try {
           if (favorite_list.includes(course_id)) {
-            const updatedFavorite = await handleFetch(
-              `/api/user/removeFavoriteCourse`,
-              {
-                course_id: course_id,
-              }
-            );
-            setUser({
-              ...userInfo,
-              db: {
-                ...userInfo.db,
-                favorites: updatedFavorite,
-              },
+            await handleFetch(`/api/user/removeFavoriteCourse`, {
+              course_id: course_id,
             });
           } else {
-            const updatedFavorite = await handleFetch(
-              `/api/user/addFavoriteCourse`,
-              {
-                course_id: course_id,
-              }
-            );
-            setUser({
-              ...userInfo,
-              db: {
-                ...userInfo.db,
-                favorites: updatedFavorite,
-              },
+            await handleFetch(`/api/user/addFavoriteCourse`, {
+              course_id: course_id,
             });
           }
+          refetch();
           setAddingFavoriteCourse(false);
           toast({
             title: `更改最愛課程成功`,

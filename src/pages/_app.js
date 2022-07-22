@@ -1,5 +1,4 @@
 import { ChakraProvider, Box } from "@chakra-ui/react";
-import { UserDataProvider } from "components/Providers/UserProvider";
 import { CourseSearchingProvider } from "components/Providers/CourseSearchingProvider";
 import { DisplayTagsProvider } from "components/Providers/DisplayTagsProvider";
 import { CourseTableProvider } from "components/Providers/CourseTableProvider";
@@ -14,15 +13,13 @@ function MyApp({ Component, pageProps }) {
       <ChakraProvider theme={theme}>
         <CourseSearchingProvider>
           <CourseTableProvider>
-            <UserDataProvider>
-              <DisplayTagsProvider>
-                <Box w="100vw" h={{ base: "100%", lg: "" }}>
-                  <HeaderBar />
-                  <Component {...pageProps} />
-                  <Footer />
-                </Box>
-              </DisplayTagsProvider>
-            </UserDataProvider>
+            <DisplayTagsProvider>
+              <Box w="100vw" h={{ base: "100%", lg: "" }}>
+                <HeaderBar />
+                <Component {...pageProps} />
+                <Footer />
+              </Box>
+            </DisplayTagsProvider>
           </CourseTableProvider>
         </CourseSearchingProvider>
       </ChakraProvider>

@@ -7,13 +7,13 @@ import {
   Accordion,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import { useUserData } from "components/Providers/UserProvider";
+import useUserInfo from "hooks/useUserInfo";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { setHoveredCourseData } from "utils/hoverCourse";
 import { useCourseTable } from "components/Providers/CourseTableProvider";
 
 function CourseInfoRowContainer({ displayTable }) {
-  const { user: userInfo } = useUserData();
+  const { userInfo } = useUserInfo();
   const { searchResult: courseInfo } = useCourseSearchingContext();
   const { courseTable } = useCourseTable();
   const selectedCourses = useMemo(() => {
@@ -52,9 +52,9 @@ function CourseInfoRowContainer({ displayTable }) {
               selected={selectedCourses.includes(course.id)}
               displayTable={displayTable}
               isfavorite={
-                userInfo === null
+                !userInfo
                   ? false
-                  : userInfo.db.favorites.map((c) => c.id).includes(course.id)
+                  : userInfo.favorites.map((c) => c.id).includes(course.id)
               }
             />
             <Spacer my={{ base: 2, md: 1 }} />
