@@ -1,8 +1,13 @@
 import useSWR, { useSWRConfig } from "swr";
 import handleFetch from "utils/CustomFetch";
 import { useEffect } from "react";
+import { useRouter } from "next/router";
 
-export default function useUserInfo(userId, onError = () => {}) {
+export default function useUserInfo(
+  userId,
+  onErrorCallback = (err, key, config) => {}
+) {
+  const router = useRouter();
   const { mutate } = useSWRConfig();
   const { data: user, error } = useSWR(
     userId ? `/api/user` : null,
@@ -13,7 +18,12 @@ export default function useUserInfo(userId, onError = () => {}) {
       return userData;
     },
     {
-      onError: onError,
+      onError: (err, key, config) => {
+        if (err?.response?.status === 401) {
+          router.push("/api/auth/login");
+        }
+        onErrorCallback(err, key, config);
+      },
     }
   );
 

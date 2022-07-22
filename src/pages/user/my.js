@@ -12,7 +12,7 @@ import { useRouter } from "next/router";
 import useUserInfo from "hooks/useUserInfo";
 
 export default function UserMyPage({ user }) {
-  const { userInfo, isLoading } = useUserInfo(user?.sub, (e) => {
+  const { userInfo, isLoading } = useUserInfo(user?.sub, (e, k, c) => {
     toast({
       title: "取得用戶資料失敗.",
       description: "請聯繫客服(?)",
@@ -20,9 +20,6 @@ export default function UserMyPage({ user }) {
       duration: 9000,
       isClosable: true,
     });
-    if (e?.response?.status === 401) {
-      router.push("/api/auth/login");
-    }
   });
   const toast = useToast();
   const { courseTable, setCourseTable } = useCourseTable();
