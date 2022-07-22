@@ -1,4 +1,10 @@
-import { FaUserGraduate, FaCheckSquare, FaPuzzlePiece, FaLanguage, FaFileImport } from "react-icons/fa";
+import {
+  FaUserGraduate,
+  FaCheckSquare,
+  FaPuzzlePiece,
+  FaLanguage,
+  FaFileImport,
+} from "react-icons/fa";
 const info_view_map = {
   required: {
     name: "課程必選修",

@@ -9,9 +9,24 @@ const CourseSearchingContext = createContext({
   batchSize: 20,
   offset: 0,
   searchColumns: ["course_name", "teacher"], // array of column names, default is all columns
-  searchSettings: { show_selected_courses: false, only_show_not_conflicted_courses: false, sync_add_to_nol: false, strict_search_mode: false }, // object of settings
-  searchFiltersEnable: { time: false, department: false, category: false, enroll_method: false }, // object of boolean, enable/disable filters
-  searchFilters: { time: [[], [], [], [], [], [], []], department: [], category: [], enroll_method: ["1", "2", "3"] }, // default value of filters
+  searchSettings: {
+    show_selected_courses: false,
+    only_show_not_conflicted_courses: false,
+    sync_add_to_nol: false,
+    strict_search_mode: false,
+  }, // object of settings
+  searchFiltersEnable: {
+    time: false,
+    department: false,
+    category: false,
+    enroll_method: false,
+  }, // object of boolean, enable/disable filters
+  searchFilters: {
+    time: [[], [], [], [], [], [], []],
+    department: [],
+    category: [],
+    enroll_method: ["1", "2", "3"],
+  }, // default value of filters
   setSearchLoading: () => {},
   setSearchResult: () => {},
   setSearchError: () => {},
@@ -33,14 +48,22 @@ function CourseSearchingProvider(props) {
   const [totalCount, setTotalCount] = useState(0);
   const [batchSize, setBatchSize] = useState(20);
   const [offset, setOffset] = useState(0);
-  const [searchColumns, setSearchColumns] = useState(["course_name", "teacher"]);
+  const [searchColumns, setSearchColumns] = useState([
+    "course_name",
+    "teacher",
+  ]);
   const [searchSettings, setSearchSettings] = useState({
     show_selected_courses: false,
     only_show_not_conflicted_courses: false,
     sync_add_to_nol: false,
     strict_search_mode: false,
   });
-  const [searchFiltersEnable, setSearchFiltersEnable] = useState({ time: false, department: false, category: false, enroll_method: false });
+  const [searchFiltersEnable, setSearchFiltersEnable] = useState({
+    time: false,
+    department: false,
+    category: false,
+    enroll_method: false,
+  });
   const [searchFilters, setSearchFilters] = useState({
     time: [[], [], [], [], [], [], []],
     department: [],

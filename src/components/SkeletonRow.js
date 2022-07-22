@@ -11,7 +11,7 @@ function SkeletonRow({ loading }) {
 
   if (isLoading) {
     return (
-      <Flex p="4">
+      <Flex p="4" direction={"row"} w="100%" justifyContent={"center"}>
         <HashLoader size="60px" color="teal" />
       </Flex>
     );

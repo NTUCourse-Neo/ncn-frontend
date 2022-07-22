@@ -4,7 +4,6 @@ import {
   Heading,
   Button,
   Avatar,
-  AvatarBadge,
   Menu,
   MenuButton,
   MenuList,
@@ -12,28 +11,52 @@ import {
   MenuItem,
   MenuDivider,
   Text,
-  Badge,
   HStack,
+  AvatarBadge,
+  Badge,
+  Center,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { ChevronRightIcon } from "@chakra-ui/icons";
+import Link from "next/link";
+import { useRouter } from "next/router";
 import { FaCheck, FaExclamation, FaBook, FaInfoCircle } from "react-icons/fa";
-import { Link } from "react-router-dom";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useUser } from "@auth0/nextjs-auth0";
 import BeatLoader from "react-spinners/BeatLoader";
 import { useUserData } from "components/Providers/UserProvider";
+import Image from "next/image";
+import ThemeToggleButton from "components/ThemeToggleButton";
 
 function SignInButton() {
   const { setUser } = useUserData();
-  const { loginWithRedirect, user, isAuthenticated, isLoading, logout } = useAuth0();
+  const { user, isLoading } = useUser();
+  const router = useRouter();
+  const textColor = useColorModeValue("gray.600", "gray.300");
 
   if (isLoading) {
-    return <Button colorScheme="blue" variant="ghost" size="md" ml="10px" mr="10px" spinner={<BeatLoader size={8} color="white" />} isLoading />;
+    return (
+      <Button
+        colorScheme="blue"
+        variant="ghost"
+        size="md"
+        ml="10px"
+        mr="10px"
+        spinner={<BeatLoader size={8} color="white" />}
+        isLoading
+      />
+    );
   }
 
-  if (isAuthenticated) {
+  if (user) {
     return (
       <Menu>
-        <MenuButton as={Avatar} name={user.name} src={user.picture} _hover={{ cursor: "pointer" }} ml={{ base: 0, md: 6 }}>
+        <MenuButton
+          as={Avatar}
+          name={user.name}
+          src={user.picture}
+          _hover={{ cursor: "pointer" }}
+          ml={{ base: 0, md: 6 }}
+        >
           {user.email_verified ? (
             <AvatarBadge boxSize="1.25em" bg="green.500">
               <FaCheck size="10" />
@@ -46,29 +69,43 @@ function SignInButton() {
         </MenuButton>
         <MenuList>
           <MenuGroup title="帳戶">
-            <Link to="/user/info">
+            <Link href="/user/info">
               <MenuItem>個人資料</MenuItem>
             </Link>
-            <Link to="/user/my">
+            <Link href="/user/my">
               <MenuItem>最愛</MenuItem>
             </Link>
           </MenuGroup>
           <MenuDivider display={{ base: "block", md: "none" }} />
-          <MenuGroup title="更多" display={{ base: "inline-block", md: "none" }}>
-            <Link to="/about">
-              <MenuItem display={{ base: "inline-block", md: "none" }}>關於</MenuItem>
+          <MenuGroup
+            title="更多"
+            display={{ base: "inline-block", md: "none" }}
+          >
+            <Link href="/about">
+              <MenuItem display={{ base: "inline-block", md: "none" }}>
+                關於
+              </MenuItem>
             </Link>
           </MenuGroup>
           <MenuDivider />
           <Flex justifyContent="end" alignItems="center">
-            <Flex flexDirection="column" justifyContent="center" alignItems="start" m="2" ml="4">
-              <Badge colorScheme={user.email_verified ? "green" : "yellow"} mb="1">
+            <Flex
+              flexDirection="column"
+              justifyContent="center"
+              alignItems="start"
+              m="2"
+              ml="4"
+            >
+              <Badge
+                colorScheme={user.email_verified ? "green" : "yellow"}
+                mb="1"
+              >
                 {user.email_verified ? "已驗證" : "未驗證"}
               </Badge>
-              <Text fontSize="sm" color="gray.600" fontWeight="700">
+              <Text fontSize="sm" color={textColor} fontWeight="700">
                 {user.name}
               </Text>
-              <Text fontSize="xs" color="gray.500" fontWeight="500">
+              <Text fontSize="xs" color={textColor} fontWeight="500">
                 {user.email}
               </Text>
             </Flex>
@@ -80,7 +117,7 @@ function SignInButton() {
               mr="4"
               onClick={() => {
                 setUser(null);
-                logout();
+                router.push("/api/auth/logout");
               }}
             >
               登出
@@ -94,16 +131,30 @@ function SignInButton() {
   return (
     <>
       <Menu display={{ base: "inline", md: "none" }}>
-        <MenuButton as={Avatar} _hover={{ cursor: "pointer" }} display={{ base: "inline", md: "none" }} />
+        <MenuButton
+          as={Avatar}
+          _hover={{ cursor: "pointer" }}
+          display={{ base: "inline", md: "none" }}
+        />
         <MenuList>
           <MenuGroup title="更多">
-            <Link to="/about">
+            <Link href="/about">
               <MenuItem>關於</MenuItem>
             </Link>
           </MenuGroup>
           <MenuDivider />
           <Flex justifyContent="end" alignItems="center">
-            <Button colorScheme="yellow" rightIcon={<ChevronRightIcon />} variant="solid" size="md" m="2" mr="4" onClick={() => loginWithRedirect()}>
+            <Button
+              colorScheme="yellow"
+              rightIcon={<ChevronRightIcon />}
+              variant="solid"
+              size="md"
+              m="2"
+              mr="4"
+              onClick={() => {
+                router.push("/api/auth/login");
+              }}
+            >
               登入 / 註冊
             </Button>
           </Flex>
@@ -115,7 +166,9 @@ function SignInButton() {
         size="md"
         ml="10px"
         mr="10px"
-        onClick={() => loginWithRedirect()}
+        onClick={() => {
+          router.push("/api/auth/login");
+        }}
         display={{ base: "none", md: "inline-block" }}
       >
         登入 / 註冊
@@ -138,26 +191,57 @@ function HeaderBar() {
       px={{ base: 6, md: 14 }}
     >
       <Flex justifyContent="center" alignItems="center">
-        <Link to="/">
-          <Heading fontSize={{ base: "xl", md: "2xl" }} fontWeight="700" color="gray.600">
-            NTUCourse Neo
-          </Heading>
+        <Link href="/" passHref>
+          <Button variant={"unstyled"}>
+            <Heading
+              fontSize={{ base: "xl", md: "2xl" }}
+              fontWeight="700"
+              color="gray.600"
+              display={{ base: "none", md: "inline-block" }}
+            >
+              NTUCourse Neo
+            </Heading>
+            <Center display={{ base: "inline-block", md: "none" }}>
+              <Image
+                src={`/img/ncn_logo.png`}
+                alt="ncnLogo"
+                width={30}
+                height={30}
+                layout="fixed"
+                borderRadius={"5px"}
+              />
+            </Center>
+          </Button>
         </Link>
-        <Link to="/course">
-          <Button colorScheme="blue" variant="ghost" size="md" ml={{ base: 0, md: 6 }} leftIcon={<FaBook />}>
+        <Link href="/course">
+          <Button
+            colorScheme="blue"
+            variant="ghost"
+            size="md"
+            ml={{ base: 4, md: 6 }}
+            leftIcon={<FaBook />}
+            color={useColorModeValue("link.light", "link.dark")}
+          >
             課程
           </Button>
         </Link>
       </Flex>
       <Flex justifyContent="center" alignItems="center">
-        <Link to="/about">
-          <Button colorScheme="blue" variant="ghost" size="md" ml="30px" display={{ base: "none", md: "inline-block" }}>
-            <HStack>
+        <Link href="/about">
+          <Button
+            colorScheme="blue"
+            variant="ghost"
+            size="md"
+            ml="30px"
+            display={{ base: "none", md: "inline-block" }}
+          >
+            <HStack color={useColorModeValue("link.light", "link.dark")}>
               <FaInfoCircle />
               <Text>關於</Text>
             </HStack>
           </Button>
         </Link>
+        <ThemeToggleButton />
         <SignInButton />
       </Flex>
     </Flex>

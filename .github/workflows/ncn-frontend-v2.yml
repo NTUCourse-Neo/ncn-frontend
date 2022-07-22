@@ -1,0 +1,84 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+# For production environment
+
+name: Azure Web App deploy - ncn-frontend-v2
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+env:
+  NEXT_PUBLIC_API_ENDPOINT: ${{ secrets.AZURE_API_ENDPOINT }}
+  NEXT_PUBLIC_API_VERSION: "v1"
+  NEXT_PUBLIC_ENV: "prod"
+  AUTH0_SELF_API_AUDIENCE: ${{ secrets.SELF_API_AUDIENCE }}
+  AUTH0_SECRET: ${{ secrets.AUTH0_SECRET_V2 }}
+  AUTH0_BASE_URL: ${{ secrets.AUTH0_BASE_URL_V2 }}
+  AUTH0_ISSUER_BASE_URL: ${{ secrets.AUTH0_ISSUER_BASE_URL_V2 }}
+  AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID_V2 }}
+  AUTH0_CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET_V2 }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Node.js version
+        uses: actions/setup-node@v1
+        with:
+          node-version: "16.x"
+
+      - name: Enable NextJS caching
+        id: enable-cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.npm
+            ${{ github.workspace}}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
+
+      - name: zip artifact for deployment
+        run: zip -r --symlinks rel.zip *
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v2
+        with:
+          name: node-app
+          path: rel.zip
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: "Production"
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v2
+        with:
+          name: node-app
+
+      - name: unzip artifact for deployment
+        run: unzip rel.zip
+
+      - name: yarn install, build, and test
+        run: |
+          yarn
+          yarn build
+
+      - name: "Deploy to Azure Web App"
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: "ncn-frontend-v2"
+          slot-name: "Production"
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_BE2056ABFC0947EFBA90F021F0F890C4 }}
+          package: .

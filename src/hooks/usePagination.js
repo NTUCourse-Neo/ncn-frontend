@@ -1,11 +1,14 @@
 import { useEffect } from "react";
-import useOnScreen from "hooks/useOnScreen";
 import { useToast } from "@chakra-ui/react";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { fetchSearchResults } from "queries/course";
+import { useInView } from "react-intersection-observer";
 
-export default function usePagination(ref) {
-  const reachedBottom = useOnScreen(ref);
+export default function usePagination() {
+  const { ref, inView: reachedBottom } = useInView({
+    /* Optional options */
+    threshold: 0,
+  });
   const {
     searchResult,
     totalCount,
@@ -29,14 +32,22 @@ export default function usePagination(ref) {
       if (searchResult.length < totalCount) {
         try {
           setSearchLoading(true);
-          fetchSearchResults(searchIds, searchFiltersEnable, searchFilters, batchSize, offset, searchSettings.strict_search_mode, {
-            onSuccess: ({ courses, ...rest }) => {
-              setSearchResult([...searchResult, ...courses]);
-              setSearchError(null);
-              setOffset(offset + batchSize);
-              setSearchLoading(false);
-            },
-          });
+          fetchSearchResults(
+            searchIds,
+            searchFiltersEnable,
+            searchFilters,
+            batchSize,
+            offset,
+            searchSettings.strict_search_mode,
+            {
+              onSuccess: ({ courses, ...rest }) => {
+                setSearchResult([...searchResult, ...courses]);
+                setSearchError(null);
+                setOffset(offset + batchSize);
+                setSearchLoading(false);
+              },
+            }
+          );
         } catch (error) {
           setSearchError(error);
           setSearchLoading(false);
@@ -51,4 +62,6 @@ export default function usePagination(ref) {
       }
     }
   }, [reachedBottom]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  return ref;
 }

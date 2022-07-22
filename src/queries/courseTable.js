@@ -1,9 +1,19 @@
 import instance from "queries/axiosInstance";
 
-export const createCourseTable = async (course_table_id, course_table_name, user_id, semester) => {
+export const createCourseTable = async (
+  course_table_id,
+  course_table_name,
+  user_id,
+  semester
+) => {
   const {
     data: { course_table },
-  } = await instance.post(`/course_tables/`, { id: course_table_id, name: course_table_name, user_id: user_id, semester: semester });
+  } = await instance.post(`/course_tables/`, {
+    id: course_table_id,
+    name: course_table_name,
+    user_id: user_id,
+    semester: semester,
+  });
   return course_table;
 };
 
@@ -14,7 +24,13 @@ export const fetchCourseTable = async (course_table_id) => {
   return course_table;
 };
 
-export const patchCourseTable = async (course_table_id, course_table_name, user_id, expire_ts, courses) => {
+export const patchCourseTable = async (
+  course_table_id,
+  course_table_name,
+  user_id,
+  expire_ts,
+  courses
+) => {
   // filter out "" in courses
   const new_courses = courses.filter((course) => course !== "");
   const {
