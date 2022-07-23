@@ -105,17 +105,20 @@ function ListRowElement({
             {course.course_name}
           </Text>
         </Flex>
-        <IconButton
+        <Button
           display={{ base: "none", md: "block" }}
+          flexDirection="row"
+          justifyContent="center"
           ml={3}
           size="sm"
           colorScheme="blue"
-          icon={<FaInfoCircle />}
           variant="ghost"
           onClick={() => {
             router.push(`/courseinfo/${course._id}`);
           }}
-        />
+        >
+          <FaInfoCircle />
+        </Button>
       </Flex>
       <Flex
         ml={{ base: 0, md: 4 }}
