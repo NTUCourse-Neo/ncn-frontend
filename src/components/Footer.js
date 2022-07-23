@@ -16,7 +16,7 @@ import Image from "next/image";
 
 function Footer() {
   const ver = "beta (20220721)";
-  const SecondaryColor = useColorModeValue("gray.400", "gray.500");
+  const secondaryColor = useColorModeValue("gray.400", "gray.500");
   const handleOpenPage = (page) => {
     window.open(page, "_blank");
   };
@@ -56,8 +56,8 @@ function Footer() {
         NTUCourse Neo
       </Text>
       <HStack ml="2">
-        <Icon as={FaCodeBranch} color={SecondaryColor} size="4"></Icon>
-        <Text fontSize="xs" color={SecondaryColor} fontWeight="600">
+        <Icon as={FaCodeBranch} color={secondaryColor} size="4"></Icon>
+        <Text fontSize="xs" color={secondaryColor} fontWeight="600">
           {ver}
         </Text>
       </HStack>
@@ -66,7 +66,7 @@ function Footer() {
         <Button
           size={{ base: "sm", md: "xs" }}
           variant="ghost"
-          color={SecondaryColor}
+          color={secondaryColor}
           px="1"
           justifyContent={"center"}
           alignItems={"center"}
@@ -90,7 +90,7 @@ function Footer() {
         <Button
           size={{ base: "sm", md: "xs" }}
           variant="ghost"
-          color={SecondaryColor}
+          color={secondaryColor}
           px="1"
           justifyContent={"center"}
           alignItems={"center"}
@@ -114,7 +114,7 @@ function Footer() {
         <Button
           size={{ base: "sm", md: "xs" }}
           variant="ghost"
-          color={SecondaryColor}
+          color={secondaryColor}
           px="1"
           justifyContent={"center"}
           alignItems={"center"}
