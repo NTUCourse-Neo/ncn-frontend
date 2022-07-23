@@ -10,7 +10,7 @@ import {
 function HomeCard({ bg, desc, img, title, children }) {
   const textColor = useColorModeValue("gray.500", "gray.400");
   return (
-    <Box className="initialBox" w="100%" bg={bg} py={8} px="5vw" boxShadow="xl">
+    <Box className="initialBox" w="100%" bg={bg} py={8} px="5vw">
       <Flex
         justifyContent="start"
         alignItems="start"
@@ -61,7 +61,6 @@ function HomeCard({ bg, desc, img, title, children }) {
             w={["100%", "100%", "100%", "30%"]}
             maxW={["100%", "100%", "100%", "30vw"]}
             borderRadius="xl"
-            boxShadow="xl"
             _hover={{ transform: "Scale(1.2)", boxShadow: "2xl" }}
             transition="all ease-out 0.2s"
           />

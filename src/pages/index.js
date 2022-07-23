@@ -708,6 +708,8 @@ function HomePage() {
                 m={2}
                 variant="outline"
                 size="lg"
+                color="gray.200"
+                borderColor="gray.500"
                 onClick={() =>
                   window.open(
                     "https://github.com/NTUCourse-Neo/ncn-frontend/issues/new/choose"

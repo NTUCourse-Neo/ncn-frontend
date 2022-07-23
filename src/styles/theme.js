@@ -20,7 +20,7 @@ const colors = {
   },
   card: {
     light: "#EDF2F7",
-    dark: "#1A202C",
+    dark: "#131720",
   },
   teal: {
     light: "#81E6D9",

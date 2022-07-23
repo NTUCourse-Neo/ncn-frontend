@@ -58,12 +58,12 @@ function SignInButton() {
           ml={{ base: 0, md: 6 }}
         >
           {user.email_verified ? (
-            <AvatarBadge boxSize="1.25em" bg="green.500">
-              <FaCheck size="10" />
+            <AvatarBadge boxSize="1em" bg="green.500" borderWidth="0.15em">
+              <FaCheck size="8" />
             </AvatarBadge>
           ) : (
-            <AvatarBadge boxSize="1.25em" bg="orange.500">
-              <FaExclamation size="10" />
+            <AvatarBadge boxSize="1em" bg="orange.500" borderWidth="0.15em">
+              <FaExclamation size="8" />
             </AvatarBadge>
           )}
         </MenuButton>

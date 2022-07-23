@@ -137,11 +137,10 @@ function CourseSearchInputTextArea() {
         justifyContent={["start", "start", "center", "center"]}
         flexWrap="wrap"
         css={{ gap: "10px" }}
-        bg={useColorModeValue("white", "gray.800")}
       >
         <Menu closeOnSelect={false} mx="2">
           <MenuButton as={Button} size={"md"} rightIcon={<ChevronDownIcon />}>
-            搜尋欄位
+            欄位
           </MenuButton>
           <MenuList>
             <MenuOptionGroup
@@ -334,12 +333,7 @@ function CourseSearchInput({ displayPanel }) {
     <>
       <CourseSearchInputTextArea />
       <Collapse in={displayPanel} animateOpacity>
-        <Box
-          w="100%"
-          py="8px"
-          mt="4"
-          bg={useColorModeValue("white", "gray.800")}
-        >
+        <Box w="100%" py="8px" mt="4">
           <Tabs>
             <TabList>
               <Tab>
