@@ -21,7 +21,6 @@ import {
 import {
   FaArrowDown,
   FaArrowRight,
-  FaArrowUp,
   FaGithub,
   FaInfoCircle,
   FaSortDown,
@@ -30,7 +29,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Head from "next/head";
-import { animateScroll as scroll, scroller } from "react-scroll";
+import { scroller } from "react-scroll";
 import { BeatLoader } from "react-spinners";
 import { motion, AnimatePresence } from "framer-motion";
 import HomeCard from "components/HomeCard";
@@ -39,109 +38,6 @@ import useUserInfo from "hooks/useUserInfo";
 import { useUser } from "@auth0/nextjs-auth0";
 import handleFetch from "utils/CustomFetch";
 import Image from "next/image";
-
-const newsCard = [
-  <Flex
-    key="NTUCollaborationCard"
-    h={{ base: "220px", lg: "200px" }}
-    overflowY={"auto"}
-    w={["80vw", "80vw", "50vw", "25vw"]}
-    justifyContent={["center", "start"]}
-    alignItems="start"
-    flexDirection="column"
-    bg="teal.200"
-    borderRadius="xl"
-    boxShadow="xl"
-    p="4"
-    mt="8"
-  >
-    <Text fontSize="xl" fontWeight="800" color="gray.700" mb="2">
-      🤩 嗨！臺大！
-    </Text>
-    <Text fontSize="md" fontWeight="500" color="gray.600">
-      經過教務處資訊組的大力推動，我們將以此專案為基礎與臺大合作開發新一代課程網！希望能帶給臺大學生更便利的選課體驗。
-    </Text>
-    <Flex flexDirection="column" flexGrow={1} justify="end" w="100%">
-      <Flex
-        justifyContent="space-between"
-        alignItems="center"
-        flexDirection="row"
-      >
-        <Text
-          fontSize={{ base: "xs", lg: "sm" }}
-          fontWeight="400"
-          color="gray.500"
-          mt="4"
-        >
-          Team NTUCourse Neo - 20220628
-        </Text>
-        <Button
-          colorScheme="teal"
-          variant="solid"
-          size="sm"
-          mt="4"
-          leftIcon={<FaInfoCircle />}
-          onClick={() =>
-            window.open(
-              "https://www.facebook.com/NTUSA/posts/pfbid04j6dfUzvHFPJEK54FDreNnXKy5C7yBZghErKAPWe8yoWXUFRcVqshqyNydqnicMWl",
-              "_blank"
-            )
-          }
-        >
-          瞭解更多
-        </Button>
-      </Flex>
-    </Flex>
-  </Flex>,
-  <Flex
-    key="RecrutingCard"
-    h={{ base: "220px", lg: "200px" }}
-    overflowY={"auto"}
-    w={["80vw", "80vw", "50vw", "25vw"]}
-    justifyContent={["center", "start"]}
-    alignItems="start"
-    flexDirection="column"
-    bg="teal.200"
-    borderRadius="xl"
-    boxShadow="xl"
-    p="4"
-    mt="8"
-  >
-    <Text fontSize="xl" fontWeight="800" color="gray.700" mb="2">
-      👋 We are hiring!
-    </Text>
-    <Text fontSize="md" fontWeight="500" color="gray.600">
-      新夥伴招募中，想跟我們一起打造更優質的選課系統嗎？ 快來加入我們吧！🥰
-    </Text>
-    <Flex flexDirection="column" flexGrow={1} justify="end" w="100%">
-      <Flex
-        justifyContent="space-between"
-        alignItems="center"
-        flexDirection="row"
-      >
-        <Text
-          fontSize={{ base: "xs", lg: "sm" }}
-          fontWeight="400"
-          color="gray.500"
-          mt="4"
-        >
-          Team NTUCourse Neo - 20220303
-        </Text>
-        <Tooltip label="暫時關閉囉><" placement="top">
-          <Button
-            colorScheme="teal"
-            variant="solid"
-            size="sm"
-            mt="4"
-            rightIcon={<FaArrowRight />}
-          >
-            加入我們
-          </Button>
-        </Tooltip>
-      </Flex>
-    </Flex>
-  </Flex>,
-];
 
 function NewRegisterModal({ isOpen, onClose, isLoading, newUser }) {
   const router = useRouter();
@@ -252,12 +148,135 @@ function HomePage() {
     }
   }, [isRegistering, isAuthLoading, user, onOpen, toast, isOpen]);
 
+  const bg = useColorModeValue("white", "black");
+
   const scroll_config = {
     duration: 1000,
     delay: 50,
     smooth: true,
     offset: -60,
   };
+
+  const newsCard = [
+    <Flex
+      key="NTUCollaborationCard"
+      h={{ base: "220px", lg: "200px" }}
+      overflowY={"auto"}
+      w={["80vw", "80vw", "50vw", "25vw"]}
+      justifyContent={["center", "start"]}
+      alignItems="start"
+      flexDirection="column"
+      bg={useColorModeValue("teal.light", "teal.dark")}
+      borderRadius="xl"
+      boxShadow="xl"
+      p="4"
+      mt="8"
+    >
+      <Text
+        fontSize="xl"
+        fontWeight="800"
+        color={useColorModeValue("heading.light", "heading.dark")}
+        mb="2"
+      >
+        🤩 嗨！臺大！
+      </Text>
+      <Text
+        fontSize="md"
+        fontWeight="500"
+        color={useColorModeValue("text.light", "text.dark")}
+      >
+        經過教務處資訊組的大力推動，我們將以此專案為基礎與臺大合作開發新一代課程網！希望能帶給臺大學生更便利的選課體驗。
+      </Text>
+      <Flex flexDirection="column" flexGrow={1} justify="end" w="100%">
+        <Flex
+          justifyContent="space-between"
+          alignItems="center"
+          flexDirection="row"
+        >
+          <Text
+            fontSize={{ base: "xs", lg: "sm" }}
+            fontWeight="400"
+            color="gray.500"
+            mt="4"
+          >
+            Team NTUCourse Neo - 20220628
+          </Text>
+          <Button
+            colorScheme="teal"
+            variant="solid"
+            size="sm"
+            mt="4"
+            leftIcon={<FaInfoCircle />}
+            onClick={() =>
+              window.open(
+                "https://www.facebook.com/NTUSA/posts/pfbid04j6dfUzvHFPJEK54FDreNnXKy5C7yBZghErKAPWe8yoWXUFRcVqshqyNydqnicMWl",
+                "_blank"
+              )
+            }
+          >
+            瞭解更多
+          </Button>
+        </Flex>
+      </Flex>
+    </Flex>,
+    <Flex
+      key="RecrutingCard"
+      h={{ base: "220px", lg: "200px" }}
+      overflowY={"auto"}
+      w={["80vw", "80vw", "50vw", "25vw"]}
+      justifyContent={["center", "start"]}
+      alignItems="start"
+      flexDirection="column"
+      bg={useColorModeValue("teal.light", "teal.dark")}
+      borderRadius="xl"
+      boxShadow="xl"
+      p="4"
+      mt="8"
+    >
+      <Text
+        fontSize="xl"
+        fontWeight="800"
+        color={useColorModeValue("heading.light", "heading.dark")}
+        mb="2"
+      >
+        👋 We are hiring!
+      </Text>
+      <Text
+        fontSize="md"
+        fontWeight="500"
+        color={useColorModeValue("heading.light", "heading.dark")}
+      >
+        新夥伴招募中，想跟我們一起打造更優質的選課系統嗎？ 快來加入我們吧！🥰
+      </Text>
+      <Flex flexDirection="column" flexGrow={1} justify="end" w="100%">
+        <Flex
+          justifyContent="space-between"
+          alignItems="center"
+          flexDirection="row"
+        >
+          <Text
+            fontSize={{ base: "xs", lg: "sm" }}
+            fontWeight="400"
+            color="gray.500"
+            mt="4"
+          >
+            Team NTUCourse Neo - 20220303
+          </Text>
+          <Tooltip label="暫時關閉囉 ><" placement="top">
+            <Button
+              colorScheme="teal"
+              variant="solid"
+              size="sm"
+              mt="4"
+              rightIcon={<FaArrowRight />}
+            >
+              加入我們
+            </Button>
+          </Tooltip>
+        </Flex>
+      </Flex>
+    </Flex>,
+  ];
 
   return (
     <>
@@ -268,7 +287,14 @@ function HomePage() {
           content="首頁 | NTUCourse Neo，全新的臺大選課網站。"
         />
       </Head>
-      <Box maxW="screen-md" mx="auto" overflow="visible" px="64px" pt="64px">
+      <Box
+        maxW="screen-md"
+        mx="auto"
+        overflow="visible"
+        pt="64px"
+        mb="-15px"
+        bg={bg}
+      >
         <NewRegisterModal
           isOpen={isOpen}
           onClose={onClose}
@@ -287,7 +313,8 @@ function HomePage() {
             justifyContent={["center", "space-between"]}
             flexDirection={{ base: "column-reverse", lg: "row" }}
             alignItems="center"
-            w="90vw"
+            w="100%"
+            px="5vw"
           >
             <Flex flexDirection="column" pt={10}>
               <Text
@@ -391,7 +418,7 @@ function HomePage() {
               />
             </Box>
           </Flex>
-          <Spacer my={10} />
+          <Spacer my={5} />
           <Button
             variant="ghost"
             size="lg"
@@ -412,7 +439,7 @@ function HomePage() {
             img="https://imgur.com/jC8IUuw.gif"
             bg={useColorModeValue("card.light", "card.dark")}
           />
-          <Spacer my={10} />
+          <Spacer my={5} />
           <Button
             variant="ghost"
             size="lg"
@@ -433,7 +460,7 @@ function HomePage() {
             img="https://i.imgur.com/CJhqamD.png"
             bg={useColorModeValue("card.light", "card.dark")}
           />
-          <Spacer my={10} />
+          <Spacer my={5} />
           <Button
             variant="ghost"
             size="lg"
@@ -453,7 +480,7 @@ function HomePage() {
             img="https://i.imgur.com/oA2qanv.png"
             bg={useColorModeValue("card.light", "card.dark")}
           />
-          <Spacer my={10} />
+          <Spacer my={5} />
           <Button
             variant="ghost"
             size="lg"
@@ -473,7 +500,7 @@ function HomePage() {
             img="https://i.imgur.com/nxjAycJ.png"
             bg={useColorModeValue("card.light", "card.dark")}
           />
-          <Spacer my={10} />
+          <Spacer my={5} />
           <Button
             variant="ghost"
             size="lg"
@@ -481,7 +508,7 @@ function HomePage() {
             onClick={() => scroller.scrollTo("card5", scroll_config)}
             leftIcon={<FaArrowDown />}
           >
-            網服真的太讚啦，先存
+            網服真的太讚啦，先存起來
           </Button>
           <Spacer my={5} name="card5" />
           <HomeCard
@@ -493,21 +520,10 @@ function HomePage() {
             img="https://imgur.com/IHw3FG1.gif"
             bg={useColorModeValue("card.light", "card.dark")}
           />
-          <Spacer mt="10" mb="10" />
-          <Button
-            variant="ghost"
-            size="lg"
-            color={useColorModeValue("heading.light", "heading.dark")}
-            onClick={() => scroll.scrollTo(0)}
-            leftIcon={<FaArrowUp />}
-          >
-            返回頂端
-          </Button>
-          <Spacer mt="10" mb="10" />
           <Flex
             w="100vw"
             bg="gray.700"
-            px={{ base: "8", md: "16", lg: "64" }}
+            px={{ base: "8", md: "16", lg: "32" }}
             py="16"
             flexDirection={{ base: "column", lg: "row" }}
             justifyContent="space-between"
@@ -515,7 +531,7 @@ function HomePage() {
             css={{ gap: "2rem" }}
           >
             <Flex
-              w={{ base: "100%", lg: "65%" }}
+              w={{ base: "100%", lg: "70%" }}
               flexDirection={{ base: "column", md: "row" }}
               align={"center"}
             >
@@ -537,6 +553,7 @@ function HomePage() {
             <Flex
               justify={{ base: "center", md: "start" }}
               flexDirection={{ base: "column", md: "row" }}
+              flexWrap="wrap"
             >
               <Button
                 m={2}
@@ -545,14 +562,28 @@ function HomePage() {
                 onClick={() => window.open("https://github.com/NTUCourse-Neo/")}
                 leftIcon={<FaGithub />}
               >
-                NTUCourse Neo
+                GitHub
+              </Button>
+              <Button
+                m={2}
+                variant="outline"
+                size="lg"
+                color="gray.200"
+                borderColor="gray.500"
+                onClick={() =>
+                  window.open(
+                    "https://github.com/NTUCourse-Neo/ncn-frontend/issues/new/choose"
+                  )
+                }
+              >
+                功能建議
               </Button>
             </Flex>
           </Flex>
           <Flex
             w="100vw"
             bg="#5865F2"
-            px={{ base: "8", md: "16", lg: "64" }}
+            px={{ base: "8", md: "16", lg: "32" }}
             py="16"
             flexDirection={{ base: "column", lg: "row" }}
             justifyContent="space-between"

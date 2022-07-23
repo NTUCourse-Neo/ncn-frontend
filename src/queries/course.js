@@ -14,11 +14,18 @@ export const fetchSearchResult = async (
   const { onSuccess = ({ courses, totalCount }) => {} } = options;
   const filter = {
     time: filters_enable.time ? filter_obj.time : null,
-    department: filters_enable.department ? filter_obj.department : null,
-    category: filters_enable.category ? filter_obj.category : null,
-    enroll_method: filters_enable.enroll_method
-      ? filter_obj.enroll_method
-      : null,
+    department:
+      filters_enable.department && filters_enable.department.length > 0
+        ? filter_obj.department
+        : null,
+    category:
+      filters_enable.category && filters_enable.category.length > 0
+        ? filter_obj.category
+        : null,
+    enroll_method:
+      filters_enable.enroll_method && filters_enable.enroll_method.length > 0
+        ? filter_obj.enroll_method
+        : null,
     strict_match: strict_match_bool,
   };
   const {

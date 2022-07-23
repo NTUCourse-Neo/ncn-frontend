@@ -482,7 +482,13 @@ function SyllabusPanel({ isLoading, isUnauth, SyllabusData }) {
 
             return (
               <React.Fragment key={syllabusTitle[key]}>
-                <Text fontSize="lg" fontWeight="600" color={headingColor}>
+                <Text
+                  flexBasis="20%"
+                  mb="1"
+                  fontSize="lg"
+                  fontWeight="600"
+                  color={headingColor}
+                >
                   {syllabusTitle[key]}
                 </Text>
                 {SyllabusData.syllabus[key] !== "" ? (
@@ -492,11 +498,12 @@ function SyllabusPanel({ isLoading, isUnauth, SyllabusData }) {
                     key={syllabusTitle[key] + "content"}
                     fontSize="md"
                     fontWeight="400"
-                    color="gray.600"
+                    color="gray.500"
                   >
                     無
                   </Text>
                 )}
+                <Divider my="4" />
               </React.Fragment>
             );
           })}
@@ -823,6 +830,8 @@ function CourseDetailInfoContainer({ course }) {
   ];
   const headingColor = useColorModeValue("heading.light", "heading.dark");
   const textColor = useColorModeValue("text.light", "text.dark");
+  const statsTitleColor = useColorModeValue("gray.500", "gray.500");
+  const bgCard = useColorModeValue("card.light", "card.dark");
 
   return (
     <Flex
@@ -832,12 +841,13 @@ function CourseDetailInfoContainer({ course }) {
       flexDirection={{ base: "column", lg: "row" }}
       flexWrap="wrap"
       justify={"center"}
+      bg={useColorModeValue("white", "black")}
     >
       {/* COL 1 */}
       <Flex w={{ base: "100%", lg: "30%" }} flexDirection={"column"}>
         {/* Box1 */}
         <Flex
-          bg={useColorModeValue("gray.100", "gray.600")}
+          bg={bgCard}
           my="1vh"
           px="6"
           py="4"
@@ -860,8 +870,10 @@ function CourseDetailInfoContainer({ course }) {
               {course_codes_1.map((item, index) => {
                 return (
                   <Stat key={"code_stats_1" + index}>
-                    <StatLabel>{item.title}</StatLabel>
-                    <StatNumber>{item.value}</StatNumber>
+                    <StatLabel color={statsTitleColor} mb="-1">
+                      {item.title}
+                    </StatLabel>
+                    <StatNumber mb="2">{item.value}</StatNumber>
                   </Stat>
                 );
               })}
@@ -870,16 +882,20 @@ function CourseDetailInfoContainer({ course }) {
               {course_codes_2.map((item, index) => {
                 return (
                   <Stat key={"code_stats_2" + index}>
-                    <StatLabel>{item.title}</StatLabel>
-                    <StatNumber>{item.value}</StatNumber>
+                    <StatLabel color={statsTitleColor} mb="-1">
+                      {item.title}
+                    </StatLabel>
+                    <StatNumber mb="2">{item.value}</StatNumber>
                   </Stat>
                 );
               })}
             </Flex>
             <Flex flexDirection="column" flexWrap="wrap">
               <Stat>
-                <StatLabel>系所</StatLabel>
-                <StatNumber>
+                <StatLabel color={statsTitleColor} mb="-1">
+                  系所
+                </StatLabel>
+                <StatNumber mb="1">
                   <HStack spacing="2">
                     {course.departments.length === 0 ? (
                       <Tag colorScheme="blackAlpha" size="lg">
@@ -905,19 +921,23 @@ function CourseDetailInfoContainer({ course }) {
                 </StatNumber>
               </Stat>
               <Stat>
-                <StatLabel>學分</StatLabel>
-                <StatNumber>{course.credits}</StatNumber>
+                <StatLabel color={statsTitleColor} mb="-1">
+                  學分
+                </StatLabel>
+                <StatNumber mb="2">{course.credits}</StatNumber>
               </Stat>
               {course.enroll_method ? (
                 <Stat>
-                  <StatLabel>加簽方式</StatLabel>
-                  <StatNumber>
+                  <StatLabel color={statsTitleColor} mb="-1">
+                    加簽方式
+                  </StatLabel>
+                  <StatNumber mb="2">
                     <HStack spacing="2">
                       <Tag
                         colorScheme="blue"
-                        size="lg"
+                        size="md"
                         fontWeight="800"
-                        fontSize="xl"
+                        fontSize="lg"
                       >
                         {course.enroll_method}
                       </Tag>
@@ -929,7 +949,9 @@ function CourseDetailInfoContainer({ course }) {
                 </Stat>
               ) : null}
               <Stat>
-                <StatLabel>開課單位</StatLabel>
+                <StatLabel color={statsTitleColor} mb="-1">
+                  開課單位
+                </StatLabel>
                 <StatNumber>{course.provider.toUpperCase()}</StatNumber>
               </Stat>
             </Flex>
@@ -966,16 +988,16 @@ function CourseDetailInfoContainer({ course }) {
             </VStack>
           )}
           <Divider mt="4" mb="4" borderColor="gray.300" />
-          <Text fontSize="lg" color={headingColor} fontWeight="700">
+          <Text mb="2" fontSize="lg" color={headingColor} fontWeight="700">
             節次資訊
           </Text>
-          <Text fontSize="sm" color="gray.600">
+          <Text fontSize="sm" color={textColor}>
             {parseCourseSchedlue(course) ?? "無資訊"}
           </Text>
         </Flex>
         {/* Box2 */}
         <Flex
-          bg={useColorModeValue("gray.100", "gray.600")}
+          bg={bgCard}
           my="1vh"
           px="6"
           py="4"
@@ -1019,7 +1041,7 @@ function CourseDetailInfoContainer({ course }) {
       >
         {/* Box3 */}
         <Flex
-          bg={useColorModeValue("gray.100", "gray.600")}
+          bg={bgCard}
           my="1vh"
           px="6"
           py="4"
@@ -1045,7 +1067,7 @@ function CourseDetailInfoContainer({ course }) {
         </Flex>
         {/* Box4 */}
         <Flex
-          bg={useColorModeValue("gray.100", "gray.600")}
+          bg={bgCard}
           my="1vh"
           px="6"
           py="4"
@@ -1059,7 +1081,6 @@ function CourseDetailInfoContainer({ course }) {
             <HStack spacing="4">
               <Text fontSize="2xl" fontWeight="800" color={headingColor}>
                 評價
-                <BetaBadge content="preview" size="sm" />
               </Text>
               <TabList>
                 <Tab color={textColor}>PTT</Tab>
@@ -1087,7 +1108,7 @@ function CourseDetailInfoContainer({ course }) {
         </Flex>
         {/* Box5 */}
         <Flex
-          bg={useColorModeValue("gray.100", "gray.600")}
+          bg={bgCard}
           my="1vh"
           px="6"
           py="4"
@@ -1101,7 +1122,6 @@ function CourseDetailInfoContainer({ course }) {
             <HStack spacing="4">
               <Text fontSize="2xl" fontWeight="800" color={headingColor}>
                 考古題資訊
-                <BetaBadge content="preview" size="sm" />
               </Text>
               <TabList>
                 <Tab>PTT</Tab>
@@ -1124,7 +1144,7 @@ function CourseDetailInfoContainer({ course }) {
       <Flex w={{ base: "100%", lg: "30%" }} flexDirection={"column"}>
         {/* Box6 */}
         <Flex
-          bg={useColorModeValue("gray.100", "gray.600")}
+          bg={bgCard}
           h={{ base: "", md: "55vh" }}
           my="1vh"
           px="6"
@@ -1149,7 +1169,7 @@ function CourseDetailInfoContainer({ course }) {
         </Flex>
         {/* Box7 */}
         <Flex
-          bg={useColorModeValue("gray.100", "gray.600")}
+          bg={bgCard}
           h={{ base: "", md: "31vh" }}
           my="1vh"
           px="6"

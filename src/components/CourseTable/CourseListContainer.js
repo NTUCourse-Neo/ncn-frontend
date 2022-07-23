@@ -60,7 +60,10 @@ function ListRowElement({
       w="100%"
       py="2"
       px="2"
-      bg={useColorModeValue("gray.100", "gray.600")}
+      bg={useColorModeValue(
+        hash_to_color_hex(course.id, 0.92, 0.3),
+        hash_to_color_hex(course.id, 0.2, 0.2)
+      )}
       my="1"
       borderRadius="lg"
       zIndex="1000"
@@ -73,16 +76,9 @@ function ListRowElement({
         w="100%"
       >
         <DragHandle />
-        <Tag
-          size={useBreakpointValue({ base: "md", md: "lg" }) ?? "md"}
-          variant="solid"
-          bg={hash_to_color_hex(course.id, 0.8)}
-          mx="2"
-        >
-          <Text fontWeight="800" color="gray.700">
-            {courseIdx + 1}
-          </Text>
-        </Tag>
+        <Text fontWeight="800" color={textColor} mx="2" fontSize="xl">
+          {courseIdx + 1}
+        </Text>
         <Flex
           direction={{ base: "column", md: "row" }}
           alignItems={{ base: "start", md: "center" }}
@@ -112,17 +108,20 @@ function ListRowElement({
             {course.name}
           </Text>
         </Flex>
-        <IconButton
+        <Button
           display={{ base: "none", md: "block" }}
+          flexDirection="row"
+          justifyContent="center"
           ml={3}
           size="sm"
           colorScheme="blue"
-          icon={<FaInfoCircle />}
           variant="ghost"
           onClick={() => {
             router.push(`/courseinfo/${course.id}`);
           }}
-        />
+        >
+          <FaInfoCircle />
+        </Button>
       </Flex>
       <Flex
         ml={{ base: 0, md: 4 }}

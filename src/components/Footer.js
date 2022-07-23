@@ -15,7 +15,8 @@ import { DiscordIcon } from "components/CustomIcons";
 import Image from "next/image";
 
 function Footer() {
-  const ver = "beta (20220713)";
+  const ver = "beta (20220721)";
+  const secondaryColor = useColorModeValue("gray.400", "gray.500");
   const handleOpenPage = (page) => {
     window.open(page, "_blank");
   };
@@ -31,6 +32,7 @@ function Footer() {
       borderColor={useColorModeValue("gray.200", "gray.700")}
       zIndex="9999"
       css={{ gap: "10px" }}
+      bg={useColorModeValue("white", "black")}
     >
       <Link href="/">
         <Center w="30px" h="30px">
@@ -54,62 +56,25 @@ function Footer() {
         NTUCourse Neo
       </Text>
       <HStack ml="2">
-        <Icon as={FaCodeBranch} color="gray.300" size="4"></Icon>
-        <Text fontSize="xs" color="gray.300" fontWeight="600">
+        <Icon as={FaCodeBranch} color={secondaryColor} size="4"></Icon>
+        <Text fontSize="xs" color={secondaryColor} fontWeight="600">
           {ver}
         </Text>
       </HStack>
-      <Spacer />
-      <Text
-        fontSize="sm"
-        color="gray.300"
-        display={{ base: "none", lg: "inline-block" }}
-      >
-        Made with 💖 by{" "}
-      </Text>
-      <ButtonGroup spacing="2" display={{ base: "none", lg: "inline-block" }}>
-        <Button
-          size="xs"
-          leftIcon={<FaGithub />}
-          color="gray.300"
-          variant="ghost"
-          onClick={() => handleOpenPage("https://github.com/jc-hiroto")}
-        >
-          jc-hiroto
-        </Button>
-        <Button
-          size="xs"
-          leftIcon={<FaGithub />}
-          color="gray.300"
-          variant="ghost"
-          onClick={() => handleOpenPage("https://github.com/swh00tw")}
-        >
-          swh00tw
-        </Button>
-        <Button
-          size="xs"
-          leftIcon={<FaGithub />}
-          color="gray.300"
-          variant="ghost"
-          onClick={() => handleOpenPage("https://github.com/Wil0408")}
-        >
-          Wil0408
-        </Button>
-      </ButtonGroup>
       <Spacer display={{ base: "none", lg: "inline-block" }} />
       <ButtonGroup spacing="2" h="100%">
         <Button
-          size={{ base: "md", md: "xs" }}
+          size={{ base: "sm", md: "xs" }}
           variant="ghost"
-          color="gray.400"
+          color={secondaryColor}
           px="1"
           justifyContent={"center"}
           alignItems={"center"}
           onClick={() => handleOpenPage("https://status.course.myntu.me/")}
         >
           <Center
-            w={{ base: "25px", md: "20px" }}
-            h={{ base: "25px", md: "20px" }}
+            w={{ base: "20px", md: "20px" }}
+            h={{ base: "20px", md: "20px" }}
           >
             <FaHeartbeat size="20" />
           </Center>
@@ -123,17 +88,17 @@ function Footer() {
           </Text>
         </Button>
         <Button
-          size={{ base: "md", md: "xs" }}
+          size={{ base: "sm", md: "xs" }}
           variant="ghost"
-          color="gray.400"
+          color={secondaryColor}
           px="1"
           justifyContent={"center"}
           alignItems={"center"}
           onClick={() => handleOpenPage("https://discord.gg/M7NrenYEbS")}
         >
           <Center
-            w={{ base: "25px", md: "20px" }}
-            h={{ base: "25px", md: "20px" }}
+            w={{ base: "15px", md: "20px" }}
+            h={{ base: "15px", md: "20px" }}
           >
             <DiscordIcon boxSize={5} />
           </Center>
@@ -147,17 +112,17 @@ function Footer() {
           </Text>
         </Button>
         <Button
-          size={{ base: "md", md: "xs" }}
+          size={{ base: "sm", md: "xs" }}
           variant="ghost"
-          color="gray.400"
+          color={secondaryColor}
           px="1"
           justifyContent={"center"}
           alignItems={"center"}
           onClick={() => handleOpenPage("https://github.com/NTUCourse-Neo")}
         >
           <Center
-            w={{ base: "25px", md: "20px" }}
-            h={{ base: "25px", md: "20px" }}
+            w={{ base: "20px", md: "20px" }}
+            h={{ base: "20px", md: "20px" }}
           >
             <FaGithub size="20" />
           </Center>

@@ -164,10 +164,11 @@ function DeleteDialog({
 }
 
 export default function UserInfoPage({ user }) {
+  const pageBg = useColorModeValue("white", "black");
   const textColor = useColorModeValue("text.light", "text.dark");
-  const cardColor = useColorModeValue("gray.50", "gray.700");
+  const cardColor = useColorModeValue("card.light", "card.dark");
   const borderColor = useColorModeValue("gray.300", "gray.900");
-  const dangerZoneColor = useColorModeValue("white", "red.200");
+  const dangerZoneColor = useColorModeValue("white", "black");
   const router = useRouter();
   const toast = useToast();
   const deptOptions = dept_list_bachelor_only.map((dept) => ({
@@ -286,11 +287,12 @@ export default function UserInfoPage({ user }) {
         />
       </Head>
       <Box
-        maxW={{ base: "100vw", md: "60vw" }}
+        w="100%"
         mx="auto"
         overflow="visible"
-        px={{ base: "32px", md: "64px" }}
+        px={{ base: "32px", md: "128px" }}
         pt="64px"
+        bg={pageBg}
       >
         <Flex
           justifyContent="space-between"

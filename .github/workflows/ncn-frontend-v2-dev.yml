@@ -12,8 +12,8 @@ on:
 
 env:
   NEXT_PUBLIC_API_ENDPOINT: ${{ secrets.AZURE_API_ENDPOINT }}
-  NEXT_PUBLIC_API_VERSION: "v1"
   NEXT_PUBLIC_ENV: "prod"
+  NEXT_PUBLIC_BASE_URL: "https://ncn-frontend-v2-dev.azurewebsites.net"
   AUTH0_SELF_API_AUDIENCE: ${{ secrets.SELF_API_AUDIENCE }}
   AUTH0_SECRET: ${{ secrets.AUTH0_SECRET_V2 }}
   AUTH0_BASE_URL: ${{ secrets.AUTH0_BASE_URL_V2_DEV }}
@@ -23,6 +23,7 @@ env:
 
 jobs:
   build:
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
 
     steps:
@@ -54,6 +55,7 @@ jobs:
           path: rel.zip
 
   deploy:
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
     needs: build
     environment:

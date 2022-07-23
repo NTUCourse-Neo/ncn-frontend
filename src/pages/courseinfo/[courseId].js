@@ -4,7 +4,6 @@ import {
   Text,
   ButtonGroup,
   Button,
-  Spacer,
   Icon,
   Flex,
   Menu,
@@ -15,6 +14,8 @@ import {
   useToast,
   Stack,
   useColorModeValue,
+  Tooltip,
+  IconButton,
 } from "@chakra-ui/react";
 import Image from "next/image";
 import CourseDetailInfoContainer from "components/CourseInfo/CourseDetailInfoContainer";
@@ -23,13 +24,8 @@ import { useRouter } from "next/router";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import Moment from "moment";
 import { IoMdOpen } from "react-icons/io";
-import {
-  FaPlus,
-  FaMinus,
-  FaHeartbeat,
-  FaHeart,
-  FaAngleDown,
-} from "react-icons/fa";
+import { FaPlus, FaMinus, FaHeartbeat, FaHeart } from "react-icons/fa";
+import { FiMoreHorizontal } from "react-icons/fi";
 import { BiCopy } from "react-icons/bi";
 import { getNolAddUrl, getNolUrl } from "utils/getNolUrls";
 import openPage from "utils/openPage";
@@ -50,10 +46,11 @@ const copyWordList = [
   { count: 3, word: "三倍複製!", color: "green.600", bg: "green.50" },
   { count: 2, word: "雙倍複製!", color: "green.600", bg: "green.50" },
   { count: 1, word: "已複製", color: "green.600", bg: "green.50" },
-  { count: 0, word: "複製連結", color: "gray.600", bg: "white" },
+  {
+    count: 0,
+    word: "複製連結",
+  },
 ];
-
-const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
 export async function getServerSideProps({ params }) {
   const { courseId } = params;
@@ -67,7 +64,7 @@ export async function getServerSideProps({ params }) {
 }
 
 function CourseInfoPage({ code, course }) {
-  const bgcolor = useColorModeValue("white", "gray.800");
+  const bgcolor = useColorModeValue("white", "black");
   const headingColor = useColorModeValue("heading.light", "heading.dark");
   const { user } = useUser();
   const { userInfo, refetch, isLoading } = useUserInfo(user?.sub);
@@ -83,10 +80,6 @@ function CourseInfoPage({ code, course }) {
   const router = useRouter();
   const toast = useToast();
 
-  const [copiedLinkClicks, setCopiedLinkClicks] = useState(0);
-  const [copyWord, setCopyWord] = useState(
-    copyWordList.find((word) => word.count <= copiedLinkClicks)
-  );
   Moment.locale("zh-tw");
 
   const selected = useMemo(
@@ -97,6 +90,12 @@ function CourseInfoPage({ code, course }) {
     () => userInfo?.favorites.map((c) => c.id).includes(course.id) ?? false,
     [userInfo, course.id]
   );
+  const [copiedLinkClicks, setCopiedLinkClicks] = useState(0);
+  const [copyWord, setCopyWord] = useState(
+    copyWordList.find((word) => word.count <= copiedLinkClicks)
+  );
+  const copyBtnDefaultColor = useColorModeValue("gray.700", "gray.100");
+  const copyBtnBg = useColorModeValue("white", "gray.800");
 
   useEffect(() => {
     setCopyWord(copyWordList.find((word) => word.count <= copiedLinkClicks));
@@ -277,7 +276,7 @@ function CourseInfoPage({ code, course }) {
             pt={2}
             pb={1}
           >
-            <Stack direction={{ base: "column", lg: "row" }}>
+            <Stack w="100%" direction={{ base: "column", lg: "row" }}>
               <HStack>
                 {course.serial ? (
                   <Tag size="md" colorScheme="blue" w="fit-content">
@@ -290,11 +289,24 @@ function CourseInfoPage({ code, course }) {
                   text={`${process.env.NEXT_PUBLIC_BASE_URL}/courseinfo/${course.id}`}
                 >
                   <Button
-                    rightIcon={<Icon as={BiCopy} color={copyWord.color} />}
+                    rightIcon={
+                      <Icon
+                        as={BiCopy}
+                        color={
+                          copyWord.count === 0
+                            ? copyBtnDefaultColor
+                            : copyWord.color
+                        }
+                      />
+                    }
                     variant="ghost"
                     size="xs"
-                    bg={copyWord.bg}
-                    color={copyWord.color}
+                    bg={copyBtnBg}
+                    color={
+                      copyWord.count === 0
+                        ? copyBtnDefaultColor
+                        : copyWord.color
+                    }
                     onClick={() => setCopiedLinkClicks(copiedLinkClicks + 1)}
                     display={{ base: "inline-block", lg: "none" }}
                   >
@@ -303,16 +315,25 @@ function CourseInfoPage({ code, course }) {
                 </CopyToClipboard>
               </HStack>
               <HStack>
-                <Text
-                  fontSize={{ base: "xl", lg: "3xl" }}
-                  fontWeight="800"
-                  color={headingColor}
-                  maxW={{ base: "100px", md: "30vw" }}
-                  isTruncated
-                  noOfLines={1}
+                <Tooltip
+                  label={course.name}
+                  placement="bottom"
+                  hasArrow
+                  shouldWrapChildren
+                  colorScheme="blackAlpha"
+                  closeOnClick={false}
                 >
-                  {course.name}
-                </Text>
+                  <Text
+                    fontSize={{ base: "xl", lg: "3xl" }}
+                    fontWeight="800"
+                    color={headingColor}
+                    maxW={{ base: "52vw", md: "30vw" }}
+                    isTruncated
+                    noOfLines={1}
+                  >
+                    {course.name}
+                  </Text>
+                </Tooltip>
                 <Text
                   fontSize={{ base: "md", lg: "2xl" }}
                   fontWeight="500"
@@ -322,15 +343,6 @@ function CourseInfoPage({ code, course }) {
                 </Text>
               </HStack>
             </Stack>
-            <Spacer display={{ base: "inline-block", lg: "none" }} />
-            <Text
-              fontWeight="500"
-              fontSize={{ base: "sm", lg: "md" }}
-              color="gray.200"
-            >
-              {Moment(new Date()).format("HH:mm")} 更新
-            </Text>
-            <Spacer display={{ base: "none", lg: "inline-block" }} />
             <HStack spacing="2" display={{ base: "none", lg: "flex" }}>
               <ButtonGroup isAttached>
                 <Button
@@ -378,17 +390,28 @@ function CourseInfoPage({ code, course }) {
                 rightIcon={<IoMdOpen />}
                 onClick={() => window.open(getNolUrl(course), "_blank")}
               >
-                課程網資訊
+                課程頁面
               </Button>
               <CopyToClipboard
                 text={`${process.env.NEXT_PUBLIC_BASE_URL}/courseinfo/${course.id}`}
               >
                 <Button
-                  rightIcon={<Icon as={BiCopy} color={copyWord.color} />}
+                  rightIcon={
+                    <Icon
+                      as={BiCopy}
+                      color={
+                        copyWord.count === 0
+                          ? copyBtnDefaultColor
+                          : copyWord.color
+                      }
+                    />
+                  }
                   variant="ghost"
                   size="md"
-                  bg={copyWord.bg}
-                  color={copyWord.color}
+                  bg={copyBtnBg}
+                  color={
+                    copyWord.count === 0 ? copyBtnDefaultColor : copyWord.color
+                  }
                   onClick={() => setCopiedLinkClicks(copiedLinkClicks + 1)}
                 >
                   {copyWord.word}
@@ -398,12 +421,11 @@ function CourseInfoPage({ code, course }) {
             <Menu>
               <MenuButton
                 isLoading={isLoading || isCourseTableLoading}
-                as={Button}
-                rightIcon={<FaAngleDown />}
+                as={IconButton}
+                variant="ghost"
+                icon={<Icon as={FiMoreHorizontal} boxSize="6" />}
                 display={{ base: "inline-block", lg: "none" }}
-              >
-                功能
-              </MenuButton>
+              />
               <MenuList display={{ base: "inline-block", lg: "none" }}>
                 <MenuItem
                   key={"NolContent_Button_" + code + "_addToCourseTable"}
@@ -446,7 +468,7 @@ function CourseInfoPage({ code, course }) {
                   icon={<IoMdOpen />}
                   onClick={() => window.open(getNolUrl(course), "_blank")}
                 >
-                  課程網資訊
+                  課程頁面
                 </MenuItem>
               </MenuList>
             </Menu>
