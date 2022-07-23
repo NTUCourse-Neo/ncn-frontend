@@ -13,7 +13,7 @@ const CourseSearchingContext = createContext({
     show_selected_courses: false,
     only_show_not_conflicted_courses: false,
     sync_add_to_nol: false,
-    strict_search_mode: false,
+    strict_search_mode: true,
   }, // object of settings
   searchFiltersEnable: {
     time: false,
@@ -56,7 +56,7 @@ function CourseSearchingProvider(props) {
     show_selected_courses: false,
     only_show_not_conflicted_courses: false,
     sync_add_to_nol: false,
-    strict_search_mode: false,
+    strict_search_mode: true,
   });
   const [searchFiltersEnable, setSearchFiltersEnable] = useState({
     time: false,

@@ -1,5 +1,13 @@
 import { React, useEffect, useState, useMemo } from "react";
-import { Flex, Text, useToast, Box, Spacer, Accordion } from "@chakra-ui/react";
+import {
+  Flex,
+  Text,
+  useToast,
+  Box,
+  Spacer,
+  Accordion,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import SkeletonRow from "components/SkeletonRow";
 import { HashLoader, BeatLoader } from "react-spinners";
 import CourseInfoRow from "components/CourseInfoRow";
@@ -22,7 +30,7 @@ export default function UserMyPage({ user }) {
   const [Loading, setLoading] = useState(true);
   const router = useRouter();
   const userLoading = !userInfo;
-
+  const bgColor = useColorModeValue("white", "black");
   const selectedCourses = useMemo(() => {
     return courseTable?.courses;
   }, [courseTable]);
@@ -114,6 +122,7 @@ export default function UserMyPage({ user }) {
           justifyContent="center"
           flexDirection="column"
           alignItems="center"
+          bg={bgColor}
         >
           <HashLoader size="60px" color="teal" />
         </Flex>
@@ -130,7 +139,7 @@ export default function UserMyPage({ user }) {
           content={`我的收藏頁面 | NTUCourse Neo，全新的臺大選課網站。`}
         />
       </Head>
-      <Flex h={{ base: "90vh", md: "95vh" }} w="100vw">
+      <Flex h={{ base: "90vh", md: "95vh" }} w="100vw" bg={bgColor}>
         <Flex
           w="100vw"
           direction="column"
