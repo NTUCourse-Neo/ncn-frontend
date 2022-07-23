@@ -1,5 +1,12 @@
-import { Flex, Text, Image, HStack, Button } from "@chakra-ui/react";
-import { FaHeartbeat } from "react-icons/fa";
+import {
+  Flex,
+  Text,
+  Image,
+  HStack,
+  Button,
+  useColorModeValue,
+} from "@chakra-ui/react";
+import { FaHeartbeat, FaSignInAlt } from "react-icons/fa";
 import Link from "next/link";
 
 export default function ErrorPage() {
@@ -11,32 +18,43 @@ export default function ErrorPage() {
       flexDirection="column"
       alignItems="center"
       justifyItems="center"
-      maxW={{ base: "100vw", md: "80vw", lg: "70vw" }}
-      mx="auto"
+      w="100%"
+      minH="95vh"
       overflow="visible"
-      p="64px"
+      px={{ base: "2vw", md: "10vw", lg: "15vw" }}
+      py="64px"
+      bg={useColorModeValue("white", "black")}
     >
-      <Image alt="" mt="5vh" src={`https://http.cat/404`} />
-      <Text fontSize="4xl" color="gray.500" mt="2vh">
-        Oops, something went wrong 😥
+      <Image w="80%" alt="" mt="5vh" src={`img/not_found.svg`} />
+      <Text fontSize="4xl" color="gray.500" m="2vh">
+        有東西出錯了 😥
       </Text>
-      <Flex direction={"column"}>
-        <Text fontSize="xl" color="gray.500" fontWeight={500}>
-          1. Try to login again
+      <Flex direction={"column"} alignItems={"center"}>
+        <HStack spacing={2} wrap="wrap">
+          <Text fontSize="xl" color="gray.500" fontWeight={500}>
+            請嘗試重新
+          </Text>
           <Link href={"/api/auth/login"}>
-            <a> ➡️ </a>
+            <Button size="xs" colorScheme="blue" leftIcon={<FaSignInAlt />}>
+              登入
+            </Button>
           </Link>
-        </Text>
+        </HStack>
         <Text fontSize="xl" color="gray.500">
-          2. If it doesn't help, report issue
+          若狀況仍未解決，請回報此問題。
         </Text>
       </Flex>
       <HStack spacing={2} mt="4">
         <Button
-          variant="solid"
-          onClick={() => handleOpenPage("https://www.surveycake.com/s/LzWd6")}
+          variant="outline"
+          onClick={() =>
+            handleOpenPage(
+              "https://github.com/NTUCourse-Neo/ncn-frontend/issues/new?assignees=&labels=bug&template=bug_report.md&title="
+            )
+          }
+          colorScheme="teal"
         >
-          點我回報問題 🥺
+          回報問題
         </Button>
         <Button
           variant="solid"

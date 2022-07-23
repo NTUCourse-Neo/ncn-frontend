@@ -36,15 +36,15 @@ const SortableElement = sortableElement(
   ({ course, prepareToRemoveCourseId, handlePrepareToDelete }) => {
     const router = useRouter();
     const badgeColor = useColorModeValue(
-      hash_to_color_hex(course.id, 0.9),
-      hash_to_color_hex(course.id, 0.8)
+      hash_to_color_hex(course.id, 0.9, 0.8),
+      hash_to_color_hex(course.id, 0.3, 0.3)
     );
-    const textColor = useColorModeValue("gray.500", "gray.400");
+    const textColor = useColorModeValue("gray.500", "gray.200");
     const removeColor = useColorModeValue("red.700", "red.300");
     return (
       <Flex className={styles.sortableHelper} alignItems="center" my="1">
         <DragHandle />
-        <Badge ml="4" mr="1" variant="solid" bg={badgeColor} color="gray.600">
+        <Badge ml="4" mr="1" variant="solid" bg={badgeColor} color={textColor}>
           {course.serial}
         </Badge>
         <Text

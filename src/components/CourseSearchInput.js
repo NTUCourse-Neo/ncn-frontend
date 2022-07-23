@@ -139,11 +139,10 @@ function CourseSearchInputTextArea(props) {
         justifyContent={["start", "start", "center", "center"]}
         flexWrap="wrap"
         css={{ gap: "10px" }}
-        bg={useColorModeValue("white", "gray.800")}
       >
         <Menu closeOnSelect={false} mx="2">
           <MenuButton as={Button} size={"md"} rightIcon={<ChevronDownIcon />}>
-            搜尋欄位
+            欄位
           </MenuButton>
           <MenuList>
             <MenuOptionGroup defaultValue={["name", "teacher"]} type="checkbox">
@@ -231,9 +230,6 @@ function CourseSearchInputTextArea(props) {
 
 function SettingSwitch({ label, setterFunc, defaultValue, isDisabled }) {
   const textColor = useColorModeValue("gray.500", "text.dark");
-  if (isDisabled) {
-    return <></>;
-  }
   return (
     <Flex alignItems="center" diisplay={{ base: "none", lg: "inline-block" }}>
       <Switch
@@ -333,12 +329,7 @@ function CourseSearchInput({ displayPanel, searchCallback }) {
     <>
       <CourseSearchInputTextArea searchCallback={searchCallback} />
       <Collapse in={displayPanel} animateOpacity>
-        <Box
-          w="100%"
-          py="8px"
-          mt="4"
-          bg={useColorModeValue("white", "gray.800")}
-        >
+        <Box w="100%" py="8px" mt="4">
           <Tabs>
             <TabList>
               <Tab>
@@ -589,12 +580,6 @@ function CourseSearchInput({ displayPanel, searchCallback }) {
                         label="只顯示未衝堂課程"
                         setterFunc={set_only_show_not_conflicted_courses}
                         defaultValue={only_show_not_conflicted_courses}
-                        isDisabled={true}
-                      />
-                      <SettingSwitch
-                        label="同步新增至課程網"
-                        setterFunc={set_sync_add_to_nol}
-                        defaultValue={sync_add_to_nol}
                         isDisabled={true}
                       />
                     </Flex>

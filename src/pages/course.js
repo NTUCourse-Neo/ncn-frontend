@@ -154,6 +154,7 @@ function CoursePage() {
         justifyContent="center"
         alignItems="center"
         overflow="hidden"
+        bg={useColorModeValue("white", "black")}
       >
         <Box
           display="flex"
@@ -178,7 +179,13 @@ function CoursePage() {
             borderBottom={useColorModeValue("gray.200", "gray.100")}
             bg={useColorModeValue("white", "gray.800")}
           >
-            <Flex w="100%" px="10vw" py="4" direction="column">
+            <Flex
+              w="100%"
+              px="10vw"
+              py="4"
+              direction="column"
+              bg={useColorModeValue("white", "black")}
+            >
               <CourseSearchInput
                 displayPanel={displayFilter}
                 searchCallback={searchCallback}
@@ -187,6 +194,7 @@ function CoursePage() {
             <IconButton
               size="xs"
               variant="ghost"
+              bg={useColorModeValue("white", "black")}
               icon={displayFilter ? <FaChevronUp /> : <FaChevronDown />}
               onClick={() => setDisplayFilter(!displayFilter)}
             />

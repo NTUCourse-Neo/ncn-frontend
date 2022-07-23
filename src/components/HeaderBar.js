@@ -32,6 +32,7 @@ function SignInButton() {
   const { user, isLoading } = useUser();
   const router = useRouter();
   const textColor = useColorModeValue("gray.600", "gray.300");
+  const loginBtnBg = useColorModeValue("yellow.300", "yellow.600");
 
   if (isLoading) {
     return (
@@ -58,12 +59,12 @@ function SignInButton() {
           ml={{ base: 0, md: 6 }}
         >
           {user.email_verified ? (
-            <AvatarBadge boxSize="1.25em" bg="green.500">
-              <FaCheck size="10" />
+            <AvatarBadge boxSize="1em" bg="green.500" borderWidth="0.15em">
+              <FaCheck size="8" />
             </AvatarBadge>
           ) : (
-            <AvatarBadge boxSize="1.25em" bg="orange.500">
-              <FaExclamation size="10" />
+            <AvatarBadge boxSize="1em" bg="orange.500" borderWidth="0.15em">
+              <FaExclamation size="8" />
             </AvatarBadge>
           )}
         </MenuButton>
@@ -161,7 +162,8 @@ function SignInButton() {
         </MenuList>
       </Menu>
       <Button
-        colorScheme="yellow"
+        bg={loginBtnBg}
+        color={"gray.800"}
         rightIcon={<ChevronRightIcon />}
         size="md"
         ml="10px"
@@ -183,7 +185,7 @@ function HeaderBar() {
       position="fixed"
       w="100%"
       h="64px"
-      bg="teal.300"
+      bg={useColorModeValue("teal.light", "teal.dark")}
       flexDirection="row"
       justifyContent="space-between"
       alignItems="center"
@@ -196,7 +198,7 @@ function HeaderBar() {
             <Heading
               fontSize={{ base: "xl", md: "2xl" }}
               fontWeight="700"
-              color="gray.600"
+              color={useColorModeValue("heading.light", "heading.dark")}
               display={{ base: "none", md: "inline-block" }}
             >
               NTUCourse Neo
@@ -215,7 +217,6 @@ function HeaderBar() {
         </Link>
         <Link href="/course">
           <Button
-            colorScheme="blue"
             variant="ghost"
             size="md"
             ml={{ base: 4, md: 6 }}
@@ -229,13 +230,13 @@ function HeaderBar() {
       <Flex justifyContent="center" alignItems="center">
         <Link href="/about">
           <Button
-            colorScheme="blue"
             variant="ghost"
             size="md"
             ml="30px"
             display={{ base: "none", md: "inline-block" }}
+            color={useColorModeValue("link.light", "link.dark")}
           >
-            <HStack color={useColorModeValue("link.light", "link.dark")}>
+            <HStack>
               <FaInfoCircle />
               <Text>關於</Text>
             </HStack>
