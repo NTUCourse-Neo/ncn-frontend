@@ -32,6 +32,7 @@ function SignInButton() {
   const { user, isLoading } = useUser();
   const router = useRouter();
   const textColor = useColorModeValue("gray.600", "gray.300");
+  const loginBtnBg = useColorModeValue("yellow.300", "yellow.600");
 
   if (isLoading) {
     return (
@@ -161,8 +162,8 @@ function SignInButton() {
         </MenuList>
       </Menu>
       <Button
-        bg={useColorModeValue("yellow.300", "yellow.600")} // eslint-disable-line
-        color={useColorModeValue("gray.800", "gray.800")} // eslint-disable-line
+        bg={loginBtnBg}
+        color={"gray.800"}
         rightIcon={<ChevronRightIcon />}
         size="md"
         ml="10px"

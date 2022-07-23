@@ -59,6 +59,7 @@ function HoverCourseIndicator({ hoveredCourse }) {
 
 function CourseTableContainer({ courses, loading, courseTimeMap }) {
   const days = ["1", "2", "3", "4", "5"];
+  const intervalTextColor = useColorModeValue("gray.300", "gray.600");
   const interval = [
     "0",
     "1",
@@ -115,11 +116,7 @@ function CourseTableContainer({ courses, loading, courseTimeMap }) {
                 justifyContent="center"
                 alignItems="center"
               >
-                <Text
-                  color={useColorModeValue("gray.300", "gray.600")} // eslint-disable-line
-                  fontSize="5xl"
-                  fontWeight="700"
-                >
+                <Text color={intervalTextColor} fontSize="5xl" fontWeight="700">
                   {" "}
                   {interval}
                 </Text>
@@ -160,7 +157,14 @@ function CourseTableContainer({ courses, loading, courseTimeMap }) {
         );
       });
     },
-    [courseTimeMap, courses, hoveredCourse, hoveredCourseTimeMap, loading]
+    [
+      courseTimeMap,
+      courses,
+      hoveredCourse,
+      hoveredCourseTimeMap,
+      loading,
+      intervalTextColor,
+    ]
   );
 
   return (

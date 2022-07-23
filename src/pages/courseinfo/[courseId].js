@@ -82,6 +82,8 @@ function CourseInfoPage({ code, course }) {
   const [copyWord, setCopyWord] = useState(
     copyWordList.find((word) => word.count <= copiedLinkClicks)
   );
+  const copyBtnDefaultColor = useColorModeValue("gray.700", "gray.100");
+  const copyBtnBg = useColorModeValue("white", "gray.800");
 
   useEffect(() => {
     setCopyWord(copyWordList.find((word) => word.count <= copiedLinkClicks));
@@ -467,17 +469,17 @@ function CourseInfoPage({ code, course }) {
                         as={BiCopy}
                         color={
                           copyWord.count === 0
-                            ? useColorModeValue("gray.700", "gray.100") // eslint-disable-line
+                            ? copyBtnDefaultColor
                             : copyWord.color
                         }
                       />
                     }
                     variant="ghost"
                     size="xs"
-                    bg={useColorModeValue("white", "gray.800")} // eslint-disable-line
+                    bg={copyBtnBg}
                     color={
                       copyWord.count === 0
-                        ? useColorModeValue("gray.700", "gray.100") // eslint-disable-line
+                        ? copyBtnDefaultColor
                         : copyWord.color
                     }
                     onClick={() => setCopiedLinkClicks(copiedLinkClicks + 1)}
@@ -574,18 +576,16 @@ function CourseInfoPage({ code, course }) {
                       as={BiCopy}
                       color={
                         copyWord.count === 0
-                          ? useColorModeValue("gray.700", "gray.100") // eslint-disable-line
+                          ? copyBtnDefaultColor
                           : copyWord.color
                       }
                     />
                   }
                   variant="ghost"
                   size="md"
-                  bg={useColorModeValue("white", "gray.900")} // eslint-disable-line
+                  bg={copyBtnBg}
                   color={
-                    copyWord.count === 0
-                      ? useColorModeValue("gray.700", "gray.100") // eslint-disable-line
-                      : copyWord.color
+                    copyWord.count === 0 ? copyBtnDefaultColor : copyWord.color
                   }
                   onClick={() => setCopiedLinkClicks(copiedLinkClicks + 1)}
                 >

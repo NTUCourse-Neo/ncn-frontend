@@ -220,6 +220,7 @@ function DeleteDialog({
 }
 
 export default function UserInfoPage({ user }) {
+  const pageBg = useColorModeValue("white", "black");
   const { setUser, user: userInfo } = useUserData();
   const textColor = useColorModeValue("text.light", "text.dark");
   const cardColor = useColorModeValue("card.light", "card.dark");
@@ -402,7 +403,7 @@ export default function UserInfoPage({ user }) {
         overflow="visible"
         px={{ base: "32px", md: "128px" }}
         pt="64px"
-        bg={useColorModeValue("white", "black")} // eslint-disable-line
+        bg={pageBg}
       >
         <Flex
           justifyContent="space-between"
