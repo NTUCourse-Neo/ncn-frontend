@@ -43,16 +43,21 @@ import {
 import { IoMdOpen } from "react-icons/io";
 import BetaBadge from "components/BetaBadge";
 import { info_view_map } from "data/mapping_table";
-import { hash_to_color_hex_with_hue } from "utils/colorAgent";
 import PTTContentRowContainer from "components/CourseInfo/PTTContentRowContainer";
 import SignUpCard from "components/CourseInfo/SignUpCard";
 import SignUpReportForm from "components/CourseInfo/SignUpReportForm";
-import { getCourseSyllabusData } from "queries/course";
 import handleFetch from "utils/CustomFetch";
 import { useUser } from "@auth0/nextjs-auth0";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import parseCourseSchedlue from "utils/parseCourseSchedule";
+import {
+  useCourseEnrollData,
+  useNTURatingData,
+  usePTTReviewData,
+  usePTTExamData,
+  useSyllabusData,
+} from "hooks/useCourseInfo";
 
 function DataSourceTag({ source }) {
   return (
@@ -285,16 +290,19 @@ function SignUpPanel({
   );
 }
 
-function EnrollStatusPanel({ isLoading, isUnauth, CourseEnrollStatus }) {
+function EnrollStatusPanel({ courseSerial }) {
+  const { user, isLoading: isAuth0Loading } = useUser();
+  const { data: courseEnrollStatus, isLoading } =
+    useCourseEnrollData(courseSerial);
   return (
     <PanelWrapper
-      isLoading={isLoading}
-      isUnauth={isUnauth}
+      isLoading={isLoading || isAuth0Loading}
+      isUnauth={!user}
       loadingFallback={
         <LoadingPanel title="努力取得資訊中..." height="100%" pt={8} />
       }
     >
-      {!CourseEnrollStatus ? (
+      {!courseEnrollStatus ? (
         <PanelPlaceholder
           title="無法取得課程即時資訊"
           isEmpty={false}
@@ -312,22 +320,22 @@ function EnrollStatusPanel({ isLoading, isUnauth, CourseEnrollStatus }) {
         >
           <Stat>
             <StatLabel>選上</StatLabel>
-            <StatNumber>{CourseEnrollStatus.enrolled}</StatNumber>
+            <StatNumber>{courseEnrollStatus.enrolled}</StatNumber>
             <StatHelpText>人</StatHelpText>
           </Stat>
           <Stat>
             <StatLabel>選上外系</StatLabel>
-            <StatNumber>{CourseEnrollStatus.enrolled_other}</StatNumber>
+            <StatNumber>{courseEnrollStatus.enrolled_other}</StatNumber>
             <StatHelpText>人</StatHelpText>
           </Stat>
           <Stat>
             <StatLabel>登記</StatLabel>
-            <StatNumber>{CourseEnrollStatus.registered}</StatNumber>
+            <StatNumber>{courseEnrollStatus.registered}</StatNumber>
             <StatHelpText>人</StatHelpText>
           </Stat>
           <Stat>
             <StatLabel>剩餘</StatLabel>
-            <StatNumber>{CourseEnrollStatus.remain}</StatNumber>
+            <StatNumber>{courseEnrollStatus.remain}</StatNumber>
             <StatHelpText>空位</StatHelpText>
           </Stat>
         </Flex>
@@ -336,16 +344,18 @@ function EnrollStatusPanel({ isLoading, isUnauth, CourseEnrollStatus }) {
   );
 }
 
-function NTURatingPanel({ isLoading, isUnauth, NTURatingData }) {
+function NTURatingPanel({ courseId }) {
+  const { user, isLoading: isAuth0Loading } = useUser();
+  const { data: ntuRatingData, isLoading } = useNTURatingData(courseId);
   return (
     <PanelWrapper
-      isLoading={isLoading}
-      isUnauth={isUnauth}
+      isLoading={isLoading || isAuth0Loading}
+      isUnauth={!user}
       loadingFallback={
         <LoadingPanel title="查詢評價中..." height="100%" pt={8} />
       }
     >
-      {!NTURatingData ? (
+      {!ntuRatingData ? (
         <Flex h="100%" flexDirection="column" alignItems="center">
           <PanelPlaceholder title="無評價資訊" h="100%" pt="8" />
           <Button
@@ -367,27 +377,27 @@ function NTURatingPanel({ isLoading, isUnauth, NTURatingData }) {
       ) : (
         <Flex h="100%" flexDirection="column" alignItems="start">
           <Text fontSize="md" fontWeight="600" color="gray.700">
-            NTURating 上共有 {NTURatingData.count} 筆評價
+            NTURating 上共有 {ntuRatingData.count} 筆評價
           </Text>
           <HStack w="100%" justify="space-between" my="2">
             <Stat>
               <StatLabel>甜度</StatLabel>
-              <StatNumber>{NTURatingData.sweety}</StatNumber>
+              <StatNumber>{ntuRatingData.sweety}</StatNumber>
               <StatHelpText>平均值</StatHelpText>
             </Stat>
             <Stat>
               <StatLabel>涼度</StatLabel>
-              <StatNumber>{NTURatingData.breeze}</StatNumber>
+              <StatNumber>{ntuRatingData.breeze}</StatNumber>
               <StatHelpText>平均值</StatHelpText>
             </Stat>
             <Stat>
               <StatLabel>紮實度</StatLabel>
-              <StatNumber>{NTURatingData.workload}</StatNumber>
+              <StatNumber>{ntuRatingData.workload}</StatNumber>
               <StatHelpText>平均值</StatHelpText>
             </Stat>
             <Stat>
               <StatLabel>品質</StatLabel>
-              <StatNumber>{NTURatingData.quality}</StatNumber>
+              <StatNumber>{ntuRatingData.quality}</StatNumber>
               <StatHelpText>平均值</StatHelpText>
             </Stat>
           </HStack>
@@ -398,7 +408,7 @@ function NTURatingPanel({ isLoading, isUnauth, NTURatingData }) {
             rightIcon={<IoMdOpen />}
             onClick={() =>
               window.open(
-                NTURatingData.url + "?referrer=ntucourse_neo",
+                ntuRatingData.url + "?referrer=ntucourse_neo",
                 "_blank"
               )
             }
@@ -411,48 +421,53 @@ function NTURatingPanel({ isLoading, isUnauth, NTURatingData }) {
   );
 }
 
-function PTTReviewPanel({ isLoading, isUnauth, PTTReviewData }) {
+function PTTReviewPanel({ courseId }) {
+  const { user, isLoading: isAuth0Loading } = useUser();
+  const { data: pttReviewData, isLoading } = usePTTReviewData(courseId);
   return (
     <PanelWrapper
-      isLoading={isLoading}
-      isUnauth={isUnauth}
+      isLoading={isLoading || isAuth0Loading}
+      isUnauth={!user}
       loadingFallback={
         <LoadingPanel title="努力爬文中..." height="100%" pt={8} />
       }
     >
-      {!PTTReviewData ? (
+      {!pttReviewData ? (
         <PanelPlaceholder title="無相關貼文資訊" h="100%" pt="8" />
       ) : (
-        <PTTContentRowContainer info={PTTReviewData} height="150px" />
+        <PTTContentRowContainer info={pttReviewData} height="150px" />
       )}
     </PanelWrapper>
   );
 }
 
-function PTTExamPanel({ isLoading, isUnauth, PTTExamData }) {
+function PTTExamPanel({ courseId }) {
+  const { user, isLoading: isAuth0Loading } = useUser();
+  const { data: pttExamData, isLoading } = usePTTExamData(courseId);
   return (
     <PanelWrapper
-      isLoading={isLoading}
-      isUnauth={isUnauth}
+      isLoading={isLoading || isAuth0Loading}
+      isUnauth={!user}
       loadingFallback={
         <LoadingPanel title="努力爬文中..." height="100%" pt={8} />
       }
     >
-      {!PTTExamData ? (
+      {!pttExamData ? (
         <PanelPlaceholder title="無相關貼文資訊" h="100%" pt="8" />
       ) : (
-        <PTTContentRowContainer info={PTTExamData} height="150px" />
+        <PTTContentRowContainer info={pttExamData} height="150px" />
       )}
     </PanelWrapper>
   );
 }
 
-function SyllabusPanel({ isLoading, isUnauth, SyllabusData }) {
+function SyllabusPanel({ courseId }) {
+  const { data: syllabusData, isLoading } = useSyllabusData(courseId);
   const headingColor = useColorModeValue("heading.light", "heading.dark");
   const textColor = useColorModeValue("text.light", "text.dark");
   return (
-    <PanelWrapper isLoading={isLoading} isUnauth={isUnauth}>
-      {!SyllabusData || !SyllabusData?.syllabus ? (
+    <PanelWrapper isLoading={isLoading} isUnauth={null}>
+      {!syllabusData || !syllabusData?.syllabus ? (
         <PanelPlaceholder title="無課程大綱資訊" h="100%" pt="8" />
       ) : (
         <Flex
@@ -464,8 +479,8 @@ function SyllabusPanel({ isLoading, isUnauth, SyllabusData }) {
           wordBreak="break-all"
           overflow="auto"
         >
-          {Object.keys(SyllabusData?.syllabus ?? {}).map((key) => {
-            const line = SyllabusData.syllabus[key].split("\n");
+          {Object.keys(syllabusData?.syllabus ?? {}).map((key) => {
+            const line = syllabusData.syllabus[key].split("\n");
             const content = line.map((item, index) => {
               return (
                 <Text
@@ -491,7 +506,7 @@ function SyllabusPanel({ isLoading, isUnauth, SyllabusData }) {
                 >
                   {syllabusTitle[key]}
                 </Text>
-                {SyllabusData.syllabus[key] !== "" ? (
+                {syllabusData.syllabus[key] !== "" ? (
                   content
                 ) : (
                   <Text
@@ -513,18 +528,19 @@ function SyllabusPanel({ isLoading, isUnauth, SyllabusData }) {
   );
 }
 
-function GradePolicyPanel({ isLoading, isUnauth, SyllabusData }) {
+function GradePolicyPanel({ courseId }) {
+  const { data: syllabusData, isLoading } = useSyllabusData(courseId);
   const headingColor = useColorModeValue("heading.light", "heading.dark");
   const textColor = useColorModeValue("text.light", "text.dark");
   return (
     <PanelWrapper
       isLoading={isLoading}
-      isUnauth={isUnauth}
+      isUnauth={null}
       loadingFallback={
         <LoadingPanel title="查看配分中..." height="100%" pt={8} />
       }
     >
-      {!SyllabusData || !SyllabusData.grade ? (
+      {!syllabusData || !syllabusData.grade ? (
         <PanelPlaceholder title="無評分相關資訊" h="100%" pt="8" />
       ) : (
         <Flex
@@ -538,7 +554,7 @@ function GradePolicyPanel({ isLoading, isUnauth, SyllabusData }) {
               lineWidth={50}
               label={({ dataEntry }) => dataEntry.value + "%"}
               labelPosition={75}
-              data={SyllabusData.grade}
+              data={syllabusData.grade}
               labelStyle={() => ({
                 fill: "white",
                 fontSize: "10px",
@@ -547,7 +563,7 @@ function GradePolicyPanel({ isLoading, isUnauth, SyllabusData }) {
             />
           </Box>
           <VStack mt={{ base: 4, lg: 0 }} align="start">
-            {SyllabusData.grade.map((item, index) => {
+            {syllabusData.grade.map((item, index) => {
               const line = item.comment.split("\n");
               const content = line.map((item, index) => {
                 return (
@@ -622,154 +638,11 @@ function CourseDetailInfoContainer({ course }) {
   const { user, isLoading: isAuth0Loading } = useUser();
   const router = useRouter();
 
-  // Course live data
-  const [CourseEnrollStatus, setCourseEnrollStatus] = useState(null);
-  const [NTURatingData, setNTURatingData] = useState(null);
-  const [PTTReviewData, setPTTReviewData] = useState(null);
-  const [PTTExamData, setPTTExamData] = useState(null);
-  const [SyllabusData, setSyllabusData] = useState(null);
+  // sign up
+  const [signUpCardIdx, setSignUpCardIdx] = useState(0);
   const [SignUpPostData, setSignUpPostData] = useState(null);
-
-  // Live data loading states
-  const [isLoadingEnrollInfo, setIsLoadingEnrollInfo] = useState(true);
-  const [isLoadingRatingData, setIsLoadingRatingData] = useState(true);
-  const [isLoadingPTTReviewData, setIsLoadingPTTReviewData] = useState(true);
-  const [isLoadingPTTExamData, setIsLoadingPTTExamData] = useState(true);
-  const [isLoadingSyllabusData, setIsLoadingSyllabusData] = useState(true);
   const [isLoadingSignUpPostData, setIsLoadingSignUpPostData] = useState(true);
 
-  // useEffect(()=>{
-  //   console.log('Form: ', signUpCardForm);
-  // },[signUpCardForm])
-
-  const [signUpCardIdx, setSignUpCardIdx] = useState(0);
-
-  async function fetchCourseEnrollData() {
-    setIsLoadingEnrollInfo(true);
-    let data;
-    try {
-      data = await handleFetch("/api/course/enrollInfo", {
-        courseId: course.serial,
-      });
-    } catch (error) {
-      setIsLoadingEnrollInfo(false);
-      toast({
-        title: "錯誤",
-        description: "無法取得課程即時資訊",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      if (error?.response?.data?.msg === "access_token_expired") {
-        router.push("/api/auth/login");
-      }
-      return;
-    }
-    setCourseEnrollStatus(data);
-    setIsLoadingEnrollInfo(false);
-  }
-  async function fetchNTURatingData() {
-    setIsLoadingRatingData(true);
-    let data;
-    try {
-      data = await handleFetch("/api/course/ntuRating", {
-        courseId: course.id,
-      });
-    } catch (error) {
-      console.log(error);
-      setIsLoadingRatingData(false);
-      toast({
-        title: "無法取得 NTURating 評價資訊",
-        description: "請洽 rating.myntu.me",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      if (error?.response?.data?.msg === "access_token_expired") {
-        router.push("/api/auth/login");
-      }
-      return;
-    }
-    setNTURatingData(data);
-    setIsLoadingRatingData(false);
-  }
-  async function fetchPTTReviewData() {
-    setIsLoadingPTTReviewData(true);
-    let data;
-    try {
-      data = await handleFetch("/api/course/ptt", {
-        courseId: course.id,
-        type: "review",
-      });
-    } catch (error) {
-      setIsLoadingPTTReviewData(false);
-      toast({
-        title: "無法取得 PTT 貼文資訊",
-        description: "請洽 ptt.cc",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      if (error?.response?.data?.msg === "access_token_expired") {
-        router.push("/api/auth/login");
-      }
-      return;
-    }
-    setPTTReviewData(data);
-    setIsLoadingPTTReviewData(false);
-  }
-  async function fetchPTTExamData() {
-    setIsLoadingPTTExamData(true);
-    let data;
-    try {
-      data = await handleFetch("/api/course/ptt", {
-        courseId: course.id,
-        type: "exam",
-      });
-    } catch (error) {
-      setIsLoadingPTTExamData(false);
-      toast({
-        title: "無法取得 PTT 貼文資訊",
-        description: "請洽 ptt.cc",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      if (error?.response?.data?.msg === "access_token_expired") {
-        router.push("/api/auth/login");
-      }
-      return;
-    }
-    setPTTExamData(data);
-    setIsLoadingPTTExamData(false);
-  }
-  async function fetchSyllabusData() {
-    setIsLoadingSyllabusData(true);
-    let data;
-    try {
-      data = await getCourseSyllabusData(course.id);
-    } catch (error) {
-      setIsLoadingSyllabusData(false);
-      toast({
-        title: "無法取得課程大綱資訊",
-        description: "請洽台大課程網",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-    if (data && data.grade) {
-      data.grade.forEach((grade) => {
-        grade.color = hash_to_color_hex_with_hue(grade.title, {
-          min: 180,
-          max: 200,
-        });
-      });
-    }
-    setSyllabusData(data);
-    setIsLoadingSyllabusData(false);
-  }
   async function fetchSignUpPostData() {
     setIsLoadingSignUpPostData(true);
     let data;
@@ -797,18 +670,9 @@ function CourseDetailInfoContainer({ course }) {
   }
 
   useEffect(() => {
-    fetchSyllabusData();
     if (!isAuth0Loading && user) {
-      fetchCourseEnrollData();
       fetchSignUpPostData();
-      fetchNTURatingData();
-      fetchPTTReviewData();
-      fetchPTTExamData();
     } else if (!isAuth0Loading && !user) {
-      setIsLoadingEnrollInfo(false);
-      setIsLoadingRatingData(false);
-      setIsLoadingPTTReviewData(false);
-      setIsLoadingPTTExamData(false);
       setIsLoadingSignUpPostData(false);
     }
   }, [isAuth0Loading, user]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -1021,11 +885,7 @@ function CourseDetailInfoContainer({ course }) {
             </HStack>
             <TabPanels my="3">
               <TabPanel>
-                <EnrollStatusPanel
-                  isLoading={isLoadingEnrollInfo || isAuth0Loading}
-                  isUnauth={!user}
-                  CourseEnrollStatus={CourseEnrollStatus}
-                />
+                <EnrollStatusPanel courseSerial={course.serial} />
               </TabPanel>
               <TabPanel></TabPanel>
             </TabPanels>
@@ -1089,18 +949,10 @@ function CourseDetailInfoContainer({ course }) {
             </HStack>
             <TabPanels>
               <TabPanel>
-                <PTTReviewPanel
-                  isLoading={isLoadingPTTReviewData || isAuth0Loading}
-                  isUnauth={!user}
-                  PTTReviewData={PTTReviewData}
-                />
+                <PTTReviewPanel courseId={course.id} />
               </TabPanel>
               <TabPanel>
-                <NTURatingPanel
-                  isLoading={isLoadingRatingData || isAuth0Loading}
-                  isUnauth={!user}
-                  NTURatingData={NTURatingData}
-                />
+                <NTURatingPanel courseId={course.id} />
               </TabPanel>
             </TabPanels>
           </Tabs>
@@ -1129,11 +981,7 @@ function CourseDetailInfoContainer({ course }) {
             </HStack>
             <TabPanels>
               <TabPanel>
-                <PTTExamPanel
-                  isLoading={isLoadingPTTExamData || isAuth0Loading}
-                  isUnauth={!user}
-                  PTTExamData={PTTExamData}
-                />
+                <PTTExamPanel courseId={course.id} />
               </TabPanel>
             </TabPanels>
           </Tabs>
@@ -1159,11 +1007,7 @@ function CourseDetailInfoContainer({ course }) {
             <Text fontSize="2xl" fontWeight="800" color={headingColor}>
               課程大綱
             </Text>
-            <SyllabusPanel
-              isLoading={isLoadingSyllabusData}
-              isUnauth={null}
-              SyllabusData={SyllabusData}
-            />
+            <SyllabusPanel courseId={course.id} />
           </VStack>
           <DataSourceTag source="臺大課程網" />
         </Flex>
@@ -1183,11 +1027,7 @@ function CourseDetailInfoContainer({ course }) {
           <Text fontSize="2xl" fontWeight="800" color={headingColor}>
             評分方式
           </Text>
-          <GradePolicyPanel
-            isLoading={isLoadingSyllabusData}
-            isUnauth={null}
-            SyllabusData={SyllabusData}
-          />
+          <GradePolicyPanel courseId={course.id} />
           <DataSourceTag source="臺大課程網" />
         </Flex>
       </Flex>
