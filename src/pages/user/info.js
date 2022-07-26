@@ -307,7 +307,7 @@ export default function UserInfoPage({ user }) {
             color={textColor}
             my="8"
           >
-            ✌️ 歡迎回來，{userInfo.name}
+            ✌️ 歡迎回來 {userInfo?.name}
           </Text>
           <Flex
             w="100%"
