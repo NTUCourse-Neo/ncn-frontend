@@ -13,12 +13,10 @@ import { IoMdOpen } from "react-icons/io";
 function PTTContentRowContainer({ info, ...restProps }) {
   const rowColor = useColorModeValue("blue.50", "#2B6CB030");
   const textColor = useColorModeValue("text.light", "text.dark");
-  const rows = Array.isArray(info) ? info : [];
-  console.log("rows: ", rows);
   return (
     <Flex w="100%" mb="0" overflow="auto" flexDirection="column" {...restProps}>
       <VStack>
-        {rows.map((data) => (
+        {info.map((data) => (
           <Flex
             key={data.url}
             as="button"
