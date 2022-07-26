@@ -149,6 +149,9 @@ function CourseDetailInfoContainer({ course }) {
           >
             <Flex mr="16" flexDirection="column" flexWrap="wrap">
               {course_codes_1.map((item, index) => {
+                if (!item.value) {
+                  return null;
+                }
                 return (
                   <Stat key={"code_stats_1" + index}>
                     <StatLabel color={statsTitleColor} mb="-1">
@@ -161,6 +164,9 @@ function CourseDetailInfoContainer({ course }) {
             </Flex>
             <Flex mr="16" flexDirection="column" flexWrap="wrap">
               {course_codes_2.map((item, index) => {
+                if (!item.value) {
+                  return null;
+                }
                 return (
                   <Stat key={"code_stats_2" + index}>
                     <StatLabel color={statsTitleColor} mb="-1">
