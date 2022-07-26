@@ -348,7 +348,7 @@ export default function UserInfoPage({ user }) {
                   fontSize="lg"
                   fontWeight="500"
                   color={textColor}
-                  defaultValue={userInfo.name}
+                  defaultValue={userInfo?.name ?? ""}
                   onChange={(e) => {
                     setName(e.currentTarget.value);
                   }}
@@ -362,11 +362,11 @@ export default function UserInfoPage({ user }) {
                   fontSize="lg"
                   fontWeight="500"
                   color={textColor}
-                  defaultValue={userInfo.email}
+                  defaultValue={userInfo?.email}
                   disabled
                 />
               </Flex>
-              <Avatar name={userInfo.name} size="2xl" src={user.picture} />
+              <Avatar name={userInfo?.name} size="2xl" src={user.picture} />
             </Flex>
             <Text fontSize="2xl" fontWeight="700" color={textColor} mt="5">
               學業
@@ -395,7 +395,7 @@ export default function UserInfoPage({ user }) {
                           }`
                         : "請選擇",
                     }}
-                    isSearchable={TextTrackCue}
+                    isSearchable={true}
                     options={[{ value: null, label: "請選擇" }, ...deptOptions]}
                     onChange={(e) => {
                       setMajor(e.value);
@@ -419,7 +419,7 @@ export default function UserInfoPage({ user }) {
                           }`
                         : "請選擇",
                     }}
-                    isSearchable={TextTrackCue}
+                    isSearchable={true}
                     options={[{ value: null, label: "請選擇" }, ...deptOptions]}
                     onChange={(e) => {
                       setDoubleMajor(e.value);
@@ -452,7 +452,7 @@ export default function UserInfoPage({ user }) {
                             )
                         : []
                     }
-                    isSearchable={TextTrackCue}
+                    isSearchable={true}
                     name="color"
                     options={deptOptions}
                     onChange={(e) => {
