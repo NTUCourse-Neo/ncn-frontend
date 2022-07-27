@@ -35,7 +35,7 @@ import {
 import { IoMdOpen } from "react-icons/io";
 import PTTContentRowContainer from "components/CourseInfo/PTTContentRowContainer";
 import SignUpCard from "components/CourseInfo/SignUpCard";
-import SignUpReportForm from "components/CourseInfo/SignUpReportForm";
+import SignUpSubmitForm from "components/CourseInfo/SignUpSubmitForm";
 import { useUser } from "@auth0/nextjs-auth0";
 import { useRouter } from "next/router";
 import Image from "next/image";
@@ -206,7 +206,7 @@ export function SignUpPanel({ courseId }) {
         >
           <PanelPlaceholder title="無加簽相關資訊" h="100%" pt="0" />
           <HStack w="100%" pr="8" mt="8" justify="end">
-            <SignUpReportForm
+            <SignUpSubmitForm
               courseId={courseId}
               haveSubmitted={signUpPostData.some((obj) => obj.is_owner)}
               submitCallback={refetch}
@@ -259,7 +259,7 @@ export function SignUpPanel({ courseId }) {
               </Text>
             </HStack>
             <Spacer />
-            <SignUpReportForm
+            <SignUpSubmitForm
               courseId={courseId}
               haveSubmitted={signUpPostData.some((obj) => obj.is_owner)}
               submitCallback={refetch}

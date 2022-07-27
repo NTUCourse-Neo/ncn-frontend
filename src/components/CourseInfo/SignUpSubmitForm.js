@@ -22,7 +22,7 @@ import { social_user_type_map } from "data/mapping_table";
 import handleFetch from "utils/CustomFetch";
 import { useRouter } from "next/router";
 
-function SignUpReportForm({ courseId, haveSubmitted, submitCallback }) {
+function SignUpSubmitForm({ courseId, haveSubmitted, submitCallback }) {
   const headingColor = useColorModeValue("heading.light", "heading.dark");
   const { onOpen, onClose, isOpen } = useDisclosure();
   const router = useRouter();
@@ -271,4 +271,4 @@ function SignUpReportForm({ courseId, haveSubmitted, submitCallback }) {
   );
 }
 
-export default SignUpReportForm;
+export default SignUpSubmitForm;
