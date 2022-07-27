@@ -39,7 +39,6 @@ import {
 } from "react-icons/fa";
 import CourseTableContainer from "components/CourseTable/CourseTableContainer";
 import CourseListContainer from "components/CourseTable/CourseListContainer";
-import { fetchCourseTableCoursesByIds } from "queries/course";
 import { v4 as uuidv4 } from "uuid";
 import { useUser } from "@auth0/nextjs-auth0";
 import { useRouter } from "next/router";
@@ -175,52 +174,37 @@ function SideCourseTableContent({
 
   // trigger when mounting, fetch local storage course_id
   useEffect(() => {
-    const courseTableInit = async (uuid) => {
-      let course_table;
+    const getTableKey = async (user) => {
+      if (!user) {
+        return localStorage?.getItem(LOCAL_STORAGE_KEY) ?? null;
+      }
       try {
-        course_table = await fetchCourseTable(uuid);
-        setCourseTable(course_table);
+        const user_data = await handleFetch("/api/user", {
+          user_id: user.sub,
+        });
+        await setUser(user_data);
+        const course_tables = user_data.db.course_tables;
+        return course_tables?.[0] ?? null;
       } catch (e) {
+        console.log(e);
+        return null;
+      }
+    };
+    const getCourseTable = async (uuid) => {
+      try {
+        const course_table = await fetchCourseTable(uuid);
+        setCourseTable(course_table);
+        setLoading(false);
+      } catch (e) {
+        if (e?.response?.data?.msg === "access_token_expired") {
+          router.push("/api/auth/login");
+        }
         if (e?.response?.status === 403 || e?.response?.status === 404) {
           // expired
           setCourseTable(null);
           setExpired(true);
           setLoading(false);
         } else {
-          router.push(`/404`);
-        }
-      }
-    };
-
-    const fetchCourseTableFromUser = async () => {
-      if (!isLoading && user) {
-        try {
-          const user_data = await handleFetch("/api/user", {
-            user_id: user.sub,
-          });
-          await setUser(user_data);
-          const course_tables = user_data.db.course_tables;
-          if (course_tables.length === 0) {
-            setCourseTable(null);
-            setLoading(false);
-          } else {
-            // pick the first table
-            try {
-              const updatedCourseTable = await fetchCourseTable(
-                course_tables[0]
-              );
-              setCourseTable(updatedCourseTable);
-            } catch (e) {
-              if (e?.response?.status === 403 || e?.response?.status === 404) {
-                // expired
-                setCourseTable(null);
-                throw e;
-              } else {
-                router.push(`/404`);
-              }
-            }
-          }
-        } catch (e) {
           toast({
             title: "取得用戶資料失敗.",
             description: "請聯繫客服(?)",
@@ -228,72 +212,32 @@ function SideCourseTableContent({
             duration: 9000,
             isClosable: true,
           });
-          setLoading(false);
-          if (e?.response?.data?.msg === "access_token_expired") {
-            router.push("/api/auth/login");
-          }
+          router.push(`/404`);
         }
       }
     };
-    // run after useAuth0 finish loading.
-    // console.log('isLoading: ', isLoading);
+
     if (!isLoading) {
-      // user mode
-      if (user) {
-        setLoading(true);
-        fetchCourseTableFromUser();
-      }
-      // guest mode
-      else {
-        const uuid = localStorage.getItem(LOCAL_STORAGE_KEY);
-        // console.log("UUID in localStorage now: ",uuid);
+      getTableKey(user).then((uuid) => {
         if (uuid) {
           setLoading(true);
-          courseTableInit(uuid);
+          getCourseTable(uuid);
         } else {
+          setCourseTable(null);
           setLoading(false);
         }
-      }
+      });
     }
   }, [user, isLoading]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // fetch course objects data from server based on array of IDs
   useEffect(() => {
-    const fetchCoursesDataById = async (_callback) => {
-      if (courseTable) {
-        try {
-          const courseResult = await fetchCourseTableCoursesByIds(
-            courseTable.courses
-          );
-          // set states: courseTimeMap, courses
-          setCourseTimeMap(
-            parseCoursesToTimeMap(convertArrayToObject(courseResult, "_id"))
-          );
-          setCourses(convertArrayToObject(courseResult, "_id"));
-        } catch (e) {
-          toast({
-            title: "取得課表課程資料失敗.",
-            description: "請聯繫客服(?)",
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-      }
-      _callback();
-    };
-    if (courseTable) {
-      setLoading(true);
-      fetchCoursesDataById(() => setLoading(false));
+    if (courseTable?.courses) {
+      setCourseTimeMap(
+        parseCoursesToTimeMap(convertArrayToObject(courseTable.courses, "id"))
+      );
+      setCourses(convertArrayToObject(courseTable.courses, "id"));
     }
-    // guest mode & do not have uuid on localstorage
-    if (!isLoading) {
-      // user mode
-      if (!user && !localStorage.getItem(LOCAL_STORAGE_KEY)) {
-        setLoading(false);
-      }
-    }
-  }, [courseTable]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [courseTable]);
 
   const handleCreateTable = async () => {
     if (!isLoading) {
@@ -305,14 +249,14 @@ function SideCourseTableContent({
           const updatedCourseTable = await createCourseTable(
             new_uuid,
             "我的課表",
-            userInfo.db._id,
+            userInfo.db.id,
             "1102"
           );
           setCourseTable(updatedCourseTable);
           // console.log("New UUID is generated: ",new_uuid);
           const updatedUser = await handleFetch("/api/user/linkCourseTable", {
             table_id: new_uuid,
-            user_id: userInfo.db._id,
+            user_id: userInfo.db.id,
           });
           setUser(updatedUser);
         } catch (e) {
@@ -338,7 +282,7 @@ function SideCourseTableContent({
           );
           setCourseTable(new_course_table);
           // console.log("New UUID is generated: ",new_uuid);
-          localStorage.setItem(LOCAL_STORAGE_KEY, new_course_table._id);
+          localStorage.setItem(LOCAL_STORAGE_KEY, new_course_table.id);
           setExpired(false);
         } catch (error) {
           toast({
@@ -357,11 +301,11 @@ function SideCourseTableContent({
     onClose();
     try {
       const res_table = await patchCourseTable(
-        courseTable._id,
+        courseTable.id,
         new_table_name,
         courseTable.user_id,
         courseTable.expire_ts,
-        courseTable.courses
+        courseTable.courses.map((course) => course.id)
       );
       setCourseTable(res_table);
       toast({

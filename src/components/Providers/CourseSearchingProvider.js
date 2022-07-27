@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState } from "react";
 
 const CourseSearchingContext = createContext({
-  searchIds: [],
+  search: "",
   searchResult: [],
   searchLoading: false,
   searchError: null,
@@ -27,12 +27,12 @@ const CourseSearchingContext = createContext({
     category: [],
     enroll_method: ["1", "2", "3"],
   }, // default value of filters
+  setSearch: () => {},
   setSearchLoading: () => {},
   setSearchResult: () => {},
   setSearchError: () => {},
   setOffset: () => {},
   setTotalCount: () => {},
-  setSearchIds: () => {},
   setBatchSize: () => {},
   setSearchSettings: () => {},
   setSearchColumns: () => {},
@@ -41,17 +41,14 @@ const CourseSearchingContext = createContext({
 });
 
 function CourseSearchingProvider(props) {
-  const [searchIds, setSearchIds] = useState([]);
+  const [search, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState(null);
   const [totalCount, setTotalCount] = useState(0);
   const [batchSize, setBatchSize] = useState(20);
   const [offset, setOffset] = useState(0);
-  const [searchColumns, setSearchColumns] = useState([
-    "course_name",
-    "teacher",
-  ]);
+  const [searchColumns, setSearchColumns] = useState(["name", "teacher"]);
   const [searchSettings, setSearchSettings] = useState({
     show_selected_courses: false,
     only_show_not_conflicted_courses: false,
@@ -74,7 +71,7 @@ function CourseSearchingProvider(props) {
   return (
     <CourseSearchingContext.Provider
       value={{
-        searchIds,
+        search,
         searchResult,
         searchLoading,
         searchError,
@@ -85,6 +82,7 @@ function CourseSearchingProvider(props) {
         searchSettings,
         searchFiltersEnable,
         searchFilters,
+        setSearch,
         setBatchSize,
         setSearchSettings,
         setSearchColumns,
@@ -95,7 +93,6 @@ function CourseSearchingProvider(props) {
         setSearchError,
         setOffset,
         setTotalCount,
-        setSearchIds,
       }}
       {...props}
     />

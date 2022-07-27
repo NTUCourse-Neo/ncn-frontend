@@ -39,115 +39,6 @@ import { useUser } from "@auth0/nextjs-auth0";
 import handleFetch from "utils/CustomFetch";
 import Image from "next/image";
 
-const newsCard = [
-  <Flex
-    key="NTUCollaborationCard"
-    h={{ base: "220px", lg: "200px" }}
-    overflowY={"auto"}
-    w={["80vw", "80vw", "50vw", "25vw"]}
-    justifyContent={["center", "start"]}
-    alignItems="start"
-    flexDirection="column"
-    bg="teal.200"
-    borderRadius="xl"
-    boxShadow="xl"
-    p="4"
-    mt="8"
-  >
-    <Text fontSize="xl" fontWeight="800" color="gray.700" mb="2">
-      🤩 嗨！臺大！
-    </Text>
-    <Text fontSize="md" fontWeight="500" color="gray.600">
-      經過教務處資訊組的大力推動，我們將以此專案為基礎與臺大合作開發新一代課程網！希望能帶給臺大學生更便利的選課體驗。
-    </Text>
-    <Flex flexDirection="column" flexGrow={1} justify="end" w="100%">
-      <Flex
-        justifyContent="space-between"
-        alignItems="center"
-        flexDirection="row"
-      >
-        <Text
-          fontSize={{ base: "xs", lg: "sm" }}
-          fontWeight="400"
-          color="gray.500"
-          mt="4"
-        >
-          Team NTUCourse Neo - 20220628
-        </Text>
-        <Button
-          colorScheme="teal"
-          variant="solid"
-          size="sm"
-          mt="4"
-          leftIcon={<FaInfoCircle />}
-          onClick={() =>
-            window.open(
-              "https://www.facebook.com/NTUSA/posts/pfbid04j6dfUzvHFPJEK54FDreNnXKy5C7yBZghErKAPWe8yoWXUFRcVqshqyNydqnicMWl",
-              "_blank"
-            )
-          }
-        >
-          瞭解更多
-        </Button>
-      </Flex>
-    </Flex>
-  </Flex>,
-  <Flex
-    key="RecrutingCard"
-    h={{ base: "220px", lg: "200px" }}
-    overflowY={"auto"}
-    w={["80vw", "80vw", "50vw", "25vw"]}
-    justifyContent={["center", "start"]}
-    alignItems="start"
-    flexDirection="column"
-    bg="teal.200"
-    borderRadius="xl"
-    boxShadow="xl"
-    p="4"
-    mt="8"
-  >
-    <Text fontSize="xl" fontWeight="800" color="gray.700" mb="2">
-      👋 We are hiring!
-    </Text>
-    <Text fontSize="md" fontWeight="500" color="gray.600">
-      新夥伴招募中，想跟我們一起打造更優質的選課系統嗎？ 快來加入我們吧！🥰
-    </Text>
-    <Flex flexDirection="column" flexGrow={1} justify="end" w="100%">
-      <Flex
-        justifyContent="space-between"
-        alignItems="center"
-        flexDirection="row"
-      >
-        <Text
-          fontSize={{ base: "xs", lg: "sm" }}
-          fontWeight="400"
-          color="gray.500"
-          mt="4"
-        >
-          Team NTUCourse Neo - 20220303
-        </Text>
-        <Tooltip
-          label="暫時關閉囉><"
-          placement="top"
-          shouldWrapChildren
-          hasArrow
-        >
-          <Button
-            colorScheme="teal"
-            variant="solid"
-            size="sm"
-            mt="4"
-            rightIcon={<FaArrowRight />}
-            disabled
-          >
-            加入我們
-          </Button>
-        </Tooltip>
-      </Flex>
-    </Flex>
-  </Flex>,
-];
-
 function NewRegisterModal({ isOpen, onClose, isLoading, newUser }) {
   const router = useRouter();
   return (
@@ -555,6 +446,7 @@ function HomePage() {
                 layout="responsive"
                 height={7}
                 width={10}
+                priority={true}
               />
             </Box>
           </Flex>

@@ -18,8 +18,8 @@ jobs:
           wait-on-timeout: 120
         env:
           NEXT_PUBLIC_API_ENDPOINT: ${{ secrets.AZURE_API_ENDPOINT }}
-          NEXT_PUBLIC_API_VERSION: "v1"
           NEXT_PUBLIC_ENV: "prod"
+          NEXT_PUBLIC_BASE_URL: "http://localhost:3000"
           AUTH0_SELF_API_AUDIENCE: ${{ secrets.SELF_API_AUDIENCE }}
           AUTH0_SECRET: ${{ secrets.AUTH0_SECRET_V2 }}
           AUTH0_BASE_URL: "http://localhost:3000"
@@ -29,7 +29,6 @@ jobs:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           CYPRESS_API_ENDPOINT: ${{ secrets.AZURE_API_ENDPOINT }}
-          CYPRESS_API_VERSION: "v1"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: "End"
         run: "unset PORT"

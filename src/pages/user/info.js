@@ -23,69 +23,13 @@ import {
 } from "@chakra-ui/react";
 import Select from "react-select";
 import { HashLoader } from "react-spinners";
-import {
-  FaFacebook,
-  FaGithub,
-  FaGoogle,
-  FaExclamationTriangle,
-} from "react-icons/fa";
+import { FaExclamationTriangle } from "react-icons/fa";
 import { useRouter } from "next/router";
 import { useUser, withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { dept_list_bachelor_only } from "data/department";
 import { useUserData } from "components/Providers/UserProvider";
 import handleFetch from "utils/CustomFetch";
 import Head from "next/head";
-
-function ConnectedAccountTags({ userInfo }) {
-  const connected_accounts = userInfo.auth0.identities;
-  const cardColor = useColorModeValue("white", "gray.600");
-  const textColor = useColorModeValue("text.light", "text.dark");
-  return connected_accounts.map((account, index) => {
-    let user_name = null;
-    let icon = null;
-    if (account.provider.includes("google")) {
-      user_name = account.profileData
-        ? account.profileData.name
-        : userInfo.auth0.email;
-      icon = <FaGoogle />;
-    } else if (account.provider.includes("github")) {
-      user_name = account.profileData
-        ? account.profileData.name
-        : userInfo.auth0.name;
-      icon = <FaGithub />;
-    } else if (account.provider.includes("facebook")) {
-      icon = <FaFacebook />;
-      user_name = account.profileData
-        ? account.profileData.name
-        : userInfo.auth0.name;
-    }
-    if (!icon) {
-      return null;
-    }
-    return (
-      <Flex
-        key={index}
-        alignItems="center"
-        justifyContent="center"
-        borderRadius="lg"
-        border="2px"
-        borderColor="gray.300"
-        p="2"
-        px="4"
-        mr="2"
-        bg={cardColor}
-        color={textColor}
-      >
-        <Flex w={6} h={6} justifyContent={"center"} alignItems="center">
-          {icon}
-        </Flex>
-        <Text ml="2" fontWeight="800">
-          {user_name}
-        </Text>
-      </Flex>
-    );
-  });
-}
 
 function DeleteDialog({
   isAlertOpen,
@@ -229,65 +173,49 @@ export default function UserInfoPage({ user }) {
   const router = useRouter();
   const toast = useToast();
   const deptOptions = dept_list_bachelor_only.map((dept) => ({
-    value: dept.full_name,
-    label: dept.code + " " + dept.full_name,
+    value: dept.code,
+    label: `${dept.code} ${dept.full_name}`,
   }));
-
-  const userLoading = !userInfo;
-
-  // states for updating userInfo
-  const [name, setName] = useState(userInfo ? userInfo.db.name : null);
-  const [major, setMajor] = useState(
-    userInfo ? userInfo.db.department.major : null
-  );
-  const [doubleMajor, setDoubleMajor] = useState(
-    userInfo ? userInfo.db.department.d_major : null
-  );
-  const [minor, setMinor] = useState(
-    userInfo ? userInfo.db.department.minors : null
-  ); // arr
+  const departmentMap = dept_list_bachelor_only.reduce((acc, department) => {
+    return { ...acc, [department.code]: department.full_name };
+  }, {});
   const [saveLoading, setSaveLoading] = useState(false);
-
-  // alert dialog states
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [deleteMode, setDeleteMode] = useState(null);
 
-  const generateUpdateObject = () => {
-    const updateObject = {};
-    if (name !== userInfo.db.name) {
-      updateObject.name = name;
-    }
-    const new_department = {};
-    if (major !== userInfo.db.department.major) {
-      new_department.major = major;
-    } else {
-      new_department.major = userInfo.db.department.major;
-    }
-    if (doubleMajor !== userInfo.db.department.d_major) {
-      new_department.d_major = doubleMajor;
-    } else {
-      new_department.d_major = userInfo.db.department.d_major;
-    }
-    if (minor !== userInfo.db.department.minors) {
-      new_department.minors = minor;
-    } else {
-      new_department.minors = userInfo.db.department.minors;
-    }
+  // states for updating userInfo
+  const [name, setName] = useState(userInfo?.db?.name ?? "");
+  const [major, setMajor] = useState(userInfo?.db?.major?.id ?? null);
+  const [doubleMajor, setDoubleMajor] = useState(
+    userInfo?.db?.d_major?.id ?? null
+  );
+  const [minor, setMinor] = useState(
+    userInfo?.db?.minors.map((d) => d.id) ?? []
+  );
 
-    if (new_department !== userInfo.db.department) {
-      updateObject.department = new_department;
+  useEffect(() => {
+    if (userInfo) {
+      setName(userInfo?.db?.name ?? "");
+      setMajor(userInfo?.db?.major?.id ?? null);
+      setDoubleMajor(userInfo?.db?.d_major?.id ?? null);
+      setMinor(userInfo?.db?.minors.map((d) => d.id) ?? []);
     }
-    // console.log('updateObject: ', updateObject);
-    return updateObject;
-  };
+  }, [userInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // TODO
   const updateUserInfo = async () => {
-    const updateObject = generateUpdateObject();
+    if (!major) {
+      toast({
+        title: "更改用戶資料失敗.",
+        description: "主修不能為空",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
     if (
-      (updateObject.department.major === updateObject.department.d_major &&
-        updateObject.department.major !== "") ||
-      updateObject.department.minors.includes(updateObject.department.major)
+      (major === doubleMajor && major && doubleMajor) ||
+      minor.includes(major)
     ) {
       toast({
         title: "更改用戶資料失敗.",
@@ -298,9 +226,7 @@ export default function UserInfoPage({ user }) {
       });
       return;
     }
-    if (
-      updateObject.department.minors.includes(updateObject.department.d_major)
-    ) {
+    if (minor.includes(doubleMajor)) {
       toast({
         title: "更改用戶資料失敗.",
         description: "雙主修不能出現在輔系",
@@ -312,7 +238,12 @@ export default function UserInfoPage({ user }) {
     }
     try {
       const updatedUser = await handleFetch("/api/user/patch", {
-        updated_obj: updateObject,
+        newUser: {
+          name: name,
+          major: major,
+          d_major: doubleMajor,
+          minors: minor,
+        },
       });
       setUser(updatedUser);
       toast({
@@ -365,16 +296,7 @@ export default function UserInfoPage({ user }) {
     fetchUserInfo();
   }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => {
-    if (userInfo) {
-      setName(userInfo.db.name);
-      setMajor(userInfo.db.department.major);
-      setDoubleMajor(userInfo.db.department.d_major);
-      setMinor(userInfo.db.department.minors);
-    }
-  }, [userInfo]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  if (userLoading) {
+  if (!userInfo) {
     return (
       <Box maxW="screen-md" h="95vh" mx="auto" overflow="visible" p="64px">
         <Flex
@@ -476,18 +398,6 @@ export default function UserInfoPage({ user }) {
                   defaultValue={userInfo.db.email}
                   disabled
                 />
-                <Text my="4" fontSize="xl" fontWeight="700" color={textColor}>
-                  已綁定帳號
-                </Text>
-                <Flex
-                  w="100%"
-                  flexDirection="row"
-                  justifyContent="start"
-                  alignItems="start"
-                  flexWrap="wrap"
-                >
-                  <ConnectedAccountTags userInfo={userInfo} />
-                </Flex>
               </Flex>
               <Avatar name={userInfo.db.name} size="2xl" src={user.picture} />
             </Flex>
@@ -506,84 +416,83 @@ export default function UserInfoPage({ user }) {
                 主修
               </Text>
               <Flex w="100%" alignItems="center">
-                {/* react selector */}
-                {major === null ? (
-                  <></>
-                ) : (
-                  <Box w={{ base: "100%", md: "20vw" }} color={textColor}>
-                    <Select
-                      className="basic-single"
-                      classNamePrefix="select"
-                      defaultValue={
-                        major === ""
-                          ? { value: "", label: "請選擇" }
-                          : { value: major, label: major }
-                      }
-                      isSearchable={TextTrackCue}
-                      options={deptOptions}
-                      onChange={(e) => {
-                        setMajor(e.value);
-                      }}
-                    />
-                  </Box>
-                )}
+                <Box w={{ base: "100%", md: "20vw" }} color={textColor}>
+                  <Select
+                    className="basic-single"
+                    classNamePrefix="select"
+                    defaultValue={{
+                      value: userInfo?.db?.major?.id ?? null,
+                      label: departmentMap?.[userInfo?.db?.major?.id]
+                        ? `${userInfo?.db?.major?.id} ${
+                            departmentMap?.[userInfo?.db?.major?.id]
+                          }`
+                        : "請選擇",
+                    }}
+                    isSearchable={TextTrackCue}
+                    options={[{ value: null, label: "請選擇" }, ...deptOptions]}
+                    onChange={(e) => {
+                      setMajor(e.value);
+                    }}
+                  />
+                </Box>
               </Flex>
               <Text my="4" fontSize="xl" fontWeight="700" color={textColor}>
                 雙主修
               </Text>
               <Flex w="100%" alignItems="center">
-                {/* react selector */}
-                {doubleMajor === null ? (
-                  <></>
-                ) : (
-                  <Box w={{ base: "100%", md: "20vw" }} color={textColor}>
-                    <Select
-                      className="basic-single"
-                      classNamePrefix="select"
-                      defaultValue={
-                        doubleMajor === ""
-                          ? { value: "", label: " 請選擇 " }
-                          : { value: doubleMajor, label: doubleMajor }
-                      }
-                      isSearchable={TextTrackCue}
-                      options={[
-                        { value: "", label: " 請選擇 " },
-                        ...deptOptions,
-                      ]}
-                      onChange={(e) => {
-                        setDoubleMajor(e.value);
-                      }}
-                    />
-                  </Box>
-                )}
+                <Box w={{ base: "100%", md: "20vw" }} color={textColor}>
+                  <Select
+                    className="basic-single"
+                    classNamePrefix="select"
+                    defaultValue={{
+                      value: userInfo?.db?.d_major?.id ?? null,
+                      label: departmentMap?.[userInfo?.db?.d_major?.id]
+                        ? `${userInfo?.db?.d_major?.id} ${
+                            departmentMap?.[userInfo?.db?.d_major?.id]
+                          }`
+                        : "請選擇",
+                    }}
+                    isSearchable={TextTrackCue}
+                    options={[{ value: null, label: "請選擇" }, ...deptOptions]}
+                    onChange={(e) => {
+                      setDoubleMajor(e.value);
+                    }}
+                  />
+                </Box>
               </Flex>
               <Text my="4" fontSize="xl" fontWeight="700" color={textColor}>
                 輔系
               </Text>
               <Flex w="100%" alignItems="center">
-                {/* react selector */}
-                {minor === null ? (
-                  <></>
-                ) : (
-                  <Box w={{ base: "100%", md: "20vw" }} color={textColor}>
-                    <Select
-                      isMulti
-                      w="100%"
-                      className="basic-single"
-                      classNamePrefix="select"
-                      defaultValue={minor.map((dept) => ({
-                        value: dept,
-                        label: dept,
-                      }))}
-                      isSearchable={TextTrackCue}
-                      name="color"
-                      options={deptOptions}
-                      onChange={(e) => {
-                        setMinor(e.map((dept) => dept.value));
-                      }}
-                    />
-                  </Box>
-                )}
+                <Box w={{ base: "100%", md: "20vw" }} color={textColor}>
+                  <Select
+                    isMulti
+                    w="100%"
+                    className="basic-single"
+                    classNamePrefix="select"
+                    defaultValue={
+                      userInfo?.db?.minors
+                        ? userInfo?.db?.minors
+                            .map((dept) => ({
+                              value: dept?.id ?? null,
+                              label: departmentMap?.[dept?.id]
+                                ? `${dept?.id} ${departmentMap?.[dept?.id]}`
+                                : null,
+                            }))
+                            .filter(
+                              (option) =>
+                                option.value !== null && option.label !== null
+                            )
+                        : []
+                    }
+                    isSearchable={TextTrackCue}
+                    name="color"
+                    options={deptOptions}
+                    onChange={(e) => {
+                      setMinor(e.map((dept) => dept.value));
+                    }}
+                  />
+                </Box>
               </Flex>
             </Flex>
             <HStack spacing={4} alignItems="center" mt="5">

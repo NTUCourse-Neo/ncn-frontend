@@ -19,12 +19,18 @@ import {
 } from "@chakra-ui/react";
 import Image from "next/image";
 import CourseDetailInfoContainer from "components/CourseInfo/CourseDetailInfoContainer";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/router";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import Moment from "moment";
 import { IoMdOpen } from "react-icons/io";
-import { FaPlus, FaMinus, FaHeartbeat, FaHeart } from "react-icons/fa";
+import {
+  FaPlus,
+  FaMinus,
+  FaHeartbeat,
+  FaHeart,
+  FaRegHeart,
+} from "react-icons/fa";
 import { FiMoreHorizontal } from "react-icons/fi";
 import { BiCopy } from "react-icons/bi";
 import { getNolAddUrl, getNolUrl } from "utils/getNolUrls";
@@ -76,8 +82,11 @@ function CourseInfoPage({ code, course }) {
   const [addingCourse, setAddingCourse] = useState(false);
   const [addingFavoriteCourse, setAddingFavoriteCourse] = useState(false);
   const [selected, setSelected] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false);
   const { user, isLoading } = useUser();
+  const isFavorite = useMemo(
+    () => userInfo?.db?.favorites.map((c) => c.id).includes(course.id) ?? false,
+    [userInfo, course.id]
+  );
   const [copiedLinkClicks, setCopiedLinkClicks] = useState(0);
   const [copyWord, setCopyWord] = useState(
     copyWordList.find((word) => word.count <= copiedLinkClicks)
@@ -114,24 +123,12 @@ function CourseInfoPage({ code, course }) {
             // use the first one
             uuid = user_data.db.course_tables[0];
           }
-          // determine isFavorite init state
-          if (user_data.db.favorites.includes(code)) {
-            setIsFavorite(true);
-          } else {
-            setIsFavorite(false);
-          }
         } else {
           if (userInfo.db.course_tables.length === 0) {
             uuid = null;
           } else {
             // use the first one
             uuid = userInfo.db.course_tables[0];
-          }
-          // determine isFavorite init state
-          if (userInfo.db.favorites.includes(code)) {
-            setIsFavorite(true);
-          } else {
-            setIsFavorite(false);
           }
         }
       } else {
@@ -150,19 +147,23 @@ function CourseInfoPage({ code, course }) {
           ) {
             // expired
             setCourseTable(null);
+          } else {
+            toast({
+              title: "取得課表資料失敗",
+              status: "error",
+              duration: 3000,
+              isClosable: true,
+            });
           }
-          toast({
-            title: "取得課表資料失敗",
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
           setAddingCourse(false);
           setAddingFavoriteCourse(false);
           return;
         }
         // determine init state
-        if (courseTable && courseTable.courses.includes(code)) {
+        if (
+          courseTable &&
+          courseTable.courses.map((c) => c.id).includes(code)
+        ) {
           setSelected(true);
         } else {
           setSelected(false);
@@ -224,7 +225,7 @@ function CourseInfoPage({ code, course }) {
           // get course_tables/:id return null (expired)
           // show error and break the function
           toast({
-            title: `新增 ${course.course_name} 失敗`,
+            title: `新增 ${course.name} 失敗`,
             description: `您的課表已過期，請重新建立課表`,
             status: "error",
             duration: 3000,
@@ -234,12 +235,12 @@ function CourseInfoPage({ code, course }) {
           // fetch course table success
           let res_table;
           let operation_str;
-          if (courseTable.courses.includes(course._id)) {
+          if (courseTable.courses.map((c) => c.id).includes(course.id)) {
             // course is already in course table, remove it.
             operation_str = "刪除";
-            const new_courses = courseTable.courses.filter(
-              (id) => id !== course._id
-            );
+            const new_courses = courseTable.courses
+              .map((c) => c.id)
+              .filter((id) => id !== course.id);
             try {
               res_table = await patchCourseTable(
                 uuid,
@@ -258,7 +259,7 @@ function CourseInfoPage({ code, course }) {
                 setCourseTable(null);
               }
               toast({
-                title: `刪除 ${course.course_name} 失敗`,
+                title: `刪除 ${course.name} 失敗`,
                 status: "error",
                 duration: 3000,
                 isClosable: true,
@@ -269,7 +270,10 @@ function CourseInfoPage({ code, course }) {
           } else {
             // course is not in course table, add it.
             operation_str = "新增";
-            const new_courses = [...courseTable.courses, course._id];
+            const new_courses = [
+              ...courseTable.courses.map((c) => c.id),
+              course.id,
+            ];
             try {
               res_table = await patchCourseTable(
                 uuid,
@@ -288,7 +292,7 @@ function CourseInfoPage({ code, course }) {
                 setCourseTable(null);
               }
               toast({
-                title: `新增 ${course.course_name} 失敗`,
+                title: `新增 ${course.name} 失敗`,
                 status: "error",
                 duration: 3000,
                 isClosable: true,
@@ -299,7 +303,7 @@ function CourseInfoPage({ code, course }) {
           }
           if (res_table) {
             toast({
-              title: `已${operation_str} ${course.course_name}`,
+              title: `已${operation_str} ${course.name}`,
               description: `課表: ${courseTable.name}`,
               status: "success",
               duration: 3000,
@@ -312,7 +316,7 @@ function CourseInfoPage({ code, course }) {
       } else {
         // do not have course table id in local storage
         toast({
-          title: `新增 ${course.course_name} 失敗`,
+          title: `新增 ${course.name} 失敗`,
           description: `尚未建立課表`,
           status: "error",
           duration: 3000,
@@ -327,45 +331,54 @@ function CourseInfoPage({ code, course }) {
     if (!isLoading) {
       if (user) {
         setAddingFavoriteCourse(true);
-        const favorite_list = [...userInfo.db.favorites];
-        let new_favorite_list;
-        let op_name;
-        if (favorite_list.includes(course_id)) {
-          // remove course from favorite list
-          new_favorite_list = favorite_list.filter((id) => id !== course_id);
-          op_name = "刪除";
-        } else {
-          // add course to favorite list
-          new_favorite_list = [...favorite_list, course_id];
-          op_name = "新增";
-        }
-        // API call
+        const favorite_list = userInfo.db.favorites.map((c) => c.id);
         try {
-          const updatedUser = await handleFetch(`/api/user/addFavoriteCourse`, {
-            new_favorite_list,
-            user_id: userInfo.db._id,
-          });
-          setUser(updatedUser);
+          if (favorite_list.includes(course_id)) {
+            const updatedFavorite = await handleFetch(
+              `/api/user/removeFavoriteCourse`,
+              {
+                course_id: course_id,
+              }
+            );
+            setUser({
+              ...userInfo,
+              db: {
+                ...userInfo.db,
+                favorites: updatedFavorite,
+              },
+            });
+          } else {
+            const updatedFavorite = await handleFetch(
+              `/api/user/addFavoriteCourse`,
+              {
+                course_id: course_id,
+              }
+            );
+            setUser({
+              ...userInfo,
+              db: {
+                ...userInfo.db,
+                favorites: updatedFavorite,
+              },
+            });
+          }
+          setAddingFavoriteCourse(false);
           toast({
-            title: `${op_name}最愛課程成功`,
-            //description: `請稍後再試`,
+            title: `更改最愛課程成功`,
             status: "success",
             duration: 3000,
             isClosable: true,
           });
-          setAddingFavoriteCourse(false);
-          setIsFavorite(!isFavorite);
-        } catch (e) {
-          // toast error
+        } catch (error) {
           toast({
-            title: `${op_name}最愛課程失敗`,
+            title: `更改最愛課程失敗`,
             description: `請稍後再試`,
             status: "error",
             duration: 3000,
             isClosable: true,
           });
           setAddingFavoriteCourse(false);
-          if (e?.response?.data?.msg === "access_token_expired") {
+          if (error?.response?.data?.msg === "access_token_expired") {
             router.push("/api/auth/login");
           }
         }
@@ -428,10 +441,10 @@ function CourseInfoPage({ code, course }) {
     return (
       <>
         <Head>
-          <title>{`${course.course_name} - 課程資訊 | NTUCourse Neo`}</title>
+          <title>{`${course.name} - 課程資訊 | NTUCourse Neo`}</title>
           <meta
             name="description"
-            content={`${course.course_name} 課程的詳細資訊 | NTUCourse Neo，全新的臺大選課網站。`}
+            content={`${course.name} 課程的詳細資訊 | NTUCourse Neo，全新的臺大選課網站。`}
           />
         </Head>
         <Flex
@@ -453,15 +466,15 @@ function CourseInfoPage({ code, course }) {
           >
             <Stack w="100%" direction={{ base: "column", lg: "row" }}>
               <HStack>
-                {course.id ? (
+                {course.serial ? (
                   <Tag size="md" colorScheme="blue" w="fit-content">
                     <Text fontWeight="800" fontSize={{ base: "md", lg: "lg" }}>
-                      {course.id}
+                      {course.serial}
                     </Text>
                   </Tag>
                 ) : null}
                 <CopyToClipboard
-                  text={"https://course.myntu.me/courseinfo/" + course._id}
+                  text={`${process.env.NEXT_PUBLIC_BASE_URL}/courseinfo/${course.id}`}
                 >
                   <Button
                     rightIcon={
@@ -491,7 +504,7 @@ function CourseInfoPage({ code, course }) {
               </HStack>
               <HStack>
                 <Tooltip
-                  label={course.course_name}
+                  label={course.name}
                   placement="bottom"
                   hasArrow
                   shouldWrapChildren
@@ -506,7 +519,7 @@ function CourseInfoPage({ code, course }) {
                     isTruncated
                     noOfLines={1}
                   >
-                    {course.course_name}
+                    {course.name}
                   </Text>
                 </Tooltip>
                 <Text
@@ -519,6 +532,25 @@ function CourseInfoPage({ code, course }) {
               </HStack>
             </Stack>
             <HStack spacing="2" display={{ base: "none", lg: "flex" }}>
+              <Tooltip
+                label={isFavorite ? "移除最愛" : "加入最愛"}
+                placement="bottom"
+                hasArrow
+              >
+                <Button
+                  key={"NolContent_Button_" + code + "_addToFavorite"}
+                  size="md"
+                  colorScheme="red"
+                  variant="ghost"
+                  isLoading={addingFavoriteCourse}
+                  disabled={!userInfo}
+                  onClick={() => {
+                    handleAddFavorite(course.id);
+                  }}
+                >
+                  <Icon as={isFavorite ? FaHeart : FaRegHeart} boxSize="6" />
+                </Button>
+              </Tooltip>
               <ButtonGroup isAttached>
                 <Button
                   key={"NolContent_Button_" + code + "_addToCourseTable"}
@@ -546,20 +578,6 @@ function CourseInfoPage({ code, course }) {
                 </Button>
               </ButtonGroup>
               <Button
-                key={"NolContent_Button_" + code + "_addToFavorite"}
-                size="md"
-                colorScheme="red"
-                variant={isFavorite ? "solid" : "outline"}
-                leftIcon={<FaHeart />}
-                isLoading={addingFavoriteCourse}
-                disabled={!userInfo}
-                onClick={() => {
-                  handleAddFavorite(course._id);
-                }}
-              >
-                {isFavorite ? "已加入最愛" : "加入最愛"}
-              </Button>
-              <Button
                 key={"NolContent_Button_" + code + "_OpenNol"}
                 size="md"
                 rightIcon={<IoMdOpen />}
@@ -568,7 +586,7 @@ function CourseInfoPage({ code, course }) {
                 課程頁面
               </Button>
               <CopyToClipboard
-                text={"https://course.myntu.me/courseinfo/" + course._id}
+                text={`${process.env.NEXT_PUBLIC_BASE_URL}/courseinfo/${course.id}`}
               >
                 <Button
                   rightIcon={
@@ -630,10 +648,10 @@ function CourseInfoPage({ code, course }) {
                   size="md"
                   color="red.500"
                   variant={"ghost"}
-                  icon={isFavorite ? <FaMinus /> : <FaHeart />}
+                  icon={isFavorite ? <FaMinus /> : <FaRegHeart />}
                   disabled={!userInfo}
                   onClick={() => {
-                    handleAddFavorite(course._id);
+                    handleAddFavorite(course.id);
                   }}
                 >
                   {isFavorite ? "從最愛移除" : "加入最愛"}

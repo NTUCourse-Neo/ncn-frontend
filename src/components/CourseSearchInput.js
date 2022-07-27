@@ -1,8 +1,6 @@
 import { React, useState } from "react";
 import {
   Flex,
-  InputGroup,
-  InputLeftElement,
   Input,
   Button,
   Menu,
@@ -12,7 +10,6 @@ import {
   MenuItemOption,
   MenuOptionGroup,
   Badge,
-  Spacer,
   HStack,
   Text,
   Collapse,
@@ -29,9 +26,10 @@ import {
   useBreakpointValue,
   Tag,
   useColorModeValue,
+  Icon,
 } from "@chakra-ui/react";
-import { Search2Icon, ChevronDownIcon } from "@chakra-ui/icons";
 import { FaSearch, FaPlus, FaMinus, FaChevronDown } from "react-icons/fa";
+import { TbListSearch } from "react-icons/tb";
 import TimeFilterModal from "components/FilterModals/TimeFilterModal";
 import DeptFilterModal from "components/FilterModals/DeptFilterModal";
 import CategoryFilterModal from "components/FilterModals/CategoryFilterModal";
@@ -43,14 +41,14 @@ import { info_view_map } from "data/mapping_table";
 import { useMount } from "react-use";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { useDisplayTags } from "components/Providers/DisplayTagsProvider";
-import { fetchSearchIDs, fetchSearchResults } from "queries/course";
+import { fetchSearchResult } from "queries/course";
 import { useRouter } from "next/router";
 
-function CourseSearchInputTextArea() {
+function CourseSearchInputTextArea(props) {
+  const { searchCallback = () => {} } = props;
   const toast = useToast();
   const router = useRouter();
   const {
-    setSearchIds,
     searchColumns,
     searchFilters,
     batchSize,
@@ -62,9 +60,10 @@ function CourseSearchInputTextArea() {
     setSearchError,
     setOffset,
     setTotalCount,
+    setSearch,
   } = useCourseSearchingContext();
 
-  const [search, setSearch] = useState("");
+  const [searchText, setSearchText] = useState("");
   useMount(() => {
     setSearch("");
   });
@@ -93,10 +92,10 @@ function CourseSearchInputTextArea() {
     try {
       setSearchLoading(true);
       setSearchResult([]);
-      const ids = await fetchSearchIDs(search, searchColumns);
-      setSearchIds(ids);
-      await fetchSearchResults(
-        ids,
+      setSearch(searchText);
+      await fetchSearchResult(
+        searchText,
+        searchColumns,
         searchFiltersEnable,
         searchFilters,
         batchSize,
@@ -105,10 +104,11 @@ function CourseSearchInputTextArea() {
         {
           onSuccess: ({ courses, totalCount }) => {
             setSearchResult(courses);
+            setTotalCount(totalCount);
+            setOffset(batchSize);
             setSearchLoading(false);
             setSearchError(null);
-            setOffset(batchSize);
-            setTotalCount(totalCount);
+            searchCallback();
           },
         }
       );
@@ -134,26 +134,32 @@ function CourseSearchInputTextArea() {
       <Flex
         flexDirection="row"
         alignItems="center"
-        justifyContent={["start", "start", "center", "center"]}
+        justifyContent="center"
         flexWrap="wrap"
         css={{ gap: "10px" }}
       >
         <Menu closeOnSelect={false} mx="2">
-          <MenuButton as={Button} size={"md"} rightIcon={<ChevronDownIcon />}>
-            欄位
+          <MenuButton as={Button} size={{ base: "md", md: "md" }}>
+            <Icon
+              as={TbListSearch}
+              mr={{ base: "0", md: "2" }}
+              boxSize={{ base: "1.2em", md: "1em" }}
+            />
+            <Text display={{ base: "none", md: "inline-block" }}>設定</Text>
           </MenuButton>
           <MenuList>
             <MenuOptionGroup
-              defaultValue={["course_name", "teacher"]}
+              title="查詢欄位"
+              defaultValue={["name", "teacher", "serial", "code", "identifier"]}
               type="checkbox"
             >
               <MenuItemOption
-                value="course_name"
+                value="name"
                 onClick={(e) => {
                   toggle_search_column(e);
                 }}
               >
-                課程名稱 <Badge>預設</Badge>
+                課程名稱
               </MenuItemOption>
               <MenuItemOption
                 value="teacher"
@@ -161,62 +167,54 @@ function CourseSearchInputTextArea() {
                   toggle_search_column(e);
                 }}
               >
-                教師
+                教師姓名
               </MenuItemOption>
               <MenuItemOption
-                value="id"
+                value="serial"
                 onClick={(e) => {
                   toggle_search_column(e);
                 }}
-                isDisabled
               >
-                流水號 <Badge colorScheme="blue">即將推出</Badge>
+                流水號
               </MenuItemOption>
               <MenuItemOption
-                value="course_code"
+                value="code"
                 onClick={(e) => {
                   toggle_search_column(e);
                 }}
-                isDisabled
               >
-                課號 <Badge colorScheme="blue">即將推出</Badge>
+                課號
               </MenuItemOption>
               <MenuItemOption
-                value="course_id"
+                value="identifier"
                 onClick={(e) => {
                   toggle_search_column(e);
                 }}
-                isDisabled
               >
-                課程識別碼 <Badge colorScheme="blue">即將推出</Badge>
+                課程識別碼
               </MenuItemOption>
             </MenuOptionGroup>
           </MenuList>
         </Menu>
-        <InputGroup w={["70%", "60%", "60%", "60%"]}>
-          <InputLeftElement>
-            <Search2Icon color="gray.500" />
-          </InputLeftElement>
-          <Input
-            variant="flushed"
-            size="md"
-            focusBorderColor="teal.500"
-            placeholder="直接搜尋可顯示全部課程"
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-            }}
-            onKeyPress={(e) => {
-              if (e.key === "Enter") {
-                startSearch();
-              }
-            }}
-          />
-        </InputGroup>
-        <Spacer display={{ base: "inline-block", md: "none" }} />
+        <Input
+          variant="flushed"
+          size={{ base: "md", md: "md" }}
+          w={["60%", "60%", "60%", "60%"]}
+          focusBorderColor="teal.500"
+          placeholder="直接搜尋顯示全部課程"
+          value={searchText}
+          onChange={(e) => {
+            setSearchText(e.target.value);
+          }}
+          onKeyPress={(e) => {
+            if (e.key === "Enter") {
+              startSearch();
+            }
+          }}
+        />
         <Button
           colorScheme="blue"
-          size={"md"}
+          size={{ base: "md", md: "md" }}
           variant="solid"
           onClick={() => {
             startSearch();
@@ -259,7 +257,7 @@ function SettingSwitch({ label, setterFunc, defaultValue, isDisabled }) {
   );
 }
 
-function CourseSearchInput({ displayPanel }) {
+function CourseSearchInput({ displayPanel, searchCallback }) {
   const toast = useToast();
   const {
     searchFilters,
@@ -270,7 +268,7 @@ function CourseSearchInput({ displayPanel }) {
     setSearchFilters,
   } = useCourseSearchingContext();
   const { displayTags, setDisplayTags } = useDisplayTags();
-  const available_tags = ["required", "total_slot", "enroll_method", "area"];
+  const available_tags = ["requirement", "slot", "enroll_method", "areas"];
 
   // filters local states
   const [selectedTime, setSelectedTime] = useState(
@@ -331,7 +329,7 @@ function CourseSearchInput({ displayPanel }) {
 
   return (
     <>
-      <CourseSearchInputTextArea />
+      <CourseSearchInputTextArea searchCallback={searchCallback} />
       <Collapse in={displayPanel} animateOpacity>
         <Box w="100%" py="8px" mt="4">
           <Tabs>

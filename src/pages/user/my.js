@@ -1,4 +1,4 @@
-import { React, useEffect, useState, useMemo } from "react";
+import { React, useEffect, useMemo } from "react";
 import {
   Flex,
   Text,
@@ -12,7 +12,6 @@ import SkeletonRow from "components/SkeletonRow";
 import { HashLoader, BeatLoader } from "react-spinners";
 import CourseInfoRow from "components/CourseInfoRow";
 import { useUserData } from "components/Providers/UserProvider";
-import { fetchFavoriteCourses } from "queries/course";
 import { useDisplayTags } from "components/Providers/DisplayTagsProvider";
 import { useCourseTable } from "components/Providers/CourseTableProvider";
 import { fetchCourseTable } from "queries/courseTable";
@@ -26,14 +25,14 @@ export default function UserMyPage({ user }) {
   const toast = useToast();
   const { courseTable, setCourseTable } = useCourseTable();
   const { displayTags } = useDisplayTags();
-  const [favorite_list, setFavorite_list] = useState([]);
-  const [Loading, setLoading] = useState(true);
   const router = useRouter();
-  const userLoading = !userInfo;
+
   const bgColor = useColorModeValue("white", "black");
   const selectedCourses = useMemo(() => {
-    return courseTable?.courses;
+    return courseTable?.courses.map((c) => c.id);
   }, [courseTable]);
+
+  const favoriteList = useMemo(() => userInfo?.db?.favorites ?? [], [userInfo]);
 
   // fetch userInfo
   useEffect(() => {
@@ -86,35 +85,7 @@ export default function UserMyPage({ user }) {
     fetchUserInfo();
   }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => {
-    const fetchFavoriteCoursesById = async () => {
-      setLoading(true);
-      // console.log(userInfo);
-      if (userInfo.db.favorites.length >= 0) {
-        try {
-          const courses = await fetchFavoriteCourses(userInfo.db.favorites);
-          // console.log(courses);
-          setFavorite_list(courses);
-        } catch (e) {
-          // console.log(e);
-          toast({
-            title: "載入最愛課程失敗.",
-            description: "請聯繫客服(?)",
-            status: "error",
-            duration: 4000,
-            isClosable: true,
-          });
-        }
-      }
-    };
-
-    if (userInfo) {
-      fetchFavoriteCoursesById();
-      setLoading(false);
-    }
-  }, [userInfo]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  if (userLoading) {
+  if (!userInfo) {
     return (
       <Box maxW="screen-md" h="95vh" mx="auto" overflow="visible" p="64px">
         <Flex
@@ -150,7 +121,7 @@ export default function UserMyPage({ user }) {
           pt="64px"
         >
           <Flex flexDirection="row" alignItems="center" justifyContent="start">
-            {Loading ? <BeatLoader size={8} color="teal" /> : <></>}
+            {!userInfo ? <BeatLoader size={8} color="teal" /> : <></>}
             <Text
               fontSize="md"
               fontWeight="medium"
@@ -158,32 +129,32 @@ export default function UserMyPage({ user }) {
               my="2"
               ml="1"
             >
-              {Loading
+              {!userInfo
                 ? "載入中"
-                : `我的最愛課程 共有 ${favorite_list.length} 筆結果`}
+                : `我的最愛課程 共有 ${favoriteList.length} 筆結果`}
             </Text>
           </Flex>
           <Box w={{ base: "100%", md: "80%", lg: "70%" }}>
             <Flex direction="column" alignItems={"center"}>
-              {favorite_list.map((info, index) => (
+              {favoriteList.map((course, index) => (
                 <Accordion
                   allowToggle
                   w={{ base: "90vw", md: "100%" }}
                   key={index}
                 >
                   <CourseInfoRow
-                    id={info["id"]}
-                    index={index}
-                    courseInfo={info}
+                    courseInfo={course}
                     selected={
-                      selectedCourses && selectedCourses.includes(info._id)
+                      selectedCourses && selectedCourses.includes(course.id)
                     }
                     displayTags={displayTags}
                     displayTable={false}
                     isfavorite={
                       userInfo === null
                         ? false
-                        : userInfo.db.favorites.includes(info._id)
+                        : userInfo.db.favorites
+                            .map((c) => c.id)
+                            .includes(course.id)
                     }
                   />
                   <Spacer my={{ base: 2, md: 1 }} />
@@ -193,7 +164,7 @@ export default function UserMyPage({ user }) {
           </Box>
 
           <Box ml="48vw" transition="all 500ms ease-in-out">
-            <SkeletonRow loading={Loading} />
+            <SkeletonRow loading={!userInfo} />
           </Box>
         </Flex>
       </Flex>

@@ -1,7 +1,8 @@
 import instance from "queries/axiosInstance";
+const api_version = "v2";
 
 export const deleteUserProfile = async (token) => {
-  await instance.delete(`/users/profile`, {
+  await instance.delete(`${api_version}/users/profile`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -16,7 +17,7 @@ export const linkCoursetableToUser = async (
   const {
     data: { user },
   } = await instance.post(
-    `/users/${user_id}/course_table`,
+    `${api_version}/users/${user_id}/course_table`,
     { course_table_id: course_table_id },
     {
       headers: {
@@ -27,27 +28,38 @@ export const linkCoursetableToUser = async (
   return user;
 };
 
-export const addFavoriteCourse = async (token, new_favorite_list) => {
+export const addFavoriteCourse = async (token, courseId) => {
   const {
-    data: { user },
-  } = await instance.patch(
-    `/users/`,
-    { user: { favorites: new_favorite_list } },
+    data: { favorites: newFavoriteList },
+  } = await instance.put(
+    `${api_version}/users/favorites/${courseId}`,
+    {},
     {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     }
   );
-  return user;
+  return newFavoriteList;
 };
 
-export const patchUserInfo = async (token, updateObject) => {
+export const removeFavoriteCourse = async (token, courseId) => {
+  const {
+    data: { favorites: newFavoriteList },
+  } = await instance.delete(`${api_version}/users/favorites/${courseId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return newFavoriteList;
+};
+
+export const patchUserInfo = async (token, newUser) => {
   const {
     data: { user },
   } = await instance.patch(
-    `/users/`,
-    { user: updateObject },
+    `${api_version}/users/`,
+    { user: newUser },
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -58,7 +70,7 @@ export const patchUserInfo = async (token, updateObject) => {
 };
 
 export const deleteUserAccount = async (token) => {
-  await instance.delete(`/users/account`, {
+  await instance.delete(`${api_version}/users/account`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -68,7 +80,7 @@ export const deleteUserAccount = async (token) => {
 export const fetchUserById = async (token, user_id) => {
   const {
     data: { user },
-  } = await instance.get(`/users/${user_id}`, {
+  } = await instance.get(`${api_version}/users/${user_id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -81,7 +93,7 @@ export const registerNewUser = async (token, email) => {
   const {
     data: { user },
   } = await instance.post(
-    `/users/`,
+    `${api_version}/users/`,
     { user: { email: email } },
     {
       headers: {

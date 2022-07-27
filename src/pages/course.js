@@ -100,7 +100,7 @@ function CoursePage() {
   //   });
   const topRef = useRef();
   const bottomRef = usePagination();
-  const { searchIds, searchLoading, searchError, totalCount, setBatchSize } =
+  const { searchLoading, totalCount, setBatchSize } =
     useCourseSearchingContext();
 
   const [isMobile, isHigherThan1325] = useMediaQuery([
@@ -122,10 +122,10 @@ function CoursePage() {
     }
   }, [isHigherThan1325, setBatchSize]);
 
-  useEffect(() => {
+  const searchCallback = () => {
     topRef.current.focus();
     setDisplayFilter(false);
-  }, [searchIds]);
+  };
 
   // if isMobile, when show Alert Modal, set displayTable to false to prevent ugly overlapping
   useEffect(() => {
@@ -181,12 +181,15 @@ function CoursePage() {
           >
             <Flex
               w="100%"
-              px="10vw"
+              px={{ base: "5vw", md: "10vw" }}
               py="4"
               direction="column"
               bg={useColorModeValue("white", "black")}
             >
-              <CourseSearchInput displayPanel={displayFilter} />
+              <CourseSearchInput
+                displayPanel={displayFilter}
+                searchCallback={searchCallback}
+              />
             </Flex>
             <IconButton
               size="xs"
@@ -199,11 +202,15 @@ function CoursePage() {
           <Flex
             flexDirection={"column"}
             alignItems={{ base: "center", lg: "start" }}
-            ml={{ base: "0", lg: displayTable ? "2vw" : "15vw" }}
+            ml={{
+              base: "0",
+              lg: displayTable ? "2vw" : "5vw",
+              xl: displayTable ? "2vw" : "10vw",
+            }}
             w={{
               base: "100%",
-              lg: displayTable ? "50vw" : "70vw",
-              xl: displayTable ? "55vw" : "70vw",
+              lg: displayTable ? "50vw" : "90vw",
+              xl: displayTable ? "55vw" : "80vw",
             }}
             transition="all 500ms ease-in-out"
           >

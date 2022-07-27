@@ -58,8 +58,8 @@ function ListRowElement({
       py="2"
       px="2"
       bg={useColorModeValue(
-        hash_to_color_hex(course._id, 0.92, 0.3),
-        hash_to_color_hex(course._id, 0.2, 0.2)
+        hash_to_color_hex(course.id, 0.92, 0.3),
+        hash_to_color_hex(course.id, 0.2, 0.2)
       )}
       my="1"
       borderRadius="lg"
@@ -87,12 +87,12 @@ function ListRowElement({
             size={useBreakpointValue({ base: "md", md: "lg" }) ?? "md"}
             mx={{ base: 0, md: 2 }}
           >
-            {course.id}
+            {course.serial}
           </Badge>
           <Text
-            as={prepareToRemoveCourseId.includes(course._id) ? "del" : ""}
+            as={prepareToRemoveCourseId.includes(course.id) ? "del" : ""}
             color={
-              prepareToRemoveCourseId.includes(course._id)
+              prepareToRemoveCourseId.includes(course.id)
                 ? removeColor
                 : textColor
             }
@@ -102,7 +102,7 @@ function ListRowElement({
             isTruncated
             maxW={{ base: "120px", md: "50vw", lg: "16vw" }}
           >
-            {course.course_name}
+            {course.name}
           </Text>
         </Flex>
         <Button
@@ -114,7 +114,7 @@ function ListRowElement({
           colorScheme="blue"
           variant="ghost"
           onClick={() => {
-            router.push(`/courseinfo/${course._id}`);
+            router.push(`/courseinfo/${course.id}`);
           }}
         >
           <FaInfoCircle />
@@ -132,7 +132,7 @@ function ListRowElement({
           colorScheme="blue"
           variant="ghost"
           onClick={() => {
-            router.push(`/courseinfo/${course._id}`);
+            router.push(`/courseinfo/${course.id}`);
           }}
         >
           <FaInfoCircle />
@@ -150,13 +150,13 @@ function ListRowElement({
         <IconButton
           aria-label="Delete"
           variant={
-            prepareToRemoveCourseId.includes(course._id) ? "solid" : "outline"
+            prepareToRemoveCourseId.includes(course.id) ? "solid" : "outline"
           }
           icon={<FaTrash />}
           size="sm"
           colorScheme="red"
           onClick={() => {
-            handleDelete(course._id);
+            handleDelete(course.id);
           }}
         />
       </Flex>
@@ -192,6 +192,7 @@ function CourseListContainer({ courseTable, courses, loading }) {
   const [prepareToRemoveCourseId, setPrepareToRemoveCourseId] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  // TODO: Redundant?
   useEffect(() => {
     //console.log('new list for sort', Object.keys(courses));
     setCourseListForSort(Object.keys(courses));
@@ -217,7 +218,7 @@ function CourseListContainer({ courseTable, courses, loading }) {
         (id) => !prepareToRemoveCourseId.includes(id)
       );
       const res_table = await patchCourseTable(
-        courseTable._id,
+        courseTable.id,
         courseTable.name,
         courseTable.user_id,
         courseTable.expire_ts,
@@ -231,7 +232,7 @@ function CourseListContainer({ courseTable, courses, loading }) {
         duration: 3000,
         isClosable: true,
       });
-      setCourseListForSort(res_table.courses);
+      setCourseListForSort(res_table.courses.map((c) => c.id));
       setPrepareToRemoveCourseId([]);
     } catch (err) {
       if (err?.response?.status === 403 || err?.response?.status === 404) {

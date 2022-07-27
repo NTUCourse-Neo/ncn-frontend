@@ -5,24 +5,26 @@ import {
   FaLanguage,
   FaFileImport,
 } from "react-icons/fa";
+
+// TODO: get rid of this? because the information already in v2 API
 const info_view_map = {
-  required: {
+  requirement: {
     name: "課程必選修",
     logo: FaCheckSquare,
     color: "blue",
     map: {
-      0: "必帶",
-      1: "必修",
-      2: "選修",
-      3: "其他",
+      preassign: "必帶",
+      required: "必修",
+      elective: "選修",
+      other: "其他",
     },
   },
-  total_slot: {
+  slot: {
     name: "修課人數上限",
     logo: FaUserGraduate,
     color: "blue",
   },
-  area: {
+  areas: {
     name: "課程領域",
     logo: FaPuzzlePiece,
     color: "blue",
@@ -164,8 +166,8 @@ const info_view_map = {
     logo: FaLanguage,
     color: "blue",
     map: {
-      TW: "中文",
-      EN: "英文",
+      zh_TW: "中文",
+      en_US: "英文",
     },
   },
 };

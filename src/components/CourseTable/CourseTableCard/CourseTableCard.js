@@ -32,15 +32,15 @@ import { patchCourseTable } from "queries/courseTable";
 function CourseBox({ courseId, courseData, isOpen, hoverId }) {
   const course = courseData?.[courseId];
   const bgColor = useColorModeValue(
-    hash_to_color_hex(course._id, 0.8, 0.6),
-    hash_to_color_hex(course._id, 0.2, 0.3)
+    hash_to_color_hex(course.id, 0.8, 0.6),
+    hash_to_color_hex(course.id, 0.2, 0.3)
   );
   if (!course) {
     return <></>;
   }
 
   return (
-    <Tooltip label={course.course_name} placement="top" hasArrow>
+    <Tooltip label={course.name} placement="top" hasArrow>
       <Button
         bg={bgColor}
         borderRadius="md"
@@ -52,12 +52,12 @@ function CourseBox({ courseId, courseData, isOpen, hoverId }) {
         border={"2px"}
         borderColor={
           hoverId === courseId
-            ? hash_to_color_hex(course._id, 0.8)
+            ? hash_to_color_hex(course.id, 0.8)
             : "transparent"
         }
       >
         <Text fontSize="xs" isTruncated noOfLines={1}>
-          {` ${course.course_name} `}
+          {` ${course.name} `}
         </Text>
       </Button>
     </Tooltip>
@@ -106,7 +106,7 @@ function CourseTableCard({
   const fetchIndexByIds = (ids_array) => {
     const index_arr = [];
     ids_array.forEach((id) => {
-      index_arr.push(courseTable.courses.indexOf(id));
+      index_arr.push(courseTable.courses.map((c) => c.id).indexOf(id));
     });
     return index_arr;
   };
@@ -115,7 +115,7 @@ function CourseTableCard({
     // get indice need to reorder from courseOrder
     const index_arr = fetchIndexByIds(courseOrder);
     // do reorder, generate new courseTable.courses to be patched
-    const new_courses = [...courseTable.courses];
+    const new_courses = courseTable.courses.map((course) => course.id);
     for (let i = 0; i < courseList.length; i++) {
       const target_index = index_arr[i];
       const target_id = courseList[i];
@@ -129,7 +129,7 @@ function CourseTableCard({
     let res_table;
     try {
       res_table = await patchCourseTable(
-        courseTable._id,
+        courseTable.id,
         courseTable.name,
         courseTable.user_id,
         courseTable.expire_ts,

@@ -4,17 +4,16 @@ import { assertNotNil } from "utils/assert";
 
 export default withApiAuthRequired(async function handler(req, res) {
   try {
-    const { new_favorite_list, user_id } = req.body;
+    const { course_id } = req.body;
     const { accessToken } = await getAccessToken(req, res);
-    if (!assertNotNil(user_id) || !assertNotNil(new_favorite_list)) {
-      res.status(400).json({ error: "Missing user_id" });
+    if (!assertNotNil(course_id)) {
+      res.status(400).json({ error: "Missing course_id" });
     } else {
-      const user_data = await addFavoriteCourse(
+      const updatedFavoriteList = await addFavoriteCourse(
         accessToken,
-        new_favorite_list,
-        user_id
+        course_id
       );
-      return res.status(200).json(user_data);
+      return res.status(200).json(updatedFavoriteList);
     }
   } catch (error) {
     console.error(error);

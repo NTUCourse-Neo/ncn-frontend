@@ -10,16 +10,14 @@ import {
 import { useUserData } from "components/Providers/UserProvider";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { setHoveredCourseData } from "utils/hoverCourse";
-import { useDisplayTags } from "components/Providers/DisplayTagsProvider";
 import { useCourseTable } from "components/Providers/CourseTableProvider";
 
 function CourseInfoRowContainer({ displayTable }) {
   const { user: userInfo } = useUserData();
   const { searchResult: courseInfo } = useCourseSearchingContext();
-  const { displayTags } = useDisplayTags();
   const { courseTable } = useCourseTable();
   const selectedCourses = useMemo(() => {
-    return courseTable?.courses;
+    return courseTable?.courses ? courseTable?.courses.map((c) => c.id) : [];
   }, [courseTable]);
   const isDesktop = useBreakpointValue({ base: false, lg: true });
 
@@ -31,33 +29,32 @@ function CourseInfoRowContainer({ displayTable }) {
   return (
     <Box w="100%">
       <Flex direction="column" alignItems={"center"}>
-        {courseInfo.map((info, index) => (
+        {courseInfo.map((course, index) => (
           <Accordion
             allowToggle
             w={{ base: "90vw", md: "100%" }}
             key={index}
             onMouseEnter={() => {
               if (displayTable && isDesktop) {
-                setHoveredCourseData(info);
+                // TODO: refactor course structure
+                setHoveredCourseData(course);
               }
             }}
             onMouseLeave={() => {
               if (displayTable && isDesktop) {
+                // TODO: refactor course structure
                 setHoveredCourseData(null);
               }
             }}
           >
             <CourseInfoRow
-              id={info["id"]}
-              index={index}
-              courseInfo={info}
-              selected={selectedCourses && selectedCourses.includes(info._id)}
-              displayTags={displayTags}
+              courseInfo={course}
+              selected={selectedCourses.includes(course.id)}
               displayTable={displayTable}
               isfavorite={
                 userInfo === null
                   ? false
-                  : userInfo.db.favorites.includes(info._id)
+                  : userInfo.db.favorites.map((c) => c.id).includes(course.id)
               }
             />
             <Spacer my={{ base: 2, md: 1 }} />
