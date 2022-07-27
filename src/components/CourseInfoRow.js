@@ -23,8 +23,9 @@ import {
   HStack,
   ButtonGroup,
   useColorModeValue,
+  Icon,
 } from "@chakra-ui/react";
-import { FaPlus, FaHeart, FaInfoCircle } from "react-icons/fa";
+import { FaPlus, FaHeart, FaInfoCircle, FaRegHeart } from "react-icons/fa";
 import { info_view_map } from "data/mapping_table";
 import { hash_to_color_hex } from "utils/colorAgent";
 import openPage from "utils/openPage";
@@ -45,45 +46,34 @@ function DeptBadge({ course }) {
   if (!course.departments || course.departments.length === 0) {
     return <></>;
   }
-  if (course.departments.length > 1) {
-    const dept_str = course.departments.map((d) => d.name_full).join(", ");
-    return (
-      <Tooltip
-        hasArrow
-        placement="top"
-        label={dept_str}
-        bg="gray.600"
-        color="white"
-      >
-        <Badge
-          colorScheme="teal"
-          variant="solid"
-          maxWidth={"75px"}
-          noOfLines={1}
-        >
-          <Text
-            sx={{
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }}
-          >
-            多個系所
-          </Text>
-        </Badge>
-      </Tooltip>
-    );
-  }
+  const dept_str = course.departments.map((d) => d.name_full).join(", ");
+  const isMultipleDepts = course.departments.length > 1;
   return (
-    <Badge colorScheme="blue" variant="solid" maxWidth={"75px"} noOfLines={1}>
-      <Text
-        sx={{
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-        }}
+    <Tooltip
+      hasArrow
+      placement="top"
+      label={dept_str}
+      bg="gray.600"
+      color="white"
+    >
+      <Badge
+        colorScheme={isMultipleDepts ? "teal" : "blue"}
+        variant="solid"
+        maxWidth={"125px"}
+        noOfLines={1}
       >
-        {course?.departments?.[0]?.name_full ?? ""}
-      </Text>
-    </Badge>
+        <Text
+          sx={{
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          {isMultipleDepts
+            ? "多個系所"
+            : course?.departments?.[0]?.name_full ?? ""}
+        </Text>
+      </Badge>
+    </Tooltip>
   );
 }
 
@@ -431,6 +421,7 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTable }) {
                 as="h3"
                 size={useBreakpointValue({ base: "sm", md: "md" }) ?? "sm"}
                 color={headingColor}
+                textAlign="start"
               >
                 {courseInfo.name}
               </Heading>
@@ -439,6 +430,8 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTable }) {
                 size={useBreakpointValue({ base: "xs", md: "sm" }) ?? "xs"}
                 color={textColor}
                 fontWeight="500"
+                textAlign="start"
+                minW={{ base: "42px", md: "auto" }}
                 display={{ base: "inline-block", md: "none" }}
               >
                 {courseInfo.teacher}
@@ -456,7 +449,7 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTable }) {
                   variant="outline"
                   display={{ base: "inline-block", md: "none" }}
                 >
-                  {courseInfo.serial}
+                  {courseInfo.serial ? courseInfo.serial : "無流水號"}
                 </Badge>
               </Tooltip>
               <Tooltip
@@ -493,13 +486,22 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTable }) {
               >
                 <Badge
                   variant="outline"
-                  ml={{ base: 0, md: 8 }}
+                  ml={{ base: 0, md: 4 }}
+                  px="1"
                   size="lg"
-                  w="150px"
                   noOfLines={1}
-                  isTruncated
+                  maxWidth="150px"
                 >
-                  {parseCourseSchedlue(courseInfo) ?? null}
+                  <Text
+                    sx={{
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {parseCourseSchedlue(courseInfo)
+                      ? parseCourseSchedlue(courseInfo)
+                      : "無課程時間"}
+                  </Text>
                 </Badge>
               </Tooltip>
             </Collapse>
@@ -591,25 +593,25 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTable }) {
             }}
           >
             <HStack>
-              <FaInfoCircle />
+              <Icon as={FaInfoCircle} boxSize="4" />
               <Text display={{ base: "none", md: "inline-block" }}>詳細</Text>
             </HStack>
           </Button>
           <Button
             size="sm"
-            ml={{ base: 0, md: "20px" }}
-            variant={isfavorite ? "solid" : "outline"}
+            ml={{ base: 0, md: "10px" }}
+            variant="ghost"
             colorScheme={"red"}
             onClick={() => handleAddFavorite(courseInfo.id)}
             isLoading={addingFavoriteCourse}
           >
             <Box>
-              <FaHeart />
+              {<Icon as={isfavorite ? FaHeart : FaRegHeart} boxSize="4" />}
             </Box>
           </Button>
           <Button
             size="sm"
-            ml={{ base: 0, md: "20px" }}
+            ml={{ base: 0, md: "10px" }}
             colorScheme={selected ? "red" : "blue"}
             onClick={() => addCourseToTable(courseInfo)}
             isLoading={addingCourse}

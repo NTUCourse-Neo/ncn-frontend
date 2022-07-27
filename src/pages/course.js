@@ -181,7 +181,7 @@ function CoursePage() {
           >
             <Flex
               w="100%"
-              px="10vw"
+              px={{ base: "5vw", md: "10vw" }}
               py="4"
               direction="column"
               bg={useColorModeValue("white", "black")}
@@ -202,11 +202,15 @@ function CoursePage() {
           <Flex
             flexDirection={"column"}
             alignItems={{ base: "center", lg: "start" }}
-            ml={{ base: "0", lg: displayTable ? "2vw" : "15vw" }}
+            ml={{
+              base: "0",
+              lg: displayTable ? "2vw" : "5vw",
+              xl: displayTable ? "2vw" : "10vw",
+            }}
             w={{
               base: "100%",
-              lg: displayTable ? "50vw" : "70vw",
-              xl: displayTable ? "55vw" : "70vw",
+              lg: displayTable ? "50vw" : "90vw",
+              xl: displayTable ? "55vw" : "80vw",
             }}
             transition="all 500ms ease-in-out"
           >
