@@ -24,7 +24,13 @@ import { useRouter } from "next/router";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import Moment from "moment";
 import { IoMdOpen } from "react-icons/io";
-import { FaPlus, FaMinus, FaHeartbeat, FaHeart } from "react-icons/fa";
+import {
+  FaPlus,
+  FaMinus,
+  FaHeartbeat,
+  FaHeart,
+  FaRegHeart,
+} from "react-icons/fa";
 import { FiMoreHorizontal } from "react-icons/fi";
 import { BiCopy } from "react-icons/bi";
 import { getNolAddUrl, getNolUrl } from "utils/getNolUrls";
@@ -526,6 +532,25 @@ function CourseInfoPage({ code, course }) {
               </HStack>
             </Stack>
             <HStack spacing="2" display={{ base: "none", lg: "flex" }}>
+              <Tooltip
+                label={isFavorite ? "移除最愛" : "加入最愛"}
+                placement="bottom"
+                hasArrow
+              >
+                <Button
+                  key={"NolContent_Button_" + code + "_addToFavorite"}
+                  size="md"
+                  colorScheme="red"
+                  variant="ghost"
+                  isLoading={addingFavoriteCourse}
+                  disabled={!userInfo}
+                  onClick={() => {
+                    handleAddFavorite(course.id);
+                  }}
+                >
+                  <Icon as={isFavorite ? FaHeart : FaRegHeart} boxSize="6" />
+                </Button>
+              </Tooltip>
               <ButtonGroup isAttached>
                 <Button
                   key={"NolContent_Button_" + code + "_addToCourseTable"}
@@ -552,20 +577,6 @@ function CourseInfoPage({ code, course }) {
                   課程網
                 </Button>
               </ButtonGroup>
-              <Button
-                key={"NolContent_Button_" + code + "_addToFavorite"}
-                size="md"
-                colorScheme="red"
-                variant={isFavorite ? "solid" : "outline"}
-                leftIcon={<FaHeart />}
-                isLoading={addingFavoriteCourse}
-                disabled={!userInfo}
-                onClick={() => {
-                  handleAddFavorite(course.id);
-                }}
-              >
-                {isFavorite ? "已加入最愛" : "加入最愛"}
-              </Button>
               <Button
                 key={"NolContent_Button_" + code + "_OpenNol"}
                 size="md"
@@ -637,7 +648,7 @@ function CourseInfoPage({ code, course }) {
                   size="md"
                   color="red.500"
                   variant={"ghost"}
-                  icon={isFavorite ? <FaMinus /> : <FaHeart />}
+                  icon={isFavorite ? <FaMinus /> : <FaRegHeart />}
                   disabled={!userInfo}
                   onClick={() => {
                     handleAddFavorite(course.id);
