@@ -7,7 +7,7 @@ export default withApiAuthRequired(async function handler(req, res) {
     const { course_id } = req.body;
     const { accessToken } = await getAccessToken(req, res);
     if (!assertNotNil(course_id)) {
-      res.status(400).json({ error: "Missing user_id" });
+      res.status(400).json({ error: "Missing course_id" });
     } else {
       const updatedFavoriteList = await removeFavoriteCourse(
         accessToken,
