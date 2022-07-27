@@ -90,6 +90,7 @@ function CategoryFilterModal({
                     selected={false}
                     onClick={() => {
                       setSelectedType([...selectedType, type.id]);
+                      // !TODO
                     }}
                   />
                 ))}

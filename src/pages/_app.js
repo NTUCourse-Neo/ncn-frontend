@@ -7,6 +7,7 @@ import HeaderBar from "components/HeaderBar";
 import Footer from "components/Footer";
 import { UserProvider as Auth0UserProvider } from "@auth0/nextjs-auth0";
 import theme from "styles/theme";
+import GoogleAnalytics from "components/GoogleAnalytics";
 
 function MyApp({ Component, pageProps }) {
   return (
@@ -19,6 +20,9 @@ function MyApp({ Component, pageProps }) {
                 <Box w="100vw" h={{ base: "100%", lg: "" }}>
                   <HeaderBar />
                   <Component {...pageProps} />
+                  {process.env.NEXT_PUBLIC_ENV === "prod" && (
+                    <GoogleAnalytics />
+                  )}
                   <Footer />
                 </Box>
               </DisplayTagsProvider>

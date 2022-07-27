@@ -6,6 +6,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { SunIcon, MoonIcon } from "@chakra-ui/icons";
+import { reportEvent } from "utils/ga";
 
 const ThemeToggleButton = () => {
   const { toggleColorMode } = useColorMode();
@@ -24,7 +25,10 @@ const ThemeToggleButton = () => {
         <Button
           aria-label="Toggle theme"
           variant="ghost"
-          onClick={toggleColorMode}
+          onClick={() => {
+            toggleColorMode();
+            reportEvent("header", "click", "color_mode");
+          }}
           w="5"
           mx={{ base: 2, md: 1 }}
           _focus={{ border: "none" }}

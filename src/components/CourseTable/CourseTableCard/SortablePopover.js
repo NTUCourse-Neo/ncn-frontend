@@ -18,6 +18,7 @@ import { hash_to_color_hex } from "utils/colorAgent";
 import { FaTrashAlt } from "react-icons/fa";
 import { useRouter } from "next/router";
 import { FaInfoCircle } from "react-icons/fa";
+import { reportEvent } from "utils/ga";
 
 // for future typescript used
 // interface Prop {
@@ -68,6 +69,7 @@ const SortableElement = sortableElement(
           leftIcon={<FaInfoCircle />}
           size="sm"
           onClick={() => {
+            reportEvent("course_table_card_popover", "click", "course_info");
             router.push(`/courseinfo/${course.id}`);
           }}
         />

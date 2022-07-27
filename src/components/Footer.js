@@ -13,6 +13,7 @@ import { FaCodeBranch, FaGithub, FaHeartbeat } from "react-icons/fa";
 import Link from "next/link";
 import { DiscordIcon } from "components/CustomIcons";
 import Image from "next/image";
+import { reportEvent } from "utils/ga";
 
 function Footer() {
   const ver = "beta (20220721)";
@@ -70,7 +71,10 @@ function Footer() {
           px="1"
           justifyContent={"center"}
           alignItems={"center"}
-          onClick={() => handleOpenPage("https://status.course.myntu.me/")}
+          onClick={() => {
+            handleOpenPage("https://status.course.myntu.me/");
+            reportEvent("footer", "click_external", "status");
+          }}
         >
           <Center
             w={{ base: "20px", md: "20px" }}
@@ -94,7 +98,10 @@ function Footer() {
           px="1"
           justifyContent={"center"}
           alignItems={"center"}
-          onClick={() => handleOpenPage("https://discord.gg/M7NrenYEbS")}
+          onClick={() => {
+            handleOpenPage("https://discord.gg/M7NrenYEbS");
+            reportEvent("footer", "click_external", "discord");
+          }}
         >
           <Center
             w={{ base: "15px", md: "20px" }}
@@ -118,7 +125,10 @@ function Footer() {
           px="1"
           justifyContent={"center"}
           alignItems={"center"}
-          onClick={() => handleOpenPage("https://github.com/NTUCourse-Neo")}
+          onClick={() => {
+            handleOpenPage("https://github.com/NTUCourse-Neo");
+            reportEvent("footer", "click_external", "github");
+          }}
         >
           <Center
             w={{ base: "20px", md: "20px" }}

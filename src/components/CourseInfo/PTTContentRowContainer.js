@@ -9,6 +9,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { IoMdOpen } from "react-icons/io";
+import { reportEvent } from "utils/ga";
 
 function PTTContentRowContainer({ info, ...restProps }) {
   const rowColor = useColorModeValue("blue.50", "#2B6CB030");
@@ -29,7 +30,10 @@ function PTTContentRowContainer({ info, ...restProps }) {
             justifyContent="start"
             alignItems="center"
             borderRadius="lg"
-            onClick={() => window.open(data.url, "_blank")}
+            onClick={() => {
+              window.open(data.url, "_blank");
+              reportEvent("ptt_panel", "click_external", data.url);
+            }}
           >
             <Badge key={data.url + "Badge"} mr="1" colorScheme="blue">
               {data.date}
