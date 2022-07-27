@@ -2,7 +2,8 @@ import React, { createContext, useContext, useState } from "react";
 
 const CourseSearchingContext = createContext({
   search: "",
-  searchResult: [],
+  pageNumber: 0,
+  searchResultCount: 0,
   searchLoading: false,
   searchError: null,
   totalCount: 0, // total number of results
@@ -28,8 +29,9 @@ const CourseSearchingContext = createContext({
     enroll_method: ["1", "2", "3"],
   }, // default value of filters
   setSearch: () => {},
+  setPageNumber: () => {},
   setSearchLoading: () => {},
-  setSearchResult: () => {},
+  setSearchResultCount: () => {},
   setSearchError: () => {},
   setOffset: () => {},
   setTotalCount: () => {},
@@ -42,12 +44,11 @@ const CourseSearchingContext = createContext({
 
 function CourseSearchingProvider(props) {
   const [search, setSearch] = useState("");
-  const [searchResult, setSearchResult] = useState([]);
+  const [pageNumber, setPageNumber] = useState(0);
+  const [searchResultCount, setSearchResultCount] = useState(0);
   const [searchLoading, setSearchLoading] = useState(false);
-  const [searchError, setSearchError] = useState(null);
   const [totalCount, setTotalCount] = useState(0);
   const [batchSize, setBatchSize] = useState(20);
-  const [offset, setOffset] = useState(0);
   const [searchColumns, setSearchColumns] = useState(["name", "teacher"]);
   const [searchSettings, setSearchSettings] = useState({
     show_selected_courses: false,
@@ -68,31 +69,41 @@ function CourseSearchingProvider(props) {
     enroll_method: ["1", "2", "3"],
   });
 
+  const fetchNextPage = () => {
+    setPageNumber(pageNumber + 1);
+  };
+
+  const dispatchSearch = (text) => {
+    setSearch(text);
+    setSearchResultCount(0);
+    setPageNumber(1);
+  };
+
   return (
     <CourseSearchingContext.Provider
       value={{
         search,
-        searchResult,
+        pageNumber,
+        searchResultCount,
         searchLoading,
-        searchError,
         totalCount,
         batchSize,
-        offset,
         searchColumns,
         searchSettings,
         searchFiltersEnable,
         searchFilters,
         setSearch,
+        setPageNumber,
         setBatchSize,
         setSearchSettings,
         setSearchColumns,
         setSearchFiltersEnable,
         setSearchFilters,
         setSearchLoading,
-        setSearchResult,
-        setSearchError,
-        setOffset,
+        setSearchResultCount,
         setTotalCount,
+        fetchNextPage,
+        dispatchSearch,
       }}
       {...props}
     />

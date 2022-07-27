@@ -13,12 +13,14 @@ import { setHoveredCourseData } from "utils/hoverCourse";
 import useCourseTable from "hooks/useCourseTable";
 import { useUser } from "@auth0/nextjs-auth0";
 import useNeoLocalStorage from "hooks/useNeoLocalStorage";
+import useSearchResult from "hooks/useSearchResult";
 
-function CourseInfoRowContainer({ displayTable }) {
+function CourseInfoRowPage({ displayTable, pageIndex }) {
+  const { search } = useCourseSearchingContext();
+  const { courses, isLoading, error } = useSearchResult(search, pageIndex);
   const { neoLocalCourseTableKey } = useNeoLocalStorage();
   const { user } = useUser();
   const { userInfo } = useUserInfo(user?.sub);
-  const { searchResult: courseInfo } = useCourseSearchingContext();
   const courseTableKey = userInfo
     ? userInfo?.course_tables?.[0] ?? null
     : neoLocalCourseTableKey;
@@ -28,45 +30,57 @@ function CourseInfoRowContainer({ displayTable }) {
   }, [courseTable]);
   const isDesktop = useBreakpointValue({ base: false, lg: true });
 
-  // const hide_scroll_bar = {
-  //     '::-webkit-scrollbar': {
-  //         display: "none"
-  //     },
-  // }
+  if (isLoading || error) {
+    return <></>;
+  }
+  return courses.map((course, index) => (
+    <Accordion
+      allowToggle
+      w={{ base: "90vw", md: "100%" }}
+      key={index}
+      onMouseEnter={() => {
+        if (displayTable && isDesktop) {
+          setHoveredCourseData(course);
+        }
+      }}
+      onMouseLeave={() => {
+        if (displayTable && isDesktop) {
+          setHoveredCourseData(null);
+        }
+      }}
+    >
+      <CourseInfoRow
+        courseInfo={course}
+        selected={selectedCourses.includes(course.id)}
+        displayTable={displayTable}
+        isfavorite={
+          !userInfo
+            ? false
+            : userInfo.favorites.map((c) => c.id).includes(course.id)
+        }
+      />
+      <Spacer my={{ base: 2, md: 1 }} />
+    </Accordion>
+  ));
+}
+
+function CourseInfoRowContainer({ displayTable }) {
+  const { pageNumber } = useCourseSearchingContext();
+
+  const pages = useMemo(() => {
+    const res = [];
+    for (let i = 0; i < pageNumber; i++) {
+      res.push(
+        <CourseInfoRowPage key={i} displayTable={displayTable} pageIndex={i} />
+      );
+    }
+    return res;
+  }, [pageNumber, displayTable]);
+
   return (
     <Box w="100%">
       <Flex direction="column" alignItems={"center"}>
-        {courseInfo.map((course, index) => (
-          <Accordion
-            allowToggle
-            w={{ base: "90vw", md: "100%" }}
-            key={index}
-            onMouseEnter={() => {
-              if (displayTable && isDesktop) {
-                // TODO: refactor course structure
-                setHoveredCourseData(course);
-              }
-            }}
-            onMouseLeave={() => {
-              if (displayTable && isDesktop) {
-                // TODO: refactor course structure
-                setHoveredCourseData(null);
-              }
-            }}
-          >
-            <CourseInfoRow
-              courseInfo={course}
-              selected={selectedCourses.includes(course.id)}
-              displayTable={displayTable}
-              isfavorite={
-                !userInfo
-                  ? false
-                  : userInfo.favorites.map((c) => c.id).includes(course.id)
-              }
-            />
-            <Spacer my={{ base: 2, md: 1 }} />
-          </Accordion>
-        ))}
+        {pages}
       </Flex>
     </Box>
   );
