@@ -522,6 +522,8 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTable }) {
                 size={useBreakpointValue({ base: "xs", md: "sm" }) ?? "xs"}
                 color={textColor}
                 fontWeight="500"
+                textAlign="start"
+                minW={{ base: "42px", md: "auto" }}
                 display={{ base: "inline-block", md: "none" }}
               >
                 {courseInfo.teacher}
@@ -539,7 +541,7 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTable }) {
                   variant="outline"
                   display={{ base: "inline-block", md: "none" }}
                 >
-                  {courseInfo.serial}
+                  {courseInfo.serial ? courseInfo.serial : "無流水號"}
                 </Badge>
               </Tooltip>
               <Tooltip
@@ -576,13 +578,22 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTable }) {
               >
                 <Badge
                   variant="outline"
-                  ml={{ base: 0, md: 8 }}
+                  ml={{ base: 0, md: 4 }}
+                  px="1"
                   size="lg"
-                  w="150px"
                   noOfLines={1}
-                  isTruncated
+                  maxWidth="150px"
                 >
-                  {parseCourseSchedlue(courseInfo) ?? null}
+                  <Text
+                    sx={{
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {parseCourseSchedlue(courseInfo)
+                      ? parseCourseSchedlue(courseInfo)
+                      : "無課程時間"}
+                  </Text>
                 </Badge>
               </Tooltip>
             </Collapse>
