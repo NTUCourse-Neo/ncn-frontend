@@ -420,7 +420,7 @@ function PTTReviewPanel({ isLoading, isUnauth, PTTReviewData }) {
         <LoadingPanel title="努力爬文中..." height="100%" pt={8} />
       }
     >
-      {!PTTReviewData ? (
+      {!PTTReviewData || !Array.isArray(PTTReviewData) ? (
         <PanelPlaceholder title="無相關貼文資訊" h="100%" pt="8" />
       ) : (
         <PTTContentRowContainer info={PTTReviewData} height="150px" />
@@ -438,7 +438,7 @@ function PTTExamPanel({ isLoading, isUnauth, PTTExamData }) {
         <LoadingPanel title="努力爬文中..." height="100%" pt={8} />
       }
     >
-      {!PTTExamData ? (
+      {!PTTExamData || !Array.isArray(PTTExamData) ? (
         <PanelPlaceholder title="無相關貼文資訊" h="100%" pt="8" />
       ) : (
         <PTTContentRowContainer info={PTTExamData} height="150px" />
