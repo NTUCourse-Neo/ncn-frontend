@@ -23,8 +23,9 @@ import {
   HStack,
   ButtonGroup,
   useColorModeValue,
+  Icon,
 } from "@chakra-ui/react";
-import { FaPlus, FaHeart, FaInfoCircle } from "react-icons/fa";
+import { FaPlus, FaHeart, FaInfoCircle, FaRegHeart } from "react-icons/fa";
 import { info_view_map } from "data/mapping_table";
 import { hash_to_color_hex } from "utils/colorAgent";
 import openPage from "utils/openPage";
@@ -664,25 +665,25 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTable }) {
             }}
           >
             <HStack>
-              <FaInfoCircle />
+              <Icon as={FaInfoCircle} boxSize="4" />
               <Text display={{ base: "none", md: "inline-block" }}>詳細</Text>
             </HStack>
           </Button>
           <Button
             size="sm"
-            ml={{ base: 0, md: "20px" }}
-            variant={isfavorite ? "solid" : "outline"}
+            ml={{ base: 0, md: "10px" }}
+            variant="ghost"
             colorScheme={"red"}
             onClick={() => handleAddFavorite(courseInfo.id)}
             isLoading={addingFavoriteCourse}
           >
             <Box>
-              <FaHeart />
+              {<Icon as={isfavorite ? FaHeart : FaRegHeart} boxSize="4" />}
             </Box>
           </Button>
           <Button
             size="sm"
-            ml={{ base: 0, md: "20px" }}
+            ml={{ base: 0, md: "10px" }}
             colorScheme={selected ? "red" : "blue"}
             onClick={() => addCourseToTable(courseInfo)}
             isLoading={addingCourse}
