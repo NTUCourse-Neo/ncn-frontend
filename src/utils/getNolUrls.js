@@ -6,14 +6,16 @@ const getNolUrl = (course) => {
   const lang = "CH";
   const base_url = "https://nol.ntu.edu.tw/nol/coursesearch/print_table.php?";
   const course_id = course.identifier.replace("E", "");
+  const dept_id = course.departments.length > 0 ? course.departments[0].id : "";
+  const class_id = course.class ? course.class : "";
   const params = `course_id=${course_id.substr(0, 3)}%20${course_id.substr(
     3
-  )}&class=${course.class}&ser_no=${
+  )}&class=${class_id}&ser_no=${
     course.serial
   }&semester=${course.semester.substr(0, 3)}-${course.semester.substr(
     3,
     1
-  )}&lang=${lang}`;
+  )}&dpt_code=${dept_id}&lang=${lang}`;
   return base_url + params;
 };
 
