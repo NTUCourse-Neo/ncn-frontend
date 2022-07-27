@@ -54,15 +54,34 @@ function DeptBadge({ course }) {
         bg="gray.600"
         color="white"
       >
-        <Badge colorScheme="teal" variant="solid" mr="4px">
-          多個系所
+        <Badge
+          colorScheme="teal"
+          variant="solid"
+          maxWidth={"75px"}
+          noOfLines={1}
+        >
+          <Text
+            sx={{
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            多個系所
+          </Text>
         </Badge>
       </Tooltip>
     );
   }
   return (
-    <Badge colorScheme="blue" variant="solid" mr="4px">
-      {course?.departments?.[0]?.name_full ?? ""}
+    <Badge colorScheme="blue" variant="solid" maxWidth={"75px"} noOfLines={1}>
+      <Text
+        sx={{
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+        }}
+      >
+        {course?.departments?.[0]?.name_full ?? ""}
+      </Text>
     </Badge>
   );
 }
