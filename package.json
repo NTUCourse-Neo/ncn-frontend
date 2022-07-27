@@ -10,7 +10,8 @@
     "lint": "next lint",
     "lint-fix": "next lint . --cache --fix",
     "e2e": "npx cypress run --spec 'cypress/e2e/e2e/*'",
-    "next:start": "next start"
+    "next:start": "next start",
+    "analyze": "cross-env ANALYZE=true next build"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": "eslint --cache --fix"
@@ -48,6 +49,8 @@
     "valtio": "^1.6.1"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^12.2.3",
+    "cross-env": "^7.0.3",
     "cypress": "^10.3.0",
     "eslint": "^8.19.0",
     "eslint-config-next": "12.2.0",
