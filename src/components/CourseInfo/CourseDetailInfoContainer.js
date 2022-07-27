@@ -14,16 +14,12 @@ import {
   Tag,
   VStack,
   Divider,
-  useToast,
   useColorModeValue,
 } from "@chakra-ui/react";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { FaCircle, FaRss } from "react-icons/fa";
 import BetaBadge from "components/BetaBadge";
 import { info_view_map } from "data/mapping_table";
-import handleFetch from "utils/CustomFetch";
-import { useUser } from "@auth0/nextjs-auth0";
-import { useRouter } from "next/router";
 import parseCourseSchedlue from "utils/parseCourseSchedule";
 import {
   SignUpPanel,
@@ -51,49 +47,6 @@ function DataSourceTag({ source }) {
 }
 
 function CourseDetailInfoContainer({ course }) {
-  const toast = useToast();
-  const { user, isLoading: isAuth0Loading } = useUser();
-  const router = useRouter();
-
-  // sign up
-  const [signUpCardIdx, setSignUpCardIdx] = useState(0);
-  const [SignUpPostData, setSignUpPostData] = useState(null);
-  const [isLoadingSignUpPostData, setIsLoadingSignUpPostData] = useState(true);
-
-  async function fetchSignUpPostData() {
-    setIsLoadingSignUpPostData(true);
-    let data;
-    try {
-      data = await handleFetch("/api/social/getByCourseId", {
-        course_id: course.id,
-      });
-    } catch (error) {
-      setIsLoadingSignUpPostData(false);
-      toast({
-        title: "無法取得加簽資訊",
-        description: "請稍後再試一次",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      if (error?.response?.data?.msg === "access_token_expired") {
-        router.push("/api/auth/login");
-      }
-      return;
-    }
-    setSignUpPostData(data);
-    setSignUpCardIdx(0);
-    setIsLoadingSignUpPostData(false);
-  }
-
-  useEffect(() => {
-    if (!isAuth0Loading && user) {
-      fetchSignUpPostData();
-    } else if (!isAuth0Loading && !user) {
-      setIsLoadingSignUpPostData(false);
-    }
-  }, [isAuth0Loading, user]); // eslint-disable-line react-hooks/exhaustive-deps
-
   const course_codes_1 = [
     { title: "流水號", value: course.serial },
     { title: "課號", value: course.code },
@@ -337,16 +290,7 @@ function CourseDetailInfoContainer({ course }) {
             加簽資訊
             <BetaBadge content="beta" size="sm" />
           </Text>
-          <SignUpPanel
-            isLoading={isLoadingSignUpPostData || isAuth0Loading}
-            isUnauth={!user}
-            course={course}
-            SignUpPostData={SignUpPostData}
-            setSignUpPostData={setSignUpPostData}
-            fetchSignUpPostData={fetchSignUpPostData}
-            signUpCardIdx={signUpCardIdx}
-            setSignUpCardIdx={setSignUpCardIdx}
-          />
+          <SignUpPanel courseId={course.id} />
         </Flex>
         {/* Box4 */}
         <Flex

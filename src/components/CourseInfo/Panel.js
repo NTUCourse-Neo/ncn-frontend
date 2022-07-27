@@ -22,7 +22,7 @@ import {
   IconButton,
   useColorModeValue,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { PieChart } from "react-minimal-pie-chart";
 import {
   FaCircle,
@@ -45,6 +45,7 @@ import {
   usePTTReviewData,
   usePTTExamData,
   useSyllabusData,
+  useSignUpPostData,
 } from "hooks/useCourseInfo";
 
 function LoadingPanel({ title, ...restProps }) {
@@ -165,28 +166,36 @@ function PanelWrapper({
   return <>{children}</>;
 }
 
-export function SignUpPanel({
-  isLoading,
-  isUnauth,
-  course,
-  SignUpPostData,
-  setSignUpPostData,
-  fetchSignUpPostData,
-  signUpCardIdx,
-  setSignUpCardIdx,
-}) {
+export function SignUpPanel({ courseId }) {
+  const { user, isLoading: isAuth0Loading } = useUser();
+  const {
+    data: signUpPostData,
+    isLoading,
+    refetch,
+  } = useSignUpPostData(courseId);
+  const [signUpCardIdx, setSignUpCardIdx] = useState(0);
   const textColor = useColorModeValue("text.light", "text.dark");
+
+  // trigger after delete sign up card
+  useEffect(() => {
+    if (
+      Array.isArray(signUpPostData) &&
+      signUpCardIdx >= signUpPostData.length
+    ) {
+      setSignUpCardIdx(Math.max(signUpPostData.length - 1, 0));
+    }
+  }, [signUpPostData, setSignUpCardIdx, signUpCardIdx]);
   return (
     <PanelWrapper
-      isLoading={isLoading}
-      isUnauth={isUnauth}
+      isLoading={isLoading || isAuth0Loading}
+      isUnauth={!user}
       loadingFallback={
         <LoadingPanel title="努力跑加簽大地中..." height="100%" />
       }
     >
-      {!SignUpPostData ? (
+      {!signUpPostData ? (
         <PanelPlaceholder title="無加簽相關資訊" height="100%" />
-      ) : SignUpPostData.length === 0 ? (
+      ) : signUpPostData.length === 0 ? (
         <Flex
           w="100%"
           h="100%"
@@ -198,9 +207,9 @@ export function SignUpPanel({
           <PanelPlaceholder title="無加簽相關資訊" h="100%" pt="0" />
           <HStack w="100%" pr="8" mt="8" justify="end">
             <SignUpReportForm
-              courseId={course.id}
-              haveSubmitted={SignUpPostData.some((obj) => obj.is_owner)}
-              submitCallback={fetchSignUpPostData}
+              courseId={courseId}
+              haveSubmitted={signUpPostData.some((obj) => obj.is_owner)}
+              submitCallback={refetch}
             />
           </HStack>
         </Flex>
@@ -214,10 +223,9 @@ export function SignUpPanel({
           alignItems={{ base: "start", lg: "center" }}
         >
           <SignUpCard
-            post={SignUpPostData[signUpCardIdx]}
-            SignUpPostData={SignUpPostData}
-            setSignUpPostData={setSignUpPostData}
-            fetchSignUpPostData={fetchSignUpPostData}
+            post={signUpPostData[signUpCardIdx]}
+            SignUpPostData={signUpPostData}
+            refetch={refetch}
           />
           <HStack w="100%" pr="8" mt="8">
             <HStack>
@@ -228,7 +236,7 @@ export function SignUpPanel({
                 onClick={() =>
                   setSignUpCardIdx(
                     signUpCardIdx === 0
-                      ? SignUpPostData.length - 1
+                      ? signUpPostData.length - 1
                       : signUpCardIdx - 1
                   )
                 }
@@ -238,7 +246,7 @@ export function SignUpPanel({
                 variant="ghost"
                 icon={<FaChevronRight />}
                 onClick={() =>
-                  setSignUpCardIdx((signUpCardIdx + 1) % SignUpPostData.length)
+                  setSignUpCardIdx((signUpCardIdx + 1) % signUpPostData.length)
                 }
               />
               <Text
@@ -247,14 +255,14 @@ export function SignUpPanel({
                 color={textColor}
                 textAlign="center"
               >
-                {signUpCardIdx + 1}/{SignUpPostData.length}
+                {signUpCardIdx + 1}/{signUpPostData.length}
               </Text>
             </HStack>
             <Spacer />
             <SignUpReportForm
-              courseId={course.id}
-              haveSubmitted={SignUpPostData.some((obj) => obj.is_owner)}
-              submitCallback={fetchSignUpPostData}
+              courseId={courseId}
+              haveSubmitted={signUpPostData.some((obj) => obj.is_owner)}
+              submitCallback={refetch}
             />
           </HStack>
         </Flex>

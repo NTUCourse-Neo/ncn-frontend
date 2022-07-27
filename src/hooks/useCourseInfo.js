@@ -5,8 +5,10 @@ import { useRouter } from "next/router";
 import { useToast } from "@chakra-ui/react";
 import { getCourseSyllabusData } from "queries/course";
 import { hash_to_color_hex_with_hue } from "utils/colorAgent";
+import { useUser } from "@auth0/nextjs-auth0";
 
 export function useCourseEnrollData(courseSerial, options) {
+  const { user } = useUser();
   const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -14,7 +16,7 @@ export function useCourseEnrollData(courseSerial, options) {
   const onErrorCallback = options?.onErrorCallback;
   const { mutate } = useSWRConfig();
   const { data: courseEnroll, error } = useSWR(
-    courseSerial ? `/api/course/enrollInfo` : null,
+    user && courseSerial ? `/api/course/enrollInfo` : null,
     async (url) => {
       setIsLoading(true);
       const courseEnrollData = await handleFetch(url, {
@@ -56,6 +58,7 @@ export function useCourseEnrollData(courseSerial, options) {
 }
 
 export function useNTURatingData(courseId, options) {
+  const { user } = useUser();
   const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -63,7 +66,7 @@ export function useNTURatingData(courseId, options) {
   const onErrorCallback = options?.onErrorCallback;
   const { mutate } = useSWRConfig();
   const { data: ntuRating, error } = useSWR(
-    courseId ? `/api/course/ntuRating` : null,
+    user && courseId ? `/api/course/ntuRating` : null,
     async (url) => {
       setIsLoading(true);
       const ntuRatingData = await handleFetch(url, {
@@ -105,6 +108,7 @@ export function useNTURatingData(courseId, options) {
 }
 
 export function usePTTReviewData(courseId, options) {
+  const { user } = useUser();
   const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -112,7 +116,7 @@ export function usePTTReviewData(courseId, options) {
   const onErrorCallback = options?.onErrorCallback;
   const { mutate } = useSWRConfig();
   const { data: pttReviewData, error } = useSWR(
-    courseId ? `/api/course/ptt/review/${courseId}` : null,
+    user && courseId ? `/api/course/ptt/review/${courseId}` : null,
     async (url) => {
       setIsLoading(true);
       const data = await handleFetch("/api/course/ptt", {
@@ -155,6 +159,7 @@ export function usePTTReviewData(courseId, options) {
 }
 
 export function usePTTExamData(courseId, options) {
+  const { user } = useUser();
   const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -162,7 +167,7 @@ export function usePTTExamData(courseId, options) {
   const onErrorCallback = options?.onErrorCallback;
   const { mutate } = useSWRConfig();
   const { data: pttExamData, error } = useSWR(
-    courseId ? `/api/course/ptt/exam/${courseId}` : null,
+    user && courseId ? `/api/course/ptt/exam/${courseId}` : null,
     async (url) => {
       setIsLoading(true);
       const data = await handleFetch("/api/course/ptt", {
@@ -264,8 +269,8 @@ export function useSyllabusData(courseId, options) {
   };
 }
 
-// not used
 export function useSignUpPostData(courseId, options) {
+  const { user } = useUser();
   const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -273,7 +278,7 @@ export function useSignUpPostData(courseId, options) {
   const onErrorCallback = options?.onErrorCallback;
   const { mutate } = useSWRConfig();
   const { data: signUpPostData, error } = useSWR(
-    courseId ? `/api/social/getByCourseId/${courseId}` : null,
+    user && courseId ? `/api/social/getByCourseId/${courseId}` : null,
     async (url) => {
       setIsLoading(true);
       const data = await handleFetch("/api/social/getByCourseId", {

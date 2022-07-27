@@ -87,6 +87,8 @@ function SignUpReportForm({ courseId, haveSubmitted, submitCallback }) {
         duration: 3000,
         isClosable: true,
       });
+      onClose();
+      await submitCallback();
     } catch (e) {
       toast({
         title: "發送失敗，請稍後再試",
@@ -98,7 +100,6 @@ function SignUpReportForm({ courseId, haveSubmitted, submitCallback }) {
         router.push("/api/auth/login");
       }
     }
-    return true;
   };
 
   return (
@@ -259,10 +260,6 @@ function SignUpReportForm({ courseId, haveSubmitted, submitCallback }) {
                 setSendingForm(true);
                 const res = await handleSubmitSignUpCardForm();
                 setSendingForm(false);
-                if (res === true) {
-                  onClose();
-                  await submitCallback();
-                }
               }}
             >
               送出
