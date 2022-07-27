@@ -45,45 +45,34 @@ function DeptBadge({ course }) {
   if (!course.departments || course.departments.length === 0) {
     return <></>;
   }
-  if (course.departments.length > 1) {
-    const dept_str = course.departments.map((d) => d.name_full).join(", ");
-    return (
-      <Tooltip
-        hasArrow
-        placement="top"
-        label={dept_str}
-        bg="gray.600"
-        color="white"
-      >
-        <Badge
-          colorScheme="teal"
-          variant="solid"
-          maxWidth={"75px"}
-          noOfLines={1}
-        >
-          <Text
-            sx={{
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }}
-          >
-            多個系所
-          </Text>
-        </Badge>
-      </Tooltip>
-    );
-  }
+  const dept_str = course.departments.map((d) => d.name_full).join(", ");
+  const isMultipleDepts = course.departments.length > 1;
   return (
-    <Badge colorScheme="blue" variant="solid" maxWidth={"75px"} noOfLines={1}>
-      <Text
-        sx={{
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-        }}
+    <Tooltip
+      hasArrow
+      placement="top"
+      label={dept_str}
+      bg="gray.600"
+      color="white"
+    >
+      <Badge
+        colorScheme={isMultipleDepts ? "teal" : "blue"}
+        variant="solid"
+        maxWidth={"125px"}
+        noOfLines={1}
       >
-        {course?.departments?.[0]?.name_full ?? ""}
-      </Text>
-    </Badge>
+        <Text
+          sx={{
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          {isMultipleDepts
+            ? "多個系所"
+            : course?.departments?.[0]?.name_full ?? ""}
+        </Text>
+      </Badge>
+    </Tooltip>
   );
 }
 
@@ -524,6 +513,7 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTable }) {
                 as="h3"
                 size={useBreakpointValue({ base: "sm", md: "md" }) ?? "sm"}
                 color={headingColor}
+                textAlign="start"
               >
                 {courseInfo.name}
               </Heading>
