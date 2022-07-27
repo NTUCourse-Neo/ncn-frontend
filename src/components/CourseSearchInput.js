@@ -1,8 +1,6 @@
 import { React, useState } from "react";
 import {
   Flex,
-  InputGroup,
-  InputLeftElement,
   Input,
   Button,
   Menu,
@@ -12,7 +10,6 @@ import {
   MenuItemOption,
   MenuOptionGroup,
   Badge,
-  Spacer,
   HStack,
   Text,
   Collapse,
@@ -29,9 +26,10 @@ import {
   useBreakpointValue,
   Tag,
   useColorModeValue,
+  Icon,
 } from "@chakra-ui/react";
-import { Search2Icon, ChevronDownIcon } from "@chakra-ui/icons";
 import { FaSearch, FaPlus, FaMinus, FaChevronDown } from "react-icons/fa";
+import { TbListSearch } from "react-icons/tb";
 import TimeFilterModal from "components/FilterModals/TimeFilterModal";
 import DeptFilterModal from "components/FilterModals/DeptFilterModal";
 import CategoryFilterModal from "components/FilterModals/CategoryFilterModal";
@@ -136,16 +134,22 @@ function CourseSearchInputTextArea(props) {
       <Flex
         flexDirection="row"
         alignItems="center"
-        justifyContent={["start", "start", "center", "center"]}
+        justifyContent="center"
         flexWrap="wrap"
         css={{ gap: "10px" }}
       >
         <Menu closeOnSelect={false} mx="2">
-          <MenuButton as={Button} size={"md"} rightIcon={<ChevronDownIcon />}>
-            欄位
+          <MenuButton as={Button} size={{ base: "md", md: "md" }}>
+            <Icon
+              as={TbListSearch}
+              mr={{ base: "0", md: "2" }}
+              boxSize={{ base: "1.2em", md: "1em" }}
+            />
+            <Text display={{ base: "none", md: "inline-block" }}>設定</Text>
           </MenuButton>
           <MenuList>
             <MenuOptionGroup
+              title="查詢欄位"
               defaultValue={["name", "teacher", "serial", "code", "identifier"]}
               type="checkbox"
             >
@@ -155,7 +159,7 @@ function CourseSearchInputTextArea(props) {
                   toggle_search_column(e);
                 }}
               >
-                課程名稱 <Badge>預設</Badge>
+                課程名稱
               </MenuItemOption>
               <MenuItemOption
                 value="teacher"
@@ -163,7 +167,7 @@ function CourseSearchInputTextArea(props) {
                   toggle_search_column(e);
                 }}
               >
-                教師
+                教師姓名
               </MenuItemOption>
               <MenuItemOption
                 value="serial"
@@ -192,30 +196,25 @@ function CourseSearchInputTextArea(props) {
             </MenuOptionGroup>
           </MenuList>
         </Menu>
-        <InputGroup w={["70%", "60%", "60%", "60%"]}>
-          <InputLeftElement>
-            <Search2Icon color="gray.500" />
-          </InputLeftElement>
-          <Input
-            variant="flushed"
-            size="md"
-            focusBorderColor="teal.500"
-            placeholder="直接搜尋可顯示全部課程"
-            value={searchText}
-            onChange={(e) => {
-              setSearchText(e.target.value);
-            }}
-            onKeyPress={(e) => {
-              if (e.key === "Enter") {
-                startSearch();
-              }
-            }}
-          />
-        </InputGroup>
-        <Spacer display={{ base: "inline-block", md: "none" }} />
+        <Input
+          variant="flushed"
+          size={{ base: "md", md: "md" }}
+          w={["60%", "60%", "60%", "60%"]}
+          focusBorderColor="teal.500"
+          placeholder="直接搜尋顯示全部課程"
+          value={searchText}
+          onChange={(e) => {
+            setSearchText(e.target.value);
+          }}
+          onKeyPress={(e) => {
+            if (e.key === "Enter") {
+              startSearch();
+            }
+          }}
+        />
         <Button
           colorScheme="blue"
-          size={"md"}
+          size={{ base: "md", md: "md" }}
           variant="solid"
           onClick={() => {
             startSearch();

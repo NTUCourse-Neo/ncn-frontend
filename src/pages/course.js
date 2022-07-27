@@ -181,7 +181,7 @@ function CoursePage() {
           >
             <Flex
               w="100%"
-              px="10vw"
+              px={{ base: "5vw", md: "10vw" }}
               py="4"
               direction="column"
               bg={useColorModeValue("white", "black")}
