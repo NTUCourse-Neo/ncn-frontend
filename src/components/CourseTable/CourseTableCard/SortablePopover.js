@@ -35,6 +35,9 @@ const DragHandle = sortableHandle(() => (
 const SortableElement = sortableElement(
   ({ course, prepareToRemoveCourseId, handlePrepareToDelete }) => {
     const router = useRouter();
+    if (!course) {
+      return <></>;
+    }
     const badgeColor = useColorModeValue(
       hash_to_color_hex(course.id, 0.9, 0.8),
       hash_to_color_hex(course.id, 0.3, 0.3)
