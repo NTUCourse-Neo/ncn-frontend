@@ -14,6 +14,7 @@ env:
   NEXT_PUBLIC_API_ENDPOINT: ${{ secrets.AZURE_API_ENDPOINT }}
   NEXT_PUBLIC_ENV: "prod"
   NEXT_PUBLIC_BASE_URL: "https://course.myntu.me"
+  NEXT_PUBLIC_GA_ID: ${{ secrets.GA_TRACKING_ID }}
   AUTH0_SELF_API_AUDIENCE: ${{ secrets.SELF_API_AUDIENCE }}
   AUTH0_SECRET: ${{ secrets.AUTH0_SECRET_V2 }}
   AUTH0_BASE_URL: ${{ secrets.AUTH0_BASE_URL_V2 }}
