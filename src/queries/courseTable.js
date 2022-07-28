@@ -19,10 +19,10 @@ export const createCourseTable = async (
 };
 
 export const fetchCourseTable = async (course_table_id) => {
-  const {
-    data: { course_table },
-  } = await instance.get(`${api_version}/course_tables/${course_table_id}`);
-  return course_table;
+  const { data } = await instance.get(
+    `${api_version}/course_tables/${course_table_id}`
+  );
+  return data;
 };
 
 export const patchCourseTable = async (
