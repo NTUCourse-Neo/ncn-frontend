@@ -14,6 +14,7 @@ import {
 import TimetableSelector from "components/FilterModals/components/TimetableSelector";
 import { mapStateToTimeTable } from "utils/timeTableConverter";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
+import { reportEvent } from "utils/ga";
 
 function TimeFilterModal({ selectedTime, setSelectedTime, toggle, title }) {
   const { searchFilters, setSearchFilters } = useCourseSearchingContext();
@@ -79,6 +80,7 @@ function TimeFilterModal({ selectedTime, setSelectedTime, toggle, title }) {
           onOpen();
           // because this modal will not re-render, so manually reload from redux state
           setSelectedTime(mapStateToTimeTable(searchFilters.time));
+          reportEvent("filter_time", "click", "open_modal");
         }}
       >
         {title}
@@ -110,11 +112,19 @@ function TimeFilterModal({ selectedTime, setSelectedTime, toggle, title }) {
                 onClick={() => {
                   onClose();
                   saveSelectedTime();
+                  reportEvent("filter_time", "click", "save_changes");
                 }}
               >
                 套用
               </Button>
-              <Button size="sm" variant="ghost" onClick={resetSelectedTime}>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => {
+                  resetSelectedTime();
+                  reportEvent("filter_time", "click", "reset_changes");
+                }}
+              >
                 重設
               </Button>
             </Flex>
@@ -133,11 +143,18 @@ function TimeFilterModal({ selectedTime, setSelectedTime, toggle, title }) {
               onClick={() => {
                 onClose();
                 saveSelectedTime();
+                reportEvent("filter_time", "click", "save_changes");
               }}
             >
               套用
             </Button>
-            <Button variant="ghost" onClick={resetSelectedTime}>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                resetSelectedTime();
+                reportEvent("filter_time", "click", "reset_changes");
+              }}
+            >
               重設
             </Button>
           </ModalFooter>

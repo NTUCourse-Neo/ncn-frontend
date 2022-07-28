@@ -30,6 +30,7 @@ import { dept_list_bachelor_only } from "data/department";
 import { useUserData } from "components/Providers/UserProvider";
 import handleFetch from "utils/CustomFetch";
 import Head from "next/head";
+import { reportEvent } from "utils/ga";
 
 function DeleteDialog({
   isAlertOpen,
@@ -524,6 +525,7 @@ export default function UserInfoPage({ user }) {
                 setSaveLoading(true);
                 await updateUserInfo();
                 setSaveLoading(false);
+                reportEvent("user_info", "click", "save");
               }}
             >
               儲存
@@ -562,6 +564,7 @@ export default function UserInfoPage({ user }) {
                   onClick={() => {
                     setIsAlertOpen(true);
                     setDeleteMode("User Profile");
+                    reportEvent("user_info", "click", "reset_info");
                   }}
                 >
                   重設個人資料
@@ -582,6 +585,7 @@ export default function UserInfoPage({ user }) {
                   onClick={() => {
                     setIsAlertOpen(true);
                     setDeleteMode("User Account");
+                    reportEvent("user_info", "click", "delete_account");
                   }}
                 >
                   徹底刪除帳號

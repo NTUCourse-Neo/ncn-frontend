@@ -14,6 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { FaGithub } from "react-icons/fa";
 import Head from "next/head";
+import { reportEvent } from "utils/ga";
 
 const teams = [
   {
@@ -78,9 +79,13 @@ function TeamMemberCard({ person }) {
               borderRadius="md"
               borderWidth="2px"
               px="3"
-              onClick={() =>
-                window.open(`https://www.github.com/${person.github}`, "_blank")
-              }
+              onClick={() => {
+                window.open(
+                  `https://www.github.com/${person.github}`,
+                  "_blank"
+                );
+                reportEvent("about", "click", "github_" + person.github);
+              }}
             >
               <Icon
                 as={FaGithub}

@@ -709,7 +709,11 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTable }) {
             colorScheme={"red"}
             onClick={() => {
               handleAddFavorite(courseInfo.id);
-              reportEvent("course_info_row", "add_favorite", courseInfo.id);
+              reportEvent(
+                "course_info_row",
+                isfavorite ? "remove_favorite" : "add_favorite",
+                courseInfo.id
+              );
             }}
             isLoading={addingFavoriteCourse}
           >
@@ -723,7 +727,11 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTable }) {
             colorScheme={selected ? "red" : "blue"}
             onClick={() => {
               addCourseToTable(courseInfo);
-              reportEvent("course_info_row", "add_to_table", courseInfo.id);
+              reportEvent(
+                "course_info_row",
+                selected ? "remove_course" : "add_course",
+                courseInfo.id
+              );
             }}
             isLoading={addingCourse}
           >
