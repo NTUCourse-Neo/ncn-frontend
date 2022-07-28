@@ -1,12 +1,10 @@
 import useSWR from "swr";
 import { fetchSearchResult } from "queries/course";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
-import { useState } from "react";
 import { useToast } from "@chakra-ui/react";
 
 export default function useSearchResult(searchKeyword, pageIndex) {
   const toast = useToast();
-  const [isLoading, setIsLoading] = useState(false);
   const {
     searchColumns,
     searchSettings,
@@ -18,10 +16,9 @@ export default function useSearchResult(searchKeyword, pageIndex) {
     setSearchLoading,
     setSearchResultCount,
   } = useCourseSearchingContext();
-  const { data, error } = useSWR(
+  const { data, error, isValidating } = useSWR(
     `/api/search/${searchKeyword}/${pageIndex}`,
     async (url) => {
-      setIsLoading(true);
       setSearchLoading(true);
       const coursesData = await fetchSearchResult(
         searchKeyword,
@@ -33,7 +30,6 @@ export default function useSearchResult(searchKeyword, pageIndex) {
         searchSettings.strict_search_mode,
         {}
       );
-      setIsLoading(false);
       setSearchLoading(false);
       return coursesData;
     },
@@ -58,7 +54,7 @@ export default function useSearchResult(searchKeyword, pageIndex) {
 
   return {
     courses: data?.courses ?? [],
-    isLoading,
+    isLoading: (!data && !error) || isValidating,
     error,
   };
 }

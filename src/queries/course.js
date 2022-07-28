@@ -28,17 +28,15 @@ export const fetchSearchResult = async (
         : null,
     strict_match: strict_match_bool,
   };
-  const {
-    data: { courses, total_count },
-  } = await instance.post(`${api_version}/courses/search`, {
+  const { data } = await instance.post(`${api_version}/courses/search`, {
     keyword: searchString,
     fields: fields,
     filter: filter,
     batch_size: batchSize,
     offset: offset,
   });
-  onSuccess({ courses, totalCount: total_count });
-  return { courses, total_count };
+  onSuccess({ courses: data?.courses, totalCount: data?.total_count });
+  return data;
 };
 
 export const fetchCourse = async (id) => {
