@@ -11,6 +11,7 @@ import { reportEvent } from "utils/ga";
 const ThemeToggleButton = () => {
   const { toggleColorMode } = useColorMode();
   const IconColor = useColorModeValue("orange.600", "purple.700");
+  const gtagActionLabel = useColorModeValue("useDarkMode", "useBrightMode");
 
   return (
     <AnimatePresence exitBeforeEnter initial={false}>
@@ -27,7 +28,7 @@ const ThemeToggleButton = () => {
           variant="ghost"
           onClick={() => {
             toggleColorMode();
-            reportEvent("header", "click", "color_mode");
+            reportEvent("header", "click", gtagActionLabel);
           }}
           w="5"
           mx={{ base: 2, md: 1 }}
