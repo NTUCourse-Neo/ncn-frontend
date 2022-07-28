@@ -1,6 +1,6 @@
 import useSWR from "swr";
 import handleFetch from "utils/CustomFetch";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
 import { useToast } from "@chakra-ui/react";
 import { getCourseSyllabusData } from "queries/course";
@@ -187,30 +187,28 @@ export function usePTTExamData(courseId, options) {
 
 export function useSyllabusData(courseId, options) {
   const toast = useToast();
-  const [isLoading, setIsLoading] = useState(false);
-  const [data, setData] = useState(null);
   const router = useRouter();
   const onSuccessCallback = options?.onSuccessCallback;
   const onErrorCallback = options?.onErrorCallback;
-  const {
-    data: syllabusData,
-    error,
-    mutate,
-  } = useSWR(
+  const { data, error, mutate } = useSWR(
     courseId ? `/courses/${courseId}/syllabus` : null,
     async (url) => {
-      setIsLoading(true);
       const data = await getCourseSyllabusData(courseId);
-      setIsLoading(false);
+      if (data?.course_syllabus?.grade) {
+        data.course_syllabus.grade.forEach((grade) => {
+          grade.color = hash_to_color_hex_with_hue(grade.title, {
+            min: 180,
+            max: 200,
+          });
+        });
+      }
       return data;
     },
     {
       onSuccess: async (data, key, config) => {
-        setIsLoading(false);
         await onSuccessCallback?.(data, key, config);
       },
       onError: (err, key, config) => {
-        setIsLoading(false);
         if (err?.response?.status === 401) {
           router.push("/api/auth/login");
         }
@@ -226,21 +224,9 @@ export function useSyllabusData(courseId, options) {
     }
   );
 
-  useEffect(() => {
-    if (syllabusData && syllabusData.grade) {
-      syllabusData.grade.forEach((grade) => {
-        grade.color = hash_to_color_hex_with_hue(grade.title, {
-          min: 180,
-          max: 200,
-        });
-      });
-    }
-    setData(syllabusData);
-  }, [syllabusData]);
-
   return {
-    data: data ?? null,
-    isLoading,
+    data: data?.course_syllabus ?? null,
+    isLoading: !data && !error,
     error: error,
     refetch: () => {
       mutate();

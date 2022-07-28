@@ -83,8 +83,8 @@ export const getPTTData = async (token, course_id, type) => {
 };
 
 export const getCourseSyllabusData = async (course_id) => {
-  const {
-    data: { course_syllabus },
-  } = await instance.get(`${api_version}/courses/${course_id}/syllabus`);
-  return course_syllabus;
+  const { data } = await instance.get(
+    `${api_version}/courses/${course_id}/syllabus`
+  );
+  return data;
 };
