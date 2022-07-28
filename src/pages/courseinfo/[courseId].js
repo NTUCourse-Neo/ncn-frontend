@@ -369,7 +369,7 @@ function CourseInfoPage({ code, course }) {
                   size="md"
                   colorScheme="red"
                   variant="ghost"
-                  isLoading={isLoading || isCourseTableLoading}
+                  isLoading={isLoading}
                   disabled={!userInfo}
                   onClick={() => {
                     handleAddFavorite(course.id);
@@ -391,7 +391,7 @@ function CourseInfoPage({ code, course }) {
                   colorScheme={selected ? "red" : "blue"}
                   variant="outline"
                   leftIcon={selected ? <FaMinus /> : <FaPlus />}
-                  isLoading={isLoading || isCourseTableLoading}
+                  isLoading={isCourseTableLoading}
                   onClick={() => {
                     handleAddCourse(course);
                     reportEvent(
