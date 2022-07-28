@@ -51,6 +51,7 @@ import {
   fetchCourseTable,
 } from "queries/courseTable";
 import handleFetch from "utils/CustomFetch";
+import { reportEvent } from "utils/ga";
 
 const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
@@ -122,15 +123,16 @@ function CourseTableNameEditor({
                 />
                 <ButtonGroup d="flex" justifyContent="flex-end">
                   <Button variant="outline" onClick={onClose}>
-                    Cancel
+                    取消
                   </Button>
                   <Button
                     colorScheme="teal"
                     onClick={() => {
                       handleSave(firstFieldRef.current.value);
+                      reportEvent("course_table", "click", "save_table_name");
                     }}
                   >
-                    Save
+                    儲存
                   </Button>
                 </ButtonGroup>
               </Stack>
@@ -365,6 +367,7 @@ function SideCourseTableContent({
             } else {
               setIsLoginWarningOpen(true);
             }
+            reportEvent("course_table", "click", "create_table");
           }}
         >
           新增課表
@@ -465,6 +468,7 @@ function SideCourseTableContainer({
           }
           onClick={() => {
             setIsDisplay(!isDisplay);
+            reportEvent("course_table", "click", "collapse_panel");
           }}
           size="sm"
           variant="ghost"

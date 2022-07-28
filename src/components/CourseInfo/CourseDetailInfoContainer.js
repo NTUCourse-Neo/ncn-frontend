@@ -53,6 +53,7 @@ import { useUser } from "@auth0/nextjs-auth0";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import parseCourseSchedlue from "utils/parseCourseSchedule";
+import { reportEvent } from "utils/ga";
 
 function DataSourceTag({ source }) {
   return (
@@ -162,6 +163,7 @@ function UnauthenticatedPanel({ ...restProps }) {
         fontSize="md"
         fontWeight="800"
         onClick={() => {
+          reportEvent("member_only_panel", "click", "login");
           router.push("/api/auth/login");
         }}
       >
@@ -354,12 +356,13 @@ function NTURatingPanel({ isLoading, isUnauth, NTURatingData }) {
             variant="outline"
             size="sm"
             rightIcon={<IoMdOpen />}
-            onClick={() =>
+            onClick={() => {
               window.open(
                 "https://rating.myntu.me/?referrer=ntucourse_neo",
                 "_blank"
-              )
-            }
+              );
+              reportEvent("rating_panel", "click_external", "nturating");
+            }}
           >
             前往 NTURating 撰寫評價
           </Button>
@@ -396,12 +399,13 @@ function NTURatingPanel({ isLoading, isUnauth, NTURatingData }) {
             variant="outline"
             size="sm"
             rightIcon={<IoMdOpen />}
-            onClick={() =>
+            onClick={() => {
               window.open(
                 NTURatingData.url + "?referrer=ntucourse_neo",
                 "_blank"
-              )
-            }
+              );
+              reportEvent("rating_panel", "click_external", NTURatingData.url);
+            }}
           >
             前往 NTURating 查看該課程評價
           </Button>

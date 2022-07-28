@@ -21,6 +21,7 @@ import React, { useState } from "react";
 import { social_user_type_map } from "data/mapping_table";
 import handleFetch from "utils/CustomFetch";
 import { useRouter } from "next/router";
+import { reportEvent } from "utils/ga";
 
 function SignUpReportForm({ courseId, haveSubmitted, submitCallback }) {
   const headingColor = useColorModeValue("heading.light", "heading.dark");
@@ -259,6 +260,7 @@ function SignUpReportForm({ courseId, haveSubmitted, submitCallback }) {
                 setSendingForm(true);
                 const res = await handleSubmitSignUpCardForm();
                 setSendingForm(false);
+                reportEvent("signup_post", "click", "submit_post");
                 if (res === true) {
                   onClose();
                   await submitCallback();

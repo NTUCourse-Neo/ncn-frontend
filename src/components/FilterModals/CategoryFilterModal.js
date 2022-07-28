@@ -18,6 +18,7 @@ import { type_list, code_map } from "data/course_type";
 import FilterElement from "components/FilterModals/components/FilterElement";
 import React, { useMemo } from "react";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
+import { reportEvent } from "utils/ga";
 
 function CategoryFilterModal({
   title,
@@ -90,6 +91,7 @@ function CategoryFilterModal({
                     selected={false}
                     onClick={() => {
                       setSelectedType([...selectedType, type.id]);
+                      reportEvent("filter_category", "click", type.id);
                     }}
                   />
                 ))}
@@ -108,6 +110,7 @@ function CategoryFilterModal({
         isDisabled={!isEnabled}
         onClick={() => {
           onOpenModal();
+          reportEvent("filter_category", "click", "open_modal");
         }}
       >
         {title}
@@ -137,6 +140,7 @@ function CategoryFilterModal({
                 mr={3}
                 onClick={() => {
                   onSaveEditing();
+                  reportEvent("filter_category", "click", "save_changes");
                 }}
               >
                 套用
@@ -146,6 +150,7 @@ function CategoryFilterModal({
                 variant="ghost"
                 onClick={() => {
                   onResetEditing();
+                  reportEvent("filter_category", "click", "reset_changes");
                 }}
               >
                 重設
@@ -166,6 +171,7 @@ function CategoryFilterModal({
                     setSelectedType(
                       selectedType.filter((id) => id !== type.id)
                     );
+                    reportEvent("filter_category", "click", type.id);
                   }}
                 />
               ))}
@@ -178,6 +184,7 @@ function CategoryFilterModal({
               mr={3}
               onClick={() => {
                 onSaveEditing();
+                reportEvent("filter_category", "click", "save_changes");
               }}
             >
               套用
@@ -186,6 +193,7 @@ function CategoryFilterModal({
               variant="ghost"
               onClick={() => {
                 onResetEditing();
+                reportEvent("filter_category", "click", "reset_changes");
               }}
             >
               重設
