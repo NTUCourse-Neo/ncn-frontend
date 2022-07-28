@@ -1,4 +1,4 @@
-import { React, useState, useRef, useEffect } from "react";
+import { React, useState, useRef } from "react";
 import {
   Box,
   Flex,
@@ -193,6 +193,15 @@ export default function UserInfoPage({ user }) {
       });
       router.push("/404");
     },
+    onSuccessCallback: (data, k, c) => {
+      const userData = data?.db;
+      if (userData) {
+        setName(userData?.name ?? "");
+        setMajor(userData?.major?.id ?? null);
+        setDoubleMajor(userData?.d_major?.id ?? null);
+        setMinor(userData?.minors.map((d) => d.id) ?? []);
+      }
+    },
   });
 
   // states for updating userInfo
@@ -200,15 +209,6 @@ export default function UserInfoPage({ user }) {
   const [major, setMajor] = useState(userInfo?.major?.id ?? null);
   const [doubleMajor, setDoubleMajor] = useState(userInfo?.d_major?.id ?? null);
   const [minor, setMinor] = useState(userInfo?.minors.map((d) => d.id) ?? []);
-
-  useEffect(() => {
-    if (userInfo) {
-      setName(userInfo?.name ?? "");
-      setMajor(userInfo?.major?.id ?? null);
-      setDoubleMajor(userInfo?.d_major?.id ?? null);
-      setMinor(userInfo?.minors.map((d) => d.id) ?? []);
-    }
-  }, [userInfo]);
 
   const updateUserInfo = async () => {
     let errorMsg = null;
