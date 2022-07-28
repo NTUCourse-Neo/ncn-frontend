@@ -66,14 +66,15 @@ const createSocialPost = async (token, course_id, post) => {
 };
 
 const getSocialPostByCourseId = async (token, course_id) => {
-  const {
-    data: { posts },
-  } = await instance.get(`${api_version}/social/courses/${course_id}/posts`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return posts;
+  const { data } = await instance.get(
+    `${api_version}/social/courses/${course_id}/posts`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return data;
 };
 
 export {

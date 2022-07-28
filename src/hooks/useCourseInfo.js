@@ -1,6 +1,5 @@
 import useSWR from "swr";
 import handleFetch from "utils/CustomFetch";
-import { useState } from "react";
 import { useRouter } from "next/router";
 import { useToast } from "@chakra-ui/react";
 import { getCourseSyllabusData } from "queries/course";
@@ -237,31 +236,22 @@ export function useSyllabusData(courseId, options) {
 export function useSignUpPostData(courseId, options) {
   const { user } = useUser();
   const toast = useToast();
-  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const onSuccessCallback = options?.onSuccessCallback;
   const onErrorCallback = options?.onErrorCallback;
-  const {
-    data: signUpPostData,
-    error,
-    mutate,
-  } = useSWR(
+  const { data, error, mutate } = useSWR(
     user && courseId ? `/api/social/getByCourseId/${courseId}` : null,
     async (url) => {
-      setIsLoading(true);
       const data = await handleFetch("/api/social/getByCourseId", {
         course_id: courseId,
       });
-      setIsLoading(false);
       return data;
     },
     {
       onSuccess: async (data, key, config) => {
-        setIsLoading(false);
         await onSuccessCallback?.(data, key, config);
       },
       onError: (err, key, config) => {
-        setIsLoading(false);
         if (err?.response?.status === 401) {
           router.push("/api/auth/login");
         }
@@ -278,8 +268,8 @@ export function useSignUpPostData(courseId, options) {
   );
 
   return {
-    data: signUpPostData ?? null,
-    isLoading,
+    data: data?.posts ?? null,
+    isLoading: !data && !error,
     error: error,
     refetch: () => {
       mutate();
