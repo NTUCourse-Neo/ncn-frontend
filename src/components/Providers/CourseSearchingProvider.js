@@ -48,7 +48,13 @@ function CourseSearchingProvider(props) {
   const [totalCount, setTotalCount] = useState(0);
   const [batchSize, setBatchSize] = useState(20);
   const [offset, setOffset] = useState(0);
-  const [searchColumns, setSearchColumns] = useState(["name", "teacher"]);
+  const [searchColumns, setSearchColumns] = useState([
+    "name",
+    "teacher",
+    "serial",
+    "code",
+    "identifier",
+  ]);
   const [searchSettings, setSearchSettings] = useState({
     show_selected_courses: false,
     only_show_not_conflicted_courses: false,

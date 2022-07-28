@@ -151,7 +151,7 @@ function CourseSearchInputTextArea(props) {
           <MenuList>
             <MenuOptionGroup
               title="查詢欄位"
-              defaultValue={["name", "teacher", "serial", "code", "identifier"]}
+              defaultValue={searchColumns}
               type="checkbox"
             >
               <MenuItemOption
