@@ -99,32 +99,23 @@ export function useNTURatingData(courseId, options) {
 export function usePTTReviewData(courseId, options) {
   const { user } = useUser();
   const toast = useToast();
-  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const onSuccessCallback = options?.onSuccessCallback;
   const onErrorCallback = options?.onErrorCallback;
-  const {
-    data: pttReviewData,
-    error,
-    mutate,
-  } = useSWR(
+  const { data, error, mutate } = useSWR(
     user && courseId ? `/api/course/ptt/review/${courseId}` : null,
     async (url) => {
-      setIsLoading(true);
       const data = await handleFetch("/api/course/ptt", {
         courseId: courseId,
         type: "review",
       });
-      setIsLoading(false);
       return data;
     },
     {
       onSuccess: async (data, key, config) => {
-        setIsLoading(false);
         await onSuccessCallback?.(data, key, config);
       },
       onError: (err, key, config) => {
-        setIsLoading(false);
         if (err?.response?.status === 401) {
           router.push("/api/auth/login");
         }
@@ -141,8 +132,8 @@ export function usePTTReviewData(courseId, options) {
   );
 
   return {
-    data: pttReviewData ?? null,
-    isLoading,
+    data: data?.course_rating ?? null,
+    isLoading: !data && !error,
     error: error,
     refetch: () => {
       mutate();

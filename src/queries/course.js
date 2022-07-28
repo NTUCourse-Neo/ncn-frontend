@@ -71,14 +71,15 @@ export const getNTURatingData = async (token, course_id) => {
 };
 
 export const getPTTData = async (token, course_id, type) => {
-  const {
-    data: { course_rating },
-  } = await instance.get(`${api_version}/courses/${course_id}/ptt/${type}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return course_rating;
+  const { data } = await instance.get(
+    `${api_version}/courses/${course_id}/ptt/${type}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return data;
 };
 
 export const getCourseSyllabusData = async (course_id) => {
