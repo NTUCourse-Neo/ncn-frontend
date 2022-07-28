@@ -42,6 +42,7 @@ import { useMount } from "react-use";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { useDisplayTags } from "components/Providers/DisplayTagsProvider";
 import { useSWRConfig } from "swr";
+import { reportEvent } from "utils/ga";
 
 function CourseSearchInputTextArea(props) {
   const { searchCallback = () => {} } = props;
@@ -110,13 +111,14 @@ function CourseSearchInputTextArea(props) {
           <MenuList>
             <MenuOptionGroup
               title="查詢欄位"
-              defaultValue={["name", "teacher", "serial", "code", "identifier"]}
+              defaultValue={searchColumns}
               type="checkbox"
             >
               <MenuItemOption
                 value="name"
                 onClick={(e) => {
                   toggle_search_column(e);
+                  reportEvent("search", "toggle_search_column", "name");
                 }}
               >
                 課程名稱
@@ -125,6 +127,7 @@ function CourseSearchInputTextArea(props) {
                 value="teacher"
                 onClick={(e) => {
                   toggle_search_column(e);
+                  reportEvent("search", "toggle_search_column", "teacher");
                 }}
               >
                 教師姓名
@@ -133,6 +136,7 @@ function CourseSearchInputTextArea(props) {
                 value="serial"
                 onClick={(e) => {
                   toggle_search_column(e);
+                  reportEvent("search", "toggle_search_column", "serial");
                 }}
               >
                 流水號
@@ -141,6 +145,7 @@ function CourseSearchInputTextArea(props) {
                 value="code"
                 onClick={(e) => {
                   toggle_search_column(e);
+                  reportEvent("search", "toggle_search_column", "code");
                 }}
               >
                 課號
@@ -149,6 +154,7 @@ function CourseSearchInputTextArea(props) {
                 value="identifier"
                 onClick={(e) => {
                   toggle_search_column(e);
+                  reportEvent("search", "toggle_search_column", "identifier");
                 }}
               >
                 課程識別碼
@@ -169,6 +175,7 @@ function CourseSearchInputTextArea(props) {
           onKeyPress={(e) => {
             if (e.key === "Enter") {
               startSearch();
+              reportEvent("search", "key_enter_search", searchText);
             }
           }}
         />
@@ -178,6 +185,7 @@ function CourseSearchInputTextArea(props) {
           variant="solid"
           onClick={() => {
             startSearch();
+            reportEvent("search", "click_search", searchText);
           }}
         >
           <HStack>
@@ -456,6 +464,11 @@ function CourseSearchInput({ displayPanel, searchCallback }) {
                               value="1"
                               onClick={(e) => {
                                 set_enroll_method(e);
+                                reportEvent(
+                                  "filter",
+                                  "toggle_enroll_method",
+                                  "1"
+                                );
                               }}
                             >
                               <Badge mr="2" colorScheme="blue">
@@ -468,6 +481,11 @@ function CourseSearchInput({ displayPanel, searchCallback }) {
                               value="2"
                               onClick={(e) => {
                                 set_enroll_method(e);
+                                reportEvent(
+                                  "filter",
+                                  "toggle_enroll_method",
+                                  "2"
+                                );
                               }}
                             >
                               <Badge mr="2" colorScheme="blue">
@@ -480,6 +498,11 @@ function CourseSearchInput({ displayPanel, searchCallback }) {
                               value="3"
                               onClick={(e) => {
                                 set_enroll_method(e);
+                                reportEvent(
+                                  "filter",
+                                  "toggle_enroll_method",
+                                  "3"
+                                );
                               }}
                             >
                               <Badge mr="2" colorScheme="blue">
@@ -559,6 +582,11 @@ function CourseSearchInput({ displayPanel, searchCallback }) {
                           sync_add_to_nol: sync_add_to_nol,
                           strict_search_mode: strict_search_mode,
                         });
+                        reportEvent(
+                          "search_settings",
+                          "save",
+                          "strict_" + strict_search_mode
+                        );
                         toast({
                           title: "設定已儲存",
                           description: "讚啦",
@@ -608,9 +636,19 @@ function CourseSearchInput({ displayPanel, searchCallback }) {
                                     setDisplayTags([
                                       ...displayTags.filter((t) => t !== tag),
                                     ]);
+                                    reportEvent(
+                                      "display_tags",
+                                      "toggle_off",
+                                      tag
+                                    );
                                   }
                                 : () => {
                                     setDisplayTags([...displayTags, tag]);
+                                    reportEvent(
+                                      "display_tags",
+                                      "toggle_on",
+                                      tag
+                                    );
                                   }
                             }
                             transition="all 200ms ease-in-out"

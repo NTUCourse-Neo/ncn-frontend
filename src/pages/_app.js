@@ -9,6 +9,7 @@ import "styles/nprogress.css";
 import { useRouter } from "next/router";
 import nProgress from "nprogress";
 import { useEffect } from "react";
+import GoogleAnalytics from "components/GoogleAnalytics";
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
@@ -22,19 +23,22 @@ function MyApp({ Component, pageProps }) {
   }, [router.events]);
 
   return (
-    <Auth0UserProvider>
-      <ChakraProvider theme={theme}>
-        <CourseSearchingProvider>
-          <DisplayTagsProvider>
-            <Box w="100vw" h={{ base: "100%", lg: "" }}>
-              <HeaderBar />
-              <Component {...pageProps} />
-              <Footer />
-            </Box>
-          </DisplayTagsProvider>
-        </CourseSearchingProvider>
-      </ChakraProvider>
-    </Auth0UserProvider>
+    <>
+      {process.env.NEXT_PUBLIC_ENV === "prod" && <GoogleAnalytics />}
+      <Auth0UserProvider>
+        <ChakraProvider theme={theme}>
+          <CourseSearchingProvider>
+            <DisplayTagsProvider>
+              <Box w="100vw" h={{ base: "100%", lg: "" }}>
+                <HeaderBar />
+                <Component {...pageProps} />
+                <Footer />
+              </Box>
+            </DisplayTagsProvider>
+          </CourseSearchingProvider>
+        </ChakraProvider>
+      </Auth0UserProvider>
+    </>
   );
 }
 

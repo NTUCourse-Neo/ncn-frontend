@@ -34,6 +34,7 @@ import SideCourseTableContainer from "components/CourseTable/SideCourseTableCont
 import usePagination from "hooks/usePagination";
 import { useRouter } from "next/router";
 import Head from "next/head";
+import { reportEvent } from "utils/ga";
 
 function NoLoginWarningDialog({
   isOpen,
@@ -69,6 +70,11 @@ function NoLoginWarningDialog({
               onClick={() => {
                 setIsOpen(false);
                 setAgreeToCreateTableWithoutLogin(true);
+                reportEvent(
+                  "course_page",
+                  "click",
+                  "agree_to_create_table_without_login"
+                );
               }}
             >
               等等再說
@@ -78,6 +84,11 @@ function NoLoginWarningDialog({
               rightIcon={<FaArrowRight />}
               onClick={() => {
                 setIsOpen(false);
+                reportEvent(
+                  "course_page",
+                  "click",
+                  "login_before_create_table"
+                );
                 router.push("/api/auth/login");
               }}
               ml={3}
@@ -129,7 +140,7 @@ function CoursePage() {
 
   // if isMobile, when show Alert Modal, set displayTable to false to prevent ugly overlapping
   useEffect(() => {
-    if (isLoginWarningOpen && isMobile) {
+    if (isLoginWarningOpen || isMobile) {
       setDisplayTable(false);
     }
   }, [isLoginWarningOpen, isMobile]);
@@ -196,7 +207,10 @@ function CoursePage() {
               variant="ghost"
               bg={useColorModeValue("white", "black")}
               icon={displayFilter ? <FaChevronUp /> : <FaChevronDown />}
-              onClick={() => setDisplayFilter(!displayFilter)}
+              onClick={() => {
+                setDisplayFilter(!displayFilter);
+                reportEvent("course_page", "click", "toggle_filter");
+              }}
             />
           </Flex>
           <Flex
@@ -257,7 +271,10 @@ function CoursePage() {
           py="1"
           px="4"
           borderRadius="xl"
-          onClick={() => setDisplayTable(!displayTable)}
+          onClick={() => {
+            setDisplayTable(!displayTable);
+            reportEvent("course_page", "click", "expand_table");
+          }}
           _hover={{
             boxShadow: "lg",
             transform: "translateY(-2px) scale(1.02)",

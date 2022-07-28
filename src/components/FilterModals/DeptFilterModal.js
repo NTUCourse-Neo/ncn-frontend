@@ -19,6 +19,7 @@ import { college_map } from "data/college";
 import { dept_list_bachelor_only } from "data/department";
 import FilterElement from "components/FilterModals/components/FilterElement";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
+import { reportEvent } from "utils/ga";
 
 function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
   const headingColor = useColorModeValue("heading.light", "heading.dark");
@@ -89,6 +90,7 @@ function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
                     selected={false}
                     onClick={() => {
                       setSelectedDept([...selectedDept, dept.code]);
+                      reportEvent("filter_department", "click", dept.code);
                     }}
                   />
                 ))}
@@ -107,6 +109,7 @@ function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
         isDisabled={!isEnabled}
         onClick={() => {
           onOpenModal();
+          reportEvent("filter_department", "click", "open_modal");
         }}
       >
         {title}
@@ -136,6 +139,7 @@ function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
                 mr={3}
                 onClick={() => {
                   onSaveEditing();
+                  reportEvent("filter_department", "click", "save_changes");
                 }}
               >
                 套用
@@ -145,6 +149,7 @@ function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
                 variant="ghost"
                 onClick={() => {
                   onResetEditing();
+                  reportEvent("filter_department", "click", "reset_changes");
                 }}
               >
                 重設
@@ -165,6 +170,7 @@ function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
                     setSelectedDept(
                       selectedDept.filter((code) => code !== dept.code)
                     );
+                    reportEvent("filter_department", "click", dept.code);
                   }}
                 />
               ))}
@@ -177,6 +183,7 @@ function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
               mr={3}
               onClick={() => {
                 onSaveEditing();
+                reportEvent("filter_department", "click", "save_changes");
               }}
             >
               套用
@@ -185,6 +192,7 @@ function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
               variant="ghost"
               onClick={() => {
                 onResetEditing();
+                reportEvent("filter_department", "click", "reset_changes");
               }}
             >
               重設

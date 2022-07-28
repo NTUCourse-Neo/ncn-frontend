@@ -31,6 +31,7 @@ import { useUser } from "@auth0/nextjs-auth0";
 import useNeoLocalStorage from "hooks/useNeoLocalStorage";
 import SortablePopover from "components/CourseTable/CourseTableCard/SortablePopover";
 import { patchCourseTable } from "queries/courseTable";
+import { reportEvent } from "utils/ga";
 
 function CourseBox({ courseId, courseData, isOpen, hoverId }) {
   const course = courseData?.[courseId];
@@ -193,6 +194,7 @@ function CourseTableCard({
             onClick={() => {
               setCourseList(courseOrder);
               setPrepareToRemoveCourseId([]);
+              reportEvent("course_table_card_popover", "click", "open");
             }}
           >
             {courseOrder.map((courseId, index) => (
@@ -259,6 +261,11 @@ function CourseTableCard({
                 colorScheme="teal"
                 onClick={() => {
                   saveChanges();
+                  reportEvent(
+                    "course_table_card_popover",
+                    "click",
+                    "save_changes"
+                  );
                 }}
                 disabled={!isEdited()}
               >

@@ -25,6 +25,7 @@ import { useUser } from "@auth0/nextjs-auth0";
 import BeatLoader from "react-spinners/BeatLoader";
 import Image from "next/image";
 import ThemeToggleButton from "components/ThemeToggleButton";
+import { reportEvent } from "utils/ga";
 
 function SignInButton() {
   const { user, isLoading } = useUser();
@@ -115,6 +116,7 @@ function SignInButton() {
               m="2"
               mr="4"
               onClick={() => {
+                reportEvent("header", "click", "logout");
                 router.push("/api/auth/logout");
               }}
             >
@@ -150,6 +152,7 @@ function SignInButton() {
               m="2"
               mr="4"
               onClick={() => {
+                reportEvent("header", "click", "login");
                 router.push("/api/auth/login");
               }}
             >
@@ -166,6 +169,7 @@ function SignInButton() {
         ml="10px"
         mr="10px"
         onClick={() => {
+          reportEvent("header", "click_external", "status");
           router.push("/api/auth/login");
         }}
         display={{ base: "none", md: "inline-block" }}

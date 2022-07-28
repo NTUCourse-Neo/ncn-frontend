@@ -43,6 +43,7 @@ import { patchCourseTable } from "queries/courseTable";
 import Head from "next/head";
 import { useUser } from "@auth0/nextjs-auth0";
 import handleFetch from "utils/CustomFetch";
+import { reportEvent } from "utils/ga";
 
 const copyWordList = [
   { count: 100, word: "複製終結者!!", color: "purple.600", bg: "purple.50" },
@@ -235,9 +236,13 @@ function CourseInfoPage({ code, course }) {
           <HStack>
             <Button
               variant="solid"
-              onClick={() =>
-                window.open("https://www.surveycake.com/s/LzWd6", "_blank")
-              }
+              onClick={() => {
+                window.open(
+                  "https://github.com/NTUCourse-Neo/ncn-frontend/issues/new?assignees=&labels=bug&template=bug_report.md&title=",
+                  "_blank"
+                );
+                reportEvent("course_info_page", "click", "report_bug");
+              }}
             >
               問題回報
             </Button>
@@ -245,9 +250,10 @@ function CourseInfoPage({ code, course }) {
               variant="solid"
               colorScheme="teal"
               leftIcon={<FaHeartbeat />}
-              onClick={() =>
-                window.open("https://status.course.myntu.me/", "_blank")
-              }
+              onClick={() => {
+                window.open("https://status.course.myntu.me/", "_blank");
+                reportEvent("course_info_page", "click", "status_page");
+              }}
             >
               服務狀態
             </Button>
@@ -313,7 +319,10 @@ function CourseInfoPage({ code, course }) {
                         ? copyBtnDefaultColor
                         : copyWord.color
                     }
-                    onClick={() => setCopiedLinkClicks(copiedLinkClicks + 1)}
+                    onClick={() => {
+                      setCopiedLinkClicks(copiedLinkClicks + 1);
+                      reportEvent("course_info_page", "click", "copy_link");
+                    }}
                     display={{ base: "inline-block", lg: "none" }}
                   >
                     {copyWord.word}
@@ -364,6 +373,11 @@ function CourseInfoPage({ code, course }) {
                   disabled={!userInfo}
                   onClick={() => {
                     handleAddFavorite(course.id);
+                    reportEvent(
+                      "course_info_page",
+                      isFavorite ? "remove_favorite" : "add_favorite",
+                      course.id
+                    );
                   }}
                 >
                   <Icon as={isFavorite ? FaHeart : FaRegHeart} boxSize="6" />
@@ -380,6 +394,11 @@ function CourseInfoPage({ code, course }) {
                   isLoading={isLoading || isCourseTableLoading}
                   onClick={() => {
                     handleAddCourse(course);
+                    reportEvent(
+                      "course_info_page",
+                      selected ? "remove_course" : "add_course",
+                      course.id
+                    );
                   }}
                 >
                   {selected ? "從課表移除" : "加入課表"}
@@ -390,7 +409,10 @@ function CourseInfoPage({ code, course }) {
                   colorScheme="blue"
                   variant="outline"
                   leftIcon={<FaPlus />}
-                  onClick={() => openPage(getNolAddUrl(course), true)}
+                  onClick={() => {
+                    openPage(getNolAddUrl(course), true);
+                    reportEvent("course_info_page", "click", "add_to_nol");
+                  }}
                 >
                   課程網
                 </Button>
@@ -399,7 +421,10 @@ function CourseInfoPage({ code, course }) {
                 key={"NolContent_Button_" + code + "_OpenNol"}
                 size="md"
                 rightIcon={<IoMdOpen />}
-                onClick={() => window.open(getNolUrl(course), "_blank")}
+                onClick={() => {
+                  window.open(getNolUrl(course), "_blank");
+                  reportEvent("course_info_page", "click", "open_nol");
+                }}
               >
                 課程頁面
               </Button>
@@ -423,7 +448,10 @@ function CourseInfoPage({ code, course }) {
                   color={
                     copyWord.count === 0 ? copyBtnDefaultColor : copyWord.color
                   }
-                  onClick={() => setCopiedLinkClicks(copiedLinkClicks + 1)}
+                  onClick={() => {
+                    setCopiedLinkClicks(copiedLinkClicks + 1);
+                    reportEvent("course_info_page", "click", "copy_link");
+                  }}
                 >
                   {copyWord.word}
                 </Button>
@@ -447,6 +475,11 @@ function CourseInfoPage({ code, course }) {
                   icon={selected ? <FaMinus /> : <FaPlus />}
                   onClick={() => {
                     handleAddCourse(course);
+                    reportEvent(
+                      "course_info_page",
+                      selected ? "remove_course" : "add_course",
+                      course.id
+                    );
                   }}
                 >
                   {selected ? "從課表移除" : "加入課表"}
@@ -457,7 +490,10 @@ function CourseInfoPage({ code, course }) {
                   color="blue.600"
                   variant="ghost"
                   icon={<FaPlus />}
-                  onClick={() => openPage(getNolAddUrl(course), true)}
+                  onClick={() => {
+                    openPage(getNolAddUrl(course), true);
+                    reportEvent("course_info_page", "click", "add_to_nol");
+                  }}
                 >
                   課程網
                 </MenuItem>
@@ -470,6 +506,11 @@ function CourseInfoPage({ code, course }) {
                   disabled={!userInfo}
                   onClick={() => {
                     handleAddFavorite(course.id);
+                    reportEvent(
+                      "course_info_page",
+                      isFavorite ? "remove_favorite" : "add_favorite",
+                      course.id
+                    );
                   }}
                 >
                   {isFavorite ? "從最愛移除" : "加入最愛"}
@@ -477,7 +518,10 @@ function CourseInfoPage({ code, course }) {
                 <MenuDivider />
                 <MenuItem
                   icon={<IoMdOpen />}
-                  onClick={() => window.open(getNolUrl(course), "_blank")}
+                  onClick={() => {
+                    window.open(getNolUrl(course), "_blank");
+                    reportEvent("course_info_page", "click", "open_nol");
+                  }}
                 >
                   課程頁面
                 </MenuItem>

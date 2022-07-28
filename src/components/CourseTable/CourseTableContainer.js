@@ -21,6 +21,7 @@ import { weekdays_map } from "data/mapping_table";
 import { hash_to_color_hex } from "utils/colorAgent";
 import { hoverCourseState } from "utils/hoverCourse";
 import { useSnapshot } from "valtio";
+import { reportEvent } from "utils/ga";
 
 function HoverCourseIndicator({ hoveredCourse }) {
   const course = hoveredCourse;
@@ -175,7 +176,10 @@ function CourseTableContainer({ courses, loading, courseTimeMap }) {
             {days.map((day, j) => {
               return (
                 <Th
-                  onClick={() => setActiveDayCol(day)}
+                  onClick={() => {
+                    setActiveDayCol(day);
+                    reportEvent("course_table", "click", "expand_day");
+                  }}
                   cursor="pointer"
                   key={`${day}-${j}`}
                 >
@@ -194,7 +198,13 @@ function CourseTableContainer({ courses, loading, courseTimeMap }) {
           </Tr>
         ) : (
           <Tr>
-            <Th onClick={() => setActiveDayCol(0)} cursor="pointer">
+            <Th
+              onClick={() => {
+                setActiveDayCol(0);
+                reportEvent("course_table", "click", "collapse_day");
+              }}
+              cursor="pointer"
+            >
               <Tooltip
                 hasArrow
                 placement="top"

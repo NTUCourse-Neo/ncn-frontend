@@ -47,6 +47,7 @@ import {
   useSyllabusData,
   useSignUpPostData,
 } from "hooks/useCourseInfo";
+import { reportEvent } from "utils/ga";
 
 function LoadingPanel({ title, ...restProps }) {
   return (
@@ -141,6 +142,7 @@ function UnauthenticatedPanel({ ...restProps }) {
         fontSize="md"
         fontWeight="800"
         onClick={() => {
+          reportEvent("member_only_panel", "click", "login");
           router.push("/api/auth/login");
         }}
       >
@@ -345,12 +347,13 @@ export function NTURatingPanel({ courseId }) {
             variant="outline"
             size="sm"
             rightIcon={<IoMdOpen />}
-            onClick={() =>
+            onClick={() => {
               window.open(
                 "https://rating.myntu.me/?referrer=ntucourse_neo",
                 "_blank"
-              )
-            }
+              );
+              reportEvent("rating_panel", "click_external", "nturating");
+            }}
           >
             前往 NTURating 撰寫評價
           </Button>
@@ -387,12 +390,13 @@ export function NTURatingPanel({ courseId }) {
             variant="outline"
             size="sm"
             rightIcon={<IoMdOpen />}
-            onClick={() =>
+            onClick={() => {
               window.open(
-                ntuRatingData.url + "?referrer=ntucourse_neo",
+                ntuRatingData?.url + "?referrer=ntucourse_neo",
                 "_blank"
-              )
-            }
+              );
+              reportEvent("rating_panel", "click_external", ntuRatingData?.url);
+            }}
           >
             前往 NTURating 查看該課程評價
           </Button>

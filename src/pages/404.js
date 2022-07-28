@@ -8,6 +8,7 @@ import {
 } from "@chakra-ui/react";
 import { FaHeartbeat, FaSignInAlt } from "react-icons/fa";
 import Link from "next/link";
+import { reportEvent } from "utils/ga";
 
 export default function ErrorPage() {
   const handleOpenPage = (page) => {
@@ -47,11 +48,12 @@ export default function ErrorPage() {
       <HStack spacing={2} mt="4">
         <Button
           variant="outline"
-          onClick={() =>
+          onClick={() => {
             handleOpenPage(
               "https://github.com/NTUCourse-Neo/ncn-frontend/issues/new?assignees=&labels=bug&template=bug_report.md&title="
-            )
-          }
+            );
+            reportEvent("404", "click", "report_bug");
+          }}
           colorScheme="teal"
         >
           回報問題
@@ -60,7 +62,10 @@ export default function ErrorPage() {
           variant="solid"
           colorScheme="teal"
           leftIcon={<FaHeartbeat />}
-          onClick={() => handleOpenPage("https://status.course.myntu.me/")}
+          onClick={() => {
+            handleOpenPage("https://status.course.myntu.me/");
+            reportEvent("404", "click", "view_status");
+          }}
         >
           服務狀態
         </Button>

@@ -38,6 +38,7 @@ import useUserInfo from "hooks/useUserInfo";
 import { useUser } from "@auth0/nextjs-auth0";
 import handleFetch from "utils/CustomFetch";
 import Image from "next/image";
+import { reportEvent } from "utils/ga";
 
 function NewRegisterModal({ isOpen, onClose, isLoading, newUser }) {
   const router = useRouter();
@@ -90,7 +91,10 @@ function NewRegisterModal({ isOpen, onClose, isLoading, newUser }) {
           <Button
             variant="ghost"
             mr={3}
-            onClick={onClose}
+            onClick={() => {
+              onClose();
+              reportEvent("new_user_modal", "click", "close");
+            }}
             isLoading={isLoading}
             spinner={<BeatLoader size={8} color="gray" />}
           >
@@ -103,6 +107,7 @@ function NewRegisterModal({ isOpen, onClose, isLoading, newUser }) {
             spinner={<BeatLoader size={8} color="white" />}
             onClick={() => {
               onClose();
+              reportEvent("new_user_modal", "click", "go_to_profile");
               router.push("user/info");
             }}
           >
@@ -559,7 +564,10 @@ function HomePage() {
                 m={2}
                 variant="solid"
                 size="lg"
-                onClick={() => window.open("https://github.com/NTUCourse-Neo/")}
+                onClick={() => {
+                  window.open("https://github.com/NTUCourse-Neo/");
+                  reportEvent("home_page", "click", "github_repo");
+                }}
                 leftIcon={<FaGithub />}
               >
                 GitHub
@@ -570,11 +578,12 @@ function HomePage() {
                 size="lg"
                 color="gray.200"
                 borderColor="gray.500"
-                onClick={() =>
+                onClick={() => {
                   window.open(
                     "https://github.com/NTUCourse-Neo/ncn-frontend/issues/new/choose"
-                  )
-                }
+                  );
+                  reportEvent("home_page", "click", "github_issue");
+                }}
               >
                 功能建議
               </Button>
@@ -617,7 +626,10 @@ function HomePage() {
               <Button
                 variant={"solid"}
                 size="lg"
-                onClick={() => window.open("https://discord.gg/M7NrenYEbS")}
+                onClick={() => {
+                  window.open("https://discord.gg/M7NrenYEbS");
+                  reportEvent("home_page", "click", "discord");
+                }}
                 bg={"white"}
                 color={"#5865F2"}
                 leftIcon={<DiscordIcon />}

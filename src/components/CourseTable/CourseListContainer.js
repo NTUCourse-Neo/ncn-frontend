@@ -37,6 +37,7 @@ import {
 } from "react-sortable-hoc";
 import { useRouter } from "next/router";
 import { patchCourseTable } from "queries/courseTable";
+import { reportEvent } from "utils/ga";
 
 const DragHandle = sortableHandle(() => (
   <MdDragHandle cursor="row-resize" size="20" color="gray" />
@@ -117,6 +118,7 @@ function ListRowElement({
           colorScheme="blue"
           variant="ghost"
           onClick={() => {
+            reportEvent("course_table_list", "click", "course_info");
             router.push(`/courseinfo/${course.id}`);
           }}
         >
@@ -135,6 +137,7 @@ function ListRowElement({
           colorScheme="blue"
           variant="ghost"
           onClick={() => {
+            reportEvent("course_table_list", "click", "course_info");
             router.push(`/courseinfo/${course.id}`);
           }}
         >
@@ -146,7 +149,10 @@ function ListRowElement({
           variant="ghost"
           colorScheme="blue"
           leftIcon={<FaPlus />}
-          onClick={() => openPage(getNolAddUrl(course), true)}
+          onClick={() => {
+            openPage(getNolAddUrl(course), true);
+            reportEvent("course_table_list", "click", "add_to_nol");
+          }}
         >
           課程網
         </Button>
@@ -160,6 +166,7 @@ function ListRowElement({
           colorScheme="red"
           onClick={() => {
             handleDelete(course.id);
+            reportEvent("course_table_list", "click", "delete_course");
           }}
         />
       </Flex>
@@ -303,6 +310,7 @@ function CourseListContainer({ courseTable, courses, loading }) {
           onClick={() => {
             setCourseListForSort(Object.keys(courses));
             setPrepareToRemoveCourseId([]);
+            reportEvent("course_table_list", "click", "reset_changes");
           }}
         >
           重設
@@ -315,6 +323,7 @@ function CourseListContainer({ courseTable, courses, loading }) {
           disabled={!isEdited()}
           onClick={() => {
             handleSaveCourseTable();
+            reportEvent("course_table_list", "click", "save_changes");
           }}
           isLoading={isLoading}
         >

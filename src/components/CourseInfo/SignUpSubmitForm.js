@@ -21,6 +21,7 @@ import React, { useState } from "react";
 import { social_user_type_map } from "data/mapping_table";
 import handleFetch from "utils/CustomFetch";
 import { useRouter } from "next/router";
+import { reportEvent } from "utils/ga";
 
 function SignUpSubmitForm({ courseId, haveSubmitted, submitCallback }) {
   const headingColor = useColorModeValue("heading.light", "heading.dark");
@@ -50,7 +51,7 @@ function SignUpSubmitForm({ courseId, haveSubmitted, submitCallback }) {
             duration: 3000,
             isClosable: true,
           });
-          return false;
+          return;
         }
       }
       // each field should not be empty except comment
@@ -63,7 +64,7 @@ function SignUpSubmitForm({ courseId, haveSubmitted, submitCallback }) {
             duration: 3000,
             isClosable: true,
           });
-          return false;
+          return;
         }
       }
     }
@@ -258,8 +259,9 @@ function SignUpSubmitForm({ courseId, haveSubmitted, submitCallback }) {
               }
               onClick={async () => {
                 setSendingForm(true);
-                const res = await handleSubmitSignUpCardForm();
+                await handleSubmitSignUpCardForm();
                 setSendingForm(false);
+                reportEvent("signup_post", "click", "submit_post");
               }}
             >
               送出

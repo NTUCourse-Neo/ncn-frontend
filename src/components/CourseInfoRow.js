@@ -39,6 +39,7 @@ import handleFetch from "utils/CustomFetch";
 import { useDisplayTags } from "components/Providers/DisplayTagsProvider";
 import parseCourseSchedlue from "utils/parseCourseSchedule";
 import useUserInfo from "hooks/useUserInfo";
+import { reportEvent } from "utils/ga";
 
 const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
@@ -210,7 +211,10 @@ function CourseDrawerContainer({ courseInfo }) {
             <Button
               size="sm"
               mr="-px"
-              onClick={() => openPage(courseInfo.cool_url)}
+              onClick={() => {
+                openPage(courseInfo.cool_url);
+                reportEvent("course_info_row", "go_to_cool", courseInfo.id);
+              }}
             >
               {"NTU COOL"}
             </Button>
@@ -222,7 +226,10 @@ function CourseDrawerContainer({ courseInfo }) {
             colorScheme="blue"
             leftIcon={<FaPlus />}
             size="sm"
-            onClick={() => openPage(getNolAddUrl(courseInfo), true)}
+            onClick={() => {
+              openPage(getNolAddUrl(courseInfo), true);
+              reportEvent("course_info_row", "add_to_nol", courseInfo.id);
+            }}
           >
             加入課程網
           </Button>
@@ -589,6 +596,12 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTable }) {
             colorScheme="blue"
             variant="ghost"
             onClick={() => {
+              reportEvent(
+                "course_info_row",
+                "course_detailed_info",
+                courseInfo.id
+              );
+
               router.push(`/courseinfo/${courseInfo.id}`);
             }}
           >
@@ -602,7 +615,14 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTable }) {
             ml={{ base: 0, md: "10px" }}
             variant="ghost"
             colorScheme={"red"}
-            onClick={() => handleAddFavorite(courseInfo.id)}
+            onClick={() => {
+              handleAddFavorite(courseInfo.id);
+              reportEvent(
+                "course_info_row",
+                isfavorite ? "remove_favorite" : "add_favorite",
+                courseInfo.id
+              );
+            }}
             isLoading={addingFavoriteCourse}
           >
             <Box>
@@ -613,7 +633,14 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTable }) {
             size="sm"
             ml={{ base: 0, md: "10px" }}
             colorScheme={selected ? "red" : "blue"}
-            onClick={() => addCourseToTable(courseInfo)}
+            onClick={() => {
+              addCourseToTable(courseInfo);
+              reportEvent(
+                "course_info_row",
+                selected ? "remove_course" : "add_course",
+                courseInfo.id
+              );
+            }}
             isLoading={addingCourse}
           >
             <Box

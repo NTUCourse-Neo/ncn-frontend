@@ -33,6 +33,7 @@ import { social_user_type_map } from "data/mapping_table";
 import Moment from "moment";
 import handleFetch from "utils/CustomFetch";
 import { useRouter } from "next/router";
+import { reportEvent } from "utils/ga";
 
 // prop.post
 // {
@@ -201,7 +202,10 @@ function SignUpCard({ post, refetch }) {
                 colorScheme="gray"
                 fontSize={"sm"}
                 color="red.600"
-                onClick={() => handleDeletePost(post._id)}
+                onClick={() => {
+                  handleDeletePost(post._id);
+                  reportEvent("signup_post", "click", "delete_self_post");
+                }}
                 isLoading={isDeletingPost}
               >
                 刪除
@@ -236,9 +240,10 @@ function SignUpCard({ post, refetch }) {
             size="xs"
             leftIcon={<FaThumbsUp />}
             isLoading={isVotingPost === 1}
-            onClick={() =>
-              handleVotePost(post._id, post.self_vote_status === 1 ? 0 : 1)
-            }
+            onClick={() => {
+              handleVotePost(post._id, post.self_vote_status === 1 ? 0 : 1);
+              reportEvent("signup_post", "click", "vote_post_up");
+            }}
           >
             {post.upvotes}
           </Button>
@@ -248,9 +253,10 @@ function SignUpCard({ post, refetch }) {
             size="xs"
             leftIcon={<FaThumbsDown />}
             isLoading={isVotingPost === -1}
-            onClick={() =>
-              handleVotePost(post._id, post.self_vote_status === -1 ? 0 : -1)
-            }
+            onClick={() => {
+              handleVotePost(post._id, post.self_vote_status === -1 ? 0 : -1);
+              reportEvent("signup_post", "click", "vote_post_down");
+            }}
           >
             {post.downvotes}
           </Button>
@@ -296,6 +302,7 @@ function SignUpCard({ post, refetch }) {
                     colorScheme="red"
                     onClick={() => {
                       handleReportPost(post._id, reportReason);
+                      reportEvent("signup_post", "click", "report_post");
                       onClose();
                     }}
                     isDisabled={reportReason === ""}
