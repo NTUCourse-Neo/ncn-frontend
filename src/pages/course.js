@@ -129,7 +129,7 @@ function CoursePage() {
 
   // if isMobile, when show Alert Modal, set displayTable to false to prevent ugly overlapping
   useEffect(() => {
-    if (isLoginWarningOpen && isMobile) {
+    if (isLoginWarningOpen || isMobile) {
       setDisplayTable(false);
     }
   }, [isLoginWarningOpen, isMobile]);
