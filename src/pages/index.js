@@ -520,12 +520,24 @@ function HomePage() {
             title="站在巨人的肩膀上。"
             desc={[
               "還在開一堆分頁，到處找散落的課程資訊嗎？",
-              "從選課人數、課程大綱，甚至於課程評價*，我們的課程資訊頁面集合了官方與非官方的資料，一手統整所有你需要的選課資訊。",
+              "從選課人數、課程大綱、加簽資訊*，甚至於課程評價跟考古題**，我們的課程資訊頁面集合了官方與非官方的資料，一手統整所有你需要的選課資訊。",
               "讓你輕鬆站在巨人的肩膀上選課。",
             ]}
             img="/img/home_cards/dashboard.svg"
             bg={useColorModeValue("white", "black")}
           />
+          <Flex w="100%" justifyContent="start" alignItems="center" px="10vw">
+            <Text
+              fontSize="xs"
+              fontWeight="500"
+              color={useColorModeValue("gray.300", "gray.700")}
+            >
+              * 加簽資訊為社群回報資訊，僅供參考，實際加簽情況可能會有所不同。
+              <br />
+              ** 資訊來自 PTT NTUCourse, PTT NTUExam ，
+              內容僅供參考且不代表本站立場。
+            </Text>
+          </Flex>
           <Flex
             w="100vw"
             bg="gray.700"
