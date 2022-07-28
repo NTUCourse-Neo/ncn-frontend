@@ -11,7 +11,10 @@ import { reportEvent } from "utils/ga";
 const ThemeToggleButton = () => {
   const { toggleColorMode } = useColorMode();
   const IconColor = useColorModeValue("orange.600", "purple.700");
-  const gtagActionLabel = useColorModeValue("useDarkMode", "useBrightMode");
+  const gtagActionLabel = useColorModeValue(
+    "switch_dark_mode",
+    "switch_light_mode"
+  );
 
   return (
     <AnimatePresence exitBeforeEnter initial={false}>
