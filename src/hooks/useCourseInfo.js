@@ -1,4 +1,4 @@
-import useSWR, { useSWRConfig } from "swr";
+import useSWR from "swr";
 import handleFetch from "utils/CustomFetch";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
@@ -14,9 +14,12 @@ export function useCourseEnrollData(courseSerial, options) {
   const router = useRouter();
   const onSuccessCallback = options?.onSuccessCallback;
   const onErrorCallback = options?.onErrorCallback;
-  const { mutate } = useSWRConfig();
-  const { data: courseEnroll, error } = useSWR(
-    user && courseSerial ? `/api/course/enrollInfo` : null,
+  const {
+    data: courseEnroll,
+    error,
+    mutate,
+  } = useSWR(
+    user && courseSerial ? [`/api/course/enrollInfo`, courseSerial] : null,
     async (url) => {
       setIsLoading(true);
       const courseEnrollData = await handleFetch(url, {
@@ -52,7 +55,7 @@ export function useCourseEnrollData(courseSerial, options) {
     isLoading,
     error: error,
     refetch: () => {
-      mutate(`/api/course/enrollInfo`);
+      mutate();
     },
   };
 }
@@ -64,9 +67,12 @@ export function useNTURatingData(courseId, options) {
   const router = useRouter();
   const onSuccessCallback = options?.onSuccessCallback;
   const onErrorCallback = options?.onErrorCallback;
-  const { mutate } = useSWRConfig();
-  const { data: ntuRating, error } = useSWR(
-    user && courseId ? `/api/course/ntuRating` : null,
+  const {
+    data: ntuRating,
+    error,
+    mutate,
+  } = useSWR(
+    user && courseId ? [`/api/course/ntuRating`, courseId] : null,
     async (url) => {
       setIsLoading(true);
       const ntuRatingData = await handleFetch(url, {
@@ -102,7 +108,7 @@ export function useNTURatingData(courseId, options) {
     isLoading,
     error: error,
     refetch: () => {
-      mutate(`/api/course/ntuRating`);
+      mutate();
     },
   };
 }
@@ -114,8 +120,11 @@ export function usePTTReviewData(courseId, options) {
   const router = useRouter();
   const onSuccessCallback = options?.onSuccessCallback;
   const onErrorCallback = options?.onErrorCallback;
-  const { mutate } = useSWRConfig();
-  const { data: pttReviewData, error } = useSWR(
+  const {
+    data: pttReviewData,
+    error,
+    mutate,
+  } = useSWR(
     user && courseId ? `/api/course/ptt/review/${courseId}` : null,
     async (url) => {
       setIsLoading(true);
@@ -153,7 +162,7 @@ export function usePTTReviewData(courseId, options) {
     isLoading,
     error: error,
     refetch: () => {
-      mutate(`/api/course/ptt/review/${courseId}`);
+      mutate();
     },
   };
 }
@@ -165,8 +174,11 @@ export function usePTTExamData(courseId, options) {
   const router = useRouter();
   const onSuccessCallback = options?.onSuccessCallback;
   const onErrorCallback = options?.onErrorCallback;
-  const { mutate } = useSWRConfig();
-  const { data: pttExamData, error } = useSWR(
+  const {
+    data: pttExamData,
+    error,
+    mutate,
+  } = useSWR(
     user && courseId ? `/api/course/ptt/exam/${courseId}` : null,
     async (url) => {
       setIsLoading(true);
@@ -204,7 +216,7 @@ export function usePTTExamData(courseId, options) {
     isLoading,
     error: error,
     refetch: () => {
-      mutate(`/api/course/ptt/exam/${courseId}`);
+      mutate();
     },
   };
 }
@@ -216,8 +228,11 @@ export function useSyllabusData(courseId, options) {
   const router = useRouter();
   const onSuccessCallback = options?.onSuccessCallback;
   const onErrorCallback = options?.onErrorCallback;
-  const { mutate } = useSWRConfig();
-  const { data: syllabusData, error } = useSWR(
+  const {
+    data: syllabusData,
+    error,
+    mutate,
+  } = useSWR(
     courseId ? `/courses/${courseId}/syllabus` : null,
     async (url) => {
       setIsLoading(true);
@@ -264,7 +279,7 @@ export function useSyllabusData(courseId, options) {
     isLoading,
     error: error,
     refetch: () => {
-      mutate(`/courses/${courseId}/syllabus`);
+      mutate();
     },
   };
 }
@@ -276,8 +291,11 @@ export function useSignUpPostData(courseId, options) {
   const router = useRouter();
   const onSuccessCallback = options?.onSuccessCallback;
   const onErrorCallback = options?.onErrorCallback;
-  const { mutate } = useSWRConfig();
-  const { data: signUpPostData, error } = useSWR(
+  const {
+    data: signUpPostData,
+    error,
+    mutate,
+  } = useSWR(
     user && courseId ? `/api/social/getByCourseId/${courseId}` : null,
     async (url) => {
       setIsLoading(true);
@@ -314,7 +332,7 @@ export function useSignUpPostData(courseId, options) {
     isLoading,
     error: error,
     refetch: () => {
-      mutate(`/api/social/getByCourseId/${courseId}`);
+      mutate();
     },
   };
 }

@@ -1,4 +1,4 @@
-import useSWR, { useSWRConfig } from "swr";
+import useSWR from "swr";
 import handleFetch from "utils/CustomFetch";
 import { useState } from "react";
 import { useRouter } from "next/router";
@@ -8,9 +8,12 @@ export default function useUserInfo(userId, options) {
   const onSuccessCallback = options?.onSuccessCallback;
   const onErrorCallback = options?.onErrorCallback;
   const router = useRouter();
-  const { mutate } = useSWRConfig();
-  const { data: user, error } = useSWR(
-    userId ? `/api/user` : null,
+  const {
+    data: user,
+    error,
+    mutate,
+  } = useSWR(
+    userId ? [`/api/user`, userId] : null,
     async (url) => {
       setIsLoading(true);
       const userData = await handleFetch(url, {
@@ -39,7 +42,7 @@ export default function useUserInfo(userId, options) {
     isLoading,
     error: error,
     refetch: () => {
-      mutate(`/api/user`);
+      mutate();
     },
   };
 }
