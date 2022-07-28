@@ -63,7 +63,6 @@ export function useNTURatingData(courseId, options) {
       const ntuRatingData = await handleFetch(url, {
         courseId: courseId,
       });
-      console.log(ntuRatingData);
       return ntuRatingData;
     },
     {
@@ -144,32 +143,23 @@ export function usePTTReviewData(courseId, options) {
 export function usePTTExamData(courseId, options) {
   const { user } = useUser();
   const toast = useToast();
-  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const onSuccessCallback = options?.onSuccessCallback;
   const onErrorCallback = options?.onErrorCallback;
-  const {
-    data: pttExamData,
-    error,
-    mutate,
-  } = useSWR(
+  const { data, error, mutate } = useSWR(
     user && courseId ? `/api/course/ptt/exam/${courseId}` : null,
     async (url) => {
-      setIsLoading(true);
       const data = await handleFetch("/api/course/ptt", {
         courseId: courseId,
         type: "exam",
       });
-      setIsLoading(false);
       return data;
     },
     {
       onSuccess: async (data, key, config) => {
-        setIsLoading(false);
         await onSuccessCallback?.(data, key, config);
       },
       onError: (err, key, config) => {
-        setIsLoading(false);
         if (err?.response?.status === 401) {
           router.push("/api/auth/login");
         }
@@ -186,8 +176,8 @@ export function usePTTExamData(courseId, options) {
   );
 
   return {
-    data: pttExamData ?? null,
-    isLoading,
+    data: data?.course_rating ?? null,
+    isLoading: !data && !error,
     error: error,
     refetch: () => {
       mutate();
