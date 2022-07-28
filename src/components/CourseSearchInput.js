@@ -55,6 +55,7 @@ function CourseSearchInputTextArea(props) {
     setSearchColumns,
     dispatchSearch,
     setSearchResultCount,
+    searchResultCount,
   } = useCourseSearchingContext();
   const [searchText, setSearchText] = useState("");
 
@@ -79,7 +80,7 @@ function CourseSearchInputTextArea(props) {
       });
       return;
     }
-    if (searchText === search) {
+    if (searchText === search && searchResultCount !== 0) {
       setSearchResultCount(0);
       for (let i = 0; i < pageNumber; i++) {
         mutate(`/api/search/${search}/${i}`);
