@@ -5,8 +5,22 @@ import HeaderBar from "components/HeaderBar";
 import Footer from "components/Footer";
 import { UserProvider as Auth0UserProvider } from "@auth0/nextjs-auth0";
 import theme from "styles/theme";
+import "styles/nprogress.css";
+import { useRouter } from "next/router";
+import nProgress from "nprogress";
+import { useEffect } from "react";
 
 function MyApp({ Component, pageProps }) {
+  const router = useRouter();
+  useEffect(() => {
+    router.events.on("routeChangeStart", nProgress.start);
+    router.events.on("routeChangeComplete", nProgress.done);
+    return () => {
+      router.events.off("routeChangeStart", nProgress.start);
+      router.events.off("routeChangeComplete", nProgress.done);
+    };
+  }, [router.events]);
+
   return (
     <Auth0UserProvider>
       <ChakraProvider theme={theme}>

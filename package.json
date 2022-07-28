@@ -30,6 +30,7 @@
     "lodash": "^4.17.21",
     "moment": "^2.29.3",
     "next": "12.2.0",
+    "nprogress": "^0.2.0",
     "randomcolor": "^0.6.2",
     "react": "18.2.0",
     "react-copy-to-clipboard": "^5.1.0",
