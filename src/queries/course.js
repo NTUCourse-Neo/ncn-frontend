@@ -47,14 +47,15 @@ export const fetchCourse = async (id) => {
 };
 
 export const getCourseEnrollInfo = async (token, course_id) => {
-  const {
-    data: { course_status },
-  } = await instance.get(`${api_version}/courses/${course_id}/enrollinfo`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return course_status;
+  const { data } = await instance.get(
+    `${api_version}/courses/${course_id}/enrollinfo`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return data;
 };
 
 export const getNTURatingData = async (token, course_id) => {

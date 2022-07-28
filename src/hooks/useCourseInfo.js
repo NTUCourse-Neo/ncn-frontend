@@ -10,31 +10,22 @@ import { useUser } from "@auth0/nextjs-auth0";
 export function useCourseEnrollData(courseSerial, options) {
   const { user } = useUser();
   const toast = useToast();
-  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const onSuccessCallback = options?.onSuccessCallback;
   const onErrorCallback = options?.onErrorCallback;
-  const {
-    data: courseEnroll,
-    error,
-    mutate,
-  } = useSWR(
+  const { data, error, mutate } = useSWR(
     user && courseSerial ? [`/api/course/enrollInfo`, courseSerial] : null,
     async (url) => {
-      setIsLoading(true);
       const courseEnrollData = await handleFetch(url, {
         courseId: courseSerial,
       });
-      setIsLoading(false);
       return courseEnrollData;
     },
     {
       onSuccess: async (data, key, config) => {
-        setIsLoading(false);
         await onSuccessCallback?.(data, key, config);
       },
       onError: (err, key, config) => {
-        setIsLoading(false);
         if (err?.response?.status === 401) {
           router.push("/api/auth/login");
         }
@@ -51,8 +42,8 @@ export function useCourseEnrollData(courseSerial, options) {
   );
 
   return {
-    data: courseEnroll ?? null,
-    isLoading,
+    data: data?.course_status ?? null,
+    isLoading: !data && !error,
     error: error,
     refetch: () => {
       mutate();
