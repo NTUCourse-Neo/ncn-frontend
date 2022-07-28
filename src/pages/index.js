@@ -17,6 +17,7 @@ import {
   Icon,
   Tooltip,
   useColorModeValue,
+  Image,
 } from "@chakra-ui/react";
 import {
   FaArrowDown,
@@ -37,7 +38,6 @@ import { DiscordIcon } from "components/CustomIcons";
 import useUserInfo from "hooks/useUserInfo";
 import { useUser } from "@auth0/nextjs-auth0";
 import handleFetch from "utils/CustomFetch";
-import Image from "next/image";
 import { reportEvent } from "utils/ga";
 
 function NewRegisterModal({ isOpen, onClose, isLoading, newUser }) {
@@ -319,7 +319,7 @@ function HomePage() {
             flexDirection={{ base: "column-reverse", lg: "row" }}
             alignItems="center"
             w="100%"
-            px="5vw"
+            px={{ base: "5vw", xl: "10vw" }}
           >
             <Flex flexDirection="column" pt={10}>
               <Text
@@ -412,37 +412,34 @@ function HomePage() {
               </Flex>
             </Flex>
             <Spacer />
-            <Box w={["80vw", "50vw"]}>
+            <Box w={["80vw", "40vw"]}>
               <Image
                 src={`/img/home_main.svg`}
                 alt="home_main"
-                layout="responsive"
-                height={7}
-                width={10}
-                priority={true}
+                maxH="900px"
+                pointerEvents="none"
               />
             </Box>
           </Flex>
-          <Spacer my={5} />
           <Button
             variant="ghost"
             size="lg"
+            mt={{ base: "8", md: "32" }}
             color={useColorModeValue("heading.light", "heading.dark")}
             onClick={() => scroller.scrollTo("card1", scroll_config)}
             leftIcon={<FaArrowDown />}
           >
-            我們有...
+            Why Neo?
           </Button>
           <Spacer my={5} name="card1" />
           <HomeCard
-            title="搜尋篩選功能，快速找到你要的課程 🚀"
+            title="搜尋篩選，更快更準。 🚀"
             desc={[
-              "試著在空堂塞入課程，想看看禮拜一下午究竟還有哪些課？",
-              "還是距離畢業還缺 A8 通識，想知道有哪些可以修呢 🤔",
-              "讓我們的篩選功能，快速滿足你各式各樣的需求！",
+              "試著在空堂塞入課程，或者在找尋系上的必修嗎？",
+              "我們的篩選功能，提供時間、系所與類別等條件複合篩選，不怕你找不到課，只怕你難以抉擇！",
             ]}
-            img="https://imgur.com/jC8IUuw.gif"
-            bg={useColorModeValue("card.light", "card.dark")}
+            img="/img/home_cards/search.svg"
+            bg={useColorModeValue("white", "black")}
           />
           <Spacer my={5} />
           <Button
@@ -452,18 +449,18 @@ function HomePage() {
             onClick={() => scroller.scrollTo("card2", scroll_config)}
             leftIcon={<FaArrowDown />}
           >
-            受夠一直切分頁看課表了嗎？
+            受夠一直切分頁了嗎？
           </Button>
           <Spacer my={5} name="card2" />
           <HomeCard
-            title="並列互動式課表，讓使用更直覺 😉"
+            title="並列互動式課表，選課更直覺。"
             desc={[
-              "👀 這堂課到底是第幾節上課？會不會卡到我的必修？",
-              "互動式課表讓課程時間不再只是簡單的數字，而是在課表中即時顯示。讓你更直覺地看到課程時間與你的規劃。",
-              "提醒您，一般課表有儲存期限，若要永久保存，請先註冊登入喔 😘",
+              "這堂課是第幾節上課？會不會卡到必修？",
+              "互動式課表讓時間不再只是簡單的數字，而是在課表中即時顯示。讓你更直覺地看到課程時間與你的規劃。",
             ]}
-            img="https://i.imgur.com/CJhqamD.png"
-            bg={useColorModeValue("card.light", "card.dark")}
+            img="/img/home_cards/course_table.svg"
+            bg={useColorModeValue("white", "black")}
+            imgAtLeft={true}
           />
           <Spacer my={5} />
           <Button
@@ -477,13 +474,14 @@ function HomePage() {
           </Button>
           <Spacer my={5} name="card3" />
           <HomeCard
-            title="我全都要。不怕選課衝堂，順序輕鬆排 🥰"
+            title="我全都要。不怕衝堂，順序輕鬆排。"
             desc={[
-              "體育通識好難選，通通加進課表後都長得落落長。 我們顛覆以往的線上課表模式，不只可衝堂加課，還能決定優先順序！",
+              "選課好貪心，課表變得超級無敵長...",
+              "我們顛覆以往的線上課表模式，不只可衝堂加課，更能分別調整衝堂課程的順序偏好！",
               "你只需要好好挑選適合的課程，剩下的交給我們。👌",
             ]}
-            img="https://i.imgur.com/oA2qanv.png"
-            bg={useColorModeValue("card.light", "card.dark")}
+            img="/img/home_cards/selection.svg"
+            bg={useColorModeValue("white", "black")}
           />
           <Spacer my={5} />
           <Button
@@ -493,17 +491,19 @@ function HomePage() {
             onClick={() => scroller.scrollTo("card4", scroll_config)}
             leftIcon={<FaArrowDown />}
           >
-            填志願好麻煩？
+            喬志願序好麻煩？
           </Button>
           <Spacer my={5} name="card4" />
           <HomeCard
-            title="一鍵加入課程網，填寫志願一目瞭然 🧐"
+            title="一鍵加入課程網，志願序一目瞭然。"
             desc={[
-              "還在埋頭研究課程志願的先後順序嗎？只要決定好衝堂課程的順序偏好，就能將課程快速加入課程網，同時告別加入時瘋狂彈出的課表。別忘了，你還能參考我們顯示的志願序數字直接填入選課系統。",
-              "就是這麼簡單，一塊蛋糕 🍰",
+              "還在埋頭研究課程志願的先後順序嗎？",
+              "調整衝堂及全部課程的志願序後，點擊將課程直接加入課程網，同時告別瘋狂彈出的預選課程頁面。別忘了，你還能參考我們顯示的志願序數字直接填入選課系統。",
+              "就是這麼簡單，一塊蛋糕。 🍰",
             ]}
-            img="https://i.imgur.com/nxjAycJ.png"
-            bg={useColorModeValue("card.light", "card.dark")}
+            img="/img/home_cards/sync.svg"
+            bg={useColorModeValue("white", "black")}
+            imgAtLeft={true}
           />
           <Spacer my={5} />
           <Button
@@ -513,23 +513,25 @@ function HomePage() {
             onClick={() => scroller.scrollTo("card5", scroll_config)}
             leftIcon={<FaArrowDown />}
           >
-            網服真的太讚啦，先存起來
+            課程資訊一把抓
           </Button>
           <Spacer my={5} name="card5" />
           <HomeCard
-            title="加入最愛，收藏喜歡的課程 💕"
+            title="站在巨人的肩膀上。"
             desc={[
-              "這堂課好有趣，但這學期學分要爆了，等下學期或下下學期吧 🥵",
-              "除了記在腦袋佔記憶體外，你還可以利用最愛功能收藏喜歡的課程，建立你的畢業前必修課程清單，讓你不再錯過任何一堂課！",
+              "還在開一堆分頁，到處找散落的課程資訊嗎？",
+              "從選課人數、課程大綱，甚至於課程評價*，我們的課程資訊頁面集合了官方與非官方的資料，一手統整所有你需要的選課資訊。",
+              "讓你輕鬆站在巨人的肩膀上選課。",
             ]}
-            img="https://imgur.com/IHw3FG1.gif"
-            bg={useColorModeValue("card.light", "card.dark")}
+            img="/img/home_cards/dashboard.svg"
+            bg={useColorModeValue("white", "black")}
           />
           <Flex
             w="100vw"
             bg="gray.700"
             px={{ base: "8", md: "16", lg: "32" }}
             py="16"
+            mt="16"
             flexDirection={{ base: "column", lg: "row" }}
             justifyContent="space-between"
             alignItems="center"
@@ -640,9 +642,9 @@ function HomePage() {
           </Flex>
           <Flex
             w="100vw"
-            px="8"
+            px={{ base: "8", md: "16", lg: "32" }}
             pt="8"
-            justifyContent="space-around"
+            justifyContent="space-between"
             alignItems="center"
             flexDirection={{ base: "column", lg: "row" }}
             css={{ gap: "2rem" }}
@@ -654,7 +656,7 @@ function HomePage() {
             >
               <Text
                 py={2}
-                fontSize="3xl"
+                fontSize={{ base: "3xl", md: "4xl" }}
                 color={useColorModeValue("text.light", "text.dark")}
                 fontWeight="800"
               >

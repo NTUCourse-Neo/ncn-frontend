@@ -47,15 +47,6 @@ function Footer() {
           />
         </Center>
       </Link>
-      <Text
-        size="sm"
-        color="gray.500"
-        ml="2"
-        fontWeight="800"
-        display={{ base: "none", md: "inline-block" }}
-      >
-        NTUCourse Neo
-      </Text>
       <HStack ml="2">
         <Icon as={FaCodeBranch} color={secondaryColor} size="4"></Icon>
         <Text fontSize="xs" color={secondaryColor} fontWeight="600">
