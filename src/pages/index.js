@@ -530,7 +530,7 @@ function HomePage() {
             <Text
               fontSize="xs"
               fontWeight="500"
-              color={useColorModeValue("gray.300", "gray.700")}
+              color={useColorModeValue("gray.300", "gray.600")}
             >
               * 加簽資訊為社群回報資訊，僅供參考，實際加簽情況可能會有所不同。
               <br />
@@ -688,6 +688,7 @@ function HomePage() {
               src={`/img/home_footer.svg`}
               height="256px"
               width="256px"
+              pointerEvents="none"
             />
           </Flex>
         </Flex>
