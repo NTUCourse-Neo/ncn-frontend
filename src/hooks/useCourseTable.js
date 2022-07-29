@@ -1,4 +1,4 @@
-import useSWR, { useSWRConfig } from "swr";
+import useSWR from "swr";
 import { useState } from "react";
 import { fetchCourseTable } from "queries/courseTable";
 
@@ -6,8 +6,7 @@ export default function useCourseTable(courseTableId, options) {
   const [isExpired, setIsExpired] = useState(false);
   const onSuccessCallback = options?.onSuccessCallback;
   const onErrorCallback = options?.onErrorCallback;
-  const { mutate } = useSWRConfig();
-  const { data, error } = useSWR(
+  const { data, error, mutate } = useSWR(
     courseTableId ? `/v2/course_tables/${courseTableId}` : null,
     async () => {
       const courseTableData = await fetchCourseTable(courseTableId);
@@ -32,8 +31,6 @@ export default function useCourseTable(courseTableId, options) {
     isLoading: !data && !error,
     error,
     isExpired,
-    refetch: () => {
-      mutate(`/v2/course_tables/${courseTableId}`);
-    },
+    refetch: mutate,
   };
 }
