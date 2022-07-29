@@ -226,7 +226,7 @@ function CourseListContainer({ courseTable, courses, loading }) {
   const handleSaveCourseTable = async () => {
     setIsLoading(true);
     try {
-      const res_table = await patchCourseTable(
+      const { course_table: res_table } = await patchCourseTable(
         courseTable.id,
         courseTable.name,
         courseTable.user_id,

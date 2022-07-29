@@ -34,13 +34,14 @@ export const patchCourseTable = async (
 ) => {
   // filter out "" in courses
   const new_courses = courses.filter((course) => course !== "");
-  const {
-    data: { course_table },
-  } = await instance.patch(`${api_version}/course_tables/${course_table_id}`, {
-    name: course_table_name,
-    user_id: user_id,
-    expire_ts: expire_ts,
-    courses: new_courses,
-  });
-  return course_table;
+  const { data } = await instance.patch(
+    `${api_version}/course_tables/${course_table_id}`,
+    {
+      name: course_table_name,
+      user_id: user_id,
+      expire_ts: expire_ts,
+      courses: new_courses,
+    }
+  );
+  return data;
 };

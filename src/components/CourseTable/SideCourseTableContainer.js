@@ -239,7 +239,7 @@ function SideCourseTableContent({
   const handleSave = async (new_table_name) => {
     onClose();
     try {
-      const res_table = await patchCourseTable(
+      await patchCourseTable(
         courseTable.id,
         new_table_name,
         courseTable.user_id,
