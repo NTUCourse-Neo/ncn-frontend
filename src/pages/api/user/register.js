@@ -9,8 +9,8 @@ export default withApiAuthRequired(async function handler(req, res) {
     if (!assertNotNil(email)) {
       res.status(400).json({ error: "Missing user_id" });
     } else {
-      const user_data = await registerNewUser(accessToken, email);
-      return res.status(200).json(user_data);
+      const userData = await registerNewUser(accessToken, email);
+      return res.status(200).json(userData);
     }
   } catch (error) {
     console.error(error);

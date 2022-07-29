@@ -83,9 +83,7 @@ export const fetchUserById = async (token, user_id) => {
 };
 
 export const registerNewUser = async (token, email) => {
-  const {
-    data: { user },
-  } = await instance.post(
+  const { data } = await instance.post(
     `${api_version}/users/`,
     { user: { email: email } },
     {
@@ -94,6 +92,5 @@ export const registerNewUser = async (token, email) => {
       },
     }
   );
-  // either null (not found) or an object.
-  return user;
+  return data;
 };
