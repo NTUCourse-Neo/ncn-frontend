@@ -61,11 +61,19 @@ const copyWordList = [
 
 export async function getServerSideProps({ params }) {
   const { courseId } = params;
-  const course = await fetchCourse(courseId);
+  const data = await fetchCourse(courseId);
+  if (!data?.course) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: `/`,
+      },
+    };
+  }
   return {
     props: {
       code: courseId,
-      course,
+      course: data.course,
     },
   };
 }

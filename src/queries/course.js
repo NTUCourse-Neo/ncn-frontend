@@ -40,10 +40,8 @@ export const fetchSearchResult = async (
 };
 
 export const fetchCourse = async (id) => {
-  const {
-    data: { course },
-  } = await instance.get(`${api_version}/courses/${id}`);
-  return course;
+  const { data } = await instance.get(`${api_version}/courses/${id}`);
+  return data;
 };
 
 export const getCourseEnrollInfo = async (token, course_id) => {
