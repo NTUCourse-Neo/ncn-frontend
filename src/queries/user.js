@@ -78,7 +78,6 @@ export const fetchUserById = async (token, user_id) => {
       Authorization: `Bearer ${token}`,
     },
   });
-  // user contains user in db & auth0, either null (not found) or an object.
   return data;
 };
 
