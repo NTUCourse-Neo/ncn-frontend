@@ -52,9 +52,7 @@ export const removeFavoriteCourse = async (token, courseId) => {
 };
 
 export const patchUserInfo = async (token, newUser) => {
-  const {
-    data: { user },
-  } = await instance.patch(
+  const { data } = await instance.patch(
     `${api_version}/users/`,
     { user: newUser },
     {
@@ -63,7 +61,7 @@ export const patchUserInfo = async (token, newUser) => {
       },
     }
   );
-  return user;
+  return data;
 };
 
 export const deleteUserAccount = async (token) => {
