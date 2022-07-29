@@ -40,14 +40,15 @@ export const addFavoriteCourse = async (token, courseId) => {
 };
 
 export const removeFavoriteCourse = async (token, courseId) => {
-  const {
-    data: { favorites: newFavoriteList },
-  } = await instance.delete(`${api_version}/users/favorites/${courseId}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return newFavoriteList;
+  const { data } = await instance.delete(
+    `${api_version}/users/favorites/${courseId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return data;
 };
 
 export const patchUserInfo = async (token, newUser) => {
