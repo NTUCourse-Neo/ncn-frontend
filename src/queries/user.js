@@ -27,9 +27,7 @@ export const linkCoursetableToUser = async (
 };
 
 export const addFavoriteCourse = async (token, courseId) => {
-  const {
-    data: { favorites: newFavoriteList },
-  } = await instance.put(
+  const { data } = await instance.put(
     `${api_version}/users/favorites/${courseId}`,
     {},
     {
@@ -38,7 +36,7 @@ export const addFavoriteCourse = async (token, courseId) => {
       },
     }
   );
-  return newFavoriteList;
+  return data;
 };
 
 export const removeFavoriteCourse = async (token, courseId) => {

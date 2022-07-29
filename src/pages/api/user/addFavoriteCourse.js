@@ -9,11 +9,11 @@ export default withApiAuthRequired(async function handler(req, res) {
     if (!assertNotNil(course_id)) {
       res.status(400).json({ error: "Missing course_id" });
     } else {
-      const updatedFavoriteList = await addFavoriteCourse(
+      const updatedFavoriteListData = await addFavoriteCourse(
         accessToken,
         course_id
       );
-      return res.status(200).json(updatedFavoriteList);
+      return res.status(200).json(updatedFavoriteListData);
     }
   } catch (error) {
     console.error(error);
