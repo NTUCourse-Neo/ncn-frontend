@@ -2,14 +2,15 @@ import instance from "queries/axiosInstance";
 const api_version = "v1";
 
 const getSocialPostByPostId = async (token, post_id) => {
-  const {
-    data: { post },
-  } = await instance.get(`${api_version}/social/posts/${post_id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return post;
+  const { data } = await instance.get(
+    `${api_version}/social/posts/${post_id}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return data;
 };
 
 const reportSocialPost = async (token, post_id, report) => {

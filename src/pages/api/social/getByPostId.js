@@ -9,8 +9,8 @@ export default withApiAuthRequired(async function handler(req, res) {
     if (!assertNotNil(post_id)) {
       res.status(400).json({ error: "Missing user_id" });
     } else {
-      const post_data = await getSocialPostByPostId(accessToken, post_id);
-      return res.status(200).json(post_data);
+      const postData = await getSocialPostByPostId(accessToken, post_id);
+      return res.status(200).json(postData);
     }
   } catch (error) {
     console.error(error);
