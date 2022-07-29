@@ -28,6 +28,7 @@ import {
   TabPanel,
   SkeletonText,
   useColorModeValue,
+  Tag,
 } from "@chakra-ui/react";
 import {
   FaRegEdit,
@@ -252,7 +253,7 @@ function SideCourseTableContent({
             new_uuid,
             "我的課表",
             userInfo.db.id,
-            "1102"
+            process.env.NEXT_PUBLIC_SEMESTER
           );
           setCourseTable(updatedCourseTable);
           // console.log("New UUID is generated: ",new_uuid);
@@ -280,7 +281,7 @@ function SideCourseTableContent({
             new_uuid,
             "我的課表",
             null,
-            "1102"
+            process.env.NEXT_PUBLIC_SEMESTER
           );
           setCourseTable(new_course_table);
           // console.log("New UUID is generated: ",new_uuid);
@@ -394,6 +395,11 @@ function SideCourseTableContent({
           >
             {courseTable ? (
               <Flex alignItems="center" flexWrap="wrap">
+                <Tag size="md" variant="outline" w="fit-content" mr="2">
+                  <Text fontWeight="800" fontSize={{ base: "sm", lg: "md" }}>
+                    {courseTable.semester}
+                  </Text>
+                </Tag>
                 <Text
                   fontWeight="700"
                   fontSize={["xl", "2xl", "3xl"]}
