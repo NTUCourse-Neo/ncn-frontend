@@ -1,6 +1,5 @@
 import useSWR from "swr";
 import handleFetch from "utils/CustomFetch";
-import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useToast } from "@chakra-ui/react";
 import { getCourseSyllabusData } from "queries/course";
@@ -10,31 +9,22 @@ import { useUser } from "@auth0/nextjs-auth0";
 export function useCourseEnrollData(courseSerial, options) {
   const { user } = useUser();
   const toast = useToast();
-  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const onSuccessCallback = options?.onSuccessCallback;
   const onErrorCallback = options?.onErrorCallback;
-  const {
-    data: courseEnroll,
-    error,
-    mutate,
-  } = useSWR(
+  const { data, error, mutate } = useSWR(
     user && courseSerial ? [`/api/course/enrollInfo`, courseSerial] : null,
     async (url) => {
-      setIsLoading(true);
       const courseEnrollData = await handleFetch(url, {
         courseId: courseSerial,
       });
-      setIsLoading(false);
       return courseEnrollData;
     },
     {
       onSuccess: async (data, key, config) => {
-        setIsLoading(false);
         await onSuccessCallback?.(data, key, config);
       },
       onError: (err, key, config) => {
-        setIsLoading(false);
         if (err?.response?.status === 401) {
           router.push("/api/auth/login");
         }
@@ -51,8 +41,8 @@ export function useCourseEnrollData(courseSerial, options) {
   );
 
   return {
-    data: courseEnroll ?? null,
-    isLoading,
+    data: data?.course_status ?? null,
+    isLoading: !data && !error,
     error: error,
     refetch: () => {
       mutate();
@@ -63,31 +53,22 @@ export function useCourseEnrollData(courseSerial, options) {
 export function useNTURatingData(courseId, options) {
   const { user } = useUser();
   const toast = useToast();
-  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const onSuccessCallback = options?.onSuccessCallback;
   const onErrorCallback = options?.onErrorCallback;
-  const {
-    data: ntuRating,
-    error,
-    mutate,
-  } = useSWR(
+  const { data, error, mutate } = useSWR(
     user && courseId ? [`/api/course/ntuRating`, courseId] : null,
     async (url) => {
-      setIsLoading(true);
       const ntuRatingData = await handleFetch(url, {
         courseId: courseId,
       });
-      setIsLoading(false);
       return ntuRatingData;
     },
     {
       onSuccess: async (data, key, config) => {
-        setIsLoading(false);
         await onSuccessCallback?.(data, key, config);
       },
       onError: (err, key, config) => {
-        setIsLoading(false);
         if (err?.response?.status === 401) {
           router.push("/api/auth/login");
         }
@@ -104,8 +85,8 @@ export function useNTURatingData(courseId, options) {
   );
 
   return {
-    data: ntuRating ?? null,
-    isLoading,
+    data: data?.course_rating ?? null,
+    isLoading: !data && !error,
     error: error,
     refetch: () => {
       mutate();
@@ -116,32 +97,23 @@ export function useNTURatingData(courseId, options) {
 export function usePTTReviewData(courseId, options) {
   const { user } = useUser();
   const toast = useToast();
-  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const onSuccessCallback = options?.onSuccessCallback;
   const onErrorCallback = options?.onErrorCallback;
-  const {
-    data: pttReviewData,
-    error,
-    mutate,
-  } = useSWR(
+  const { data, error, mutate } = useSWR(
     user && courseId ? `/api/course/ptt/review/${courseId}` : null,
     async (url) => {
-      setIsLoading(true);
       const data = await handleFetch("/api/course/ptt", {
         courseId: courseId,
         type: "review",
       });
-      setIsLoading(false);
       return data;
     },
     {
       onSuccess: async (data, key, config) => {
-        setIsLoading(false);
         await onSuccessCallback?.(data, key, config);
       },
       onError: (err, key, config) => {
-        setIsLoading(false);
         if (err?.response?.status === 401) {
           router.push("/api/auth/login");
         }
@@ -158,8 +130,8 @@ export function usePTTReviewData(courseId, options) {
   );
 
   return {
-    data: pttReviewData ?? null,
-    isLoading,
+    data: data?.course_rating ?? null,
+    isLoading: !data && !error,
     error: error,
     refetch: () => {
       mutate();
@@ -170,32 +142,23 @@ export function usePTTReviewData(courseId, options) {
 export function usePTTExamData(courseId, options) {
   const { user } = useUser();
   const toast = useToast();
-  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const onSuccessCallback = options?.onSuccessCallback;
   const onErrorCallback = options?.onErrorCallback;
-  const {
-    data: pttExamData,
-    error,
-    mutate,
-  } = useSWR(
+  const { data, error, mutate } = useSWR(
     user && courseId ? `/api/course/ptt/exam/${courseId}` : null,
     async (url) => {
-      setIsLoading(true);
       const data = await handleFetch("/api/course/ptt", {
         courseId: courseId,
         type: "exam",
       });
-      setIsLoading(false);
       return data;
     },
     {
       onSuccess: async (data, key, config) => {
-        setIsLoading(false);
         await onSuccessCallback?.(data, key, config);
       },
       onError: (err, key, config) => {
-        setIsLoading(false);
         if (err?.response?.status === 401) {
           router.push("/api/auth/login");
         }
@@ -212,8 +175,8 @@ export function usePTTExamData(courseId, options) {
   );
 
   return {
-    data: pttExamData ?? null,
-    isLoading,
+    data: data?.course_rating ?? null,
+    isLoading: !data && !error,
     error: error,
     refetch: () => {
       mutate();
@@ -223,30 +186,28 @@ export function usePTTExamData(courseId, options) {
 
 export function useSyllabusData(courseId, options) {
   const toast = useToast();
-  const [isLoading, setIsLoading] = useState(false);
-  const [data, setData] = useState(null);
   const router = useRouter();
   const onSuccessCallback = options?.onSuccessCallback;
   const onErrorCallback = options?.onErrorCallback;
-  const {
-    data: syllabusData,
-    error,
-    mutate,
-  } = useSWR(
+  const { data, error, mutate } = useSWR(
     courseId ? `/courses/${courseId}/syllabus` : null,
     async (url) => {
-      setIsLoading(true);
       const data = await getCourseSyllabusData(courseId);
-      setIsLoading(false);
+      if (data?.course_syllabus?.grade) {
+        data.course_syllabus.grade.forEach((grade) => {
+          grade.color = hash_to_color_hex_with_hue(grade.title, {
+            min: 180,
+            max: 200,
+          });
+        });
+      }
       return data;
     },
     {
       onSuccess: async (data, key, config) => {
-        setIsLoading(false);
         await onSuccessCallback?.(data, key, config);
       },
       onError: (err, key, config) => {
-        setIsLoading(false);
         if (err?.response?.status === 401) {
           router.push("/api/auth/login");
         }
@@ -262,21 +223,9 @@ export function useSyllabusData(courseId, options) {
     }
   );
 
-  useEffect(() => {
-    if (syllabusData && syllabusData.grade) {
-      syllabusData.grade.forEach((grade) => {
-        grade.color = hash_to_color_hex_with_hue(grade.title, {
-          min: 180,
-          max: 200,
-        });
-      });
-    }
-    setData(syllabusData);
-  }, [syllabusData]);
-
   return {
-    data: data ?? null,
-    isLoading,
+    data: data?.course_syllabus ?? null,
+    isLoading: !data && !error,
     error: error,
     refetch: () => {
       mutate();
@@ -287,31 +236,22 @@ export function useSyllabusData(courseId, options) {
 export function useSignUpPostData(courseId, options) {
   const { user } = useUser();
   const toast = useToast();
-  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const onSuccessCallback = options?.onSuccessCallback;
   const onErrorCallback = options?.onErrorCallback;
-  const {
-    data: signUpPostData,
-    error,
-    mutate,
-  } = useSWR(
+  const { data, error, mutate } = useSWR(
     user && courseId ? `/api/social/getByCourseId/${courseId}` : null,
     async (url) => {
-      setIsLoading(true);
       const data = await handleFetch("/api/social/getByCourseId", {
         course_id: courseId,
       });
-      setIsLoading(false);
       return data;
     },
     {
       onSuccess: async (data, key, config) => {
-        setIsLoading(false);
         await onSuccessCallback?.(data, key, config);
       },
       onError: (err, key, config) => {
-        setIsLoading(false);
         if (err?.response?.status === 401) {
           router.push("/api/auth/login");
         }
@@ -328,8 +268,8 @@ export function useSignUpPostData(courseId, options) {
   );
 
   return {
-    data: signUpPostData ?? null,
-    isLoading,
+    data: data?.posts ?? null,
+    isLoading: !data && !error,
     error: error,
     refetch: () => {
       mutate();

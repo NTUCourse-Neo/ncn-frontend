@@ -78,15 +78,13 @@ export const deleteUserAccount = async (token) => {
 };
 
 export const fetchUserById = async (token, user_id) => {
-  const {
-    data: { user },
-  } = await instance.get(`${api_version}/users/${user_id}`, {
+  const { data } = await instance.get(`${api_version}/users/${user_id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
   // user contains user in db & auth0, either null (not found) or an object.
-  return user;
+  return data;
 };
 
 export const registerNewUser = async (token, email) => {
