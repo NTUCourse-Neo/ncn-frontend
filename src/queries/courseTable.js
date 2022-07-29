@@ -7,15 +7,13 @@ export const createCourseTable = async (
   user_id,
   semester
 ) => {
-  const {
-    data: { course_table },
-  } = await instance.post(`${api_version}/course_tables/`, {
+  const { data } = await instance.post(`${api_version}/course_tables/`, {
     id: course_table_id,
     name: course_table_name,
     user_id: user_id,
     semester: semester,
   });
-  return course_table;
+  return data;
 };
 
 export const fetchCourseTable = async (course_table_id) => {

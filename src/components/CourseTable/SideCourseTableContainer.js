@@ -212,7 +212,7 @@ function SideCourseTableContent({
       } else {
         // Guest mode
         try {
-          const new_course_table = await createCourseTable(
+          const { course_table: new_course_table } = await createCourseTable(
             new_uuid,
             "我的課表",
             null,
