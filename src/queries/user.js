@@ -14,9 +14,7 @@ export const linkCoursetableToUser = async (
   course_table_id,
   user_id
 ) => {
-  const {
-    data: { user },
-  } = await instance.post(
+  const { data } = await instance.post(
     `${api_version}/users/${user_id}/course_table`,
     { course_table_id: course_table_id },
     {
@@ -25,7 +23,7 @@ export const linkCoursetableToUser = async (
       },
     }
   );
-  return user;
+  return data;
 };
 
 export const addFavoriteCourse = async (token, courseId) => {
