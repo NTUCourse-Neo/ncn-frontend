@@ -25,6 +25,7 @@ function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
   const headingColor = useColorModeValue("heading.light", "heading.dark");
   const { searchFilters, setSearchFilters } = useCourseSearchingContext();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const modalBgColor = useColorModeValue("white", "gray.700");
 
   const onOpenModal = () => {
     // overwrite local states by redux store
@@ -74,6 +75,7 @@ function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
                 top="0"
                 mt={index === 0 ? 0 : 6}
                 zIndex="50"
+                bg={modalBgColor}
               >
                 <Heading fontSize="2xl" color={headingColor}>
                   {college_key + " " + college_map[college_key].name}
@@ -99,7 +101,7 @@ function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
         })}
       </>
     ),
-    [selectedDept, setSelectedDept, headingColor]
+    [selectedDept, setSelectedDept, headingColor, modalBgColor]
   );
 
   return (

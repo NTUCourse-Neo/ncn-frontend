@@ -29,6 +29,7 @@ function CategoryFilterModal({
   const headingColor = useColorModeValue("heading.light", "heading.dark");
   const { searchFilters, setSearchFilters } = useCourseSearchingContext();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const modalBgColor = useColorModeValue("white", "gray.700");
 
   const onOpenModal = () => {
     // overwrite local states by redux store
@@ -75,6 +76,7 @@ function CategoryFilterModal({
                 top="0"
                 mt={index === 0 ? 0 : 6}
                 zIndex="50"
+                bg={modalBgColor}
               >
                 <Heading fontSize="2xl" color={headingColor}>
                   {code_map[code_map_key].name}
@@ -100,7 +102,7 @@ function CategoryFilterModal({
         })}
       </React.Fragment>
     ),
-    [selectedType, setSelectedType, headingColor]
+    [selectedType, setSelectedType, headingColor, modalBgColor]
   );
 
   return (
