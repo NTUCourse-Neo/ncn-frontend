@@ -163,6 +163,7 @@ function SideCourseTableContent({
     isExpired,
   } = useCourseTable(courseTableKey);
   const { mutate } = useSWRConfig();
+  const bgColor = useColorModeValue("card.light", "card.dark");
 
   // some local states for handling course data
   const [courses, setCourses] = useState({}); // dictionary of Course objects using courseId as key
@@ -351,8 +352,11 @@ function SideCourseTableContent({
             flexDirection="row"
             justifyContent="start"
             alignItems="center"
-            mb="2"
+            pb={4}
             ml="4"
+            position={"sticky"}
+            top={0}
+            bg={bgColor}
           >
             {courseTable ? (
               <Flex alignItems="center" flexWrap="wrap">
