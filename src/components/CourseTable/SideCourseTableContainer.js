@@ -50,6 +50,7 @@ import { createCourseTable, patchCourseTable } from "queries/courseTable";
 import handleFetch from "utils/CustomFetch";
 import useUserInfo from "hooks/useUserInfo";
 import { reportEvent } from "utils/ga";
+import { useSWRConfig } from "swr";
 
 const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
@@ -158,9 +159,10 @@ function SideCourseTableContent({
   const {
     courseTable,
     isLoading: isCourseTableLoading,
-    refetch: refetchCourseTable,
+    mutate: mutateCourseTable,
     isExpired,
   } = useCourseTable(courseTableKey);
+  const { mutate } = useSWRConfig();
 
   // some local states for handling course data
   const [courses, setCourses] = useState({}); // dictionary of Course objects using courseId as key
@@ -194,13 +196,13 @@ function SideCourseTableContent({
       if (userInfo) {
         // hasLogIn
         try {
-          await createCourseTable(
+          const newCourseTableData = await createCourseTable(
             new_uuid,
             "我的課表",
             userInfo.id,
             process.env.NEXT_PUBLIC_SEMESTER
           );
-          mutateUser(
+          await mutateUser(
             async () => {
               const userData = await handleFetch("/api/user/linkCourseTable", {
                 table_id: new_uuid,
@@ -213,7 +215,16 @@ function SideCourseTableContent({
               populateCache: true,
             }
           );
-          refetchCourseTable();
+          await mutate(
+            `/v2/course_tables/${new_uuid}`,
+            async (prev) => {
+              return newCourseTableData ?? prev;
+            },
+            {
+              revalidate: false,
+              populateCache: true,
+            }
+          );
         } catch (e) {
           toast({
             title: `新增課表失敗`,
@@ -253,12 +264,21 @@ function SideCourseTableContent({
   const handleSave = async (new_table_name) => {
     onClose();
     try {
-      await patchCourseTable(
-        courseTable.id,
-        new_table_name,
-        courseTable.user_id,
-        courseTable.expire_ts,
-        courseTable.courses.map((course) => course.id)
+      await mutateCourseTable(
+        async (prev) => {
+          const data = await patchCourseTable(
+            courseTable.id,
+            new_table_name,
+            courseTable.user_id,
+            courseTable.expire_ts,
+            courseTable.courses.map((course) => course.id)
+          );
+          return data ?? prev;
+        },
+        {
+          revalidate: false,
+          populateCache: true,
+        }
       );
       toast({
         title: `變更課表名稱成功`,
@@ -267,7 +287,6 @@ function SideCourseTableContent({
         duration: 3000,
         isClosable: true,
       });
-      refetchCourseTable();
     } catch (e) {
       toast({
         title: `變更課表名稱失敗`,

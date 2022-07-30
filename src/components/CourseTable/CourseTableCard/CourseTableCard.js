@@ -81,7 +81,7 @@ function CourseTableCard({
   const courseTableKey = userInfo
     ? userInfo?.course_tables?.[0] ?? null
     : neoLocalCourseTableKey;
-  const { courseTable, refetch: refetchCourseTable } =
+  const { courseTable, mutate: mutateCourseTable } =
     useCourseTable(courseTableKey);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
@@ -138,14 +138,22 @@ function CourseTableCard({
       }
     }
     try {
-      await patchCourseTable(
-        courseTable.id,
-        courseTable.name,
-        courseTable.user_id,
-        courseTable.expire_ts,
-        new_courses
+      await mutateCourseTable(
+        async (prev) => {
+          const data = await patchCourseTable(
+            courseTable.id,
+            courseTable.name,
+            courseTable.user_id,
+            courseTable.expire_ts,
+            new_courses
+          );
+          return data ?? prev;
+        },
+        {
+          revalidate: false,
+          populateCache: true,
+        }
       );
-      refetchCourseTable();
       toast({
         title: `Saved!`,
         description: `更改志願序成功`,

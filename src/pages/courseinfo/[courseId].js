@@ -90,7 +90,7 @@ function CourseInfoPage({ code, course }) {
   const {
     courseTable,
     isLoading: isCourseTableLoading,
-    refetch: refetchCourseTable,
+    mutate: mutateCourseTable,
   } = useCourseTable(courseTableKey);
   const router = useRouter();
   const toast = useToast();
@@ -121,33 +121,42 @@ function CourseInfoPage({ code, course }) {
     if (!isLoading && !isCourseTableLoading) {
       if (courseTableKey) {
         // fetch course table success
-        let operation_str;
         try {
-          if (courseTable.courses.map((c) => c.id).includes(course.id)) {
-            // course is already in course table, remove it.
-            operation_str = "刪除";
-            await patchCourseTable(
-              courseTableKey,
-              courseTable.name,
-              courseTable.user_id,
-              courseTable.expire_ts,
-              courseTable.courses
-                .map((c) => c.id)
-                .filter((id) => id !== course.id)
-            );
-            refetchCourseTable();
-          } else {
-            // course is not in course table, add it.
-            operation_str = "新增";
-            await patchCourseTable(
-              courseTableKey,
-              courseTable.name,
-              courseTable.user_id,
-              courseTable.expire_ts,
-              [...courseTable.courses.map((c) => c.id), course.id]
-            );
-            refetchCourseTable();
-          }
+          const originalCourseTableLength = courseTable?.courses?.length ?? 0;
+          const newCourseTableData = await mutateCourseTable(
+            async (prev) => {
+              if (courseTable.courses.map((c) => c.id).includes(course.id)) {
+                const data = await patchCourseTable(
+                  courseTableKey,
+                  courseTable.name,
+                  courseTable.user_id,
+                  courseTable.expire_ts,
+                  courseTable.courses
+                    .map((c) => c.id)
+                    .filter((id) => id !== course.id)
+                );
+                return data ?? prev;
+              } else {
+                const data = await patchCourseTable(
+                  courseTableKey,
+                  courseTable.name,
+                  courseTable.user_id,
+                  courseTable.expire_ts,
+                  [...courseTable.courses.map((c) => c.id), course.id]
+                );
+                return data ?? prev;
+              }
+            },
+            {
+              revalidate: false,
+              populateCache: true,
+            }
+          );
+          const operation_str =
+            (newCourseTableData?.course_table?.courses?.length ?? 0) >
+            originalCourseTableLength
+              ? "加入"
+              : "移除";
           toast({
             title: `已${operation_str} ${course.name}`,
             description: `課表: ${courseTable.name}`,

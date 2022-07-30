@@ -200,7 +200,7 @@ function CourseListContainer({ courseTable, courses, loading }) {
   const courseTableKey = userInfo
     ? userInfo?.course_tables?.[0] ?? null
     : neoLocalCourseTableKey;
-  const { refetch } = useCourseTable(courseTableKey);
+  const { mutate: mutateCourseTable } = useCourseTable(courseTableKey);
   const toast = useToast();
   const [courseListForSort, setCourseListForSort] = useState(
     Object.keys(courses)
@@ -226,14 +226,24 @@ function CourseListContainer({ courseTable, courses, loading }) {
   const handleSaveCourseTable = async () => {
     setIsLoading(true);
     try {
-      const { course_table: res_table } = await patchCourseTable(
-        courseTable.id,
-        courseTable.name,
-        courseTable.user_id,
-        courseTable.expire_ts,
-        courseListForSort.filter((id) => !prepareToRemoveCourseId.includes(id))
+      const updatedCourseTableData = await mutateCourseTable(
+        async (prev) => {
+          const data = await patchCourseTable(
+            courseTable.id,
+            courseTable.name,
+            courseTable.user_id,
+            courseTable.expire_ts,
+            courseListForSort.filter(
+              (id) => !prepareToRemoveCourseId.includes(id)
+            )
+          );
+          return data ?? prev;
+        },
+        {
+          revalidate: false,
+          populateCache: true,
+        }
       );
-      refetch();
       toast({
         title: "編輯課表成功",
         description: "課程更動已儲存",
@@ -241,7 +251,9 @@ function CourseListContainer({ courseTable, courses, loading }) {
         duration: 3000,
         isClosable: true,
       });
-      setCourseListForSort(res_table.courses.map((c) => c.id));
+      setCourseListForSort(
+        updatedCourseTableData?.course_table.courses.map((c) => c.id)
+      );
       setPrepareToRemoveCourseId([]);
     } catch (err) {
       toast({
