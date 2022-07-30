@@ -159,11 +159,11 @@ function PanelWrapper({
   unauthFallback = <UnauthenticatedPanel />,
   children,
 }) {
-  if (isLoading) {
-    return loadingFallback;
-  }
   if (isUnauth) {
     return unauthFallback;
+  }
+  if (isLoading) {
+    return loadingFallback;
   }
   return <>{children}</>;
 }
