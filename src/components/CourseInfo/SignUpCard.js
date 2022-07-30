@@ -49,7 +49,7 @@ import { reportEvent } from "utils/ga";
 //   self_vote_status: get_self_vote_status(post, user_id)
 // }
 
-function SignUpCard({ post, refetch }) {
+function SignUpCard({ post, mutate }) {
   const is_owner = post?.is_owner;
   const toast = useToast();
   const [isVotingPost, setIsVotingPost] = useState(0);
@@ -67,7 +67,6 @@ function SignUpCard({ post, refetch }) {
   const handleVotePost = async (post_id, vote_type) => {
     setIsVotingPost(vote_type);
     try {
-      console.log("vote_type: ", vote_type);
       await handleFetch("/api/social/votePost", { post_id, vote_type });
     } catch (error) {
       setIsVotingPost(0);
@@ -83,7 +82,7 @@ function SignUpCard({ post, refetch }) {
       }
       return;
     }
-    refetch();
+    mutate();
     setIsVotingPost(0);
   };
 
@@ -106,7 +105,7 @@ function SignUpCard({ post, refetch }) {
       return;
     }
     setIsDeletingPost(false);
-    refetch();
+    mutate();
   };
 
   const handleReportPost = async (post_id, content) => {
@@ -128,7 +127,7 @@ function SignUpCard({ post, refetch }) {
       return;
     }
     setIsReportingPost(false);
-    refetch();
+    mutate();
   };
 
   if (!post) {

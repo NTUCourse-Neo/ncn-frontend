@@ -14,7 +14,7 @@ export default withApiAuthRequired(async function handler(req, res) {
     }
   } catch (error) {
     if (error?.response?.status === 404) {
-      return res.status(200).json([]);
+      return res.status(200).json({ posts: [] });
     } else {
       console.error(error);
       res

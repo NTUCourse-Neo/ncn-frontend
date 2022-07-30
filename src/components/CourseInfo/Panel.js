@@ -173,7 +173,7 @@ export function SignUpPanel({ courseId }) {
   const {
     data: signUpPostData,
     isLoading,
-    refetch,
+    mutate,
   } = useSignUpPostData(courseId);
   const [signUpCardIdx, setSignUpCardIdx] = useState(0);
   const textColor = useColorModeValue("text.light", "text.dark");
@@ -187,6 +187,7 @@ export function SignUpPanel({ courseId }) {
       setSignUpCardIdx(Math.max(signUpPostData.length - 1, 0));
     }
   }, [signUpPostData, setSignUpCardIdx, signUpCardIdx]);
+
   return (
     <PanelWrapper
       isLoading={isLoading || isAuth0Loading}
@@ -211,7 +212,7 @@ export function SignUpPanel({ courseId }) {
             <SignUpSubmitForm
               courseId={courseId}
               haveSubmitted={signUpPostData.some((obj) => obj.is_owner)}
-              submitCallback={refetch}
+              mutate={mutate}
             />
           </HStack>
         </Flex>
@@ -227,7 +228,7 @@ export function SignUpPanel({ courseId }) {
           <SignUpCard
             post={signUpPostData[signUpCardIdx]}
             SignUpPostData={signUpPostData}
-            refetch={refetch}
+            mutate={mutate}
           />
           <HStack w="100%" pr="8" mt="8">
             <HStack>
@@ -264,7 +265,7 @@ export function SignUpPanel({ courseId }) {
             <SignUpSubmitForm
               courseId={courseId}
               haveSubmitted={signUpPostData.some((obj) => obj.is_owner)}
-              submitCallback={refetch}
+              mutate={mutate}
             />
           </HStack>
         </Flex>

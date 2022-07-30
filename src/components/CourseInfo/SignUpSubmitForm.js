@@ -23,7 +23,7 @@ import handleFetch from "utils/CustomFetch";
 import { useRouter } from "next/router";
 import { reportEvent } from "utils/ga";
 
-function SignUpSubmitForm({ courseId, haveSubmitted, submitCallback }) {
+function SignUpSubmitForm({ courseId, haveSubmitted, mutate }) {
   const headingColor = useColorModeValue("heading.light", "heading.dark");
   const { onOpen, onClose, isOpen } = useDisclosure();
   const router = useRouter();
@@ -81,6 +81,7 @@ function SignUpSubmitForm({ courseId, haveSubmitted, submitCallback }) {
         user_type: signUpCardForm.user_type,
       };
       await handleFetch("/api/social/createPost", { courseId, post });
+      await mutate();
       toast({
         title: "發送成功",
         description: "感謝您的填寫！",
@@ -89,7 +90,6 @@ function SignUpSubmitForm({ courseId, haveSubmitted, submitCallback }) {
         isClosable: true,
       });
       onClose();
-      await submitCallback();
     } catch (e) {
       toast({
         title: "發送失敗，請稍後再試",

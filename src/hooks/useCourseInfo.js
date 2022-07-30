@@ -44,7 +44,7 @@ export function useCourseEnrollData(courseSerial, options) {
     data: data?.course_status ?? null,
     isLoading: !data && !error,
     error: error,
-    refetch: mutate,
+    mutate,
   };
 }
 
@@ -86,7 +86,7 @@ export function useNTURatingData(courseId, options) {
     data: data?.course_rating ?? null,
     isLoading: !data && !error,
     error: error,
-    refetch: mutate,
+    mutate,
   };
 }
 
@@ -129,7 +129,7 @@ export function usePTTReviewData(courseId, options) {
     data: data?.course_rating ?? null,
     isLoading: !data && !error,
     error: error,
-    refetch: mutate,
+    mutate,
   };
 }
 
@@ -172,7 +172,7 @@ export function usePTTExamData(courseId, options) {
     data: data?.course_rating ?? null,
     isLoading: !data && !error,
     error: error,
-    refetch: mutate,
+    mutate,
   };
 }
 
@@ -219,7 +219,7 @@ export function useSyllabusData(courseId, options) {
     data: data?.course_syllabus ?? null,
     isLoading: !data && !error,
     error: error,
-    refetch: mutate,
+    mutate,
   };
 }
 
@@ -261,6 +261,6 @@ export function useSignUpPostData(courseId, options) {
     data: data?.posts ?? null,
     isLoading: !data && !error,
     error: error,
-    refetch: mutate,
+    mutate,
   };
 }
