@@ -28,6 +28,7 @@ import {
   TabPanel,
   SkeletonText,
   useColorModeValue,
+  Tag,
 } from "@chakra-ui/react";
 import {
   FaRegEdit,
@@ -193,7 +194,12 @@ function SideCourseTableContent({
       if (userInfo) {
         // hasLogIn
         try {
-          await createCourseTable(new_uuid, "我的課表", userInfo.id, "1111");
+          await createCourseTable(
+            new_uuid,
+            "我的課表",
+            userInfo.id,
+            process.env.NEXT_PUBLIC_SEMESTER
+          );
           mutateUser(
             async () => {
               const userData = await handleFetch("/api/user/linkCourseTable", {
@@ -224,7 +230,7 @@ function SideCourseTableContent({
             new_uuid,
             "我的課表",
             null,
-            "1111"
+            process.env.NEXT_PUBLIC_SEMESTER
           );
           // set State
           localStorage.setItem(LOCAL_STORAGE_KEY, new_course_table.id);
@@ -326,6 +332,11 @@ function SideCourseTableContent({
           >
             {courseTable ? (
               <Flex alignItems="center" flexWrap="wrap">
+                <Tag size="md" variant="outline" w="fit-content" mr="2">
+                  <Text fontWeight="800" fontSize={{ base: "sm", lg: "md" }}>
+                    {courseTable.semester}
+                  </Text>
+                </Tag>
                 <Text
                   fontWeight="700"
                   fontSize={["xl", "2xl", "3xl"]}

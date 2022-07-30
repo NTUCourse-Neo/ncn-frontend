@@ -21,6 +21,7 @@ import {
 import {
   FaArrowDown,
   FaArrowRight,
+  FaEdit,
   FaGithub,
   FaInfoCircle,
   FaSortDown,
@@ -164,6 +165,64 @@ function HomePage() {
 
   const newsCard = [
     <Flex
+      key="1111CourseCard"
+      h={{ base: "220px", lg: "200px" }}
+      overflowY={"auto"}
+      w={["80vw", "80vw", "50vw", "25vw"]}
+      justifyContent={["center", "start"]}
+      alignItems="start"
+      flexDirection="column"
+      bg={useColorModeValue("teal.light", "teal.dark")}
+      borderRadius="xl"
+      boxShadow="xl"
+      p="4"
+      mt="8"
+    >
+      <Text
+        fontSize="xl"
+        fontWeight="800"
+        color={useColorModeValue("heading.light", "heading.dark")}
+        mb="2"
+      >
+        🚀 台大課程網 111-1 課程已更新！
+      </Text>
+      <Text
+        fontSize="md"
+        fontWeight="500"
+        color={useColorModeValue("text.light", "text.dark")}
+      >
+        讚啦！新的學期即將到來，現在就開始規劃課程吧。使用之餘也歡迎協助台大課程網填寫使用習慣問卷，讓我們能變得更好。
+      </Text>
+      <Flex flexDirection="column" flexGrow={1} justify="end" w="100%">
+        <Flex
+          justifyContent="space-between"
+          alignItems="center"
+          flexDirection="row"
+        >
+          <Text
+            fontSize={{ base: "xs", lg: "sm" }}
+            fontWeight="400"
+            color="gray.500"
+            mt="4"
+          >
+            Team NTUCourse Neo - 20220729
+          </Text>
+          <Button
+            colorScheme="teal"
+            variant="solid"
+            size="sm"
+            mt="4"
+            leftIcon={<FaEdit />}
+            onClick={() =>
+              window.open("https://forms.gle/8MZZBLc9buhntM8R6", "_blank")
+            }
+          >
+            問卷調查
+          </Button>
+        </Flex>
+      </Flex>
+    </Flex>,
+    <Flex
       key="NTUCollaborationCard"
       h={{ base: "220px", lg: "200px" }}
       overflowY={"auto"}
@@ -267,13 +326,19 @@ function HomePage() {
           >
             Team NTUCourse Neo - 20220303
           </Text>
-          <Tooltip label="暫時關閉囉 ><" placement="top">
+          <Tooltip
+            label="暫時關閉囉 ><"
+            placement="top"
+            shouldWrapChildren
+            hasArrow
+          >
             <Button
               colorScheme="teal"
               variant="solid"
               size="sm"
               mt="4"
               rightIcon={<FaArrowRight />}
+              disabled
             >
               加入我們
             </Button>
@@ -391,7 +456,11 @@ function HomePage() {
                     variant="ghost"
                     size="sm"
                     onClick={() =>
-                      setDisplayingCard((displayingCard + 1) % newsCard.length)
+                      setDisplayingCard(
+                        displayingCard - 1 < 0
+                          ? displayingCard - 1 + newsCard.length
+                          : displayingCard - 1
+                      )
                     }
                   />
                   <IconButton
@@ -401,11 +470,7 @@ function HomePage() {
                     variant="ghost"
                     size="sm"
                     onClick={() =>
-                      setDisplayingCard(
-                        displayingCard - 1 < 0
-                          ? displayingCard - 1 + newsCard.length
-                          : displayingCard - 1
-                      )
+                      setDisplayingCard((displayingCard + 1) % newsCard.length)
                     }
                   />
                 </Flex>

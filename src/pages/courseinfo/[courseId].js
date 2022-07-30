@@ -337,6 +337,11 @@ function CourseInfoPage({ code, course }) {
           >
             <Stack w="100%" direction={{ base: "column", lg: "row" }}>
               <HStack>
+                <Tag size="md" variant="outline" w="fit-content">
+                  <Text fontWeight="800" fontSize={{ base: "md", lg: "md" }}>
+                    {course.semester}
+                  </Text>
+                </Tag>
                 {course.serial ? (
                   <Tag size="md" colorScheme="blue" w="fit-content">
                     <Text fontWeight="800" fontSize={{ base: "md", lg: "lg" }}>
