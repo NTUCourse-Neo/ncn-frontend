@@ -298,7 +298,8 @@ function SideCourseTableContent({
     }
   };
 
-  if ((!courseTable || isExpired === true) && !isLoading) {
+  const sideCourseTableLoading = isCourseTableLoading || isLoading;
+  if ((!courseTable || isExpired === true) && !sideCourseTableLoading) {
     return (
       <Flex
         flexDirection="column"

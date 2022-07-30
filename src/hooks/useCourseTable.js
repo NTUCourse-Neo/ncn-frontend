@@ -4,11 +4,13 @@ import { fetchCourseTable } from "queries/courseTable";
 
 export default function useCourseTable(courseTableId, options) {
   const [isExpired, setIsExpired] = useState(false);
+  const [hasStartFetching, setHasStartFetching] = useState(false);
   const onSuccessCallback = options?.onSuccessCallback;
   const onErrorCallback = options?.onErrorCallback;
   const { data, error, mutate } = useSWR(
     courseTableId ? `/v2/course_tables/${courseTableId}` : null,
     async () => {
+      setHasStartFetching(true);
       const courseTableData = await fetchCourseTable(courseTableId);
       return courseTableData;
     },
@@ -28,9 +30,9 @@ export default function useCourseTable(courseTableId, options) {
 
   return {
     courseTable: data?.course_table ?? null,
-    isLoading: !data && !error,
+    isLoading: !data && !error && hasStartFetching,
     error,
     isExpired,
-    refetch: mutate,
+    mutate,
   };
 }
