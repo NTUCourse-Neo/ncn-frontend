@@ -1,4 +1,4 @@
-import { React, useMemo } from "react";
+import { React, useMemo, useState } from "react";
 import {
   Flex,
   Text,
@@ -11,7 +11,6 @@ import {
 import SkeletonRow from "components/SkeletonRow";
 import { HashLoader, BeatLoader } from "react-spinners";
 import CourseInfoRow from "components/CourseInfoRow";
-import { useDisplayTags } from "components/Providers/DisplayTagsProvider";
 import useCourseTable from "hooks/useCourseTable";
 import useNeoLocalStorage from "hooks/useNeoLocalStorage";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
@@ -37,12 +36,11 @@ export default function UserMyPage({ user }) {
     : neoLocalCourseTableKey;
   const { courseTable } = useCourseTable(courseTableKey);
 
-  const { displayTags } = useDisplayTags();
   const bgColor = useColorModeValue("white", "black");
   const selectedCourses = useMemo(() => {
     return courseTable?.courses.map((c) => c.id);
   }, [courseTable]);
-  const favoriteList = useMemo(() => userInfo?.favorites ?? [], [userInfo]);
+  const [favoriteList, setFavoriteList] = useState(userInfo?.favorites ?? []);
 
   if (isLoading) {
     return (
@@ -106,15 +104,13 @@ export default function UserMyPage({ user }) {
                     selected={
                       selectedCourses && selectedCourses.includes(course.id)
                     }
-                    displayTags={displayTags}
                     displayTable={false}
-                    isfavorite={
-                      userInfo === null
-                        ? false
-                        : userInfo.favorites
-                            .map((c) => c.id)
-                            .includes(course.id)
-                    }
+                    isFavorite={favoriteList
+                      .map((c) => c.id)
+                      .includes(course.id)}
+                    onMutateFavorite={(newFavoriteList) => {
+                      setFavoriteList(newFavoriteList);
+                    }}
                   />
                   <Spacer my={{ base: 2, md: 1 }} />
                 </Accordion>

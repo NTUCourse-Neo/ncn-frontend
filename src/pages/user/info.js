@@ -182,7 +182,11 @@ export default function UserInfoPage({ user }) {
   const [saveLoading, setSaveLoading] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [deleteMode, setDeleteMode] = useState(null);
-  const { userInfo, isLoading, refetch } = useUserInfo(user?.sub, {
+  const {
+    userInfo,
+    isLoading,
+    mutate: mutateUser,
+  } = useUserInfo(user?.sub, {
     onErrorCallback: (e, k, c) => {
       toast({
         title: "取得用戶資料失敗.",
@@ -235,21 +239,29 @@ export default function UserInfoPage({ user }) {
       return;
     }
     try {
-      handleFetch("/api/user/patch", {
-        newUser: {
-          name: name,
-          major: major,
-          d_major: doubleMajor,
-          minors: minor,
+      mutateUser(
+        async () => {
+          const userData = await handleFetch("/api/user/patch", {
+            newUser: {
+              name: name,
+              major: major,
+              d_major: doubleMajor,
+              minors: minor,
+            },
+          });
+          return userData;
         },
-      });
+        {
+          revalidate: false,
+          populateCache: true,
+        }
+      );
       toast({
         title: "更改用戶資料成功.",
         status: "success",
         duration: 3000,
         isClosable: true,
       });
-      refetch();
     } catch (e) {
       toast({
         title: "更改用戶資料失敗.",

@@ -82,7 +82,17 @@ function CourseInfoPage({ code, course }) {
   const bgcolor = useColorModeValue("white", "black");
   const headingColor = useColorModeValue("heading.light", "heading.dark");
   const { user } = useUser();
-  const { userInfo, refetch, isLoading } = useUserInfo(user?.sub);
+  const {
+    userInfo,
+    mutate: mutateUser,
+    isLoading,
+  } = useUserInfo(user?.sub, {
+    onSuccessCallback: (userData, k, c) => {
+      setIsFavorite(
+        userData?.user?.db?.favorites.map((c) => c.id).includes(course.id)
+      );
+    },
+  });
   const { neoLocalCourseTableKey } = useNeoLocalStorage();
   const courseTableKey = userInfo
     ? userInfo?.course_tables?.[0] ?? null
@@ -101,10 +111,10 @@ function CourseInfoPage({ code, course }) {
     () => (courseTable?.courses ?? []).map((c) => c.id).includes(code),
     [courseTable, code]
   );
-  const isFavorite = useMemo(
-    () => userInfo?.favorites.map((c) => c.id).includes(course.id) ?? false,
-    [userInfo, course.id]
+  const [isFavorite, setIsFavorite] = useState(
+    userInfo?.favorites.map((c) => c.id).includes(course.id) ?? false
   );
+  const [isAddingFavorite, setIsAddingFavorite] = useState(false);
   const [copiedLinkClicks, setCopiedLinkClicks] = useState(0);
   const [copyWord, setCopyWord] = useState(
     copyWordList.find((word) => word.count <= copiedLinkClicks)
@@ -179,18 +189,43 @@ function CourseInfoPage({ code, course }) {
   const handleAddFavorite = async (course_id) => {
     if (!isLoading) {
       if (userInfo) {
-        const favorite_list = userInfo.favorites.map((c) => c.id);
+        setIsAddingFavorite(true);
         try {
-          if (favorite_list.includes(course_id)) {
-            await handleFetch(`/api/user/removeFavoriteCourse`, {
-              course_id: course_id,
-            });
-          } else {
-            await handleFetch(`/api/user/addFavoriteCourse`, {
-              course_id: course_id,
-            });
-          }
-          refetch();
+          await mutateUser(
+            async (prevUser) => {
+              if (
+                !prevUser?.user?.db?.favorites ||
+                !Array.isArray(prevUser?.user?.db?.favorites)
+              ) {
+                return prevUser;
+              }
+              const favorite_list = prevUser.user.db.favorites.map((c) => c.id);
+              if (favorite_list.includes(course_id)) {
+                const data = await handleFetch(
+                  `/api/user/removeFavoriteCourse`,
+                  {
+                    course_id: course_id,
+                  }
+                );
+                const newUser = prevUser;
+                newUser.user.db.favorites = data.favorites;
+                setIsFavorite(false);
+                return newUser;
+              } else {
+                const data = await handleFetch(`/api/user/addFavoriteCourse`, {
+                  course_id: course_id,
+                });
+                const newUser = prevUser;
+                newUser.user.db.favorites = data.favorites;
+                setIsFavorite(true);
+                return newUser;
+              }
+            },
+            {
+              revalidate: false,
+              populateCache: true,
+            }
+          );
           toast({
             title: `更改最愛課程成功`,
             status: "success",
@@ -209,6 +244,7 @@ function CourseInfoPage({ code, course }) {
             router.push("/api/auth/login");
           }
         }
+        setIsAddingFavorite(false);
       } else {
         toast({
           title: `請先登入`,
@@ -377,7 +413,7 @@ function CourseInfoPage({ code, course }) {
                   size="md"
                   colorScheme="red"
                   variant="ghost"
-                  isLoading={isLoading}
+                  isLoading={isLoading || isAddingFavorite}
                   disabled={!userInfo}
                   onClick={() => {
                     handleAddFavorite(course.id);
@@ -467,7 +503,9 @@ function CourseInfoPage({ code, course }) {
             </HStack>
             <Menu>
               <MenuButton
-                isLoading={isLoading || isCourseTableLoading}
+                isLoading={
+                  isLoading || isCourseTableLoading || isAddingFavorite
+                }
                 as={IconButton}
                 variant="ghost"
                 icon={<Icon as={FiMoreHorizontal} boxSize="6" />}

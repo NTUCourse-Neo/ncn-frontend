@@ -31,6 +31,6 @@ export default function useUserInfo(userId, options) {
     userInfo: data?.user?.db ?? null,
     isLoading: !data && !error,
     error: error,
-    refetch: mutate,
+    mutate,
   };
 }

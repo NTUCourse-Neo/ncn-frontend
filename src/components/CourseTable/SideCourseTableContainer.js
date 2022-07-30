@@ -149,7 +149,7 @@ function SideCourseTableContent({
   const router = useRouter();
   const { user } = useUser();
   const toast = useToast();
-  const { userInfo, isLoading, refetch } = useUserInfo(user?.sub);
+  const { userInfo, isLoading, mutate: mutateUser } = useUserInfo(user?.sub);
   const { neoLocalCourseTableKey, setNeoLocalStorage } = useNeoLocalStorage();
   const courseTableKey = userInfo
     ? userInfo?.course_tables?.[0] ?? null
@@ -193,12 +193,20 @@ function SideCourseTableContent({
       if (userInfo) {
         // hasLogIn
         try {
-          await createCourseTable(new_uuid, "我的課表", userInfo.id, "1102");
-          await handleFetch("/api/user/linkCourseTable", {
-            table_id: new_uuid,
-            user_id: userInfo.id,
-          });
-          refetch();
+          await createCourseTable(new_uuid, "我的課表", userInfo.id, "1111");
+          mutateUser(
+            async () => {
+              const userData = await handleFetch("/api/user/linkCourseTable", {
+                table_id: new_uuid,
+                user_id: userInfo.id,
+              });
+              return userData;
+            },
+            {
+              revalidate: false,
+              populateCache: true,
+            }
+          );
           refetchCourseTable();
         } catch (e) {
           toast({
@@ -216,7 +224,7 @@ function SideCourseTableContent({
             new_uuid,
             "我的課表",
             null,
-            "1102"
+            "1111"
           );
           // set State
           localStorage.setItem(LOCAL_STORAGE_KEY, new_course_table.id);
@@ -265,10 +273,7 @@ function SideCourseTableContent({
     }
   };
 
-  if (
-    (!courseTable || isExpired === true) &&
-    !(isCourseTableLoading || isLoading)
-  ) {
+  if ((!courseTable || isExpired === true) && !isLoading) {
     return (
       <Flex
         flexDirection="column"

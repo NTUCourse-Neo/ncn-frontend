@@ -239,7 +239,13 @@ function CourseDrawerContainer({ courseInfo }) {
   );
 }
 
-function CourseInfoRow({ courseInfo, selected, isfavorite, displayTable }) {
+function CourseInfoRow({
+  courseInfo,
+  selected,
+  displayTable,
+  isFavorite,
+  onMutateFavorite,
+}) {
   const rowColor = useColorModeValue("card.light", "card.dark");
   const textColor = useColorModeValue("text.light", "text.dark");
   const headingColor = useColorModeValue("heading.light", "heading.dark");
@@ -253,7 +259,7 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTable }) {
   const router = useRouter();
   const { neoLocalCourseTableKey } = useNeoLocalStorage();
   const { user } = useUser();
-  const { userInfo, refetch, isLoading } = useUserInfo(user?.sub);
+  const { userInfo, mutate: mutateUser, isLoading } = useUserInfo(user?.sub);
   const courseTableKey = userInfo
     ? userInfo?.course_tables?.[0] ?? null
     : neoLocalCourseTableKey;
@@ -330,22 +336,43 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTable }) {
 
   const handleAddFavorite = async (course_id) => {
     if (!isLoading) {
-      if (user) {
+      if (userInfo) {
         setAddingFavoriteCourse(true);
-        const favorite_list = (userInfo?.favorites ?? []).map((c) => c.id);
         try {
-          if (favorite_list.includes(course_id)) {
-            await handleFetch(`/api/user/removeFavoriteCourse`, {
-              course_id: course_id,
-            });
-            refetch();
-          } else {
-            await handleFetch(`/api/user/addFavoriteCourse`, {
-              course_id: course_id,
-            });
-            refetch();
-          }
-          setAddingFavoriteCourse(false);
+          const newUserData = await mutateUser(
+            async (prevUser) => {
+              if (
+                !prevUser?.user?.db?.favorites ||
+                !Array.isArray(prevUser?.user?.db?.favorites)
+              ) {
+                return prevUser;
+              }
+              const favorite_list = prevUser.user.db.favorites.map((c) => c.id);
+              if (favorite_list.includes(course_id)) {
+                const data = await handleFetch(
+                  `/api/user/removeFavoriteCourse`,
+                  {
+                    course_id: course_id,
+                  }
+                );
+                const newUser = prevUser;
+                newUser.user.db.favorites = data.favorites;
+                return newUser;
+              } else {
+                const data = await handleFetch(`/api/user/addFavoriteCourse`, {
+                  course_id: course_id,
+                });
+                const newUser = prevUser;
+                newUser.user.db.favorites = data.favorites;
+                return newUser;
+              }
+            },
+            {
+              revalidate: false,
+              populateCache: true,
+            }
+          );
+          onMutateFavorite?.(newUserData?.user?.db?.favorites ?? []);
           toast({
             title: `更改最愛課程成功`,
             status: "success",
@@ -353,7 +380,6 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTable }) {
             isClosable: true,
           });
         } catch (error) {
-          console.log(error);
           toast({
             title: `更改最愛課程失敗`,
             description: `請稍後再試`,
@@ -361,11 +387,11 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTable }) {
             duration: 3000,
             isClosable: true,
           });
-          setAddingFavoriteCourse(false);
-          if (error?.response?.data?.msg === "access_token_expired") {
+          if (error?.response?.status === 401) {
             router.push("/api/auth/login");
           }
         }
+        setAddingFavoriteCourse(false);
       } else {
         toast({
           title: `請先登入`,
@@ -619,14 +645,14 @@ function CourseInfoRow({ courseInfo, selected, isfavorite, displayTable }) {
               handleAddFavorite(courseInfo.id);
               reportEvent(
                 "course_info_row",
-                isfavorite ? "remove_favorite" : "add_favorite",
+                isFavorite ? "remove_favorite" : "add_favorite",
                 courseInfo.id
               );
             }}
             isLoading={addingFavoriteCourse}
           >
             <Box>
-              {<Icon as={isfavorite ? FaHeart : FaRegHeart} boxSize="4" />}
+              {<Icon as={isFavorite ? FaHeart : FaRegHeart} boxSize="4" />}
             </Box>
           </Button>
           <Button

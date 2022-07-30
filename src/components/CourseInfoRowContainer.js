@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import CourseInfoRow from "components/CourseInfoRow";
 import {
   Box,
@@ -30,6 +30,8 @@ function CourseInfoRowPage({ displayTable, pageIndex }) {
   }, [courseTable]);
   const isDesktop = useBreakpointValue({ base: false, lg: true });
 
+  const [favoriteList, setFavoriteList] = useState(userInfo?.favorites ?? []);
+
   if (isLoading || error) {
     return <></>;
   }
@@ -53,11 +55,10 @@ function CourseInfoRowPage({ displayTable, pageIndex }) {
         courseInfo={course}
         selected={selectedCourses.includes(course.id)}
         displayTable={displayTable}
-        isfavorite={
-          !userInfo
-            ? false
-            : userInfo.favorites.map((c) => c.id).includes(course.id)
-        }
+        isFavorite={favoriteList.map((c) => c.id).includes(course.id)}
+        onMutateFavorite={(newFavoriteList) => {
+          setFavoriteList(newFavoriteList);
+        }}
       />
       <Spacer my={{ base: 2, md: 1 }} />
     </Accordion>
