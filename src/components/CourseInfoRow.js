@@ -1,7 +1,7 @@
 // Props
 // | courseInfo: Obj
 //
-import { React, useState } from "react";
+import { React, useState, useMemo } from "react";
 import {
   Box,
   Flex,
@@ -239,13 +239,7 @@ function CourseDrawerContainer({ courseInfo }) {
   );
 }
 
-function CourseInfoRow({
-  courseInfo,
-  selected,
-  displayTable,
-  isFavorite,
-  onMutateFavorite,
-}) {
+function CourseInfoRow({ courseInfo, selected, displayTable }) {
   const rowColor = useColorModeValue("card.light", "card.dark");
   const textColor = useColorModeValue("text.light", "text.dark");
   const headingColor = useColorModeValue("heading.light", "heading.dark");
@@ -271,6 +265,10 @@ function CourseInfoRow({
 
   const [addingCourse, setAddingCourse] = useState(false);
   const [addingFavoriteCourse, setAddingFavoriteCourse] = useState(false);
+  const isFavorite = useMemo(
+    () => (userInfo?.favorites ?? []).map((c) => c.id).includes(courseInfo.id),
+    [userInfo, courseInfo.id]
+  );
 
   const toast = useToast();
 
@@ -355,16 +353,30 @@ function CourseInfoRow({
                     course_id: course_id,
                   }
                 );
-                const newUser = prevUser;
-                newUser.user.db.favorites = data.favorites;
-                return newUser;
+                return {
+                  ...prevUser,
+                  user: {
+                    ...prevUser.user,
+                    db: {
+                      ...prevUser.user.db,
+                      favorites: data.favorites,
+                    },
+                  },
+                };
               } else {
                 const data = await handleFetch(`/api/user/addFavoriteCourse`, {
                   course_id: course_id,
                 });
-                const newUser = prevUser;
-                newUser.user.db.favorites = data.favorites;
-                return newUser;
+                return {
+                  ...prevUser,
+                  user: {
+                    ...prevUser.user,
+                    db: {
+                      ...prevUser.user.db,
+                      favorites: data.favorites,
+                    },
+                  },
+                };
               }
             },
             {
@@ -372,7 +384,6 @@ function CourseInfoRow({
               populateCache: true,
             }
           );
-          onMutateFavorite?.(newUserData?.user?.db?.favorites ?? []);
           toast({
             title: `更改最愛課程成功`,
             status: "success",

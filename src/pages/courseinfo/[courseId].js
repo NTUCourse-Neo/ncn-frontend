@@ -82,17 +82,7 @@ function CourseInfoPage({ code, course }) {
   const bgcolor = useColorModeValue("white", "black");
   const headingColor = useColorModeValue("heading.light", "heading.dark");
   const { user } = useUser();
-  const {
-    userInfo,
-    mutate: mutateUser,
-    isLoading,
-  } = useUserInfo(user?.sub, {
-    onSuccessCallback: (userData, k, c) => {
-      setIsFavorite(
-        userData?.user?.db?.favorites.map((c) => c.id).includes(course.id)
-      );
-    },
-  });
+  const { userInfo, mutate: mutateUser, isLoading } = useUserInfo(user?.sub);
   const { neoLocalCourseTableKey } = useNeoLocalStorage();
   const courseTableKey = userInfo
     ? userInfo?.course_tables?.[0] ?? null
@@ -111,8 +101,9 @@ function CourseInfoPage({ code, course }) {
     () => (courseTable?.courses ?? []).map((c) => c.id).includes(code),
     [courseTable, code]
   );
-  const [isFavorite, setIsFavorite] = useState(
-    userInfo?.favorites.map((c) => c.id).includes(course.id) ?? false
+  const isFavorite = useMemo(
+    () => (userInfo?.favorites ?? []).map((c) => c.id).includes(course.id),
+    [userInfo, course.id]
   );
   const [isAddingFavorite, setIsAddingFavorite] = useState(false);
   const [copiedLinkClicks, setCopiedLinkClicks] = useState(0);
@@ -207,18 +198,30 @@ function CourseInfoPage({ code, course }) {
                     course_id: course_id,
                   }
                 );
-                const newUser = prevUser;
-                newUser.user.db.favorites = data.favorites;
-                setIsFavorite(false);
-                return newUser;
+                return {
+                  ...prevUser,
+                  user: {
+                    ...prevUser.user,
+                    db: {
+                      ...prevUser.user.db,
+                      favorites: data.favorites,
+                    },
+                  },
+                };
               } else {
                 const data = await handleFetch(`/api/user/addFavoriteCourse`, {
                   course_id: course_id,
                 });
-                const newUser = prevUser;
-                newUser.user.db.favorites = data.favorites;
-                setIsFavorite(true);
-                return newUser;
+                return {
+                  ...prevUser,
+                  user: {
+                    ...prevUser.user,
+                    db: {
+                      ...prevUser.user.db,
+                      favorites: data.favorites,
+                    },
+                  },
+                };
               }
             },
             {

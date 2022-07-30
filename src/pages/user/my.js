@@ -1,4 +1,4 @@
-import { React, useMemo, useState } from "react";
+import { React, useMemo } from "react";
 import {
   Flex,
   Text,
@@ -40,7 +40,7 @@ export default function UserMyPage({ user }) {
   const selectedCourses = useMemo(() => {
     return courseTable?.courses.map((c) => c.id);
   }, [courseTable]);
-  const [favoriteList, setFavoriteList] = useState(userInfo?.favorites ?? []);
+  const favoriteList = useMemo(() => userInfo?.favorites ?? [], [userInfo]);
 
   if (isLoading) {
     return (
@@ -105,12 +105,6 @@ export default function UserMyPage({ user }) {
                       selectedCourses && selectedCourses.includes(course.id)
                     }
                     displayTable={false}
-                    isFavorite={favoriteList
-                      .map((c) => c.id)
-                      .includes(course.id)}
-                    onMutateFavorite={(newFavoriteList) => {
-                      setFavoriteList(newFavoriteList);
-                    }}
                   />
                   <Spacer my={{ base: 2, md: 1 }} />
                 </Accordion>
