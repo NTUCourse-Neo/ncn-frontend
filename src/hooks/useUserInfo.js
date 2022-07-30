@@ -1,17 +1,14 @@
 import useSWR from "swr";
 import handleFetch from "utils/CustomFetch";
 import { useRouter } from "next/router";
-import { useState } from "react";
 
 export default function useUserInfo(userId, options) {
-  const [hasStartFetching, setHasStartFetching] = useState(false);
   const onSuccessCallback = options?.onSuccessCallback;
   const onErrorCallback = options?.onErrorCallback;
   const router = useRouter();
   const { data, error, mutate } = useSWR(
     userId ? [`/api/user`, userId] : null,
     async (url) => {
-      setHasStartFetching(true);
       const userData = await handleFetch(url, {
         user_id: userId,
       });
@@ -32,7 +29,7 @@ export default function useUserInfo(userId, options) {
 
   return {
     userInfo: data?.user?.db ?? null,
-    isLoading: !data && !error && hasStartFetching,
+    isLoading: !data && !error,
     error: error,
     mutate,
   };

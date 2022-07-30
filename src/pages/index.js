@@ -128,7 +128,7 @@ function HomePage() {
   const { user, isLoading: isAuthLoading } = useUser();
   useUserInfo(user?.sub, {
     onSuccessCallback: async (userData, key, config) => {
-      if (!userData) {
+      if (!userData?.user?.db) {
         setIsRegistering(true);
         try {
           await handleFetch("/api/user/register", {

@@ -190,73 +190,74 @@ function SideCourseTableContent({
   }, [courseTable]);
 
   const handleCreateTable = async () => {
-    if (!isLoading) {
-      // generate a new uuid of course table
-      const new_uuid = uuidv4();
-      if (userInfo) {
-        // hasLogIn
-        try {
-          const newCourseTableData = await createCourseTable(
-            new_uuid,
-            "我的課表",
-            userInfo.id,
-            process.env.NEXT_PUBLIC_SEMESTER
-          );
-          await mutateUser(
-            async () => {
-              const userData = await handleFetch("/api/user/linkCourseTable", {
-                table_id: new_uuid,
-                user_id: userInfo.id,
-              });
-              return userData;
-            },
-            {
-              revalidate: false,
-              populateCache: true,
-            }
-          );
-          await mutate(
-            `/v2/course_tables/${new_uuid}`,
-            async (prev) => {
-              return newCourseTableData ?? prev;
-            },
-            {
-              revalidate: false,
-              populateCache: true,
-            }
-          );
-        } catch (e) {
-          toast({
-            title: `新增課表失敗`,
-            description: `請聯繫客服(?)`,
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-      } else {
-        // Guest mode
-        try {
-          const { course_table: new_course_table } = await createCourseTable(
-            new_uuid,
-            "我的課表",
-            null,
-            process.env.NEXT_PUBLIC_SEMESTER
-          );
-          // set State
-          localStorage.setItem(LOCAL_STORAGE_KEY, new_course_table.id);
-          setNeoLocalStorage({
-            courseTableKey: new_course_table.id,
-          }); // have to setState to trigger request to new course table
-        } catch (error) {
-          toast({
-            title: `新增課表失敗`,
-            description: `請聯繫客服(?)`,
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
+    // generate a new uuid of course table
+    const new_uuid = uuidv4();
+    if (userInfo) {
+      // hasLogIn
+      try {
+        const newCourseTableData = await createCourseTable(
+          new_uuid,
+          "我的課表",
+          userInfo.id,
+          process.env.NEXT_PUBLIC_SEMESTER
+        );
+        await mutateUser(
+          async () => {
+            const userData = await handleFetch("/api/user/linkCourseTable", {
+              table_id: new_uuid,
+              user_id: userInfo.id,
+            });
+            return userData;
+          },
+          {
+            revalidate: false,
+            populateCache: true,
+          }
+        );
+        await mutate(
+          `/v2/course_tables/${new_uuid}`,
+          async (prev) => {
+            return newCourseTableData ?? prev;
+          },
+          {
+            revalidate: false,
+            populateCache: true,
+          }
+        );
+      } catch (e) {
+        toast({
+          title: `新增課表失敗`,
+          description: `請聯繫客服(?)`,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    } else {
+      // Guest mode
+      try {
+        const newCourseTableData = await createCourseTable(
+          new_uuid,
+          "我的課表",
+          null,
+          process.env.NEXT_PUBLIC_SEMESTER
+        );
+        // set State
+        localStorage.setItem(
+          LOCAL_STORAGE_KEY,
+          newCourseTableData.course_table.id
+        );
+        setNeoLocalStorage({
+          courseTableKey: newCourseTableData.course_table.id,
+        }); // have to setState to trigger request to new course table
+      } catch (error) {
+        toast({
+          title: `新增課表失敗`,
+          description: `請聯繫客服(?)`,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
       }
     }
   };
@@ -298,7 +299,10 @@ function SideCourseTableContent({
     }
   };
 
-  const sideCourseTableLoading = isCourseTableLoading || isLoading;
+  const sideCourseTableLoading =
+    (isCourseTableLoading && courseTableKey !== null) ||
+    (isLoading && user?.sub !== undefined);
+
   if ((!courseTable || isExpired === true) && !sideCourseTableLoading) {
     return (
       <Flex
@@ -394,7 +398,7 @@ function SideCourseTableContent({
                 <CourseTableContainer
                   courseTimeMap={courseTimeMap}
                   courses={courses}
-                  loading={isCourseTableLoading || isLoading}
+                  loading={sideCourseTableLoading}
                 />
               </Flex>
             </TabPanel>
@@ -402,7 +406,7 @@ function SideCourseTableContent({
               <CourseListContainer
                 courseTable={courseTable}
                 courses={courses}
-                loading={isCourseTableLoading || isLoading}
+                loading={sideCourseTableLoading}
               />
             </TabPanel>
           </TabPanels>
