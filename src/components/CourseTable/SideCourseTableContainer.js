@@ -300,9 +300,7 @@ function SideCourseTableContent({
     }
   };
 
-  const sideCourseTableLoading =
-    (isCourseTableLoading && courseTableKey !== null) ||
-    (isLoading && user?.sub !== undefined);
+  const sideCourseTableLoading = isCourseTableLoading || isLoading;
 
   if ((!courseTable || isExpired === true) && !sideCourseTableLoading) {
     return (
@@ -357,6 +355,7 @@ function SideCourseTableContent({
             position={"sticky"}
             top={0}
             bg={bgColor}
+            zIndex={10000}
           >
             {courseTable ? (
               <Flex alignItems="center" flexWrap="wrap">
