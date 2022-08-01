@@ -245,15 +245,14 @@ function CoursePage() {
               </Text>
             </Flex>
             <CourseInfoRowContainer displayTable={displayTable} />
+            <SkeletonRow times={3} />
           </Flex>
           <Flex
             alignItems="center"
             w={displayTable ? "60%" : "100%"}
             justifyContent={{ base: "center", lg: "start" }}
             transition="all 500ms ease-in-out"
-          >
-            <SkeletonRow />
-          </Flex>
+          ></Flex>
           <div ref={bottomRef} />
         </Box>
       </Flex>

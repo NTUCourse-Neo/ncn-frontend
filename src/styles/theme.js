@@ -26,6 +26,10 @@ const colors = {
     light: "#81E6D9",
     dark: "#1A202C",
   },
+  headerBar: {
+    light: "#EDF2F7",
+    dark: "#1A202C",
+  },
 };
 
 const theme = extendTheme({ config, colors });

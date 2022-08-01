@@ -26,7 +26,13 @@ export default function ErrorPage() {
       py="64px"
       bg={useColorModeValue("white", "black")}
     >
-      <Image w="80%" alt="" mt="5vh" src={`img/not_found.svg`} />
+      <Image
+        w="80%"
+        alt=""
+        mt="5vh"
+        src={`img/not_found.svg`}
+        pointerEvents="none"
+      />
       <Text fontSize="4xl" color="gray.500" m="2vh">
         有東西出錯了 😥
       </Text>

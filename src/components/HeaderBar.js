@@ -14,7 +14,6 @@ import {
   HStack,
   AvatarBadge,
   Badge,
-  Center,
   useColorModeValue,
 } from "@chakra-ui/react";
 import { ChevronRightIcon } from "@chakra-ui/icons";
@@ -56,6 +55,7 @@ function SignInButton() {
           src={user.picture}
           _hover={{ cursor: "pointer" }}
           ml={{ base: 0, md: 6 }}
+          boxSize="10"
         >
           {user.email_verified ? (
             <AvatarBadge boxSize="1em" bg="green.500" borderWidth="0.15em">
@@ -186,35 +186,34 @@ function HeaderBar() {
       position="fixed"
       w="100%"
       h="64px"
-      bg={useColorModeValue("teal.light", "teal.dark")}
+      bg={useColorModeValue("headerBar.light", "headerBar.dark")}
       flexDirection="row"
       justifyContent="space-between"
       alignItems="center"
       zIndex="1000"
-      px={{ base: 6, md: 14 }}
+      px={{ base: 6, md: 10 }}
     >
       <Flex justifyContent="center" alignItems="center">
         <Link href="/" passHref>
-          <Button variant={"unstyled"}>
+          <Flex alignItems="center" flexDirection="row" cursor="pointer">
+            <Image
+              src={`/img/ncn_logo.png`}
+              alt="ncnLogo"
+              width="25"
+              height="25"
+              layout="fixed"
+              borderRadius={"5px"}
+            />
             <Heading
-              fontSize={{ base: "xl", md: "2xl" }}
+              ml="2"
+              fontSize={{ base: "lg", md: "xl" }}
               fontWeight="700"
               color={useColorModeValue("heading.light", "heading.dark")}
               display={{ base: "none", md: "inline-block" }}
             >
               NTUCourse Neo
             </Heading>
-            <Center display={{ base: "inline-block", md: "none" }}>
-              <Image
-                src={`/img/ncn_logo.png`}
-                alt="ncnLogo"
-                width={30}
-                height={30}
-                layout="fixed"
-                borderRadius={"5px"}
-              />
-            </Center>
-          </Button>
+          </Flex>
         </Link>
         <Link href="/course">
           <Button

@@ -1,18 +1,26 @@
 import React from "react";
-import { Flex, useToast, Text } from "@chakra-ui/react";
-import { HashLoader } from "react-spinners";
+import { Flex, useToast, Text, Skeleton } from "@chakra-ui/react";
 import { FaSadTear } from "react-icons/fa";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 
-function SkeletonRow({ loading }) {
+function SkeletonRow({ loading, times = 1 }) {
   const { searchLoading, searchError } = useCourseSearchingContext();
   const isLoading = loading ?? searchLoading;
   const toast = useToast();
 
   if (isLoading) {
     return (
-      <Flex p="4" direction={"row"} w="100%" justifyContent={"center"}>
-        <HashLoader size="60px" color="teal" />
+      <Flex direction={"column"} w="100%" justifyContent={"center"}>
+        {[...Array(times)].map((_, index) => (
+          <Skeleton
+            mb="2"
+            mx={{ base: "5", md: "0" }}
+            height={{ base: "120px", md: "45px" }}
+            borderRadius="md"
+            speed={1 + index * 0.5}
+            key={"skeleton-" + index}
+          />
+        ))}
       </Flex>
     );
   }
