@@ -86,7 +86,7 @@ export default function useCourseTable(courseTableId, options) {
 
   return {
     courseTable: data?.course_table ?? null,
-    isLoading: !data && !error,
+    isLoading: !data && !error && courseTableId,
     error,
     isExpired,
     mutate,
