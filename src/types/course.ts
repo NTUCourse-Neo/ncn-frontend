@@ -65,7 +65,6 @@ export interface Schedule {
   location: string;
 }
 
-// TODO: refactor question mark (need modify backend)
 export type CourseEnrollStatus = {
   enrolled: string;
   enrolled_other: string;
@@ -73,7 +72,6 @@ export type CourseEnrollStatus = {
   registered: string;
   remain: string;
 } | null;
-
 // from ntu rating
 export type CourseRatingData = {
   breeze: number;
@@ -83,17 +81,8 @@ export type CourseRatingData = {
   url: string;
   workload: number;
 } | null;
-
-export interface PTTArticle {
-  aid: string;
-  author: string;
-  date: string;
-  title: string;
-  url: string;
-}
-
 export type CourseSyllabus = {
-  grade?:
+  grade:
     | null
     | {
         color: string | null;
@@ -101,7 +90,7 @@ export type CourseSyllabus = {
         title: string;
         value: number;
       }[];
-  syllabus?: {
+  syllabus: {
     intro: string;
     material: string;
     objective: string;
@@ -109,9 +98,12 @@ export type CourseSyllabus = {
     requirement: string;
     specify: string;
   };
-};
+} | null;
+export type PTTReviewData = PTTArticle[] | null;
+export type PTTEXamData = PTTArticle[] | null;
+export type SignUpPostData = SignUpPost[] | null;
 
-export interface SignUpPost {
+interface SignUpPost {
   content: {
     amount: number;
     comment: string;
@@ -128,4 +120,12 @@ export interface SignUpPost {
   downvotes: number;
   user_type: string;
   _id: string;
+}
+
+interface PTTArticle {
+  aid: string;
+  author: string;
+  date: string;
+  title: string;
+  url: string;
 }
