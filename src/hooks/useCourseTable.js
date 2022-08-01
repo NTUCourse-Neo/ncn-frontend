@@ -1,8 +1,11 @@
 import useSWR from "swr";
 import { useState } from "react";
 import { fetchCourseTable } from "queries/courseTable";
+import { useToast } from "@chakra-ui/react";
+import { patchCourseTable } from "queries/courseTable";
 
 export default function useCourseTable(courseTableId, options) {
+  const toast = useToast();
   const [isExpired, setIsExpired] = useState(false);
   const onSuccessCallback = options?.onSuccessCallback;
   const onErrorCallback = options?.onErrorCallback;
@@ -26,11 +29,67 @@ export default function useCourseTable(courseTableId, options) {
     }
   );
 
+  const addOrRemoveCourse = async (course) => {
+    const courseTable = data?.course_table;
+    try {
+      const originalCourseTableLength = courseTable?.courses?.length ?? 0;
+      const newCourseTableData = await mutate(
+        async (prev) => {
+          if (courseTable.courses.map((c) => c.id).includes(course.id)) {
+            const data = await patchCourseTable(
+              courseTableId,
+              courseTable.name,
+              courseTable.user_id,
+              courseTable.expire_ts,
+              courseTable.courses
+                .map((c) => c.id)
+                .filter((id) => id !== course.id)
+            );
+            return data ?? prev;
+          } else {
+            const data = await patchCourseTable(
+              courseTableId,
+              courseTable.name,
+              courseTable.user_id,
+              courseTable.expire_ts,
+              [...courseTable.courses.map((c) => c.id), course.id]
+            );
+            return data ?? prev;
+          }
+        },
+        {
+          revalidate: false,
+          populateCache: true,
+        }
+      );
+      const operation_str =
+        (newCourseTableData?.course_table?.courses?.length ?? 0) >
+        originalCourseTableLength
+          ? "加入"
+          : "移除";
+      toast({
+        title: `已${operation_str} ${course.name}`,
+        description: `課表: ${courseTable.name}`,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (e) {
+      toast({
+        title: `新增 ${course.name} 失敗`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
   return {
     courseTable: data?.course_table ?? null,
     isLoading: !data && !error,
     error,
     isExpired,
     mutate,
+    addOrRemoveCourse,
   };
 }

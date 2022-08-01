@@ -31,11 +31,9 @@ import { hash_to_color_hex } from "utils/colorAgent";
 import openPage from "utils/openPage";
 import { getNolAddUrl } from "utils/getNolUrls";
 import useCourseTable from "hooks/useCourseTable";
-import { patchCourseTable } from "queries/courseTable";
 import useNeoLocalStorage from "hooks/useNeoLocalStorage";
 import { useRouter } from "next/router";
 import { useUser } from "@auth0/nextjs-auth0";
-import handleFetch from "utils/CustomFetch";
 import { useDisplayTags } from "components/Providers/DisplayTagsProvider";
 import parseCourseSchedlue from "utils/parseCourseSchedule";
 import useUserInfo from "hooks/useUserInfo";
@@ -253,14 +251,14 @@ function CourseInfoRow({ courseInfo, selected, displayTable }) {
   const router = useRouter();
   const { neoLocalCourseTableKey } = useNeoLocalStorage();
   const { user } = useUser();
-  const { userInfo, mutate: mutateUser, isLoading } = useUserInfo(user?.sub);
+  const { userInfo, addOrRemoveFavorite, isLoading } = useUserInfo(user?.sub);
   const courseTableKey = userInfo
     ? userInfo?.course_tables?.[0] ?? null
     : neoLocalCourseTableKey;
   const {
     courseTable,
     isLoading: isCourseTableLoading,
-    mutate: mutateCourseTable,
+    addOrRemoveCourse,
   } = useCourseTable(courseTableKey);
 
   const [addingCourse, setAddingCourse] = useState(false);
@@ -276,57 +274,7 @@ function CourseInfoRow({ courseInfo, selected, displayTable }) {
     if (!isLoading && !isCourseTableLoading) {
       setAddingCourse(true);
       if (courseTableKey && courseTable) {
-        try {
-          const originalCourseTableLength = courseTable?.courses?.length ?? 0;
-          const newCourseTableData = await mutateCourseTable(
-            async (prev) => {
-              if (courseTable.courses.map((c) => c.id).includes(course.id)) {
-                const data = await patchCourseTable(
-                  courseTableKey,
-                  courseTable.name,
-                  courseTable.user_id,
-                  courseTable.expire_ts,
-                  courseTable.courses
-                    .map((c) => c.id)
-                    .filter((id) => id !== course.id)
-                );
-                return data ?? prev;
-              } else {
-                const data = await patchCourseTable(
-                  courseTableKey,
-                  courseTable.name,
-                  courseTable.user_id,
-                  courseTable.expire_ts,
-                  [...courseTable.courses.map((c) => c.id), course.id]
-                );
-                return data ?? prev;
-              }
-            },
-            {
-              revalidate: false,
-              populateCache: true,
-            }
-          );
-          const operation_str =
-            (newCourseTableData?.course_table?.courses?.length ?? 0) >
-            originalCourseTableLength
-              ? "加入"
-              : "移除";
-          toast({
-            title: `已${operation_str} ${course.name}`,
-            description: `課表: ${courseTable.name}`,
-            status: "success",
-            duration: 3000,
-            isClosable: true,
-          });
-        } catch (e) {
-          toast({
-            title: `新增 ${course.name} 失敗`,
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
+        await addOrRemoveCourse(course);
       } else {
         // do not have course table id in local storage
         toast({
@@ -345,72 +293,7 @@ function CourseInfoRow({ courseInfo, selected, displayTable }) {
     if (!isLoading) {
       if (userInfo) {
         setAddingFavoriteCourse(true);
-        try {
-          const newUserData = await mutateUser(
-            async (prevUser) => {
-              if (
-                !prevUser?.user?.db?.favorites ||
-                !Array.isArray(prevUser?.user?.db?.favorites)
-              ) {
-                return prevUser;
-              }
-              const favorite_list = prevUser.user.db.favorites.map((c) => c.id);
-              if (favorite_list.includes(course_id)) {
-                const data = await handleFetch(
-                  `/api/user/removeFavoriteCourse`,
-                  {
-                    course_id: course_id,
-                  }
-                );
-                return {
-                  ...prevUser,
-                  user: {
-                    ...prevUser.user,
-                    db: {
-                      ...prevUser.user.db,
-                      favorites: data.favorites,
-                    },
-                  },
-                };
-              } else {
-                const data = await handleFetch(`/api/user/addFavoriteCourse`, {
-                  course_id: course_id,
-                });
-                return {
-                  ...prevUser,
-                  user: {
-                    ...prevUser.user,
-                    db: {
-                      ...prevUser.user.db,
-                      favorites: data.favorites,
-                    },
-                  },
-                };
-              }
-            },
-            {
-              revalidate: false,
-              populateCache: true,
-            }
-          );
-          toast({
-            title: `更改最愛課程成功`,
-            status: "success",
-            duration: 3000,
-            isClosable: true,
-          });
-        } catch (error) {
-          toast({
-            title: `更改最愛課程失敗`,
-            description: `請稍後再試`,
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-          if (error?.response?.status === 401) {
-            router.push("/api/auth/login");
-          }
-        }
+        await addOrRemoveFavorite(course_id);
         setAddingFavoriteCourse(false);
       } else {
         toast({
