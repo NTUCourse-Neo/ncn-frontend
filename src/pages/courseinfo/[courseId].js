@@ -444,40 +444,56 @@ function CourseInfoPage({ code, course }) {
                   <Icon as={isFavorite ? FaHeart : FaRegHeart} boxSize="6" />
                 </Button>
               </Tooltip>
-              <ButtonGroup isAttached>
-                <Button
-                  key={"NolContent_Button_" + code + "_addToCourseTable"}
-                  mr="-px"
-                  size="md"
-                  colorScheme={selected ? "red" : "blue"}
-                  variant="outline"
-                  leftIcon={selected ? <FaMinus /> : <FaPlus />}
-                  isLoading={isCourseTableLoading}
-                  onClick={() => {
-                    handleAddCourse(course);
-                    reportEvent(
-                      "course_info_page",
-                      selected ? "remove_course" : "add_course",
-                      course.id
-                    );
-                  }}
-                >
-                  {selected ? "從課表移除" : "加入課表"}
-                </Button>
-                <Button
-                  key={"NolContent_Button_" + code + "_addToNol"}
-                  size="md"
-                  colorScheme="blue"
-                  variant="outline"
-                  leftIcon={<FaPlus />}
-                  onClick={() => {
-                    openPage(getNolAddUrl(course), true);
-                    reportEvent("course_info_page", "click", "add_to_nol");
-                  }}
-                >
-                  課程網
-                </Button>
-              </ButtonGroup>
+              <Tooltip
+                label="非當學期課程"
+                hasArrow
+                shouldWrapChildren
+                placement="top"
+                isDisabled={
+                  course.semester === process.env.NEXT_PUBLIC_SEMESTER
+                }
+              >
+                <ButtonGroup isAttached>
+                  <Button
+                    key={"NolContent_Button_" + code + "_addToCourseTable"}
+                    mr="-px"
+                    size="md"
+                    colorScheme={selected ? "red" : "blue"}
+                    variant="outline"
+                    leftIcon={selected ? <FaMinus /> : <FaPlus />}
+                    isLoading={isCourseTableLoading}
+                    onClick={() => {
+                      handleAddCourse(course);
+                      reportEvent(
+                        "course_info_page",
+                        selected ? "remove_course" : "add_course",
+                        course.id
+                      );
+                    }}
+                    disabled={
+                      course.semester !== process.env.NEXT_PUBLIC_SEMESTER
+                    }
+                  >
+                    {selected ? "從課表移除" : "加入課表"}
+                  </Button>
+                  <Button
+                    key={"NolContent_Button_" + code + "_addToNol"}
+                    size="md"
+                    colorScheme="blue"
+                    variant="outline"
+                    leftIcon={<FaPlus />}
+                    onClick={() => {
+                      openPage(getNolAddUrl(course), true);
+                      reportEvent("course_info_page", "click", "add_to_nol");
+                    }}
+                    disabled={
+                      course.semester !== process.env.NEXT_PUBLIC_SEMESTER
+                    }
+                  >
+                    課程網
+                  </Button>
+                </ButtonGroup>
+              </Tooltip>
               <Button
                 key={"NolContent_Button_" + code + "_OpenNol"}
                 size="md"

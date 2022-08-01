@@ -675,27 +675,40 @@ function CourseInfoRow({ courseInfo, selected, displayTable }) {
               {<Icon as={isFavorite ? FaHeart : FaRegHeart} boxSize="4" />}
             </Box>
           </Button>
-          <Button
-            size="sm"
-            ml={{ base: 0, md: "10px" }}
-            colorScheme={selected ? "red" : "blue"}
-            onClick={() => {
-              addCourseToTable(courseInfo);
-              reportEvent(
-                "course_info_row",
-                selected ? "remove_course" : "add_course",
-                courseInfo.id
-              );
-            }}
-            isLoading={addingCourse}
+          <Tooltip
+            label="非當學期課程"
+            hasArrow
+            shouldWrapChildren
+            placement="top"
+            isDisabled={
+              courseInfo.semester === process.env.NEXT_PUBLIC_SEMESTER
+            }
           >
-            <Box
-              transform={selected ? "rotate(45deg)" : ""}
-              transition="all ease-in-out 200ms"
+            <Button
+              size="sm"
+              ml={{ base: 0, md: "10px" }}
+              colorScheme={selected ? "red" : "blue"}
+              onClick={() => {
+                addCourseToTable(courseInfo);
+                reportEvent(
+                  "course_info_row",
+                  selected ? "remove_course" : "add_course",
+                  courseInfo.id
+                );
+              }}
+              isLoading={addingCourse}
+              disabled={
+                courseInfo.semester !== process.env.NEXT_PUBLIC_SEMESTER
+              }
             >
-              <FaPlus />
-            </Box>
-          </Button>
+              <Box
+                transform={selected ? "rotate(45deg)" : ""}
+                transition="all ease-in-out 200ms"
+              >
+                <FaPlus />
+              </Box>
+            </Button>
+          </Tooltip>
         </Flex>
       </Flex>
       <AccordionPanel>
