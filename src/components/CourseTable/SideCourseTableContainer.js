@@ -355,6 +355,7 @@ function SideCourseTableContent({
             position={"sticky"}
             top={0}
             bg={bgColor}
+            zIndex={10000}
           >
             {courseTable ? (
               <Flex alignItems="center" flexWrap="wrap">
