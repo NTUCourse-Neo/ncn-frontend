@@ -309,7 +309,7 @@ export default function UserInfoPage({ user }) {
       >
         <Flex
           justifyContent="space-between"
-          mb={4}
+          pb={4}
           grow="1"
           flexDirection="column"
           alignItems="center"
