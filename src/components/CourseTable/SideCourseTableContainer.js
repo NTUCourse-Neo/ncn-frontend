@@ -300,9 +300,7 @@ function SideCourseTableContent({
     }
   };
 
-  const sideCourseTableLoading =
-    (isCourseTableLoading && courseTableKey !== null) ||
-    (isLoading && user?.sub !== undefined);
+  const sideCourseTableLoading = isCourseTableLoading || isLoading;
 
   if ((!courseTable || isExpired === true) && !sideCourseTableLoading) {
     return (

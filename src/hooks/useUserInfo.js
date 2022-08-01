@@ -97,7 +97,7 @@ export default function useUserInfo(userId, options) {
 
   return {
     userInfo: data?.user?.db ?? null,
-    isLoading: !data && !error,
+    isLoading: !data && !error && userId,
     error: error,
     mutate,
     addOrRemoveFavorite,
