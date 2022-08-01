@@ -14,11 +14,10 @@ import { reportEvent } from "utils/ga";
 function PTTContentRowContainer({ info, ...restProps }) {
   const rowColor = useColorModeValue("blue.50", "#2B6CB030");
   const textColor = useColorModeValue("text.light", "text.dark");
-  const rows = info ?? [];
   return (
     <Flex w="100%" mb="0" overflow="auto" flexDirection="column" {...restProps}>
       <VStack>
-        {rows.map((data) => (
+        {info.map((data) => (
           <Flex
             key={data.url}
             as="button"

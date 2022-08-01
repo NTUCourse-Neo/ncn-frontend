@@ -10,7 +10,7 @@ describe("Course related functionalties test", () => {
     );
     cy.get(".css-bs7b3k").contains("搜尋").click();
 
-    cy.wait(["@search-courses"]);
+    // cy.wait(["@search-courses"]);
     cy.get(".css-1xcdwtr").contains("共找到 10935 筆結果");
   });
 });

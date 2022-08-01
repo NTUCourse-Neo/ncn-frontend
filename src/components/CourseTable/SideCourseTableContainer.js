@@ -44,15 +44,13 @@ import { v4 as uuidv4 } from "uuid";
 import { useUser } from "@auth0/nextjs-auth0";
 import { useRouter } from "next/router";
 import { parseCoursesToTimeMap } from "utils/parseCourseTime";
-import { useUserData } from "components/Providers/UserProvider";
-import { useCourseTable } from "components/Providers/CourseTableProvider";
-import {
-  createCourseTable,
-  patchCourseTable,
-  fetchCourseTable,
-} from "queries/courseTable";
+import useCourseTable from "hooks/useCourseTable";
+import useNeoLocalStorage from "hooks/useNeoLocalStorage";
+import { createCourseTable, patchCourseTable } from "queries/courseTable";
 import handleFetch from "utils/CustomFetch";
+import useUserInfo from "hooks/useUserInfo";
 import { reportEvent } from "utils/ga";
+import { useSWRConfig } from "swr";
 
 const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
@@ -151,17 +149,25 @@ function SideCourseTableContent({
 }) {
   const headingColor = useColorModeValue("heading.light", "heading.dark");
   const router = useRouter();
-  const { user, isLoading } = useUser();
+  const { user } = useUser();
   const toast = useToast();
-  const { courseTable, setCourseTable } = useCourseTable();
-  const { setUser, user: userInfo } = useUserData();
+  const { userInfo, isLoading, mutate: mutateUser } = useUserInfo(user?.sub);
+  const { neoLocalCourseTableKey, setNeoLocalStorage } = useNeoLocalStorage();
+  const courseTableKey = userInfo
+    ? userInfo?.course_tables?.[0] ?? null
+    : neoLocalCourseTableKey;
+  const {
+    courseTable,
+    isLoading: isCourseTableLoading,
+    mutate: mutateCourseTable,
+    isExpired,
+  } = useCourseTable(courseTableKey);
+  const { mutate } = useSWRConfig();
+  const bgColor = useColorModeValue("card.light", "card.dark");
 
   // some local states for handling course data
   const [courses, setCourses] = useState({}); // dictionary of Course objects using courseId as key
   const [courseTimeMap, setCourseTimeMap] = useState({});
-
-  const [loading, setLoading] = useState(true);
-  const [expired, setExpired] = useState(false);
 
   const { onOpen, onClose, isOpen } = useDisclosure();
 
@@ -175,64 +181,6 @@ function SideCourseTableContent({
     }, initialValue);
   };
 
-  // trigger when mounting, fetch local storage course_id
-  useEffect(() => {
-    const getTableKey = async (user) => {
-      if (!user) {
-        return localStorage?.getItem(LOCAL_STORAGE_KEY) ?? null;
-      }
-      try {
-        const user_data = await handleFetch("/api/user", {
-          user_id: user.sub,
-        });
-        await setUser(user_data);
-        const course_tables = user_data.db.course_tables;
-        return course_tables?.[0] ?? null;
-      } catch (e) {
-        console.log(e);
-        return null;
-      }
-    };
-    const getCourseTable = async (uuid) => {
-      try {
-        const course_table = await fetchCourseTable(uuid);
-        setCourseTable(course_table);
-        setLoading(false);
-      } catch (e) {
-        if (e?.response?.data?.msg === "access_token_expired") {
-          router.push("/api/auth/login");
-        }
-        if (e?.response?.status === 403 || e?.response?.status === 404) {
-          // expired
-          setCourseTable(null);
-          setExpired(true);
-          setLoading(false);
-        } else {
-          toast({
-            title: "取得用戶資料失敗.",
-            description: "請聯繫客服(?)",
-            status: "error",
-            duration: 9000,
-            isClosable: true,
-          });
-          router.push(`/404`);
-        }
-      }
-    };
-
-    if (!isLoading) {
-      getTableKey(user).then((uuid) => {
-        if (uuid) {
-          setLoading(true);
-          getCourseTable(uuid);
-        } else {
-          setCourseTable(null);
-          setLoading(false);
-        }
-      });
-    }
-  }, [user, isLoading]); // eslint-disable-line react-hooks/exhaustive-deps
-
   useEffect(() => {
     if (courseTable?.courses) {
       setCourseTimeMap(
@@ -243,59 +191,74 @@ function SideCourseTableContent({
   }, [courseTable]);
 
   const handleCreateTable = async () => {
-    if (!isLoading) {
-      // generate a new uuid of course table
-      const new_uuid = uuidv4();
-      if (user) {
-        // hasLogIn
-        try {
-          const updatedCourseTable = await createCourseTable(
-            new_uuid,
-            "我的課表",
-            userInfo.db.id,
-            process.env.NEXT_PUBLIC_SEMESTER
-          );
-          setCourseTable(updatedCourseTable);
-          // console.log("New UUID is generated: ",new_uuid);
-          const updatedUser = await handleFetch("/api/user/linkCourseTable", {
-            table_id: new_uuid,
-            user_id: userInfo.db.id,
-          });
-          setUser(updatedUser);
-        } catch (e) {
-          toast({
-            title: `新增課表失敗`,
-            description: `請聯繫客服(?)`,
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-          if (e?.response?.data?.msg === "access_token_expired") {
-            router.push("/api/auth/login");
+    // generate a new uuid of course table
+    const new_uuid = uuidv4();
+    if (userInfo) {
+      // hasLogIn
+      try {
+        const newCourseTableData = await createCourseTable(
+          new_uuid,
+          "我的課表",
+          userInfo.id,
+          process.env.NEXT_PUBLIC_SEMESTER
+        );
+        await mutateUser(
+          async () => {
+            const userData = await handleFetch("/api/user/linkCourseTable", {
+              table_id: new_uuid,
+              user_id: userInfo.id,
+            });
+            return userData;
+          },
+          {
+            revalidate: false,
+            populateCache: true,
           }
-        }
-      } else {
-        // Guest mode
-        try {
-          const new_course_table = await createCourseTable(
-            new_uuid,
-            "我的課表",
-            null,
-            process.env.NEXT_PUBLIC_SEMESTER
-          );
-          setCourseTable(new_course_table);
-          // console.log("New UUID is generated: ",new_uuid);
-          localStorage.setItem(LOCAL_STORAGE_KEY, new_course_table.id);
-          setExpired(false);
-        } catch (error) {
-          toast({
-            title: `新增課表失敗`,
-            description: `請聯繫客服(?)`,
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
+        );
+        await mutate(
+          `/v2/course_tables/${new_uuid}`,
+          async (prev) => {
+            return newCourseTableData ?? prev;
+          },
+          {
+            revalidate: false,
+            populateCache: true,
+          }
+        );
+      } catch (e) {
+        toast({
+          title: `新增課表失敗`,
+          description: `請聯繫客服(?)`,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    } else {
+      // Guest mode
+      try {
+        const newCourseTableData = await createCourseTable(
+          new_uuid,
+          "我的課表",
+          null,
+          process.env.NEXT_PUBLIC_SEMESTER
+        );
+        // set State
+        localStorage.setItem(
+          LOCAL_STORAGE_KEY,
+          newCourseTableData.course_table.id
+        );
+        setNeoLocalStorage({
+          courseTableKey: newCourseTableData.course_table.id,
+        }); // have to setState to trigger request to new course table
+      } catch (error) {
+        toast({
+          title: `新增課表失敗`,
+          description: `請聯繫客服(?)`,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
       }
     }
   };
@@ -303,14 +266,22 @@ function SideCourseTableContent({
   const handleSave = async (new_table_name) => {
     onClose();
     try {
-      const res_table = await patchCourseTable(
-        courseTable.id,
-        new_table_name,
-        courseTable.user_id,
-        courseTable.expire_ts,
-        courseTable.courses.map((course) => course.id)
+      await mutateCourseTable(
+        async (prev) => {
+          const data = await patchCourseTable(
+            courseTable.id,
+            new_table_name,
+            courseTable.user_id,
+            courseTable.expire_ts,
+            courseTable.courses.map((course) => course.id)
+          );
+          return data ?? prev;
+        },
+        {
+          revalidate: false,
+          populateCache: true,
+        }
       );
-      setCourseTable(res_table);
       toast({
         title: `變更課表名稱成功`,
         description: `課表名稱已更新為 ${new_table_name}`,
@@ -319,19 +290,6 @@ function SideCourseTableContent({
         isClosable: true,
       });
     } catch (e) {
-      if (e?.response?.status === 403 || e?.response?.status === 404) {
-        // expired
-        setCourseTable(null);
-        toast({
-          title: `變更課表名稱失敗`,
-          description: `課表已過期`,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-        setExpired(true);
-        return;
-      }
       toast({
         title: `變更課表名稱失敗`,
         description: `請聯繫客服(?)`,
@@ -342,7 +300,11 @@ function SideCourseTableContent({
     }
   };
 
-  if ((courseTable === null || expired === true) && !(loading || isLoading)) {
+  const sideCourseTableLoading =
+    (isCourseTableLoading && courseTableKey !== null) ||
+    (isLoading && user?.sub !== undefined);
+
+  if ((!courseTable || isExpired === true) && !sideCourseTableLoading) {
     return (
       <Flex
         flexDirection="column"
@@ -357,7 +319,7 @@ function SideCourseTableContent({
           <FaRegHandPointDown size="3vh" style={{ color: "gray" }} />
         </Flex>
         <Text fontSize="2xl" fontWeight="bold" color="gray">
-          {expired ? "您的課表已過期" : "尚無課表"}
+          {isExpired ? "您的課表已過期" : "尚無課表"}
         </Text>
         <Button
           colorScheme="teal"
@@ -390,8 +352,11 @@ function SideCourseTableContent({
             flexDirection="row"
             justifyContent="start"
             alignItems="center"
-            mb="2"
+            pb={4}
             ml="4"
+            position={"sticky"}
+            top={0}
+            bg={bgColor}
           >
             {courseTable ? (
               <Flex alignItems="center" flexWrap="wrap">
@@ -437,7 +402,7 @@ function SideCourseTableContent({
                 <CourseTableContainer
                   courseTimeMap={courseTimeMap}
                   courses={courses}
-                  loading={loading || isLoading}
+                  loading={sideCourseTableLoading}
                 />
               </Flex>
             </TabPanel>
@@ -445,7 +410,7 @@ function SideCourseTableContent({
               <CourseListContainer
                 courseTable={courseTable}
                 courses={courses}
-                loading={loading || isLoading}
+                loading={sideCourseTableLoading}
               />
             </TabPanel>
           </TabPanels>
@@ -474,7 +439,11 @@ function SideCourseTableContainer({
           }
           onClick={() => {
             setIsDisplay(!isDisplay);
-            reportEvent("course_table", "click", "collapse_panel");
+            reportEvent(
+              "course_table",
+              "click",
+              `${isDisplay ? "Close" : "Open"}_panel`
+            );
           }}
           size="sm"
           variant="ghost"

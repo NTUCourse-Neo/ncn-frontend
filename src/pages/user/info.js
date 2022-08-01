@@ -1,4 +1,4 @@
-import { React, useState, useEffect, useRef } from "react";
+import { React, useState, useRef, useEffect } from "react";
 import {
   Box,
   Flex,
@@ -27,9 +27,10 @@ import { FaExclamationTriangle } from "react-icons/fa";
 import { useRouter } from "next/router";
 import { useUser, withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { dept_list_bachelor_only } from "data/department";
-import { useUserData } from "components/Providers/UserProvider";
 import handleFetch from "utils/CustomFetch";
 import Head from "next/head";
+import useUserInfo from "hooks/useUserInfo";
+import { useSWRConfig } from "swr";
 import { reportEvent } from "utils/ga";
 
 function DeleteDialog({
@@ -38,16 +39,15 @@ function DeleteDialog({
   deleteMode,
   setDeleteMode,
 }) {
-  const { setUser } = useUserData();
   const confirmMessage = `我確定`;
   const cancelRef = useRef();
   const toast = useToast();
   const { user } = useUser();
   const router = useRouter();
+  const { mutate } = useSWRConfig();
 
   const [confirm, setConfirm] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
-
   const onClose = () => {
     setIsAlertOpen(false);
     setDeleteMode(null);
@@ -60,6 +60,7 @@ function DeleteDialog({
       await handleFetch("/api/user/register", {
         email: user?.email,
       });
+      mutate("/api/user");
     } catch (e) {
       toast({
         title: "刪除用戶資料失敗.",
@@ -67,7 +68,7 @@ function DeleteDialog({
         duration: 3000,
         isClosable: true,
       });
-      if (e?.response?.data?.msg === "access_token_expired") {
+      if (e?.response?.status === 401) {
         router.push("/api/auth/login");
       }
     }
@@ -76,7 +77,6 @@ function DeleteDialog({
   const clearUserAccount = async () => {
     try {
       await handleFetch("/api/user/deleteAccount", {});
-      setUser(null);
     } catch (e) {
       toast({
         title: "刪除用戶帳號失敗.",
@@ -84,7 +84,7 @@ function DeleteDialog({
         duration: 3000,
         isClosable: true,
       });
-      if (e?.response?.data?.msg === "access_token_expired") {
+      if (e?.response?.status === 401) {
         router.push("/api/auth/login");
       }
     }
@@ -166,7 +166,6 @@ function DeleteDialog({
 
 export default function UserInfoPage({ user }) {
   const pageBg = useColorModeValue("white", "black");
-  const { setUser, user: userInfo } = useUserData();
   const textColor = useColorModeValue("text.light", "text.dark");
   const cardColor = useColorModeValue("card.light", "card.dark");
   const borderColor = useColorModeValue("gray.300", "gray.900");
@@ -183,54 +182,56 @@ export default function UserInfoPage({ user }) {
   const [saveLoading, setSaveLoading] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [deleteMode, setDeleteMode] = useState(null);
+  const {
+    userInfo,
+    isLoading,
+    mutate: mutateUser,
+  } = useUserInfo(user?.sub, {
+    onErrorCallback: (e, k, c) => {
+      toast({
+        title: "取得用戶資料失敗.",
+        description: "請聯繫客服(?)",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+      router.push("/404");
+    },
+  });
 
   // states for updating userInfo
-  const [name, setName] = useState(userInfo?.db?.name ?? "");
-  const [major, setMajor] = useState(userInfo?.db?.major?.id ?? null);
-  const [doubleMajor, setDoubleMajor] = useState(
-    userInfo?.db?.d_major?.id ?? null
-  );
-  const [minor, setMinor] = useState(
-    userInfo?.db?.minors.map((d) => d.id) ?? []
-  );
+  const [name, setName] = useState(userInfo?.name ?? "");
+  const [major, setMajor] = useState(userInfo?.major?.id ?? null);
+  const [doubleMajor, setDoubleMajor] = useState(userInfo?.d_major?.id ?? null);
+  const [minor, setMinor] = useState(userInfo?.minors.map((d) => d.id) ?? []);
 
   useEffect(() => {
     if (userInfo) {
-      setName(userInfo?.db?.name ?? "");
-      setMajor(userInfo?.db?.major?.id ?? null);
-      setDoubleMajor(userInfo?.db?.d_major?.id ?? null);
-      setMinor(userInfo?.db?.minors.map((d) => d.id) ?? []);
+      setName(userInfo?.name ?? "");
+      setMajor(userInfo?.major?.id ?? null);
+      setDoubleMajor(userInfo?.d_major?.id ?? null);
+      setMinor(userInfo?.minors.map((d) => d.id) ?? []);
     }
-  }, [userInfo]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [userInfo]);
 
   const updateUserInfo = async () => {
+    let errorMsg = null;
     if (!major) {
-      toast({
-        title: "更改用戶資料失敗.",
-        description: "主修不能為空",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
+      errorMsg = "主修不能為空";
     }
     if (
       (major === doubleMajor && major && doubleMajor) ||
       minor.includes(major)
     ) {
-      toast({
-        title: "更改用戶資料失敗.",
-        description: "主修不能跟雙主修或輔系一樣",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
+      errorMsg = "主修不能跟雙主修或輔系一樣";
     }
     if (minor.includes(doubleMajor)) {
+      errorMsg = "雙主修不能出現在輔系";
+    }
+    if (errorMsg) {
       toast({
         title: "更改用戶資料失敗.",
-        description: "雙主修不能出現在輔系",
+        description: `${errorMsg}`,
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -238,15 +239,23 @@ export default function UserInfoPage({ user }) {
       return;
     }
     try {
-      const updatedUser = await handleFetch("/api/user/patch", {
-        newUser: {
-          name: name,
-          major: major,
-          d_major: doubleMajor,
-          minors: minor,
+      mutateUser(
+        async () => {
+          const userData = await handleFetch("/api/user/patch", {
+            newUser: {
+              name: name,
+              major: major,
+              d_major: doubleMajor,
+              minors: minor,
+            },
+          });
+          return userData;
         },
-      });
-      setUser(updatedUser);
+        {
+          revalidate: false,
+          populateCache: true,
+        }
+      );
       toast({
         title: "更改用戶資料成功.",
         status: "success",
@@ -261,43 +270,13 @@ export default function UserInfoPage({ user }) {
         duration: 3000,
         isClosable: true,
       });
-      if (e?.response?.data?.msg === "access_token_expired") {
+      if (e?.response?.status === 401) {
         router.push("/api/auth/login");
       }
     }
   };
 
-  useEffect(() => {
-    // fetch on render
-    const fetchUserInfo = async () => {
-      if (user) {
-        try {
-          const user_data = await handleFetch("/api/user", {
-            user_id: user?.sub,
-          });
-          await setUser(user_data);
-        } catch (e) {
-          toast({
-            title: "取得用戶資料失敗.",
-            description: "請聯繫客服(?)",
-            status: "error",
-            duration: 9000,
-            isClosable: true,
-          });
-          if (e?.response?.data?.msg === "access_token_expired") {
-            router.push("/api/auth/login");
-          } else {
-            router.push("/404");
-          }
-          // Other subsequent actions?
-        }
-      }
-    };
-
-    fetchUserInfo();
-  }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  if (!userInfo) {
+  if (isLoading) {
     return (
       <Box maxW="screen-md" h="95vh" mx="auto" overflow="visible" p="64px">
         <Flex
@@ -341,7 +320,7 @@ export default function UserInfoPage({ user }) {
             color={textColor}
             my="8"
           >
-            ✌️ 歡迎回來，{userInfo.db.name}
+            ✌️ 歡迎回來 {userInfo?.name}
           </Text>
           <Flex
             w="100%"
@@ -382,7 +361,7 @@ export default function UserInfoPage({ user }) {
                   fontSize="lg"
                   fontWeight="500"
                   color={textColor}
-                  defaultValue={userInfo.db.name}
+                  defaultValue={userInfo?.name ?? ""}
                   onChange={(e) => {
                     setName(e.currentTarget.value);
                   }}
@@ -396,11 +375,11 @@ export default function UserInfoPage({ user }) {
                   fontSize="lg"
                   fontWeight="500"
                   color={textColor}
-                  defaultValue={userInfo.db.email}
+                  defaultValue={userInfo?.email}
                   disabled
                 />
               </Flex>
-              <Avatar name={userInfo.db.name} size="2xl" src={user.picture} />
+              <Avatar name={userInfo?.name} size="2xl" src={user.picture} />
             </Flex>
             <Text fontSize="2xl" fontWeight="700" color={textColor} mt="5">
               學業
@@ -422,14 +401,14 @@ export default function UserInfoPage({ user }) {
                     className="basic-single"
                     classNamePrefix="select"
                     defaultValue={{
-                      value: userInfo?.db?.major?.id ?? null,
-                      label: departmentMap?.[userInfo?.db?.major?.id]
-                        ? `${userInfo?.db?.major?.id} ${
-                            departmentMap?.[userInfo?.db?.major?.id]
+                      value: userInfo?.major?.id ?? null,
+                      label: departmentMap?.[userInfo?.major?.id]
+                        ? `${userInfo?.major?.id} ${
+                            departmentMap?.[userInfo?.major?.id]
                           }`
                         : "請選擇",
                     }}
-                    isSearchable={TextTrackCue}
+                    isSearchable={true}
                     options={[{ value: null, label: "請選擇" }, ...deptOptions]}
                     onChange={(e) => {
                       setMajor(e.value);
@@ -446,14 +425,14 @@ export default function UserInfoPage({ user }) {
                     className="basic-single"
                     classNamePrefix="select"
                     defaultValue={{
-                      value: userInfo?.db?.d_major?.id ?? null,
-                      label: departmentMap?.[userInfo?.db?.d_major?.id]
-                        ? `${userInfo?.db?.d_major?.id} ${
-                            departmentMap?.[userInfo?.db?.d_major?.id]
+                      value: userInfo?.d_major?.id ?? null,
+                      label: departmentMap?.[userInfo?.d_major?.id]
+                        ? `${userInfo?.d_major?.id} ${
+                            departmentMap?.[userInfo?.d_major?.id]
                           }`
                         : "請選擇",
                     }}
-                    isSearchable={TextTrackCue}
+                    isSearchable={true}
                     options={[{ value: null, label: "請選擇" }, ...deptOptions]}
                     onChange={(e) => {
                       setDoubleMajor(e.value);
@@ -472,8 +451,8 @@ export default function UserInfoPage({ user }) {
                     className="basic-single"
                     classNamePrefix="select"
                     defaultValue={
-                      userInfo?.db?.minors
-                        ? userInfo?.db?.minors
+                      userInfo?.minors
+                        ? userInfo?.minors
                             .map((dept) => ({
                               value: dept?.id ?? null,
                               label: departmentMap?.[dept?.id]
@@ -486,7 +465,7 @@ export default function UserInfoPage({ user }) {
                             )
                         : []
                     }
-                    isSearchable={TextTrackCue}
+                    isSearchable={true}
                     name="color"
                     options={deptOptions}
                     onChange={(e) => {

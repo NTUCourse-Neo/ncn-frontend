@@ -23,7 +23,7 @@ import handleFetch from "utils/CustomFetch";
 import { useRouter } from "next/router";
 import { reportEvent } from "utils/ga";
 
-function SignUpReportForm({ courseId, haveSubmitted, submitCallback }) {
+function SignUpSubmitForm({ courseId, haveSubmitted, mutate }) {
   const headingColor = useColorModeValue("heading.light", "heading.dark");
   const { onOpen, onClose, isOpen } = useDisclosure();
   const router = useRouter();
@@ -51,7 +51,7 @@ function SignUpReportForm({ courseId, haveSubmitted, submitCallback }) {
             duration: 3000,
             isClosable: true,
           });
-          return false;
+          return;
         }
       }
       // each field should not be empty except comment
@@ -64,7 +64,7 @@ function SignUpReportForm({ courseId, haveSubmitted, submitCallback }) {
             duration: 3000,
             isClosable: true,
           });
-          return false;
+          return;
         }
       }
     }
@@ -81,6 +81,7 @@ function SignUpReportForm({ courseId, haveSubmitted, submitCallback }) {
         user_type: signUpCardForm.user_type,
       };
       await handleFetch("/api/social/createPost", { courseId, post });
+      await mutate();
       toast({
         title: "發送成功",
         description: "感謝您的填寫！",
@@ -88,6 +89,7 @@ function SignUpReportForm({ courseId, haveSubmitted, submitCallback }) {
         duration: 3000,
         isClosable: true,
       });
+      onClose();
     } catch (e) {
       toast({
         title: "發送失敗，請稍後再試",
@@ -99,7 +101,6 @@ function SignUpReportForm({ courseId, haveSubmitted, submitCallback }) {
         router.push("/api/auth/login");
       }
     }
-    return true;
   };
 
   return (
@@ -258,13 +259,9 @@ function SignUpReportForm({ courseId, haveSubmitted, submitCallback }) {
               }
               onClick={async () => {
                 setSendingForm(true);
-                const res = await handleSubmitSignUpCardForm();
+                await handleSubmitSignUpCardForm();
                 setSendingForm(false);
                 reportEvent("signup_post", "click", "submit_post");
-                if (res === true) {
-                  onClose();
-                  await submitCallback();
-                }
               }}
             >
               送出
@@ -276,4 +273,4 @@ function SignUpReportForm({ courseId, haveSubmitted, submitCallback }) {
   );
 }
 
-export default SignUpReportForm;
+export default SignUpSubmitForm;

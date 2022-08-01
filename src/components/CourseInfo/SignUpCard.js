@@ -49,55 +49,24 @@ import { reportEvent } from "utils/ga";
 //   self_vote_status: get_self_vote_status(post, user_id)
 // }
 
-function SignUpCard({
-  post,
-  SignUpPostData,
-  setSignUpPostData,
-  fetchSignUpPostData,
-}) {
-  const is_owner = post.is_owner;
+function SignUpCard({ post, mutate }) {
+  const is_owner = post?.is_owner;
   const toast = useToast();
   const [isVotingPost, setIsVotingPost] = useState(0);
   const [isDeletingPost, setIsDeletingPost] = useState(false);
   const [isReportingPost, setIsReportingPost] = useState(false);
   const [reportReason, setReportReason] = useState("");
   const { onOpen, onClose, isOpen } = useDisclosure();
+  const cardBg = useColorModeValue("gray.200", "gray.700");
+  const textColor = useColorModeValue("gray.800", "gray.300");
+  const commentColor = useColorModeValue("gray.600", "gray.400");
+  const downvoteBtnColor = useColorModeValue("orange", "red");
   const router = useRouter();
   Moment.locale("zh-tw");
-
-  const handleRefetchPost = async (post_id) => {
-    let data;
-    try {
-      data = await handleFetch("/api/social/getByPostId", {
-        post_id,
-      });
-    } catch (error) {
-      toast({
-        title: "無法處理評分",
-        description: "請稍後再試一次",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      if (error?.response?.data?.msg === "access_token_expired") {
-        router.push("/api/auth/login");
-      }
-      return;
-    }
-    // find the post in the SignUpPostData array and replace it with the new data.
-    const new_post = data;
-    const new_post_index = SignUpPostData.findIndex(
-      (post) => post._id === post_id
-    );
-    const new_post_array = [...SignUpPostData];
-    new_post_array[new_post_index] = new_post;
-    setSignUpPostData(new_post_array);
-  };
 
   const handleVotePost = async (post_id, vote_type) => {
     setIsVotingPost(vote_type);
     try {
-      console.log("vote_type: ", vote_type);
       await handleFetch("/api/social/votePost", { post_id, vote_type });
     } catch (error) {
       setIsVotingPost(0);
@@ -113,7 +82,7 @@ function SignUpCard({
       }
       return;
     }
-    handleRefetchPost(post_id);
+    mutate();
     setIsVotingPost(0);
   };
 
@@ -136,7 +105,7 @@ function SignUpCard({
       return;
     }
     setIsDeletingPost(false);
-    fetchSignUpPostData();
+    mutate();
   };
 
   const handleReportPost = async (post_id, content) => {
@@ -158,66 +127,12 @@ function SignUpCard({
       return;
     }
     setIsReportingPost(false);
-    fetchSignUpPostData();
+    mutate();
   };
 
-  const renderReportPopover = () => {
-    return (
-      <Popover
-        placement="bottom"
-        isOpen={isOpen}
-        onOpen={onOpen}
-        onClose={onClose}
-      >
-        <PopoverTrigger>
-          <Button
-            colorScheme="red"
-            variant="ghost"
-            size="sm"
-            isDisabled={is_owner}
-            isLoading={isReportingPost}
-          >
-            檢舉
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent>
-          <PopoverArrow />
-          <PopoverCloseButton />
-          <Flex p="4" flexDirection="column" alignItems="start">
-            <Text
-              fontSize="md"
-              fontWeight="800"
-              color="gray.700"
-              textAlign="center"
-            >
-              檢舉此資訊
-            </Text>
-            <Textarea
-              my="2"
-              size="md"
-              placeholder="請輸入檢舉原因"
-              onChange={(e) => {
-                setReportReason(e.currentTarget.value);
-              }}
-            />
-            <ButtonGroup w="100%" size="sm" d="flex" justifyContent="end">
-              <Button
-                colorScheme="red"
-                onClick={() => {
-                  handleReportPost(post._id, reportReason);
-                  reportEvent("signup_post", "click", "report_post");
-                  onClose();
-                }}
-                isDisabled={reportReason === ""}
-              >
-                檢舉
-              </Button>
-            </ButtonGroup>
-          </Flex>
-        </PopoverContent>
-      </Popover>
-    );
-  };
+  if (!post) {
+    return null;
+  }
 
   return (
     <Flex
@@ -229,7 +144,7 @@ function SignUpCard({
       justifyContent="space-around"
       alignItems="start"
       flexDirection={{ base: "column", md: "row" }}
-      bg={useColorModeValue("gray.200", "gray.700")}
+      bg={cardBg}
       borderRadius="lg"
       boxShadow="lg"
     >
@@ -259,11 +174,7 @@ function SignUpCard({
       <VStack mt={{ base: 4, md: 0 }} w={{ base: "100%", md: "70%" }} h="100%">
         <VStack w="100%" h="100%" justify="start" align="start">
           <HStack w="100%">
-            <Text
-              fontSize="sm"
-              fontWeight="600"
-              color={useColorModeValue("gray.800", "gray.300")}
-            >
+            <Text fontSize="sm" fontWeight="600" color={textColor}>
               更多資訊
             </Text>
             <Tooltip
@@ -306,7 +217,7 @@ function SignUpCard({
             <Text
               fontSize="md"
               fontWeight="600"
-              color={useColorModeValue("gray.600", "gray.400")}
+              color={commentColor}
               overflow="auto"
               wordBreak="break-all"
             >
@@ -336,7 +247,7 @@ function SignUpCard({
             {post.upvotes}
           </Button>
           <Button
-            colorScheme={useColorModeValue("orange", "red")}
+            colorScheme={downvoteBtnColor}
             variant={post.self_vote_status === -1 ? "solid" : "ghost"}
             size="xs"
             leftIcon={<FaThumbsDown />}
@@ -348,7 +259,59 @@ function SignUpCard({
           >
             {post.downvotes}
           </Button>
-          {renderReportPopover()}
+          <Popover
+            placement="bottom"
+            isOpen={isOpen}
+            onOpen={onOpen}
+            onClose={onClose}
+          >
+            <PopoverTrigger>
+              <Button
+                colorScheme="red"
+                variant="ghost"
+                size="sm"
+                isDisabled={is_owner}
+                isLoading={isReportingPost}
+              >
+                檢舉
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent>
+              <PopoverArrow />
+              <PopoverCloseButton />
+              <Flex p="4" flexDirection="column" alignItems="start">
+                <Text
+                  fontSize="md"
+                  fontWeight="800"
+                  color="gray.700"
+                  textAlign="center"
+                >
+                  檢舉此資訊
+                </Text>
+                <Textarea
+                  my="2"
+                  size="md"
+                  placeholder="請輸入檢舉原因"
+                  onChange={(e) => {
+                    setReportReason(e.currentTarget.value);
+                  }}
+                />
+                <ButtonGroup w="100%" size="sm" d="flex" justifyContent="end">
+                  <Button
+                    colorScheme="red"
+                    onClick={() => {
+                      handleReportPost(post._id, reportReason);
+                      reportEvent("signup_post", "click", "report_post");
+                      onClose();
+                    }}
+                    isDisabled={reportReason === ""}
+                  >
+                    檢舉
+                  </Button>
+                </ButtonGroup>
+              </Flex>
+            </PopoverContent>
+          </Popover>
         </HStack>
       </VStack>
     </Flex>

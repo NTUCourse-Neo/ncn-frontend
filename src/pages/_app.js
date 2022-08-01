@@ -1,32 +1,40 @@
 import { ChakraProvider, Box } from "@chakra-ui/react";
-import { UserDataProvider } from "components/Providers/UserProvider";
 import { CourseSearchingProvider } from "components/Providers/CourseSearchingProvider";
 import { DisplayTagsProvider } from "components/Providers/DisplayTagsProvider";
-import { CourseTableProvider } from "components/Providers/CourseTableProvider";
 import HeaderBar from "components/HeaderBar";
 import Footer from "components/Footer";
 import { UserProvider as Auth0UserProvider } from "@auth0/nextjs-auth0";
 import theme from "styles/theme";
+import "styles/nprogress.css";
+import { useRouter } from "next/router";
+import nProgress from "nprogress";
+import { useEffect } from "react";
 import GoogleAnalytics from "components/GoogleAnalytics";
 
 function MyApp({ Component, pageProps }) {
+  const router = useRouter();
+  useEffect(() => {
+    router.events.on("routeChangeStart", nProgress.start);
+    router.events.on("routeChangeComplete", nProgress.done);
+    return () => {
+      router.events.off("routeChangeStart", nProgress.start);
+      router.events.off("routeChangeComplete", nProgress.done);
+    };
+  }, [router.events]);
+
   return (
     <>
       {process.env.NEXT_PUBLIC_ENV === "prod" && <GoogleAnalytics />}
       <Auth0UserProvider>
         <ChakraProvider theme={theme}>
           <CourseSearchingProvider>
-            <CourseTableProvider>
-              <UserDataProvider>
-                <DisplayTagsProvider>
-                  <Box w="100vw" h={{ base: "100%", lg: "" }}>
-                    <HeaderBar />
-                    <Component {...pageProps} />
-                    <Footer />
-                  </Box>
-                </DisplayTagsProvider>
-              </UserDataProvider>
-            </CourseTableProvider>
+            <DisplayTagsProvider>
+              <Box w="100vw" h={{ base: "100%", lg: "" }}>
+                <HeaderBar />
+                <Component {...pageProps} />
+                <Footer />
+              </Box>
+            </DisplayTagsProvider>
           </CourseSearchingProvider>
         </ChakraProvider>
       </Auth0UserProvider>

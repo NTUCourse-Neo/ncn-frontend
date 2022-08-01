@@ -9,8 +9,8 @@ export default withApiAuthRequired(async function handler(req, res) {
     if (!assertNotNil(newUser)) {
       res.status(400).json({ error: "Missing user_id" });
     } else {
-      const user_data = await patchUserInfo(accessToken, newUser);
-      return res.status(200).json(user_data);
+      const userData = await patchUserInfo(accessToken, newUser);
+      return res.status(200).json(userData);
     }
   } catch (error) {
     console.error(error);

@@ -7,22 +7,20 @@ export const createCourseTable = async (
   user_id,
   semester
 ) => {
-  const {
-    data: { course_table },
-  } = await instance.post(`${api_version}/course_tables/`, {
+  const { data } = await instance.post(`${api_version}/course_tables/`, {
     id: course_table_id,
     name: course_table_name,
     user_id: user_id,
     semester: semester,
   });
-  return course_table;
+  return data;
 };
 
 export const fetchCourseTable = async (course_table_id) => {
-  const {
-    data: { course_table },
-  } = await instance.get(`${api_version}/course_tables/${course_table_id}`);
-  return course_table;
+  const { data } = await instance.get(
+    `${api_version}/course_tables/${course_table_id}`
+  );
+  return data;
 };
 
 export const patchCourseTable = async (
@@ -34,13 +32,14 @@ export const patchCourseTable = async (
 ) => {
   // filter out "" in courses
   const new_courses = courses.filter((course) => course !== "");
-  const {
-    data: { course_table },
-  } = await instance.patch(`${api_version}/course_tables/${course_table_id}`, {
-    name: course_table_name,
-    user_id: user_id,
-    expire_ts: expire_ts,
-    courses: new_courses,
-  });
-  return course_table;
+  const { data } = await instance.patch(
+    `${api_version}/course_tables/${course_table_id}`,
+    {
+      name: course_table_name,
+      user_id: user_id,
+      expire_ts: expire_ts,
+      courses: new_courses,
+    }
+  );
+  return data;
 };

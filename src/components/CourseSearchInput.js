@@ -41,33 +41,23 @@ import { info_view_map } from "data/mapping_table";
 import { useMount } from "react-use";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { useDisplayTags } from "components/Providers/DisplayTagsProvider";
-import { fetchSearchResult } from "queries/course";
-import { useRouter } from "next/router";
+import { useSWRConfig } from "swr";
 import { reportEvent } from "utils/ga";
 
 function CourseSearchInputTextArea(props) {
   const { searchCallback = () => {} } = props;
+  const { mutate } = useSWRConfig();
   const toast = useToast();
-  const router = useRouter();
   const {
+    search,
     searchColumns,
-    searchFilters,
-    batchSize,
-    searchFiltersEnable,
-    searchSettings,
+    pageNumber,
     setSearchColumns,
-    setSearchResult,
-    setSearchLoading,
-    setSearchError,
-    setOffset,
-    setTotalCount,
-    setSearch,
+    dispatchSearch,
+    setSearchResultCount,
+    searchResultCount,
   } = useCourseSearchingContext();
-
   const [searchText, setSearchText] = useState("");
-  useMount(() => {
-    setSearch("");
-  });
 
   const toggle_search_column = (e) => {
     const col_name = e.currentTarget.value;
@@ -90,44 +80,15 @@ function CourseSearchInputTextArea(props) {
       });
       return;
     }
-    try {
-      setSearchLoading(true);
-      setSearchResult([]);
-      setSearch(searchText);
-      await fetchSearchResult(
-        searchText,
-        searchColumns,
-        searchFiltersEnable,
-        searchFilters,
-        batchSize,
-        0,
-        searchSettings.strict_search_mode,
-        {
-          onSuccess: ({ courses, totalCount }) => {
-            setSearchResult(courses);
-            setTotalCount(totalCount);
-            setOffset(batchSize);
-            setSearchLoading(false);
-            setSearchError(null);
-            searchCallback();
-          },
-        }
-      );
-    } catch (e) {
-      setSearchLoading(false);
-      setSearchError(e);
-      if (e.status >= 500) {
-        router.push(`/404`);
-      } else {
-        toast({
-          title: "搜尋失敗",
-          description: "請檢查網路連線，或聯絡系統管理員",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
+    if (searchText === search && searchResultCount !== 0) {
+      setSearchResultCount(0);
+      for (let i = 0; i < pageNumber; i++) {
+        mutate(`/api/search/${search}/${i}`);
       }
+    } else {
+      dispatchSearch(searchText);
     }
+    searchCallback();
   };
 
   return (

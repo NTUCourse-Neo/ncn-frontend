@@ -2,14 +2,15 @@ import instance from "queries/axiosInstance";
 const api_version = "v1";
 
 const getSocialPostByPostId = async (token, post_id) => {
-  const {
-    data: { post },
-  } = await instance.get(`${api_version}/social/posts/${post_id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return post;
+  const { data } = await instance.get(
+    `${api_version}/social/posts/${post_id}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return data;
 };
 
 const reportSocialPost = async (token, post_id, report) => {
@@ -66,14 +67,15 @@ const createSocialPost = async (token, course_id, post) => {
 };
 
 const getSocialPostByCourseId = async (token, course_id) => {
-  const {
-    data: { posts },
-  } = await instance.get(`${api_version}/social/courses/${course_id}/posts`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return posts;
+  const { data } = await instance.get(
+    `${api_version}/social/courses/${course_id}/posts`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return data;
 };
 
 export {

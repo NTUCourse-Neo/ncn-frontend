@@ -1,4 +1,4 @@
-import { React, useEffect, useMemo } from "react";
+import { React, useMemo } from "react";
 import {
   Flex,
   Text,
@@ -11,81 +11,38 @@ import {
 import SkeletonRow from "components/SkeletonRow";
 import { HashLoader, BeatLoader } from "react-spinners";
 import CourseInfoRow from "components/CourseInfoRow";
-import { useUserData } from "components/Providers/UserProvider";
-import { useDisplayTags } from "components/Providers/DisplayTagsProvider";
-import { useCourseTable } from "components/Providers/CourseTableProvider";
-import { fetchCourseTable } from "queries/courseTable";
+import useCourseTable from "hooks/useCourseTable";
+import useNeoLocalStorage from "hooks/useNeoLocalStorage";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
-import handleFetch from "utils/CustomFetch";
 import Head from "next/head";
-import { useRouter } from "next/router";
+import useUserInfo from "hooks/useUserInfo";
 
 export default function UserMyPage({ user }) {
-  const { setUser, user: userInfo } = useUserData();
+  const { userInfo, isLoading } = useUserInfo(user?.sub, {
+    onErrorCallback: (e, k, c) => {
+      toast({
+        title: "取得用戶資料失敗.",
+        description: "請聯繫客服(?)",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    },
+  });
   const toast = useToast();
-  const { courseTable, setCourseTable } = useCourseTable();
-  const { displayTags } = useDisplayTags();
-  const router = useRouter();
+  const { neoLocalCourseTableKey } = useNeoLocalStorage();
+  const courseTableKey = userInfo
+    ? userInfo?.course_tables?.[0] ?? null
+    : neoLocalCourseTableKey;
+  const { courseTable } = useCourseTable(courseTableKey);
 
   const bgColor = useColorModeValue("white", "black");
   const selectedCourses = useMemo(() => {
     return courseTable?.courses.map((c) => c.id);
   }, [courseTable]);
+  const favoriteList = useMemo(() => userInfo?.favorites ?? [], [userInfo]);
 
-  const favoriteList = useMemo(() => userInfo?.db?.favorites ?? [], [userInfo]);
-
-  // fetch userInfo
-  useEffect(() => {
-    // fetch on render
-    const fetchUserInfo = async () => {
-      if (user) {
-        try {
-          const user_data = await handleFetch("/api/user", {
-            user_id: user?.sub,
-          });
-          await setUser(user_data);
-          const course_tables = user_data.db.course_tables;
-          // console.log(course_tables);
-          if (course_tables.length === 0) {
-            setCourseTable(null);
-          } else {
-            // pick the first table
-            try {
-              const course_table = await fetchCourseTable(course_tables[0]);
-              setCourseTable(course_table);
-            } catch (e) {
-              if (e?.response?.status === 403 || e?.response?.status === 404) {
-                // expired
-                setCourseTable(null);
-                return;
-              }
-              toast({
-                title: "取得課表資料失敗.",
-                status: "error",
-                duration: 9000,
-                isClosable: true,
-              });
-            }
-          }
-        } catch (e) {
-          toast({
-            title: "取得用戶資料失敗.",
-            description: "請聯繫客服(?)",
-            status: "error",
-            duration: 9000,
-            isClosable: true,
-          });
-          if (e?.response?.data?.msg === "access_token_expired") {
-            router.push("/api/auth/login");
-          }
-        }
-      }
-    };
-
-    fetchUserInfo();
-  }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  if (!userInfo) {
+  if (isLoading) {
     return (
       <Box maxW="screen-md" h="95vh" mx="auto" overflow="visible" p="64px">
         <Flex
@@ -147,15 +104,7 @@ export default function UserMyPage({ user }) {
                     selected={
                       selectedCourses && selectedCourses.includes(course.id)
                     }
-                    displayTags={displayTags}
                     displayTable={false}
-                    isfavorite={
-                      userInfo === null
-                        ? false
-                        : userInfo.db.favorites
-                            .map((c) => c.id)
-                            .includes(course.id)
-                    }
                   />
                   <Spacer my={{ base: 2, md: 1 }} />
                 </Accordion>

@@ -35,7 +35,7 @@ import { BeatLoader } from "react-spinners";
 import { motion, AnimatePresence } from "framer-motion";
 import HomeCard from "components/HomeCard";
 import { DiscordIcon } from "components/CustomIcons";
-import { useUserData } from "components/Providers/UserProvider";
+import useUserInfo from "hooks/useUserInfo";
 import { useUser } from "@auth0/nextjs-auth0";
 import handleFetch from "utils/CustomFetch";
 import Image from "next/image";
@@ -121,14 +121,38 @@ function NewRegisterModal({ isOpen, onClose, isLoading, newUser }) {
 }
 
 function HomePage() {
-  const { setUser } = useUserData();
   const toast = useToast();
-  const router = useRouter();
-  const { user, isLoading } = useUser();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
   const [isRegistering, setIsRegistering] = useState(false);
   const [displayingCard, setDisplayingCard] = useState(0);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { user, isLoading: isAuthLoading } = useUser();
+  useUserInfo(user?.sub, {
+    onSuccessCallback: async (userData, key, config) => {
+      if (!userData?.user?.db) {
+        setIsRegistering(true);
+        try {
+          await handleFetch("/api/user/register", {
+            email: user.email,
+          });
+        } catch (e) {
+          toast({
+            title: "註冊用戶失敗",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+        }
+        setIsRegistering(false);
+      }
+    },
+  });
+  useEffect(() => {
+    if (user && !isAuthLoading) {
+      if (isRegistering && !isOpen) {
+        onOpen();
+      }
+    }
+  }, [isRegistering, isAuthLoading, user, onOpen, toast, isOpen]);
 
   const bg = useColorModeValue("white", "black");
 
@@ -323,62 +347,6 @@ function HomePage() {
       </Flex>
     </Flex>,
   ];
-
-  useEffect(() => {
-    const registerNewUserToDB = async () => {
-      if (!isLoading && user) {
-        let user_data;
-        try {
-          user_data = await handleFetch("/api/user", {
-            user_id: user.sub,
-          });
-        } catch (e) {
-          if (e?.response?.data?.msg === "access_token_expired") {
-            router.push("/api/auth/login");
-          } else {
-            router.push("/404");
-          }
-        }
-        if (!user_data) {
-          // if user is null (not found in db)
-          // do register in background and display a modal.
-          setIsRegistering(true);
-          if (!isOpen) {
-            onOpen();
-          }
-          try {
-            await handleFetch("/api/user/register", {
-              email: user.email,
-            });
-            setIsRegistering(false);
-          } catch (e) {
-            toast({
-              title: "註冊失敗.",
-              description: "請聯繫客服(?)",
-              status: "error",
-              duration: 3000,
-              isClosable: true,
-            });
-            // setIsRegistering(false)? or other actions?
-          }
-          // Re-fetch user data from server
-          let new_user_data;
-          try {
-            new_user_data = await handleFetch("/api/user", {
-              user_id: user.sub,
-            });
-          } catch (e) {
-            router.push(`404`);
-          }
-          setUser(new_user_data);
-        } else {
-          setUser(user_data);
-        }
-      }
-    };
-
-    registerNewUserToDB();
-  }, [user, isLoading, setUser, router, toast, onOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>

@@ -28,62 +28,61 @@ export const fetchSearchResult = async (
         : null,
     strict_match: strict_match_bool,
   };
-  const {
-    data: { courses, total_count },
-  } = await instance.post(`${api_version}/courses/search`, {
+  const { data } = await instance.post(`${api_version}/courses/search`, {
     keyword: searchString,
     fields: fields,
     filter: filter,
     batch_size: batchSize,
     offset: offset,
   });
-  onSuccess({ courses, totalCount: total_count });
-  return { courses, total_count };
+  onSuccess({ courses: data?.courses, totalCount: data?.total_count });
+  return data;
 };
 
 export const fetchCourse = async (id) => {
-  const {
-    data: { course },
-  } = await instance.get(`${api_version}/courses/${id}`);
-  return course;
+  const { data } = await instance.get(`${api_version}/courses/${id}`);
+  return data;
 };
 
 export const getCourseEnrollInfo = async (token, course_id) => {
-  const {
-    data: { course_status },
-  } = await instance.get(`${api_version}/courses/${course_id}/enrollinfo`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return course_status;
+  const { data } = await instance.get(
+    `${api_version}/courses/${course_id}/enrollinfo`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return data;
 };
 
 export const getNTURatingData = async (token, course_id) => {
-  const {
-    data: { course_rating },
-  } = await instance.get(`${api_version}/courses/${course_id}/rating`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return course_rating;
+  const { data } = await instance.get(
+    `${api_version}/courses/${course_id}/rating`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return data;
 };
 
 export const getPTTData = async (token, course_id, type) => {
-  const {
-    data: { course_rating },
-  } = await instance.get(`${api_version}/courses/${course_id}/ptt/${type}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return course_rating;
+  const { data } = await instance.get(
+    `${api_version}/courses/${course_id}/ptt/${type}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return data;
 };
 
 export const getCourseSyllabusData = async (course_id) => {
-  const {
-    data: { course_syllabus },
-  } = await instance.get(`${api_version}/courses/${course_id}/syllabus`);
-  return course_syllabus;
+  const { data } = await instance.get(
+    `${api_version}/courses/${course_id}/syllabus`
+  );
+  return data;
 };

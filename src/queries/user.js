@@ -14,9 +14,7 @@ export const linkCoursetableToUser = async (
   course_table_id,
   user_id
 ) => {
-  const {
-    data: { user },
-  } = await instance.post(
+  const { data } = await instance.post(
     `${api_version}/users/${user_id}/course_table`,
     { course_table_id: course_table_id },
     {
@@ -25,13 +23,11 @@ export const linkCoursetableToUser = async (
       },
     }
   );
-  return user;
+  return data;
 };
 
 export const addFavoriteCourse = async (token, courseId) => {
-  const {
-    data: { favorites: newFavoriteList },
-  } = await instance.put(
+  const { data } = await instance.put(
     `${api_version}/users/favorites/${courseId}`,
     {},
     {
@@ -40,24 +36,23 @@ export const addFavoriteCourse = async (token, courseId) => {
       },
     }
   );
-  return newFavoriteList;
+  return data;
 };
 
 export const removeFavoriteCourse = async (token, courseId) => {
-  const {
-    data: { favorites: newFavoriteList },
-  } = await instance.delete(`${api_version}/users/favorites/${courseId}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return newFavoriteList;
+  const { data } = await instance.delete(
+    `${api_version}/users/favorites/${courseId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return data;
 };
 
 export const patchUserInfo = async (token, newUser) => {
-  const {
-    data: { user },
-  } = await instance.patch(
+  const { data } = await instance.patch(
     `${api_version}/users/`,
     { user: newUser },
     {
@@ -66,7 +61,7 @@ export const patchUserInfo = async (token, newUser) => {
       },
     }
   );
-  return user;
+  return data;
 };
 
 export const deleteUserAccount = async (token) => {
@@ -78,21 +73,16 @@ export const deleteUserAccount = async (token) => {
 };
 
 export const fetchUserById = async (token, user_id) => {
-  const {
-    data: { user },
-  } = await instance.get(`${api_version}/users/${user_id}`, {
+  const { data } = await instance.get(`${api_version}/users/${user_id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
-  // user contains user in db & auth0, either null (not found) or an object.
-  return user;
+  return data;
 };
 
 export const registerNewUser = async (token, email) => {
-  const {
-    data: { user },
-  } = await instance.post(
+  const { data } = await instance.post(
     `${api_version}/users/`,
     { user: { email: email } },
     {
@@ -101,6 +91,5 @@ export const registerNewUser = async (token, email) => {
       },
     }
   );
-  // either null (not found) or an object.
-  return user;
+  return data;
 };
