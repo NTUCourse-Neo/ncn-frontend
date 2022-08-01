@@ -64,3 +64,68 @@ export interface Schedule {
     | "D";
   location: string;
 }
+
+// TODO: refactor question mark (need modify backend)
+export type CourseEnrollStatus = {
+  enrolled: string;
+  enrolled_other: string;
+  fetch_ts: number;
+  registered: string;
+  remain: string;
+} | null;
+
+// from ntu rating
+export type CourseRatingData = {
+  breeze: number;
+  count: number;
+  quality: number;
+  sweety: number;
+  url: string;
+  workload: number;
+} | null;
+
+export interface PTTArticle {
+  aid: string;
+  author: string;
+  date: string;
+  title: string;
+  url: string;
+}
+
+export type CourseSyllabus = {
+  grade?:
+    | null
+    | {
+        color: string | null;
+        comment: string;
+        title: string;
+        value: number;
+      }[];
+  syllabus?: {
+    intro: string;
+    material: string;
+    objective: string;
+    office_hour: string;
+    requirement: string;
+    specify: string;
+  };
+};
+
+export interface SignUpPost {
+  content: {
+    amount: number;
+    comment: string;
+    rule: string;
+    when: string;
+    _id: string;
+  };
+  course_id: string;
+  create_ts: string;
+  is_owner: boolean;
+  self_vote_status: number;
+  type: string;
+  upvotes: number;
+  downvotes: number;
+  user_type: string;
+  _id: string;
+}
