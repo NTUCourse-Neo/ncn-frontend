@@ -15,6 +15,7 @@ test.http
 /.next/
 /out/
 .next/
+next-env.d.ts
 
 # production
 /build
