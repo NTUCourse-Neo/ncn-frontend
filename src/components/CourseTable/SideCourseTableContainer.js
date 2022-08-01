@@ -387,7 +387,7 @@ function SideCourseTableContent({
                 </TabList>
               </Flex>
             ) : (
-              <SkeletonText width="15vw" mt="2" h="2" noOfLines={3} />
+              <SkeletonText width="15vw" mt="2" h="8" noOfLines={2} />
             )}
           </Flex>
           <TabPanels>
