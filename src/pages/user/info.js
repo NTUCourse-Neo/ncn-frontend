@@ -239,7 +239,7 @@ export default function UserInfoPage({ user }) {
       return;
     }
     try {
-      mutateUser(
+      await mutateUser(
         async () => {
           const userData = await handleFetch("/api/user/patch", {
             newUser: {
