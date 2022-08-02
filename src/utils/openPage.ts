@@ -1,4 +1,4 @@
-function openPage(url, closeAfterOneSecond = false) {
+function openPage(url: string, closeAfterOneSecond = false) {
   if (window) {
     const wnd = window.open(url, "_blank");
     if (closeAfterOneSecond) {

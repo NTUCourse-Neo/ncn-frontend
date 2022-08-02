@@ -1,12 +1,18 @@
 import { proxy } from "valtio";
-import { parseCourseTime } from "utils/parseCourseTime";
+import { parseCourseTime, TimeMap } from "utils/parseCourseTime";
+import type { Course } from "@/types/course";
 
-const hoverCourseState = proxy({
+interface HoverCourseState {
+  hoveredCourse: Course | null;
+  hoveredCourseTimeMap: TimeMap | null;
+}
+
+const hoverCourseState = proxy<HoverCourseState>({
   hoveredCourse: null,
   hoveredCourseTimeMap: null,
 });
 
-const setHoveredCourseData = (course) => {
+const setHoveredCourseData = (course: Course | null) => {
   if (course === null) {
     hoverCourseState.hoveredCourse = null;
     hoverCourseState.hoveredCourseTimeMap = null;
