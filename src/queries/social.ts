@@ -1,4 +1,4 @@
-import instance from "queries/axiosInstance";
+import instance from "@/queries/axiosInstance";
 import { SignUpPost } from "@/types/course";
 const api_version = "v1";
 

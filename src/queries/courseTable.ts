@@ -1,4 +1,4 @@
-import instance from "queries/axiosInstance";
+import instance from "@/queries/axiosInstance";
 import type { CourseTable } from "@/types/courseTable";
 const api_version = "v2";
 

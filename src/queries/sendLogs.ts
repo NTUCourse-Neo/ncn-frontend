@@ -1,4 +1,4 @@
-import instance from "queries/axiosInstance";
+import instance from "@/queries/axiosInstance";
 const api_version = "v1";
 
 const sendLogs = async (

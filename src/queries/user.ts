@@ -1,4 +1,4 @@
-import instance from "queries/axiosInstance";
+import instance from "@/queries/axiosInstance";
 import type { User } from "@/types/user";
 const api_version = "v2";
 

@@ -1,4 +1,4 @@
-import instance from "queries/axiosInstance";
+import instance from "@/queries/axiosInstance";
 import type { SearchFieldName, FilterEnable, Filter } from "@/types/search";
 import type {
   Course,
