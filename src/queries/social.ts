@@ -1,7 +1,8 @@
 import instance from "queries/axiosInstance";
+import { SignUpPost } from "@/types/course";
 const api_version = "v1";
 
-const getSocialPostByPostId = async (token, post_id) => {
+const getSocialPostByPostId = async (token: string, post_id: string) => {
   const { data } = await instance.get(
     `${api_version}/social/posts/${post_id}`,
     {
@@ -10,15 +11,20 @@ const getSocialPostByPostId = async (token, post_id) => {
       },
     }
   );
-  return data;
+  return data as {
+    post: SignUpPost;
+  };
 };
 
-const reportSocialPost = async (token, post_id, report) => {
+const reportSocialPost = async (
+  token: string,
+  post_id: string,
+  report: string
+) => {
   await instance.post(
     `${api_version}/social/posts/${post_id}/report`,
     {
       report: report,
-      // includes: content, post_type, user_type
     },
     {
       headers: {
@@ -28,12 +34,11 @@ const reportSocialPost = async (token, post_id, report) => {
   );
 };
 
-const voteSocialPost = async (token, post_id, type) => {
+const voteSocialPost = async (token: string, post_id: string, type: number) => {
   await instance.patch(
     `${api_version}/social/posts/${post_id}/votes`,
     {
       type: type,
-      // includes: content, post_type, user_type
     },
     {
       headers: {
@@ -43,7 +48,7 @@ const voteSocialPost = async (token, post_id, type) => {
   );
 };
 
-const deleteSocialPost = async (token, post_id) => {
+const deleteSocialPost = async (token: string, post_id: string) => {
   await instance.delete(`${api_version}/social/posts/${post_id}/`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -51,7 +56,21 @@ const deleteSocialPost = async (token, post_id) => {
   });
 };
 
-const createSocialPost = async (token, course_id, post) => {
+export interface SignUpPostForm {
+  type: string;
+  content: {
+    amount: string;
+    when: string;
+    rule: string;
+    comment: string;
+  };
+  user_type: string;
+}
+const createSocialPost = async (
+  token: string,
+  course_id: string,
+  post: SignUpPostForm
+) => {
   await instance.post(
     `${api_version}/social/courses/${course_id}/posts`,
     {
@@ -66,7 +85,7 @@ const createSocialPost = async (token, course_id, post) => {
   );
 };
 
-const getSocialPostByCourseId = async (token, course_id) => {
+const getSocialPostByCourseId = async (token: string, course_id: string) => {
   const { data } = await instance.get(
     `${api_version}/social/courses/${course_id}/posts`,
     {
@@ -75,7 +94,9 @@ const getSocialPostByCourseId = async (token, course_id) => {
       },
     }
   );
-  return data;
+  return data as {
+    posts: SignUpPost[];
+  };
 };
 
 export {

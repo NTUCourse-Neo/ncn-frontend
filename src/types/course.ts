@@ -104,7 +104,7 @@ export type CourseSyllabus = {
 export type PTTData = PTTArticle[];
 export type SignUpPostData = SignUpPost[] | null;
 
-interface SignUpPost {
+export interface SignUpPost {
   content: {
     amount: number;
     comment: string;
