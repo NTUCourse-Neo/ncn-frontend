@@ -1,11 +1,12 @@
 import instance from "queries/axiosInstance";
+import type { CourseTable } from "@/types/courseTable";
 const api_version = "v2";
 
 export const createCourseTable = async (
-  course_table_id,
-  course_table_name,
-  user_id,
-  semester
+  course_table_id: string,
+  course_table_name: string,
+  user_id: string | null,
+  semester: string
 ) => {
   const { data } = await instance.post(`${api_version}/course_tables/`, {
     id: course_table_id,
@@ -13,14 +14,20 @@ export const createCourseTable = async (
     user_id: user_id,
     semester: semester,
   });
-  return data;
+  return data as {
+    course_table: CourseTable;
+    message: string;
+  };
 };
 
-export const fetchCourseTable = async (course_table_id) => {
+export const fetchCourseTable = async (course_table_id: string) => {
   const { data } = await instance.get(
     `${api_version}/course_tables/${course_table_id}`
   );
-  return data;
+  return data as {
+    course_table: CourseTable;
+    message: string;
+  };
 };
 
 export const patchCourseTable = async (
@@ -41,5 +48,8 @@ export const patchCourseTable = async (
       courses: new_courses,
     }
   );
-  return data;
+  return data as {
+    course_table: CourseTable | null; // TODO: why null?
+    message: string;
+  };
 };
