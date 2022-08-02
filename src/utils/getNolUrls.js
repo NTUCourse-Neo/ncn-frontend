@@ -3,6 +3,10 @@ const getNolAddUrl = (course) => {
   return `https://nol.ntu.edu.tw/nol/coursesearch/myschedule.php?add=${course.serial}&ddd=${d_id}`;
 };
 const getNolUrl = (course) => {
+  const nol_base_url = "https://nol.ntu.edu.tw/nol/coursesearch/";
+  if (course.syllabus_url && course.syllabus_url.length > 0) {
+    return nol_base_url + course.syllabus_url;
+  }
   const lang = "CH";
   const base_url = "https://nol.ntu.edu.tw/nol/coursesearch/print_table.php?";
   const course_id = course.identifier.replace("E", "");
