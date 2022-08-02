@@ -1,7 +1,8 @@
 import instance from "queries/axiosInstance";
+import type { User } from "@/types/user";
 const api_version = "v2";
 
-export const deleteUserProfile = async (token) => {
+export const deleteUserProfile = async (token: string) => {
   await instance.delete(`${api_version}/users/profile`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -10,9 +11,9 @@ export const deleteUserProfile = async (token) => {
 };
 
 export const linkCoursetableToUser = async (
-  token,
-  course_table_id,
-  user_id
+  token: string,
+  course_table_id: string,
+  user_id: string
 ) => {
   const { data } = await instance.post(
     `${api_version}/users/${user_id}/course_table`,
@@ -23,10 +24,13 @@ export const linkCoursetableToUser = async (
       },
     }
   );
-  return data;
+  return data as {
+    message: string;
+    user: User;
+  };
 };
 
-export const addFavoriteCourse = async (token, courseId) => {
+export const addFavoriteCourse = async (token: string, courseId: string) => {
   const { data } = await instance.put(
     `${api_version}/users/favorites/${courseId}`,
     {},
@@ -36,10 +40,13 @@ export const addFavoriteCourse = async (token, courseId) => {
       },
     }
   );
-  return data;
+  return data as {
+    message: string;
+    favorites: User["db"]["favorites"];
+  };
 };
 
-export const removeFavoriteCourse = async (token, courseId) => {
+export const removeFavoriteCourse = async (token: string, courseId: string) => {
   const { data } = await instance.delete(
     `${api_version}/users/favorites/${courseId}`,
     {
@@ -48,10 +55,22 @@ export const removeFavoriteCourse = async (token, courseId) => {
       },
     }
   );
-  return data;
+  return data as {
+    message: string;
+    favorites: User["db"]["favorites"];
+  };
 };
 
-export const patchUserInfo = async (token, newUser) => {
+export type PatchUserObject = {
+  name: string;
+  major: string;
+  d_major: string | null;
+  minors: string[];
+};
+export const patchUserInfo = async (
+  token: string,
+  newUser: PatchUserObject
+) => {
   const { data } = await instance.patch(
     `${api_version}/users/`,
     { user: newUser },
@@ -61,10 +80,13 @@ export const patchUserInfo = async (token, newUser) => {
       },
     }
   );
-  return data;
+  return data as {
+    message: string;
+    user: User;
+  };
 };
 
-export const deleteUserAccount = async (token) => {
+export const deleteUserAccount = async (token: string) => {
   await instance.delete(`${api_version}/users/account`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -72,16 +94,19 @@ export const deleteUserAccount = async (token) => {
   });
 };
 
-export const fetchUserById = async (token, user_id) => {
+export const fetchUserById = async (token: string, user_id: string) => {
   const { data } = await instance.get(`${api_version}/users/${user_id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
-  return data;
+  return data as {
+    message: string;
+    user: User | null; // null for initial sign up (not found in DB)
+  };
 };
 
-export const registerNewUser = async (token, email) => {
+export const registerNewUser = async (token: string, email: string) => {
   const { data } = await instance.post(
     `${api_version}/users/`,
     { user: { email: email } },
@@ -91,5 +116,8 @@ export const registerNewUser = async (token, email) => {
       },
     }
   );
-  return data;
+  return data as {
+    message: string;
+    user: User;
+  };
 };
