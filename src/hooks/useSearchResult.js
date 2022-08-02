@@ -27,8 +27,7 @@ export default function useSearchResult(searchKeyword, pageIndex) {
         searchFilters,
         batchSize,
         pageIndex * batchSize,
-        searchSettings.strict_search_mode,
-        {}
+        searchSettings.strict_search_mode
       );
       setSearchLoading(false);
       return coursesData;

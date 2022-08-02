@@ -1,17 +1,23 @@
 import instance from "queries/axiosInstance";
+import type { SearchFieldName, FilterEnable, Filter } from "@/types/search";
+import type {
+  Course,
+  CourseEnrollStatus,
+  CourseRatingData,
+  PTTData,
+  CourseSyllabus,
+} from "@/types/course";
 const api_version = "v2";
 
 export const fetchSearchResult = async (
-  searchString,
-  fields,
-  filters_enable,
-  filter_obj,
-  batchSize,
-  offset,
-  strict_match_bool,
-  options
+  searchString: string,
+  fields: SearchFieldName[],
+  filters_enable: FilterEnable,
+  filter_obj: Filter,
+  batchSize: number,
+  offset: number,
+  strict_match_bool: boolean
 ) => {
-  const { onSuccess = ({ courses, totalCount }) => {} } = options;
   const filter = {
     time: filters_enable.time ? filter_obj.time : null,
     department:
@@ -35,16 +41,21 @@ export const fetchSearchResult = async (
     batch_size: batchSize,
     offset: offset,
   });
-  onSuccess({ courses: data?.courses, totalCount: data?.total_count });
-  return data;
+  return data as {
+    courses: Course[];
+    total_count: number;
+  };
 };
 
-export const fetchCourse = async (id) => {
+export const fetchCourse = async (id: string) => {
   const { data } = await instance.get(`${api_version}/courses/${id}`);
-  return data;
+  return data as {
+    course: Course;
+    message: string;
+  };
 };
 
-export const getCourseEnrollInfo = async (token, course_id) => {
+export const getCourseEnrollInfo = async (token: string, course_id: string) => {
   const { data } = await instance.get(
     `${api_version}/courses/${course_id}/enrollinfo`,
     {
@@ -53,10 +64,15 @@ export const getCourseEnrollInfo = async (token, course_id) => {
       },
     }
   );
-  return data;
+  return data as {
+    course_id: string;
+    course_status: CourseEnrollStatus | null;
+    update_ts: string;
+    message: string;
+  };
 };
 
-export const getNTURatingData = async (token, course_id) => {
+export const getNTURatingData = async (token: string, course_id: string) => {
   const { data } = await instance.get(
     `${api_version}/courses/${course_id}/rating`,
     {
@@ -65,10 +81,20 @@ export const getNTURatingData = async (token, course_id) => {
       },
     }
   );
-  return data;
+  return data as {
+    course_id: string;
+    course_rating: CourseRatingData | null;
+    update_ts: string;
+    message: string;
+  };
 };
 
-export const getPTTData = async (token, course_id, type) => {
+type PTTRequestType = "review" | "exam";
+export const getPTTData = async (
+  token: string,
+  course_id: string,
+  type: PTTRequestType
+) => {
   const { data } = await instance.get(
     `${api_version}/courses/${course_id}/ptt/${type}`,
     {
@@ -77,12 +103,22 @@ export const getPTTData = async (token, course_id, type) => {
       },
     }
   );
-  return data;
+  return data as {
+    course_id: string;
+    course_rating: PTTData | null;
+    update_ts: string;
+    message: string;
+  };
 };
 
-export const getCourseSyllabusData = async (course_id) => {
+export const getCourseSyllabusData = async (course_id: string) => {
   const { data } = await instance.get(
     `${api_version}/courses/${course_id}/syllabus`
   );
-  return data;
+  return data as {
+    course_id: string;
+    course_syllabus: CourseSyllabus | null;
+    update_ts: string;
+    message: string;
+  };
 };

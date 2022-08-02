@@ -44,24 +44,26 @@ export interface Department {
   name_short: string | null;
 }
 
+export type Interval =
+  | "0"
+  | "1"
+  | "2"
+  | "3"
+  | "4"
+  | "5"
+  | "6"
+  | "7"
+  | "8"
+  | "9"
+  | "10"
+  | "A"
+  | "B"
+  | "C"
+  | "D";
+
 export interface Schedule {
   weekday: 1 | 2 | 3 | 4 | 5 | 6 | 7;
-  interval:
-    | "0"
-    | "1"
-    | "2"
-    | "3"
-    | "4"
-    | "5"
-    | "6"
-    | "7"
-    | "8"
-    | "9"
-    | "10"
-    | "A"
-    | "B"
-    | "C"
-    | "D";
+  interval: Interval;
   location: string;
 }
 
@@ -71,7 +73,7 @@ export type CourseEnrollStatus = {
   fetch_ts: number;
   registered: string;
   remain: string;
-} | null;
+};
 // from ntu rating
 export type CourseRatingData = {
   breeze: number;
@@ -80,7 +82,7 @@ export type CourseRatingData = {
   sweety: number;
   url: string;
   workload: number;
-} | null;
+};
 export type CourseSyllabus = {
   grade:
     | null
@@ -98,9 +100,8 @@ export type CourseSyllabus = {
     requirement: string;
     specify: string;
   };
-} | null;
-export type PTTReviewData = PTTArticle[] | null;
-export type PTTEXamData = PTTArticle[] | null;
+};
+export type PTTData = PTTArticle[];
 export type SignUpPostData = SignUpPost[] | null;
 
 interface SignUpPost {
