@@ -1,17 +1,7 @@
-const mapStateToTimeTable = (time_state) => {
-  // time_state is arr consisting of 7 subarray, ex:
-  /*
-        [
-            ["0","1"],
-            [],
-            ["A"],
-            [],
-            [],
-            [],
-            ["B"]
-        ]
-    */
-  if (time_state === null || time_state === [[], [], [], [], [], [], []]) {
+import { Interval } from "@/types/course";
+
+const mapStateToTimeTable = (time_state: Interval[][]) => {
+  if (time_state === [[], [], [], [], [], [], []]) {
     return [
       [false, false, false, false, false, false, false],
       [false, false, false, false, false, false, false],
@@ -105,16 +95,12 @@ const mapStateToTimeTable = (time_state) => {
   }
 };
 
-const mapStateToIntervals = (time_state) => {
-  if (time_state === null) {
-    return 0;
-  } else {
-    let res = 0;
-    for (let i = 0; i < time_state.length; i++) {
-      res += time_state[i].length;
-    }
-    return res;
+const mapStateToIntervals = (time_state: Interval[][]) => {
+  let res = 0;
+  for (let i = 0; i < time_state.length; i++) {
+    res += time_state[i].length;
   }
+  return res;
 };
 
 export { mapStateToTimeTable, mapStateToIntervals };
