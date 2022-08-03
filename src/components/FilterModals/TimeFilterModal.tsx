@@ -16,7 +16,15 @@ import { mapStateToTimeTable } from "utils/timeTableConverter";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { reportEvent } from "utils/ga";
 
-function TimeFilterModal({ selectedTime, setSelectedTime, toggle, title }) {
+export interface TimeFilterModalProps {
+  readonly title: string;
+  readonly isEnabled: boolean;
+  readonly selectedTime: boolean[][];
+  readonly setSelectedTime: (time: boolean[][]) => void;
+}
+
+function TimeFilterModal(props: TimeFilterModalProps) {
+  const { selectedTime, setSelectedTime, isEnabled, title } = props;
   const { searchFilters, setSearchFilters } = useCourseSearchingContext();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -75,10 +83,9 @@ function TimeFilterModal({ selectedTime, setSelectedTime, toggle, title }) {
     <>
       <Button
         size={useBreakpointValue({ base: "sm", md: "md" }) ?? "md"}
-        isDisabled={!toggle}
+        isDisabled={!isEnabled}
         onClick={() => {
           onOpen();
-          // because this modal will not re-render, so manually reload from redux state
           setSelectedTime(mapStateToTimeTable(searchFilters.time));
           reportEvent("filter_time", "click", "open_modal");
         }}
@@ -88,7 +95,6 @@ function TimeFilterModal({ selectedTime, setSelectedTime, toggle, title }) {
       <Modal
         isOpen={isOpen}
         onClose={() => {
-          // when click "X", overwrite local state from redux state
           onClose();
         }}
         size={useBreakpointValue({ base: "full", md: "xl" }) ?? "xl"}

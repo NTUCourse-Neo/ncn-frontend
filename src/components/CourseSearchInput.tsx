@@ -366,7 +366,7 @@ function CourseSearchInput({
                             : `已選擇 ${mapStateToIntervals(searchFilters.time)}
                                節次`
                         }
-                        toggle={timeFilterOn}
+                        isEnabled={timeFilterOn}
                         selectedTime={selectedTime}
                         setSelectedTime={setSelectedTime}
                       />

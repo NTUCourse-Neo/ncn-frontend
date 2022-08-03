@@ -14,14 +14,25 @@ import {
   useBreakpointValue,
   useColorModeValue,
 } from "@chakra-ui/react";
-import React, { useMemo } from "react";
-import { college_map } from "data/college";
-import { dept_list_bachelor_only } from "data/department";
+import { type_list, code_map } from "data/course_type";
 import FilterElement from "components/FilterModals/components/FilterElement";
+import React, { useMemo } from "react";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { reportEvent } from "utils/ga";
 
-function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
+export interface CategoryFilterModalProps {
+  readonly title: string;
+  readonly isEnabled: boolean;
+  readonly selectedType: string[];
+  readonly setSelectedType: (time: string[]) => void;
+}
+
+function CategoryFilterModal({
+  title,
+  isEnabled,
+  selectedType,
+  setSelectedType,
+}: CategoryFilterModalProps) {
   const headingColor = useColorModeValue("heading.light", "heading.dark");
   const { searchFilters, setSearchFilters } = useCourseSearchingContext();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -29,7 +40,7 @@ function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
 
   const onOpenModal = () => {
     // overwrite local states by redux store
-    setSelectedDept(searchFilters.department);
+    setSelectedType(searchFilters.category);
     onOpen();
   };
 
@@ -37,36 +48,32 @@ function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
     // fire when click "X" or outside of modal
     // overwrite local state by redux state
     onClose();
-    setSelectedDept(searchFilters.department);
+    setSelectedType(searchFilters.category);
   };
 
   const onSaveEditing = () => {
     // fire when click "Save"
     // overwrite redux state by local state
-    setSearchFilters({ ...searchFilters, department: selectedDept });
+    setSearchFilters({ ...searchFilters, category: selectedType });
     onClose();
   };
 
   const onResetEditing = () => {
     // fire when click "Reset"
     // set local state to empty array
-    setSelectedDept([]);
+    setSelectedType([]);
   };
 
   const modalBody = useMemo(
     () => (
-      <>
-        {Object.keys(college_map).map((college_key, index) => {
-          const departments = dept_list_bachelor_only.filter(
-            (dept) => dept.code[0] === college_key
+      <React.Fragment key={`modalBody`}>
+        {Object.keys(code_map).map((code_map_key, index) => {
+          const categories = type_list.filter(
+            (type) => type.code[0] === code_map_key
           );
-          if (departments.length === 0) {
-            return null;
-          }
           return (
-            <React.Fragment key={`${college_key}`}>
+            <React.Fragment key={`${code_map_key}-${index}`}>
               <Flex
-                key={`${college_key}-${index}`}
                 px="2"
                 h="40px"
                 flexDirection="column"
@@ -78,30 +85,30 @@ function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
                 bg={modalBgColor}
               >
                 <Heading fontSize="2xl" color={headingColor}>
-                  {college_key + " " + college_map[college_key].name}
+                  {code_map[code_map_key].name}
                 </Heading>
                 <Divider />
               </Flex>
-              {departments
-                .filter((dept) => !selectedDept.includes(dept.code))
-                .map((dept, dept_index) => (
+              {categories
+                .filter((type) => !selectedType.includes(type.id))
+                .map((type, typeIdx) => (
                   <FilterElement
-                    key={`${dept.code}-${dept_index}-modalBody`}
-                    id={dept.code}
-                    name={dept.full_name}
+                    key={`${type.id}-${typeIdx}`}
+                    id={type.code}
+                    name={type.full_name}
                     selected={false}
                     onClick={() => {
-                      setSelectedDept([...selectedDept, dept.code]);
-                      reportEvent("filter_department", "click", dept.code);
+                      setSelectedType([...selectedType, type.id]);
+                      reportEvent("filter_category", "click", type.id);
                     }}
                   />
                 ))}
             </React.Fragment>
           );
         })}
-      </>
+      </React.Fragment>
     ),
-    [selectedDept, setSelectedDept, headingColor, modalBgColor]
+    [selectedType, setSelectedType, headingColor, modalBgColor]
   );
 
   return (
@@ -111,7 +118,7 @@ function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
         isDisabled={!isEnabled}
         onClick={() => {
           onOpenModal();
-          reportEvent("filter_department", "click", "open_modal");
+          reportEvent("filter_category", "click", "open_modal");
         }}
       >
         {title}
@@ -141,7 +148,7 @@ function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
                 mr={3}
                 onClick={() => {
                   onSaveEditing();
-                  reportEvent("filter_department", "click", "save_changes");
+                  reportEvent("filter_category", "click", "save_changes");
                 }}
               >
                 套用
@@ -151,7 +158,7 @@ function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
                 variant="ghost"
                 onClick={() => {
                   onResetEditing();
-                  reportEvent("filter_department", "click", "reset_changes");
+                  reportEvent("filter_category", "click", "reset_changes");
                 }}
               >
                 重設
@@ -160,19 +167,19 @@ function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody overflow="auto" pt="0">
-            {dept_list_bachelor_only
-              .filter((dept) => selectedDept.includes(dept.code))
-              .map((dept, index) => (
+            {type_list
+              .filter((type) => selectedType.includes(type.id))
+              .map((type, index) => (
                 <FilterElement
-                  key={`${dept.code}-${index}-modalHeader`}
-                  id={dept.code}
-                  name={dept.full_name}
+                  key={`${type.id}-${index}-modalHeader`}
+                  id={type.code}
+                  name={type.full_name}
                   selected={true}
                   onClick={() => {
-                    setSelectedDept(
-                      selectedDept.filter((code) => code !== dept.code)
+                    setSelectedType(
+                      selectedType.filter((id) => id !== type.id)
                     );
-                    reportEvent("filter_department", "click", dept.code);
+                    reportEvent("filter_category", "click", type.id);
                   }}
                 />
               ))}
@@ -185,7 +192,7 @@ function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
               mr={3}
               onClick={() => {
                 onSaveEditing();
-                reportEvent("filter_department", "click", "save_changes");
+                reportEvent("filter_category", "click", "save_changes");
               }}
             >
               套用
@@ -194,7 +201,7 @@ function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
               variant="ghost"
               onClick={() => {
                 onResetEditing();
-                reportEvent("filter_department", "click", "reset_changes");
+                reportEvent("filter_category", "click", "reset_changes");
               }}
             >
               重設
@@ -206,4 +213,4 @@ function DeptFilterModal({ title, isEnabled, selectedDept, setSelectedDept }) {
   );
 }
 
-export default DeptFilterModal;
+export default CategoryFilterModal;
