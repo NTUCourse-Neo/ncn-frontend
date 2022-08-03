@@ -1,9 +1,9 @@
 import axios from "axios";
 
 // used for hitting self-hosted API in Next.js
-const handleFetch = async (route: string, payload: object) => {
+async function handleFetch<T>(route: string, payload: object): Promise<T> {
   const response = await axios.post(route, payload);
-  return response.data as unknown;
-};
+  return response.data;
+}
 
 export default handleFetch;
