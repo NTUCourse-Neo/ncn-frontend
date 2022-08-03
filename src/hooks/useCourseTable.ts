@@ -3,8 +3,23 @@ import { useState } from "react";
 import { fetchCourseTable } from "queries/courseTable";
 import { useToast } from "@chakra-ui/react";
 import { patchCourseTable } from "queries/courseTable";
+import type { Course } from "@/types/course";
 
-export default function useCourseTable(courseTableId, options) {
+export default function useCourseTable(
+  courseTableId: string,
+  options: {
+    readonly onSuccessCallback?: (
+      data: unknown,
+      key: string,
+      config: unknown
+    ) => void;
+    readonly onErrorCallback?: (
+      data: unknown,
+      key: string,
+      config: unknown
+    ) => void;
+  }
+) {
   const toast = useToast();
   const [isExpired, setIsExpired] = useState(false);
   const onSuccessCallback = options?.onSuccessCallback;
@@ -29,7 +44,7 @@ export default function useCourseTable(courseTableId, options) {
     }
   );
 
-  const addOrRemoveCourse = async (course) => {
+  const addOrRemoveCourse = async (course: Course) => {
     const courseTable = data?.course_table;
     try {
       const originalCourseTableLength = courseTable?.courses?.length ?? 0;

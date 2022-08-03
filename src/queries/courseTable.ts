@@ -31,11 +31,11 @@ export const fetchCourseTable = async (course_table_id: string) => {
 };
 
 export const patchCourseTable = async (
-  course_table_id,
-  course_table_name,
-  user_id,
-  expire_ts,
-  courses
+  course_table_id: string,
+  course_table_name: string,
+  user_id: string | null,
+  expire_ts: null | string,
+  courses: string[]
 ) => {
   // filter out "" in courses
   const new_courses = courses.filter((course) => course !== "");
