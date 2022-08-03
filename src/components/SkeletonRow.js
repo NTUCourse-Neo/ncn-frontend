@@ -13,7 +13,7 @@ function SkeletonRow({ loading, times = 1 }) {
       <Flex direction={"column"} w="100%" justifyContent={"center"}>
         {[...Array(times)].map((_, index) => (
           <Skeleton
-            mb="2"
+            mb={1}
             mx={{ base: "5", md: "0" }}
             height={{ base: "120px", md: "45px" }}
             borderRadius="md"
