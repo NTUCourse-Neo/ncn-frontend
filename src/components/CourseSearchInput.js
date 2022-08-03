@@ -80,7 +80,7 @@ function CourseSearchInputTextArea(props) {
       });
       return;
     }
-    if (searchText === search && searchResultCount !== 0) {
+    if (searchText === search) {
       setSearchResultCount(0);
       for (let i = 0; i < pageNumber; i++) {
         mutate(`/api/search/${search}/${i}`);

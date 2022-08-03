@@ -43,7 +43,7 @@ const CourseSearchingContext = createContext({
 });
 
 function CourseSearchingProvider(props) {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(null);
   const [pageNumber, setPageNumber] = useState(0);
   const [searchResultCount, setSearchResultCount] = useState(0);
   const [searchLoading, setSearchLoading] = useState(false);
