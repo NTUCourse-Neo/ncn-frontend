@@ -1,39 +1,68 @@
 import React, { createContext, useContext, useState } from "react";
+import type { SearchFieldName, FilterEnable, Filter } from "@/types/search";
 
-const CourseSearchingContext = createContext({
+export interface SearchConfigType {
+  show_selected_courses: boolean;
+  only_show_not_conflicted_courses: boolean;
+  sync_add_to_nol: boolean;
+  strict_search_mode: boolean;
+}
+
+interface CourseSearchingContextType {
+  search: string | null;
+  setSearch: (search: string | null) => void;
+  pageNumber: number;
+  setPageNumber: (pageNumber: number) => void;
+  searchResultCount: number;
+  setSearchResultCount: (searchResultCount: number) => void;
+  searchLoading: boolean;
+  setSearchLoading: (searchLoading: boolean) => void;
+  totalCount: number;
+  setTotalCount: (totalCount: number) => void;
+  batchSize: number;
+  setBatchSize: (batchSize: number) => void;
+  searchColumns: SearchFieldName[];
+  setSearchColumns: (searchColumns: SearchFieldName[]) => void;
+  searchSettings: SearchConfigType;
+  setSearchSettings: (searchSettings: SearchConfigType) => void;
+  searchFiltersEnable: FilterEnable;
+  setSearchFiltersEnable: (searchFiltersEnable: FilterEnable) => void;
+  searchFilters: Filter;
+  setSearchFilters: (searchFilters: Filter) => void;
+  fetchNextPage: () => void;
+  dispatchSearch: (search: string | null) => void;
+}
+
+const CourseSearchingContext = createContext<CourseSearchingContextType>({
   search: "",
   pageNumber: 0,
   searchResultCount: 0,
   searchLoading: false,
-  searchError: null,
-  totalCount: 0, // total number of results
+  totalCount: 0,
   batchSize: 20,
-  offset: 0,
-  searchColumns: ["course_name", "teacher"], // array of column names, default is all columns
+  searchColumns: ["name", "teacher", "serial", "code", "identifier"],
   searchSettings: {
     show_selected_courses: false,
     only_show_not_conflicted_courses: false,
     sync_add_to_nol: false,
     strict_search_mode: true,
-  }, // object of settings
+  },
   searchFiltersEnable: {
     time: false,
     department: false,
     category: false,
     enroll_method: false,
-  }, // object of boolean, enable/disable filters
+  },
   searchFilters: {
     time: [[], [], [], [], [], [], []],
     department: [],
     category: [],
     enroll_method: ["1", "2", "3"],
-  }, // default value of filters
+  },
   setSearch: () => {},
   setPageNumber: () => {},
   setSearchLoading: () => {},
   setSearchResultCount: () => {},
-  setSearchError: () => {},
-  setOffset: () => {},
   setTotalCount: () => {},
   setBatchSize: () => {},
   setSearchSettings: () => {},
@@ -44,33 +73,35 @@ const CourseSearchingContext = createContext({
   dispatchSearch: () => {},
 });
 
-function CourseSearchingProvider(props) {
-  const [search, setSearch] = useState(null);
+const CourseSearchingProvider: React.FC<{
+  readonly children: React.ReactNode;
+}> = ({ children }) => {
+  const [search, setSearch] = useState<string | null>(null);
   const [pageNumber, setPageNumber] = useState(0);
   const [searchResultCount, setSearchResultCount] = useState(0);
   const [searchLoading, setSearchLoading] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
   const [batchSize, setBatchSize] = useState(20);
-  const [searchColumns, setSearchColumns] = useState([
+  const [searchColumns, setSearchColumns] = useState<SearchFieldName[]>([
     "name",
     "teacher",
     "serial",
     "code",
     "identifier",
   ]);
-  const [searchSettings, setSearchSettings] = useState({
+  const [searchSettings, setSearchSettings] = useState<SearchConfigType>({
     show_selected_courses: false,
     only_show_not_conflicted_courses: false,
     sync_add_to_nol: false,
     strict_search_mode: true,
   });
-  const [searchFiltersEnable, setSearchFiltersEnable] = useState({
+  const [searchFiltersEnable, setSearchFiltersEnable] = useState<FilterEnable>({
     time: false,
     department: false,
     category: false,
     enroll_method: false,
   });
-  const [searchFilters, setSearchFilters] = useState({
+  const [searchFilters, setSearchFilters] = useState<Filter>({
     time: [[], [], [], [], [], [], []],
     department: [],
     category: [],
@@ -81,7 +112,7 @@ function CourseSearchingProvider(props) {
     setPageNumber(pageNumber + 1);
   };
 
-  const dispatchSearch = (text) => {
+  const dispatchSearch = (text: string) => {
     setSearch(text);
     setSearchResultCount(0);
     setPageNumber(1);
@@ -113,10 +144,11 @@ function CourseSearchingProvider(props) {
         fetchNextPage,
         dispatchSearch,
       }}
-      {...props}
-    />
+    >
+      {children}
+    </CourseSearchingContext.Provider>
   );
-}
+};
 
 function useCourseSearchingContext() {
   return useContext(CourseSearchingContext);
