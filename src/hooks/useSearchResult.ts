@@ -3,7 +3,10 @@ import { fetchSearchResult } from "queries/course";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { useToast } from "@chakra-ui/react";
 
-export default function useSearchResult(searchKeyword, pageIndex) {
+export default function useSearchResult(
+  searchKeyword: string,
+  pageIndex: number
+) {
   const toast = useToast();
   const {
     searchColumns,
