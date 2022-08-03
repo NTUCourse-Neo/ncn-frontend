@@ -1,11 +1,16 @@
-import { React } from "react";
 import TableDragSelect from "react-table-drag-select";
 import "react-table-drag-select/style.css";
 import { Flex, Text } from "@chakra-ui/react";
 
-function TimetableSelector({ selectedTime, setSelectedTime }) {
+function TimetableSelector({
+  selectedTime,
+  setSelectedTime,
+}: {
+  readonly selectedTime: boolean[][];
+  readonly setSelectedTime: (time: boolean[][]) => void;
+}) {
   const days = ["一", "二", "三", "四", "五", "六", "日"];
-  const interval = [
+  const intervals = [
     "0",
     "1",
     "2",
@@ -51,7 +56,7 @@ function TimetableSelector({ selectedTime, setSelectedTime }) {
           alignItems="center"
           mr={{ base: "0", md: "2" }}
         >
-          {interval.map((interval, j) => {
+          {intervals.map((interval, j) => {
             return (
               <Text
                 key={j}
@@ -66,9 +71,11 @@ function TimetableSelector({ selectedTime, setSelectedTime }) {
         </Flex>
         <TableDragSelect
           value={selectedTime}
-          onChange={(new_time_table) => setSelectedTime(new_time_table)}
+          onChange={(new_time_table: boolean[][]) =>
+            setSelectedTime(new_time_table)
+          }
         >
-          {interval.map((day, i) => {
+          {intervals.map((day, i) => {
             return (
               <tr key={i}>
                 {days.map((interval, j) => {
@@ -85,7 +92,7 @@ function TimetableSelector({ selectedTime, setSelectedTime }) {
           alignItems="center"
           ml={{ base: "0", md: "2" }}
         >
-          {interval.map((interval, j) => {
+          {intervals.map((interval, j) => {
             return (
               <Text
                 key={j}

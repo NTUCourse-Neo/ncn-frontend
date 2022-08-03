@@ -1,7 +1,19 @@
-import { Button, Badge, useColorModeValue } from "@chakra-ui/react";
+import {
+  Button,
+  Badge,
+  useColorModeValue,
+  ButtonProps,
+} from "@chakra-ui/react";
+
+export interface FilterElementProps extends ButtonProps {
+  readonly id: string;
+  readonly name: string;
+  readonly selected: boolean;
+}
 
 // Buttons in filter modal
-function FilterElement({ id, name, selected, onClick }) {
+function FilterElement(props: FilterElementProps) {
+  const { id, name, selected, onClick } = props;
   return (
     <Button
       colorScheme={"teal"}
