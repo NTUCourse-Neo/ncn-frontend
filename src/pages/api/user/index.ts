@@ -6,7 +6,7 @@ import type { User } from "@/types/user";
 
 export default withApiAuthRequired(async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<{ user: User; message: string }>
+  res: NextApiResponse<{ user: User | null; message: string }>
 ) {
   try {
     const { user_id } = req.body;
