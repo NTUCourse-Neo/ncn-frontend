@@ -52,7 +52,7 @@ function SignInButton() {
         <MenuButton
           as={Avatar}
           name={user.name}
-          src={user.picture}
+          src={user?.picture ?? null}
           _hover={{ cursor: "pointer" }}
           ml={{ base: 0, md: 6 }}
           boxSize="10"
@@ -130,7 +130,7 @@ function SignInButton() {
 
   return (
     <>
-      <Menu display={{ base: "inline", md: "none" }}>
+      <Menu>
         <MenuButton
           as={Avatar}
           _hover={{ cursor: "pointer" }}
@@ -202,7 +202,6 @@ function HeaderBar() {
               width="25"
               height="25"
               layout="fixed"
-              borderRadius={"5px"}
             />
             <Heading
               ml="2"

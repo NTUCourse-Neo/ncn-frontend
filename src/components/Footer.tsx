@@ -18,7 +18,7 @@ import { reportEvent } from "utils/ga";
 function Footer() {
   const ver = "beta (20220721)";
   const secondaryColor = useColorModeValue("gray.400", "gray.500");
-  const handleOpenPage = (page) => {
+  const handleOpenPage = (page: string) => {
     window.open(page, "_blank");
   };
   return (
@@ -40,7 +40,6 @@ function Footer() {
           <Image
             src={`/img/ncn_logo.png`}
             alt="ncnLogo"
-            display={{ base: "inline-block", md: "none" }}
             height="30px"
             width="30px"
             layout="fixed"

@@ -7,7 +7,7 @@ const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 function GoogleAnalytics() {
   const router = useRouter();
   useEffect(() => {
-    const handleRouteChange = (url) => {
+    const handleRouteChange = (url: string) => {
       window.gtag("config", GA_ID, { page_path: url });
     };
     router.events.on("routeChangeComplete", handleRouteChange);

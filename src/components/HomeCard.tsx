@@ -1,4 +1,3 @@
-import { React } from "react";
 import {
   Box,
   Flex,
@@ -6,8 +5,18 @@ import {
   Text,
   Image,
   useColorModeValue,
+  BoxProps,
 } from "@chakra-ui/react";
-function HomeCard({ bg, desc, img, title, children, imgAtLeft = false }) {
+
+export interface HomeCardProps extends BoxProps {
+  readonly desc: string[];
+  readonly title: string;
+  readonly img: string;
+  readonly imgAtLeft?: boolean;
+}
+
+function HomeCard(props: HomeCardProps) {
+  const { bg, desc, img, title, children, imgAtLeft = false } = props;
   const textColor = useColorModeValue("gray.500", "gray.400");
   return (
     <Box

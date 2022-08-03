@@ -1,5 +1,6 @@
-import { Icon } from "@chakra-ui/react";
-const DiscordIcon = (props) => (
+import { Icon, IconProps } from "@chakra-ui/react";
+
+const DiscordIcon = (props: IconProps) => (
   <Icon viewBox="0 0 71 55" {...props}>
     <path
       fill="currentColor"
