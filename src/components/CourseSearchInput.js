@@ -40,7 +40,10 @@ import {
 import { info_view_map } from "data/mapping_table";
 import { useMount } from "react-use";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
-import { useDisplayTags } from "components/Providers/DisplayTagsProvider";
+import {
+  useDisplayTags,
+  availableTags,
+} from "components/Providers/DisplayTagsProvider";
 import { useSWRConfig } from "swr";
 import { reportEvent } from "utils/ga";
 
@@ -237,7 +240,6 @@ function CourseSearchInput({ displayPanel, searchCallback }) {
     setSearchFilters,
   } = useCourseSearchingContext();
   const { displayTags, setDisplayTags } = useDisplayTags();
-  const available_tags = ["requirement", "slot", "enroll_method", "areas"];
 
   // filters local states
   const [selectedTime, setSelectedTime] = useState(
@@ -621,7 +623,7 @@ function CourseSearchInput({ displayPanel, searchCallback }) {
                       flexWrap="wrap"
                       css={{ gap: "4px" }}
                     >
-                      {available_tags.map((tag) => {
+                      {availableTags.map((tag) => {
                         // console.log(displayTags)
                         const selected = displayTags.includes(tag);
                         return (
