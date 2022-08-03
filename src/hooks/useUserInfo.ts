@@ -7,7 +7,7 @@ import type { Course } from "@/types/course";
 
 export default function useUserInfo(
   userId: string,
-  options: {
+  options?: {
     readonly onSuccessCallback?: (
       data: unknown,
       key: string,
@@ -122,7 +122,7 @@ export default function useUserInfo(
 
   return {
     userInfo: data?.user?.db ?? null,
-    isLoading: !data && !error && userId,
+    isLoading: !data && !error && !(userId === null || userId === undefined),
     error: error,
     mutate,
     addOrRemoveFavorite,

@@ -7,7 +7,7 @@ import type { Course } from "@/types/course";
 
 export default function useCourseTable(
   courseTableId: string,
-  options: {
+  options?: {
     readonly onSuccessCallback?: (
       data: unknown,
       key: string,
@@ -101,7 +101,10 @@ export default function useCourseTable(
 
   return {
     courseTable: data?.course_table ?? null,
-    isLoading: !data && !error && courseTableId,
+    isLoading:
+      !data &&
+      !error &&
+      !(courseTableId === null || courseTableId === undefined),
     error,
     isExpired,
     mutate,

@@ -25,7 +25,7 @@ interface Options {
   ) => void;
 }
 
-export function useCourseEnrollData(courseSerial: string, options: Options) {
+export function useCourseEnrollData(courseSerial: string, options?: Options) {
   const { user } = useUser();
   const toast = useToast();
   const router = useRouter();
@@ -72,7 +72,7 @@ export function useCourseEnrollData(courseSerial: string, options: Options) {
   };
 }
 
-export function useNTURatingData(courseId: string, options: Options) {
+export function useNTURatingData(courseId: string, options?: Options) {
   const { user } = useUser();
   const toast = useToast();
   const router = useRouter();
@@ -119,7 +119,7 @@ export function useNTURatingData(courseId: string, options: Options) {
   };
 }
 
-export function usePTTReviewData(courseId: string, options: Options) {
+export function usePTTReviewData(courseId: string, options?: Options) {
   const { user } = useUser();
   const toast = useToast();
   const router = useRouter();
@@ -167,7 +167,7 @@ export function usePTTReviewData(courseId: string, options: Options) {
   };
 }
 
-export function usePTTExamData(courseId: string, options: Options) {
+export function usePTTExamData(courseId: string, options?: Options) {
   const { user } = useUser();
   const toast = useToast();
   const router = useRouter();
@@ -215,7 +215,7 @@ export function usePTTExamData(courseId: string, options: Options) {
   };
 }
 
-export function useSyllabusData(courseId: string, options: Options) {
+export function useSyllabusData(courseId: string, options?: Options) {
   const toast = useToast();
   const router = useRouter();
   const onSuccessCallback = options?.onSuccessCallback;
@@ -262,7 +262,7 @@ export function useSyllabusData(courseId: string, options: Options) {
   };
 }
 
-export function useSignUpPostData(courseId: string, options: Options) {
+export function useSignUpPostData(courseId: string, options?: Options) {
   const { user } = useUser();
   const toast = useToast();
   const router = useRouter();
