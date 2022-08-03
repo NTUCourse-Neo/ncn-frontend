@@ -13,6 +13,5 @@ export interface User {
     favorites: Course[];
     history_courses: unknown; // TODO
     student_id: null | string; // TODO
-    languages: unknown; // TODO: to be removed
   };
 }
