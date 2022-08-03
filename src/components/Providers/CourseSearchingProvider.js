@@ -40,6 +40,8 @@ const CourseSearchingContext = createContext({
   setSearchColumns: () => {},
   setSearchFiltersEnable: () => {},
   setSearchFilters: () => {},
+  fetchNextPage: () => {},
+  dispatchSearch: () => {},
 });
 
 function CourseSearchingProvider(props) {
