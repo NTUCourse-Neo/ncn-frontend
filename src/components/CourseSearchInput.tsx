@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import React, { useState } from "react";
 import {
   Flex,
   Input,
@@ -46,8 +46,11 @@ import {
 } from "components/Providers/DisplayTagsProvider";
 import { useSWRConfig } from "swr";
 import { reportEvent } from "utils/ga";
+import { SearchFieldName, EnrollMethod } from "@/types/search";
 
-function CourseSearchInputTextArea(props) {
+function CourseSearchInputTextArea(props: {
+  readonly searchCallback?: () => void;
+}) {
   const { searchCallback = () => {} } = props;
   const { mutate } = useSWRConfig();
   const toast = useToast();
@@ -58,12 +61,10 @@ function CourseSearchInputTextArea(props) {
     setSearchColumns,
     dispatchSearch,
     setSearchResultCount,
-    searchResultCount,
   } = useCourseSearchingContext();
   const [searchText, setSearchText] = useState("");
 
-  const toggle_search_column = (e) => {
-    const col_name = e.currentTarget.value;
+  const toggleSearchColumn = (col_name: SearchFieldName) => {
     if (searchColumns.includes(col_name)) {
       setSearchColumns(searchColumns.filter((col) => col !== col_name));
     } else {
@@ -103,7 +104,7 @@ function CourseSearchInputTextArea(props) {
         flexWrap="wrap"
         css={{ gap: "10px" }}
       >
-        <Menu closeOnSelect={false} mx="2">
+        <Menu closeOnSelect={false}>
           <MenuButton as={Button} size={{ base: "md", md: "md" }}>
             <Icon
               as={TbListSearch}
@@ -121,7 +122,7 @@ function CourseSearchInputTextArea(props) {
               <MenuItemOption
                 value="name"
                 onClick={(e) => {
-                  toggle_search_column(e);
+                  toggleSearchColumn("name");
                   reportEvent("search", "toggle_search_column", "name");
                 }}
               >
@@ -130,7 +131,7 @@ function CourseSearchInputTextArea(props) {
               <MenuItemOption
                 value="teacher"
                 onClick={(e) => {
-                  toggle_search_column(e);
+                  toggleSearchColumn("teacher");
                   reportEvent("search", "toggle_search_column", "teacher");
                 }}
               >
@@ -139,7 +140,7 @@ function CourseSearchInputTextArea(props) {
               <MenuItemOption
                 value="serial"
                 onClick={(e) => {
-                  toggle_search_column(e);
+                  toggleSearchColumn("serial");
                   reportEvent("search", "toggle_search_column", "serial");
                 }}
               >
@@ -148,7 +149,7 @@ function CourseSearchInputTextArea(props) {
               <MenuItemOption
                 value="code"
                 onClick={(e) => {
-                  toggle_search_column(e);
+                  toggleSearchColumn("code");
                   reportEvent("search", "toggle_search_column", "code");
                 }}
               >
@@ -157,7 +158,7 @@ function CourseSearchInputTextArea(props) {
               <MenuItemOption
                 value="identifier"
                 onClick={(e) => {
-                  toggle_search_column(e);
+                  toggleSearchColumn("identifier");
                   reportEvent("search", "toggle_search_column", "identifier");
                 }}
               >
@@ -202,10 +203,16 @@ function CourseSearchInputTextArea(props) {
   );
 }
 
-function SettingSwitch({ label, setterFunc, defaultValue, isDisabled }) {
+function SettingSwitch(props: {
+  label: string;
+  isDisabled: boolean;
+  defaultValue: boolean;
+  setterFunc: (x: boolean) => void;
+}) {
+  const { label, setterFunc, defaultValue, isDisabled } = props;
   const textColor = useColorModeValue("gray.500", "text.dark");
   return (
-    <Flex alignItems="center" diisplay={{ base: "none", lg: "inline-block" }}>
+    <Flex alignItems="center">
       <Switch
         id={label}
         defaultChecked={defaultValue}
@@ -229,7 +236,14 @@ function SettingSwitch({ label, setterFunc, defaultValue, isDisabled }) {
   );
 }
 
-function CourseSearchInput({ displayPanel, searchCallback }) {
+export interface CourseSearchInputProps {
+  displayPanel: boolean;
+  searchCallback?: () => void;
+}
+function CourseSearchInput({
+  displayPanel,
+  searchCallback,
+}: CourseSearchInputProps) {
   const toast = useToast();
   const {
     searchFilters,
@@ -241,13 +255,14 @@ function CourseSearchInput({ displayPanel, searchCallback }) {
   } = useCourseSearchingContext();
   const { displayTags, setDisplayTags } = useDisplayTags();
 
-  // filters local states
+  // filters local states // TODO: move to their component
   const [selectedTime, setSelectedTime] = useState(
     mapStateToTimeTable(searchFilters.time)
   );
   const [selectedDept, setSelectedDept] = useState(searchFilters.department);
   const [selectedType, setSelectedType] = useState(searchFilters.category);
 
+  // TODO: no need to use local state
   const [timeFilterOn, setTimeFilterOn] = useState(searchFiltersEnable.time);
   const [deptFilterOn, setDeptFilterOn] = useState(
     searchFiltersEnable.department
@@ -276,9 +291,7 @@ function CourseSearchInput({ displayPanel, searchCallback }) {
     setSelectedTime(mapStateToTimeTable(searchFilters.time));
   });
 
-  const set_enroll_method = (e) => {
-    // console.log(e.currentTarget.value)
-    const new_enroll_method = e.currentTarget.value;
+  const set_enroll_method = (new_enroll_method: EnrollMethod) => {
     const idx = searchFilters.enroll_method.indexOf(new_enroll_method);
     if (idx === -1) {
       //add
@@ -288,7 +301,6 @@ function CourseSearchInput({ displayPanel, searchCallback }) {
       });
     } else {
       // remove
-
       setSearchFilters({
         ...searchFilters,
         enroll_method: searchFilters.enroll_method.filter(
@@ -326,7 +338,6 @@ function CourseSearchInput({ displayPanel, searchCallback }) {
             </TabList>
             <TabPanels>
               <TabPanel>
-                {/* Filters: time, department, type of courses */}
                 <Flex flexDirection="row" flexWrap="wrap" css={{ gap: "10px" }}>
                   <Flex flexDirection="column" px="4">
                     <Flex
@@ -352,9 +363,8 @@ function CourseSearchInput({ displayPanel, searchCallback }) {
                         title={
                           mapStateToIntervals(searchFilters.time) === 0
                             ? "未選擇課程時間"
-                            : "已選擇 " +
-                              mapStateToIntervals(searchFilters.time) +
-                              " 節次"
+                            : `已選擇 ${mapStateToIntervals(searchFilters.time)}
+                               節次`
                         }
                         toggle={timeFilterOn}
                         selectedTime={selectedTime}
@@ -386,7 +396,7 @@ function CourseSearchInput({ displayPanel, searchCallback }) {
                         title={
                           selectedDept.length === 0
                             ? "未選擇開課系所"
-                            : "已選擇 " + selectedDept.length + " 系所"
+                            : `已選擇 ${selectedDept.length} 系所`
                         }
                         isEnabled={deptFilterOn}
                         selectedDept={selectedDept}
@@ -418,7 +428,7 @@ function CourseSearchInput({ displayPanel, searchCallback }) {
                         title={
                           selectedType.length === 0
                             ? "未選擇課程類別"
-                            : "已選擇 " + selectedType.length + " 類別"
+                            : `已選擇 ${selectedType.length} 類別`
                         }
                         isEnabled={catFilterOn}
                         selectedType={selectedType}
@@ -446,7 +456,7 @@ function CourseSearchInput({ displayPanel, searchCallback }) {
                           });
                         }}
                       />
-                      <Menu closeOnSelect={false} mx="2">
+                      <Menu closeOnSelect={false}>
                         <MenuButton
                           size={
                             useBreakpointValue({ base: "sm", md: "md" }) ?? "md"
@@ -466,7 +476,7 @@ function CourseSearchInput({ displayPanel, searchCallback }) {
                               key="1"
                               value="1"
                               onClick={(e) => {
-                                set_enroll_method(e);
+                                set_enroll_method("1");
                                 reportEvent(
                                   "filter",
                                   "toggle_enroll_method",
@@ -483,7 +493,7 @@ function CourseSearchInput({ displayPanel, searchCallback }) {
                               key="2"
                               value="2"
                               onClick={(e) => {
-                                set_enroll_method(e);
+                                set_enroll_method("2");
                                 reportEvent(
                                   "filter",
                                   "toggle_enroll_method",
@@ -500,7 +510,7 @@ function CourseSearchInput({ displayPanel, searchCallback }) {
                               key="3"
                               value="3"
                               onClick={(e) => {
-                                set_enroll_method(e);
+                                set_enroll_method("3");
                                 reportEvent(
                                   "filter",
                                   "toggle_enroll_method",
@@ -527,7 +537,6 @@ function CourseSearchInput({ displayPanel, searchCallback }) {
                 </Flex>
               </TabPanel>
               <TabPanel>
-                {/* Settings */}
                 <Flex flexDirection="row" flexWrap="wrap" css={{ gap: "10px" }}>
                   <Flex
                     w={{ base: "100%", lg: "50%" }}
@@ -624,7 +633,6 @@ function CourseSearchInput({ displayPanel, searchCallback }) {
                       css={{ gap: "4px" }}
                     >
                       {availableTags.map((tag) => {
-                        // console.log(displayTags)
                         const selected = displayTags.includes(tag);
                         return (
                           <Tag
