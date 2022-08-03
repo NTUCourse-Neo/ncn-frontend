@@ -6,13 +6,23 @@
     "prettier",
     "plugin:react-hooks/recommended",
     "eslint:recommended",
-    "plugin:react/recommended"
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended"
   ],
   "overrides": [
     {
-      "files": ["*.js", "*.jsx"],
-      "extends": ["next/core-web-vitals"],
-      "plugins": ["prettier", "react", "react-hooks", "unused-imports"],
+      "files": ["*.js", "*.jsx", ".ts", ".tsx"],
+      "extends": [
+        "next/core-web-vitals",
+        "plugin:@typescript-eslint/recommended"
+      ],
+      "plugins": [
+        "prettier",
+        "react",
+        "react-hooks",
+        "unused-imports",
+        "@typescript-eslint"
+      ],
       "settings": {
         "react": {
           "version": "detect"

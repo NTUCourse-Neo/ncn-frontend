@@ -43,3 +43,6 @@ yarn-error.log*
 cypress.env.json
 cypress/videos/
 cypress/screenshots/
+
+# typescript
+tsconfig.tsbuildinfo
