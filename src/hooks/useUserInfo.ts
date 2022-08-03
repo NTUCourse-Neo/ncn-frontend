@@ -2,8 +2,24 @@ import useSWR from "swr";
 import handleFetch from "utils/CustomFetch";
 import { useRouter } from "next/router";
 import { useToast } from "@chakra-ui/react";
+import type { User } from "@/types/user";
+import type { Course } from "@/types/course";
 
-export default function useUserInfo(userId, options) {
+export default function useUserInfo(
+  userId: string,
+  options: {
+    readonly onSuccessCallback?: (
+      data: unknown,
+      key: string,
+      config: unknown
+    ) => void;
+    readonly onErrorCallback?: (
+      data: unknown,
+      key: string,
+      config: unknown
+    ) => void;
+  }
+) {
   const toast = useToast();
   const onSuccessCallback = options?.onSuccessCallback;
   const onErrorCallback = options?.onErrorCallback;
@@ -11,7 +27,10 @@ export default function useUserInfo(userId, options) {
   const { data, error, mutate } = useSWR(
     userId ? [`/api/user`, userId] : null,
     async (url) => {
-      const userData = await handleFetch(url, {
+      const userData = await handleFetch<{
+        user: User | null;
+        message: string;
+      }>(url, {
         user_id: userId,
       });
       return userData;
@@ -29,7 +48,7 @@ export default function useUserInfo(userId, options) {
     }
   );
 
-  const addOrRemoveFavorite = async (courseId) => {
+  const addOrRemoveFavorite = async (courseId: string) => {
     try {
       await mutate(
         async (prevUser) => {
@@ -41,7 +60,10 @@ export default function useUserInfo(userId, options) {
           }
           const favorite_list = prevUser.user.db.favorites.map((c) => c.id);
           if (favorite_list.includes(courseId)) {
-            const data = await handleFetch(`/api/user/removeFavoriteCourse`, {
+            const data = await handleFetch<{
+              favorites: Course[];
+              message: string;
+            }>(`/api/user/removeFavoriteCourse`, {
               course_id: courseId,
             });
             return {
@@ -55,7 +77,10 @@ export default function useUserInfo(userId, options) {
               },
             };
           } else {
-            const data = await handleFetch(`/api/user/addFavoriteCourse`, {
+            const data = await handleFetch<{
+              favorites: Course[];
+              message: string;
+            }>(`/api/user/addFavoriteCourse`, {
               course_id: courseId,
             });
             return {
