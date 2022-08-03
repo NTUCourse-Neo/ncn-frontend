@@ -1,7 +1,4 @@
-// Props
-// | courseInfo: Obj
-//
-import { React, useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import {
   Box,
   Flex,
@@ -38,11 +35,10 @@ import { useDisplayTags } from "components/Providers/DisplayTagsProvider";
 import parseCourseSchedlue from "utils/parseCourseSchedule";
 import useUserInfo from "hooks/useUserInfo";
 import { reportEvent } from "utils/ga";
+import type { Course } from "@/types/course";
 
-const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
-
-function DeptBadge({ course }) {
-  if (!course.departments || course.departments.length === 0) {
+function DeptBadge({ course }: { readonly course: Course }) {
+  if (course.departments.length === 0) {
     return <></>;
   }
   const dept_str = course.departments.map((d) => d.name_full).join(", ");
@@ -76,9 +72,15 @@ function DeptBadge({ course }) {
   );
 }
 
-function DrawerDataTag({ fieldName, label }) {
+function DrawerDataTag({
+  fieldName,
+  label,
+}: {
+  readonly fieldName: string;
+  readonly label: string;
+}) {
   const textColor = useColorModeValue("text.light", "text.dark");
-  if (label === "" || label === null || label === undefined) {
+  if (label === "") {
     return <></>;
   }
   return (
@@ -99,7 +101,11 @@ function DrawerDataTag({ fieldName, label }) {
   );
 }
 
-function CourseDrawerContainer({ courseInfo }) {
+function CourseDrawerContainer({
+  courseInfo,
+}: {
+  readonly courseInfo: Course;
+}) {
   return (
     <Flex
       px="1"
@@ -189,9 +195,7 @@ function CourseDrawerContainer({ courseInfo }) {
             color={useColorModeValue("text.light", "text.dark")}
             mx="4px"
           >
-            {courseInfo.note === "" || !courseInfo.note
-              ? "無"
-              : courseInfo.note}
+            {courseInfo?.note ?? "無"}
           </Text>
         </Flex>
       </Flex>
@@ -237,7 +241,16 @@ function CourseDrawerContainer({ courseInfo }) {
   );
 }
 
-function CourseInfoRow({ courseInfo, selected, displayTable }) {
+export interface CourseInfoRowProps {
+  readonly courseInfo: Course;
+  readonly selected: boolean;
+  readonly displayTable: boolean;
+}
+function CourseInfoRow({
+  courseInfo,
+  selected,
+  displayTable,
+}: CourseInfoRowProps) {
   const rowColor = useColorModeValue("card.light", "card.dark");
   const textColor = useColorModeValue("text.light", "text.dark");
   const headingColor = useColorModeValue("heading.light", "heading.dark");
@@ -270,7 +283,7 @@ function CourseInfoRow({ courseInfo, selected, displayTable }) {
 
   const toast = useToast();
 
-  const addCourseToTable = async (course) => {
+  const addCourseToTable = async (course: Course) => {
     if (!isLoading && !isCourseTableLoading) {
       setAddingCourse(true);
       if (courseTableKey && courseTable) {
@@ -289,7 +302,7 @@ function CourseInfoRow({ courseInfo, selected, displayTable }) {
     }
   };
 
-  const handleAddFavorite = async (course_id) => {
+  const handleAddFavorite = async (course_id: string) => {
     if (!isLoading) {
       if (userInfo) {
         setAddingFavoriteCourse(true);
@@ -505,9 +518,11 @@ function CourseInfoRow({ courseInfo, selected, displayTable }) {
                   >
                     <TagLeftIcon boxSize="12px" as={info_view_map[tag].logo} />
                     <TagLabel>
-                      {info_view_map?.[tag]?.map?.[courseInfo?.[tag]] ??
-                        courseInfo?.[tag] ??
-                        "未知"}
+                      {tag === "slot"
+                        ? courseInfo?.[tag] ?? "未知"
+                        : info_view_map?.[tag]?.map?.[courseInfo?.[tag]] ??
+                          courseInfo?.[tag] ??
+                          "未知"}
                     </TagLabel>
                   </Tag>
                 </Tooltip>

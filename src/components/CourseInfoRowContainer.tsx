@@ -15,7 +15,14 @@ import { useUser } from "@auth0/nextjs-auth0";
 import useNeoLocalStorage from "hooks/useNeoLocalStorage";
 import useSearchResult from "hooks/useSearchResult";
 
-function CourseInfoRowPage({ displayTable, pageIndex }) {
+interface CourseInfoRowPageProps {
+  readonly displayTable: boolean;
+  readonly pageIndex: number;
+}
+function CourseInfoRowPage({
+  displayTable,
+  pageIndex,
+}: CourseInfoRowPageProps): JSX.Element {
   const { search } = useCourseSearchingContext();
   const { courses, isLoading, error } = useSearchResult(search, pageIndex);
   const { neoLocalCourseTableKey } = useNeoLocalStorage();
@@ -31,38 +38,46 @@ function CourseInfoRowPage({ displayTable, pageIndex }) {
   const isDesktop = useBreakpointValue({ base: false, lg: true });
 
   if (isLoading || error) {
-    return <></>;
+    return null;
   }
-  return courses.map((course, index) => (
-    <Accordion
-      allowToggle
-      w={{ base: "90vw", md: "100%" }}
-      key={index}
-      onMouseEnter={() => {
-        if (displayTable && isDesktop) {
-          setHoveredCourseData(course);
-        }
-      }}
-      onMouseLeave={() => {
-        if (displayTable && isDesktop) {
-          setHoveredCourseData(null);
-        }
-      }}
-    >
-      <CourseInfoRow
-        courseInfo={course}
-        selected={selectedCourses.includes(course.id)}
-        displayTable={displayTable}
-      />
-      <Spacer my={{ base: 2, md: 1 }} />
-    </Accordion>
-  ));
+  return (
+    <>
+      {courses.map((course, index) => (
+        <Accordion
+          allowToggle
+          w={{ base: "90vw", md: "100%" }}
+          key={index}
+          onMouseEnter={() => {
+            if (displayTable && isDesktop) {
+              setHoveredCourseData(course);
+            }
+          }}
+          onMouseLeave={() => {
+            if (displayTable && isDesktop) {
+              setHoveredCourseData(null);
+            }
+          }}
+        >
+          <CourseInfoRow
+            courseInfo={course}
+            selected={selectedCourses.includes(course.id)}
+            displayTable={displayTable}
+          />
+          <Spacer my={{ base: 2, md: 1 }} />
+        </Accordion>
+      ))}
+    </>
+  );
 }
 
-function CourseInfoRowContainer({ displayTable }) {
+function CourseInfoRowContainer({
+  displayTable,
+}: {
+  readonly displayTable: boolean;
+}) {
   const { pageNumber } = useCourseSearchingContext();
 
-  const pages = useMemo(() => {
+  const pages: JSX.Element[] = useMemo(() => {
     const res = [];
     for (let i = 0; i < pageNumber; i++) {
       res.push(
