@@ -5,8 +5,27 @@ import { useToast } from "@chakra-ui/react";
 import { getCourseSyllabusData } from "queries/course";
 import { hash_to_color_hex_with_hue } from "utils/colorAgent";
 import { useUser } from "@auth0/nextjs-auth0";
+import type {
+  CourseEnrollStatus,
+  CourseRatingData,
+  PTTData,
+  SignUpPost,
+} from "@/types/course";
 
-export function useCourseEnrollData(courseSerial, options) {
+interface Options {
+  readonly onSuccessCallback?: (
+    data: unknown,
+    key: string,
+    config: unknown
+  ) => void;
+  readonly onErrorCallback?: (
+    data: unknown,
+    key: string,
+    config: unknown
+  ) => void;
+}
+
+export function useCourseEnrollData(courseSerial: string, options: Options) {
   const { user } = useUser();
   const toast = useToast();
   const router = useRouter();
@@ -15,7 +34,12 @@ export function useCourseEnrollData(courseSerial, options) {
   const { data, error, mutate } = useSWR(
     user && courseSerial ? [`/api/course/enrollInfo`, courseSerial] : null,
     async (url) => {
-      const courseEnrollData = await handleFetch(url, {
+      const courseEnrollData = await handleFetch<{
+        course_id: string;
+        course_status: CourseEnrollStatus | null;
+        update_ts: string;
+        message: string;
+      }>(url, {
         courseId: courseSerial,
       });
       return courseEnrollData;
@@ -48,7 +72,7 @@ export function useCourseEnrollData(courseSerial, options) {
   };
 }
 
-export function useNTURatingData(courseId, options) {
+export function useNTURatingData(courseId: string, options: Options) {
   const { user } = useUser();
   const toast = useToast();
   const router = useRouter();
@@ -57,7 +81,12 @@ export function useNTURatingData(courseId, options) {
   const { data, error, mutate } = useSWR(
     user && courseId ? [`/api/course/ntuRating`, courseId] : null,
     async (url) => {
-      const ntuRatingData = await handleFetch(url, {
+      const ntuRatingData = await handleFetch<{
+        course_id: string;
+        course_rating: CourseRatingData | null;
+        update_ts: string;
+        message: string;
+      }>(url, {
         courseId: courseId,
       });
       return ntuRatingData;
@@ -90,7 +119,7 @@ export function useNTURatingData(courseId, options) {
   };
 }
 
-export function usePTTReviewData(courseId, options) {
+export function usePTTReviewData(courseId: string, options: Options) {
   const { user } = useUser();
   const toast = useToast();
   const router = useRouter();
@@ -99,7 +128,12 @@ export function usePTTReviewData(courseId, options) {
   const { data, error, mutate } = useSWR(
     user && courseId ? `/api/course/ptt/review/${courseId}` : null,
     async (url) => {
-      const data = await handleFetch("/api/course/ptt", {
+      const data = await handleFetch<{
+        course_id: string;
+        course_rating: PTTData | null;
+        update_ts: string;
+        message: string;
+      }>("/api/course/ptt", {
         courseId: courseId,
         type: "review",
       });
@@ -133,7 +167,7 @@ export function usePTTReviewData(courseId, options) {
   };
 }
 
-export function usePTTExamData(courseId, options) {
+export function usePTTExamData(courseId: string, options: Options) {
   const { user } = useUser();
   const toast = useToast();
   const router = useRouter();
@@ -142,7 +176,12 @@ export function usePTTExamData(courseId, options) {
   const { data, error, mutate } = useSWR(
     user && courseId ? `/api/course/ptt/exam/${courseId}` : null,
     async (url) => {
-      const data = await handleFetch("/api/course/ptt", {
+      const data = await handleFetch<{
+        course_id: string;
+        course_rating: PTTData | null;
+        update_ts: string;
+        message: string;
+      }>("/api/course/ptt", {
         courseId: courseId,
         type: "exam",
       });
@@ -176,7 +215,7 @@ export function usePTTExamData(courseId, options) {
   };
 }
 
-export function useSyllabusData(courseId, options) {
+export function useSyllabusData(courseId: string, options: Options) {
   const toast = useToast();
   const router = useRouter();
   const onSuccessCallback = options?.onSuccessCallback;
@@ -223,7 +262,7 @@ export function useSyllabusData(courseId, options) {
   };
 }
 
-export function useSignUpPostData(courseId, options) {
+export function useSignUpPostData(courseId: string, options: Options) {
   const { user } = useUser();
   const toast = useToast();
   const router = useRouter();
@@ -232,7 +271,9 @@ export function useSignUpPostData(courseId, options) {
   const { data, error, mutate } = useSWR(
     user && courseId ? `/api/social/getByCourseId/${courseId}` : null,
     async (url) => {
-      const data = await handleFetch("/api/social/getByCourseId", {
+      const data = await handleFetch<{
+        posts: SignUpPost[];
+      }>("/api/social/getByCourseId", {
         course_id: courseId,
       });
       return data;
