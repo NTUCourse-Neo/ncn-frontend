@@ -19,7 +19,9 @@ const getSocialPostByPostId = async (token: string, post_id: string) => {
 const reportSocialPost = async (
   token: string,
   post_id: string,
-  report: string
+  report: {
+    reason: string;
+  }
 ) => {
   await instance.post(
     `${api_version}/social/posts/${post_id}/report`,
