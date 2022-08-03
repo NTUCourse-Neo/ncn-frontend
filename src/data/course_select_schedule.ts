@@ -1,4 +1,10 @@
-const status_map = [
+export interface CourseSelectionStatus {
+  name: string;
+  emoji: string;
+  color: string;
+}
+
+const status_map: CourseSelectionStatus[] = [
   {
     name: "即將開始",
     emoji: "⏰",
@@ -20,11 +26,20 @@ const status_map = [
     color: "red.200",
   },
 ];
+
 const ntu_course_select_url = [
   "https://if192.aca.ntu.edu.tw/index.php",
   "https://if177.aca.ntu.edu.tw/index.php",
 ];
-const course_select_schedule = [
+
+export interface CourseSelectionSchedule {
+  name: string;
+  label: string;
+  start: number;
+  end: number;
+}
+
+const course_select_schedule: CourseSelectionSchedule[] = [
   {
     name: "初選第一階段",
     label: "初選 一階",

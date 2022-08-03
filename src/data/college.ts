@@ -1,4 +1,10 @@
-const college_map = {
+export interface CollegeMap {
+  [key: string]: {
+    name: string;
+  };
+}
+
+const college_map: CollegeMap = {
   0: {
     name: "未知學院",
   },

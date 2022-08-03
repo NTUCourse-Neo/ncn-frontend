@@ -1,4 +1,10 @@
-const type_list = [
+export interface CourseCategory {
+  id: string;
+  code: string;
+  full_name: string;
+}
+
+const type_list: CourseCategory[] = [
   {
     id: "chinese",
     code: "共",
@@ -121,7 +127,13 @@ const type_list = [
   },
 ];
 
-const code_map = {
+export interface CourseCategoryCodeMap {
+  [key: string]: {
+    name: string;
+  };
+}
+
+const code_map: CourseCategoryCodeMap = {
   共: {
     name: "共同課程",
   },

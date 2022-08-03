@@ -1,5 +1,14 @@
+// TODO: refactor to use Department Type in DB
+// import type { Department } from "@/types/course";
+export interface DepartmentInfo {
+  code: string;
+  short_name: string;
+  full_name: string;
+  third_name: string;
+}
+
 // IMPORTANT: Should keep these data consistent with DB's department table
-const dept_list = [
+const dept_list: DepartmentInfo[] = [
   {
     code: "0020",
     short_name: "",
@@ -1886,7 +1895,7 @@ const dept_list = [
   },
 ];
 
-const dept_list_bachelor_only = [
+const dept_list_bachelor_only: DepartmentInfo[] = [
   {
     code: "1010",
     short_name: "中文系",

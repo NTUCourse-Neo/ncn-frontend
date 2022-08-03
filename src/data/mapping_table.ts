@@ -5,9 +5,32 @@ import {
   FaLanguage,
   FaFileImport,
 } from "react-icons/fa";
+import { IconType } from "react-icons/lib";
+
+interface CourseInfoBaseType {
+  name: string;
+  logo: IconType;
+  color: string;
+}
+
+interface CourseInfoType<T> extends CourseInfoBaseType {
+  map: Record<string, T>;
+}
+
+export interface CourseInfoTranslateMap {
+  requirement: CourseInfoType<string>;
+  slot: CourseInfoBaseType;
+  areas: CourseInfoType<{
+    id: string;
+    code: string;
+    full_name: string;
+  }>;
+  enroll_method: CourseInfoType<string>;
+  language: CourseInfoType<string>;
+}
 
 // TODO: get rid of this? because the information already in v2 API
-const info_view_map = {
+const info_view_map: CourseInfoTranslateMap = {
   requirement: {
     name: "課程必選修",
     logo: FaCheckSquare,
@@ -171,7 +194,8 @@ const info_view_map = {
     },
   },
 };
-const weekdays_map = {
+
+const weekdays_map: Record<"1" | "2" | "3" | "4" | "5" | "6" | "7", string> = {
   1: "一",
   2: "二",
   3: "三",
