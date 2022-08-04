@@ -17,13 +17,19 @@ import {
 import * as React from "react";
 import { useState, useCallback } from "react";
 import CourseTableCard from "components/CourseTable/CourseTableCard/CourseTableCard";
-import { weekdays_map } from "data/mapping_table";
+import { weekdays_map, Weekday } from "data/mapping_table";
 import { hash_to_color_hex } from "utils/colorAgent";
 import { hoverCourseState } from "utils/hoverCourse";
 import { useSnapshot } from "valtio";
 import { reportEvent } from "utils/ga";
+import { TimeMap } from "@/utils/parseCourseTime";
+import { Course, Interval } from "@/types/course";
 
-function HoverCourseIndicator({ hoveredCourse }) {
+function HoverCourseIndicator({
+  hoveredCourse,
+}: {
+  readonly hoveredCourse: Course;
+}) {
   const course = hoveredCourse;
   return (
     <div
@@ -44,13 +50,7 @@ function HoverCourseIndicator({ hoveredCourse }) {
         borderColor={hash_to_color_hex(course.id, 0.8)}
         borderStyle="dashed"
       >
-        <Text
-          fontSize="xs"
-          width={"100%"}
-          align="center"
-          isTruncated
-          noOfLines={1}
-        >
+        <Text fontSize="xs" width={"100%"} align="center" noOfLines={1}>
           {course.name}
         </Text>
       </Button>
@@ -58,10 +58,17 @@ function HoverCourseIndicator({ hoveredCourse }) {
   );
 }
 
-function CourseTableContainer({ courses, loading, courseTimeMap }) {
-  const days = ["1", "2", "3", "4", "5"];
+function CourseTableContainer(props: {
+  readonly courses: {
+    readonly [key: string]: Course;
+  };
+  readonly loading: boolean;
+  readonly courseTimeMap: TimeMap;
+}) {
+  const { courses, loading, courseTimeMap } = props;
+  const days: Weekday[] = ["1", "2", "3", "4", "5"];
   const intervalTextColor = useColorModeValue("gray.300", "gray.600");
-  const interval = [
+  const interval: Interval[] = [
     "0",
     "1",
     "2",
@@ -78,10 +85,10 @@ function CourseTableContainer({ courses, loading, courseTimeMap }) {
     "C",
     "D",
   ];
-  const [activeDayCol, setActiveDayCol] = useState(0);
+  const [activeDayCol, setActiveDayCol] = useState<"0" | Weekday>("0");
   const { hoveredCourse, hoveredCourseTimeMap } = useSnapshot(hoverCourseState);
   const renderIntervalContent = useCallback(
-    (days, interval, i) => {
+    (days: Weekday[], interval: Interval, i: number) => {
       const fullWidth = days.length === 1;
       return days.map((day, j) => {
         const intervalCourseIds = courseTimeMap?.[day]?.[interval];
@@ -89,8 +96,8 @@ function CourseTableContainer({ courses, loading, courseTimeMap }) {
           hoveredCourse && hoveredCourseTimeMap?.[day]?.[interval];
         // hover course has been in courseTable already, show solid border in this case
         const isOverlapped = intervalCourseIds
-          ? courseTimeMap?.[day]?.[interval].includes(
-              hoveredCourseTimeMap?.[day]?.[interval]?.[0]
+          ? (courseTimeMap?.[day]?.[interval] ?? []).includes(
+              hoveredCourseTimeMap?.[day]?.[interval]?.[0] ?? ""
             )
           : false;
         if (loading) {
@@ -142,7 +149,7 @@ function CourseTableContainer({ courses, loading, courseTimeMap }) {
               ) : null}
               {intervalCourseIds ? (
                 <CourseTableCard
-                  courseInitialOrder={courseTimeMap[day][interval]}
+                  courseInitialOrder={courseTimeMap?.[day]?.[interval] ?? []}
                   courseData={courses}
                   interval={interval}
                   day={weekdays_map[day]}
@@ -171,7 +178,7 @@ function CourseTableContainer({ courses, loading, courseTimeMap }) {
   return (
     <Table variant="simple" colorScheme="blue" borderRadius="lg" w="100%">
       <Thead>
-        {activeDayCol === 0 ? (
+        {activeDayCol === "0" ? (
           <Tr>
             {days.map((day, j) => {
               return (
@@ -200,7 +207,7 @@ function CourseTableContainer({ courses, loading, courseTimeMap }) {
           <Tr>
             <Th
               onClick={() => {
-                setActiveDayCol(0);
+                setActiveDayCol("0");
                 reportEvent("course_table", "click", "collapse_day");
               }}
               cursor="pointer"
@@ -220,7 +227,7 @@ function CourseTableContainer({ courses, loading, courseTimeMap }) {
       </Thead>
       <Tbody>
         {interval.map((interval, i) => {
-          if (activeDayCol === 0) {
+          if (activeDayCol === "0") {
             return (
               <Tr key={`${interval}-${i}`}>
                 {renderIntervalContent(days, interval, i)}

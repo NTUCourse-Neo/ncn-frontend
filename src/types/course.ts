@@ -14,19 +14,19 @@ export interface Course {
   is_half_year: boolean;
   slot: number;
   enroll_method: number;
-  intensive_weeks: number[];
-  departments_raw: string[];
+  intensive_weeks: readonly number[];
+  departments_raw: readonly string[];
   class: string | null;
   syllabus_url: string | null;
   requirement: "preassign" | "required" | "elective" | "other";
   language: "zh_TW" | "en_US";
   provider: "ntu" | "ntust" | "ntnu" | "other";
-  areas: Area[];
-  departments: Department[];
-  schedules: Schedule[];
-  specialties: CourseSpecialty[]; // TODO
-  prerequisites: string[]; // TODO
-  prerequisite_of: string[]; // TODO
+  areas: readonly Area[];
+  departments: readonly Department[];
+  schedules: readonly Schedule[];
+  specialties: readonly CourseSpecialty[]; // TODO
+  prerequisites: readonly string[]; // TODO
+  prerequisite_of: readonly string[]; // TODO
 }
 
 export interface Area {

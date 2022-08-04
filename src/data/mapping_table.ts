@@ -195,7 +195,8 @@ const info_view_map: CourseInfoTranslateMap = {
   },
 };
 
-const weekdays_map: Record<"1" | "2" | "3" | "4" | "5" | "6" | "7", string> = {
+export type Weekday = "1" | "2" | "3" | "4" | "5" | "6" | "7";
+const weekdays_map: Record<Weekday, string> = {
   1: "一",
   2: "二",
   3: "三",
