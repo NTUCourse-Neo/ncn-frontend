@@ -3,6 +3,7 @@ import { getAccessToken, withApiAuthRequired } from "@auth0/nextjs-auth0";
 import { assertNotNil } from "utils/assert";
 import type { NextApiRequest, NextApiResponse } from "next";
 import type { Course } from "@/types/course";
+import axios from "axios";
 
 export default withApiAuthRequired(async function handler(
   req: NextApiRequest,
@@ -14,7 +15,7 @@ export default withApiAuthRequired(async function handler(
   try {
     const { course_id } = req.body;
     const { accessToken } = await getAccessToken(req, res);
-    if (!assertNotNil(course_id)) {
+    if (!assertNotNil(course_id) || !accessToken) {
       res.status(400).json({ favorites: [], message: "Missing course_id" });
     } else {
       const updatedFavoriteListData = await removeFavoriteCourse(
@@ -25,8 +26,15 @@ export default withApiAuthRequired(async function handler(
     }
   } catch (error) {
     console.error(error);
-    res
-      .status(error.status || 500)
-      .json({ favorites: [], message: error?.code ?? error.message });
+    if (axios.isAxiosError(error)) {
+      res
+        .status(500)
+        .json({ favorites: [], message: error?.code ?? error.message });
+    } else {
+      res.status(500).json({
+        favorites: [],
+        message: "Error occur in removeFavoriteCourse",
+      });
+    }
   }
 });

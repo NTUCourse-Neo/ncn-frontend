@@ -2,6 +2,7 @@ import { createSocialPost } from "queries/social";
 import { getAccessToken, withApiAuthRequired } from "@auth0/nextjs-auth0";
 import { assertNotNil } from "utils/assert";
 import type { NextApiRequest, NextApiResponse } from "next";
+import axios from "axios";
 
 export default withApiAuthRequired(async function handler(
   req: NextApiRequest,
@@ -12,7 +13,7 @@ export default withApiAuthRequired(async function handler(
   try {
     const { courseId, post } = req.body;
     const { accessToken } = await getAccessToken(req, res);
-    if (!assertNotNil(courseId) || !assertNotNil(post)) {
+    if (!assertNotNil(courseId) || !assertNotNil(post) || !accessToken) {
       res.status(400).json({ message: "Missing user_id" });
     } else {
       await createSocialPost(accessToken, courseId, post);
@@ -22,8 +23,10 @@ export default withApiAuthRequired(async function handler(
     }
   } catch (error) {
     console.error(error);
-    res
-      .status(error.status || 500)
-      .json({ message: error?.code ?? error.message });
+    if (axios.isAxiosError(error)) {
+      res.status(500).json({ message: error?.code ?? error.message });
+    } else {
+      res.status(500).json({ message: "Error occur in deleteSocialPost" });
+    }
   }
 });

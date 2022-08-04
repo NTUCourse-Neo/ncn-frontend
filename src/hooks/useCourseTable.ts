@@ -6,7 +6,7 @@ import { patchCourseTable } from "queries/courseTable";
 import type { Course } from "@/types/course";
 
 export default function useCourseTable(
-  courseTableId: string,
+  courseTableId: string | null,
   options?: {
     readonly onSuccessCallback?: (
       data: unknown,
@@ -27,7 +27,7 @@ export default function useCourseTable(
   const { data, error, mutate } = useSWR(
     courseTableId ? `/v2/course_tables/${courseTableId}` : null,
     async () => {
-      const courseTableData = await fetchCourseTable(courseTableId);
+      const courseTableData = await fetchCourseTable(courseTableId as string);
       return courseTableData;
     },
     {
@@ -46,50 +46,59 @@ export default function useCourseTable(
 
   const addOrRemoveCourse = async (course: Course) => {
     const courseTable = data?.course_table;
-    try {
-      const originalCourseTableLength = courseTable?.courses?.length ?? 0;
-      const newCourseTableData = await mutate(
-        async (prev) => {
-          if (courseTable.courses.map((c) => c.id).includes(course.id)) {
-            const data = await patchCourseTable(
-              courseTableId,
-              courseTable.name,
-              courseTable.user_id,
-              courseTable.expire_ts,
-              courseTable.courses
-                .map((c) => c.id)
-                .filter((id) => id !== course.id)
-            );
-            return data ?? prev;
-          } else {
-            const data = await patchCourseTable(
-              courseTableId,
-              courseTable.name,
-              courseTable.user_id,
-              courseTable.expire_ts,
-              [...courseTable.courses.map((c) => c.id), course.id]
-            );
-            return data ?? prev;
+    if (courseTable && courseTableId) {
+      try {
+        const originalCourseTableLength = courseTable?.courses?.length ?? 0;
+        const newCourseTableData = await mutate(
+          async (prev) => {
+            if (courseTable.courses.map((c) => c.id).includes(course.id)) {
+              const data = await patchCourseTable(
+                courseTableId,
+                courseTable.name,
+                courseTable.user_id,
+                courseTable.expire_ts,
+                courseTable.courses
+                  .map((c) => c.id)
+                  .filter((id) => id !== course.id)
+              );
+              return data ?? prev;
+            } else {
+              const data = await patchCourseTable(
+                courseTableId,
+                courseTable.name,
+                courseTable.user_id,
+                courseTable.expire_ts,
+                [...courseTable.courses.map((c) => c.id), course.id]
+              );
+              return data ?? prev;
+            }
+          },
+          {
+            revalidate: false,
+            populateCache: true,
           }
-        },
-        {
-          revalidate: false,
-          populateCache: true,
-        }
-      );
-      const operation_str =
-        (newCourseTableData?.course_table?.courses?.length ?? 0) >
-        originalCourseTableLength
-          ? "加入"
-          : "移除";
-      toast({
-        title: `已${operation_str} ${course.name}`,
-        description: `課表: ${courseTable.name}`,
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-    } catch (e) {
+        );
+        const operation_str =
+          (newCourseTableData?.course_table?.courses?.length ?? 0) >
+          originalCourseTableLength
+            ? "加入"
+            : "移除";
+        toast({
+          title: `已${operation_str} ${course.name}`,
+          description: `課表: ${courseTable.name}`,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      } catch (e) {
+        toast({
+          title: `新增 ${course.name} 失敗`,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    } else {
       toast({
         title: `新增 ${course.name} 失敗`,
         status: "error",

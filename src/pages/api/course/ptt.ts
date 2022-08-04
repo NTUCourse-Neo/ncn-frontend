@@ -3,13 +3,14 @@ import { getAccessToken, withApiAuthRequired } from "@auth0/nextjs-auth0";
 import { assertNotNil } from "utils/assert";
 import type { NextApiRequest, NextApiResponse } from "next";
 import type { PTTData } from "@/types/course";
+import axios from "axios";
 
 export default withApiAuthRequired(async function handler(
   req: NextApiRequest,
   res: NextApiResponse<{
-    course_id: string;
+    course_id: string | null;
     course_rating: PTTData | null;
-    update_ts: string;
+    update_ts: string | null;
     message: string;
   }>
 ) {
@@ -19,7 +20,8 @@ export default withApiAuthRequired(async function handler(
     if (
       !assertNotNil(courseId) ||
       !assertNotNil(type) ||
-      !["review", "exam"].includes(type)
+      !["review", "exam"].includes(type) ||
+      !accessToken
     ) {
       res.status(400).json({
         course_id: null,
@@ -33,11 +35,20 @@ export default withApiAuthRequired(async function handler(
     }
   } catch (error) {
     console.error(error);
-    res.status(error.status || 500).json({
-      course_id: null,
-      course_rating: null,
-      update_ts: null,
-      message: error?.code ?? error.message,
-    });
+    if (axios.isAxiosError(error)) {
+      res.status(500).json({
+        course_id: null,
+        course_rating: null,
+        update_ts: null,
+        message: error?.code ?? error.message,
+      });
+    } else {
+      res.status(500).json({
+        course_id: null,
+        course_rating: null,
+        update_ts: null,
+        message: "Error occur in getPTTData",
+      });
+    }
   }
 });

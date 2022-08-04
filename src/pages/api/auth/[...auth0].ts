@@ -10,7 +10,7 @@ export default handleAuth({
         },
       });
     } catch (error) {
-      res.status(error.status || 400).end(error.message);
+      res.status(400).end("Error in login");
     }
   },
 });

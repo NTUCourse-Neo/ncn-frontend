@@ -4,9 +4,10 @@ import { useRouter } from "next/router";
 import { useToast } from "@chakra-ui/react";
 import type { User } from "@/types/user";
 import type { Course } from "@/types/course";
+import { AxiosError } from "axios";
 
 export default function useUserInfo(
-  userId: string,
+  userId: string | null,
   options?: {
     readonly onSuccessCallback?: (
       data: unknown,
@@ -114,7 +115,7 @@ export default function useUserInfo(
         duration: 3000,
         isClosable: true,
       });
-      if (error?.response?.status === 401) {
+      if ((error as AxiosError)?.response?.status === 401) {
         router.push("/api/auth/login");
       }
     }

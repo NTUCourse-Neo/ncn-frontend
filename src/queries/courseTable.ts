@@ -49,7 +49,7 @@ export const patchCourseTable = async (
     }
   );
   return data as {
-    course_table: CourseTable | null; // TODO: why return 200 & null when no course table found
+    course_table: CourseTable;
     message: string;
   };
 };

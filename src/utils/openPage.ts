@@ -3,7 +3,7 @@ function openPage(url: string, closeAfterOneSecond = false) {
     const wnd = window.open(url, "_blank");
     if (closeAfterOneSecond) {
       setTimeout(() => {
-        wnd.close();
+        wnd?.close();
       }, 1000);
     }
   }
