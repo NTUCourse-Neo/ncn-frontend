@@ -1,4 +1,4 @@
-import { React, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "components/CourseTable/CourseTableCard/CourseTableCard.module.css";
 import { arrayMoveImmutable as arrayMove } from "array-move";
 import {
@@ -31,24 +31,26 @@ import useUserInfo from "hooks/useUserInfo";
 import { useUser } from "@auth0/nextjs-auth0";
 import useNeoLocalStorage from "hooks/useNeoLocalStorage";
 import {
-  sortableContainer,
-  sortableElement,
-  sortableHandle,
+  SortableContainer as sortableContainer,
+  SortableElement as sortableElement,
+  SortableHandle as sortableHandle,
 } from "react-sortable-hoc";
 import { useRouter } from "next/router";
 import { patchCourseTable } from "queries/courseTable";
 import { reportEvent } from "utils/ga";
+import { Course } from "@/types/course";
 
 const DragHandle = sortableHandle(() => (
   <MdDragHandle cursor="row-resize" size="20" color="gray" />
 ));
 
-function ListRowElement({
-  course,
-  courseIdx,
-  prepareToRemoveCourseId,
-  handleDelete,
+function ListRowElement(props: {
+  readonly course: Course;
+  readonly courseIdx: number;
+  readonly prepareToRemoveCourseId: string[];
+  readonly handleDelete: (courseId: string) => void;
 }) {
+  const { course, courseIdx, prepareToRemoveCourseId, handleDelete } = props;
   const router = useRouter();
   const textColor = useColorModeValue("heading.light", "heading.dark");
   const removeColor = useColorModeValue("red.700", "red.300");
@@ -94,7 +96,7 @@ function ListRowElement({
             {course.serial}
           </Badge>
           <Text
-            as={prepareToRemoveCourseId.includes(course.id) ? "del" : ""}
+            as={prepareToRemoveCourseId.includes(course.id) ? "del" : undefined}
             color={
               prepareToRemoveCourseId.includes(course.id)
                 ? removeColor
@@ -103,7 +105,6 @@ function ListRowElement({
             fontSize={{ base: "lg", md: "xl" }}
             fontWeight="bold"
             noOfLines={1}
-            isTruncated
             maxW={{ base: "120px", md: "50vw", lg: "16vw" }}
           >
             {course.name}
@@ -174,8 +175,24 @@ function ListRowElement({
   );
 }
 
-const SortableElement = sortableElement(
-  ({ course, courseIdx, prepareToRemoveCourseId, handleDelete }) => (
+const SortableElement = sortableElement<{
+  readonly helperClass: string;
+  readonly course: Course;
+  readonly courseIdx: number;
+  readonly handleDelete: (courseId: string) => void;
+  readonly prepareToRemoveCourseId: string[];
+}>(
+  ({
+    course,
+    courseIdx,
+    prepareToRemoveCourseId,
+    handleDelete,
+  }: {
+    readonly course: Course;
+    readonly courseIdx: number;
+    readonly handleDelete: (courseId: string) => void;
+    readonly prepareToRemoveCourseId: string[];
+  }) => (
     <ListRowElement
       course={course}
       courseIdx={courseIdx}
@@ -185,7 +202,9 @@ const SortableElement = sortableElement(
   )
 );
 
-const SortableContainer = sortableContainer(({ children }) => {
+const SortableContainer = sortableContainer<{
+  readonly children: React.ReactNode;
+}>(({ children }: { readonly children: React.ReactNode }) => {
   return (
     <Flex flexDirection="column" overflow={"visible"}>
       {children}
@@ -193,19 +212,28 @@ const SortableContainer = sortableContainer(({ children }) => {
   );
 });
 
-function CourseListContainer({ courseTable, courses, loading }) {
+function CourseListContainer(props: {
+  readonly loading: boolean;
+  readonly courses: {
+    readonly [key: string]: Course;
+  };
+}) {
+  const { courses, loading } = props;
   const { neoLocalCourseTableKey } = useNeoLocalStorage();
   const { user } = useUser();
-  const { userInfo } = useUserInfo(user?.sub);
+  const { userInfo } = useUserInfo(user?.sub ?? null);
   const courseTableKey = userInfo
     ? userInfo?.course_tables?.[0] ?? null
     : neoLocalCourseTableKey;
-  const { mutate: mutateCourseTable } = useCourseTable(courseTableKey);
+  const { courseTable, mutate: mutateCourseTable } =
+    useCourseTable(courseTableKey);
   const toast = useToast();
   const [courseListForSort, setCourseListForSort] = useState(
     Object.keys(courses)
   );
-  const [prepareToRemoveCourseId, setPrepareToRemoveCourseId] = useState([]);
+  const [prepareToRemoveCourseId, setPrepareToRemoveCourseId] = useState<
+    string[]
+  >([]);
   const [isLoading, setIsLoading] = useState(false);
 
   // TODO: Redundant?
@@ -213,7 +241,7 @@ function CourseListContainer({ courseTable, courses, loading }) {
     setCourseListForSort(Object.keys(courses));
   }, [courses]);
 
-  const handleDelete = (courseId) => {
+  const handleDelete = (courseId: string) => {
     if (prepareToRemoveCourseId.includes(courseId)) {
       setPrepareToRemoveCourseId(
         prepareToRemoveCourseId.filter((id) => id !== courseId)
@@ -225,37 +253,49 @@ function CourseListContainer({ courseTable, courses, loading }) {
 
   const handleSaveCourseTable = async () => {
     setIsLoading(true);
-    try {
-      const updatedCourseTableData = await mutateCourseTable(
-        async (prev) => {
-          const data = await patchCourseTable(
-            courseTable.id,
-            courseTable.name,
-            courseTable.user_id,
-            courseTable.expire_ts,
-            courseListForSort.filter(
-              (id) => !prepareToRemoveCourseId.includes(id)
-            )
+    if (courseTable) {
+      try {
+        const updatedCourseTableData = await mutateCourseTable(
+          async (prev) => {
+            const data = await patchCourseTable(
+              courseTable.id,
+              courseTable.name,
+              courseTable.user_id,
+              courseTable.expire_ts,
+              courseListForSort.filter(
+                (id) => !prepareToRemoveCourseId.includes(id)
+              )
+            );
+            return data ?? prev;
+          },
+          {
+            revalidate: false,
+            populateCache: true,
+          }
+        );
+        if (updatedCourseTableData) {
+          setCourseListForSort(
+            updatedCourseTableData.course_table.courses.map((c) => c.id)
           );
-          return data ?? prev;
-        },
-        {
-          revalidate: false,
-          populateCache: true,
+          setPrepareToRemoveCourseId([]);
+          toast({
+            title: "編輯課表成功",
+            description: "課程更動已儲存",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+          });
         }
-      );
-      toast({
-        title: "編輯課表成功",
-        description: "課程更動已儲存",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-      setCourseListForSort(
-        updatedCourseTableData?.course_table.courses.map((c) => c.id)
-      );
-      setPrepareToRemoveCourseId([]);
-    } catch (err) {
+      } catch (err) {
+        toast({
+          title: `編輯課表失敗`,
+          description: `請稍後再試`,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    } else {
       toast({
         title: `編輯課表失敗`,
         description: `請稍後再試`,
@@ -275,7 +315,13 @@ function CourseListContainer({ courseTable, courses, loading }) {
     );
   };
 
-  const onSortEnd = ({ oldIndex, newIndex }) => {
+  const onSortEnd = ({
+    oldIndex,
+    newIndex,
+  }: {
+    oldIndex: number;
+    newIndex: number;
+  }) => {
     setCourseListForSort(arrayMove(courseListForSort, oldIndex, newIndex));
   };
 

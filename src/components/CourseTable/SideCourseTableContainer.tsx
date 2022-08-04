@@ -434,7 +434,6 @@ function SideCourseTableContent(props: {
             </TabPanel>
             <TabPanel>
               <CourseListContainer
-                courseTable={courseTable}
                 courses={courses}
                 loading={sideCourseTableLoading}
               />
