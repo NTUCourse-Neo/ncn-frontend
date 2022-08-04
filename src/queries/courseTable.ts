@@ -44,12 +44,12 @@ export const patchCourseTable = async (
     {
       name: course_table_name,
       user_id: user_id,
-      expire_ts: expire_ts,
+      expire_ts: expire_ts, // not used
       courses: new_courses,
     }
   );
   return data as {
-    course_table: CourseTable | null; // TODO: why null?
+    course_table: CourseTable | null; // TODO: why return 200 & null when no course table found
     message: string;
   };
 };

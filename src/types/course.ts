@@ -1,6 +1,6 @@
 export interface Course {
   id: string;
-  serial: string;
+  serial: string | null;
   code: string;
   identifier: string;
   name: string;
@@ -24,9 +24,9 @@ export interface Course {
   areas: Area[];
   departments: Department[];
   schedules: Schedule[];
-  specialties: unknown[]; // TODO
-  prerequisites: unknown[]; // TODO
-  prerequisite_of: unknown[]; // TODO
+  specialties: CourseSpecialty[]; // TODO
+  prerequisites: string[]; // TODO
+  prerequisite_of: string[]; // TODO
 }
 
 export interface Area {
@@ -42,6 +42,11 @@ export interface Department {
   name_alt: string | null;
   name_full: string;
   name_short: string | null;
+}
+
+export interface CourseSpecialty {
+  id: string;
+  name: string;
 }
 
 export type Interval =

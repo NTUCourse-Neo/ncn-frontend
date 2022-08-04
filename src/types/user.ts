@@ -11,7 +11,7 @@ export interface User {
     major: Department | null;
     minors: Department[];
     favorites: Course[];
-    history_courses: unknown; // TODO
+    history_courses: Course[]; // TODO
     student_id: null | string; // TODO
   };
 }
