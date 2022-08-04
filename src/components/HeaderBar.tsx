@@ -51,7 +51,7 @@ function SignInButton() {
       <Menu>
         <MenuButton
           as={Avatar}
-          name={user.name}
+          name={user?.name ?? "User"}
           src={user?.picture ?? null}
           _hover={{ cursor: "pointer" }}
           ml={{ base: 0, md: 6 }}

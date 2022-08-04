@@ -15,6 +15,7 @@ import TimetableSelector from "components/FilterModals/components/TimetableSelec
 import { mapStateToTimeTable } from "utils/timeTableConverter";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { reportEvent } from "utils/ga";
+import type { Interval } from "@/types/course";
 
 export interface TimeFilterModalProps {
   readonly title: string;
@@ -30,8 +31,8 @@ function TimeFilterModal(props: TimeFilterModalProps) {
 
   const saveSelectedTime = () => {
     // turn 15x7 2D array (selectedTime) to 7x15 array
-    const timeTable = [[], [], [], [], [], [], []];
-    const intervals = [
+    const timeTable: Interval[][] = [[], [], [], [], [], [], []];
+    const intervals: Interval[] = [
       "0",
       "1",
       "2",

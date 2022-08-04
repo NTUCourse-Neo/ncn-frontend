@@ -2280,8 +2280,8 @@ const dBDeptList: Department[] = [
   },
 ];
 
-const deptList = dBDeptList
-  .filter((d) => d.college_id !== null)
-  .filter((d) => collegeIds.includes(d.college_id));
+const deptList = dBDeptList.filter(
+  (d) => d.college_id !== null && collegeIds.includes(d.college_id)
+);
 
 export { dBDeptList, deptList };

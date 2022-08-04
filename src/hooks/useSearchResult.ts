@@ -4,7 +4,7 @@ import { useCourseSearchingContext } from "components/Providers/CourseSearchingP
 import { useToast } from "@chakra-ui/react";
 
 export default function useSearchResult(
-  searchKeyword: string,
+  searchKeyword: string | null,
   pageIndex: number
 ) {
   const toast = useToast();
@@ -20,11 +20,11 @@ export default function useSearchResult(
     setSearchResultCount,
   } = useCourseSearchingContext();
   const { data, error, isValidating } = useSWR(
-    `/api/search/${searchKeyword}/${pageIndex}`,
+    searchKeyword ? `/api/search/${searchKeyword}/${pageIndex}` : null,
     async (url) => {
       setSearchLoading(true);
       const coursesData = await fetchSearchResult(
-        searchKeyword,
+        searchKeyword as string,
         searchColumns,
         searchFiltersEnable,
         searchFilters,

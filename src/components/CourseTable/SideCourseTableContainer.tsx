@@ -1,4 +1,4 @@
-import { React, useRef, forwardRef, useEffect, useState } from "react";
+import { useRef, forwardRef, useEffect, useState } from "react";
 import FocusLock from "react-focus-lock";
 import {
   Flex,
@@ -29,6 +29,7 @@ import {
   SkeletonText,
   useColorModeValue,
   Tag,
+  InputProps,
 } from "@chakra-ui/react";
 import {
   FaRegEdit,
@@ -43,7 +44,7 @@ import CourseListContainer from "components/CourseTable/CourseListContainer";
 import { v4 as uuidv4 } from "uuid";
 import { useUser } from "@auth0/nextjs-auth0";
 import { useRouter } from "next/router";
-import { parseCoursesToTimeMap } from "utils/parseCourseTime";
+import { parseCoursesToTimeMap, TimeMap } from "utils/parseCourseTime";
 import useCourseTable from "hooks/useCourseTable";
 import useNeoLocalStorage from "hooks/useNeoLocalStorage";
 import { createCourseTable, patchCourseTable } from "queries/courseTable";
@@ -51,6 +52,8 @@ import handleFetch from "utils/CustomFetch";
 import useUserInfo from "hooks/useUserInfo";
 import { reportEvent } from "utils/ga";
 import { useSWRConfig } from "swr";
+import { Course } from "@/types/course";
+import { User } from "@/types/user";
 
 const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 
@@ -69,24 +72,29 @@ const courseTableScrollBarCss = {
   },
 };
 
+interface TextInputProps extends InputProps {
+  readonly id: string;
+  readonly label: string;
+}
 // eslint-disable-next-line react/display-name
-const TextInput = forwardRef((props, ref) => {
+const TextInput = forwardRef<HTMLInputElement, TextInputProps>((props, ref) => {
   return (
     <FormControl>
       <FormLabel htmlFor={props.id}>{props.label}</FormLabel>
-      <Input ref={ref} id={props.id} {...props} />
+      <Input ref={ref} {...props} id={props.id} />
     </FormControl>
   );
 });
 
-function CourseTableNameEditor({
-  isOpen,
-  onOpen,
-  onClose,
-  handleSave,
-  defaultName,
+function CourseTableNameEditor(props: {
+  readonly isOpen: boolean;
+  readonly onClose: () => void;
+  readonly onOpen: () => void;
+  readonly handleSave: (name: string | null) => void;
+  readonly defaultName: string;
 }) {
-  const firstFieldRef = useRef(null);
+  const { isOpen, onOpen, onClose, handleSave, defaultName } = props;
+  const firstFieldRef = useRef<HTMLInputElement>(null);
   return (
     <Popover
       isOpen={isOpen}
@@ -116,18 +124,18 @@ function CourseTableNameEditor({
                   defaultValue={defaultName}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
-                      handleSave(firstFieldRef.current.value);
+                      handleSave(firstFieldRef?.current?.value ?? null);
                     }
                   }}
                 />
-                <ButtonGroup d="flex" justifyContent="flex-end">
+                <ButtonGroup display="flex" justifyContent="flex-end">
                   <Button variant="outline" onClick={onClose}>
                     取消
                   </Button>
                   <Button
                     colorScheme="teal"
                     onClick={() => {
-                      handleSave(firstFieldRef.current.value);
+                      handleSave(firstFieldRef?.current?.value ?? null);
                       reportEvent("course_table", "click", "save_table_name");
                     }}
                   >
@@ -143,15 +151,20 @@ function CourseTableNameEditor({
   );
 }
 
-function SideCourseTableContent({
-  agreeToCreateTableWithoutLogin,
-  setIsLoginWarningOpen,
+function SideCourseTableContent(props: {
+  readonly agreeToCreateTableWithoutLogin: boolean;
+  readonly setIsLoginWarningOpen: (isOpen: boolean) => void;
 }) {
+  const { agreeToCreateTableWithoutLogin, setIsLoginWarningOpen } = props;
   const headingColor = useColorModeValue("heading.light", "heading.dark");
   const router = useRouter();
   const { user } = useUser();
   const toast = useToast();
-  const { userInfo, isLoading, mutate: mutateUser } = useUserInfo(user?.sub);
+  const {
+    userInfo,
+    isLoading,
+    mutate: mutateUser,
+  } = useUserInfo(user?.sub ?? null);
   const { neoLocalCourseTableKey, setNeoLocalStorage } = useNeoLocalStorage();
   const courseTableKey = userInfo
     ? userInfo?.course_tables?.[0] ?? null
@@ -166,27 +179,28 @@ function SideCourseTableContent({
   const bgColor = useColorModeValue("card.light", "card.dark");
 
   // some local states for handling course data
-  const [courses, setCourses] = useState({}); // dictionary of Course objects using courseId as key
-  const [courseTimeMap, setCourseTimeMap] = useState({});
+  const [courses, setCourses] = useState<{ [key: string]: Course }>({}); // dictionary of Course objects using courseId as key
+  const [courseTimeMap, setCourseTimeMap] = useState<TimeMap>({});
 
   const { onOpen, onClose, isOpen } = useDisclosure();
 
-  const convertArrayToObject = (array, key) => {
+  function convertArrayToObject(array: Course[]): { [key: string]: Course } {
     const initialValue = {};
-    return array.reduce((obj, item) => {
+    return array.reduce((obj, item: Course) => {
+      const courseKey = item.id;
       return {
         ...obj,
-        [item[key]]: item,
+        courseKey: item,
       };
     }, initialValue);
-  };
+  }
 
   useEffect(() => {
     if (courseTable?.courses) {
       setCourseTimeMap(
-        parseCoursesToTimeMap(convertArrayToObject(courseTable.courses, "id"))
+        parseCoursesToTimeMap(convertArrayToObject(courseTable.courses))
       );
-      setCourses(convertArrayToObject(courseTable.courses, "id"));
+      setCourses(convertArrayToObject(courseTable.courses));
     }
   }, [courseTable]);
 
@@ -200,14 +214,17 @@ function SideCourseTableContent({
           new_uuid,
           "我的課表",
           userInfo.id,
-          process.env.NEXT_PUBLIC_SEMESTER
+          process.env.NEXT_PUBLIC_SEMESTER ?? "error_secret_key"
         );
         await mutateUser(
           async () => {
-            const userData = await handleFetch("/api/user/linkCourseTable", {
-              table_id: new_uuid,
-              user_id: userInfo.id,
-            });
+            const userData = await handleFetch<{ user: User; message: string }>(
+              "/api/user/linkCourseTable",
+              {
+                table_id: new_uuid,
+                user_id: userInfo.id,
+              }
+            );
             return userData;
           },
           {
@@ -217,7 +234,7 @@ function SideCourseTableContent({
         );
         await mutate(
           `/v2/course_tables/${new_uuid}`,
-          async (prev) => {
+          async (prev: unknown) => {
             return newCourseTableData ?? prev;
           },
           {
@@ -241,7 +258,7 @@ function SideCourseTableContent({
           new_uuid,
           "我的課表",
           null,
-          process.env.NEXT_PUBLIC_SEMESTER
+          process.env.NEXT_PUBLIC_SEMESTER ?? "error_secret_key"
         );
         // set State
         localStorage.setItem(
@@ -263,36 +280,46 @@ function SideCourseTableContent({
     }
   };
 
-  const handleSave = async (new_table_name) => {
+  const handleSave = async (new_table_name: string | null) => {
     onClose();
-    try {
-      await mutateCourseTable(
-        async (prev) => {
-          const data = await patchCourseTable(
-            courseTable.id,
-            new_table_name,
-            courseTable.user_id,
-            courseTable.expire_ts,
-            courseTable.courses.map((course) => course.id)
-          );
-          return data ?? prev;
-        },
-        {
-          revalidate: false,
-          populateCache: true,
-        }
-      );
-      toast({
-        title: `變更課表名稱成功`,
-        description: `課表名稱已更新為 ${new_table_name}`,
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-    } catch (e) {
+    if (courseTable) {
+      try {
+        await mutateCourseTable(
+          async (prev) => {
+            const data = await patchCourseTable(
+              courseTable.id,
+              new_table_name ?? courseTable.name,
+              courseTable.user_id,
+              courseTable.expire_ts,
+              courseTable.courses.map((course) => course.id)
+            );
+            return data ?? prev;
+          },
+          {
+            revalidate: false,
+            populateCache: true,
+          }
+        );
+        toast({
+          title: `變更課表名稱成功`,
+          description: `課表名稱已更新為 ${new_table_name}`,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      } catch (e) {
+        toast({
+          title: `變更課表名稱失敗`,
+          description: `請聯繫客服`,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    } else {
       toast({
         title: `變更課表名稱失敗`,
-        description: `請聯繫客服(?)`,
+        description: `請聯繫客服`,
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -419,16 +446,23 @@ function SideCourseTableContent({
   );
 }
 
-function SideCourseTableContainer({
-  isDisplay,
-  setIsDisplay,
-  agreeToCreateTableWithoutLogin,
-  setIsLoginWarningOpen,
+function SideCourseTableContainer(props: {
+  readonly isDisplay: boolean;
+  readonly setIsDisplay: (isDisplay: boolean) => void;
+  readonly agreeToCreateTableWithoutLogin: boolean;
+  readonly setIsLoginWarningOpen: (isOpen: boolean) => void;
 }) {
+  const {
+    isDisplay,
+    setIsDisplay,
+    agreeToCreateTableWithoutLogin,
+    setIsLoginWarningOpen,
+  } = props;
   return (
     <Flex flexDirection={{ base: "column", lg: "row" }} h="100%" w="100%">
       <Flex justifyContent="center" alignItems="center">
         <IconButton
+          aria-label="開啟課表"
           h={{ base: "", lg: "100%" }}
           w={{ base: "100%", lg: "" }}
           icon={

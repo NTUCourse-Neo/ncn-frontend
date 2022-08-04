@@ -8,7 +8,9 @@ function GoogleAnalytics() {
   const router = useRouter();
   useEffect(() => {
     const handleRouteChange = (url: string) => {
-      window.gtag("config", GA_ID, { page_path: url });
+      if (GA_ID) {
+        window.gtag("config", GA_ID, { page_path: url });
+      }
     };
     router.events.on("routeChangeComplete", handleRouteChange);
     return () => {

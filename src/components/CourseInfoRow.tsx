@@ -124,7 +124,7 @@ function CourseDrawerContainer({
       >
         <DrawerDataTag fieldName={"課程識別碼"} label={courseInfo.identifier} />
         <DrawerDataTag fieldName={"課號"} label={courseInfo.code} />
-        <DrawerDataTag fieldName={"班次"} label={courseInfo.class} />
+        <DrawerDataTag fieldName={"班次"} label={courseInfo?.class ?? "未知"} />
         <DrawerDataTag
           fieldName={info_view_map.enroll_method.name}
           label={info_view_map.enroll_method.map[courseInfo.enroll_method]}
@@ -214,7 +214,9 @@ function CourseDrawerContainer({
               size="sm"
               mr="-px"
               onClick={() => {
-                openPage(courseInfo.cool_url);
+                if (courseInfo?.cool_url) {
+                  openPage(courseInfo.cool_url);
+                }
                 reportEvent("course_info_row", "go_to_cool", courseInfo.id);
               }}
             >
@@ -264,7 +266,9 @@ function CourseInfoRow({
   const router = useRouter();
   const { neoLocalCourseTableKey } = useNeoLocalStorage();
   const { user } = useUser();
-  const { userInfo, addOrRemoveFavorite, isLoading } = useUserInfo(user?.sub);
+  const { userInfo, addOrRemoveFavorite, isLoading } = useUserInfo(
+    user?.sub ?? null
+  );
   const courseTableKey = userInfo
     ? userInfo?.course_tables?.[0] ?? null
     : neoLocalCourseTableKey;

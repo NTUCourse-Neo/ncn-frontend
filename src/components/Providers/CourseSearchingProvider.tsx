@@ -112,7 +112,7 @@ const CourseSearchingProvider: React.FC<{
     setPageNumber(pageNumber + 1);
   };
 
-  const dispatchSearch = (text: string) => {
+  const dispatchSearch = (text: string | null) => {
     setSearch(text);
     setSearchResultCount(0);
     setPageNumber(1);

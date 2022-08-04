@@ -27,7 +27,7 @@ function CourseInfoRowPage({
   const { courses, isLoading, error } = useSearchResult(search, pageIndex);
   const { neoLocalCourseTableKey } = useNeoLocalStorage();
   const { user } = useUser();
-  const { userInfo } = useUserInfo(user?.sub);
+  const { userInfo } = useUserInfo(user?.sub ?? null);
   const courseTableKey = userInfo
     ? userInfo?.course_tables?.[0] ?? null
     : neoLocalCourseTableKey;
@@ -38,7 +38,7 @@ function CourseInfoRowPage({
   const isDesktop = useBreakpointValue({ base: false, lg: true });
 
   if (isLoading || error) {
-    return null;
+    return <></>;
   }
   return (
     <>
