@@ -190,7 +190,7 @@ function SideCourseTableContent(props: {
       const courseKey = item.id;
       return {
         ...obj,
-        courseKey: item,
+        [courseKey]: item,
       };
     }, initialValue);
   }
