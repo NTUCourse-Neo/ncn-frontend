@@ -26,7 +26,7 @@ import { HashLoader } from "react-spinners";
 import { FaExclamationTriangle } from "react-icons/fa";
 import { useRouter } from "next/router";
 import { useUser, withPageAuthRequired } from "@auth0/nextjs-auth0";
-import { dept_list_bachelor_only } from "data/department";
+import { deptList } from "data/department";
 import handleFetch from "utils/CustomFetch";
 import Head from "next/head";
 import useUserInfo from "hooks/useUserInfo";
@@ -172,12 +172,12 @@ export default function UserInfoPage({ user }) {
   const dangerZoneColor = useColorModeValue("white", "black");
   const router = useRouter();
   const toast = useToast();
-  const deptOptions = dept_list_bachelor_only.map((dept) => ({
-    value: dept.code,
-    label: `${dept.code} ${dept.full_name}`,
+  const deptOptions = deptList.map((dept) => ({
+    value: dept.id,
+    label: `${dept.id} ${dept.name_full}`,
   }));
-  const departmentMap = dept_list_bachelor_only.reduce((acc, department) => {
-    return { ...acc, [department.code]: department.full_name };
+  const departmentMap = deptList.reduce((acc, department) => {
+    return { ...acc, [department.id]: department.name_full };
   }, {});
   const [saveLoading, setSaveLoading] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);

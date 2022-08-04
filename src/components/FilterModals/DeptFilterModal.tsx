@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { college_map } from "data/college";
-import { dept_list_bachelor_only } from "data/department";
+import { deptList } from "data/department";
 import FilterElement from "components/FilterModals/components/FilterElement";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { reportEvent } from "utils/ga";
@@ -69,8 +69,8 @@ function DeptFilterModal({
     () => (
       <>
         {Object.keys(college_map).map((college_key, index) => {
-          const departments = dept_list_bachelor_only.filter(
-            (dept) => dept.code[0] === college_key
+          const departments = deptList.filter(
+            (dept) => dept.college_id === college_key
           );
           if (departments.length === 0) {
             return null;
@@ -94,16 +94,16 @@ function DeptFilterModal({
                 <Divider />
               </Flex>
               {departments
-                .filter((dept) => !selectedDept.includes(dept.code))
+                .filter((dept) => !selectedDept.includes(dept.id))
                 .map((dept, dept_index) => (
                   <FilterElement
-                    key={`${dept.code}-${dept_index}-modalBody`}
-                    id={dept.code}
-                    name={dept.full_name}
+                    key={`${dept.id}-${dept_index}-modalBody`}
+                    id={dept.id}
+                    name={dept.name_full}
                     selected={false}
                     onClick={() => {
-                      setSelectedDept([...selectedDept, dept.code]);
-                      reportEvent("filter_department", "click", dept.code);
+                      setSelectedDept([...selectedDept, dept.id]);
+                      reportEvent("filter_department", "click", dept.id);
                     }}
                   />
                 ))}
@@ -171,19 +171,19 @@ function DeptFilterModal({
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody overflow="auto" pt="0">
-            {dept_list_bachelor_only
-              .filter((dept) => selectedDept.includes(dept.code))
+            {deptList
+              .filter((dept) => selectedDept.includes(dept.id))
               .map((dept, index) => (
                 <FilterElement
-                  key={`${dept.code}-${index}-modalHeader`}
-                  id={dept.code}
-                  name={dept.full_name}
+                  key={`${dept.id}-${index}-modalHeader`}
+                  id={dept.id}
+                  name={dept.name_full}
                   selected={true}
                   onClick={() => {
                     setSelectedDept(
-                      selectedDept.filter((code) => code !== dept.code)
+                      selectedDept.filter((code) => code !== dept.id)
                     );
-                    reportEvent("filter_department", "click", dept.code);
+                    reportEvent("filter_department", "click", dept.id);
                   }}
                 />
               ))}
