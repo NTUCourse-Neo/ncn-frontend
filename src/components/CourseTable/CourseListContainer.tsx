@@ -175,24 +175,21 @@ function ListRowElement(props: {
   );
 }
 
-const SortableElement = sortableElement<{
+interface SortableElementProps {
   readonly helperClass: string;
   readonly course: Course;
   readonly courseIdx: number;
   readonly handleDelete: (courseId: string) => void;
   readonly prepareToRemoveCourseId: string[];
-}>(
+}
+
+const SortableElement = sortableElement<SortableElementProps>(
   ({
     course,
     courseIdx,
     prepareToRemoveCourseId,
     handleDelete,
-  }: {
-    readonly course: Course;
-    readonly courseIdx: number;
-    readonly handleDelete: (courseId: string) => void;
-    readonly prepareToRemoveCourseId: string[];
-  }) => (
+  }: SortableElementProps) => (
     <ListRowElement
       course={course}
       courseIdx={courseIdx}
