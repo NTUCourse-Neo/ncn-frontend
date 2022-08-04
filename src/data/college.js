@@ -1,3 +1,4 @@
+// IMPORTANT: must be aligned with DB
 const college_map = {
   0: {
     name: "未知學院",
@@ -35,6 +36,9 @@ const college_map = {
   B: {
     name: "生命科學院",
   },
+  E: {
+    name: "進修推廣學院",
+  },
   H: {
     name: "學位學程",
   },
@@ -42,11 +46,19 @@ const college_map = {
     name: "產業研發碩士專班",
   },
   K: {
-    name: "三校聯盟",
+    name: "重點科技研究學院與三校聯盟",
+  },
+  Q: {
+    name: "寫作教學中心",
+  },
+  V: {
+    name: "國家理論科學研究中心",
   },
   Z: {
     name: "創新設計學院",
   },
 };
 
-export { college_map };
+const collegeIds = Object.keys(college_map);
+
+export { college_map, collegeIds };
