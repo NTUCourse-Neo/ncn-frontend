@@ -20,11 +20,11 @@ export default function useSearchResult(
     setSearchResultCount,
   } = useCourseSearchingContext();
   const { data, error, isValidating } = useSWR(
-    searchKeyword ? `/api/search/${searchKeyword}/${pageIndex}` : null,
-    async (url) => {
+    `/api/search/${searchKeyword}/${pageIndex}`,
+    async () => {
       setSearchLoading(true);
       const coursesData = await fetchSearchResult(
-        searchKeyword as string,
+        searchKeyword ?? "",
         searchColumns,
         searchFiltersEnable,
         searchFilters,
