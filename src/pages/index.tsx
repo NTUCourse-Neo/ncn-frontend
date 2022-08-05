@@ -1,4 +1,4 @@
-import { React, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Flex,
@@ -18,6 +18,7 @@ import {
   Tooltip,
   useColorModeValue,
   Image,
+  SpacerProps,
 } from "@chakra-ui/react";
 import {
   FaArrowDown,
@@ -31,7 +32,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Head from "next/head";
-import { scroller } from "react-scroll";
+import { scroller, Element as ScrollAnchorElement } from "react-scroll";
 import { BeatLoader } from "react-spinners";
 import { motion, AnimatePresence } from "framer-motion";
 import HomeCard from "components/HomeCard";
@@ -41,7 +42,27 @@ import { useUser } from "@auth0/nextjs-auth0";
 import handleFetch from "utils/CustomFetch";
 import { reportEvent } from "utils/ga";
 
-function NewRegisterModal({ isOpen, onClose, isLoading, newUser }) {
+interface ScrollAnchorSpacerProps extends SpacerProps {
+  readonly name: string;
+}
+function ScrollAnchorSpacer(props: ScrollAnchorSpacerProps) {
+  return (
+    <ScrollAnchorElement name={props.name}>
+      <Spacer {...props} />
+    </ScrollAnchorElement>
+  );
+}
+interface NewRegisterModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  isLoading: boolean;
+}
+function NewRegisterModal({
+  isOpen,
+  onClose,
+  isLoading,
+}: NewRegisterModalProps) {
+  const { user: newUser } = useUser();
   const router = useRouter();
   return (
     <Modal
@@ -126,9 +147,9 @@ function HomePage() {
   const [displayingCard, setDisplayingCard] = useState(0);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { user, isLoading: isAuthLoading } = useUser();
-  useUserInfo(user?.sub, {
+  useUserInfo(user?.sub ?? null, {
     onSuccessCallback: async (userData, key, config) => {
-      if (!userData?.user?.db) {
+      if (!userData?.user?.db && user?.email) {
         setIsRegistering(true);
         try {
           await handleFetch("/api/user/register", {
@@ -369,7 +390,6 @@ function HomePage() {
           isOpen={isOpen}
           onClose={onClose}
           isLoading={isRegistering}
-          newUser={user}
         />
         <Flex
           justifyContent="space-between"
@@ -450,6 +470,7 @@ function HomePage() {
                 </Flex>
                 <Flex flexDirection={"column"} justify="start" mt="10">
                   <IconButton
+                    aria-label="prev"
                     ml="2"
                     color={useColorModeValue("heading.light", "heading.dark")}
                     icon={<FaSortUp />}
@@ -464,6 +485,7 @@ function HomePage() {
                     }
                   />
                   <IconButton
+                    aria-label="next"
                     ml="2"
                     color={useColorModeValue("heading.light", "heading.dark")}
                     icon={<FaSortDown />}
@@ -496,7 +518,7 @@ function HomePage() {
           >
             Why Neo?
           </Button>
-          <Spacer my={5} name="card1" />
+          <ScrollAnchorSpacer my={5} name="card1" />
           <HomeCard
             title="搜尋篩選，更快更準。 🚀"
             desc={[
@@ -516,7 +538,7 @@ function HomePage() {
           >
             受夠一直切分頁了嗎？
           </Button>
-          <Spacer my={5} name="card2" />
+          <ScrollAnchorSpacer my={5} name="card2" />
           <HomeCard
             title="並列互動式課表，選課更直覺。"
             desc={[
@@ -537,7 +559,7 @@ function HomePage() {
           >
             小孩子才做選擇
           </Button>
-          <Spacer my={5} name="card3" />
+          <ScrollAnchorSpacer my={5} name="card3" />
           <HomeCard
             title="我全都要。不怕衝堂，順序輕鬆排。"
             desc={[
@@ -558,7 +580,7 @@ function HomePage() {
           >
             喬志願序好麻煩？
           </Button>
-          <Spacer my={5} name="card4" />
+          <ScrollAnchorSpacer my={5} name="card4" />
           <HomeCard
             title="一鍵加入課程網，志願序一目瞭然。"
             desc={[
@@ -580,7 +602,7 @@ function HomePage() {
           >
             課程資訊一把抓
           </Button>
-          <Spacer my={5} name="card5" />
+          <ScrollAnchorSpacer my={5} name="card5" />
           <HomeCard
             title="站在巨人的肩膀上。"
             desc={[

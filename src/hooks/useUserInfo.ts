@@ -10,7 +10,10 @@ export default function useUserInfo(
   userId: string | null,
   options?: {
     readonly onSuccessCallback?: (
-      data: unknown,
+      data: {
+        user: User | null;
+        message: string;
+      },
       key: string,
       config: unknown
     ) => void;
