@@ -1,7 +1,7 @@
 import {
-  sortableContainer,
-  sortableElement,
-  sortableHandle,
+  SortableContainer as sortableContainer,
+  SortableElement as sortableElement,
+  SortableHandle as sortableHandle,
 } from "react-sortable-hoc";
 import { MdDragHandle } from "react-icons/md";
 import styles from "components/CourseTable/CourseTableCard/CourseTableCard.module.css";
@@ -19,22 +19,25 @@ import { FaTrashAlt } from "react-icons/fa";
 import { useRouter } from "next/router";
 import { FaInfoCircle } from "react-icons/fa";
 import { reportEvent } from "utils/ga";
-
-// for future typescript used
-// interface Prop {
-//     courseData: dictionary of course obj w/ course_id as key;
-//     courseList: list of course_id's to reorder;
-//     prepareToRemoveCourseId: list of course_id's to remove;
-//     onSortEnd: function to call when sort ends;
-//     handlePrepareToDelete: function to call when delete button is clicked;
-// }
+import React from "react";
+import { Course } from "@/types/course";
 
 const DragHandle = sortableHandle(() => (
   <MdDragHandle cursor="row-resize" size="20" color="gray" />
 ));
 
-const SortableElement = sortableElement(
-  ({ course, prepareToRemoveCourseId, handlePrepareToDelete }) => {
+interface SortableElementProps {
+  readonly course: Course;
+  readonly prepareToRemoveCourseId: string[];
+  readonly handlePrepareToDelete: (courseId: string) => void;
+  readonly helperClass: string;
+}
+const SortableElement = sortableElement<SortableElementProps>(
+  ({
+    course,
+    prepareToRemoveCourseId,
+    handlePrepareToDelete,
+  }: SortableElementProps) => {
     const router = useRouter();
     if (!course) {
       return <></>;
@@ -52,7 +55,7 @@ const SortableElement = sortableElement(
           {course.serial}
         </Badge>
         <Text
-          as={prepareToRemoveCourseId.includes(course.id) ? "del" : ""}
+          as={prepareToRemoveCourseId.includes(course.id) ? "del" : undefined}
           fontSize="lg"
           color={
             prepareToRemoveCourseId.includes(course.id)
@@ -62,7 +65,6 @@ const SortableElement = sortableElement(
           mx="1"
           fontWeight="700"
           noOfLines={1}
-          isTruncated
         >
           {course.name}
         </Text>
@@ -94,17 +96,34 @@ const SortableElement = sortableElement(
   }
 );
 
-const SortableContainer = sortableContainer(({ children }) => {
+const SortableContainer = sortableContainer<{
+  readonly children: React.ReactNode;
+}>(({ children }: { readonly children: React.ReactNode }) => {
   return <Flex flexDirection="column">{children}</Flex>;
 });
 
-function SortablePopover({
-  courseData,
-  courseList,
-  prepareToRemoveCourseId,
-  onSortEnd,
-  handlePrepareToDelete,
+function SortablePopover(props: {
+  readonly courseData: {
+    readonly [key: string]: Course;
+  };
+  readonly courseList: string[];
+  readonly prepareToRemoveCourseId: string[];
+  readonly onSortEnd: ({
+    oldIndex,
+    newIndex,
+  }: {
+    readonly oldIndex: number;
+    readonly newIndex: number;
+  }) => void;
+  readonly handlePrepareToDelete: (courseId: string) => void;
 }) {
+  const {
+    courseData,
+    courseList,
+    prepareToRemoveCourseId,
+    onSortEnd,
+    handlePrepareToDelete,
+  } = props;
   return (
     <SortableContainer useDragHandle onSortEnd={onSortEnd} lockAxis="y">
       {courseList.map((courseId, index) => {
