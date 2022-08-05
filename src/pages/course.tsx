@@ -1,4 +1,4 @@
-import { React, useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   Box,
   Flex,
@@ -40,14 +40,20 @@ function NoLoginWarningDialog({
   isOpen,
   setIsOpen,
   setAgreeToCreateTableWithoutLogin,
+}: {
+  readonly isOpen: boolean;
+  readonly setIsOpen: (isOpen: boolean) => void;
+  readonly setAgreeToCreateTableWithoutLogin: (x: boolean) => void;
 }) {
   const router = useRouter();
+  const leastDestructiveElement = useRef<HTMLDivElement>(null);
   return (
     <AlertDialog
       isOpen={isOpen}
       onClose={() => setIsOpen(false)}
       motionPreset="slideInBottom"
       isCentered
+      leastDestructiveRef={leastDestructiveElement}
     >
       <AlertDialogOverlay>
         <AlertDialogContent>
@@ -59,7 +65,13 @@ function NoLoginWarningDialog({
               <AlertIcon />
               訪客課表將於一天後過期，屆時您將無法存取此課表。
             </Alert>
-            <Text mt={4} color="gray.600" fontWeight="700" fontSize="lg">
+            <Text
+              mt={4}
+              color="gray.600"
+              fontWeight="700"
+              fontSize="lg"
+              ref={leastDestructiveElement}
+            >
               真的啦！相信我。
               <br />
               註冊跟登入非常迅速，而且課表還能永久保存喔！
@@ -103,13 +115,7 @@ function NoLoginWarningDialog({
 }
 
 function CoursePage() {
-  //   useMount(() => {
-  //     setPageMeta({
-  //       title: `課程搜尋 | NTUCourse Neo`,
-  //       desc: `課程搜尋頁面 | NTUCourse Neo，全新的臺大選課網站。`,
-  //     });
-  //   });
-  const topRef = useRef();
+  const topRef = useRef<HTMLDivElement>(null);
   const bottomRef = usePagination();
   const { searchLoading, totalCount, setBatchSize } =
     useCourseSearchingContext();
@@ -134,7 +140,7 @@ function CoursePage() {
   }, [isHigherThan1325, setBatchSize]);
 
   const searchCallback = () => {
-    topRef.current.focus();
+    topRef.current?.focus();
     setDisplayFilter(false);
   };
 
@@ -203,6 +209,7 @@ function CoursePage() {
               />
             </Flex>
             <IconButton
+              aria-label="searchInputDrawer"
               size="xs"
               variant="ghost"
               bg={useColorModeValue("white", "black")}
