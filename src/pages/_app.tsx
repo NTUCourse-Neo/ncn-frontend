@@ -10,8 +10,9 @@ import { useRouter } from "next/router";
 import nProgress from "nprogress";
 import { useEffect } from "react";
 import GoogleAnalytics from "components/GoogleAnalytics";
+import type { AppProps } from "next/app";
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
   useEffect(() => {
     router.events.on("routeChangeStart", nProgress.start);
