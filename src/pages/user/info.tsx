@@ -1,4 +1,4 @@
-import { React, useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Box,
   Flex,
@@ -25,22 +25,29 @@ import Select from "react-select";
 import { HashLoader } from "react-spinners";
 import { FaExclamationTriangle } from "react-icons/fa";
 import { useRouter } from "next/router";
-import { useUser, withPageAuthRequired } from "@auth0/nextjs-auth0";
+import {
+  useUser,
+  withPageAuthRequired,
+  UserProfile,
+} from "@auth0/nextjs-auth0";
 import { deptList } from "data/department";
 import handleFetch from "utils/CustomFetch";
 import Head from "next/head";
 import useUserInfo from "hooks/useUserInfo";
 import { useSWRConfig } from "swr";
 import { reportEvent } from "utils/ga";
+import type { User } from "types/user";
+import { AxiosError } from "axios";
 
-function DeleteDialog({
-  isAlertOpen,
-  setIsAlertOpen,
-  deleteMode,
-  setDeleteMode,
+function DeleteDialog(props: {
+  readonly isAlertOpen: boolean;
+  readonly setIsAlertOpen: (isAlertOpen: boolean) => void;
+  readonly deleteMode: string | null;
+  readonly setDeleteMode: (deleteMode: string | null) => void;
 }) {
+  const { isAlertOpen, setIsAlertOpen, deleteMode, setDeleteMode } = props;
   const confirmMessage = `我確定`;
-  const cancelRef = useRef();
+  const cancelRef = useRef(null);
   const toast = useToast();
   const { user } = useUser();
   const router = useRouter();
@@ -68,7 +75,7 @@ function DeleteDialog({
         duration: 3000,
         isClosable: true,
       });
-      if (e?.response?.status === 401) {
+      if ((e as AxiosError)?.response?.status === 401) {
         router.push("/api/auth/login");
       }
     }
@@ -84,7 +91,7 @@ function DeleteDialog({
         duration: 3000,
         isClosable: true,
       });
-      if (e?.response?.status === 401) {
+      if ((e as AxiosError)?.response?.status === 401) {
         router.push("/api/auth/login");
       }
     }
@@ -164,7 +171,7 @@ function DeleteDialog({
   );
 }
 
-export default function UserInfoPage({ user }) {
+export default function UserInfoPage({ user }: { readonly user: UserProfile }) {
   const pageBg = useColorModeValue("white", "black");
   const textColor = useColorModeValue("text.light", "text.dark");
   const cardColor = useColorModeValue("card.light", "card.dark");
@@ -176,17 +183,19 @@ export default function UserInfoPage({ user }) {
     value: dept.id,
     label: `${dept.id} ${dept.name_full}`,
   }));
-  const departmentMap = deptList.reduce((acc, department) => {
+  const departmentMap: {
+    [key: string]: string;
+  } = deptList.reduce((acc, department) => {
     return { ...acc, [department.id]: department.name_full };
   }, {});
   const [saveLoading, setSaveLoading] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
-  const [deleteMode, setDeleteMode] = useState(null);
+  const [deleteMode, setDeleteMode] = useState<string | null>(null);
   const {
     userInfo,
     isLoading,
     mutate: mutateUser,
-  } = useUserInfo(user?.sub, {
+  } = useUserInfo(user?.sub ?? null, {
     onErrorCallback: (e, k, c) => {
       toast({
         title: "取得用戶資料失敗.",
@@ -221,11 +230,11 @@ export default function UserInfoPage({ user }) {
     }
     if (
       (major === doubleMajor && major && doubleMajor) ||
-      minor.includes(major)
+      (major && minor.includes(major))
     ) {
       errorMsg = "主修不能跟雙主修或輔系一樣";
     }
-    if (minor.includes(doubleMajor)) {
+    if (doubleMajor && minor.includes(doubleMajor)) {
       errorMsg = "雙主修不能出現在輔系";
     }
     if (errorMsg) {
@@ -241,7 +250,10 @@ export default function UserInfoPage({ user }) {
     try {
       await mutateUser(
         async () => {
-          const userData = await handleFetch("/api/user/patch", {
+          const userData = await handleFetch<{
+            message: string;
+            user: User;
+          }>("/api/user/patch", {
             newUser: {
               name: name,
               major: major,
@@ -270,7 +282,7 @@ export default function UserInfoPage({ user }) {
         duration: 3000,
         isClosable: true,
       });
-      if (e?.response?.status === 401) {
+      if ((e as AxiosError)?.response?.status === 401) {
         router.push("/api/auth/login");
       }
     }
@@ -379,7 +391,11 @@ export default function UserInfoPage({ user }) {
                   disabled
                 />
               </Flex>
-              <Avatar name={userInfo?.name} size="2xl" src={user.picture} />
+              <Avatar
+                name={userInfo?.name}
+                size="2xl"
+                src={user.picture ?? undefined}
+              />
             </Flex>
             <Text fontSize="2xl" fontWeight="700" color={textColor} mt="5">
               學業
@@ -402,15 +418,18 @@ export default function UserInfoPage({ user }) {
                     classNamePrefix="select"
                     defaultValue={{
                       value: userInfo?.major?.id ?? null,
-                      label: departmentMap?.[userInfo?.major?.id]
+                      label: departmentMap?.[userInfo?.major?.id ?? ""]
                         ? `${userInfo?.major?.id} ${
-                            departmentMap?.[userInfo?.major?.id]
+                            departmentMap?.[userInfo?.major?.id ?? ""]
                           }`
                         : "請選擇",
                     }}
                     isSearchable={true}
                     options={[{ value: null, label: "請選擇" }, ...deptOptions]}
                     onChange={(e) => {
+                      if (!e) {
+                        return;
+                      }
                       setMajor(e.value);
                     }}
                   />
@@ -426,15 +445,18 @@ export default function UserInfoPage({ user }) {
                     classNamePrefix="select"
                     defaultValue={{
                       value: userInfo?.d_major?.id ?? null,
-                      label: departmentMap?.[userInfo?.d_major?.id]
+                      label: departmentMap?.[userInfo?.d_major?.id ?? ""]
                         ? `${userInfo?.d_major?.id} ${
-                            departmentMap?.[userInfo?.d_major?.id]
+                            departmentMap?.[userInfo?.d_major?.id ?? ""]
                           }`
                         : "請選擇",
                     }}
                     isSearchable={true}
                     options={[{ value: null, label: "請選擇" }, ...deptOptions]}
                     onChange={(e) => {
+                      if (!e) {
+                        return;
+                      }
                       setDoubleMajor(e.value);
                     }}
                   />
@@ -447,7 +469,6 @@ export default function UserInfoPage({ user }) {
                 <Box w={{ base: "100%", md: "20vw" }} color={textColor}>
                   <Select
                     isMulti
-                    w="100%"
                     className="basic-single"
                     classNamePrefix="select"
                     defaultValue={
