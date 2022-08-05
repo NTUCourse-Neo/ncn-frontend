@@ -18,18 +18,26 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { social_user_type_map } from "data/mapping_table";
+import { social_user_type_map, socialUserTypes } from "data/mapping_table";
 import handleFetch from "utils/CustomFetch";
 import { useRouter } from "next/router";
 import { reportEvent } from "utils/ga";
+import { useSignUpPostData } from "hooks/useCourseInfo";
 
-function SignUpSubmitForm({ courseId, haveSubmitted, mutate }) {
+function SignUpSubmitForm(props: {
+  readonly courseId: string;
+  readonly haveSubmitted: boolean;
+}) {
+  const { courseId, haveSubmitted } = props;
+  const { mutate } = useSignUpPostData(courseId);
   const headingColor = useColorModeValue("heading.light", "heading.dark");
   const { onOpen, onClose, isOpen } = useDisclosure();
   const router = useRouter();
   const toast = useToast();
   const [sendingForm, setSendingForm] = useState(false);
-  const [signUpCardForm, setSignUpCardForm] = useState({
+  const [signUpCardForm, setSignUpCardForm] = useState<{
+    [key: string]: string;
+  }>({
     user_type: "",
     amount: "",
     when: "",
@@ -97,9 +105,6 @@ function SignUpSubmitForm({ courseId, haveSubmitted, mutate }) {
         duration: 3000,
         isClosable: true,
       });
-      if (e?.response?.data?.msg === "access_token_expired") {
-        router.push("/api/auth/login");
-      }
     }
   };
 
@@ -154,7 +159,7 @@ function SignUpSubmitForm({ courseId, haveSubmitted, mutate }) {
               });
             }}
           >
-            {Object.keys(social_user_type_map).map((key) => {
+            {socialUserTypes.map((key) => {
               return (
                 <option value={key} key={key}>
                   {social_user_type_map[key]}
@@ -247,7 +252,7 @@ function SignUpSubmitForm({ courseId, haveSubmitted, mutate }) {
               });
             }}
           />
-          <ButtonGroup w="100%" size="sm" d="flex" justifyContent="end">
+          <ButtonGroup w="100%" size="sm" display="flex" justifyContent="end">
             <Button
               colorScheme="blue"
               isLoading={sendingForm}

@@ -214,4 +214,7 @@ const social_user_type_map = {
   others: "其他",
 };
 
-export { info_view_map, weekdays_map, social_user_type_map };
+export type SocialUser = keyof typeof social_user_type_map;
+const socialUserTypes = Object.keys(social_user_type_map) as SocialUser[];
+
+export { info_view_map, weekdays_map, social_user_type_map, socialUserTypes };

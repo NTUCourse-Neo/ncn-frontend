@@ -231,7 +231,6 @@ export function SignUpPanel({ courseId }: { readonly courseId: string }) {
             <SignUpSubmitForm
               courseId={courseId}
               haveSubmitted={signUpPostData.some((obj) => obj.is_owner)}
-              mutate={mutate}
             />
           </HStack>
         </Flex>
@@ -282,7 +281,6 @@ export function SignUpPanel({ courseId }: { readonly courseId: string }) {
             <SignUpSubmitForm
               courseId={courseId}
               haveSubmitted={signUpPostData.some((obj) => obj.is_owner)}
-              mutate={mutate}
             />
           </HStack>
         </Flex>
