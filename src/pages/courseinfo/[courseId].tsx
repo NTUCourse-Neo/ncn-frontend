@@ -42,8 +42,17 @@ import useNeoLocalStorage from "hooks/useNeoLocalStorage";
 import Head from "next/head";
 import { useUser } from "@auth0/nextjs-auth0";
 import { reportEvent } from "utils/ga";
+import { GetServerSideProps } from "next";
+import { Course } from "@/types/course";
+import { ParsedUrlQuery } from "querystring";
 
-const copyWordList = [
+interface CopyWordType {
+  readonly word: string;
+  readonly count: number;
+  readonly color?: string;
+  readonly bg?: string;
+}
+const copyWordList: CopyWordType[] = [
   { count: 100, word: "複製終結者!!", color: "purple.600", bg: "purple.50" },
   { count: 50, word: "終極複製!!", color: "red.600", bg: "red.50" },
   { count: 25, word: "超級複製!!", color: "orange.600", bg: "orange.50" },
@@ -57,7 +66,26 @@ const copyWordList = [
   },
 ];
 
-export async function getServerSideProps({ params }) {
+interface PageProps {
+  readonly code: string;
+  readonly course: Course;
+}
+interface Params extends ParsedUrlQuery {
+  readonly courseId: string;
+}
+
+export const getServerSideProps: GetServerSideProps<
+  PageProps,
+  Params
+> = async ({ params }) => {
+  if (!params) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: `/`,
+      },
+    };
+  }
   const { courseId } = params;
   const data = await fetchCourse(courseId);
   if (!data?.course) {
@@ -74,13 +102,15 @@ export async function getServerSideProps({ params }) {
       course: data.course,
     },
   };
-}
+};
 
-function CourseInfoPage({ code, course }) {
+function CourseInfoPage({ code, course }: PageProps) {
   const bgcolor = useColorModeValue("white", "black");
   const headingColor = useColorModeValue("heading.light", "heading.dark");
   const { user } = useUser();
-  const { userInfo, addOrRemoveFavorite, isLoading } = useUserInfo(user?.sub);
+  const { userInfo, addOrRemoveFavorite, isLoading } = useUserInfo(
+    user?.sub ?? null
+  );
   const { neoLocalCourseTableKey } = useNeoLocalStorage();
   const courseTableKey = userInfo
     ? userInfo?.course_tables?.[0] ?? null
@@ -105,17 +135,27 @@ function CourseInfoPage({ code, course }) {
   );
   const [isAddingFavorite, setIsAddingFavorite] = useState(false);
   const [copiedLinkClicks, setCopiedLinkClicks] = useState(0);
-  const [copyWord, setCopyWord] = useState(
-    copyWordList.find((word) => word.count <= copiedLinkClicks)
+  const initCopyword: CopyWordType = useMemo(
+    () => ({
+      count: 0,
+      word: "複製連結",
+    }),
+    []
+  );
+  const [copyWord, setCopyWord] = useState<CopyWordType>(
+    copyWordList.find((word) => word.count <= copiedLinkClicks) ?? initCopyword
   );
   const copyBtnDefaultColor = useColorModeValue("gray.700", "gray.100");
   const copyBtnBg = useColorModeValue("white", "gray.800");
 
   useEffect(() => {
-    setCopyWord(copyWordList.find((word) => word.count <= copiedLinkClicks));
-  }, [copiedLinkClicks]);
+    setCopyWord(
+      copyWordList.find((word) => word.count <= copiedLinkClicks) ??
+        initCopyword
+    );
+  }, [copiedLinkClicks, initCopyword]);
 
-  const handleAddCourse = async (course) => {
+  const handleAddCourse = async (course: Course) => {
     if (!isLoading && !isCourseTableLoading) {
       if (courseTableKey) {
         await addOrRemoveCourse(course);
@@ -132,7 +172,7 @@ function CourseInfoPage({ code, course }) {
     }
   };
 
-  const handleAddFavorite = async (course_id) => {
+  const handleAddFavorite = async (course_id: string) => {
     if (!isLoading) {
       if (userInfo) {
         setIsAddingFavorite(true);
@@ -285,7 +325,6 @@ function CourseInfoPage({ code, course }) {
                     fontWeight="800"
                     color={headingColor}
                     maxW={{ base: "52vw", md: "30vw" }}
-                    isTruncated
                     noOfLines={1}
                   >
                     {course.name}
@@ -415,7 +454,7 @@ function CourseInfoPage({ code, course }) {
                 </Button>
               </CopyToClipboard>
             </HStack>
-            <Menu>
+            <Menu autoSelect={false}>
               <MenuButton
                 isLoading={
                   isLoading || isCourseTableLoading || isAddingFavorite
@@ -429,9 +468,7 @@ function CourseInfoPage({ code, course }) {
                 <MenuItem
                   key={"NolContent_Button_" + code + "_addToCourseTable"}
                   mr="-px"
-                  size="md"
                   color={selected ? "red.500" : "blue.600"}
-                  variant="ghost"
                   icon={selected ? <FaMinus /> : <FaPlus />}
                   onClick={() => {
                     handleAddCourse(course);
@@ -446,9 +483,7 @@ function CourseInfoPage({ code, course }) {
                 </MenuItem>
                 <MenuItem
                   key={"NolContent_Button_" + code + "_addToNol"}
-                  size="md"
                   color="blue.600"
-                  variant="ghost"
                   icon={<FaPlus />}
                   onClick={() => {
                     openPage(getNolAddUrl(course), true);
@@ -459,9 +494,7 @@ function CourseInfoPage({ code, course }) {
                 </MenuItem>
                 <MenuItem
                   key={"NolContent_Button_" + code + "_addToFavorite"}
-                  size="md"
                   color="red.500"
-                  variant={"ghost"}
                   icon={isFavorite ? <FaMinus /> : <FaRegHeart />}
                   disabled={!userInfo}
                   onClick={() => {
