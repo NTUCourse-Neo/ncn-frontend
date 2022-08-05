@@ -243,7 +243,10 @@ export function SignUpPanel({ courseId }: { readonly courseId: string }) {
           justifyContent="center"
           alignItems={{ base: "start", lg: "center" }}
         >
-          <SignUpCard post={signUpPostData[signUpCardIdx]} mutate={mutate} />
+          <SignUpCard
+            post={signUpPostData[signUpCardIdx]}
+            courseId={courseId}
+          />
           <HStack w="100%" pr="8" mt="8">
             <HStack>
               <IconButton

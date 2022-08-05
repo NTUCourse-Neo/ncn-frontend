@@ -34,22 +34,16 @@ import Moment from "moment";
 import handleFetch from "utils/CustomFetch";
 import { useRouter } from "next/router";
 import { reportEvent } from "utils/ga";
+import type { SignUpPost } from "@/types/course";
+import { useSignUpPostData } from "hooks/useCourseInfo";
 
-// prop.post
-// {
-//   _id: post._id,
-//   course_id: post.course_id,
-//   type: post.type,
-//   content: post.content,
-//   is_owner: post.user_id === user_id,
-//   user_type: post.user_type,
-//   create_ts: post.create_ts,
-//   upvotes: post.upvotes.length,
-//   downvotes: post.downvotes.length,
-//   self_vote_status: get_self_vote_status(post, user_id)
-// }
-
-function SignUpCard({ post, mutate }) {
+function SignUpCard({
+  post,
+  courseId,
+}: {
+  readonly post: SignUpPost;
+  readonly courseId: string;
+}) {
   const is_owner = post?.is_owner;
   const toast = useToast();
   const [isVotingPost, setIsVotingPost] = useState(0);
@@ -62,9 +56,10 @@ function SignUpCard({ post, mutate }) {
   const commentColor = useColorModeValue("gray.600", "gray.400");
   const downvoteBtnColor = useColorModeValue("orange", "red");
   const router = useRouter();
+  const { mutate } = useSignUpPostData(courseId);
   Moment.locale("zh-tw");
 
-  const handleVotePost = async (post_id, vote_type) => {
+  const handleVotePost = async (post_id: string, vote_type: number) => {
     setIsVotingPost(vote_type);
     try {
       await handleFetch("/api/social/votePost", { post_id, vote_type });
@@ -77,16 +72,13 @@ function SignUpCard({ post, mutate }) {
         duration: 3000,
         isClosable: true,
       });
-      if (error?.response?.data?.msg === "access_token_expired") {
-        router.push("/api/auth/login");
-      }
       return;
     }
     mutate();
     setIsVotingPost(0);
   };
 
-  const handleDeletePost = async (post_id) => {
+  const handleDeletePost = async (post_id: string) => {
     setIsDeletingPost(true);
     try {
       await handleFetch("/api/social/deletePost", { post_id });
@@ -99,16 +91,13 @@ function SignUpCard({ post, mutate }) {
         duration: 3000,
         isClosable: true,
       });
-      if (error?.response?.data?.msg === "access_token_expired") {
-        router.push("/api/auth/login");
-      }
       return;
     }
     setIsDeletingPost(false);
     mutate();
   };
 
-  const handleReportPost = async (post_id, content) => {
+  const handleReportPost = async (post_id: string, content: string) => {
     setIsReportingPost(true);
     try {
       await handleFetch("/api/social/reportPost", { post_id, content });
@@ -121,9 +110,6 @@ function SignUpCard({ post, mutate }) {
         duration: 3000,
         isClosable: true,
       });
-      if (error?.response?.data?.msg === "access_token_expired") {
-        router.push("/api/auth/login");
-      }
       return;
     }
     setIsReportingPost(false);
@@ -296,7 +282,12 @@ function SignUpCard({ post, mutate }) {
                     setReportReason(e.currentTarget.value);
                   }}
                 />
-                <ButtonGroup w="100%" size="sm" d="flex" justifyContent="end">
+                <ButtonGroup
+                  w="100%"
+                  size="sm"
+                  display="flex"
+                  justifyContent="end"
+                >
                   <Button
                     colorScheme="red"
                     onClick={() => {

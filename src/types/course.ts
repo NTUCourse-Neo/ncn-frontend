@@ -1,3 +1,5 @@
+import { SocialUser } from "@/data/mapping_table";
+
 export interface Course {
   id: string;
   serial: string | null;
@@ -129,7 +131,7 @@ export interface SignUpPost {
   type: string;
   upvotes: number;
   downvotes: number;
-  user_type: string;
+  user_type: SocialUser;
   _id: string;
 }
 
