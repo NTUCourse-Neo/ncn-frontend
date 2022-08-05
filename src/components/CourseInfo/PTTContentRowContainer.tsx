@@ -7,11 +7,18 @@ import {
   VStack,
   Icon,
   useColorModeValue,
+  FlexProps,
 } from "@chakra-ui/react";
 import { IoMdOpen } from "react-icons/io";
 import { reportEvent } from "utils/ga";
+import type { PTTData } from "@/types/course";
 
-function PTTContentRowContainer({ info, ...restProps }) {
+export interface PTTContentRowContainerProps extends FlexProps {
+  readonly info: PTTData;
+}
+
+function PTTContentRowContainer(props: PTTContentRowContainerProps) {
+  const { info, ...restProps } = props;
   const rowColor = useColorModeValue("blue.50", "#2B6CB030");
   const textColor = useColorModeValue("text.light", "text.dark");
   return (
@@ -46,7 +53,6 @@ function PTTContentRowContainer({ info, ...restProps }) {
               fontWeight="500"
               textAlign="start"
               noOfLines={1}
-              isTruncated
             >
               {data.title}
             </Text>
@@ -59,7 +65,6 @@ function PTTContentRowContainer({ info, ...restProps }) {
               fontWeight="500"
               textAlign="start"
               noOfLines={1}
-              isTruncated
             >
               - {data.author}
             </Text>
