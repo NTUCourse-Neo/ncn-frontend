@@ -21,6 +21,7 @@ import {
   Spacer,
   IconButton,
   useColorModeValue,
+  FlexProps,
 } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
 import { PieChart } from "react-minimal-pie-chart";
@@ -48,8 +49,15 @@ import {
   useSignUpPostData,
 } from "hooks/useCourseInfo";
 import { reportEvent } from "utils/ga";
+import {
+  syllabusFields,
+  syllabusFieldSource as syllabusTitle,
+} from "@/types/course";
 
-function LoadingPanel({ title, ...restProps }) {
+interface LoadingPanelProps extends FlexProps {
+  readonly title: string;
+}
+function LoadingPanel({ title, ...restProps }: LoadingPanelProps) {
   return (
     <Flex
       w="100%"
@@ -79,11 +87,15 @@ function LoadingPanel({ title, ...restProps }) {
   );
 }
 
+interface PanelPlaceholderProps extends FlexProps {
+  readonly title: string;
+  readonly isEmpty?: boolean;
+}
 function PanelPlaceholder({
   title = "暫無資訊",
   isEmpty = true,
   ...restProps
-}) {
+}: PanelPlaceholderProps) {
   return (
     <Flex
       w="100%"
@@ -110,7 +122,7 @@ function PanelPlaceholder({
   );
 }
 
-function UnauthenticatedPanel({ ...restProps }) {
+function UnauthenticatedPanel({ ...restProps }: FlexProps) {
   const router = useRouter();
   return (
     <Flex
@@ -152,13 +164,20 @@ function UnauthenticatedPanel({ ...restProps }) {
   );
 }
 
+interface PanelWrapperProps {
+  readonly children: JSX.Element;
+  readonly isLoading: boolean;
+  readonly isUnauth: boolean | null;
+  readonly loadingFallback?: JSX.Element;
+  readonly unauthFallback?: JSX.Element;
+}
 function PanelWrapper({
   isLoading,
   loadingFallback = <LoadingPanel title="載入中..." height="100%" />,
   isUnauth,
   unauthFallback = <UnauthenticatedPanel />,
   children,
-}) {
+}: PanelWrapperProps): JSX.Element {
   if (isUnauth) {
     return unauthFallback;
   }
@@ -168,7 +187,7 @@ function PanelWrapper({
   return <>{children}</>;
 }
 
-export function SignUpPanel({ courseId }) {
+export function SignUpPanel({ courseId }: { readonly courseId: string }) {
   const { user, isLoading: isAuth0Loading } = useUser();
   const {
     data: signUpPostData,
@@ -225,14 +244,11 @@ export function SignUpPanel({ courseId }) {
           justifyContent="center"
           alignItems={{ base: "start", lg: "center" }}
         >
-          <SignUpCard
-            post={signUpPostData[signUpCardIdx]}
-            SignUpPostData={signUpPostData}
-            mutate={mutate}
-          />
+          <SignUpCard post={signUpPostData[signUpCardIdx]} mutate={mutate} />
           <HStack w="100%" pr="8" mt="8">
             <HStack>
               <IconButton
+                aria-label="prev"
                 size="md"
                 variant="ghost"
                 icon={<FaChevronLeft />}
@@ -245,6 +261,7 @@ export function SignUpPanel({ courseId }) {
                 }
               />
               <IconButton
+                aria-label="next"
                 size="md"
                 variant="ghost"
                 icon={<FaChevronRight />}
@@ -274,7 +291,11 @@ export function SignUpPanel({ courseId }) {
   );
 }
 
-export function EnrollStatusPanel({ courseSerial }) {
+export function EnrollStatusPanel({
+  courseSerial,
+}: {
+  readonly courseSerial: string;
+}) {
   const { user, isLoading: isAuth0Loading } = useUser();
   const { data: courseEnrollStatus, isLoading } =
     useCourseEnrollData(courseSerial);
@@ -328,7 +349,7 @@ export function EnrollStatusPanel({ courseSerial }) {
   );
 }
 
-export function NTURatingPanel({ courseId }) {
+export function NTURatingPanel({ courseId }: { readonly courseId: string }) {
   const { user, isLoading: isAuth0Loading } = useUser();
   const { data: ntuRatingData, isLoading } = useNTURatingData(courseId);
   return (
@@ -407,7 +428,7 @@ export function NTURatingPanel({ courseId }) {
   );
 }
 
-export function PTTReviewPanel({ courseId }) {
+export function PTTReviewPanel({ courseId }: { readonly courseId: string }) {
   const { user, isLoading: isAuth0Loading } = useUser();
   const { data: pttReviewData, isLoading } = usePTTReviewData(courseId);
   return (
@@ -427,7 +448,7 @@ export function PTTReviewPanel({ courseId }) {
   );
 }
 
-export function PTTExamPanel({ courseId }) {
+export function PTTExamPanel({ courseId }: { readonly courseId: string }) {
   const { user, isLoading: isAuth0Loading } = useUser();
   const { data: pttExamData, isLoading } = usePTTExamData(courseId);
   return (
@@ -447,18 +468,11 @@ export function PTTExamPanel({ courseId }) {
   );
 }
 
-export function SyllabusPanel({ courseId }) {
+export function SyllabusPanel({ courseId }: { readonly courseId: string }) {
   const { data: syllabusData, isLoading } = useSyllabusData(courseId);
   const headingColor = useColorModeValue("heading.light", "heading.dark");
   const textColor = useColorModeValue("text.light", "text.dark");
-  const syllabusTitle = {
-    intro: "概述",
-    objective: "目標",
-    requirement: "要求",
-    office_hour: "Office Hour",
-    material: "參考書目",
-    specify: "指定閱讀",
-  };
+
   return (
     <PanelWrapper isLoading={isLoading} isUnauth={null}>
       {!syllabusData || !syllabusData?.syllabus ? (
@@ -473,7 +487,7 @@ export function SyllabusPanel({ courseId }) {
           wordBreak="break-all"
           overflow="auto"
         >
-          {Object.keys(syllabusData?.syllabus ?? {}).map((key) => {
+          {syllabusFields.map((key) => {
             const line = syllabusData.syllabus[key].split("\n");
             const content = line.map((item, index) => {
               return (
@@ -522,10 +536,19 @@ export function SyllabusPanel({ courseId }) {
   );
 }
 
-export function GradePolicyPanel({ courseId }) {
+export function GradePolicyPanel({ courseId }: { readonly courseId: string }) {
   const { data: syllabusData, isLoading } = useSyllabusData(courseId);
   const headingColor = useColorModeValue("heading.light", "heading.dark");
   const textColor = useColorModeValue("text.light", "text.dark");
+  const pieChartData = syllabusData?.grade
+    ? (syllabusData?.grade.filter((g) => g.color !== null) as {
+        title?: string | number;
+        color: string;
+        value: number;
+        key?: string | number;
+        [key: string]: unknown;
+      }[]) // Type def: https://github.com/toomuchdesign/react-minimal-pie-chart/blob/master/src/commonTypes.ts
+    : undefined;
   return (
     <PanelWrapper
       isLoading={isLoading}
@@ -548,7 +571,7 @@ export function GradePolicyPanel({ courseId }) {
               lineWidth={50}
               label={({ dataEntry }) => dataEntry.value + "%"}
               labelPosition={75}
-              data={syllabusData.grade}
+              data={pieChartData}
               labelStyle={() => ({
                 fill: "white",
                 fontSize: "10px",
@@ -576,8 +599,16 @@ export function GradePolicyPanel({ courseId }) {
                 <Popover key={"SyllabusData" + index}>
                   <PopoverTrigger>
                     <HStack justify="start" cursor="pointer">
-                      <Icon as={FaCircle} size="20px" color={item.color} />
-                      <Text fontSize="lg" fontWeight="800" color={item.color}>
+                      <Icon
+                        as={FaCircle}
+                        size="20px"
+                        color={item.color ?? "current"}
+                      />
+                      <Text
+                        fontSize="lg"
+                        fontWeight="800"
+                        color={item.color ?? "current"}
+                      >
                         {item.value}%
                       </Text>
                       <Text fontSize="md" fontWeight="600" color={headingColor}>
@@ -590,7 +621,11 @@ export function GradePolicyPanel({ courseId }) {
                     <PopoverCloseButton />
                     <PopoverHeader>
                       <HStack>
-                        <Text fontSize="lg" fontWeight="800" color={item.color}>
+                        <Text
+                          fontSize="lg"
+                          fontWeight="800"
+                          color={item.color ?? "current"}
+                        >
                           {item.value}%
                         </Text>
                         <Text fontSize="md" fontWeight="600" color="gray.700">

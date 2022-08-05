@@ -88,6 +88,18 @@ export type CourseRatingData = {
   url: string;
   workload: number;
 };
+export const syllabusFieldSource = {
+  intro: "概述",
+  objective: "目標",
+  requirement: "要求",
+  office_hour: "Office Hour",
+  material: "參考書目",
+  specify: "指定閱讀",
+};
+export type SyllabusFieldName = keyof typeof syllabusFieldSource;
+export const syllabusFields = Object.keys(
+  syllabusFieldSource
+) as SyllabusFieldName[];
 export type CourseSyllabus = {
   grade:
     | null
@@ -97,14 +109,7 @@ export type CourseSyllabus = {
         title: string;
         value: number;
       }[];
-  syllabus: {
-    intro: string;
-    material: string;
-    objective: string;
-    office_hour: string;
-    requirement: string;
-    specify: string;
-  };
+  syllabus: Record<SyllabusFieldName, string>;
 };
 export type PTTData = PTTArticle[];
 export type SignUpPostData = SignUpPost[] | null;
