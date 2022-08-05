@@ -1,4 +1,4 @@
-import { React, useMemo } from "react";
+import { useMemo } from "react";
 import {
   Flex,
   Text,
@@ -13,12 +13,12 @@ import { HashLoader, BeatLoader } from "react-spinners";
 import CourseInfoRow from "components/CourseInfoRow";
 import useCourseTable from "hooks/useCourseTable";
 import useNeoLocalStorage from "hooks/useNeoLocalStorage";
-import { withPageAuthRequired } from "@auth0/nextjs-auth0";
+import { withPageAuthRequired, UserProfile } from "@auth0/nextjs-auth0";
 import Head from "next/head";
 import useUserInfo from "hooks/useUserInfo";
 
-export default function UserMyPage({ user }) {
-  const { userInfo, isLoading } = useUserInfo(user?.sub, {
+export default function UserMyPage({ user }: { readonly user: UserProfile }) {
+  const { userInfo, isLoading } = useUserInfo(user?.sub ?? null, {
     onErrorCallback: (e, k, c) => {
       toast({
         title: "取得用戶資料失敗.",
@@ -38,7 +38,7 @@ export default function UserMyPage({ user }) {
 
   const bgColor = useColorModeValue("white", "black");
   const selectedCourses = useMemo(() => {
-    return courseTable?.courses.map((c) => c.id);
+    return courseTable?.courses.map((c) => c.id) ?? [];
   }, [courseTable]);
   const favoriteList = useMemo(() => userInfo?.favorites ?? [], [userInfo]);
 
@@ -101,9 +101,7 @@ export default function UserMyPage({ user }) {
                 >
                   <CourseInfoRow
                     courseInfo={course}
-                    selected={
-                      selectedCourses && selectedCourses.includes(course.id)
-                    }
+                    selected={selectedCourses.includes(course.id)}
                     displayTable={false}
                   />
                   <Spacer my={{ base: 2, md: 1 }} />
