@@ -1,4 +1,4 @@
-import { React } from "react";
+import React from "react";
 import {
   Avatar,
   Box,
@@ -16,7 +16,15 @@ import { FaGithub } from "react-icons/fa";
 import Head from "next/head";
 import { reportEvent } from "utils/ga";
 
-const teams = [
+interface TeamMember {
+  name: string;
+  github: string;
+  img: string;
+  dept: string;
+  quote: string;
+  desc: string;
+}
+const teams: TeamMember[] = [
   {
     name: "張博皓",
     img: "/img/team_avatar/jc-hiroto.png",
@@ -43,7 +51,7 @@ const teams = [
   },
 ];
 
-function TeamMemberCard({ person }) {
+function TeamMemberCard({ person }: { readonly person: TeamMember }) {
   return (
     <Box
       w="400"
@@ -75,7 +83,6 @@ function TeamMemberCard({ person }) {
               size="sm"
               alignItems="center"
               justifyContent="center"
-              spacing="2"
               borderRadius="md"
               borderWidth="2px"
               px="3"

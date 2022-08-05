@@ -11,7 +11,7 @@ import Link from "next/link";
 import { reportEvent } from "utils/ga";
 
 export default function ErrorPage() {
-  const handleOpenPage = (page) => {
+  const handleOpenPage = (page: string) => {
     window.open(page, "_blank");
   };
   return (
