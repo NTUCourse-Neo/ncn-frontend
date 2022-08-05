@@ -30,8 +30,9 @@ import {
   SyllabusPanel,
   GradePolicyPanel,
 } from "components/CourseInfo/Panel";
+import type { Course } from "@/types/course";
 
-function DataSourceTag({ source }) {
+function DataSourceTag({ source }: { readonly source: string }) {
   return (
     <HStack spacing="2">
       <FaRss color="gray" size="12" />
@@ -46,7 +47,7 @@ function DataSourceTag({ source }) {
   );
 }
 
-function CourseDetailInfoContainer({ course }) {
+function CourseDetailInfoContainer({ course }: { readonly course: Course }) {
   const course_codes_1 = [
     { title: "流水號", value: course.serial },
     { title: "課號", value: course.code },
