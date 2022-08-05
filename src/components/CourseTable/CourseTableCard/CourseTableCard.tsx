@@ -32,8 +32,16 @@ import useNeoLocalStorage from "hooks/useNeoLocalStorage";
 import SortablePopover from "components/CourseTable/CourseTableCard/SortablePopover";
 import { patchCourseTable } from "queries/courseTable";
 import { reportEvent } from "utils/ga";
+import { Interval, Course } from "@/types/course";
 
-function CourseBox({ courseId, courseData, isOpen, hoverId }) {
+function CourseBox(props: {
+  readonly courseId: string;
+  readonly courseData: {
+    readonly [key: string]: Course;
+  };
+  readonly hoverId: string;
+}) {
+  const { courseId, courseData, hoverId } = props;
   const course = courseData?.[courseId];
   const bgColor = useColorModeValue(
     hash_to_color_hex(course.id, 0.8, 0.6),
@@ -60,7 +68,7 @@ function CourseBox({ courseId, courseData, isOpen, hoverId }) {
             : "transparent"
         }
       >
-        <Text fontSize="xs" isTruncated noOfLines={1}>
+        <Text fontSize="xs" noOfLines={1}>
           {` ${course.name} `}
         </Text>
       </Button>
@@ -68,16 +76,17 @@ function CourseBox({ courseId, courseData, isOpen, hoverId }) {
   );
 }
 
-function CourseTableCard({
-  courseInitialOrder,
-  courseData,
-  day,
-  interval,
-  hoverId,
+function CourseTableCard(props: {
+  readonly courseInitialOrder: string[];
+  readonly courseData: { readonly [key: string]: Course };
+  readonly interval: Interval;
+  readonly day: string;
+  readonly hoverId: string;
 }) {
+  const { courseInitialOrder, courseData, day, interval, hoverId = "" } = props;
   const { neoLocalCourseTableKey } = useNeoLocalStorage();
   const { user } = useUser();
-  const { userInfo } = useUserInfo(user?.sub);
+  const { userInfo } = useUserInfo(user?.sub ?? null);
   const courseTableKey = userInfo
     ? userInfo?.course_tables?.[0] ?? null
     : neoLocalCourseTableKey;
@@ -88,10 +97,12 @@ function CourseTableCard({
   // initial order of courses
   const courseOrder = courseInitialOrder;
   // temp state (buffer), used for decide the NEW course order / dispatch to server, when press "save"
-  const [courseList, setCourseList] = useState([]);
-  const [prepareToRemoveCourseId, setPrepareToRemoveCourseId] = useState([]);
+  const [courseList, setCourseList] = useState<string[]>([]);
+  const [prepareToRemoveCourseId, setPrepareToRemoveCourseId] = useState<
+    string[]
+  >([]);
 
-  const handleDelete = (courseId) => {
+  const handleDelete = (courseId: string) => {
     if (prepareToRemoveCourseId.includes(courseId)) {
       setPrepareToRemoveCourseId(
         prepareToRemoveCourseId.filter((id) => id !== courseId)
@@ -109,13 +120,22 @@ function CourseTableCard({
     );
   };
 
-  const onSortEnd = ({ oldIndex, newIndex }) => {
+  const onSortEnd = ({
+    oldIndex,
+    newIndex,
+  }: {
+    readonly oldIndex: number;
+    readonly newIndex: number;
+  }) => {
     setCourseList(arrayMove(courseList, oldIndex, newIndex));
   };
 
   // fetch original order from courseOrder (ids_array), return the indices need to reorder
-  const fetchIndexByIds = (ids_array) => {
-    const index_arr = [];
+  const fetchIndexByIds = (ids_array: string[]) => {
+    if (!courseTable) {
+      return null;
+    }
+    const index_arr: number[] = [];
     ids_array.forEach((id) => {
       index_arr.push(courseTable.courses.map((c) => c.id).indexOf(id));
     });
@@ -125,6 +145,16 @@ function CourseTableCard({
   const saveChanges = async () => {
     // get indice need to reorder from courseOrder
     const index_arr = fetchIndexByIds(courseOrder);
+    if (!index_arr || !courseTable) {
+      toast({
+        title: "更改志願序失敗!",
+        description: "請檢查網路連線，或聯絡系統管理員。",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+      return;
+    }
     // do reorder, generate new courseTable.courses to be patched
     const new_courses = courseTable.courses.map((course) => course.id);
     for (let i = 0; i < courseList.length; i++) {
@@ -210,7 +240,6 @@ function CourseTableCard({
                 <CourseBox
                   courseId={courseId}
                   courseData={courseData}
-                  isOpen={isOpen}
                   hoverId={hoverId}
                 />
               </React.Fragment>
