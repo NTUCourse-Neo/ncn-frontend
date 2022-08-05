@@ -25,7 +25,10 @@ interface Options {
   ) => void;
 }
 
-export function useCourseEnrollData(courseSerial: string, options?: Options) {
+export function useCourseEnrollData(
+  courseSerial: string | null,
+  options?: Options
+) {
   const { user } = useUser();
   const toast = useToast();
   const router = useRouter();

@@ -294,7 +294,7 @@ export function SignUpPanel({ courseId }: { readonly courseId: string }) {
 export function EnrollStatusPanel({
   courseSerial,
 }: {
-  readonly courseSerial: string;
+  readonly courseSerial: string | null;
 }) {
   const { user, isLoading: isAuth0Loading } = useUser();
   const { data: courseEnrollStatus, isLoading } =
@@ -307,7 +307,7 @@ export function EnrollStatusPanel({
         <LoadingPanel title="努力取得資訊中..." height="100%" pt={8} />
       }
     >
-      {!courseEnrollStatus ? (
+      {!courseEnrollStatus || courseSerial === null ? (
         <PanelPlaceholder
           title="無法取得課程即時資訊"
           isEmpty={false}
