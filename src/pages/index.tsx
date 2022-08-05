@@ -147,7 +147,7 @@ function HomePage() {
   const [displayingCard, setDisplayingCard] = useState(0);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { user, isLoading: isAuthLoading } = useUser();
-  useUserInfo(user?.sub ?? null, {
+  useUserInfo(user?.sub, {
     onSuccessCallback: async (userData, key, config) => {
       if (!userData?.user?.db && user?.email) {
         setIsRegistering(true);
