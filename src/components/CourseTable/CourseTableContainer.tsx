@@ -24,6 +24,7 @@ import { useSnapshot } from "valtio";
 import { reportEvent } from "utils/ga";
 import { TimeMap } from "@/utils/parseCourseTime";
 import { Course, Interval } from "types/course";
+import { intervals } from "constant";
 
 function HoverCourseIndicator({
   hoveredCourse,
@@ -68,23 +69,7 @@ function CourseTableContainer(props: {
   const { courses, loading, courseTimeMap } = props;
   const days: Weekday[] = ["1", "2", "3", "4", "5"];
   const intervalTextColor = useColorModeValue("gray.300", "gray.600");
-  const interval: Interval[] = [
-    "0",
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    "10",
-    "A",
-    "B",
-    "C",
-    "D",
-  ];
+
   const [activeDayCol, setActiveDayCol] = useState<"0" | Weekday>("0");
   const { hoveredCourse, hoveredCourseTimeMap } = useSnapshot(hoverCourseState);
   const renderIntervalContent = useCallback(
@@ -226,7 +211,7 @@ function CourseTableContainer(props: {
         )}
       </Thead>
       <Tbody>
-        {interval.map((interval, i) => {
+        {intervals.map((interval, i) => {
           if (activeDayCol === "0") {
             return (
               <Tr key={`${interval}-${i}`}>

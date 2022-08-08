@@ -1,6 +1,7 @@
 import TableDragSelect from "react-table-drag-select";
 import "react-table-drag-select/style.css";
 import { Flex, Text } from "@chakra-ui/react";
+import { intervals } from "constant";
 
 function TimetableSelector({
   selectedTime,
@@ -10,23 +11,6 @@ function TimetableSelector({
   readonly setSelectedTime: (time: boolean[][]) => void;
 }) {
   const days = ["一", "二", "三", "四", "五", "六", "日"];
-  const intervals = [
-    "0",
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    "10",
-    "A",
-    "B",
-    "C",
-    "D",
-  ];
 
   return (
     <Flex px={{ base: "1", md: "20" }} flexDirection="column">

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-
-const COURSE_TABLE_LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
+import { NCN_COURSE_TABLE_LOCAL_STORAGE_KEY } from "constant";
 
 export interface NeoLocalStorageType {
   courseTableKey: string | null;
@@ -12,7 +11,7 @@ export default function useNeoLocalStorage() {
   useEffect(() => {
     // load from local storage when client side hydrated
     const courseTableKey = localStorage?.getItem(
-      COURSE_TABLE_LOCAL_STORAGE_KEY
+      NCN_COURSE_TABLE_LOCAL_STORAGE_KEY
     );
     setNeoLocalStorage({
       courseTableKey,
