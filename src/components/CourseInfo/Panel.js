@@ -393,7 +393,7 @@ export function NTURatingPanel({ courseId }) {
             rightIcon={<IoMdOpen />}
             onClick={() => {
               window.open(
-                ntuRatingData?.url + "?referrer=ntucourse_neo",
+                ntuRatingData?.url + "&referrer=ntucourse_neo",
                 "_blank"
               );
               reportEvent("rating_panel", "click_external", ntuRatingData?.url);
