@@ -2,7 +2,7 @@ import { getSocialPostByCourseId } from "queries/social";
 import { getAccessToken, withApiAuthRequired } from "@auth0/nextjs-auth0";
 import { assertNotNil } from "utils/assert";
 import type { NextApiRequest, NextApiResponse } from "next";
-import type { SignUpPost } from "@/types/course";
+import type { SignUpPost } from "types/course";
 import axios from "axios";
 
 export default withApiAuthRequired(async function handler(

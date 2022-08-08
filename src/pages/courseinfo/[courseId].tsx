@@ -43,7 +43,7 @@ import Head from "next/head";
 import { useUser } from "@auth0/nextjs-auth0";
 import { reportEvent } from "utils/ga";
 import { GetServerSideProps } from "next";
-import { Course } from "@/types/course";
+import { Course } from "types/course";
 import { ParsedUrlQuery } from "querystring";
 
 interface CopyWordType {

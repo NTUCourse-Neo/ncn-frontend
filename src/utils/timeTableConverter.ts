@@ -1,4 +1,4 @@
-import { Interval } from "@/types/course";
+import { Interval } from "types/course";
 
 const mapStateToTimeTable = (time_state: Interval[][]) => {
   if (time_state === [[], [], [], [], [], [], []]) {

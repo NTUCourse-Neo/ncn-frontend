@@ -32,7 +32,7 @@ import useNeoLocalStorage from "hooks/useNeoLocalStorage";
 import SortablePopover from "components/CourseTable/CourseTableCard/SortablePopover";
 import { patchCourseTable } from "queries/courseTable";
 import { reportEvent } from "utils/ga";
-import { Interval, Course } from "@/types/course";
+import { Interval, Course } from "types/course";
 
 function CourseBox(props: {
   readonly courseId: string;

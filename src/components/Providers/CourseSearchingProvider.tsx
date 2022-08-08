@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
-import type { SearchFieldName, FilterEnable, Filter } from "@/types/search";
+import type { SearchFieldName, FilterEnable, Filter } from "types/search";
 
 export interface SearchConfigType {
   show_selected_courses: boolean;

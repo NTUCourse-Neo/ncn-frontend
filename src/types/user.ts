@@ -1,4 +1,4 @@
-import { Department, Course } from "@/types/course";
+import { Department, Course } from "types/course";
 
 export interface User {
   db: {

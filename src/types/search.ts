@@ -1,4 +1,4 @@
-import { Interval } from "@/types/course";
+import { Interval } from "types/course";
 
 export const FilterSource = {
   time: null,

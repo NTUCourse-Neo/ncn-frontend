@@ -46,7 +46,7 @@ import {
 } from "components/Providers/DisplayTagsProvider";
 import { useSWRConfig } from "swr";
 import { reportEvent } from "utils/ga";
-import { SearchFieldName, EnrollMethod } from "@/types/search";
+import { SearchFieldName, EnrollMethod } from "types/search";
 
 function CourseSearchInputTextArea(props: {
   readonly searchCallback?: () => void;

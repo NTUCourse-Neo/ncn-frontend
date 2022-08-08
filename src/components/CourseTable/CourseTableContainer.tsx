@@ -23,7 +23,7 @@ import { hoverCourseState } from "utils/hoverCourse";
 import { useSnapshot } from "valtio";
 import { reportEvent } from "utils/ga";
 import { TimeMap } from "@/utils/parseCourseTime";
-import { Course, Interval } from "@/types/course";
+import { Course, Interval } from "types/course";
 
 function HoverCourseIndicator({
   hoveredCourse,

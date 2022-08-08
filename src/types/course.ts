@@ -1,4 +1,4 @@
-import { SocialUser } from "@/data/mapping_table";
+import { SocialUser } from "data/mapping_table";
 
 export interface Course {
   id: string;

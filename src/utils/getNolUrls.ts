@@ -1,4 +1,4 @@
-import type { Course } from "@/types/course";
+import type { Course } from "types/course";
 
 const getNolAddUrl = (course: Course) => {
   const d_id = "T010"; // TODO: move to parameter?

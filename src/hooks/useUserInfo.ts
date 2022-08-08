@@ -2,8 +2,8 @@ import useSWR from "swr";
 import handleFetch from "utils/CustomFetch";
 import { useRouter } from "next/router";
 import { useToast } from "@chakra-ui/react";
-import type { User } from "@/types/user";
-import type { Course } from "@/types/course";
+import type { User } from "types/user";
+import type { Course } from "types/course";
 import { AxiosError } from "axios";
 
 export default function useUserInfo(

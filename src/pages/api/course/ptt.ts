@@ -2,7 +2,7 @@ import { getPTTData } from "queries/course";
 import { getAccessToken, withApiAuthRequired } from "@auth0/nextjs-auth0";
 import { assertNotNil } from "utils/assert";
 import type { NextApiRequest, NextApiResponse } from "next";
-import type { PTTData } from "@/types/course";
+import type { PTTData } from "types/course";
 import axios from "axios";
 
 export default withApiAuthRequired(async function handler(

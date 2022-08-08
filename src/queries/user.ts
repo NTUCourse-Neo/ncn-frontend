@@ -1,5 +1,5 @@
 import instance from "@/queries/axiosInstance";
-import type { User } from "@/types/user";
+import type { User } from "types/user";
 const api_version = "v2";
 
 export const deleteUserProfile = async (token: string) => {

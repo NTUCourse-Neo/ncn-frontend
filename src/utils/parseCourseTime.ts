@@ -1,5 +1,5 @@
-import type { Course, Interval } from "@/types/course";
-import type { Weekday } from "@/data/mapping_table";
+import type { Course, Interval } from "types/course";
+import type { Weekday } from "data/mapping_table";
 
 export type SingleDayTimeMap = Partial<Record<Interval, string[]>>;
 export type TimeMap = Partial<Record<Weekday, SingleDayTimeMap>>;

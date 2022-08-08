@@ -6,7 +6,7 @@ import type {
   CourseRatingData,
   PTTData,
   CourseSyllabus,
-} from "@/types/course";
+} from "types/course";
 const api_version = "v2";
 
 export const fetchSearchResult = async (

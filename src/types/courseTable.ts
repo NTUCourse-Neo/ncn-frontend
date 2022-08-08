@@ -1,4 +1,4 @@
-import { Course } from "@/types/course";
+import { Course } from "types/course";
 
 export interface CourseTable {
   courses: Course[];

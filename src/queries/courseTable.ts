@@ -1,5 +1,5 @@
 import instance from "@/queries/axiosInstance";
-import type { CourseTable } from "@/types/courseTable";
+import type { CourseTable } from "types/courseTable";
 const api_version = "v2";
 
 export const createCourseTable = async (

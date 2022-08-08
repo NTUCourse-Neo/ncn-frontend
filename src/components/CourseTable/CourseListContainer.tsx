@@ -38,7 +38,7 @@ import {
 import { useRouter } from "next/router";
 import { patchCourseTable } from "queries/courseTable";
 import { reportEvent } from "utils/ga";
-import { Course } from "@/types/course";
+import { Course } from "types/course";
 
 const DragHandle = sortableHandle(() => (
   <MdDragHandle cursor="row-resize" size="20" color="gray" />

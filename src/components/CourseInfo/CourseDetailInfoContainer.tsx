@@ -30,7 +30,7 @@ import {
   SyllabusPanel,
   GradePolicyPanel,
 } from "components/CourseInfo/Panel";
-import type { Course } from "@/types/course";
+import type { Course } from "types/course";
 
 function DataSourceTag({ source }: { readonly source: string }) {
   return (

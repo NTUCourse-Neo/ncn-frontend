@@ -52,8 +52,8 @@ import handleFetch from "utils/CustomFetch";
 import useUserInfo from "hooks/useUserInfo";
 import { reportEvent } from "utils/ga";
 import { useSWRConfig } from "swr";
-import { Course } from "@/types/course";
-import { User } from "@/types/user";
+import { Course } from "types/course";
+import { User } from "types/user";
 
 const LOCAL_STORAGE_KEY = "NTU_CourseNeo_Course_Table_Key";
 

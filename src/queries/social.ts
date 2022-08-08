@@ -1,5 +1,5 @@
 import instance from "@/queries/axiosInstance";
-import { SignUpPost } from "@/types/course";
+import { SignUpPost } from "types/course";
 const api_version = "v1";
 
 const getSocialPostByPostId = async (token: string, post_id: string) => {

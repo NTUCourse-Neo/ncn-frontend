@@ -52,7 +52,7 @@ import { reportEvent } from "utils/ga";
 import {
   syllabusFields,
   syllabusFieldSource as syllabusTitle,
-} from "@/types/course";
+} from "types/course";
 
 interface LoadingPanelProps extends FlexProps {
   readonly title: string;

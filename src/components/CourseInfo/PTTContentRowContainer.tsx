@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { IoMdOpen } from "react-icons/io";
 import { reportEvent } from "utils/ga";
-import type { PTTData } from "@/types/course";
+import type { PTTData } from "types/course";
 
 export interface PTTContentRowContainerProps extends FlexProps {
   readonly info: PTTData;

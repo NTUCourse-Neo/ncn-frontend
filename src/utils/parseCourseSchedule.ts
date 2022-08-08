@@ -1,6 +1,6 @@
 import _ from "lodash";
-import type { Course } from "@/types/course";
-import { weekdays_map as numberToDay } from "@/data/mapping_table";
+import type { Course } from "types/course";
+import { weekdays_map as numberToDay } from "data/mapping_table";
 
 export default function parseCourseSchedlue(course: Course): string {
   const schedules = course.schedules;

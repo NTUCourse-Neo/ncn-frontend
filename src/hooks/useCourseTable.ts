@@ -3,7 +3,7 @@ import { useState } from "react";
 import { fetchCourseTable } from "queries/courseTable";
 import { useToast } from "@chakra-ui/react";
 import { patchCourseTable } from "queries/courseTable";
-import type { Course } from "@/types/course";
+import type { Course } from "types/course";
 
 export default function useCourseTable(
   courseTableId: string | null,

@@ -34,7 +34,7 @@ import Moment from "moment";
 import handleFetch from "utils/CustomFetch";
 import { useRouter } from "next/router";
 import { reportEvent } from "utils/ga";
-import type { SignUpPost } from "@/types/course";
+import type { SignUpPost } from "types/course";
 import { useSignUpPostData } from "hooks/useCourseInfo";
 
 function SignUpCard({

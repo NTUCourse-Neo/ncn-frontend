@@ -1,6 +1,6 @@
 import { proxy } from "valtio";
 import { parseCourseTime, TimeMap } from "utils/parseCourseTime";
-import type { Course } from "@/types/course";
+import type { Course } from "types/course";
 
 interface HoverCourseState {
   hoveredCourse: Course | null;

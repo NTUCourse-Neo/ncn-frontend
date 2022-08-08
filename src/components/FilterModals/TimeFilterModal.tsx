@@ -15,7 +15,7 @@ import TimetableSelector from "components/FilterModals/components/TimetableSelec
 import { mapStateToTimeTable } from "utils/timeTableConverter";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { reportEvent } from "utils/ga";
-import type { Interval } from "@/types/course";
+import type { Interval } from "types/course";
 
 export interface TimeFilterModalProps {
   readonly title: string;

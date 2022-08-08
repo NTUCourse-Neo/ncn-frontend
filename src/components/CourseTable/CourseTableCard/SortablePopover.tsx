@@ -20,7 +20,7 @@ import { useRouter } from "next/router";
 import { FaInfoCircle } from "react-icons/fa";
 import { reportEvent } from "utils/ga";
 import React from "react";
-import { Course } from "@/types/course";
+import { Course } from "types/course";
 
 const DragHandle = sortableHandle(() => (
   <MdDragHandle cursor="row-resize" size="20" color="gray" />

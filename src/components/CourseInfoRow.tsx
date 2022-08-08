@@ -35,7 +35,7 @@ import { useDisplayTags } from "components/Providers/DisplayTagsProvider";
 import parseCourseSchedlue from "utils/parseCourseSchedule";
 import useUserInfo from "hooks/useUserInfo";
 import { reportEvent } from "utils/ga";
-import type { Course } from "@/types/course";
+import type { Course } from "types/course";
 
 function DeptBadge({ course }: { readonly course: Course }) {
   if (course.departments.length === 0) {
