@@ -1,4 +1,4 @@
-import { useRef, forwardRef, useEffect, useState } from "react";
+import { useRef, forwardRef, useEffect, useState, useMemo } from "react";
 import FocusLock from "react-focus-lock";
 import {
   Flex,
@@ -166,9 +166,11 @@ function SideCourseTableContent(props: {
     mutate: mutateUser,
   } = useUserInfo(user?.sub ?? null);
   const { neoLocalCourseTableKey, setNeoLocalStorage } = useNeoLocalStorage();
-  const courseTableKey = userInfo
-    ? userInfo?.course_tables?.[0] ?? null
-    : neoLocalCourseTableKey;
+  const courseTableKey = useMemo(
+    () =>
+      userInfo ? userInfo?.course_tables?.[0] ?? null : neoLocalCourseTableKey,
+    [userInfo, neoLocalCourseTableKey]
+  );
   const {
     courseTable,
     isLoading: isCourseTableLoading,
@@ -329,7 +331,10 @@ function SideCourseTableContent(props: {
 
   const sideCourseTableLoading = isCourseTableLoading || isLoading;
 
-  if ((!courseTable || isExpired === true) && !sideCourseTableLoading) {
+  if (
+    (!courseTable || (userInfo === undefined && isExpired === true)) &&
+    !sideCourseTableLoading
+  ) {
     return (
       <Flex
         flexDirection="column"
