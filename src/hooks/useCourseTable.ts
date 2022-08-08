@@ -56,7 +56,6 @@ export default function useCourseTable(
                 courseTableId,
                 courseTable.name,
                 courseTable.user_id,
-                courseTable.expire_ts,
                 courseTable.courses
                   .map((c) => c.id)
                   .filter((id) => id !== course.id)
@@ -67,7 +66,6 @@ export default function useCourseTable(
                 courseTableId,
                 courseTable.name,
                 courseTable.user_id,
-                courseTable.expire_ts,
                 [...courseTable.courses.map((c) => c.id), course.id]
               );
               return data ?? prev;

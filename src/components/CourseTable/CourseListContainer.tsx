@@ -258,7 +258,6 @@ function CourseListContainer(props: {
               courseTable.id,
               courseTable.name,
               courseTable.user_id,
-              courseTable.expire_ts,
               courseListForSort.filter(
                 (id) => !prepareToRemoveCourseId.includes(id)
               )

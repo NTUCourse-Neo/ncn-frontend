@@ -174,7 +174,6 @@ function CourseTableCard(props: {
             courseTable.id,
             courseTable.name,
             courseTable.user_id,
-            courseTable.expire_ts,
             new_courses
           );
           return data ?? prev;

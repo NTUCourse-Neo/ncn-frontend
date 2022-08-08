@@ -34,7 +34,6 @@ export const patchCourseTable = async (
   course_table_id: string,
   course_table_name: string,
   user_id: string | null,
-  expire_ts: null | string,
   courses: string[]
 ) => {
   // filter out "" in courses
@@ -44,7 +43,6 @@ export const patchCourseTable = async (
     {
       name: course_table_name,
       user_id: user_id,
-      expire_ts: expire_ts, // not used
       courses: new_courses,
     }
   );

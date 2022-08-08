@@ -292,7 +292,6 @@ function SideCourseTableContent(props: {
               courseTable.id,
               new_table_name ?? courseTable.name,
               courseTable.user_id,
-              courseTable.expire_ts,
               courseTable.courses.map((course) => course.id)
             );
             return data ?? prev;
