@@ -263,13 +263,21 @@ function SideCourseTableContent(props: {
           process.env.NEXT_PUBLIC_SEMESTER ?? "error_secret_key"
         );
         // set State
-        localStorage.setItem(
-          LOCAL_STORAGE_KEY,
-          cipherId(newCourseTableData.course_table.id)
-        );
-        setNeoLocalStorage({
-          courseTableKey: newCourseTableData.course_table.id,
-        }); // have to setState to trigger request to new course table
+        const ctKey = cipherId(newCourseTableData.course_table.id);
+        if (ctKey) {
+          localStorage.setItem(LOCAL_STORAGE_KEY, ctKey);
+          setNeoLocalStorage({
+            courseTableKey: newCourseTableData.course_table.id,
+          }); // have to setState to trigger request to new course table
+        } else {
+          toast({
+            title: `新增課表失敗`,
+            description: `請至 Discord 回報錯誤`,
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+        }
       } catch (error) {
         toast({
           title: `新增課表失敗`,
