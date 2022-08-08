@@ -55,6 +55,7 @@ import { useSWRConfig } from "swr";
 import { Course } from "types/course";
 import { User } from "types/user";
 import { NCN_COURSE_TABLE_LOCAL_STORAGE_KEY as LOCAL_STORAGE_KEY } from "constant";
+import { cipherId } from "utils/cipher";
 
 const courseTableScrollBarCss = {
   "&::-webkit-scrollbar": {
@@ -264,7 +265,7 @@ function SideCourseTableContent(props: {
         // set State
         localStorage.setItem(
           LOCAL_STORAGE_KEY,
-          newCourseTableData.course_table.id
+          cipherId(newCourseTableData.course_table.id)
         );
         setNeoLocalStorage({
           courseTableKey: newCourseTableData.course_table.id,
