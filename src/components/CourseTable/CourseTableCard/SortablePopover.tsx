@@ -13,6 +13,7 @@ import {
   IconButton,
   Button,
   useColorModeValue,
+  Center,
 } from "@chakra-ui/react";
 import { hash_to_color_hex } from "utils/colorAgent";
 import { FaTrashAlt } from "react-icons/fa";
@@ -23,7 +24,9 @@ import React from "react";
 import { Course } from "types/course";
 
 const DragHandle = sortableHandle(() => (
-  <MdDragHandle cursor="row-resize" size="20" color="gray" />
+  <Center>
+    <MdDragHandle cursor="row-resize" size="20" color="gray" />
+  </Center>
 ));
 
 interface SortableElementProps {
@@ -51,12 +54,12 @@ const SortableElement = sortableElement<SortableElementProps>(
     return (
       <Flex className={styles.sortableHelper} alignItems="center" my="1">
         <DragHandle />
-        <Badge ml="4" mr="1" variant="solid" bg={badgeColor} color={textColor}>
+        <Badge ml="2" mr="1" variant="solid" bg={badgeColor} color={textColor}>
           {course.serial}
         </Badge>
         <Text
           as={prepareToRemoveCourseId.includes(course.id) ? "del" : undefined}
-          fontSize="lg"
+          fontSize="sm"
           color={
             prepareToRemoveCourseId.includes(course.id)
               ? removeColor

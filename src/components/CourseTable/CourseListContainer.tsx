@@ -102,7 +102,7 @@ function ListRowElement(props: {
                 ? removeColor
                 : textColor
             }
-            fontSize={{ base: "lg", md: "xl" }}
+            fontSize={{ base: "lg", md: "md" }}
             fontWeight="bold"
             noOfLines={1}
             maxW={{ base: "120px", md: "50vw", lg: "16vw" }}

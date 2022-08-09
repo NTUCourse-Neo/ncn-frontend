@@ -45,7 +45,7 @@ function HoverCourseIndicator({
         borderRadius="lg"
         boxShadow="lg"
         w="100%"
-        p={0}
+        p={2}
         h="3vh"
         border="2px"
         borderColor={hash_to_color_hex(course.id, 0.8)}
@@ -100,9 +100,7 @@ function CourseTableContainer(props: {
             <Td key={`${day}-${i}-${j}`}>
               <Flex
                 w={
-                  fullWidth
-                    ? "100%"
-                    : { base: "70px", md: "110px", lg: "100px" }
+                  fullWidth ? "100%" : { base: "70px", md: "110px", lg: "4vw" }
                 }
                 h="4vh"
                 mb="1"
@@ -120,9 +118,7 @@ function CourseTableContainer(props: {
         return (
           <Td key={`${day}-${i}-${j}`}>
             <Flex
-              w={
-                fullWidth ? "100%" : { base: "70px", md: "110px", lg: "100px" }
-              }
+              w={fullWidth ? "100%" : { base: "70px", md: "110px", lg: "4vw" }}
               minH="4vh"
               mb="1"
               direction={"column"}
@@ -182,7 +178,9 @@ function CourseTableContainer(props: {
                     bg="gray.600"
                     color="white"
                   >
-                    <Center>{weekdays_map[day]}</Center>
+                    <Center w={{ base: "70px", md: "110px", lg: "4vw" }}>
+                      {weekdays_map[day]}
+                    </Center>
                   </Tooltip>
                 </Th>
               );
