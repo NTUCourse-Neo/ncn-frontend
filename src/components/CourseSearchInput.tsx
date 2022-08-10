@@ -262,16 +262,6 @@ function CourseSearchInput({
   const [selectedDept, setSelectedDept] = useState(searchFilters.department);
   const [selectedType, setSelectedType] = useState(searchFilters.category);
 
-  // TODO: no need to use local state
-  const [timeFilterOn, setTimeFilterOn] = useState(searchFiltersEnable.time);
-  const [deptFilterOn, setDeptFilterOn] = useState(
-    searchFiltersEnable.department
-  );
-  const [catFilterOn, setCatFilterOn] = useState(searchFiltersEnable.category);
-  const [enrollFilterOn, setEnrollFilterOn] = useState(
-    searchFiltersEnable.enroll_method
-  );
-
   // searchSettings local states
   const [show_selected_courses, set_show_selected_courses] = useState(
     searchSettings.show_selected_courses
@@ -350,9 +340,8 @@ function CourseSearchInput({
                           useBreakpointValue({ base: "md", lg: "lg" }) ?? "md"
                         }
                         mr="2"
-                        isChecked={timeFilterOn}
+                        isChecked={searchFiltersEnable.time}
                         onChange={(e) => {
-                          setTimeFilterOn(e.currentTarget.checked);
                           setSearchFiltersEnable({
                             ...searchFiltersEnable,
                             time: e.currentTarget.checked,
@@ -366,7 +355,7 @@ function CourseSearchInput({
                             : `已選擇 ${mapStateToIntervals(searchFilters.time)}
                                節次`
                         }
-                        isEnabled={timeFilterOn}
+                        isEnabled={searchFiltersEnable.time}
                         selectedTime={selectedTime}
                         setSelectedTime={setSelectedTime}
                       />
@@ -383,9 +372,8 @@ function CourseSearchInput({
                           useBreakpointValue({ base: "md", lg: "lg" }) ?? "md"
                         }
                         mr="2"
-                        isChecked={deptFilterOn}
+                        isChecked={searchFiltersEnable.department}
                         onChange={(e) => {
-                          setDeptFilterOn(e.currentTarget.checked);
                           setSearchFiltersEnable({
                             ...searchFiltersEnable,
                             department: e.currentTarget.checked,
@@ -398,7 +386,7 @@ function CourseSearchInput({
                             ? "未選擇開課系所"
                             : `已選擇 ${selectedDept.length} 系所`
                         }
-                        isEnabled={deptFilterOn}
+                        isEnabled={searchFiltersEnable.department}
                         selectedDept={selectedDept}
                         setSelectedDept={setSelectedDept}
                       />
@@ -415,9 +403,8 @@ function CourseSearchInput({
                           useBreakpointValue({ base: "md", lg: "lg" }) ?? "md"
                         }
                         mr="2"
-                        isChecked={catFilterOn}
+                        isChecked={searchFiltersEnable.category}
                         onChange={(e) => {
-                          setCatFilterOn(e.currentTarget.checked);
                           setSearchFiltersEnable({
                             ...searchFiltersEnable,
                             category: e.currentTarget.checked,
@@ -430,7 +417,7 @@ function CourseSearchInput({
                             ? "未選擇課程類別"
                             : `已選擇 ${selectedType.length} 類別`
                         }
-                        isEnabled={catFilterOn}
+                        isEnabled={searchFiltersEnable.category}
                         selectedType={selectedType}
                         setSelectedType={setSelectedType}
                       />
@@ -447,9 +434,8 @@ function CourseSearchInput({
                           useBreakpointValue({ base: "md", lg: "lg" }) ?? "md"
                         }
                         mr="2"
-                        isChecked={enrollFilterOn}
+                        isChecked={searchFiltersEnable.enroll_method}
                         onChange={(e) => {
-                          setEnrollFilterOn(e.currentTarget.checked);
                           setSearchFiltersEnable({
                             ...searchFiltersEnable,
                             enroll_method: e.currentTarget.checked,
@@ -463,7 +449,7 @@ function CourseSearchInput({
                           }
                           as={Button}
                           rightIcon={<FaChevronDown />}
-                          disabled={!enrollFilterOn}
+                          disabled={!searchFiltersEnable.enroll_method}
                         >
                           加選方式
                         </MenuButton>
