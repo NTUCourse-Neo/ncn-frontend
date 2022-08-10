@@ -27,7 +27,9 @@ import {
   Tag,
   useColorModeValue,
   Icon,
+  FormControl,
 } from "@chakra-ui/react";
+import { Select } from "chakra-react-select";
 import { FaSearch, FaPlus, FaMinus, FaChevronDown } from "react-icons/fa";
 import { TbListSearch } from "react-icons/tb";
 import TimeFilterModal from "components/FilterModals/TimeFilterModal";
@@ -47,6 +49,44 @@ import {
 import { useSWRConfig } from "swr";
 import { reportEvent } from "utils/ga";
 import { SearchFieldName, EnrollMethod } from "types/search";
+
+const availableSemesters = ["1102", "1111"];
+
+function SemesterSelector() {
+  // single select right now
+  const { searchSemester, setSearchSemester } = useCourseSearchingContext();
+  return (
+    <FormControl w="12%">
+      <Select
+        isSearchable={false}
+        value={{
+          value: searchSemester,
+          label: searchSemester,
+        }}
+        options={availableSemesters.map((s) => ({
+          value: s,
+          label: s,
+        }))}
+        onChange={(e) => {
+          if (!e) {
+            return;
+          }
+          setSearchSemester(e.value);
+        }}
+        chakraStyles={{
+          menu: (base) => ({
+            ...base,
+            width: "100%",
+          }),
+          menuList: (base) => ({
+            ...base,
+            borderRadius: 0,
+          }),
+        }}
+      />
+    </FormControl>
+  );
+}
 
 function CourseSearchInputTextArea(props: {
   readonly searchCallback?: () => void;
@@ -167,6 +207,7 @@ function CourseSearchInputTextArea(props: {
             </MenuOptionGroup>
           </MenuList>
         </Menu>
+        <SemesterSelector />
         <Input
           variant="flushed"
           size={{ base: "md", md: "md" }}
