@@ -14,6 +14,7 @@ export default function useSearchResult(
     searchFiltersEnable,
     searchFilters,
     batchSize,
+    searchSemester,
     searchResultCount,
     setTotalCount,
     setSearchLoading,
@@ -22,6 +23,16 @@ export default function useSearchResult(
   const { data, error, isValidating } = useSWR(
     `/api/search/${searchKeyword}/${pageIndex}`,
     async () => {
+      if (!searchSemester) {
+        toast({
+          title: "獲取課程資訊失敗",
+          description: "請選擇學期",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        throw new Error("Missing semester env variable");
+      }
       setSearchLoading(true);
       const coursesData = await fetchSearchResult(
         searchKeyword ?? "",
@@ -30,6 +41,7 @@ export default function useSearchResult(
         searchFilters,
         batchSize,
         pageIndex * batchSize,
+        searchSemester,
         searchSettings.strict_search_mode
       );
       setSearchLoading(false);
