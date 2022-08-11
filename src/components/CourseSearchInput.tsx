@@ -27,9 +27,9 @@ import {
   Tag,
   useColorModeValue,
   Icon,
-  FormControl,
+  ButtonGroup,
+  Tooltip,
 } from "@chakra-ui/react";
-import { Select } from "chakra-react-select";
 import { FaSearch, FaPlus, FaMinus, FaChevronDown } from "react-icons/fa";
 import { TbListSearch } from "react-icons/tb";
 import TimeFilterModal from "components/FilterModals/TimeFilterModal";
@@ -52,42 +52,6 @@ import { SearchFieldName, EnrollMethod } from "types/search";
 
 const availableSemesters = ["1102", "1111"];
 
-function SemesterSelector() {
-  // single select right now
-  const { searchSemester, setSearchSemester } = useCourseSearchingContext();
-  return (
-    <FormControl w="12%">
-      <Select
-        isSearchable={false}
-        value={{
-          value: searchSemester,
-          label: searchSemester,
-        }}
-        options={availableSemesters.map((s) => ({
-          value: s,
-          label: s,
-        }))}
-        onChange={(e) => {
-          if (!e) {
-            return;
-          }
-          setSearchSemester(e.value);
-        }}
-        chakraStyles={{
-          menu: (base) => ({
-            ...base,
-            width: "100%",
-          }),
-          menuList: (base) => ({
-            ...base,
-            borderRadius: 0,
-          }),
-        }}
-      />
-    </FormControl>
-  );
-}
-
 function CourseSearchInputTextArea(props: {
   readonly searchCallback?: () => void;
 }) {
@@ -103,6 +67,7 @@ function CourseSearchInputTextArea(props: {
     setSearchResultCount,
   } = useCourseSearchingContext();
   const [searchText, setSearchText] = useState("");
+  const { searchSemester, setSearchSemester } = useCourseSearchingContext();
 
   const toggleSearchColumn = (col_name: SearchFieldName) => {
     if (searchColumns.includes(col_name)) {
@@ -207,7 +172,6 @@ function CourseSearchInputTextArea(props: {
             </MenuOptionGroup>
           </MenuList>
         </Menu>
-        <SemesterSelector />
         <Input
           variant="flushed"
           size={{ base: "md", md: "md" }}
@@ -225,20 +189,63 @@ function CourseSearchInputTextArea(props: {
             }
           }}
         />
-        <Button
-          colorScheme="blue"
-          size={{ base: "md", md: "md" }}
-          variant="solid"
-          onClick={() => {
-            startSearch();
-            reportEvent("search", "click_search", searchText);
-          }}
-        >
-          <HStack>
-            <FaSearch />
-            <Text display={{ base: "none", md: "inline" }}>搜尋</Text>
-          </HStack>
-        </Button>
+        <ButtonGroup isAttached>
+          <Button
+            colorScheme="blue"
+            size={"md"}
+            variant="solid"
+            onClick={() => {
+              startSearch();
+              reportEvent("search", "click_search", searchText);
+            }}
+          >
+            <HStack>
+              <FaSearch />
+              <Text display={{ base: "none", md: "inline" }}>搜尋</Text>
+            </HStack>
+          </Button>
+          <Menu>
+            <Tooltip
+              hasArrow
+              placement="top"
+              label={"選擇學期"}
+              bg="gray.600"
+              color="white"
+            >
+              <MenuButton
+                as={Button}
+                colorScheme="blue"
+                size={"md"}
+                variant="solid"
+                borderLeft={`0.1px solid ${useColorModeValue(
+                  "white",
+                  "black"
+                )}`}
+              >
+                <FaChevronDown size={10} />
+              </MenuButton>
+            </Tooltip>
+            <MenuList>
+              <MenuOptionGroup
+                value={searchSemester ?? undefined}
+                title="開課學期"
+                type="radio"
+              >
+                {availableSemesters.map((semester) => (
+                  <MenuItemOption
+                    key={semester}
+                    value={semester}
+                    onClick={() => {
+                      setSearchSemester(semester);
+                    }}
+                  >
+                    {semester}
+                  </MenuItemOption>
+                ))}
+              </MenuOptionGroup>
+            </MenuList>
+          </Menu>
+        </ButtonGroup>
       </Flex>
     </Flex>
   );

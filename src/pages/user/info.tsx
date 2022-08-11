@@ -292,7 +292,7 @@ export default function UserInfoPage({ user }: { readonly user: UserProfile }) {
     }
   };
 
-  function reactSelectStyles<T extends boolean>() {
+  function getReactSelectStyles<T extends boolean>() {
     return {
       menu: (provided) => ({
         ...provided,
@@ -481,7 +481,7 @@ export default function UserInfoPage({ user }: { readonly user: UserProfile }) {
                       setMajor(e.value);
                     }}
                     styles={{
-                      ...reactSelectStyles<false>(),
+                      ...getReactSelectStyles<false>(),
                       singleValue: (provided) => ({
                         ...provided,
                         color: selectorTextColor,
@@ -515,7 +515,7 @@ export default function UserInfoPage({ user }: { readonly user: UserProfile }) {
                       setDoubleMajor(e.value);
                     }}
                     styles={{
-                      ...reactSelectStyles<false>(),
+                      ...getReactSelectStyles<false>(),
                       singleValue: (provided) => ({
                         ...provided,
                         color: selectorTextColor,
@@ -559,7 +559,7 @@ export default function UserInfoPage({ user }: { readonly user: UserProfile }) {
                       );
                     }}
                     styles={{
-                      ...reactSelectStyles<true>(),
+                      ...getReactSelectStyles<true>(),
                       multiValue: (provided) => ({
                         ...provided,
                         backgroundColor: "#4A5568",
