@@ -29,6 +29,8 @@ interface CourseSearchingContextType {
   setSearchFiltersEnable: (searchFiltersEnable: FilterEnable) => void;
   searchFilters: Filter;
   setSearchFilters: (searchFilters: Filter) => void;
+  searchSemester: string | null;
+  setSearchSemester: (searchSemester: string | null) => void;
   fetchNextPage: () => void;
   dispatchSearch: (search: string | null) => void;
 }
@@ -59,6 +61,7 @@ const CourseSearchingContext = createContext<CourseSearchingContextType>({
     category: [],
     enroll_method: ["1", "2", "3"],
   },
+  searchSemester: "",
   setSearch: () => {},
   setPageNumber: () => {},
   setSearchLoading: () => {},
@@ -69,6 +72,7 @@ const CourseSearchingContext = createContext<CourseSearchingContextType>({
   setSearchColumns: () => {},
   setSearchFiltersEnable: () => {},
   setSearchFilters: () => {},
+  setSearchSemester: () => {},
   fetchNextPage: () => {},
   dispatchSearch: () => {},
 });
@@ -107,6 +111,9 @@ const CourseSearchingProvider: React.FC<{
     category: [],
     enroll_method: ["1", "2", "3"],
   });
+  const [searchSemester, setSearchSemester] = useState(
+    process.env.NEXT_PUBLIC_SEMESTER ?? null
+  );
 
   const fetchNextPage = () => {
     setPageNumber(pageNumber + 1);
@@ -131,6 +138,7 @@ const CourseSearchingProvider: React.FC<{
         searchSettings,
         searchFiltersEnable,
         searchFilters,
+        searchSemester,
         setSearch,
         setPageNumber,
         setBatchSize,
@@ -141,6 +149,7 @@ const CourseSearchingProvider: React.FC<{
         setSearchLoading,
         setSearchResultCount,
         setTotalCount,
+        setSearchSemester,
         fetchNextPage,
         dispatchSearch,
       }}

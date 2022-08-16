@@ -16,6 +16,7 @@ export const fetchSearchResult = async (
   filter_obj: Filter,
   batchSize: number,
   offset: number,
+  semester: string,
   strict_match_bool: boolean
 ) => {
   const filter = {
@@ -40,6 +41,7 @@ export const fetchSearchResult = async (
     filter: filter,
     batch_size: batchSize,
     offset: offset,
+    semester: semester,
   });
   return data as {
     courses: Course[];

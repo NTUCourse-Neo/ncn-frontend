@@ -21,7 +21,7 @@ import {
   Badge,
   useColorModeValue,
 } from "@chakra-ui/react";
-import Select from "react-select";
+import Select, { StylesConfig, GroupBase } from "react-select";
 import { HashLoader } from "react-spinners";
 import { FaExclamationTriangle } from "react-icons/fa";
 import { useRouter } from "next/router";
@@ -38,6 +38,7 @@ import { useSWRConfig } from "swr";
 import { reportEvent } from "utils/ga";
 import type { User } from "types/user";
 import { AxiosError } from "axios";
+import { Department } from "types/course";
 
 function DeleteDialog(props: {
   readonly isAlertOpen: boolean;
@@ -177,6 +178,9 @@ export default function UserInfoPage({ user }: { readonly user: UserProfile }) {
   const cardColor = useColorModeValue("card.light", "card.dark");
   const borderColor = useColorModeValue("gray.300", "gray.900");
   const dangerZoneColor = useColorModeValue("white", "black");
+  const selectorColor = useColorModeValue("#edf2f7", "#131720");
+  const selectorTextColor = useColorModeValue("#4A5568", "#CBD5E0");
+  const selectorBorderColor = useColorModeValue("#CBD5E0", "#2D3748");
   const router = useRouter();
   const toast = useToast();
   const deptOptions = deptList.map((dept) => ({
@@ -287,6 +291,50 @@ export default function UserInfoPage({ user }: { readonly user: UserProfile }) {
       }
     }
   };
+
+  function getReactSelectStyles<T extends boolean>() {
+    return {
+      menu: (provided) => ({
+        ...provided,
+        color: textColor,
+        backgroundColor: pageBg,
+      }),
+      control: (provided) => ({
+        ...provided,
+        border: `2px solid ${selectorBorderColor}`,
+        borderRadius: "5px",
+        boxSizing: "border-box",
+      }),
+      valueContainer: (provided) => ({
+        ...provided,
+        color: selectorTextColor,
+        backgroundColor: selectorColor,
+        border: `1px solid ${selectorColor}`,
+        borderRadius: "2px 0 0 2px",
+      }),
+      input: (provided) => ({
+        ...provided,
+        color: selectorTextColor,
+      }),
+      indicatorsContainer: (provided) => ({
+        ...provided,
+        color: textColor,
+        backgroundColor: selectorColor,
+        border: `1px solid ${selectorColor}`,
+        borderRadius: "0px 2px 2px 0px",
+      }),
+      option: (provided) => ({
+        ...provided,
+        ":hover": {
+          color: "#4A5568",
+        },
+      }),
+    } as StylesConfig<
+      { value: string | null; label: string },
+      T,
+      GroupBase<{ value: string | null; label: string }>
+    >;
+  }
 
   if (isLoading) {
     return (
@@ -432,6 +480,13 @@ export default function UserInfoPage({ user }: { readonly user: UserProfile }) {
                       }
                       setMajor(e.value);
                     }}
+                    styles={{
+                      ...getReactSelectStyles<false>(),
+                      singleValue: (provided) => ({
+                        ...provided,
+                        color: selectorTextColor,
+                      }),
+                    }}
                   />
                 </Box>
               </Flex>
@@ -459,6 +514,13 @@ export default function UserInfoPage({ user }: { readonly user: UserProfile }) {
                       }
                       setDoubleMajor(e.value);
                     }}
+                    styles={{
+                      ...getReactSelectStyles<false>(),
+                      singleValue: (provided) => ({
+                        ...provided,
+                        color: selectorTextColor,
+                      }),
+                    }}
                   />
                 </Box>
               </Flex>
@@ -473,8 +535,8 @@ export default function UserInfoPage({ user }: { readonly user: UserProfile }) {
                     classNamePrefix="select"
                     defaultValue={
                       userInfo?.minors
-                        ? userInfo?.minors
-                            .map((dept) => ({
+                        ? (userInfo?.minors
+                            .map((dept: Department) => ({
                               value: dept?.id ?? null,
                               label: departmentMap?.[dept?.id]
                                 ? `${dept?.id} ${departmentMap?.[dept?.id]}`
@@ -483,14 +545,29 @@ export default function UserInfoPage({ user }: { readonly user: UserProfile }) {
                             .filter(
                               (option) =>
                                 option.value !== null && option.label !== null
-                            )
+                            ) as { value: string | null; label: string }[])
                         : []
                     }
                     isSearchable={true}
                     name="color"
                     options={deptOptions}
                     onChange={(e) => {
-                      setMinor(e.map((dept) => dept.value));
+                      setMinor(
+                        e
+                          .filter((dept) => dept !== null)
+                          .map((dept) => dept.value as string)
+                      );
+                    }}
+                    styles={{
+                      ...getReactSelectStyles<true>(),
+                      multiValue: (provided) => ({
+                        ...provided,
+                        backgroundColor: "#4A5568",
+                      }),
+                      multiValueLabel: (provided) => ({
+                        ...provided,
+                        color: "white",
+                      }),
                     }}
                   />
                 </Box>
