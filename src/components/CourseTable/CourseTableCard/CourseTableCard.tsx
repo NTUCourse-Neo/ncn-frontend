@@ -1,6 +1,5 @@
 import * as React from "react";
 import { useState } from "react";
-import { arrayMoveImmutable as arrayMove } from "array-move";
 import {
   Flex,
   Text,
@@ -118,16 +117,6 @@ function CourseTableCard(props: {
       !courseOrder.every((course, index) => course === courseList[index]) ||
       prepareToRemoveCourseId.length > 0
     );
-  };
-
-  const onSortEnd = ({
-    oldIndex,
-    newIndex,
-  }: {
-    readonly oldIndex: number;
-    readonly newIndex: number;
-  }) => {
-    setCourseList(arrayMove(courseList, oldIndex, newIndex));
   };
 
   // fetch original order from courseOrder (ids_array), return the indices need to reorder
@@ -270,7 +259,7 @@ function CourseTableCard(props: {
                 courseData={courseData}
                 courseList={courseList}
                 prepareToRemoveCourseId={prepareToRemoveCourseId}
-                onSortEnd={onSortEnd}
+                setCourseList={setCourseList}
                 handlePrepareToDelete={handleDelete}
               />
             </Flex>

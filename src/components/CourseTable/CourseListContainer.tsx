@@ -307,16 +307,6 @@ function CourseListContainer(props: {
     );
   };
 
-  const onSortEnd = ({
-    oldIndex,
-    newIndex,
-  }: {
-    oldIndex: number;
-    newIndex: number;
-  }) => {
-    setCourseListForSort(arrayMove(courseListForSort, oldIndex, newIndex));
-  };
-
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
