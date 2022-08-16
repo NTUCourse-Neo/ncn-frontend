@@ -1,5 +1,4 @@
 import { MdDragHandle } from "react-icons/md";
-import styles from "components/CourseTable/CourseTableCard/CourseTableCard.module.css";
 import {
   Flex,
   Text,
@@ -68,7 +67,6 @@ function SortableElement(props: SortableElementProps) {
   };
   return (
     <Flex
-      className={styles.sortableHelper}
       alignItems="center"
       my="1"
       sx={style}
