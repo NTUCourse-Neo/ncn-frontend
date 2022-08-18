@@ -43,7 +43,8 @@ import {
   DndContext,
   closestCenter,
   KeyboardSensor,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
@@ -106,7 +107,12 @@ function SortableRowElement(props: SortableElementProps) {
         h="100%"
         w="100%"
       >
-        <div {...listeners}>
+        <div
+          style={{
+            touchAction: "manipulation",
+          }}
+          {...listeners}
+        >
           <MdDragHandle cursor="row-resize" size="20" color="gray" />
         </div>
         <Text fontWeight="800" color={textColor} mx="2" fontSize="xl">
@@ -308,7 +314,8 @@ function CourseListContainer(props: {
   };
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(MouseSensor),
+    useSensor(TouchSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })

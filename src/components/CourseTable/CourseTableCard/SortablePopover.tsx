@@ -26,7 +26,8 @@ import {
   DndContext,
   closestCenter,
   KeyboardSensor,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
@@ -69,11 +70,18 @@ function SortableElement(props: SortableElementProps) {
     <Flex
       alignItems="center"
       my="1"
+      bg={useColorModeValue("white", "gray.700")}
+      borderRadius="lg"
       sx={style}
       ref={setNodeRef}
       {...attributes}
     >
-      <div {...listeners}>
+      <div
+        style={{
+          touchAction: "manipulation",
+        }}
+        {...listeners}
+      >
         <MdDragHandle cursor="row-resize" size="20" color="gray" />
       </div>
       <Badge ml="2" mr="1" variant="solid" bg={badgeColor} color={textColor}>
@@ -135,7 +143,8 @@ function SortablePopover(props: {
     handlePrepareToDelete,
   } = props;
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(MouseSensor),
+    useSensor(TouchSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
