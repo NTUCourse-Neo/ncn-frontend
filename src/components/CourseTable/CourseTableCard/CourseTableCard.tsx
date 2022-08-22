@@ -130,22 +130,8 @@ function CourseTableCard(props: {
     setCourseList(arrayMove(courseList, oldIndex, newIndex));
   };
 
-  // fetch original order from courseOrder (ids_array), return the indices need to reorder
-  const fetchIndexByIds = (ids_array: string[]) => {
-    if (!courseTable) {
-      return null;
-    }
-    const index_arr: number[] = [];
-    ids_array.forEach((id) => {
-      index_arr.push(courseTable.courses.map((c) => c.id).indexOf(id));
-    });
-    return index_arr;
-  };
-
   const saveChanges = async () => {
-    // get indice need to reorder from courseOrder
-    const index_arr = fetchIndexByIds(courseOrder);
-    if (!index_arr || !courseTable) {
+    if (!courseTable) {
       toast({
         title: "更改志願序失敗!",
         description: "請檢查網路連線，或聯絡系統管理員。",
@@ -155,18 +141,9 @@ function CourseTableCard(props: {
       });
       return;
     }
-    // do reorder, generate new courseTable.courses to be patched
-    const new_courses = courseTable.courses.map((course) => course.id);
-    for (let i = 0; i < courseList.length; i++) {
-      const target_index = index_arr[i];
-      const target_id = courseList[i];
-      if (!prepareToRemoveCourseId.includes(target_id)) {
-        new_courses[target_index] = target_id;
-      } else {
-        // deleted
-        new_courses[target_index] = "";
-      }
-    }
+    const new_courses = courseList.filter(
+      (c) => !prepareToRemoveCourseId.includes(c)
+    );
     try {
       await mutateCourseTable(
         async (prev) => {

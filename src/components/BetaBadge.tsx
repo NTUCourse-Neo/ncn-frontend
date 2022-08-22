@@ -9,7 +9,7 @@ function BetaBadge({
   return (
     <Text
       as="sup"
-      fontSize={size ? size : "sm"}
+      fontSize={size || "sm"}
       style={{ fontStyle: "italic" }}
       color="gray.500"
       fontWeight="500"

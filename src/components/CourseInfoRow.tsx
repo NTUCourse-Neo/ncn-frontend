@@ -195,7 +195,7 @@ function CourseDrawerContainer({
             color={useColorModeValue("text.light", "text.dark")}
             mx="4px"
           >
-            {courseInfo?.note ?? "無"}
+            {courseInfo?.note || "無"}
           </Text>
         </Flex>
       </Flex>
@@ -505,6 +505,11 @@ function CourseInfoRow({
                   </Tooltip>
                 );
               }
+              const tagLabel =
+                (tag === "slot"
+                  ? courseInfo?.[tag]
+                  : info_view_map?.[tag]?.map?.[courseInfo?.[tag]] ??
+                    courseInfo?.[tag]) ?? "未知";
               return (
                 <Tooltip
                   hasArrow
@@ -521,13 +526,7 @@ function CourseInfoRow({
                     hidden={!courseInfo[tag]}
                   >
                     <TagLeftIcon boxSize="12px" as={info_view_map[tag].logo} />
-                    <TagLabel>
-                      {tag === "slot"
-                        ? courseInfo?.[tag] ?? "未知"
-                        : info_view_map?.[tag]?.map?.[courseInfo?.[tag]] ??
-                          courseInfo?.[tag] ??
-                          "未知"}
-                    </TagLabel>
+                    <TagLabel>{tagLabel}</TagLabel>
                   </Tag>
                 </Tooltip>
               );
