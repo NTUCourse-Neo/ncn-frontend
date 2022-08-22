@@ -32,6 +32,13 @@ const colors = {
   },
 };
 
-const theme = extendTheme({ config, colors });
+const theme = extendTheme({
+  config,
+  colors,
+  fonts: {
+    heading: `'Noto Sans TC', sans-serif`,
+    body: `'Noto Sans TC', sans-serif`,
+  },
+});
 
 export default theme;
