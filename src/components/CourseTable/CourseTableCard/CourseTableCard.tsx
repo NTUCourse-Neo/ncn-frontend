@@ -48,7 +48,7 @@ function CourseBox(props: {
     hash_to_color_hex(course.id, 0.2, 0.3)
   );
   if (!course) {
-    return <></>;
+    return null;
   }
 
   return (

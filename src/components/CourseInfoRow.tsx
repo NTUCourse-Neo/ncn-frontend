@@ -39,7 +39,7 @@ import type { Course } from "types/course";
 
 function DeptBadge({ course }: { readonly course: Course }) {
   if (course.departments.length === 0) {
-    return <></>;
+    return null;
   }
   const dept_str = course.departments.map((d) => d.name_full).join(", ");
   const isMultipleDepts = course.departments.length > 1;
@@ -81,7 +81,7 @@ function DrawerDataTag({
 }) {
   const textColor = useColorModeValue("text.light", "text.dark");
   if (label === "") {
-    return <></>;
+    return null;
   }
   return (
     <Flex

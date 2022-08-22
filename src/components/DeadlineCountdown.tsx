@@ -114,7 +114,7 @@ function DeadlineCountdown() {
     "cyan"
   );
   if (status_idx === -1) {
-    return <></>;
+    return null;
   }
   const elaspedDays = differenceInDays(
     status_idx === 0

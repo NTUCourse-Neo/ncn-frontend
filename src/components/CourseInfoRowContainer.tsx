@@ -22,7 +22,7 @@ interface CourseInfoRowPageProps {
 function CourseInfoRowPage({
   displayTable,
   pageIndex,
-}: CourseInfoRowPageProps): JSX.Element {
+}: CourseInfoRowPageProps): JSX.Element | null {
   const { search } = useCourseSearchingContext();
   const { courses, isLoading, error } = useSearchResult(search, pageIndex);
   const { neoLocalCourseTableKey } = useNeoLocalStorage();
@@ -38,7 +38,7 @@ function CourseInfoRowPage({
   const isDesktop = useBreakpointValue({ base: false, lg: true });
 
   if (isLoading || error) {
-    return <></>;
+    return null;
   }
   return (
     <>
