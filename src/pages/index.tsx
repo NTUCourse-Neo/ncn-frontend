@@ -206,14 +206,14 @@ function HomePage() {
         color={useColorModeValue("heading.light", "heading.dark")}
         mb="2"
       >
-        🚀 台大課程網 111-1 課程已更新！
+        🚀 臺大 111-1 課程已更新！
       </Text>
       <Text
         fontSize="md"
         fontWeight="500"
         color={useColorModeValue("text.light", "text.dark")}
       >
-        讚啦！新的學期即將到來，現在就開始規劃課程吧。使用之餘也歡迎協助台大課程網填寫使用習慣問卷，讓我們能變得更好。
+        新的學期即將到來，現在就開始規劃課程吧。歡迎填寫台大課程網使用習慣問卷，讓我們能變得更好。
       </Text>
       <Flex flexDirection="column" flexGrow={1} justify="end" w="100%">
         <Flex
@@ -453,7 +453,7 @@ function HomePage() {
               </Flex>
               <Flex
                 alignItems="start"
-                justifyContent={{ base: "center", lg: "start" }}
+                justifyContent={{ base: "start", lg: "start" }}
               >
                 <Flex flexDirection="column" alignItems="start">
                   <AnimatePresence initial={true} exitBeforeEnter={true}>

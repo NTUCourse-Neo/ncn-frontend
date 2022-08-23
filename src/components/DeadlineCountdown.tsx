@@ -110,7 +110,7 @@ function DeadlineCountdown() {
   const curr_ts = new Date().getTime();
   const { status_idx, schedule_idx } = getCourseSelectSchedule(curr_ts);
   if (status_idx === -1) {
-    return <></>;
+    return null;
   }
   const elaspedDays = differenceInDays(
     status_idx === 0

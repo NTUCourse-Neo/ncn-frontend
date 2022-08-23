@@ -186,23 +186,25 @@ function SideCourseTableContent(props: {
 
   const { onOpen, onClose, isOpen } = useDisclosure();
 
-  function convertArrayToObject(array: Course[]): { [key: string]: Course } {
-    const initialValue = {};
-    return array.reduce((obj, item: Course) => {
+  function convertCourseArrayToObject(array: Course[]): {
+    [key: string]: Course;
+  } {
+    const courseDict: {
+      [key: string]: Course;
+    } = {};
+    array.forEach((item: Course) => {
       const courseKey = item.id;
-      return {
-        ...obj,
-        [courseKey]: item,
-      };
-    }, initialValue);
+      courseDict[courseKey] = item;
+    });
+    return courseDict;
   }
 
   useEffect(() => {
     if (courseTable?.courses) {
       setCourseTimeMap(
-        parseCoursesToTimeMap(convertArrayToObject(courseTable.courses))
+        parseCoursesToTimeMap(convertCourseArrayToObject(courseTable.courses))
       );
-      setCourses(convertArrayToObject(courseTable.courses));
+      setCourses(convertCourseArrayToObject(courseTable.courses));
     }
   }, [courseTable]);
 
