@@ -4,6 +4,7 @@ export interface CollegeMap {
   };
 }
 
+// IMPORTANT: must be aligned with DB
 const college_map: CollegeMap = {
   0: {
     name: "未知學院",
