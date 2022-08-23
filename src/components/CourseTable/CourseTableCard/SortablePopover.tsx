@@ -43,7 +43,7 @@ const SortableElement = sortableElement<SortableElementProps>(
   }: SortableElementProps) => {
     const router = useRouter();
     if (!course) {
-      return <></>;
+      return null;
     }
     const badgeColor = useColorModeValue(
       hash_to_color_hex(course.id, 0.9, 0.8),

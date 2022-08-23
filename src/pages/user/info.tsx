@@ -189,9 +189,9 @@ export default function UserInfoPage({ user }: { readonly user: UserProfile }) {
   }));
   const departmentMap: {
     [key: string]: string;
-  } = deptList.reduce((acc, department) => {
-    return { ...acc, [department.id]: department.name_full };
-  }, {});
+  } = Object.fromEntries(
+    deptList.map((department) => [department.id, department.name_full])
+  );
   const [saveLoading, setSaveLoading] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [deleteMode, setDeleteMode] = useState<string | null>(null);
