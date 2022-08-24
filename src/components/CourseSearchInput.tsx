@@ -174,8 +174,8 @@ function CourseSearchInputTextArea(props: {
         </Menu>
         <Input
           variant="flushed"
-          size={{ base: "md", md: "md" }}
-          w={["60%", "60%", "60%", "60%"]}
+          size={{ base: "sm", md: "md" }}
+          w={["50%", "60%", "60%", "60%"]}
           focusBorderColor="teal.500"
           placeholder="直接搜尋顯示全部課程"
           value={searchText}
