@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import styles from "components/CourseTable/CourseTableCard/CourseTableCard.module.css";
-import { arrayMoveImmutable as arrayMove } from "array-move";
 import {
   Flex,
   Text,
@@ -30,27 +28,55 @@ import useCourseTable from "hooks/useCourseTable";
 import useUserInfo from "hooks/useUserInfo";
 import { useUser } from "@auth0/nextjs-auth0";
 import useNeoLocalStorage from "hooks/useNeoLocalStorage";
-import {
-  SortableContainer as sortableContainer,
-  SortableElement as sortableElement,
-  SortableHandle as sortableHandle,
-} from "react-sortable-hoc";
 import { useRouter } from "next/router";
 import { patchCourseTable } from "queries/courseTable";
 import { reportEvent } from "utils/ga";
 import { Course } from "types/course";
+import {
+  useSortable,
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import { CSS } from "@dnd-kit/utilities";
+import {
+  restrictToVerticalAxis,
+  restrictToParentElement,
+} from "@dnd-kit/modifiers";
 
-const DragHandle = sortableHandle(() => (
-  <MdDragHandle cursor="row-resize" size="20" color="gray" />
-));
-
-function ListRowElement(props: {
+interface SortableElementProps {
   readonly course: Course;
   readonly courseIdx: number;
-  readonly prepareToRemoveCourseId: string[];
   readonly handleDelete: (courseId: string) => void;
-}) {
+  readonly prepareToRemoveCourseId: string[];
+}
+
+function SortableRowElement(props: SortableElementProps) {
   const { course, courseIdx, prepareToRemoveCourseId, handleDelete } = props;
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: course.id });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    position: "relative",
+    zIndex: isDragging ? 1000 : undefined,
+  };
   const router = useRouter();
   const textColor = useColorModeValue("heading.light", "heading.dark");
   const removeColor = useColorModeValue("red.700", "red.300");
@@ -70,6 +96,9 @@ function ListRowElement(props: {
       my="1"
       borderRadius="lg"
       zIndex="1000"
+      sx={style}
+      ref={setNodeRef}
+      {...attributes}
     >
       <Flex
         flexDirection="row"
@@ -78,7 +107,14 @@ function ListRowElement(props: {
         h="100%"
         w="100%"
       >
-        <DragHandle />
+        <div
+          style={{
+            touchAction: "manipulation",
+          }}
+          {...listeners}
+        >
+          <MdDragHandle cursor="row-resize" size="20" color="gray" />
+        </div>
         <Text fontWeight="800" color={textColor} mx="2" fontSize="xl">
           {courseIdx + 1}
         </Text>
@@ -174,40 +210,6 @@ function ListRowElement(props: {
     </Flex>
   );
 }
-
-interface SortableElementProps {
-  readonly helperClass: string;
-  readonly course: Course;
-  readonly courseIdx: number;
-  readonly handleDelete: (courseId: string) => void;
-  readonly prepareToRemoveCourseId: string[];
-}
-
-const SortableElement = sortableElement<SortableElementProps>(
-  ({
-    course,
-    courseIdx,
-    prepareToRemoveCourseId,
-    handleDelete,
-  }: SortableElementProps) => (
-    <ListRowElement
-      course={course}
-      courseIdx={courseIdx}
-      prepareToRemoveCourseId={prepareToRemoveCourseId}
-      handleDelete={handleDelete}
-    />
-  )
-);
-
-const SortableContainer = sortableContainer<{
-  readonly children: React.ReactNode;
-}>(({ children }: { readonly children: React.ReactNode }) => {
-  return (
-    <Flex flexDirection="column" overflow={"visible"}>
-      {children}
-    </Flex>
-  );
-});
 
 function CourseListContainer(props: {
   readonly loading: boolean;
@@ -311,15 +313,13 @@ function CourseListContainer(props: {
     );
   };
 
-  const onSortEnd = ({
-    oldIndex,
-    newIndex,
-  }: {
-    oldIndex: number;
-    newIndex: number;
-  }) => {
-    setCourseListForSort(arrayMove(courseListForSort, oldIndex, newIndex));
-  };
+  const sensors = useSensors(
+    useSensor(MouseSensor),
+    useSensor(TouchSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   if (loading) {
     return (
@@ -384,30 +384,45 @@ function CourseListContainer(props: {
           儲存
         </Button>
       </Flex>
-      <SortableContainer
-        onSortEnd={onSortEnd}
-        lockAxis="y"
-        useDragHandle
-        helperClass={styles.sortableHelper}
-      >
-        {courseListForSort.map((key, index) => {
-          const course = courses?.[key];
-          if (!course) {
-            return null;
-          }
-          return (
-            <SortableElement
-              key={key}
-              index={index}
-              helperClass={styles.sortableHelper}
-              course={course}
-              courseIdx={index}
-              handleDelete={handleDelete}
-              prepareToRemoveCourseId={prepareToRemoveCourseId}
-            />
-          );
-        })}
-      </SortableContainer>
+      <div>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          modifiers={[restrictToParentElement, restrictToVerticalAxis]}
+          onDragEnd={(event) => {
+            const { active, over } = event;
+            if (active.id !== over?.id) {
+              setCourseListForSort((courseListForSort) => {
+                const oldIndex = courseListForSort.indexOf(String(active.id));
+                const newIndex = courseListForSort.indexOf(String(over?.id));
+
+                return arrayMove(courseListForSort, oldIndex, newIndex);
+              });
+            }
+          }}
+        >
+          <SortableContext
+            items={courseListForSort}
+            strategy={verticalListSortingStrategy}
+          >
+            {courseListForSort.map((key, index) => {
+              const course = courses?.[key];
+              if (!course) {
+                return null;
+              }
+              return (
+                <SortableRowElement
+                  key={key}
+                  course={course}
+                  courseIdx={index}
+                  handleDelete={handleDelete}
+                  prepareToRemoveCourseId={prepareToRemoveCourseId}
+                />
+              );
+            })}
+          </SortableContext>
+        </DndContext>
+      </div>
     </>
   );
 }

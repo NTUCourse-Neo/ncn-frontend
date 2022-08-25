@@ -1,6 +1,5 @@
 import * as React from "react";
 import { useState } from "react";
-import { arrayMoveImmutable as arrayMove } from "array-move";
 import {
   Flex,
   Text,
@@ -120,18 +119,20 @@ function CourseTableCard(props: {
     );
   };
 
-  const onSortEnd = ({
-    oldIndex,
-    newIndex,
-  }: {
-    readonly oldIndex: number;
-    readonly newIndex: number;
-  }) => {
-    setCourseList(arrayMove(courseList, oldIndex, newIndex));
+  const getIndicesByIds = (ids_array: string[]) => {
+    if (!courseTable) {
+      return null;
+    }
+    const index_arr: number[] = [];
+    ids_array.forEach((id) => {
+      index_arr.push(courseTable.courses.map((c) => c.id).indexOf(id));
+    });
+    return index_arr;
   };
 
   const saveChanges = async () => {
-    if (!courseTable) {
+    const index_arr = getIndicesByIds(courseOrder);
+    if (!index_arr || !courseTable) {
       toast({
         title: "更改志願序失敗!",
         description: "請檢查網路連線，或聯絡系統管理員。",
@@ -141,9 +142,16 @@ function CourseTableCard(props: {
       });
       return;
     }
-    const new_courses = courseList.filter(
-      (c) => !prepareToRemoveCourseId.includes(c)
-    );
+    const new_courses = courseTable.courses.map((course) => course.id);
+    for (let i = 0; i < courseList.length; i++) {
+      const target_index = index_arr[i];
+      const target_id = courseList[i];
+      if (!prepareToRemoveCourseId.includes(target_id)) {
+        new_courses[target_index] = target_id;
+      } else {
+        new_courses[target_index] = "";
+      }
+    }
     try {
       await mutateCourseTable(
         async (prev) => {
@@ -151,7 +159,7 @@ function CourseTableCard(props: {
             courseTable.id,
             courseTable.name,
             courseTable.user_id,
-            new_courses
+            new_courses.filter((id) => id !== "")
           );
           return data ?? prev;
         },
@@ -247,7 +255,7 @@ function CourseTableCard(props: {
                 courseData={courseData}
                 courseList={courseList}
                 prepareToRemoveCourseId={prepareToRemoveCourseId}
-                onSortEnd={onSortEnd}
+                setCourseList={setCourseList}
                 handlePrepareToDelete={handleDelete}
               />
             </Flex>
