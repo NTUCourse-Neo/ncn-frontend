@@ -1,4 +1,5 @@
 import { extendTheme } from "@chakra-ui/react";
+import Button from "styles/theme/component/button";
 
 const config = {
   initialColorMode: "light",
@@ -106,6 +107,9 @@ const theme = extendTheme({
   fonts: {
     heading: `'Noto Sans TC', sans-serif`,
     body: `'Noto Sans TC', sans-serif`,
+  },
+  components: {
+    Button,
   },
 });
 
