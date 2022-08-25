@@ -7,7 +7,7 @@ export function cipherId(id: string) {
   if (!password) {
     return null;
   }
-  const ciphertext = AES.encrypt(id, password);
+  const ciphertext = AES.encrypt(JSON.stringify({ id }), password);
   return ciphertext.toString();
 }
 
@@ -16,5 +16,6 @@ export function decipherId(id: string | null) {
   if (!password) {
     return null;
   }
-  return AES.decrypt(id, password).toString(enc.Utf8);
+  const decryptJson = AES.decrypt(id, password).toString(enc.Utf8);
+  return JSON.parse(decryptJson).id as string;
 }
