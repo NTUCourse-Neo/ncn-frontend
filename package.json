@@ -12,8 +12,8 @@
     "e2e": "npx cypress run --spec 'cypress/e2e/e2e/*'",
     "next:start": "next start",
     "analyze": "cross-env ANALYZE=true next build",
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "storybook": "start-storybook -p 6006 -s ./public",
+    "build-storybook": "build-storybook -s public"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": "eslint --cache --fix"
