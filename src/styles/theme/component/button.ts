@@ -9,33 +9,40 @@ const button: ComponentStyleConfig = {
   },
   sizes: {},
   variants: {
-    solid: {
-      bg: "primary.500",
+    solid: ({ colorScheme: c }) => ({
+      bg: `${c}.500`,
       color: "white",
+      _focus: {
+        borderColor: `${c}.200`,
+      },
       _pressed: {
-        bg: "primary.600",
+        bg: `${c}.600`,
       },
       _hover: {
-        bg: "primary.600",
+        bg: `${c}.600`,
         _disabled: {
-          bg: "primary.400",
+          bg: `${c}.400`,
         },
       },
       _disabled: {
-        bg: "primary.400",
+        bg: `${c}.400`,
+        opacity: 1,
       },
-    },
-    outline: {
-      borderColor: "primary.500",
-      color: "primary.500",
-    },
-    soft: {
+    }),
+    outline: ({ colorScheme: c }) => ({
+      borderColor: `${c}.500`,
+      color: `${c}.500`,
+    }),
+    soft: ({ colorScheme: c }) => ({
       border: "none",
-      bg: "#96B7FF",
-      color: "#0D40C3",
-    },
+      bg: `${c}.200`,
+      color: `${c}.500`,
+    }),
   },
-  defaultProps: {},
+  defaultProps: {
+    colorScheme: "primary",
+    variant: "solid",
+  },
 };
 
 export default button;
