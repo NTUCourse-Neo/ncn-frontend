@@ -1,5 +1,5 @@
 import { extendTheme } from "@chakra-ui/react";
-import Button from "styles/theme/component/button";
+import Button from "@/styles/theme/component/button";
 
 const config = {
   initialColorMode: "light",
