@@ -3,6 +3,7 @@ import Button from "@/styles/theme/component/button";
 import Tag from "@/styles/theme/component/tag";
 import Checkbox from "@/styles/theme/component/checkbox";
 import Radio from "@/styles/theme/component/radio";
+import Switch from "@/styles/theme/component/switch";
 import textStyles from "@/styles/theme/textStyle";
 import shadows from "@/styles/theme/shadows";
 
@@ -129,6 +130,7 @@ const theme = extendTheme({
     Tag,
     Checkbox,
     Radio,
+    Switch,
   },
 });
 
