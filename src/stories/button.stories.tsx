@@ -8,7 +8,7 @@ export default {
   title: "Neo Components/Button",
   argTypes: {
     variant: {
-      options: ["solid", "outline", "soft"],
+      options: ["solid", "outline"],
       defaultValue: "solid",
       control: {
         type: "select",
