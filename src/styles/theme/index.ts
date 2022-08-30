@@ -1,6 +1,8 @@
 import { extendTheme } from "@chakra-ui/react";
 import Button from "@/styles/theme/component/button";
 import Tag from "@/styles/theme/component/tag";
+import Checkbox from "@/styles/theme/component/checkbox";
+import Radio from "@/styles/theme/component/radio";
 import textStyles from "@/styles/theme/textStyle";
 import shadows from "@/styles/theme/shadows";
 
@@ -125,6 +127,8 @@ const theme = extendTheme({
   components: {
     Button,
     Tag,
+    Checkbox,
+    Radio,
   },
 });
 
