@@ -5,7 +5,7 @@ import { ChevronRightIcon, ChevronLeftIcon, AddIcon } from "@chakra-ui/icons";
 
 export default {
   component: Button,
-  title: "Neo Components/Button",
+  title: "Neo Design System/Button",
   argTypes: {
     variant: {
       options: ["solid", "outline"],

@@ -4,7 +4,7 @@ import { Switch } from "@chakra-ui/react";
 
 export default {
   component: Switch,
-  title: "Neo Components/Switch",
+  title: "Neo Design System/Switch",
   argTypes: {
     isDisabled: {
       defaultValue: false,

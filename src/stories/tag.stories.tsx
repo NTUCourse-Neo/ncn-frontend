@@ -5,7 +5,7 @@ import { CloseIcon, ArrowRightIcon } from "@chakra-ui/icons";
 
 export default {
   component: Tag,
-  title: "Neo Components/Badge",
+  title: "Neo Design System/Badge",
   argTypes: {
     size: {
       options: ["sm", "md", "lg"],

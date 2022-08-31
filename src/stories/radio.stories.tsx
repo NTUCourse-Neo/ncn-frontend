@@ -4,7 +4,7 @@ import { Radio } from "@chakra-ui/react";
 
 export default {
   component: Radio,
-  title: "Neo Components/Radio",
+  title: "Neo Design System/Radio",
   argTypes: {
     isDisabled: {
       defaultValue: false,

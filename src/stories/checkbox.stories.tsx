@@ -4,7 +4,7 @@ import { Checkbox } from "@chakra-ui/react";
 
 export default {
   component: Checkbox,
-  title: "Neo Components/Checkbox",
+  title: "Neo Design System/Checkbox",
   argTypes: {
     variant: {
       options: ["default", "rounded"],
