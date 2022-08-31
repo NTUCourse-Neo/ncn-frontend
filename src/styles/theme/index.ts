@@ -5,6 +5,7 @@ import Checkbox from "@/styles/theme/component/checkbox";
 import Radio from "@/styles/theme/component/radio";
 import Switch from "@/styles/theme/component/switch";
 import Input from "@/styles/theme/component/input";
+import Textarea from "@/styles/theme/component/textarea";
 import textStyles from "@/styles/theme/textStyle";
 import shadows from "@/styles/theme/shadows";
 
@@ -133,6 +134,7 @@ const theme = extendTheme({
     Radio,
     Switch,
     Input,
+    Textarea,
   },
 });
 
