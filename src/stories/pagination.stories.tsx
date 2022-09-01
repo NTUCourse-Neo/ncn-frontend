@@ -29,6 +29,7 @@ const Template: ComponentStory<typeof PaginationButton> = (args) => {
 export const Default = Template.bind({});
 Default.args = {
   numberOfPages: 10,
+  maxVisiblePages: 5,
   onClick: (page) => {
     console.log(`page ${page}`);
   },
