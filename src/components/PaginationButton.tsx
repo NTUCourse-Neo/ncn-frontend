@@ -7,11 +7,35 @@ import {
   IconButtonProps,
   ButtonGroupProps,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { ChevronRightIcon, ChevronLeftIcon } from "@chakra-ui/icons";
+
+function checkIsPositiveInteger(value: number) {
+  return value > 0 && value === Math.floor(value);
+}
+
+// currentPage is 0-indexed
+function generatePageNumbers(
+  totalPages: number,
+  maxVisiblePages: number,
+  currentPageZeroIndexed: number
+): number[] {
+  const currentPage = currentPageZeroIndexed + 1;
+  const half = Math.floor(maxVisiblePages / 2);
+  let to;
+  to = maxVisiblePages;
+  if (currentPage + half >= totalPages) {
+    to = totalPages;
+  } else if (currentPage > half) {
+    to = currentPage + half;
+  }
+  const from = to - maxVisiblePages;
+  return Array.from({ length: maxVisiblePages }, (_, i) => i + 1 + from);
+}
 
 export interface PaginationButtonProps {
   readonly numberOfPages: number;
+  readonly maxVisiblePages: number;
   readonly onClick: (page: number) => void;
   readonly navButtonProps?: ButtonProps;
   readonly numberButtonProps?: IconButtonProps;
@@ -22,12 +46,14 @@ export interface PaginationButtonProps {
 export default function PaginationButton(props: PaginationButtonProps) {
   const {
     numberOfPages,
+    maxVisiblePages,
     onClick,
     navButtonProps = {},
     numberButtonProps = {},
     buttonGroupProps = {},
     useIcon = false,
   } = props;
+
   const [currentPage, setCurrentPage] = useState(0); // 0-indexed
   const buttonBaseStyle = {
     color: "black",
@@ -56,6 +82,21 @@ export default function PaginationButton(props: PaginationButtonProps) {
       cursor: "not-allowed",
     },
   };
+
+  const PageIndexNumbers: number[] = useMemo(() => {
+    if (numberOfPages <= maxVisiblePages) {
+      return Array.from({ length: numberOfPages }, (_, i) => i + 1);
+    }
+    return generatePageNumbers(numberOfPages, maxVisiblePages, currentPage);
+  }, [currentPage, numberOfPages, maxVisiblePages]);
+
+  if (
+    !checkIsPositiveInteger(numberOfPages) ||
+    !checkIsPositiveInteger(maxVisiblePages)
+  ) {
+    return null;
+  }
+
   return (
     <ButtonGroup isAttached {...buttonGroupProps}>
       {useIcon ? (
@@ -83,10 +124,11 @@ export default function PaginationButton(props: PaginationButtonProps) {
           Previous
         </Button>
       )}
-      {Array.from({ length: numberOfPages }, (_, index) => {
-        const pageIndex = index + 1;
+      {PageIndexNumbers.map((pageIndex) => {
+        const index = pageIndex - 1;
         return (
           <IconButton
+            key={pageIndex}
             sx={{ ...buttonBaseStyle, ...numberButtonProps }}
             bg={currentPage === index ? "#f7f8f9" : "#ffffff"}
             aria-label={`page ${pageIndex}`}

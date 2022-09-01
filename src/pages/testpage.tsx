@@ -6,7 +6,8 @@ export default function TestPage() {
     <Center w="100vw" h="80vh">
       <Center h="80vh" w="10vw" bg="#fff">
         <PaginationButton
-          numberOfPages={10}
+          numberOfPages={20}
+          maxVisiblePages={10}
           onClick={(page) => {
             console.log(`Page ${page} !`);
           }}
