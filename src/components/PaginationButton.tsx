@@ -56,7 +56,10 @@ export default function PaginationButton(props: PaginationButtonProps) {
 
   const [currentPage, setCurrentPage] = useState(0); // 0-indexed
   const buttonBaseStyle = {
-    color: "black",
+    color: "#4b4b4b",
+    fontSize: "14px",
+    lineHeight: "20px",
+    fontWeight: 400,
     border: "1px solid #EEF0F3",
     shadow: "0px 1px 2px rgba(42, 51, 66, 0.06)",
     borderRadius: "6px",
