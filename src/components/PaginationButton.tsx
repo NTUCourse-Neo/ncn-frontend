@@ -114,6 +114,9 @@ export default function PaginationButton(props: PaginationButtonProps) {
             onClick(currentPage);
             setCurrentPage(currentPage - 1);
           }}
+          onMouseDown={(e) => {
+            e.preventDefault();
+          }}
           icon={<ChevronLeftIcon />}
         />
       ) : (
@@ -124,6 +127,9 @@ export default function PaginationButton(props: PaginationButtonProps) {
           onClick={() => {
             onClick(currentPage);
             setCurrentPage(currentPage - 1);
+          }}
+          onMouseDown={(e) => {
+            e.preventDefault();
           }}
         >
           Previous
@@ -142,6 +148,9 @@ export default function PaginationButton(props: PaginationButtonProps) {
               onClick(pageIndex);
               setCurrentPage(index);
             }}
+            onMouseDown={(e) => {
+              e.preventDefault();
+            }}
           />
         );
       })}
@@ -155,6 +164,9 @@ export default function PaginationButton(props: PaginationButtonProps) {
             onClick(currentPage + 2);
             setCurrentPage(currentPage + 1);
           }}
+          onMouseDown={(e) => {
+            e.preventDefault();
+          }}
           icon={<ChevronRightIcon />}
         />
       ) : (
@@ -165,6 +177,9 @@ export default function PaginationButton(props: PaginationButtonProps) {
           onClick={() => {
             onClick(currentPage + 2);
             setCurrentPage(currentPage + 1);
+          }}
+          onMouseDown={(e) => {
+            e.preventDefault();
           }}
         >
           Next
