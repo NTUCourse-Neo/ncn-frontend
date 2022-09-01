@@ -77,6 +77,8 @@ export default function PaginationButton(props: PaginationButtonProps) {
       opacity: 0.5,
     },
     _focus: {
+      shadow: "drop-shadow-2xl",
+      bg: "#96B7FF30",
       borderColor: "#EEF0F3",
     },
     _disabled: {
