@@ -23,7 +23,6 @@ import { FaCheck, FaExclamation, FaBook, FaInfoCircle } from "react-icons/fa";
 import { useUser } from "@auth0/nextjs-auth0";
 import BeatLoader from "react-spinners/BeatLoader";
 import Image from "next/image";
-import ThemeToggleButton from "components/ThemeToggleButton";
 import { reportEvent } from "utils/ga";
 
 function SignInButton() {
@@ -183,7 +182,8 @@ function SignInButton() {
 function HeaderBar() {
   return (
     <Flex
-      position="fixed"
+      top={0}
+      position="sticky"
       w="100%"
       h="64px"
       bg={useColorModeValue("headerBar.light", "headerBar.dark")}
@@ -241,7 +241,6 @@ function HeaderBar() {
             </HStack>
           </Button>
         </Link>
-        <ThemeToggleButton />
         <SignInButton />
       </Flex>
     </Flex>
