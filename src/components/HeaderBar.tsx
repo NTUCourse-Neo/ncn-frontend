@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import {
   Flex,
   Heading,
@@ -15,15 +15,75 @@ import {
   AvatarBadge,
   Badge,
   useColorModeValue,
+  Box,
+  Fade,
 } from "@chakra-ui/react";
-import { ChevronRightIcon } from "@chakra-ui/icons";
+import { ChevronRightIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { FaCheck, FaExclamation, FaBook, FaInfoCircle } from "react-icons/fa";
+import { FaCheck, FaExclamation } from "react-icons/fa";
 import { useUser } from "@auth0/nextjs-auth0";
 import BeatLoader from "react-spinners/BeatLoader";
 import Image from "next/image";
 import { reportEvent } from "utils/ga";
+import useOutsideDetecter from "@/hooks/useOutsideDetecter";
+
+function DropdownButton(props: {
+  readonly id: string;
+  readonly title: string;
+  readonly children: React.ReactNode;
+  readonly isOpen: boolean;
+  readonly onClick: () => void;
+}) {
+  const { id, title, children, isOpen, onClick } = props;
+  return (
+    <Flex
+      flexDirection={"column"}
+      justifyContent="center"
+      alignItems={"center"}
+      sx={{
+        transition: "all 0.4s ease-in-out",
+      }}
+      color={isOpen ? "primary.main" : "black"}
+    >
+      <HStack
+        spacing={0}
+        onClick={onClick}
+        sx={{
+          cursor: "pointer",
+        }}
+      >
+        <Text textStyle={"body1"} id={id}>
+          {title}
+        </Text>
+        <ChevronDownIcon
+          id={id}
+          boxSize={"24px"}
+          transform={isOpen ? "rotate(180deg)" : ""}
+          transition="all ease-in-out 0.4s"
+        />
+      </HStack>
+      <Fade in={isOpen} unmountOnExit={true}>
+        <Box
+          sx={{
+            transition: "all 1s ease-in-out",
+            transform: "translate(-50%, 0)",
+            border: "0.5px solid #6F6F6F",
+            borderRadius: "4px",
+          }}
+          top="60px"
+          w="fit-content"
+          bg="white"
+          position="absolute"
+          color="black"
+          p={2}
+        >
+          {children}
+        </Box>
+      </Fade>
+    </Flex>
+  );
+}
 
 function SignInButton() {
   const { user, isLoading } = useUser();
@@ -73,17 +133,6 @@ function SignInButton() {
             </Link>
             <Link href="/user/my">
               <MenuItem>最愛</MenuItem>
-            </Link>
-          </MenuGroup>
-          <MenuDivider display={{ base: "block", md: "none" }} />
-          <MenuGroup
-            title="更多"
-            display={{ base: "inline-block", md: "none" }}
-          >
-            <Link href="/about">
-              <MenuItem display={{ base: "inline-block", md: "none" }}>
-                關於
-              </MenuItem>
             </Link>
           </MenuGroup>
           <MenuDivider />
@@ -136,12 +185,6 @@ function SignInButton() {
           display={{ base: "inline", md: "none" }}
         />
         <MenuList>
-          <MenuGroup title="更多">
-            <Link href="/about">
-              <MenuItem>關於</MenuItem>
-            </Link>
-          </MenuGroup>
-          <MenuDivider />
           <Flex justifyContent="end" alignItems="center">
             <Button
               colorScheme="yellow"
@@ -162,6 +205,9 @@ function SignInButton() {
       </Menu>
       <Button
         bg={loginBtnBg}
+        _hover={{
+          bg: "yellow.400",
+        }}
         color={"gray.800"}
         rightIcon={<ChevronRightIcon />}
         size="md"
@@ -180,6 +226,22 @@ function SignInButton() {
 }
 
 function HeaderBar() {
+  const [openPanel, setOpenPanel] = useState<
+    null | "courseInfo" | "courseSites" | "selectSites"
+  >(null);
+  const courseInfoRef = useRef(null);
+  const courseSitesRef = useRef(null);
+  const selectSitesRef = useRef(null);
+  useOutsideDetecter(courseInfoRef, "courseInfo", () => {
+    setOpenPanel(null);
+  });
+  useOutsideDetecter(courseSitesRef, "courseSites", () => {
+    setOpenPanel(null);
+  });
+  useOutsideDetecter(selectSitesRef, "selectSites", () => {
+    setOpenPanel(null);
+  });
+
   return (
     <Flex
       top={0}
@@ -191,7 +253,7 @@ function HeaderBar() {
       justifyContent="space-between"
       alignItems="center"
       zIndex="1000"
-      px={{ base: 6, md: 10 }}
+      px={{ base: 6, md: 10, lg: 20 }}
     >
       <Flex justifyContent="center" alignItems="center">
         <Link href="/" passHref>
@@ -214,33 +276,58 @@ function HeaderBar() {
             </Heading>
           </Flex>
         </Link>
-        <Link href="/course">
-          <Button
-            variant="ghost"
-            size="md"
-            ml={{ base: 4, md: 6 }}
-            leftIcon={<FaBook />}
-            color={useColorModeValue("link.light", "link.dark")}
-          >
-            課程
-          </Button>
-        </Link>
+      </Flex>
+      <Flex flexDirection={"row"} alignItems="center" gap={6}>
+        <DropdownButton
+          id="courseInfo"
+          title={"課程資訊"}
+          isOpen={openPanel === "courseInfo"}
+          onClick={() => {
+            if (openPanel === "courseInfo") {
+              setOpenPanel(null);
+            } else {
+              setOpenPanel("courseInfo");
+            }
+          }}
+        >
+          <Flex w="200px" ref={courseInfoRef}>
+            123
+          </Flex>
+        </DropdownButton>
+        <DropdownButton
+          id="courseSites"
+          title={"課程網站"}
+          isOpen={openPanel === "courseSites"}
+          onClick={() => {
+            if (openPanel === "courseSites") {
+              setOpenPanel(null);
+            } else {
+              setOpenPanel("courseSites");
+            }
+          }}
+        >
+          <Flex w="200px" ref={courseSitesRef}>
+            123
+          </Flex>
+        </DropdownButton>
+        <DropdownButton
+          id="selectSites"
+          title={"正式選課"}
+          isOpen={openPanel === "selectSites"}
+          onClick={() => {
+            if (openPanel === "selectSites") {
+              setOpenPanel(null);
+            } else {
+              setOpenPanel("selectSites");
+            }
+          }}
+        >
+          <Flex w="200px" ref={selectSitesRef}>
+            123
+          </Flex>
+        </DropdownButton>
       </Flex>
       <Flex justifyContent="center" alignItems="center">
-        <Link href="/about">
-          <Button
-            variant="ghost"
-            size="md"
-            ml="30px"
-            display={{ base: "none", md: "inline-block" }}
-            color={useColorModeValue("link.light", "link.dark")}
-          >
-            <HStack>
-              <FaInfoCircle />
-              <Text>關於</Text>
-            </HStack>
-          </Button>
-        </Link>
         <SignInButton />
       </Flex>
     </Flex>
