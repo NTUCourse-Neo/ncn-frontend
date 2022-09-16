@@ -1,40 +1,24 @@
-import {
-  Text,
-  Flex,
-  Progress,
-  HStack,
-  Button,
-  LightMode,
-} from "@chakra-ui/react";
-import { FaClock } from "react-icons/fa";
+import { Text, Flex, Progress, HStack } from "@chakra-ui/react";
 import { differenceInDays, differenceInHours } from "date-fns";
+import { StopWatchOutlineIcon } from "components/CustomIcons";
 
 const status_map = [
   {
     name: "即將開始",
-    emoji: "⏰",
     color: "blue.200",
   },
   {
     name: "已開始",
-    emoji: "🏎️",
     color: "green.200",
   },
   {
     name: "快結束啦!",
-    emoji: "🏃",
     color: "yellow.200",
   },
   {
     name: "剩不到一天了",
-    emoji: "🥵",
     color: "red.200",
   },
-];
-
-const ntu_course_select_url = [
-  "https://if192.aca.ntu.edu.tw/index.php",
-  "https://if177.aca.ntu.edu.tw/index.php",
 ];
 
 interface CourseSelectionSchedule {
@@ -135,87 +119,86 @@ function DeadlineCountdown() {
     ((time_percent + schedule_idx) / (course_select_schedule.length - 1)) * 100;
 
   return (
-    <LightMode>
+    <Flex
+      overflowY={"auto"}
+      w={"100%"}
+      h="64px"
+      justifyContent={"center"}
+      alignItems="center"
+      flexDirection="row"
+      px="4"
+      bg={status_map[status_idx].color}
+    >
       <Flex
-        overflowY={"auto"}
-        w={{ base: "100%", lg: "25vw" }}
-        justifyContent={["center", "start"]}
-        alignItems="start"
-        flexDirection="column"
-        borderRadius="xl"
-        boxShadow="xl"
-        p="4"
-        bg={status_map[status_idx].color}
+        w={{ base: "100%" }}
+        flexDirection={{ base: "column", md: "row" }}
+        justifyContent="center"
+        alignItems={"center"}
+        gap={{ base: 2, md: 6 }}
       >
-        <Flex
-          w="100%"
-          justifyContent="space-between"
-          alignItems="center"
-          wrap="wrap"
-          css={{ gap: "2" }}
-        >
-          <Text fontSize="xl" fontWeight="800" color="gray.700" mb="2">
-            {status_map[status_idx].emoji}{" "}
-            {course_select_schedule[schedule_idx].name}{" "}
-            {status_map[status_idx].name}
-          </Text>
-          <HStack ml="1">
-            <FaClock color="black" />
-            <Text fontSize="sm" fontWeight="600" color="gray.700" mb="2">
+        <Flex flexDirection={"row"} gap={{ base: 2, md: 6 }}>
+          <Flex flexDirection={"column"} justifyContent={"center"}>
+            <Text
+              sx={{
+                fontSize: "20px",
+                fontWeight: "600",
+                lineHeight: "24px",
+              }}
+              color="gray.700"
+            >
+              {course_select_schedule[schedule_idx].name}{" "}
+              {status_map[status_idx].name}
+            </Text>
+          </Flex>
+          <HStack>
+            <StopWatchOutlineIcon boxSize={"24px"} color="black.800" />
+            <Text textStyle={"body1"}>
               {" "}
               尚餘 {elaspedDays} 天 {elapsedHours} 時
             </Text>
           </HStack>
         </Flex>
-        <Progress
-          w="100%"
-          my="2"
-          colorScheme={status_map[status_idx].color.slice(0, -4)}
-          size="sm"
-          value={process_percent}
-          hasStripe
-          isAnimated
-        />
-        <Flex w="100%" justifyContent="space-between" alignItems="center">
-          {course_select_schedule.map((item, idx) => {
-            return (
-              <Text
-                key={idx}
-                fontSize="xs"
-                fontWeight="600"
-                color="gray.700"
-                mb="2"
-              >
-                {item.label}
-              </Text>
-            );
-          })}
-        </Flex>
-        <Flex w="100%" mt="4" justifyContent="end" alignItems="center">
-          <Button
-            variant="solid"
-            mr="2"
-            size="sm"
-            onClick={() => {
-              window.open(ntu_course_select_url[0], "_blank");
-            }}
+        <Flex
+          flexDirection={"column"}
+          w={{ base: "95%", md: "40%", lg: "25%", xl: "20%" }}
+          position={"relative"}
+        >
+          <Progress
+            w="100%"
+            height="1rem"
             colorScheme={status_map[status_idx].color.slice(0, -4)}
-          >
-            選課系統 1
-          </Button>
-          <Button
-            variant="solid"
             size="sm"
-            onClick={() => {
-              window.open(ntu_course_select_url[1], "_blank");
-            }}
-            colorScheme={status_map[status_idx].color.slice(0, -4)}
+            value={process_percent}
+            hasStripe
+            isAnimated
+          />
+          <Flex
+            w="100%"
+            justifyContent="space-between"
+            alignItems="center"
+            position={"absolute"}
+            top="0"
+            px="1"
           >
-            選課系統 2
-          </Button>
+            {course_select_schedule.map((item, idx) => {
+              return (
+                <Text
+                  key={idx}
+                  sx={{
+                    fontSize: "9.94px",
+                    fontWeight: "400",
+                    color: "#2d2d2d",
+                    lineHeight: "14px",
+                  }}
+                >
+                  {item.label}
+                </Text>
+              );
+            })}
+          </Flex>
         </Flex>
       </Flex>
-    </LightMode>
+    </Flex>
   );
 }
 

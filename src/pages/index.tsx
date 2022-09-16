@@ -41,7 +41,6 @@ import useUserInfo from "hooks/useUserInfo";
 import { useUser } from "@auth0/nextjs-auth0";
 import handleFetch from "utils/CustomFetch";
 import { reportEvent } from "utils/ga";
-import DeadlineCountdown from "components/DeadlineCountdown";
 
 interface ScrollAnchorSpacerProps extends SpacerProps {
   readonly name: string;
@@ -498,7 +497,6 @@ function HomePage() {
                   />
                 </Flex>
               </Flex>
-              <DeadlineCountdown />
             </Flex>
             <Spacer />
             <Box w={["80vw", "40vw"]}>
