@@ -125,8 +125,6 @@ function SignInButton() {
         colorScheme="blue"
         variant="ghost"
         size="md"
-        ml="10px"
-        mr="10px"
         spinner={<BeatLoader size={8} color="white" />}
         isLoading
       />
@@ -141,7 +139,6 @@ function SignInButton() {
           name={user?.name ?? "User"}
           src={user?.picture ?? null}
           _hover={{ cursor: "pointer" }}
-          ml={{ base: 0, md: 6 }}
           boxSize="10"
         >
           {user.email_verified ? (
@@ -226,7 +223,7 @@ function SignInButton() {
                 router.push("/api/auth/login");
               }}
             >
-              登入 / 註冊
+              學生/教職員登入
             </Button>
           </Flex>
         </MenuList>
@@ -237,17 +234,14 @@ function SignInButton() {
           bg: "yellow.400",
         }}
         color={"gray.800"}
-        rightIcon={<ChevronRightIcon />}
         size="md"
-        ml="10px"
-        mr="10px"
         onClick={() => {
           reportEvent("header", "click_external", "status");
           router.push("/api/auth/login");
         }}
         display={{ base: "none", md: "inline-block" }}
       >
-        登入 / 註冊
+        學生/教職員登入
       </Button>
     </>
   );
@@ -270,6 +264,8 @@ function HeaderBar() {
     setOpenPanel(null);
   });
 
+  const hasNewPost = true; // TODO: check if there is new post
+
   return (
     <Flex
       top={0}
@@ -278,12 +274,12 @@ function HeaderBar() {
       h="64px"
       bg={useColorModeValue("headerBar.light", "headerBar.dark")}
       flexDirection="row"
-      justifyContent="space-between"
+      justifyContent="center"
       alignItems="center"
       zIndex="1000"
       px={{ base: 6, md: 10, lg: 20 }}
     >
-      <Flex justifyContent="center" alignItems="center">
+      <Flex justifyContent="flex-start" alignItems="center" flex={1}>
         <Link href="/" passHref>
           <Flex alignItems="center" flexDirection="row" cursor="pointer">
             <Image
@@ -319,7 +315,7 @@ function HeaderBar() {
           }}
         >
           <Flex
-            flexDirection={"row"}
+            flexDirection={{ base: "column", md: "row" }}
             gap={6}
             px={10}
             pt={4}
@@ -331,7 +327,11 @@ function HeaderBar() {
               color: "#484848",
             }}
           >
-            <Flex flexDirection={"column"} gap={3} w="192px">
+            <Flex
+              flexDirection={"column"}
+              gap={3}
+              w={{ md: "40%", lg: "192px" }}
+            >
               <Text
                 sx={{
                   fontSize: "18px",
@@ -355,7 +355,11 @@ function HeaderBar() {
                 課程相關說明文件
               </MegaMenuLink>
             </Flex>
-            <Flex flexDirection={"column"} gap={3} w="192px">
+            <Flex
+              flexDirection={"column"}
+              gap={3}
+              w={{ md: "40%", lg: "192px" }}
+            >
               <Text
                 sx={{
                   fontSize: "18px",
@@ -373,7 +377,11 @@ function HeaderBar() {
                 進階英語免修
               </MegaMenuLink>
             </Flex>
-            <Flex flexDirection={"column"} gap={3} w="192px">
+            <Flex
+              flexDirection={"column"}
+              gap={3}
+              w={{ md: "40%", lg: "192px" }}
+            >
               <Text
                 sx={{
                   fontSize: "18px",
@@ -477,7 +485,42 @@ function HeaderBar() {
           </Flex>
         </DropdownButton>
       </Flex>
-      <Flex justifyContent="center" alignItems="center">
+      <Flex
+        justifyContent="flex-end"
+        alignItems="center"
+        gap={{ base: 2, xl: 6 }}
+        flex={1}
+      >
+        <Box position={"relative"}>
+          <Link href="/newPost">
+            <Text textStyle={"body1"} cursor="pointer">
+              最新消息
+            </Text>
+          </Link>
+          {hasNewPost ? (
+            <Box
+              position={"absolute"}
+              boxSizing="content-box"
+              bg="#ff0000"
+              width="8px"
+              height="8px"
+              borderRadius="50%"
+              borderColor={"headerBar.light"}
+              borderWidth="2px"
+              top="0px"
+              right="-4px"
+              zIndex={100}
+            />
+          ) : null}
+        </Box>
+        <Link href="/helpCenter">
+          <Text textStyle={"body1"} cursor="pointer">
+            幫助中心
+          </Text>
+        </Link>
+        <Text textStyle={"body1"} cursor="pointer">
+          ENG
+        </Text>
         <SignInButton />
       </Flex>
     </Flex>
