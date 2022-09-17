@@ -17,6 +17,8 @@ import {
   useColorModeValue,
   Box,
   Fade,
+  Divider,
+  TextProps,
 } from "@chakra-ui/react";
 import { ChevronRightIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import Link from "next/link";
@@ -27,6 +29,31 @@ import BeatLoader from "react-spinners/BeatLoader";
 import Image from "next/image";
 import { reportEvent } from "utils/ga";
 import useOutsideDetecter from "@/hooks/useOutsideDetecter";
+
+interface MegaMenuLinkProps extends TextProps {
+  readonly href: string;
+  readonly isExternal?: boolean;
+}
+function MegaMenuLink(props: MegaMenuLinkProps) {
+  const { href, isExternal = true, children, ...restProps } = props;
+  return (
+    <Text
+      sx={{
+        cursor: "pointer",
+        transition: "all 0.2s ease-in-out",
+        _hover: {
+          opacity: 0.7,
+        },
+      }}
+      onClick={() => {
+        window.open(href, isExternal ? "_blank" : "_self");
+      }}
+      {...restProps}
+    >
+      {children}
+    </Text>
+  );
+}
 
 function DropdownButton(props: {
   readonly id: string;
@@ -65,6 +92,7 @@ function DropdownButton(props: {
       </HStack>
       <Fade in={isOpen} unmountOnExit={true}>
         <Box
+          boxSizing="border-box"
           sx={{
             transition: "all 1s ease-in-out",
             transform: "translate(-50%, 0)",
@@ -290,8 +318,79 @@ function HeaderBar() {
             }
           }}
         >
-          <Flex w="200px" ref={courseInfoRef}>
-            123
+          <Flex
+            flexDirection={"row"}
+            gap={6}
+            px={10}
+            pt={4}
+            pb={6}
+            ref={courseInfoRef}
+            sx={{
+              fontSize: "16px",
+              lineHeight: 1.6,
+              color: "#484848",
+            }}
+          >
+            <Flex flexDirection={"column"} gap={3} w="192px">
+              <Text
+                sx={{
+                  fontSize: "18px",
+                  fontWeight: "700",
+                  lineHeight: 1.5,
+                }}
+              >
+                修課認識
+              </Text>
+              <Divider />
+              <MegaMenuLink href="http://140.112.161.31/NTUVoxCourse/index.php/uquery/index">
+                必修科目及應修學分
+              </MegaMenuLink>
+              <MegaMenuLink href="https://specom.aca.ntu.edu.tw/">
+                領域專長
+              </MegaMenuLink>
+              <MegaMenuLink href="http://coursemap.aca.ntu.edu.tw/course_map_all/index.php.htm">
+                台大課程地圖
+              </MegaMenuLink>
+              <MegaMenuLink href="/courseDocuments" isExternal={false}>
+                課程相關說明文件
+              </MegaMenuLink>
+            </Flex>
+            <Flex flexDirection={"column"} gap={3} w="192px">
+              <Text
+                sx={{
+                  fontSize: "18px",
+                  fontWeight: "700",
+                  lineHeight: 1.5,
+                }}
+              >
+                相關申請
+              </Text>
+              <Divider />
+              <MegaMenuLink href="http://curri.aca.ntu.edu.tw/aca_doc/waive.asp">
+                學分抵免申請
+              </MegaMenuLink>
+              <MegaMenuLink href="/courseDocuments" isExternal={false}>
+                進階英語免修
+              </MegaMenuLink>
+            </Flex>
+            <Flex flexDirection={"column"} gap={3} w="192px">
+              <Text
+                sx={{
+                  fontSize: "18px",
+                  fontWeight: "700",
+                  lineHeight: 1.5,
+                }}
+              >
+                其他
+              </Text>
+              <Divider />
+              <MegaMenuLink href="https://gra206.aca.ntu.edu.tw/classrm/">
+                教務處教室查詢借用系統
+              </MegaMenuLink>
+              <MegaMenuLink href="https://course.lib.ntu.edu.tw/">
+                臺灣大學歷年課表
+              </MegaMenuLink>
+            </Flex>
           </Flex>
         </DropdownButton>
         <DropdownButton
@@ -306,8 +405,38 @@ function HeaderBar() {
             }
           }}
         >
-          <Flex w="200px" ref={courseSitesRef}>
-            123
+          <Flex
+            flexDirection={"column"}
+            w="288px"
+            gap={3}
+            px={10}
+            pt={4}
+            pb={6}
+            sx={{
+              fontSize: "16px",
+              lineHeight: 1.6,
+              color: "#484848",
+            }}
+            ref={courseSitesRef}
+          >
+            <MegaMenuLink href="https://eclass.fltc.ntu.edu.tw/">
+              線上英語課程
+            </MegaMenuLink>
+            <MegaMenuLink href="http://coursemap.aca.ntu.edu.tw/summer/">
+              暑期課程網
+            </MegaMenuLink>
+            <MegaMenuLink href="http://teach.cc.ntu.edu.tw/distance/Default.html">
+              臺大遠距教學
+            </MegaMenuLink>
+            <MegaMenuLink href="http://training.dpd.ntu.edu.tw/">
+              進修推廣部課程網
+            </MegaMenuLink>
+            <MegaMenuLink href="https://webpageprodvm.ntu.edu.tw/e-learning/">
+              計中資訊應用課程網
+            </MegaMenuLink>
+            <MegaMenuLink href="http://ocw.aca.ntu.edu.tw/ntu-ocw/">
+              臺大開放式課程
+            </MegaMenuLink>
           </Flex>
         </DropdownButton>
         <DropdownButton
@@ -322,8 +451,29 @@ function HeaderBar() {
             }
           }}
         >
-          <Flex w="200px" ref={selectSitesRef}>
-            123
+          <Flex
+            flexDirection={"column"}
+            w="288px"
+            gap={3}
+            px={10}
+            pt={4}
+            pb={6}
+            sx={{
+              fontSize: "16px",
+              lineHeight: 1.6,
+              color: "#484848",
+            }}
+            ref={selectSitesRef}
+          >
+            <MegaMenuLink href="https://if192.aca.ntu.edu.tw/index.php">
+              網路選課系統 1
+            </MegaMenuLink>
+            <MegaMenuLink href="https://if177.aca.ntu.edu.tw/index.php">
+              網路選課系統 2
+            </MegaMenuLink>
+            <MegaMenuLink href="https://if177.aca.ntu.edu.tw/qcaureg/stulogin.asp">
+              選課結果查詢
+            </MegaMenuLink>
           </Flex>
         </DropdownButton>
       </Flex>
