@@ -116,7 +116,7 @@ function DeadlineCountdown() {
         (course_select_schedule[schedule_idx].end -
           course_select_schedule[schedule_idx].start);
   const process_percent =
-    ((time_percent + schedule_idx) / (course_select_schedule.length - 1)) * 100;
+    ((time_percent + schedule_idx) / course_select_schedule.length) * 100;
 
   return (
     <Flex
@@ -140,10 +140,10 @@ function DeadlineCountdown() {
           <Flex flexDirection={"column"} justifyContent={"center"}>
             <Text
               sx={{
-                fontSize: "20px",
                 fontWeight: "600",
                 lineHeight: "24px",
               }}
+              fontSize={{ base: "16px", md: "20px" }}
               color="gray.700"
             >
               {course_select_schedule[schedule_idx].name}{" "}
@@ -152,7 +152,7 @@ function DeadlineCountdown() {
           </Flex>
           <HStack>
             <StopWatchOutlineIcon boxSize={"24px"} color="black.800" />
-            <Text textStyle={"body1"}>
+            <Text textStyle={"body1"} fontSize={{ base: "14px", md: "16px" }}>
               {" "}
               尚餘 {elaspedDays} 天 {elapsedHours} 時
             </Text>
@@ -160,7 +160,7 @@ function DeadlineCountdown() {
         </Flex>
         <Flex
           flexDirection={"column"}
-          w={{ base: "95%", md: "40%", lg: "25%", xl: "20%" }}
+          w={{ base: "95%", md: "40%", lg: "30%", xl: "20%" }}
           position={"relative"}
         >
           <Progress
@@ -190,6 +190,7 @@ function DeadlineCountdown() {
                     color: "#2d2d2d",
                     lineHeight: "14px",
                   }}
+                  w="20%"
                 >
                   {item.label}
                 </Text>
