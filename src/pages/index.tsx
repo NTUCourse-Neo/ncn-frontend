@@ -261,13 +261,12 @@ function HomePage() {
             <Flex
               mt="10"
               w="80%"
-              h="60%"
               bg="white"
               borderRadius={"8px"}
               boxShadow="drop-shadow-2xl"
               px={12}
               pt={8}
-              pb={12}
+              pb={14}
               flexDirection="column"
             >
               <Text
