@@ -128,6 +128,8 @@ function DeadlineCountdown() {
       flexDirection="row"
       px="4"
       bg={status_map[status_idx].color}
+      zIndex={100}
+      position="relative"
     >
       <Flex
         w={{ base: "100%" }}
