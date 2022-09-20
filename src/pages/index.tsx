@@ -389,6 +389,7 @@ function HomePage() {
                           >
                             {availableSemesters.map((semester, index) => (
                               <Radio
+                                colorScheme={"green"}
                                 key={semester}
                                 value={semester}
                                 h="32px"
