@@ -35,6 +35,7 @@ import {
   RadioGroup,
   Fade,
   Divider,
+  Stack,
 } from "@chakra-ui/react";
 import {
   FaArrowDown,
@@ -55,6 +56,16 @@ import handleFetch from "utils/CustomFetch";
 import { reportEvent } from "utils/ga";
 import { SearchIcon } from "@chakra-ui/icons";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
+import { EnrollMethod } from "types/search";
+
+function setCheckList<T>(array: T[], member: T): T[] {
+  const idx = array.indexOf(member);
+  if (idx === -1) {
+    return [...array, member];
+  } else {
+    return array.filter((item) => item !== member);
+  }
+}
 
 interface ScrollAnchorSpacerProps extends SpacerProps {
   readonly name: string;
@@ -122,12 +133,12 @@ function FilterDropDown(props: {
           bg="white"
           position="absolute"
           color="black"
-          p={2}
+          zIndex={1000}
         >
-          <Flex flexDirection={"column"} gap={3}>
+          <Flex flexDirection={"column"} gap={3} p={6}>
             {children}
             <Divider />
-            <Flex justifyContent={"end"} w="200px" alignItems={"center"}>
+            <Flex justifyContent={"end"} alignItems={"center"}>
               <Button
                 variant={"unstyled"}
                 sx={{
@@ -267,7 +278,8 @@ function HomePage() {
   const [openPanel, setOpenPanel] = useState<
     null | "registerMethod" | "targetStudent" | "otherLimit"
   >(null);
-  const { searchSemester, setSearchSemester } = useCourseSearchingContext();
+  const { searchSemester, setSearchSemester, searchFilters, setSearchFilters } =
+    useCourseSearchingContext();
   const toast = useToast();
   const [isRegistering, setIsRegistering] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -299,6 +311,11 @@ function HomePage() {
       }
     }
   }, [isRegistering, isAuthLoading, user, onOpen, toast, isOpen]);
+
+  // local states
+  const [selectedEnrollMethod, setSelectedEnrollMethod] = useState<
+    EnrollMethod[]
+  >(searchFilters.enroll_method);
 
   const bg = useColorModeValue("white", "black");
 
@@ -541,24 +558,68 @@ function HomePage() {
                     title="加選方式"
                     onClick={() => {
                       if (openPanel === "registerMethod") {
-                        // write onCancel logic here
-                        console.log("cancel");
                         setOpenPanel(null);
                       } else {
-                        // write onOpen logic here
-                        console.log("open");
+                        setSelectedEnrollMethod(searchFilters.enroll_method);
                         setOpenPanel("registerMethod");
                       }
                     }}
                     onSave={() => {
-                      console.log("saved");
+                      setSearchFilters({
+                        ...searchFilters,
+                        enroll_method: selectedEnrollMethod,
+                      });
                       setOpenPanel(null);
                     }}
                     onClear={() => {
-                      console.log("cleared");
+                      setSelectedEnrollMethod([]);
                     }}
                   >
-                    123
+                    <Stack
+                      w="280px"
+                      spacing={3}
+                      sx={{
+                        fontSize: "14px",
+                        lineHeight: "20px",
+                        fontWeight: 500,
+                        color: "#666666",
+                        letterSpacing: "0.05em",
+                      }}
+                    >
+                      <Checkbox
+                        colorScheme={"green"}
+                        isChecked={selectedEnrollMethod.includes("1")}
+                        onChange={() => {
+                          setSelectedEnrollMethod(
+                            setCheckList(selectedEnrollMethod, "1")
+                          );
+                        }}
+                      >
+                        1 - 不限人數，直接上網加選
+                      </Checkbox>
+                      <Checkbox
+                        colorScheme={"green"}
+                        isChecked={selectedEnrollMethod.includes("2")}
+                        onChange={() => {
+                          setSelectedEnrollMethod(
+                            setCheckList(selectedEnrollMethod, "2")
+                          );
+                        }}
+                      >
+                        2 - 向教師取得授權碼後加選
+                      </Checkbox>
+                      <Checkbox
+                        colorScheme={"green"}
+                        isChecked={selectedEnrollMethod.includes("3")}
+                        onChange={() => {
+                          setSelectedEnrollMethod(
+                            setCheckList(selectedEnrollMethod, "3")
+                          );
+                        }}
+                      >
+                        3 - 有人數限制，上網登記後分發
+                      </Checkbox>
+                    </Stack>
                   </FilterDropDown>
                   <FilterDropDown
                     isOpen={openPanel === "targetStudent"}
@@ -610,7 +671,7 @@ function HomePage() {
                   </FilterDropDown>
                 </Flex>
               </Flex>
-              <Checkbox mt="4">
+              <Checkbox mt="4" w="fit-content">
                 <Text
                   sx={{
                     fontSize: "14px",
