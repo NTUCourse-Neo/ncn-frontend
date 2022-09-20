@@ -33,6 +33,8 @@ import {
   Checkbox,
   Radio,
   RadioGroup,
+  Fade,
+  Divider,
 } from "@chakra-ui/react";
 import {
   FaArrowDown,
@@ -82,6 +84,90 @@ function FilterButton(props: FlexProps) {
       }}
       {...props}
     />
+  );
+}
+
+function FilterDropDown(props: {
+  readonly title: string;
+  readonly isOpen: boolean;
+  readonly children: React.ReactNode;
+  readonly onClick: () => void;
+  readonly onSave: () => void;
+  readonly onClear: () => void;
+}) {
+  const { title, isOpen, children, onClick, onClear, onSave } = props;
+  return (
+    <Flex
+      position="relative"
+      flexDirection={"column"}
+      alignItems="start"
+      justifyContent={"start"}
+      sx={{
+        transition: "all 0.4s ease-in-out",
+      }}
+    >
+      <FilterButton onClick={onClick} bg={isOpen ? "#cccccc" : "white"}>
+        {title}
+      </FilterButton>
+      <Fade in={isOpen} unmountOnExit={true}>
+        <Box
+          boxSizing="border-box"
+          sx={{
+            transition: "all 1s ease-in-out",
+            border: "0.5px solid #6F6F6F",
+            borderRadius: "4px",
+          }}
+          top="42px"
+          w="fit-content"
+          bg="white"
+          position="absolute"
+          color="black"
+          p={2}
+        >
+          <Flex flexDirection={"column"} gap={3}>
+            {children}
+            <Divider />
+            <Flex justifyContent={"end"} w="200px" alignItems={"center"}>
+              <Button
+                variant={"unstyled"}
+                sx={{
+                  color: "#4b4b4b",
+                  fontSize: "13px",
+                  lineHeight: "18px",
+                  fontWeight: 600,
+                }}
+                onClick={onClear}
+              >
+                清除
+              </Button>
+              <Button
+                ml="2"
+                w="58px"
+                h="34px"
+                sx={{
+                  borderRadius: "50px",
+                  fontSize: "13px",
+                  lineHeight: "18px",
+                  fontWeight: 600,
+                  bg: "#4b4b4b",
+                  _hover: {
+                    bg: "#4b4b4b",
+                    opacity: 0.8,
+                  },
+                  _active: {
+                    bg: "#4b4b4b",
+                    opacity: 0.7,
+                  },
+                }}
+                onClick={onSave}
+              >
+                套用
+              </Button>
+            </Flex>
+          </Flex>
+        </Box>
+      </Fade>
+    </Flex>
   );
 }
 
@@ -178,6 +264,9 @@ function HomePage() {
   const availableSemesters = ["1111", "1102"];
   const semesterRef = useRef<HTMLInputElement>(null);
   const semesterMenuRef = useRef<HTMLDivElement>(null);
+  const [openPanel, setOpenPanel] = useState<
+    null | "registerMethod" | "targetStudent" | "otherLimit"
+  >(null);
   const { searchSemester, setSearchSemester } = useCourseSearchingContext();
   const toast = useToast();
   const [isRegistering, setIsRegistering] = useState(false);
@@ -447,9 +536,78 @@ function HomePage() {
                 <Flex alignItems={"center"} flexWrap="wrap" gap="3">
                   <FilterButton>上課時間</FilterButton>
                   <FilterButton>開課系所</FilterButton>
-                  <FilterButton>加選方式</FilterButton>
-                  <FilterButton>授課年級</FilterButton>
-                  <FilterButton>其他限制</FilterButton>
+                  <FilterDropDown
+                    isOpen={openPanel === "registerMethod"}
+                    title="加選方式"
+                    onClick={() => {
+                      if (openPanel === "registerMethod") {
+                        // write onCancel logic here
+                        console.log("cancel");
+                        setOpenPanel(null);
+                      } else {
+                        // write onOpen logic here
+                        console.log("open");
+                        setOpenPanel("registerMethod");
+                      }
+                    }}
+                    onSave={() => {
+                      console.log("saved");
+                      setOpenPanel(null);
+                    }}
+                    onClear={() => {
+                      console.log("cleared");
+                    }}
+                  >
+                    123
+                  </FilterDropDown>
+                  <FilterDropDown
+                    isOpen={openPanel === "targetStudent"}
+                    title="授課年級"
+                    onClick={() => {
+                      if (openPanel === "targetStudent") {
+                        // write onCancel logic here
+                        console.log("cancel");
+                        setOpenPanel(null);
+                      } else {
+                        // write onOpen logic here
+                        console.log("open");
+                        setOpenPanel("targetStudent");
+                      }
+                    }}
+                    onSave={() => {
+                      console.log("saved");
+                      setOpenPanel(null);
+                    }}
+                    onClear={() => {
+                      console.log("cleared");
+                    }}
+                  >
+                    123
+                  </FilterDropDown>
+                  <FilterDropDown
+                    isOpen={openPanel === "otherLimit"}
+                    title="其他限制"
+                    onClick={() => {
+                      if (openPanel === "otherLimit") {
+                        // write onCancel logic here
+                        console.log("cancel");
+                        setOpenPanel(null);
+                      } else {
+                        // write onOpen logic here
+                        console.log("open");
+                        setOpenPanel("otherLimit");
+                      }
+                    }}
+                    onSave={() => {
+                      console.log("saved");
+                      setOpenPanel(null);
+                    }}
+                    onClear={() => {
+                      console.log("cleared");
+                    }}
+                  >
+                    123
+                  </FilterDropDown>
                 </Flex>
               </Flex>
               <Checkbox mt="4">
