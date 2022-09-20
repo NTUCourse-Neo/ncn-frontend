@@ -360,7 +360,20 @@ function HomePage() {
                         borderRadius={"4px"}
                         minW={0}
                         w="fit-content"
+                        position={"relative"}
                       >
+                        <Box
+                          position="absolute"
+                          top="0"
+                          w="100%"
+                          h="54px"
+                          zIndex={2}
+                          pointerEvents="none"
+                          sx={{
+                            background:
+                              "linear-gradient(181.46deg, #FFFFFF -82.1%, #FFFFFF 32.01%, rgba(255, 255, 255, 0) 48.34%)",
+                          }}
+                        />
                         <RadioGroup
                           value={searchSemester ?? undefined}
                           onChange={setSearchSemester}
@@ -370,7 +383,7 @@ function HomePage() {
                             px={6}
                             py={6}
                             flexDirection={"column"}
-                            h="160px"
+                            h="180px"
                             overflowY="scroll"
                             ref={semesterMenuRef}
                           >
@@ -386,6 +399,12 @@ function HomePage() {
                                     ? semesterRef
                                     : undefined
                                 }
+                                sx={{
+                                  fontSize: "14px",
+                                  fontWeight: 500,
+                                  lineHeight: "20px",
+                                  color: "#666666",
+                                }}
                               >
                                 {` ${semester.slice(0, 3)}-${semester.slice(
                                   3,
@@ -395,6 +414,19 @@ function HomePage() {
                             ))}
                           </Flex>
                         </RadioGroup>
+                        <Box
+                          position="absolute"
+                          bottom="0"
+                          w="100%"
+                          h="54px"
+                          zIndex={2}
+                          pointerEvents="none"
+                          sx={{
+                            transform: "rotate(-180deg)",
+                            background:
+                              "linear-gradient(181.46deg, #FFFFFF -82.1%, #FFFFFF 32.01%, rgba(255, 255, 255, 0) 48.34%)",
+                          }}
+                        />
                       </MenuList>
                     </Menu>
                   </ButtonGroup>
