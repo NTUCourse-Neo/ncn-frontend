@@ -36,6 +36,7 @@ import {
   Fade,
   Divider,
   Stack,
+  Badge,
 } from "@chakra-ui/react";
 import {
   FaArrowDown,
@@ -165,6 +166,7 @@ function FilterDropDown(props: {
                 }}
                 onClick={onClear}
                 isDisabled={isEmpty}
+                ml={6}
               >
                 清除
               </Button>
@@ -661,7 +663,24 @@ function HomePage() {
                       console.log("cleared");
                     }}
                   >
-                    123
+                    <Stack
+                      spacing={3}
+                      sx={{
+                        fontSize: "14px",
+                        lineHeight: "20px",
+                        fontWeight: 500,
+                        color: "#666666",
+                        letterSpacing: "0.05em",
+                      }}
+                      w="fit-content"
+                    >
+                      <Checkbox colorScheme={"green"}>大一</Checkbox>
+                      <Checkbox colorScheme={"green"}>大二</Checkbox>
+                      <Checkbox colorScheme={"green"}>大三</Checkbox>
+                      <Checkbox colorScheme={"green"}>大四</Checkbox>
+                      <Checkbox colorScheme={"green"}>碩士</Checkbox>
+                      <Checkbox colorScheme={"green"}>博士</Checkbox>
+                    </Stack>
                   </FilterDropDown>
                   <FilterDropDown
                     isOpen={openPanel === "otherLimit"}
@@ -685,7 +704,71 @@ function HomePage() {
                       console.log("cleared");
                     }}
                   >
-                    123
+                    <Stack
+                      spacing={3}
+                      sx={{
+                        fontSize: "14px",
+                        lineHeight: "20px",
+                        fontWeight: 500,
+                        color: "#666666",
+                        letterSpacing: "0.05em",
+                      }}
+                      w="300px"
+                    >
+                      <Stack spacing={3} w="fit-content">
+                        <Text
+                          sx={{
+                            fontSize: "16px",
+                            lineHeight: "21px",
+                            fontWeight: 600,
+                          }}
+                        >
+                          上課形式
+                        </Text>
+                        <Checkbox colorScheme={"green"}>
+                          只顯示英文授課
+                        </Checkbox>
+                      </Stack>
+                      <Divider />
+                      <Stack spacing={3} w="fit-content">
+                        <Text
+                          sx={{
+                            fontSize: "16px",
+                            lineHeight: "21px",
+                            fontWeight: 600,
+                          }}
+                        >
+                          課程調整
+                        </Text>
+                        <Checkbox colorScheme={"green"}>
+                          只顯示異動課程
+                        </Checkbox>
+                        <Checkbox colorScheme={"green"}>
+                          只顯示加開課程
+                        </Checkbox>
+                      </Stack>
+                      <Divider />
+                      <Stack spacing={3} w="fit-content">
+                        <Text
+                          sx={{
+                            fontSize: "16px",
+                            lineHeight: "21px",
+                            fontWeight: 600,
+                          }}
+                        >
+                          個人設定
+                        </Text>
+                        <Checkbox colorScheme={"green"}>
+                          只顯示沒有先修規定/資格限制的課程
+                        </Checkbox>
+                        <Checkbox colorScheme={"green"} isDisabled>
+                          只顯示未衝堂課程<Badge>即將推出</Badge>
+                        </Checkbox>
+                        <Checkbox colorScheme={"green"} isDisabled>
+                          只顯示未選課程<Badge>即將推出</Badge>
+                        </Checkbox>
+                      </Stack>
+                    </Stack>
                   </FilterDropDown>
                 </Flex>
               </Flex>
