@@ -162,7 +162,7 @@ function DeadlineCountdown() {
         </Flex>
         <Flex
           flexDirection={"column"}
-          w={{ base: "95%", md: "40%", lg: "30%", xl: "20%" }}
+          w={{ base: "95%", md: "40%", lg: "30%", xl: "25%" }}
           position={"relative"}
         >
           <Progress
