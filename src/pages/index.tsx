@@ -105,8 +105,17 @@ function FilterDropDown(props: {
   readonly onClick: () => void;
   readonly onSave: () => void;
   readonly onClear: () => void;
+  readonly isEmpty?: boolean;
 }) {
-  const { title, isOpen, children, onClick, onClear, onSave } = props;
+  const {
+    title,
+    isOpen,
+    isEmpty = false,
+    children,
+    onClick,
+    onClear,
+    onSave,
+  } = props;
   return (
     <Flex
       position="relative"
@@ -118,7 +127,14 @@ function FilterDropDown(props: {
       }}
     >
       <FilterButton onClick={onClick} bg={isOpen ? "#cccccc" : "white"}>
-        {title}
+        <HStack>
+          <Text>{title}</Text>
+          <Icon
+            as={FaChevronDown}
+            transform={isOpen ? "rotate(180deg)" : ""}
+            transition="all ease-in-out 0.4s"
+          />
+        </HStack>
       </FilterButton>
       <Fade in={isOpen} unmountOnExit={true}>
         <Box
@@ -148,6 +164,7 @@ function FilterDropDown(props: {
                   fontWeight: 600,
                 }}
                 onClick={onClear}
+                isDisabled={isEmpty}
               >
                 清除
               </Button>
@@ -574,6 +591,7 @@ function HomePage() {
                     onClear={() => {
                       setSelectedEnrollMethod([]);
                     }}
+                    isEmpty={selectedEnrollMethod.length === 0}
                   >
                     <Stack
                       w="280px"
