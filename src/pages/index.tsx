@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Box,
   Flex,
@@ -31,6 +31,8 @@ import {
   MenuOptionGroup,
   FlexProps,
   Checkbox,
+  Radio,
+  RadioGroup,
 } from "@chakra-ui/react";
 import {
   FaArrowDown,
@@ -173,11 +175,12 @@ function NewRegisterModal({
 }
 
 function HomePage() {
-  const availableSemesters = ["1102", "1111"];
+  const availableSemesters = ["1111", "1102"];
+  const semesterRef = useRef<HTMLInputElement>(null);
+  const semesterMenuRef = useRef<HTMLDivElement>(null);
   const { searchSemester, setSearchSemester } = useCourseSearchingContext();
   const toast = useToast();
   const [isRegistering, setIsRegistering] = useState(false);
-  const [displayingCard, setDisplayingCard] = useState(0);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { user, isLoading: isAuthLoading } = useUser();
   useUserInfo(user?.sub ?? null, {
@@ -303,16 +306,35 @@ function HomePage() {
                 />
                 <InputRightElement w="fit-content" h="100%" px="2">
                   <ButtonGroup isAttached>
-                    <Button
-                      colorScheme="blue"
-                      size={"md"}
-                      variant="solid"
-                      onClick={() => {}}
-                      px="8"
+                    <Tooltip
+                      hasArrow
+                      placement="top"
+                      label={"點擊搜尋查看所有課程"}
+                      bg="gray.600"
+                      color="white"
                     >
-                      <Text display={{ base: "none", md: "inline" }}>搜尋</Text>
-                    </Button>
-                    <Menu>
+                      <Button
+                        colorScheme="blue"
+                        size={"md"}
+                        variant="solid"
+                        onClick={() => {}}
+                        px="8"
+                      >
+                        <Text display={{ base: "none", md: "inline" }}>
+                          搜尋
+                        </Text>
+                      </Button>
+                    </Tooltip>
+                    <Menu
+                      onOpen={() => {
+                        const offsetY =
+                          parseInt(semesterRef?.current?.id?.[0] ?? "0", 10) ??
+                          0;
+                        if (semesterMenuRef?.current) {
+                          semesterMenuRef.current.scrollTop = 44 * offsetY;
+                        }
+                      }}
+                    >
                       <Tooltip
                         hasArrow
                         placement="top"
@@ -333,44 +355,69 @@ function HomePage() {
                           <FaChevronDown size={10} />
                         </MenuButton>
                       </Tooltip>
-                      <MenuList>
-                        <MenuOptionGroup
+                      <MenuList
+                        border="0.5px solid #6F6F6F"
+                        borderRadius={"4px"}
+                        minW={0}
+                        w="fit-content"
+                      >
+                        <RadioGroup
                           value={searchSemester ?? undefined}
-                          title="開課學期"
-                          type="radio"
+                          onChange={setSearchSemester}
+                          w="fit-content"
                         >
-                          {availableSemesters.map((semester) => (
-                            <MenuItemOption
-                              key={semester}
-                              value={semester}
-                              onClick={() => {
-                                setSearchSemester(semester);
-                              }}
-                            >
-                              {semester}
-                            </MenuItemOption>
-                          ))}
-                        </MenuOptionGroup>
+                          <Flex
+                            px={6}
+                            py={6}
+                            flexDirection={"column"}
+                            h="160px"
+                            overflowY="scroll"
+                            ref={semesterMenuRef}
+                          >
+                            {availableSemesters.map((semester, index) => (
+                              <Radio
+                                key={semester}
+                                value={semester}
+                                h="32px"
+                                py="6px"
+                                id={`${index}-${semester}`}
+                                ref={
+                                  searchSemester === semester
+                                    ? semesterRef
+                                    : undefined
+                                }
+                              >
+                                {` ${semester.slice(0, 3)}-${semester.slice(
+                                  3,
+                                  4
+                                )}`}
+                              </Radio>
+                            ))}
+                          </Flex>
+                        </RadioGroup>
                       </MenuList>
                     </Menu>
                   </ButtonGroup>
                 </InputRightElement>
               </InputGroup>
-              <Flex flexDirection={"row"} gap="3" alignItems={"center"}>
+              <Flex flexDirection={"row"} alignItems={"center"}>
                 <Text
                   sx={{
                     fontSize: "14px",
                     lineHeight: "20px",
                     color: "#6f6f6f",
                   }}
+                  w="72px"
                 >
                   篩選條件
                 </Text>
-                <FilterButton>上課時間</FilterButton>
-                <FilterButton>開課系所</FilterButton>
-                <FilterButton>加選方式</FilterButton>
-                <FilterButton>授課年級</FilterButton>
-                <FilterButton>其他限制</FilterButton>
+                <Flex alignItems={"center"} flexWrap="wrap" gap="3">
+                  <FilterButton>上課時間</FilterButton>
+                  <FilterButton>開課系所</FilterButton>
+                  <FilterButton>加選方式</FilterButton>
+                  <FilterButton>授課年級</FilterButton>
+                  <FilterButton>其他限制</FilterButton>
+                </Flex>
               </Flex>
               <Checkbox mt="4">
                 <Text
