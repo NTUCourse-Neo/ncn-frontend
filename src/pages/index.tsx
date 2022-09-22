@@ -607,7 +607,6 @@ function HomePage() {
                       }}
                     >
                       <Checkbox
-                        colorScheme={"green"}
                         isChecked={selectedEnrollMethod.includes("1")}
                         onChange={() => {
                           setSelectedEnrollMethod(
@@ -618,7 +617,6 @@ function HomePage() {
                         1 - 不限人數，直接上網加選
                       </Checkbox>
                       <Checkbox
-                        colorScheme={"green"}
                         isChecked={selectedEnrollMethod.includes("2")}
                         onChange={() => {
                           setSelectedEnrollMethod(
@@ -629,7 +627,6 @@ function HomePage() {
                         2 - 向教師取得授權碼後加選
                       </Checkbox>
                       <Checkbox
-                        colorScheme={"green"}
                         isChecked={selectedEnrollMethod.includes("3")}
                         onChange={() => {
                           setSelectedEnrollMethod(
@@ -674,12 +671,12 @@ function HomePage() {
                       }}
                       w="fit-content"
                     >
-                      <Checkbox colorScheme={"green"}>大一</Checkbox>
-                      <Checkbox colorScheme={"green"}>大二</Checkbox>
-                      <Checkbox colorScheme={"green"}>大三</Checkbox>
-                      <Checkbox colorScheme={"green"}>大四</Checkbox>
-                      <Checkbox colorScheme={"green"}>碩士</Checkbox>
-                      <Checkbox colorScheme={"green"}>博士</Checkbox>
+                      <Checkbox>大一</Checkbox>
+                      <Checkbox>大二</Checkbox>
+                      <Checkbox>大三</Checkbox>
+                      <Checkbox>大四</Checkbox>
+                      <Checkbox>碩士</Checkbox>
+                      <Checkbox>博士</Checkbox>
                     </Stack>
                   </FilterDropDown>
                   <FilterDropDown
@@ -725,9 +722,7 @@ function HomePage() {
                         >
                           上課形式
                         </Text>
-                        <Checkbox colorScheme={"green"}>
-                          只顯示英文授課
-                        </Checkbox>
+                        <Checkbox>只顯示英文授課</Checkbox>
                       </Stack>
                       <Divider />
                       <Stack spacing={3} w="fit-content">
@@ -740,12 +735,8 @@ function HomePage() {
                         >
                           課程調整
                         </Text>
-                        <Checkbox colorScheme={"green"}>
-                          只顯示異動課程
-                        </Checkbox>
-                        <Checkbox colorScheme={"green"}>
-                          只顯示加開課程
-                        </Checkbox>
+                        <Checkbox>只顯示異動課程</Checkbox>
+                        <Checkbox>只顯示加開課程</Checkbox>
                       </Stack>
                       <Divider />
                       <Stack spacing={3} w="fit-content">
@@ -758,13 +749,11 @@ function HomePage() {
                         >
                           個人設定
                         </Text>
-                        <Checkbox colorScheme={"green"}>
-                          只顯示沒有先修規定/資格限制的課程
-                        </Checkbox>
-                        <Checkbox colorScheme={"green"} isDisabled>
+                        <Checkbox>只顯示沒有先修規定/資格限制的課程</Checkbox>
+                        <Checkbox isDisabled>
                           只顯示未衝堂課程<Badge>即將推出</Badge>
                         </Checkbox>
-                        <Checkbox colorScheme={"green"} isDisabled>
+                        <Checkbox isDisabled>
                           只顯示未選課程<Badge>即將推出</Badge>
                         </Checkbox>
                       </Stack>
