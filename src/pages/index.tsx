@@ -55,9 +55,14 @@ import useUserInfo from "hooks/useUserInfo";
 import { useUser } from "@auth0/nextjs-auth0";
 import handleFetch from "utils/CustomFetch";
 import { reportEvent } from "utils/ga";
-import { SearchIcon } from "@chakra-ui/icons";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  SearchIcon,
+} from "@chakra-ui/icons";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { EnrollMethod } from "types/search";
+import useHorizontalScrollable from "@/hooks/useHorizontalScrollable";
 
 function setCheckList<T>(array: T[], member: T): T[] {
   const idx = array.indexOf(member);
@@ -291,9 +296,32 @@ function NewRegisterModal({
 }
 
 function HomePage() {
+  const searchOptions = [
+    "快速搜尋",
+    "系所課程",
+    "通識",
+    "共同",
+    "體育軍訓",
+    "學程",
+    "領域專長",
+    "校際課程",
+    "分組編班",
+    "密集",
+    "遠距",
+    "進階英語",
+  ];
   const availableSemesters = ["1111", "1102"];
   const semesterRef = useRef<HTMLInputElement>(null);
   const semesterMenuRef = useRef<HTMLDivElement>(null);
+  const searchOptionRef = useRef<HTMLDivElement>(null);
+  const {
+    isScrollable,
+    reachLeft,
+    reachRight,
+    updateReachStates,
+    scrollLeft,
+    scrollRight,
+  } = useHorizontalScrollable(searchOptionRef);
   const [openPanel, setOpenPanel] = useState<
     null | "registerMethod" | "targetStudent" | "otherLimit"
   >(null);
@@ -385,9 +413,88 @@ function HomePage() {
             flexDirection="column"
             justifyContent={"center"}
             alignItems="center"
+            gap={4}
           >
             <Flex
               mt="10"
+              justifyContent={"start"}
+              w="80%"
+              overflowX="hidden"
+              overflowY={"hidden"}
+              h="36px"
+              position={"relative"}
+            >
+              <Box
+                position="absolute"
+                left="0"
+                w="36px"
+                h="36px"
+                zIndex={20}
+                bg="linear-gradient(90deg, #d9d9d9, #d9d9d950)"
+                onClick={() => {
+                  scrollLeft();
+                }}
+                display={isScrollable && !reachLeft ? "block" : "none"}
+              >
+                <ChevronLeftIcon
+                  color="white"
+                  h="100%"
+                  w="36px"
+                  cursor={"pointer"}
+                />
+              </Box>
+              <Flex
+                position="absolute"
+                top="0"
+                left="0"
+                bottom={"-15px"}
+                overflowX="auto"
+                overflowY="hidden"
+                ref={searchOptionRef}
+                onScroll={() => {
+                  updateReachStates();
+                }}
+              >
+                {searchOptions.map((option, index) => (
+                  <Box
+                    key={option}
+                    px={5}
+                    py={2}
+                    w="fit-content"
+                    minWidth={"fit-content"}
+                    borderLeft={index !== 0 ? "1px solid #F6F6F6" : "none"}
+                    sx={{
+                      fontSize: "16px",
+                      fontWeight: 500,
+                      lineHeight: "20px",
+                      color: "#484848",
+                    }}
+                  >
+                    {option}
+                  </Box>
+                ))}
+              </Flex>
+              <Box
+                position="absolute"
+                right="0"
+                w="36px"
+                h="36px"
+                zIndex={20}
+                bg="linear-gradient(270deg, #d9d9d9, #d9d9d950)"
+                onClick={() => {
+                  scrollRight();
+                }}
+                display={isScrollable && !reachRight ? "block" : "none"}
+              >
+                <ChevronRightIcon
+                  color="white"
+                  h="100%"
+                  w="36px"
+                  cursor={"pointer"}
+                />
+              </Box>
+            </Flex>
+            <Flex
               w="80%"
               bg="white"
               borderRadius={"8px"}
