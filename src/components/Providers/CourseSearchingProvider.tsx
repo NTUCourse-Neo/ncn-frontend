@@ -1,3 +1,4 @@
+import type { SearchMode } from "@/data/searchMode";
 import React, { createContext, useContext, useState } from "react";
 import type { SearchFieldName, FilterEnable, Filter } from "types/search";
 
@@ -31,6 +32,8 @@ interface CourseSearchingContextType {
   setSearchFilters: (searchFilters: Filter) => void;
   searchSemester: string | null;
   setSearchSemester: (searchSemester: string | null) => void;
+  searchMode: SearchMode;
+  setSearchMode: (searchMode: SearchMode) => void;
   fetchNextPage: () => void;
   dispatchSearch: (search: string | null) => void;
 }
@@ -62,6 +65,11 @@ const CourseSearchingContext = createContext<CourseSearchingContextType>({
     enroll_method: ["1", "2", "3"],
   },
   searchSemester: "",
+  searchMode: {
+    id: "fast",
+    chinese: "快速搜尋",
+    english: "Quick Search",
+  },
   setSearch: () => {},
   setPageNumber: () => {},
   setSearchLoading: () => {},
@@ -73,6 +81,7 @@ const CourseSearchingContext = createContext<CourseSearchingContextType>({
   setSearchFiltersEnable: () => {},
   setSearchFilters: () => {},
   setSearchSemester: () => {},
+  setSearchMode: () => {},
   fetchNextPage: () => {},
   dispatchSearch: () => {},
 });
@@ -114,6 +123,11 @@ const CourseSearchingProvider: React.FC<{
   const [searchSemester, setSearchSemester] = useState(
     process.env.NEXT_PUBLIC_SEMESTER ?? null
   );
+  const [searchMode, setSearchMode] = useState<SearchMode>({
+    id: "fast",
+    chinese: "快速搜尋",
+    english: "Quick Search",
+  });
 
   const fetchNextPage = () => {
     setPageNumber(pageNumber + 1);
@@ -139,6 +153,7 @@ const CourseSearchingProvider: React.FC<{
         searchFiltersEnable,
         searchFilters,
         searchSemester,
+        searchMode,
         setSearch,
         setPageNumber,
         setBatchSize,
@@ -150,6 +165,7 @@ const CourseSearchingProvider: React.FC<{
         setSearchResultCount,
         setTotalCount,
         setSearchSemester,
+        setSearchMode,
         fetchNextPage,
         dispatchSearch,
       }}

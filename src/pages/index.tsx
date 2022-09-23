@@ -63,6 +63,7 @@ import {
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { EnrollMethod } from "types/search";
 import useHorizontalScrollable from "@/hooks/useHorizontalScrollable";
+import searchModeList from "@/data/searchMode";
 
 function setCheckList<T>(array: T[], member: T): T[] {
   const idx = array.indexOf(member);
@@ -296,23 +297,10 @@ function NewRegisterModal({
 }
 
 function HomePage() {
-  const searchOptions = [
-    "快速搜尋",
-    "系所課程",
-    "通識",
-    "共同",
-    "體育軍訓",
-    "學程",
-    "領域專長",
-    "校際課程",
-    "分組編班",
-    "密集",
-    "進階英語",
-  ];
   const availableSemesters = ["1111", "1102"];
   const semesterRef = useRef<HTMLInputElement>(null);
   const semesterMenuRef = useRef<HTMLDivElement>(null);
-  const searchOptionRef = useRef<HTMLDivElement>(null);
+  const searchModeRef = useRef<HTMLDivElement>(null);
   const {
     isScrollable,
     reachLeft,
@@ -320,12 +308,18 @@ function HomePage() {
     updateReachStates,
     scrollLeft,
     scrollRight,
-  } = useHorizontalScrollable(searchOptionRef);
+  } = useHorizontalScrollable(searchModeRef);
   const [openPanel, setOpenPanel] = useState<
     null | "registerMethod" | "targetStudent" | "otherLimit"
   >(null);
-  const { searchSemester, setSearchSemester, searchFilters, setSearchFilters } =
-    useCourseSearchingContext();
+  const {
+    searchSemester,
+    setSearchSemester,
+    searchFilters,
+    setSearchFilters,
+    searchMode,
+    setSearchMode,
+  } = useCourseSearchingContext();
   const toast = useToast();
   const [isRegistering, setIsRegistering] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -449,14 +443,14 @@ function HomePage() {
                 bottom={"-15px"}
                 overflowX="auto"
                 overflowY="hidden"
-                ref={searchOptionRef}
+                ref={searchModeRef}
                 onScroll={() => {
                   updateReachStates();
                 }}
               >
-                {searchOptions.map((option, index) => (
+                {searchModeList.map((option, index) => (
                   <Box
-                    key={option}
+                    key={option.id}
                     px={5}
                     py={2}
                     w="fit-content"
@@ -466,10 +460,15 @@ function HomePage() {
                       fontSize: "16px",
                       fontWeight: 500,
                       lineHeight: "20px",
-                      color: "#484848",
+                      color: searchMode.id === option.id ? "white" : "#484848",
+                      transition: "all 0.2s ease-in-out",
+                    }}
+                    cursor="pointer"
+                    onClick={() => {
+                      setSearchMode(option);
                     }}
                   >
-                    {option}
+                    {option.chinese}
                   </Box>
                 ))}
               </Flex>
@@ -510,7 +509,7 @@ function HomePage() {
                   fontWeight: "500",
                 }}
               >
-                快速搜尋
+                {searchMode.chinese}
               </Text>
               <InputGroup
                 w="60%"
