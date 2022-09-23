@@ -23,6 +23,9 @@ function Footer() {
   };
   return (
     <Flex
+      w="100%"
+      position="fixed"
+      bottom="0"
       flexDirection="row"
       flexWrap="wrap"
       justifyContent="space-between"
