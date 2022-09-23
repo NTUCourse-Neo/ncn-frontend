@@ -16,15 +16,15 @@ function FilterElement(props: FilterElementProps) {
   const { id, name, selected, onClick } = props;
   return (
     <Button
-      colorScheme={"teal"}
+      colorScheme={"primary"}
       variant={!selected ? "outline" : "solid"}
       size="sm"
       minW="100px"
       m="1"
       onClick={onClick}
-      _hover={!selected ? { bg: "teal.100" } : { bg: "red.700" }}
+      _hover={!selected ? { bg: "primary.200" } : { bg: "error.800" }}
     >
-      <Badge mx="2" colorScheme={useColorModeValue("teal", "black")}>
+      <Badge mx="2" bg="#ececec" color="primary.500">
         {id}
       </Badge>
       {name}

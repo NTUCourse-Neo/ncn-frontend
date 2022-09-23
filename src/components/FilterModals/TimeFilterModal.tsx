@@ -112,7 +112,16 @@ function TimeFilterModal(props: TimeFilterModalProps) {
       >
         <ModalOverlay />
         <ModalContent maxW={{ base: "100vw", md: "90vw", lg: "50vw" }}>
-          <ModalHeader>
+          <ModalHeader
+            borderBottom={"0.5px solid #6F6F6F"}
+            boxSizing="border-box"
+            sx={{
+              fontSize: "17px",
+              lineHeight: "22px",
+              color: "#2d2d2d",
+              fontWeight: 400,
+            }}
+          >
             {`已選擇 ${countInterval(selectedTime)} 個時段`}
             <Flex
               flexDirection="row"
@@ -144,18 +153,55 @@ function TimeFilterModal(props: TimeFilterModalProps) {
                 重設
               </Button>
             </Flex>
+            <ModalCloseButton />
           </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody overflow="auto" pt="0">
+          <ModalBody overflow="auto" pt="8">
             <TimetableSelector
               selectedTime={selectedTime}
               setSelectedTime={setSelectedTime}
             />
           </ModalBody>
-          <ModalFooter display={{ base: "none", md: "flex" }}>
+          <ModalFooter
+            display={{ base: "none", md: "flex" }}
+            borderTop={"0.5px solid #6F6F6F"}
+            boxSizing="border-box"
+          >
             <Button
-              colorScheme="blue"
-              mr={3}
+              variant={"unstyled"}
+              sx={{
+                color: "#4b4b4b",
+                fontSize: "13px",
+                lineHeight: "18px",
+                fontWeight: 600,
+              }}
+              mx={6}
+              isDisabled={countInterval(selectedTime) === 0}
+              onClick={() => {
+                resetSelectedTime();
+                reportEvent("filter_time", "click", "reset_changes");
+              }}
+            >
+              重設
+            </Button>
+            <Button
+              ml="2"
+              w="58px"
+              h="34px"
+              sx={{
+                borderRadius: "50px",
+                fontSize: "13px",
+                lineHeight: "18px",
+                fontWeight: 600,
+                bg: "#4b4b4b",
+                _hover: {
+                  bg: "#4b4b4b",
+                  opacity: 0.8,
+                },
+                _active: {
+                  bg: "#4b4b4b",
+                  opacity: 0.7,
+                },
+              }}
               onClick={() => {
                 onClose();
                 saveSelectedTime();
@@ -163,15 +209,6 @@ function TimeFilterModal(props: TimeFilterModalProps) {
               }}
             >
               套用
-            </Button>
-            <Button
-              variant="ghost"
-              onClick={() => {
-                resetSelectedTime();
-                reportEvent("filter_time", "click", "reset_changes");
-              }}
-            >
-              重設
             </Button>
           </ModalFooter>
         </ModalContent>

@@ -72,7 +72,7 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
           return (
             <React.Fragment key={`${college_key}-${index}`}>
               <Flex
-                px="2"
+                p="2"
                 h="40px"
                 flexDirection="column"
                 justifyContent="center"
@@ -85,8 +85,8 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
                 <Heading fontSize="2xl" color={headingColor}>
                   {college_key + " " + college_map[college_key].name}
                 </Heading>
-                <Divider />
               </Flex>
+              <Divider pt={2} />
               {departments
                 .filter((dept) => !selectedDept.includes(dept.id))
                 .map((dept, dept_index) => (
@@ -142,7 +142,16 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
       >
         <ModalOverlay />
         <ModalContent maxW={{ base: "100vw", md: "90vw", lg: "50vw" }}>
-          <ModalHeader>
+          <ModalHeader
+            borderBottom={"0.5px solid #6F6F6F"}
+            boxSizing="border-box"
+            sx={{
+              fontSize: "17px",
+              lineHeight: "22px",
+              color: "#2d2d2d",
+              fontWeight: 400,
+            }}
+          >
             {`已選擇 ${selectedDept.length} 個系所`}
             <Flex
               flexDirection="row"
@@ -173,8 +182,8 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
                 重設
               </Button>
             </Flex>
+            <ModalCloseButton />
           </ModalHeader>
-          <ModalCloseButton />
           <ModalBody overflow="auto" pt="0">
             {deptList
               .filter((dept) => selectedDept.includes(dept.id))
@@ -192,28 +201,55 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
                   }}
                 />
               ))}
-            <Divider />
             {modalBody}
           </ModalBody>
-          <ModalFooter display={{ base: "none", md: "flex" }}>
+          <ModalFooter
+            display={{ base: "none", md: "flex" }}
+            borderTop={"0.5px solid #6F6F6F"}
+            boxSizing="border-box"
+          >
             <Button
-              colorScheme="blue"
-              mr={3}
-              onClick={() => {
-                onSaveEditing();
-                reportEvent("filter_department", "click", "save_changes");
+              variant={"unstyled"}
+              sx={{
+                color: "#4b4b4b",
+                fontSize: "13px",
+                lineHeight: "18px",
+                fontWeight: 600,
               }}
-            >
-              套用
-            </Button>
-            <Button
-              variant="ghost"
+              mx={6}
+              isDisabled={selectedDept.length === 0}
               onClick={() => {
                 onResetEditing();
                 reportEvent("filter_department", "click", "reset_changes");
               }}
             >
               重設
+            </Button>
+            <Button
+              ml="2"
+              w="58px"
+              h="34px"
+              sx={{
+                borderRadius: "50px",
+                fontSize: "13px",
+                lineHeight: "18px",
+                fontWeight: 600,
+                bg: "#4b4b4b",
+                _hover: {
+                  bg: "#4b4b4b",
+                  opacity: 0.8,
+                },
+                _active: {
+                  bg: "#4b4b4b",
+                  opacity: 0.7,
+                },
+              }}
+              onClick={() => {
+                onSaveEditing();
+                reportEvent("filter_department", "click", "save_changes");
+              }}
+            >
+              套用
             </Button>
           </ModalFooter>
         </ModalContent>
