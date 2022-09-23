@@ -32,15 +32,9 @@ import {
 } from "@chakra-ui/react";
 import { FaSearch, FaPlus, FaMinus, FaChevronDown } from "react-icons/fa";
 import { TbListSearch } from "react-icons/tb";
-import TimeFilterModal from "components/FilterModals/TimeFilterModal";
 import DeptFilterModal from "components/FilterModals/DeptFilterModal";
 import CategoryFilterModal from "components/FilterModals/CategoryFilterModal";
-import {
-  mapStateToTimeTable,
-  mapStateToIntervals,
-} from "utils/timeTableConverter";
 import { info_view_map } from "data/mapping_table";
-import { useMount } from "react-use";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import {
   useDisplayTags,
@@ -304,9 +298,6 @@ function CourseSearchInput({
   const { displayTags, setDisplayTags } = useDisplayTags();
 
   // filters local states // TODO: move to their component
-  const [selectedTime, setSelectedTime] = useState(
-    mapStateToTimeTable(searchFilters.time)
-  );
   const [selectedDept, setSelectedDept] = useState(searchFilters.department);
   const [selectedType, setSelectedType] = useState(searchFilters.category);
 
@@ -324,10 +315,6 @@ function CourseSearchInput({
   const [strict_search_mode, set_strict_search_mode] = useState(
     searchSettings.strict_search_mode
   );
-
-  useMount(() => {
-    setSelectedTime(mapStateToTimeTable(searchFilters.time));
-  });
 
   const set_enroll_method = (new_enroll_method: EnrollMethod) => {
     const idx = searchFilters.enroll_method.indexOf(new_enroll_method);
@@ -396,7 +383,7 @@ function CourseSearchInput({
                           });
                         }}
                       />
-                      <TimeFilterModal
+                      {/* <TimeFilterModal
                         title={
                           mapStateToIntervals(searchFilters.time) === 0
                             ? "未選擇課程時間"
@@ -406,7 +393,7 @@ function CourseSearchInput({
                         isEnabled={searchFiltersEnable.time}
                         selectedTime={selectedTime}
                         setSelectedTime={setSelectedTime}
-                      />
+                      /> */}
                     </Flex>
                   </Flex>
                   <Flex flexDirection="column" px="4">

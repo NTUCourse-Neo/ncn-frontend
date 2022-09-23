@@ -17,17 +17,19 @@ import { useCourseSearchingContext } from "components/Providers/CourseSearchingP
 import { reportEvent } from "utils/ga";
 import type { Interval } from "types/course";
 import { intervals } from "constant";
+import { useState } from "react";
 
 export interface TimeFilterModalProps {
   readonly title: string;
-  readonly isEnabled: boolean;
-  readonly selectedTime: boolean[][];
-  readonly setSelectedTime: (time: boolean[][]) => void;
+  readonly isActive?: boolean;
 }
 
 function TimeFilterModal(props: TimeFilterModalProps) {
-  const { selectedTime, setSelectedTime, isEnabled, title } = props;
+  const { title, isActive = false } = props;
   const { searchFilters, setSearchFilters } = useCourseSearchingContext();
+  const [selectedTime, setSelectedTime] = useState(
+    mapStateToTimeTable(searchFilters.time)
+  );
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const saveSelectedTime = () => {
@@ -66,17 +68,28 @@ function TimeFilterModal(props: TimeFilterModalProps) {
 
   return (
     <>
-      <Button
-        size={useBreakpointValue({ base: "sm", md: "md" }) ?? "md"}
-        isDisabled={!isEnabled}
+      <Flex
+        borderRadius={"24px"}
+        height="36px"
+        px="16px"
+        py="6px"
+        border="0.5px solid #4B4B4B"
+        alignItems={"center"}
+        color="#4b4b4b"
+        cursor={"pointer"}
+        transition={"all 0.2s ease-in-out"}
+        _hover={{
+          bg: "#4b4b4b20",
+        }}
         onClick={() => {
           onOpen();
           setSelectedTime(mapStateToTimeTable(searchFilters.time));
           reportEvent("filter_time", "click", "open_modal");
         }}
+        bg={isActive ? "#cccccc" : "white"}
       >
         {title}
-      </Button>
+      </Flex>
       <Modal
         isOpen={isOpen}
         onClose={() => {

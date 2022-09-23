@@ -52,6 +52,8 @@ import { EnrollMethod } from "types/search";
 import useHorizontalScrollable from "@/hooks/useHorizontalScrollable";
 import searchModeList from "@/data/searchMode";
 import useOutsideDetecter from "@/hooks/useOutsideDetecter";
+import TimeFilterModal from "@/components/FilterModals/TimeFilterModal";
+import { mapStateToIntervals } from "utils/timeTableConverter";
 
 function setCheckList<T>(array: T[], member: T): T[] {
   const idx = array.indexOf(member);
@@ -670,7 +672,14 @@ function HomePage() {
                   篩選條件
                 </Text>
                 <Flex alignItems={"center"} flexWrap="wrap" gap="3">
-                  <FilterButton>上課時間</FilterButton>
+                  <TimeFilterModal
+                    title={`上課時間 ${
+                      mapStateToIntervals(searchFilters.time) === 0
+                        ? ""
+                        : `(${mapStateToIntervals(searchFilters.time)})`
+                    }`}
+                    isActive={mapStateToIntervals(searchFilters.time) > 0}
+                  />
                   <FilterButton>開課系所</FilterButton>
                   <FilterDropDown
                     id="registerMethod"
@@ -890,6 +899,9 @@ function HomePage() {
                 </Text>
               </Checkbox>
             </Flex>
+          </Flex>
+          <Flex w="100vw" h="50vh" justify={"center"} alignItems="center">
+            資訊介紹版位 (In progress)
           </Flex>
         </Flex>
       </Box>
