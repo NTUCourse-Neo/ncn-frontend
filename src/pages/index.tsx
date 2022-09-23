@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, forwardRef } from "react";
 import {
   Box,
   Flex,
@@ -64,6 +64,7 @@ import { useCourseSearchingContext } from "components/Providers/CourseSearchingP
 import { EnrollMethod } from "types/search";
 import useHorizontalScrollable from "@/hooks/useHorizontalScrollable";
 import searchModeList from "@/data/searchMode";
+import useOutsideDetecter from "@/hooks/useOutsideDetecter";
 
 function setCheckList<T>(array: T[], member: T): T[] {
   const idx = array.indexOf(member);
@@ -105,16 +106,21 @@ function FilterButton(props: FlexProps) {
   );
 }
 
-function FilterDropDown(props: {
-  readonly title: string;
-  readonly isOpen: boolean;
-  readonly children: React.ReactNode;
-  readonly onClick: () => void;
-  readonly onSave: () => void;
-  readonly onClear: () => void;
-  readonly isEmpty?: boolean;
-}) {
+const FilterDropDown = forwardRef<
+  HTMLDivElement,
+  {
+    readonly id?: string;
+    readonly title: string;
+    readonly isOpen: boolean;
+    readonly children: React.ReactNode;
+    readonly onClick: () => void;
+    readonly onSave: () => void;
+    readonly onClear: () => void;
+    readonly isEmpty?: boolean;
+  }
+>((props, ref) => {
   const {
+    id = "",
     title,
     isOpen,
     isEmpty = false,
@@ -133,10 +139,11 @@ function FilterDropDown(props: {
         transition: "all 0.4s ease-in-out",
       }}
     >
-      <FilterButton onClick={onClick} bg={isOpen ? "#cccccc" : "white"}>
-        <HStack>
-          <Text>{title}</Text>
+      <FilterButton onClick={onClick} bg={isOpen ? "#cccccc" : "white"} id={id}>
+        <HStack id={id}>
+          <Text id={id}>{title}</Text>
           <Icon
+            id={id}
             as={FaChevronDown}
             transform={isOpen ? "rotate(180deg)" : ""}
             transition="all ease-in-out 0.4s"
@@ -145,6 +152,7 @@ function FilterDropDown(props: {
       </FilterButton>
       <Fade in={isOpen} unmountOnExit={true}>
         <Box
+          ref={ref}
           boxSizing="border-box"
           sx={{
             transition: "all 1s ease-in-out",
@@ -205,7 +213,7 @@ function FilterDropDown(props: {
       </Fade>
     </Flex>
   );
-}
+});
 
 interface NewRegisterModalProps {
   isOpen: boolean;
@@ -312,6 +320,18 @@ function HomePage() {
   const [openPanel, setOpenPanel] = useState<
     null | "registerMethod" | "targetStudent" | "otherLimit"
   >(null);
+  const registerMethodRef = useRef<HTMLDivElement>(null);
+  const targetStudentRef = useRef<HTMLDivElement>(null);
+  const otherLimitRef = useRef<HTMLDivElement>(null);
+  useOutsideDetecter(registerMethodRef, "registerMethod", () => {
+    setOpenPanel(null);
+  });
+  useOutsideDetecter(targetStudentRef, "targetStudent", () => {
+    setOpenPanel(null);
+  });
+  useOutsideDetecter(otherLimitRef, "otherLimit", () => {
+    setOpenPanel(null);
+  });
   const {
     searchSemester,
     setSearchSemester,
@@ -680,6 +700,8 @@ function HomePage() {
                   <FilterButton>上課時間</FilterButton>
                   <FilterButton>開課系所</FilterButton>
                   <FilterDropDown
+                    id="registerMethod"
+                    ref={registerMethodRef}
                     isOpen={openPanel === "registerMethod"}
                     title="加選方式"
                     onClick={() => {
@@ -746,6 +768,8 @@ function HomePage() {
                     </Stack>
                   </FilterDropDown>
                   <FilterDropDown
+                    id="targetStudent"
+                    ref={targetStudentRef}
                     isOpen={openPanel === "targetStudent"}
                     title="授課年級"
                     onClick={() => {
@@ -787,6 +811,8 @@ function HomePage() {
                     </Stack>
                   </FilterDropDown>
                   <FilterDropDown
+                    id="otherLimit"
+                    ref={otherLimitRef}
                     isOpen={openPanel === "otherLimit"}
                     title="其他限制"
                     onClick={() => {
