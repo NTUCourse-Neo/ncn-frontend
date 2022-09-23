@@ -143,7 +143,7 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
         <ModalOverlay />
         <ModalContent maxW={{ base: "100vw", md: "90vw", lg: "50vw" }}>
           <ModalHeader>
-            {title}
+            {`已選擇 ${selectedDept.length} 個系所`}
             <Flex
               flexDirection="row"
               justifyContent="start"

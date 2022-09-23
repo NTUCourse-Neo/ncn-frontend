@@ -19,6 +19,18 @@ import type { Interval } from "types/course";
 import { intervals } from "constant";
 import { useState } from "react";
 
+const countInterval = (timeTable: boolean[][]): number => {
+  let count = 0;
+  for (let i = 0; i < timeTable.length; i++) {
+    for (let j = 0; j < timeTable[i].length; j++) {
+      if (timeTable[i][j]) {
+        count++;
+      }
+    }
+  }
+  return count;
+};
+
 export interface TimeFilterModalProps {
   readonly title: string;
   readonly isActive?: boolean;
@@ -101,7 +113,7 @@ function TimeFilterModal(props: TimeFilterModalProps) {
         <ModalOverlay />
         <ModalContent maxW={{ base: "100vw", md: "90vw", lg: "50vw" }}>
           <ModalHeader>
-            {title}
+            {`已選擇 ${countInterval(selectedTime)} 個時段`}
             <Flex
               flexDirection="row"
               justifyContent="start"
