@@ -319,6 +319,8 @@ function HomePage() {
     setSearchFilters,
     searchMode,
     setSearchMode,
+    searchSettings,
+    setSearchSettings,
   } = useCourseSearchingContext();
   const toast = useToast();
   const [isRegistering, setIsRegistering] = useState(false);
@@ -867,7 +869,17 @@ function HomePage() {
                   </FilterDropDown>
                 </Flex>
               </Flex>
-              <Checkbox mt="4" w="fit-content">
+              <Checkbox
+                mt="4"
+                w="fit-content"
+                isChecked={searchSettings.strict_search_mode}
+                onChange={(e) => {
+                  setSearchSettings({
+                    ...searchSettings,
+                    strict_search_mode: e.currentTarget.checked,
+                  });
+                }}
+              >
                 <Text
                   sx={{
                     fontSize: "14px",
