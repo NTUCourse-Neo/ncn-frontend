@@ -298,7 +298,6 @@ function CourseSearchInput({
   const { displayTags, setDisplayTags } = useDisplayTags();
 
   // filters local states // TODO: move to their component
-  const [selectedDept, setSelectedDept] = useState(searchFilters.department);
   const [selectedType, setSelectedType] = useState(searchFilters.category);
 
   // searchSettings local states
@@ -415,7 +414,7 @@ function CourseSearchInput({
                           });
                         }}
                       />
-                      <DeptFilterModal
+                      {/* <DeptFilterModal
                         title={
                           selectedDept.length === 0
                             ? "未選擇開課系所"
@@ -424,7 +423,7 @@ function CourseSearchInput({
                         isEnabled={searchFiltersEnable.department}
                         selectedDept={selectedDept}
                         setSelectedDept={setSelectedDept}
-                      />
+                      /> */}
                     </Flex>
                   </Flex>
                   <Flex flexDirection="column" px="4">

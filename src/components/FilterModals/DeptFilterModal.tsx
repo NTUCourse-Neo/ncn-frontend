@@ -14,7 +14,7 @@ import {
   useBreakpointValue,
   useColorModeValue,
 } from "@chakra-ui/react";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { college_map } from "data/college";
 import { deptList } from "data/department";
 import FilterElement from "components/FilterModals/components/FilterElement";
@@ -23,19 +23,13 @@ import { reportEvent } from "utils/ga";
 
 export interface DeptFilterModalProps {
   readonly title: string;
-  readonly isEnabled: boolean;
-  readonly selectedDept: string[];
-  readonly setSelectedDept: (time: string[]) => void;
+  readonly isActive?: boolean;
 }
 
-function DeptFilterModal({
-  title,
-  isEnabled,
-  selectedDept,
-  setSelectedDept,
-}: DeptFilterModalProps) {
-  const headingColor = useColorModeValue("heading.light", "heading.dark");
+function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
   const { searchFilters, setSearchFilters } = useCourseSearchingContext();
+  const [selectedDept, setSelectedDept] = useState(searchFilters.department);
+  const headingColor = useColorModeValue("heading.light", "heading.dark");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const modalBgColor = useColorModeValue("white", "gray.700");
 
@@ -117,16 +111,27 @@ function DeptFilterModal({
 
   return (
     <>
-      <Button
-        size={useBreakpointValue({ base: "sm", md: "md" }) ?? "md"}
-        isDisabled={!isEnabled}
+      <Flex
+        borderRadius={"24px"}
+        height="36px"
+        px="16px"
+        py="6px"
+        border="0.5px solid #4B4B4B"
+        alignItems={"center"}
+        color="#4b4b4b"
+        cursor={"pointer"}
+        transition={"all 0.2s ease-in-out"}
+        _hover={{
+          bg: "#4b4b4b20",
+        }}
         onClick={() => {
           onOpenModal();
           reportEvent("filter_department", "click", "open_modal");
         }}
+        bg={isActive ? "#cccccc" : "white"}
       >
         {title}
-      </Button>
+      </Flex>
       <Modal
         isOpen={isOpen}
         onClose={() => {

@@ -53,6 +53,7 @@ import useHorizontalScrollable from "@/hooks/useHorizontalScrollable";
 import searchModeList from "@/data/searchMode";
 import useOutsideDetecter from "@/hooks/useOutsideDetecter";
 import TimeFilterModal from "@/components/FilterModals/TimeFilterModal";
+import DeptFilterModal from "@/components/FilterModals/DeptFilterModal";
 import { mapStateToIntervals } from "utils/timeTableConverter";
 
 function setCheckList<T>(array: T[], member: T): T[] {
@@ -673,14 +674,21 @@ function HomePage() {
                 </Text>
                 <Flex alignItems={"center"} flexWrap="wrap" gap="3">
                   <TimeFilterModal
-                    title={`上課時間 ${
+                    title={`上課時間${
                       mapStateToIntervals(searchFilters.time) === 0
                         ? ""
-                        : `(${mapStateToIntervals(searchFilters.time)})`
+                        : ` (${mapStateToIntervals(searchFilters.time)})`
                     }`}
                     isActive={mapStateToIntervals(searchFilters.time) > 0}
                   />
-                  <FilterButton>開課系所</FilterButton>
+                  <DeptFilterModal
+                    title={`開課系所${
+                      searchFilters.department.length > 0
+                        ? ` (${searchFilters.department.length})`
+                        : ""
+                    }`}
+                    isActive={searchFilters.department.length > 0}
+                  />
                   <FilterDropDown
                     id="registerMethod"
                     ref={registerMethodRef}
