@@ -34,7 +34,7 @@ function Footer() {
       py={{ base: 2, md: 4 }}
       borderTop="1px solid"
       borderColor={useColorModeValue("gray.200", "gray.700")}
-      zIndex="9999"
+      zIndex="1000"
       css={{ gap: "10px" }}
       bg={useColorModeValue("white", "black")}
     >
