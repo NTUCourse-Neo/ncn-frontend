@@ -307,7 +307,6 @@ function HomePage() {
     "校際課程",
     "分組編班",
     "密集",
-    "遠距",
     "進階英語",
   ];
   const availableSemesters = ["1111", "1102"];
@@ -830,6 +829,7 @@ function HomePage() {
                           上課形式
                         </Text>
                         <Checkbox>只顯示英文授課</Checkbox>
+                        <Checkbox>只顯示遠距課程</Checkbox>
                       </Stack>
                       <Divider />
                       <Stack spacing={3} w="fit-content">
