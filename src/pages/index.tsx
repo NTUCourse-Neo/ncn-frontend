@@ -305,7 +305,7 @@ function HomePage() {
     scrollRight,
   } = useHorizontalScrollable(searchModeRef);
   const [openPanel, setOpenPanel] = useState<
-    null | "registerMethod" | "targetStudent" | "otherLimit"
+    null | "registerMethod" | "targetGrade" | "otherLimit"
   >(null);
   const registerMethodRef = useRef<HTMLDivElement>(null);
   const targetStudentRef = useRef<HTMLDivElement>(null);
@@ -313,7 +313,7 @@ function HomePage() {
   useOutsideDetecter(registerMethodRef, "registerMethod", () => {
     setOpenPanel(null);
   });
-  useOutsideDetecter(targetStudentRef, "targetStudent", () => {
+  useOutsideDetecter(targetStudentRef, "targetGrade", () => {
     setOpenPanel(null);
   });
   useOutsideDetecter(otherLimitRef, "otherLimit", () => {
@@ -775,19 +775,19 @@ function HomePage() {
                     </Stack>
                   </FilterDropDown>
                   <FilterDropDown
-                    id="targetStudent"
+                    id="targetGrade"
                     ref={targetStudentRef}
-                    isOpen={openPanel === "targetStudent"}
+                    isOpen={openPanel === "targetGrade"}
                     title="授課年級"
                     onClick={() => {
-                      if (openPanel === "targetStudent") {
+                      if (openPanel === "targetGrade") {
                         // write onCancel logic here
                         console.log("cancel");
                         setOpenPanel(null);
                       } else {
                         // write onOpen logic here
                         console.log("open");
-                        setOpenPanel("targetStudent");
+                        setOpenPanel("targetGrade");
                       }
                     }}
                     onSave={() => {
