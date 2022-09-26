@@ -11,7 +11,7 @@ import shadows from "@/styles/theme/shadows";
 
 const config = {
   initialColorMode: "light",
-  useSystemColorMode: true,
+  useSystemColorMode: false,
 };
 
 const breakpoints = {
