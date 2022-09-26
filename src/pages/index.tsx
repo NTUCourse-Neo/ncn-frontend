@@ -55,6 +55,7 @@ import useOutsideDetecter from "@/hooks/useOutsideDetecter";
 import TimeFilterModal from "@/components/FilterModals/TimeFilterModal";
 import DeptFilterModal from "@/components/FilterModals/DeptFilterModal";
 import { mapStateToIntervals } from "utils/timeTableConverter";
+import { isEnrollMethodFilterActive } from "utils/searchFilter";
 
 function setCheckList<T>(array: T[], member: T): T[] {
   const idx = array.indexOf(member);
@@ -96,6 +97,7 @@ const FilterDropDown = forwardRef<
     readonly onSave: () => void;
     readonly onClear: () => void;
     readonly isEmpty?: boolean;
+    readonly isActive?: boolean;
   }
 >((props, ref) => {
   const {
@@ -103,11 +105,13 @@ const FilterDropDown = forwardRef<
     title,
     isOpen,
     isEmpty = false,
+    isActive = false,
     children,
     onClick,
     onClear,
     onSave,
   } = props;
+  const isDarkBackground = isActive || isOpen;
   return (
     <Flex
       position="relative"
@@ -118,7 +122,11 @@ const FilterDropDown = forwardRef<
         transition: "all 0.4s ease-in-out",
       }}
     >
-      <FilterButton onClick={onClick} bg={isOpen ? "#cccccc" : "white"} id={id}>
+      <FilterButton
+        onClick={onClick}
+        bg={isDarkBackground ? "#cccccc" : "white"}
+        id={id}
+      >
         <HStack id={id}>
           <Text id={id}>{title}</Text>
           <Icon
@@ -693,7 +701,13 @@ function HomePage() {
                     id="registerMethod"
                     ref={registerMethodRef}
                     isOpen={openPanel === "registerMethod"}
-                    title="加選方式"
+                    title={`加選方式${
+                      isEnrollMethodFilterActive(searchFilters.enroll_method)
+                        ? ` (${[...searchFilters.enroll_method]
+                            .sort()
+                            .join(", ")})`
+                        : ""
+                    }`}
                     onClick={() => {
                       if (openPanel === "registerMethod") {
                         setOpenPanel(null);
@@ -713,6 +727,9 @@ function HomePage() {
                       setSelectedEnrollMethod([]);
                     }}
                     isEmpty={selectedEnrollMethod.length === 0}
+                    isActive={isEnrollMethodFilterActive(
+                      searchFilters.enroll_method
+                    )}
                   >
                     <Stack
                       w="280px"
