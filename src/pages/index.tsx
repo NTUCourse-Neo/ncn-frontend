@@ -48,16 +48,19 @@ import {
   SearchIcon,
 } from "@chakra-ui/icons";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
-import { EnrollMethod } from "types/search";
+import { EnrollMethod, grades, Grade } from "types/search";
 import useHorizontalScrollable from "@/hooks/useHorizontalScrollable";
 import searchModeList from "@/data/searchMode";
 import useOutsideDetecter from "@/hooks/useOutsideDetecter";
 import TimeFilterModal from "@/components/FilterModals/TimeFilterModal";
 import DeptFilterModal from "@/components/FilterModals/DeptFilterModal";
 import { mapStateToIntervals } from "utils/timeTableConverter";
-import { isEnrollMethodFilterActive } from "utils/searchFilter";
+import {
+  isEnrollMethodFilterActive,
+  isTargetGradeFilterActive,
+} from "utils/searchFilter";
 
-function setCheckList<T>(array: T[], member: T): T[] {
+function getNextCheckListState<T>(array: T[], member: T): T[] {
   const idx = array.indexOf(member);
   if (idx === -1) {
     return [...array, member];
@@ -365,6 +368,9 @@ function HomePage() {
   const [selectedEnrollMethod, setSelectedEnrollMethod] = useState<
     EnrollMethod[]
   >(searchFilters.enroll_method);
+  const [selectedTargetGrade, setSelectedTargetGrade] = useState<Grade[]>(
+    searchFilters.target_grade
+  );
 
   return (
     <>
@@ -746,7 +752,7 @@ function HomePage() {
                         isChecked={selectedEnrollMethod.includes("1")}
                         onChange={() => {
                           setSelectedEnrollMethod(
-                            setCheckList(selectedEnrollMethod, "1")
+                            getNextCheckListState(selectedEnrollMethod, "1")
                           );
                         }}
                       >
@@ -756,7 +762,7 @@ function HomePage() {
                         isChecked={selectedEnrollMethod.includes("2")}
                         onChange={() => {
                           setSelectedEnrollMethod(
-                            setCheckList(selectedEnrollMethod, "2")
+                            getNextCheckListState(selectedEnrollMethod, "2")
                           );
                         }}
                       >
@@ -766,7 +772,7 @@ function HomePage() {
                         isChecked={selectedEnrollMethod.includes("3")}
                         onChange={() => {
                           setSelectedEnrollMethod(
-                            setCheckList(selectedEnrollMethod, "3")
+                            getNextCheckListState(selectedEnrollMethod, "3")
                           );
                         }}
                       >
@@ -778,25 +784,33 @@ function HomePage() {
                     id="targetGrade"
                     ref={targetStudentRef}
                     isOpen={openPanel === "targetGrade"}
-                    title="授課年級"
+                    title={`授課年級${
+                      isTargetGradeFilterActive(searchFilters.target_grade)
+                        ? ` (${searchFilters.target_grade.length})`
+                        : ""
+                    }`}
                     onClick={() => {
                       if (openPanel === "targetGrade") {
-                        // write onCancel logic here
-                        console.log("cancel");
                         setOpenPanel(null);
                       } else {
-                        // write onOpen logic here
-                        console.log("open");
+                        setSelectedTargetGrade(searchFilters.target_grade);
                         setOpenPanel("targetGrade");
                       }
                     }}
                     onSave={() => {
-                      console.log("saved");
+                      setSearchFilters({
+                        ...searchFilters,
+                        target_grade: selectedTargetGrade,
+                      });
                       setOpenPanel(null);
                     }}
                     onClear={() => {
-                      console.log("cleared");
+                      setSelectedTargetGrade([]);
                     }}
+                    isEmpty={selectedTargetGrade.length === 0}
+                    isActive={isTargetGradeFilterActive(
+                      searchFilters.target_grade
+                    )}
                   >
                     <Stack
                       spacing={3}
@@ -809,12 +823,26 @@ function HomePage() {
                       }}
                       w="fit-content"
                     >
-                      <Checkbox>大一</Checkbox>
-                      <Checkbox>大二</Checkbox>
-                      <Checkbox>大三</Checkbox>
-                      <Checkbox>大四</Checkbox>
-                      <Checkbox>碩士</Checkbox>
-                      <Checkbox>博士</Checkbox>
+                      {grades.map((grade) => {
+                        return (
+                          <Checkbox
+                            key={grade.value}
+                            isChecked={selectedTargetGrade.includes(
+                              grade.value
+                            )}
+                            onChange={() => {
+                              setSelectedTargetGrade(
+                                getNextCheckListState(
+                                  selectedTargetGrade,
+                                  grade.value
+                                )
+                              );
+                            }}
+                          >
+                            {grade.label}
+                          </Checkbox>
+                        );
+                      })}
                     </Stack>
                   </FilterDropDown>
                   <FilterDropDown
