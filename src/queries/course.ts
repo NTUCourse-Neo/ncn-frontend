@@ -1,5 +1,5 @@
 import instance from "@/queries/axiosInstance";
-import type { SearchFieldName, FilterEnable, Filter } from "@/types/search";
+import type { SearchFieldName, Filter } from "@/types/search";
 import type {
   Course,
   CourseEnrollStatus,
@@ -7,12 +7,16 @@ import type {
   PTTData,
   CourseSyllabus,
 } from "types/course";
+import {
+  isEnrollMethodFilterActive,
+  isTargetGradeFilterActive,
+} from "@/utils/searchFilter";
+import { mapStateToIntervals } from "utils/timeTableConverter";
 const api_version = "v2";
 
 export const fetchSearchResult = async (
   searchString: string,
   fields: SearchFieldName[],
-  filters_enable: FilterEnable,
   filter_obj: Filter,
   batchSize: number,
   offset: number,
@@ -20,19 +24,14 @@ export const fetchSearchResult = async (
   strict_match_bool: boolean
 ) => {
   const filter = {
-    time: filters_enable.time ? filter_obj.time : null,
-    department:
-      filters_enable.department && filter_obj.department.length > 0
-        ? filter_obj.department
-        : null,
-    category:
-      filters_enable.category && filter_obj.category.length > 0
-        ? filter_obj.category
-        : null,
-    enroll_method:
-      filters_enable.enroll_method && filter_obj.enroll_method.length > 0
-        ? filter_obj.enroll_method
-        : null,
+    time: mapStateToIntervals(filter_obj.time) > 0 ? filter_obj.time : null,
+    department: filter_obj.department.length > 0 ? filter_obj.department : null,
+    target_grade: isTargetGradeFilterActive(filter_obj.target_grade)
+      ? filter_obj.target_grade
+      : null,
+    enroll_method: isEnrollMethodFilterActive(filter_obj.enroll_method)
+      ? filter_obj.enroll_method
+      : null,
     strict_match: strict_match_bool,
   };
   const { data } = await instance.post(`${api_version}/courses/search`, {

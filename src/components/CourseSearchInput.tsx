@@ -287,18 +287,12 @@ function CourseSearchInput({
   searchCallback,
 }: CourseSearchInputProps) {
   const toast = useToast();
-  const {
-    searchFilters,
-    searchSettings,
-    searchFiltersEnable,
-    setSearchFiltersEnable,
-    setSearchSettings,
-    setSearchFilters,
-  } = useCourseSearchingContext();
+  const { searchFilters, searchSettings, setSearchSettings, setSearchFilters } =
+    useCourseSearchingContext();
   const { displayTags, setDisplayTags } = useDisplayTags();
 
   // filters local states // TODO: move to their component
-  const [selectedType, setSelectedType] = useState(searchFilters.category);
+  // const [selectedType, setSelectedType] = useState(searchFilters.category);
 
   // searchSettings local states
   const [show_selected_courses, set_show_selected_courses] = useState(
@@ -369,7 +363,7 @@ function CourseSearchInput({
                       alignItems="center"
                       justifyContent="center"
                     >
-                      <Switch
+                      {/* <Switch
                         size={
                           useBreakpointValue({ base: "md", lg: "lg" }) ?? "md"
                         }
@@ -381,7 +375,7 @@ function CourseSearchInput({
                             time: e.currentTarget.checked,
                           });
                         }}
-                      />
+                      /> */}
                       {/* <TimeFilterModal
                         title={
                           mapStateToIntervals(searchFilters.time) === 0
@@ -401,7 +395,7 @@ function CourseSearchInput({
                       alignItems="center"
                       justifyContent="center"
                     >
-                      <Switch
+                      {/* <Switch
                         size={
                           useBreakpointValue({ base: "md", lg: "lg" }) ?? "md"
                         }
@@ -413,7 +407,7 @@ function CourseSearchInput({
                             department: e.currentTarget.checked,
                           });
                         }}
-                      />
+                      /> */}
                       {/* <DeptFilterModal
                         title={
                           selectedDept.length === 0
@@ -432,7 +426,7 @@ function CourseSearchInput({
                       alignItems="center"
                       justifyContent="center"
                     >
-                      <Switch
+                      {/* <Switch
                         size={
                           useBreakpointValue({ base: "md", lg: "lg" }) ?? "md"
                         }
@@ -454,7 +448,7 @@ function CourseSearchInput({
                         isEnabled={searchFiltersEnable.category}
                         selectedType={selectedType}
                         setSelectedType={setSelectedType}
-                      />
+                      />*/}
                     </Flex>
                   </Flex>
                   <Flex flexDirection="column" px="4">
@@ -463,7 +457,7 @@ function CourseSearchInput({
                       alignItems="center"
                       justifyContent="center"
                     >
-                      <Switch
+                      {/* <Switch
                         size={
                           useBreakpointValue({ base: "md", lg: "lg" }) ?? "md"
                         }
@@ -551,7 +545,7 @@ function CourseSearchInput({
                             </Text>
                           </Flex>
                         </MenuList>
-                      </Menu>
+                      </Menu> */}
                     </Flex>
                   </Flex>
                 </Flex>

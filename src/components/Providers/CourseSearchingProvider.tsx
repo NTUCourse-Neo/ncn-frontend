@@ -1,6 +1,6 @@
 import type { SearchMode } from "@/data/searchMode";
 import React, { createContext, useContext, useState } from "react";
-import type { SearchFieldName, FilterEnable, Filter } from "types/search";
+import type { SearchFieldName, Filter } from "types/search";
 
 export interface SearchConfigType {
   show_selected_courses: boolean;
@@ -26,8 +26,6 @@ interface CourseSearchingContextType {
   setSearchColumns: (searchColumns: SearchFieldName[]) => void;
   searchSettings: SearchConfigType;
   setSearchSettings: (searchSettings: SearchConfigType) => void;
-  searchFiltersEnable: FilterEnable;
-  setSearchFiltersEnable: (searchFiltersEnable: FilterEnable) => void;
   searchFilters: Filter;
   setSearchFilters: (searchFilters: Filter) => void;
   searchSemester: string | null;
@@ -52,16 +50,10 @@ const CourseSearchingContext = createContext<CourseSearchingContextType>({
     sync_add_to_nol: false,
     strict_search_mode: true,
   },
-  searchFiltersEnable: {
-    time: false,
-    department: false,
-    category: false,
-    enroll_method: false,
-  },
   searchFilters: {
     time: [[], [], [], [], [], [], []],
     department: [],
-    category: [],
+    target_grade: [],
     enroll_method: ["1", "2", "3"],
   },
   searchSemester: "",
@@ -78,7 +70,6 @@ const CourseSearchingContext = createContext<CourseSearchingContextType>({
   setBatchSize: () => {},
   setSearchSettings: () => {},
   setSearchColumns: () => {},
-  setSearchFiltersEnable: () => {},
   setSearchFilters: () => {},
   setSearchSemester: () => {},
   setSearchMode: () => {},
@@ -108,16 +99,10 @@ const CourseSearchingProvider: React.FC<{
     sync_add_to_nol: false,
     strict_search_mode: true,
   });
-  const [searchFiltersEnable, setSearchFiltersEnable] = useState<FilterEnable>({
-    time: false,
-    department: false,
-    category: false,
-    enroll_method: false,
-  });
   const [searchFilters, setSearchFilters] = useState<Filter>({
     time: [[], [], [], [], [], [], []],
     department: [],
-    category: [],
+    target_grade: [],
     enroll_method: ["1", "2", "3"],
   });
   const [searchSemester, setSearchSemester] = useState(
@@ -150,7 +135,6 @@ const CourseSearchingProvider: React.FC<{
         batchSize,
         searchColumns,
         searchSettings,
-        searchFiltersEnable,
         searchFilters,
         searchSemester,
         searchMode,
@@ -159,7 +143,6 @@ const CourseSearchingProvider: React.FC<{
         setBatchSize,
         setSearchSettings,
         setSearchColumns,
-        setSearchFiltersEnable,
         setSearchFilters,
         setSearchLoading,
         setSearchResultCount,

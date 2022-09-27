@@ -11,7 +11,6 @@ export default function useSearchResult(
   const {
     searchColumns,
     searchSettings,
-    searchFiltersEnable,
     searchFilters,
     batchSize,
     searchSemester,
@@ -37,7 +36,6 @@ export default function useSearchResult(
       const coursesData = await fetchSearchResult(
         searchKeyword ?? "",
         searchColumns,
-        searchFiltersEnable,
         searchFilters,
         batchSize,
         pageIndex * batchSize,

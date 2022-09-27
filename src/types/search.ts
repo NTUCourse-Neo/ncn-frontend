@@ -1,19 +1,10 @@
 import { Interval } from "types/course";
 
-export const FilterSource = {
-  time: null,
-  department: null,
-  category: null,
-  enroll_method: null,
-};
-export type FilterName = keyof typeof FilterSource;
-export type FilterEnable = Record<FilterName, boolean>;
-export type EnrollMethod = "1" | "2" | "3";
 export type Filter = {
-  category: string[]; // TODO: refactor to ENUM
-  department: string[]; // TODO: refactor to ENUM
-  enroll_method: EnrollMethod[];
   time: Interval[][];
+  department: string[];
+  enroll_method: EnrollMethod[];
+  target_grade: Grade[];
 };
 
 export type SearchFieldName =
@@ -22,3 +13,35 @@ export type SearchFieldName =
   | "serial"
   | "code"
   | "identifier";
+
+// enroll method filter
+export type EnrollMethod = "1" | "2" | "3";
+
+// targetGrade filter
+export const grades = [
+  {
+    label: "大一",
+    value: "1",
+  },
+  {
+    label: "大二",
+    value: "2",
+  },
+  {
+    label: "大三",
+    value: "3",
+  },
+  {
+    label: "大四",
+    value: "4",
+  },
+  {
+    label: "碩士",
+    value: "m",
+  },
+  {
+    label: "博士",
+    value: "d",
+  },
+] as const;
+export type Grade = typeof grades[number]["value"];
