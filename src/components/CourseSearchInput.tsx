@@ -32,8 +32,6 @@ import {
 } from "@chakra-ui/react";
 import { FaSearch, FaPlus, FaMinus, FaChevronDown } from "react-icons/fa";
 import { TbListSearch } from "react-icons/tb";
-import DeptFilterModal from "components/FilterModals/DeptFilterModal";
-import CategoryFilterModal from "components/FilterModals/CategoryFilterModal";
 import { info_view_map } from "data/mapping_table";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import {
