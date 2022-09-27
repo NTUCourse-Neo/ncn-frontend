@@ -7,6 +7,7 @@ import DeadlineCountdown from "components/DeadlineCountdown";
 import { UserProvider as Auth0UserProvider } from "@auth0/nextjs-auth0";
 import theme from "styles/theme";
 import "styles/nprogress.css";
+import "components/FilterModals/components/TableDragSelect.css";
 import { useRouter } from "next/router";
 import nProgress from "nprogress";
 import { useEffect } from "react";

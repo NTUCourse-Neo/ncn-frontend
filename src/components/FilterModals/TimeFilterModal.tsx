@@ -111,7 +111,7 @@ function TimeFilterModal(props: TimeFilterModalProps) {
         scrollBehavior="inside"
       >
         <ModalOverlay />
-        <ModalContent maxW={{ base: "100vw", md: "90vw", lg: "50vw" }}>
+        <ModalContent maxW={{ base: "100vw", md: "90vw", lg: "54vw" }}>
           <ModalHeader
             borderBottom={"0.5px solid #6F6F6F"}
             boxSizing="border-box"
@@ -155,7 +155,7 @@ function TimeFilterModal(props: TimeFilterModalProps) {
             </Flex>
             <ModalCloseButton />
           </ModalHeader>
-          <ModalBody overflow="auto" pt="8">
+          <ModalBody pt="8">
             <TimetableSelector
               selectedTime={selectedTime}
               setSelectedTime={setSelectedTime}
