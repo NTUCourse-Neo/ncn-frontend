@@ -338,6 +338,7 @@ function HomePage() {
     setSearchMode,
     searchSettings,
     setSearchSettings,
+    resetFilters,
   } = useCourseSearchingContext();
   const toast = useToast();
   const [isRegistering, setIsRegistering] = useState(false);
@@ -385,6 +386,13 @@ function HomePage() {
     otherLimits,
     (limit) => limit.type_label
   );
+
+  const isFiltersEdited =
+    mapStateToIntervals(searchFilters.time) > 0 ||
+    searchFilters.department.length > 0 ||
+    isEnrollMethodFilterActive(searchFilters.enroll_method) ||
+    isTargetGradeFilterActive(searchFilters.target_grade) ||
+    searchFilters.other_limit.length > 0;
 
   return (
     <>
@@ -887,7 +895,7 @@ function HomePage() {
                       setSelectedOtherLimit([]);
                     }}
                     isEmpty={selectedOtherLimit.length === 0}
-                    isActive={selectedOtherLimit.length > 0}
+                    isActive={searchFilters.other_limit.length > 0}
                   >
                     <Stack
                       spacing={3}
@@ -944,6 +952,22 @@ function HomePage() {
                       )}
                     </Stack>
                   </FilterDropDown>
+                  {isFiltersEdited ? (
+                    <Box
+                      sx={{
+                        fontSize: "14px",
+                        lineHeight: "20px",
+                        fontWeight: 500,
+                        color: "#484848",
+                      }}
+                      cursor="pointer"
+                      onClick={() => {
+                        resetFilters();
+                      }}
+                    >
+                      清除全部
+                    </Box>
+                  ) : null}
                 </Flex>
               </Flex>
               <Checkbox

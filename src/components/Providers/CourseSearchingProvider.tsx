@@ -34,6 +34,7 @@ interface CourseSearchingContextType {
   setSearchMode: (searchMode: SearchMode) => void;
   fetchNextPage: () => void;
   dispatchSearch: (search: string | null) => void;
+  resetFilters: () => void;
 }
 
 const CourseSearchingContext = createContext<CourseSearchingContextType>({
@@ -76,6 +77,7 @@ const CourseSearchingContext = createContext<CourseSearchingContextType>({
   setSearchMode: () => {},
   fetchNextPage: () => {},
   dispatchSearch: () => {},
+  resetFilters: () => {},
 });
 
 const CourseSearchingProvider: React.FC<{
@@ -126,6 +128,16 @@ const CourseSearchingProvider: React.FC<{
     setPageNumber(1);
   };
 
+  const resetFilters = () => {
+    setSearchFilters({
+      time: [[], [], [], [], [], [], []],
+      department: [],
+      target_grade: [],
+      enroll_method: ["1", "2", "3"],
+      other_limit: [],
+    });
+  };
+
   return (
     <CourseSearchingContext.Provider
       value={{
@@ -153,6 +165,7 @@ const CourseSearchingProvider: React.FC<{
         setSearchMode,
         fetchNextPage,
         dispatchSearch,
+        resetFilters,
       }}
     >
       {children}
