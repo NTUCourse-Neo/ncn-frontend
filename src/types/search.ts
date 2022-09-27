@@ -5,6 +5,7 @@ export type Filter = {
   department: string[];
   enroll_method: EnrollMethod[];
   target_grade: Grade[];
+  other_limit: OtherLimit[];
 };
 
 export type SearchFieldName =
@@ -18,6 +19,7 @@ export type SearchFieldName =
 export type EnrollMethod = "1" | "2" | "3";
 
 // targetGrade filter
+// need english label in the future
 export const grades = [
   {
     label: "大一",
@@ -45,3 +47,51 @@ export const grades = [
   },
 ] as const;
 export type Grade = typeof grades[number]["value"];
+
+// otherLimit filter
+// need english label in the future
+export const otherLimits = [
+  {
+    type_label: "上課形式",
+    label: "只顯示英文授課",
+    value: "english_only",
+    avaliable: true,
+  },
+  {
+    type_label: "上課形式",
+    label: "只顯示遠距課程",
+    value: "remote_only",
+    avaliable: true,
+  },
+  {
+    type_label: "課程調整",
+    label: "只顯示異動課程",
+    value: "change_only",
+    avaliable: true,
+  },
+  {
+    type_label: "課程調整",
+    label: "只顯示加開課程",
+    value: "add_only",
+    avaliable: true,
+  },
+  {
+    type_label: "個人設定",
+    label: "只顯示沒有先修規定/資格限制的課程",
+    value: "no_prerequisite",
+    avaliable: true,
+  },
+  {
+    type_label: "個人設定",
+    label: "只顯示未衝堂的課程",
+    value: "no_clash",
+    avaliable: false,
+  },
+  {
+    type_label: "個人設定",
+    label: "只顯示未選課程",
+    value: "no_enroll",
+    avaliable: false,
+  },
+] as const;
+export type OtherLimit = typeof otherLimits[number]["value"];

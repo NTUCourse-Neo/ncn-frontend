@@ -32,6 +32,8 @@ export const fetchSearchResult = async (
     enroll_method: isEnrollMethodFilterActive(filter_obj.enroll_method)
       ? filter_obj.enroll_method
       : null,
+    other_limit:
+      filter_obj.other_limit.length > 0 ? filter_obj.other_limit : null,
     strict_match: strict_match_bool,
   };
   const { data } = await instance.post(`${api_version}/courses/search`, {

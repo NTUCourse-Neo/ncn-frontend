@@ -48,7 +48,13 @@ import {
   SearchIcon,
 } from "@chakra-ui/icons";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
-import { EnrollMethod, grades, Grade } from "types/search";
+import {
+  EnrollMethod,
+  grades,
+  Grade,
+  otherLimits,
+  OtherLimit,
+} from "types/search";
 import useHorizontalScrollable from "@/hooks/useHorizontalScrollable";
 import searchModeList from "@/data/searchMode";
 import useOutsideDetecter from "@/hooks/useOutsideDetecter";
@@ -59,6 +65,7 @@ import {
   isEnrollMethodFilterActive,
   isTargetGradeFilterActive,
 } from "utils/searchFilter";
+import _ from "lodash";
 
 function getNextCheckListState<T>(array: T[], member: T): T[] {
   const idx = array.indexOf(member);
@@ -370,6 +377,13 @@ function HomePage() {
   >(searchFilters.enroll_method);
   const [selectedTargetGrade, setSelectedTargetGrade] = useState<Grade[]>(
     searchFilters.target_grade
+  );
+  const [selectedOtherLimit, setSelectedOtherLimit] = useState<OtherLimit[]>(
+    searchFilters.other_limit
+  );
+  const otherLimitsGroupByType = _.groupBy(
+    otherLimits,
+    (limit) => limit.type_label
   );
 
   return (
@@ -849,25 +863,31 @@ function HomePage() {
                     id="otherLimit"
                     ref={otherLimitRef}
                     isOpen={openPanel === "otherLimit"}
-                    title="其他限制"
+                    title={`其他限制${
+                      searchFilters.other_limit.length > 0
+                        ? ` (${searchFilters.other_limit.length})`
+                        : ``
+                    }`}
                     onClick={() => {
                       if (openPanel === "otherLimit") {
-                        // write onCancel logic here
-                        console.log("cancel");
                         setOpenPanel(null);
                       } else {
-                        // write onOpen logic here
-                        console.log("open");
+                        setSelectedOtherLimit(searchFilters.other_limit);
                         setOpenPanel("otherLimit");
                       }
                     }}
                     onSave={() => {
-                      console.log("saved");
+                      setSearchFilters({
+                        ...searchFilters,
+                        other_limit: selectedOtherLimit,
+                      });
                       setOpenPanel(null);
                     }}
                     onClear={() => {
-                      console.log("cleared");
+                      setSelectedOtherLimit([]);
                     }}
+                    isEmpty={selectedOtherLimit.length === 0}
+                    isActive={selectedOtherLimit.length > 0}
                   >
                     <Stack
                       spacing={3}
@@ -880,52 +900,48 @@ function HomePage() {
                       }}
                       w="300px"
                     >
-                      <Stack spacing={3} w="fit-content">
-                        <Text
-                          sx={{
-                            fontSize: "16px",
-                            lineHeight: "21px",
-                            fontWeight: 600,
-                          }}
-                        >
-                          上課形式
-                        </Text>
-                        <Checkbox>只顯示英文授課</Checkbox>
-                        <Checkbox>只顯示遠距課程</Checkbox>
-                      </Stack>
-                      <Divider />
-                      <Stack spacing={3} w="fit-content">
-                        <Text
-                          sx={{
-                            fontSize: "16px",
-                            lineHeight: "21px",
-                            fontWeight: 600,
-                          }}
-                        >
-                          課程調整
-                        </Text>
-                        <Checkbox>只顯示異動課程</Checkbox>
-                        <Checkbox>只顯示加開課程</Checkbox>
-                      </Stack>
-                      <Divider />
-                      <Stack spacing={3} w="fit-content">
-                        <Text
-                          sx={{
-                            fontSize: "16px",
-                            lineHeight: "21px",
-                            fontWeight: 600,
-                          }}
-                        >
-                          個人設定
-                        </Text>
-                        <Checkbox>只顯示沒有先修規定/資格限制的課程</Checkbox>
-                        <Checkbox isDisabled>
-                          只顯示未衝堂課程<Badge>即將推出</Badge>
-                        </Checkbox>
-                        <Checkbox isDisabled>
-                          只顯示未選課程<Badge>即將推出</Badge>
-                        </Checkbox>
-                      </Stack>
+                      {Object.entries(otherLimitsGroupByType).map(
+                        ([type, limits], index) => {
+                          return (
+                            <React.Fragment key={type}>
+                              {index !== 0 ? <Divider /> : null}
+                              <Stack spacing={3} w="fit-content">
+                                <Text
+                                  sx={{
+                                    fontSize: "16px",
+                                    lineHeight: "21px",
+                                    fontWeight: 600,
+                                  }}
+                                >
+                                  {type}
+                                </Text>
+                                {limits.map((limit) => (
+                                  <Checkbox
+                                    key={limit.label}
+                                    isDisabled={!limit.avaliable}
+                                    isChecked={selectedOtherLimit.includes(
+                                      limit.value
+                                    )}
+                                    onChange={() => {
+                                      setSelectedOtherLimit(
+                                        getNextCheckListState(
+                                          selectedOtherLimit,
+                                          limit.value
+                                        )
+                                      );
+                                    }}
+                                  >
+                                    {limit.label}{" "}
+                                    {!limit.avaliable ? (
+                                      <Badge>即將推出</Badge>
+                                    ) : null}
+                                  </Checkbox>
+                                ))}
+                              </Stack>
+                            </React.Fragment>
+                          );
+                        }
+                      )}
                     </Stack>
                   </FilterDropDown>
                 </Flex>
