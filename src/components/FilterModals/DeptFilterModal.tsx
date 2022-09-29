@@ -19,7 +19,14 @@ import {
   FlexProps,
   Box,
 } from "@chakra-ui/react";
-import React, { useMemo, useState } from "react";
+import React, {
+  useMemo,
+  useState,
+  useRef,
+  useEffect,
+  forwardRef,
+  RefObject,
+} from "react";
 import { college_map } from "data/college";
 import { deptList } from "data/department";
 import FilterElement from "components/FilterModals/components/FilterElement";
@@ -73,50 +80,89 @@ function IsSeleciveRadioGroup(props: IsSeleciveRadioGroupProps) {
   );
 }
 
-function ModalDeptSection(props: {
+interface ModalDeptSectionProps {
   readonly college_key: string;
   readonly departments: Department[];
   readonly selectedDept: string[];
   readonly setSelectedDept: (selectedDept: string[]) => void;
+  readonly activeDept: string | null;
+  readonly setActiveDept: (activeDept: string | null) => void;
   readonly flexProps?: FlexProps;
-}) {
-  const { college_key, departments, selectedDept, setSelectedDept, flexProps } =
-    props;
-  return (
-    <React.Fragment>
-      <Flex
-        p="2"
-        h="40px"
-        flexDirection="column"
-        justifyContent="center"
-        position="sticky"
-        top="0"
-        zIndex="50"
-        bg={"white"}
-        {...flexProps}
-      >
-        <Heading fontSize="2xl" color={"heading.light"}>
-          {college_key + " " + college_map[college_key].name}
-        </Heading>
-      </Flex>
-      <Divider pt={2} />
-      {departments
-        .filter((dept) => !selectedDept.includes(dept.id))
-        .map((dept, dept_index) => (
-          <FilterElement
-            key={`${dept.id}-${dept_index}-modalBody`}
-            id={dept.id}
-            name={dept.name_full}
-            selected={false}
-            onClick={() => {
-              setSelectedDept([...selectedDept, dept.id]);
-              reportEvent("filter_department", "click", dept.id);
-            }}
-          />
-        ))}
-    </React.Fragment>
-  );
 }
+const ModalDeptSection = forwardRef<HTMLDivElement, ModalDeptSectionProps>(
+  (props, ref) => {
+    const {
+      college_key,
+      departments,
+      selectedDept,
+      setSelectedDept,
+      activeDept,
+      setActiveDept,
+      flexProps,
+    } = props;
+    const sectionRef = useRef<HTMLDivElement>(null);
+    const modalBody = (ref as RefObject<HTMLDivElement>).current;
+    console.log(ref);
+
+    useEffect(() => {
+      // ref: https://dev.to/maciekgrzybek/create-section-navigation-with-react-and-intersection-observer-fg0
+      const observerConfig = {
+        root: modalBody ?? null,
+        rootMargin: `0px 0px -80% 0px`,
+      };
+      const handleIntersection = function (
+        entries: IntersectionObserverEntry[]
+      ) {
+        entries.forEach((entry) => {
+          if (entry.target.id !== activeDept && entry.isIntersecting) {
+            setActiveDept(entry.target.id);
+          }
+        });
+      };
+      const observer = new IntersectionObserver(
+        handleIntersection,
+        observerConfig
+      );
+      observer.observe(sectionRef.current as Element);
+      return () => observer.disconnect();
+    }, []);
+
+    return (
+      <Box ref={sectionRef} id={college_key}>
+        <Flex
+          p="2"
+          h="40px"
+          flexDirection="column"
+          justifyContent="center"
+          position="sticky"
+          top="0"
+          zIndex="50"
+          bg={"white"}
+          {...flexProps}
+        >
+          <Heading fontSize="2xl" color={"heading.light"}>
+            {college_key + " " + college_map[college_key].name}
+          </Heading>
+        </Flex>
+        <Divider pt={2} />
+        {departments
+          .filter((dept) => !selectedDept.includes(dept.id))
+          .map((dept, dept_index) => (
+            <FilterElement
+              key={`${dept.id}-${dept_index}-modalBody`}
+              id={dept.id}
+              name={dept.name_full}
+              selected={false}
+              onClick={() => {
+                setSelectedDept([...selectedDept, dept.id]);
+                reportEvent("filter_department", "click", dept.id);
+              }}
+            />
+          ))}
+      </Box>
+    );
+  }
+);
 
 export interface DeptFilterModalProps {
   readonly title: string;
@@ -128,9 +174,9 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
   const [isSelective, setIsSelective] = useState<boolean | null>(
     searchFilters.is_selective
   );
-  const headingColor = useColorModeValue("heading.light", "heading.dark");
+  const modalBodyRef = useRef<HTMLDivElement>(null);
+  const [activeDept, setActiveDept] = useState<string | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const modalBgColor = useColorModeValue("white", "gray.700");
 
   const onOpenModal = () => {
     // overwrite local states by context
@@ -182,15 +228,18 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
               departments={departments}
               selectedDept={selectedDept}
               setSelectedDept={setSelectedDept}
+              activeDept={activeDept}
+              setActiveDept={setActiveDept}
               flexProps={{
                 mt: index === 0 ? 0 : 6,
               }}
+              ref={modalBodyRef}
             />
           );
         })}
       </>
     ),
-    [selectedDept, setSelectedDept, headingColor, modalBgColor]
+    [selectedDept, activeDept]
   );
 
   return (
@@ -275,10 +324,11 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
             <ModalCloseButton />
           </ModalHeader>
           <ModalBody py="0" px={0} overflow="hidden">
-            <Flex h="68vh">
+            <Flex h="68vh" ref={modalBodyRef}>
               <Box overflowY="scroll" h="100%" w="25%" bg="#f2f2f2">
                 {Object.keys(college_map).map((college_key, index) => {
                   const deptName = college_map[college_key].name;
+                  const isActive = activeDept === college_key;
                   return (
                     <Flex
                       key={college_key}
@@ -286,9 +336,10 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
                       px={8}
                       alignItems="start"
                       sx={{
-                        fontSize: "15px",
-                        lineHeight: "23px",
-                        color: "#4b4b4b",
+                        fontSize: isActive ? "17px" : "15px",
+                        lineHeight: isActive ? "22px" : "23px",
+                        color: isActive ? "#2d2d2d" : "#4b4b4b",
+                        fontWeight: isActive ? 600 : 400,
                       }}
                     >
                       <Box mr={1}>{college_key}</Box>
@@ -309,9 +360,9 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
                       position="sticky"
                       top="0"
                       zIndex="50"
-                      bg={modalBgColor}
+                      bg={"white"}
                     >
-                      <Heading fontSize="2xl" color={headingColor}>
+                      <Heading fontSize="2xl" color={"heading.light"}>
                         {`已選開課系所`}
                       </Heading>
                     </Flex>
