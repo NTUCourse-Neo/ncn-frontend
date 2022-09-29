@@ -392,7 +392,8 @@ function HomePage() {
     searchFilters.department.length > 0 ||
     isEnrollMethodFilterActive(searchFilters.enroll_method) ||
     isTargetGradeFilterActive(searchFilters.target_grade) ||
-    searchFilters.other_limit.length > 0;
+    searchFilters.other_limit.length > 0 ||
+    searchFilters.is_full_year !== null;
 
   return (
     <>
@@ -715,7 +716,10 @@ function HomePage() {
                         ? ""
                         : ` (${mapStateToIntervals(searchFilters.time)})`
                     }`}
-                    isActive={mapStateToIntervals(searchFilters.time) > 0}
+                    isActive={
+                      mapStateToIntervals(searchFilters.time) > 0 ||
+                      searchFilters.is_full_year !== null
+                    }
                   />
                   <DeptFilterModal
                     title={`開課系所${

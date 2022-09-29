@@ -10,6 +10,9 @@ import {
   Button,
   Flex,
   useBreakpointValue,
+  Radio,
+  RadioGroup,
+  Stack,
 } from "@chakra-ui/react";
 import TimetableSelector from "components/FilterModals/components/TimetableSelector";
 import { mapStateToTimeTable } from "utils/timeTableConverter";
@@ -42,9 +45,13 @@ function TimeFilterModal(props: TimeFilterModalProps) {
   const [selectedTime, setSelectedTime] = useState(
     mapStateToTimeTable(searchFilters.time)
   );
+  const [isFullYear, setIsFullYear] = useState<null | boolean>(
+    searchFilters.is_full_year
+  );
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const saveSelectedTime = () => {
+  const onSave = () => {
+    // time & isFullYear state
     // turn 15x7 2D array (selectedTime) to 7x15 array
     const timeTable: Interval[][] = [[], [], [], [], [], [], []];
     for (let i = 0; i < intervals.length; i++) {
@@ -55,10 +62,14 @@ function TimeFilterModal(props: TimeFilterModalProps) {
         }
       }
     }
-    setSearchFilters({ ...searchFilters, time: timeTable });
+    setSearchFilters({
+      ...searchFilters,
+      time: timeTable,
+      is_full_year: isFullYear,
+    });
   };
 
-  const resetSelectedTime = () => {
+  const onReset = () => {
     setSelectedTime([
       [false, false, false, false, false, false, false],
       [false, false, false, false, false, false, false],
@@ -76,6 +87,7 @@ function TimeFilterModal(props: TimeFilterModalProps) {
       [false, false, false, false, false, false, false],
       [false, false, false, false, false, false, false],
     ]);
+    setIsFullYear(null);
   };
 
   return (
@@ -96,6 +108,7 @@ function TimeFilterModal(props: TimeFilterModalProps) {
         onClick={() => {
           onOpen();
           setSelectedTime(mapStateToTimeTable(searchFilters.time));
+          setIsFullYear(searchFilters.is_full_year);
           reportEvent("filter_time", "click", "open_modal");
         }}
         bg={isActive ? "#cccccc" : "white"}
@@ -136,7 +149,7 @@ function TimeFilterModal(props: TimeFilterModalProps) {
                 mr={3}
                 onClick={() => {
                   onClose();
-                  saveSelectedTime();
+                  onSave();
                   reportEvent("filter_time", "click", "save_changes");
                 }}
               >
@@ -146,7 +159,7 @@ function TimeFilterModal(props: TimeFilterModalProps) {
                 size="sm"
                 variant="ghost"
                 onClick={() => {
-                  resetSelectedTime();
+                  onReset();
                   reportEvent("filter_time", "click", "reset_changes");
                 }}
               >
@@ -166,50 +179,90 @@ function TimeFilterModal(props: TimeFilterModalProps) {
             borderTop={"0.5px solid #6F6F6F"}
             boxSizing="border-box"
           >
-            <Button
-              variant={"unstyled"}
-              sx={{
-                color: "#4b4b4b",
-                fontSize: "13px",
-                lineHeight: "18px",
-                fontWeight: 600,
-              }}
-              mx={6}
-              isDisabled={countInterval(selectedTime) === 0}
-              onClick={() => {
-                resetSelectedTime();
-                reportEvent("filter_time", "click", "reset_changes");
-              }}
-            >
-              重設
-            </Button>
-            <Button
-              ml="2"
-              w="58px"
-              h="34px"
-              sx={{
-                borderRadius: "50px",
-                fontSize: "13px",
-                lineHeight: "18px",
-                fontWeight: 600,
-                bg: "#4b4b4b",
-                _hover: {
-                  bg: "#4b4b4b",
-                  opacity: 0.8,
-                },
-                _active: {
-                  bg: "#4b4b4b",
-                  opacity: 0.7,
-                },
-              }}
-              onClick={() => {
-                onClose();
-                saveSelectedTime();
-                reportEvent("filter_time", "click", "save_changes");
-              }}
-            >
-              套用
-            </Button>
+            <Flex w="100%" justifyContent={"space-between"}>
+              <Flex alignItems={"center"}>
+                <RadioGroup
+                  onChange={(next) => {
+                    if (next === "all") {
+                      setIsFullYear(null);
+                    } else if (next === "full") {
+                      setIsFullYear(true);
+                    } else if (next === "half") {
+                      setIsFullYear(false);
+                    }
+                  }}
+                  value={
+                    isFullYear === null
+                      ? "all"
+                      : isFullYear === false
+                      ? "half"
+                      : "full"
+                  }
+                >
+                  <Stack
+                    direction="row"
+                    spacing={4}
+                    sx={{
+                      fontSize: "14px",
+                      lineHeight: "20px",
+                      fontWeight: 500,
+                      color: "#666666",
+                      letterSpacing: "0.05em",
+                    }}
+                  >
+                    <Radio value={"all"}>全部</Radio>
+                    <Radio value={"half"}>半年課程</Radio>
+                    <Radio value={"full"}>全年課程</Radio>
+                  </Stack>
+                </RadioGroup>
+              </Flex>
+              <Flex>
+                <Button
+                  variant={"unstyled"}
+                  sx={{
+                    color: "#4b4b4b",
+                    fontSize: "13px",
+                    lineHeight: "18px",
+                    fontWeight: 600,
+                  }}
+                  mx={6}
+                  isDisabled={countInterval(selectedTime) === 0}
+                  onClick={() => {
+                    onReset();
+                    reportEvent("filter_time", "click", "reset_changes");
+                  }}
+                >
+                  重設
+                </Button>
+                <Button
+                  ml="2"
+                  w="58px"
+                  h="34px"
+                  sx={{
+                    borderRadius: "50px",
+                    fontSize: "13px",
+                    lineHeight: "18px",
+                    fontWeight: 600,
+                    bg: "#4b4b4b",
+                    _hover: {
+                      bg: "#4b4b4b",
+                      opacity: 0.8,
+                    },
+                    _active: {
+                      bg: "#4b4b4b",
+                      opacity: 0.7,
+                    },
+                  }}
+                  onClick={() => {
+                    onClose();
+                    onSave();
+                    reportEvent("filter_time", "click", "save_changes");
+                  }}
+                >
+                  套用
+                </Button>
+              </Flex>
+            </Flex>
           </ModalFooter>
         </ModalContent>
       </Modal>

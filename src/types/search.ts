@@ -6,6 +6,7 @@ export type Filter = {
   enroll_method: EnrollMethod[];
   target_grade: Grade[];
   other_limit: OtherLimit[];
+  is_full_year: boolean | null;
 };
 
 export type SearchFieldName =
