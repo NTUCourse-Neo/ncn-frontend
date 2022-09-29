@@ -26,6 +26,7 @@ import React, {
   useEffect,
   forwardRef,
   RefObject,
+  createRef,
 } from "react";
 import { college_map } from "data/college";
 import { deptList } from "data/department";
@@ -87,6 +88,7 @@ interface ModalDeptSectionProps {
   readonly setSelectedDept: (selectedDept: string[]) => void;
   readonly activeDept: string | null;
   readonly setActiveDept: (activeDept: string | null) => void;
+  readonly collegeRefs: Record<string, React.RefObject<HTMLDivElement>>;
   readonly flexProps?: FlexProps;
 }
 const ModalDeptSection = forwardRef<HTMLDivElement, ModalDeptSectionProps>(
@@ -98,11 +100,11 @@ const ModalDeptSection = forwardRef<HTMLDivElement, ModalDeptSectionProps>(
       setSelectedDept,
       activeDept,
       setActiveDept,
+      collegeRefs,
       flexProps,
     } = props;
-    const sectionRef = useRef<HTMLDivElement>(null);
+    const sectionRef = collegeRefs[college_key];
     const modalBody = (ref as RefObject<HTMLDivElement>).current;
-    console.log(ref);
 
     useEffect(() => {
       // ref: https://dev.to/maciekgrzybek/create-section-navigation-with-react-and-intersection-observer-fg0
@@ -129,6 +131,13 @@ const ModalDeptSection = forwardRef<HTMLDivElement, ModalDeptSectionProps>(
 
     return (
       <Box>
+        <Box
+          ref={sectionRef}
+          id={college_key}
+          h="1px"
+          w="100%"
+          bg="transparent"
+        />
         <Flex
           p="2"
           h="40px"
@@ -138,8 +147,6 @@ const ModalDeptSection = forwardRef<HTMLDivElement, ModalDeptSectionProps>(
           top="0"
           zIndex="50"
           bg={"white"}
-          ref={sectionRef}
-          id={college_key}
           {...flexProps}
         >
           <Heading fontSize="2xl" color={"heading.light"}>
@@ -179,6 +186,18 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
   const modalBodyRef = useRef<HTMLDivElement>(null);
   const [activeDept, setActiveDept] = useState<string | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  // clickable navigation link && scrollIntoView effect
+  const collegeRefs = Object.keys(college_map).reduce((refsObj, collegeId) => {
+    refsObj[collegeId] = createRef<HTMLDivElement>();
+    return refsObj;
+  }, {} as Record<string, RefObject<HTMLDivElement>>);
+  const scrollToCollege = (collegeId: string) => {
+    collegeRefs?.[collegeId]?.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
 
   const onOpenModal = () => {
     // overwrite local states by context
@@ -236,6 +255,7 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
                 mt: index === 0 ? 0 : 6,
               }}
               ref={modalBodyRef}
+              collegeRefs={collegeRefs}
             />
           );
         })}
@@ -342,6 +362,10 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
                         lineHeight: isActive ? "22px" : "23px",
                         color: isActive ? "#2d2d2d" : "#4b4b4b",
                         fontWeight: isActive ? 600 : 400,
+                      }}
+                      cursor="pointer"
+                      onClick={() => {
+                        scrollToCollege(college_key);
                       }}
                     >
                       <Box mr={1}>{college_key}</Box>
