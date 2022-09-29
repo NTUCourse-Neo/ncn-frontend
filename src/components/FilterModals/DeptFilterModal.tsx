@@ -128,7 +128,7 @@ const ModalDeptSection = forwardRef<HTMLDivElement, ModalDeptSectionProps>(
     }, []);
 
     return (
-      <Box ref={sectionRef} id={college_key}>
+      <Box>
         <Flex
           p="2"
           h="40px"
@@ -138,6 +138,8 @@ const ModalDeptSection = forwardRef<HTMLDivElement, ModalDeptSectionProps>(
           top="0"
           zIndex="50"
           bg={"white"}
+          ref={sectionRef}
+          id={college_key}
           {...flexProps}
         >
           <Heading fontSize="2xl" color={"heading.light"}>
