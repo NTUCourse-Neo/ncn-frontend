@@ -13,6 +13,9 @@ import {
   Flex,
   useBreakpointValue,
   useColorModeValue,
+  Radio,
+  RadioGroup,
+  Stack,
 } from "@chakra-ui/react";
 import React, { useMemo, useState } from "react";
 import { college_map } from "data/college";
@@ -29,27 +32,36 @@ export interface DeptFilterModalProps {
 function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
   const { searchFilters, setSearchFilters } = useCourseSearchingContext();
   const [selectedDept, setSelectedDept] = useState(searchFilters.department);
+  const [isSelective, setIsSelective] = useState<boolean | null>(
+    searchFilters.is_selective
+  );
   const headingColor = useColorModeValue("heading.light", "heading.dark");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const modalBgColor = useColorModeValue("white", "gray.700");
 
   const onOpenModal = () => {
-    // overwrite local states by redux store
+    // overwrite local states by context
     setSelectedDept(searchFilters.department);
+    setIsSelective(searchFilters.is_selective);
     onOpen();
   };
 
   const onCancelEditing = () => {
     // fire when click "X" or outside of modal
-    // overwrite local state by redux state
+    // overwrite local state by context
     onClose();
     setSelectedDept(searchFilters.department);
+    setIsSelective(searchFilters.is_selective);
   };
 
   const onSaveEditing = () => {
     // fire when click "Save"
     // overwrite redux state by local state
-    setSearchFilters({ ...searchFilters, department: selectedDept });
+    setSearchFilters({
+      ...searchFilters,
+      department: selectedDept,
+      is_selective: isSelective,
+    });
     onClose();
   };
 
@@ -57,6 +69,7 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
     // fire when click "Reset"
     // set local state to empty array
     setSelectedDept([]);
+    setIsSelective(null);
   };
 
   const modalBody = useMemo(
@@ -174,6 +187,7 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
               <Button
                 size="sm"
                 variant="ghost"
+                isDisabled={selectedDept.length === 0 && isSelective === null}
                 onClick={() => {
                   onResetEditing();
                   reportEvent("filter_department", "click", "reset_changes");
@@ -208,49 +222,89 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
             borderTop={"0.5px solid #6F6F6F"}
             boxSizing="border-box"
           >
-            <Button
-              variant={"unstyled"}
-              sx={{
-                color: "#4b4b4b",
-                fontSize: "13px",
-                lineHeight: "18px",
-                fontWeight: 600,
-              }}
-              mx={6}
-              isDisabled={selectedDept.length === 0}
-              onClick={() => {
-                onResetEditing();
-                reportEvent("filter_department", "click", "reset_changes");
-              }}
-            >
-              重設
-            </Button>
-            <Button
-              ml="2"
-              w="58px"
-              h="34px"
-              sx={{
-                borderRadius: "50px",
-                fontSize: "13px",
-                lineHeight: "18px",
-                fontWeight: 600,
-                bg: "#4b4b4b",
-                _hover: {
-                  bg: "#4b4b4b",
-                  opacity: 0.8,
-                },
-                _active: {
-                  bg: "#4b4b4b",
-                  opacity: 0.7,
-                },
-              }}
-              onClick={() => {
-                onSaveEditing();
-                reportEvent("filter_department", "click", "save_changes");
-              }}
-            >
-              套用
-            </Button>
+            <Flex justifyContent={"space-between"} w="100%">
+              <Flex alignItems={"center"}>
+                <RadioGroup
+                  onChange={(next) => {
+                    if (next === "all") {
+                      setIsSelective(null);
+                    } else if (next === "selective") {
+                      setIsSelective(true);
+                    } else if (next === "required") {
+                      setIsSelective(false);
+                    }
+                  }}
+                  value={
+                    isSelective === null
+                      ? "all"
+                      : isSelective === false
+                      ? "required"
+                      : "selective"
+                  }
+                >
+                  <Stack
+                    direction="row"
+                    spacing={4}
+                    sx={{
+                      fontSize: "14px",
+                      lineHeight: "20px",
+                      fontWeight: 500,
+                      color: "#666666",
+                      letterSpacing: "0.05em",
+                    }}
+                  >
+                    <Radio value={"all"}>全部</Radio>
+                    <Radio value={"required"}>必修課程</Radio>
+                    <Radio value={"selective"}>選修課程</Radio>
+                  </Stack>
+                </RadioGroup>
+              </Flex>
+              <Flex>
+                <Button
+                  variant={"unstyled"}
+                  sx={{
+                    color: "#4b4b4b",
+                    fontSize: "13px",
+                    lineHeight: "18px",
+                    fontWeight: 600,
+                  }}
+                  mx={6}
+                  isDisabled={selectedDept.length === 0 && isSelective === null}
+                  onClick={() => {
+                    onResetEditing();
+                    reportEvent("filter_department", "click", "reset_changes");
+                  }}
+                >
+                  重設
+                </Button>
+                <Button
+                  ml="2"
+                  w="58px"
+                  h="34px"
+                  sx={{
+                    borderRadius: "50px",
+                    fontSize: "13px",
+                    lineHeight: "18px",
+                    fontWeight: 600,
+                    bg: "#4b4b4b",
+                    _hover: {
+                      bg: "#4b4b4b",
+                      opacity: 0.8,
+                    },
+                    _active: {
+                      bg: "#4b4b4b",
+                      opacity: 0.7,
+                    },
+                  }}
+                  onClick={() => {
+                    onSaveEditing();
+                    reportEvent("filter_department", "click", "save_changes");
+                  }}
+                >
+                  套用
+                </Button>
+              </Flex>
+            </Flex>
           </ModalFooter>
         </ModalContent>
       </Modal>

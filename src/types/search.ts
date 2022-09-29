@@ -7,6 +7,7 @@ export type Filter = {
   target_grade: Grade[];
   other_limit: OtherLimit[];
   is_full_year: boolean | null;
+  is_selective: boolean | null;
 };
 
 export type SearchFieldName =

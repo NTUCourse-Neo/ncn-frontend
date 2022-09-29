@@ -34,6 +34,8 @@ export const fetchSearchResult = async (
       : null,
     other_limit:
       filter_obj.other_limit.length > 0 ? filter_obj.other_limit : null,
+    is_full_year: filter_obj.is_full_year,
+    is_selective: filter_obj.is_selective,
     strict_match: strict_match_bool,
   };
   const { data } = await instance.post(`${api_version}/courses/search`, {

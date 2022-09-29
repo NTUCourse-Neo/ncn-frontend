@@ -393,7 +393,8 @@ function HomePage() {
     isEnrollMethodFilterActive(searchFilters.enroll_method) ||
     isTargetGradeFilterActive(searchFilters.target_grade) ||
     searchFilters.other_limit.length > 0 ||
-    searchFilters.is_full_year !== null;
+    searchFilters.is_full_year !== null ||
+    searchFilters.is_selective !== null;
 
   return (
     <>
@@ -727,7 +728,10 @@ function HomePage() {
                         ? ` (${searchFilters.department.length})`
                         : ""
                     }`}
-                    isActive={searchFilters.department.length > 0}
+                    isActive={
+                      searchFilters.department.length > 0 ||
+                      searchFilters.is_selective !== null
+                    }
                   />
                   <FilterDropDown
                     id="registerMethod"

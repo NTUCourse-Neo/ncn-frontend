@@ -58,6 +58,7 @@ const CourseSearchingContext = createContext<CourseSearchingContextType>({
     enroll_method: ["1", "2", "3"],
     other_limit: [],
     is_full_year: null,
+    is_selective: null,
   },
   searchSemester: "",
   searchMode: {
@@ -110,6 +111,7 @@ const CourseSearchingProvider: React.FC<{
     enroll_method: ["1", "2", "3"],
     other_limit: [],
     is_full_year: null,
+    is_selective: null,
   });
   const [searchSemester, setSearchSemester] = useState(
     process.env.NEXT_PUBLIC_SEMESTER ?? null
@@ -138,6 +140,7 @@ const CourseSearchingProvider: React.FC<{
       enroll_method: ["1", "2", "3"],
       other_limit: [],
       is_full_year: null,
+      is_selective: null,
     });
   };
 

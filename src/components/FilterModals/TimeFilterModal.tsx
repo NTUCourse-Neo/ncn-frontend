@@ -158,6 +158,9 @@ function TimeFilterModal(props: TimeFilterModalProps) {
               <Button
                 size="sm"
                 variant="ghost"
+                isDisabled={
+                  countInterval(selectedTime) === 0 && isFullYear === null
+                }
                 onClick={() => {
                   onReset();
                   reportEvent("filter_time", "click", "reset_changes");
@@ -226,7 +229,9 @@ function TimeFilterModal(props: TimeFilterModalProps) {
                     fontWeight: 600,
                   }}
                   mx={6}
-                  isDisabled={countInterval(selectedTime) === 0}
+                  isDisabled={
+                    countInterval(selectedTime) === 0 && isFullYear === null
+                  }
                   onClick={() => {
                     onReset();
                     reportEvent("filter_time", "click", "reset_changes");
