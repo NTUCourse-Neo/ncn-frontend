@@ -13,6 +13,7 @@ import {
   Radio,
   RadioGroup,
   Stack,
+  FlexProps,
 } from "@chakra-ui/react";
 import TimetableSelector from "components/FilterModals/components/TimetableSelector";
 import { mapStateToTimeTable } from "utils/timeTableConverter";
@@ -33,6 +34,48 @@ const countInterval = (timeTable: boolean[][]): number => {
   }
   return count;
 };
+
+interface IsFullYearRadioGroupProps extends FlexProps {
+  readonly isFullYear: boolean | null;
+  readonly setIsFullYear: (isFullYear: boolean | null) => void;
+}
+function IsFullYearRadioGroup(props: IsFullYearRadioGroupProps) {
+  const { isFullYear, setIsFullYear, ...rest } = props;
+  return (
+    <Flex alignItems={"center"} {...rest}>
+      <RadioGroup
+        onChange={(next) => {
+          if (next === "all") {
+            setIsFullYear(null);
+          } else if (next === "full") {
+            setIsFullYear(true);
+          } else if (next === "half") {
+            setIsFullYear(false);
+          }
+        }}
+        value={
+          isFullYear === null ? "all" : isFullYear === false ? "half" : "full"
+        }
+      >
+        <Stack
+          direction="row"
+          spacing={4}
+          sx={{
+            fontSize: "14px",
+            lineHeight: "20px",
+            fontWeight: 500,
+            color: "#666666",
+            letterSpacing: "0.05em",
+          }}
+        >
+          <Radio value={"all"}>全部</Radio>
+          <Radio value={"half"}>半年課程</Radio>
+          <Radio value={"full"}>全年課程</Radio>
+        </Stack>
+      </RadioGroup>
+    </Flex>
+  );
+}
 
 export interface TimeFilterModalProps {
   readonly title: string;
@@ -143,6 +186,11 @@ function TimeFilterModal(props: TimeFilterModalProps) {
               mt="2"
               display={{ base: "block", md: "none" }}
             >
+              <IsFullYearRadioGroup
+                isFullYear={isFullYear}
+                setIsFullYear={setIsFullYear}
+                my={2}
+              />
               <Button
                 size="sm"
                 colorScheme="blue"
@@ -183,42 +231,10 @@ function TimeFilterModal(props: TimeFilterModalProps) {
             boxSizing="border-box"
           >
             <Flex w="100%" justifyContent={"space-between"}>
-              <Flex alignItems={"center"}>
-                <RadioGroup
-                  onChange={(next) => {
-                    if (next === "all") {
-                      setIsFullYear(null);
-                    } else if (next === "full") {
-                      setIsFullYear(true);
-                    } else if (next === "half") {
-                      setIsFullYear(false);
-                    }
-                  }}
-                  value={
-                    isFullYear === null
-                      ? "all"
-                      : isFullYear === false
-                      ? "half"
-                      : "full"
-                  }
-                >
-                  <Stack
-                    direction="row"
-                    spacing={4}
-                    sx={{
-                      fontSize: "14px",
-                      lineHeight: "20px",
-                      fontWeight: 500,
-                      color: "#666666",
-                      letterSpacing: "0.05em",
-                    }}
-                  >
-                    <Radio value={"all"}>全部</Radio>
-                    <Radio value={"half"}>半年課程</Radio>
-                    <Radio value={"full"}>全年課程</Radio>
-                  </Stack>
-                </RadioGroup>
-              </Flex>
+              <IsFullYearRadioGroup
+                isFullYear={isFullYear}
+                setIsFullYear={setIsFullYear}
+              />
               <Flex>
                 <Button
                   variant={"unstyled"}

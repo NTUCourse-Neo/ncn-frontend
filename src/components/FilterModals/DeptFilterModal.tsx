@@ -16,6 +16,7 @@ import {
   Radio,
   RadioGroup,
   Stack,
+  FlexProps,
 } from "@chakra-ui/react";
 import React, { useMemo, useState } from "react";
 import { college_map } from "data/college";
@@ -23,6 +24,52 @@ import { deptList } from "data/department";
 import FilterElement from "components/FilterModals/components/FilterElement";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { reportEvent } from "utils/ga";
+
+interface IsSeleciveRadioGroupProps extends FlexProps {
+  readonly isSelective: boolean | null;
+  readonly setIsSelective: (isSelective: boolean | null) => void;
+}
+function IsSeleciveRadioGroup(props: IsSeleciveRadioGroupProps) {
+  const { isSelective, setIsSelective, ...rest } = props;
+  return (
+    <Flex alignItems={"center"} {...rest}>
+      <RadioGroup
+        onChange={(next) => {
+          if (next === "all") {
+            setIsSelective(null);
+          } else if (next === "selective") {
+            setIsSelective(true);
+          } else if (next === "required") {
+            setIsSelective(false);
+          }
+        }}
+        value={
+          isSelective === null
+            ? "all"
+            : isSelective === false
+            ? "required"
+            : "selective"
+        }
+      >
+        <Stack
+          direction="row"
+          spacing={4}
+          sx={{
+            fontSize: "14px",
+            lineHeight: "20px",
+            fontWeight: 500,
+            color: "#666666",
+            letterSpacing: "0.05em",
+          }}
+        >
+          <Radio value={"all"}>全部</Radio>
+          <Radio value={"required"}>必修課程</Radio>
+          <Radio value={"selective"}>選修課程</Radio>
+        </Stack>
+      </RadioGroup>
+    </Flex>
+  );
+}
 
 export interface DeptFilterModalProps {
   readonly title: string;
@@ -173,6 +220,11 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
               mt="2"
               display={{ base: "block", md: "none" }}
             >
+              <IsSeleciveRadioGroup
+                isSelective={isSelective}
+                setIsSelective={setIsSelective}
+                my={2}
+              />
               <Button
                 size="sm"
                 colorScheme="blue"
@@ -223,42 +275,10 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
             boxSizing="border-box"
           >
             <Flex justifyContent={"space-between"} w="100%">
-              <Flex alignItems={"center"}>
-                <RadioGroup
-                  onChange={(next) => {
-                    if (next === "all") {
-                      setIsSelective(null);
-                    } else if (next === "selective") {
-                      setIsSelective(true);
-                    } else if (next === "required") {
-                      setIsSelective(false);
-                    }
-                  }}
-                  value={
-                    isSelective === null
-                      ? "all"
-                      : isSelective === false
-                      ? "required"
-                      : "selective"
-                  }
-                >
-                  <Stack
-                    direction="row"
-                    spacing={4}
-                    sx={{
-                      fontSize: "14px",
-                      lineHeight: "20px",
-                      fontWeight: 500,
-                      color: "#666666",
-                      letterSpacing: "0.05em",
-                    }}
-                  >
-                    <Radio value={"all"}>全部</Radio>
-                    <Radio value={"required"}>必修課程</Radio>
-                    <Radio value={"selective"}>選修課程</Radio>
-                  </Stack>
-                </RadioGroup>
-              </Flex>
+              <IsSeleciveRadioGroup
+                isSelective={isSelective}
+                setIsSelective={setIsSelective}
+              />
               <Flex>
                 <Button
                   variant={"unstyled"}
