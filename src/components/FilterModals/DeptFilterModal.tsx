@@ -12,7 +12,6 @@ import {
   Divider,
   Flex,
   useBreakpointValue,
-  useColorModeValue,
   Radio,
   RadioGroup,
   Stack,
@@ -127,7 +126,7 @@ const ModalDeptSection = forwardRef<HTMLDivElement, ModalDeptSectionProps>(
       );
       observer.observe(sectionRef.current as Element);
       return () => observer.disconnect();
-    }, []);
+    }, [activeDept, modalBody, sectionRef, setActiveDept]);
 
     return (
       <Box>
@@ -172,6 +171,7 @@ const ModalDeptSection = forwardRef<HTMLDivElement, ModalDeptSectionProps>(
     );
   }
 );
+ModalDeptSection.displayName = "ModalDeptSection";
 
 export interface DeptFilterModalProps {
   readonly title: string;
@@ -261,7 +261,7 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
         })}
       </>
     ),
-    [selectedDept, activeDept]
+    [selectedDept, activeDept, collegeRefs]
   );
 
   return (

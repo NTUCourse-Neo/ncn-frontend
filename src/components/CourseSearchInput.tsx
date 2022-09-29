@@ -20,7 +20,6 @@ import {
   TabPanels,
   TabPanel,
   Switch,
-  MenuDivider,
   TagLeftIcon,
   FormLabel,
   useBreakpointValue,

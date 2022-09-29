@@ -211,6 +211,7 @@ const FilterDropDown = forwardRef<
     </Flex>
   );
 });
+FilterDropDown.displayName = "FilterDropDown";
 
 interface NewRegisterModalProps {
   isOpen: boolean;

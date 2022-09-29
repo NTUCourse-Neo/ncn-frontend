@@ -78,7 +78,7 @@ function TimetableSelector({
                 borderRadius={"4px"}
               >
                 {timeString.split(" ").map((t, i) => (
-                  <Text>{t}</Text>
+                  <Text key={`${t}-${i}`}>{t}</Text>
                 ))}
               </Flex>
             );

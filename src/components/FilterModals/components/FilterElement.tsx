@@ -1,9 +1,4 @@
-import {
-  Button,
-  Badge,
-  useColorModeValue,
-  ButtonProps,
-} from "@chakra-ui/react";
+import { Button, Badge, ButtonProps } from "@chakra-ui/react";
 
 export interface FilterElementProps extends ButtonProps {
   readonly id: string;
