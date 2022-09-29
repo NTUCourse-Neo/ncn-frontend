@@ -109,7 +109,7 @@ const ModalDeptSection = forwardRef<HTMLDivElement, ModalDeptSectionProps>(
       // ref: https://dev.to/maciekgrzybek/create-section-navigation-with-react-and-intersection-observer-fg0
       const observerConfig = {
         root: modalBody ?? null,
-        rootMargin: `0px 0px -90% 0px`,
+        rootMargin: `0px 0px -88% 0px`,
       };
       const handleIntersection = function (
         entries: IntersectionObserverEntry[]
