@@ -33,7 +33,7 @@ import FilterElement from "components/FilterModals/components/FilterElement";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { reportEvent } from "utils/ga";
 import type { Department } from "types/course";
-
+import { generateScrollBarCss } from "styles/customScrollBar";
 interface IsSeleciveRadioGroupProps extends FlexProps {
   readonly isSelective: boolean | null;
   readonly setIsSelective: (isSelective: boolean | null) => void;
@@ -347,7 +347,13 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
           </ModalHeader>
           <ModalBody py="0" px={0} overflow="hidden">
             <Flex h="68vh" ref={modalBodyRef}>
-              <Box overflowY="scroll" h="100%" w="25%" bg="#f2f2f2">
+              <Box
+                overflowY="scroll"
+                h="100%"
+                w="25%"
+                bg="#f2f2f2"
+                __css={generateScrollBarCss("#f2f2f2", "#909090")}
+              >
                 {Object.keys(college_map).map((college_key, index) => {
                   const deptName = college_map[college_key].name;
                   const isActive = activeDept === college_key;
@@ -374,7 +380,12 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
                   );
                 })}
               </Box>
-              <Box overflowY="scroll" w="75%" h="100%">
+              <Box
+                overflowY="scroll"
+                w="75%"
+                h="100%"
+                __css={generateScrollBarCss("white", "#909090")}
+              >
                 {deptList.filter((dept) => selectedDept.includes(dept.id))
                   .length > 0 ? (
                   <Box mb={6}>
