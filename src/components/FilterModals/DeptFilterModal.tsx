@@ -38,6 +38,7 @@ import { useCourseSearchingContext } from "components/Providers/CourseSearchingP
 import { reportEvent } from "utils/ga";
 import type { Department } from "types/course";
 import { generateScrollBarCss } from "styles/customScrollBar";
+import { useInView } from "react-intersection-observer";
 
 interface IsSeleciveRadioGroupProps extends FlexProps {
   readonly isSelective: boolean | null;
@@ -90,7 +91,6 @@ interface ModalDeptSectionProps {
   readonly departments: Department[];
   readonly selectedDept: string[];
   readonly setSelectedDept: (selectedDept: string[]) => void;
-  readonly activeDept: string | null;
   readonly setActiveDept: (activeDept: string | null) => void;
   readonly collegeRefs: Record<string, React.RefObject<HTMLDivElement>>;
   readonly flexProps?: FlexProps;
@@ -102,12 +102,11 @@ const ModalDeptSection = forwardRef<HTMLDivElement, ModalDeptSectionProps>(
       departments,
       selectedDept,
       setSelectedDept,
-      activeDept,
       setActiveDept,
       collegeRefs,
       flexProps,
     } = props;
-    const sectionRef = collegeRefs[college_key];
+    const sectionScrollRef = collegeRefs[college_key];
     const modal = ref as RefObject<HTMLDivElement>;
     const modalBody = modal.current;
     const ROOT_MARGIN_BOX_HEIGHT = 50;
@@ -115,35 +114,32 @@ const ModalDeptSection = forwardRef<HTMLDivElement, ModalDeptSectionProps>(
       ? `-${modalBody.clientHeight - ROOT_MARGIN_BOX_HEIGHT}px`
       : "-88%";
 
-    useEffect(() => {
-      // ref: https://dev.to/maciekgrzybek/create-section-navigation-with-react-and-intersection-observer-fg0
-      const observerConfig = {
-        root: modalBody ?? null,
-        rootMargin: `0px 0px ${offsetBottom} 0px`,
-      };
-      const handleIntersection = function (
-        entries: IntersectionObserverEntry[]
-      ) {
-        entries.forEach((entry) => {
-          if (entry.target.id !== activeDept && entry.isIntersecting) {
-            setActiveDept(entry.target.id);
-          }
-        });
-      };
-      const observer = new IntersectionObserver(
-        handleIntersection,
-        observerConfig
-      );
-      observer.observe(sectionRef.current as Element);
-      return () => observer.disconnect();
-    }, [activeDept, modalBody, sectionRef, setActiveDept]);
+    const { ref: inViewRef } = useInView({
+      /* Optional options */
+      root: modalBody ?? null,
+      rootMargin: `0px 0px ${offsetBottom} 0px`,
+      onChange: (inView, entry) => {
+        if (inView) {
+          setActiveDept(entry?.target?.id ?? null);
+        }
+      },
+    });
 
     return (
       <Box position={"relative"} minH="100px">
         <Box
-          ref={sectionRef}
+          ref={inViewRef}
           id={college_key}
-          h="50px"
+          h="40px"
+          w="100%"
+          bg="transparent"
+          position={"absolute"}
+          top={0}
+        />
+        <Box
+          ref={sectionScrollRef}
+          id={college_key}
+          h="40px"
           w="100%"
           bg="transparent"
           position={"absolute"}
@@ -260,7 +256,6 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
               departments={departments}
               selectedDept={selectedDept}
               setSelectedDept={setSelectedDept}
-              activeDept={activeDept}
               setActiveDept={setActiveDept}
               flexProps={{
                 mt: index === 0 ? 0 : 6,
