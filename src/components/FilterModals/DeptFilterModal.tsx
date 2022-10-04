@@ -40,6 +40,25 @@ import type { Department } from "types/course";
 import { generateScrollBarCss } from "styles/customScrollBar";
 import { useInView } from "react-intersection-observer";
 
+function searchDept(
+  searchText: string,
+  departments: Department[]
+): Department[] {
+  const keyword = searchText.trim();
+  const result: Department[] = [];
+  for (const department of departments) {
+    if (
+      department.name_full.includes(keyword) ||
+      department.id.includes(keyword) ||
+      (department?.name_alt ?? "").includes(keyword) ||
+      (department?.name_short ?? "").includes(keyword)
+    ) {
+      result.push(department);
+    }
+  }
+  return result;
+}
+
 interface IsSeleciveRadioGroupProps extends FlexProps {
   readonly isSelective: boolean | null;
   readonly setIsSelective: (isSelective: boolean | null) => void;
@@ -246,11 +265,15 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
           if (departments.length === 0) {
             return null;
           }
+          const deptAfterSearch = searchDept(searchString, departments);
+          if (deptAfterSearch.length === 0) {
+            return null;
+          }
           return (
             <ModalDeptSection
               key={college_key}
               college_key={college_key}
-              departments={departments}
+              departments={deptAfterSearch}
               selectedDept={selectedDept}
               setSelectedDept={setSelectedDept}
               setActiveDept={setActiveDept}
@@ -264,7 +287,7 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
         })}
       </>
     ),
-    [selectedDept, activeDept, collegeRefs]
+    [selectedDept, activeDept, collegeRefs, searchString]
   );
 
   return (
@@ -417,9 +440,6 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
                       h="40px"
                       flexDirection="column"
                       justifyContent="center"
-                      position="sticky"
-                      top="0"
-                      zIndex="50"
                       bg={"white"}
                     >
                       <Heading fontSize="2xl" color={"heading.light"}>
@@ -427,7 +447,7 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
                       </Heading>
                     </Flex>
                     <Divider pt={2} />
-                    {deptList
+                    {searchDept(searchString, deptList)
                       .filter((dept) => selectedDept.includes(dept.id))
                       .map((dept, index) => (
                         <FilterElement
