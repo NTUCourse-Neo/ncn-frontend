@@ -21,6 +21,7 @@ import {
   InputGroup,
   InputLeftElement,
   Center,
+  InputRightElement,
 } from "@chakra-ui/react";
 import { SearchOutlineIcon } from "components/CustomIcons";
 import React, {
@@ -40,6 +41,7 @@ import { reportEvent } from "utils/ga";
 import type { Department } from "types/course";
 import { generateScrollBarCss } from "styles/customScrollBar";
 import { useInView } from "react-intersection-observer";
+import { CloseIcon } from "@chakra-ui/icons";
 
 function searchDept(
   searchText: string,
@@ -376,6 +378,26 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
                     }}
                     value={searchString}
                   />
+                  <InputRightElement>
+                    {searchString.trim() !== "" ? (
+                      <CloseIcon
+                        boxSize="10px"
+                        color="#6f6f6f"
+                        sx={{
+                          fontWeight: 500,
+                          boxSizing: "content-box",
+                          cursor: "pointer",
+                          borderRadius: "999px",
+                          padding: "2px",
+                          borderWidth: "2px",
+                          borderColor: "#6f6f6f",
+                        }}
+                        onClick={() => {
+                          setSearchString("");
+                        }}
+                      />
+                    ) : null}
+                  </InputRightElement>
                 </InputGroup>
               </Flex>
               <Flex
