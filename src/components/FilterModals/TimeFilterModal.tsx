@@ -235,7 +235,7 @@ function TimeFilterModal(props: TimeFilterModalProps) {
                 isFullYear={isFullYear}
                 setIsFullYear={setIsFullYear}
               />
-              <Flex>
+              <Flex alignItems={"center"}>
                 <Button
                   variant={"unstyled"}
                   sx={{

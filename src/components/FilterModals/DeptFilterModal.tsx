@@ -212,7 +212,6 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
     setIsSelective(searchFilters.is_selective);
     onOpen();
   };
-
   const onCancelEditing = () => {
     // fire when click "X" or outside of modal
     // overwrite local state by context
@@ -220,7 +219,6 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
     setSelectedDept(searchFilters.department);
     setIsSelective(searchFilters.is_selective);
   };
-
   const onSaveEditing = () => {
     // fire when click "Save"
     // overwrite redux state by local state
@@ -231,7 +229,6 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
     });
     onClose();
   };
-
   const onResetEditing = () => {
     // fire when click "Reset"
     // set local state to empty array
@@ -462,7 +459,7 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
                 isSelective={isSelective}
                 setIsSelective={setIsSelective}
               />
-              <Flex>
+              <Flex alignItems={"center"}>
                 <Button
                   variant={"unstyled"}
                   sx={{
