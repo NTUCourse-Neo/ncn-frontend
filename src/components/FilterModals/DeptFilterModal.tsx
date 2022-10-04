@@ -17,7 +17,11 @@ import {
   Stack,
   FlexProps,
   Box,
+  Input,
+  InputGroup,
+  InputLeftElement,
 } from "@chakra-ui/react";
+import { SearchOutlineIcon } from "components/CustomIcons";
 import React, {
   useMemo,
   useState,
@@ -34,6 +38,7 @@ import { useCourseSearchingContext } from "components/Providers/CourseSearchingP
 import { reportEvent } from "utils/ga";
 import type { Department } from "types/course";
 import { generateScrollBarCss } from "styles/customScrollBar";
+
 interface IsSeleciveRadioGroupProps extends FlexProps {
   readonly isSelective: boolean | null;
   readonly setIsSelective: (isSelective: boolean | null) => void;
@@ -103,13 +108,18 @@ const ModalDeptSection = forwardRef<HTMLDivElement, ModalDeptSectionProps>(
       flexProps,
     } = props;
     const sectionRef = collegeRefs[college_key];
-    const modalBody = (ref as RefObject<HTMLDivElement>).current;
+    const modal = ref as RefObject<HTMLDivElement>;
+    const modalBody = modal.current;
+    const ROOT_MARGIN_BOX_HEIGHT = 50;
+    const offsetBottom = modalBody?.clientHeight
+      ? `-${modalBody.clientHeight - ROOT_MARGIN_BOX_HEIGHT}px`
+      : "-88%";
 
     useEffect(() => {
       // ref: https://dev.to/maciekgrzybek/create-section-navigation-with-react-and-intersection-observer-fg0
       const observerConfig = {
         root: modalBody ?? null,
-        rootMargin: `0px 0px -88% 0px`,
+        rootMargin: `0px 0px ${offsetBottom} 0px`,
       };
       const handleIntersection = function (
         entries: IntersectionObserverEntry[]
@@ -129,22 +139,21 @@ const ModalDeptSection = forwardRef<HTMLDivElement, ModalDeptSectionProps>(
     }, [activeDept, modalBody, sectionRef, setActiveDept]);
 
     return (
-      <Box>
+      <Box position={"relative"} minH="100px">
         <Box
           ref={sectionRef}
           id={college_key}
-          h="1px"
+          h="50px"
           w="100%"
           bg="transparent"
+          position={"absolute"}
+          top={0}
         />
         <Flex
           p="2"
           h="40px"
           flexDirection="column"
           justifyContent="center"
-          position="sticky"
-          top="0"
-          zIndex="50"
           bg={"white"}
           {...flexProps}
         >
@@ -186,6 +195,8 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
   const modalBodyRef = useRef<HTMLDivElement>(null);
   const [activeDept, setActiveDept] = useState<string | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const [searchString, setSearchString] = useState("");
 
   // clickable navigation link && scrollIntoView effect
   const collegeRefs = Object.keys(college_map).reduce((refsObj, collegeId) => {
@@ -307,41 +318,61 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
               fontWeight: 400,
             }}
           >
-            {`已選擇 ${selectedDept.length} 個系所`}
             <Flex
-              flexDirection="row"
-              justifyContent="start"
+              flexDirection={{ base: "column", md: "row" }}
               alignItems="center"
-              mt="2"
-              display={{ base: "block", md: "none" }}
             >
-              <IsSeleciveRadioGroup
-                isSelective={isSelective}
-                setIsSelective={setIsSelective}
-                my={2}
-              />
-              <Button
-                size="sm"
-                colorScheme="blue"
-                mr={3}
-                onClick={() => {
-                  onSaveEditing();
-                  reportEvent("filter_department", "click", "save_changes");
-                }}
+              <Flex w="40%">{`已選擇 ${selectedDept.length} 個系所`}</Flex>
+              <Flex w="30%">
+                <InputGroup>
+                  <InputLeftElement pointerEvents="none" pl="2" pt="1">
+                    <SearchOutlineIcon boxSize="22px" color="#909090" />
+                  </InputLeftElement>
+                  <Input
+                    borderRadius={"999px"}
+                    placeholder="搜尋系所名稱或代碼"
+                    onChange={(e) => {
+                      setSearchString(e.target.value);
+                    }}
+                    value={searchString}
+                  />
+                </InputGroup>
+              </Flex>
+              <Flex
+                flexDirection="row"
+                justifyContent="start"
+                alignItems="center"
+                mt="2"
+                display={{ base: "block", md: "none" }}
               >
-                套用
-              </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                isDisabled={selectedDept.length === 0 && isSelective === null}
-                onClick={() => {
-                  onResetEditing();
-                  reportEvent("filter_department", "click", "reset_changes");
-                }}
-              >
-                重設
-              </Button>
+                <IsSeleciveRadioGroup
+                  isSelective={isSelective}
+                  setIsSelective={setIsSelective}
+                  my={2}
+                />
+                <Button
+                  size="sm"
+                  colorScheme="blue"
+                  mr={3}
+                  onClick={() => {
+                    onSaveEditing();
+                    reportEvent("filter_department", "click", "save_changes");
+                  }}
+                >
+                  套用
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  isDisabled={selectedDept.length === 0 && isSelective === null}
+                  onClick={() => {
+                    onResetEditing();
+                    reportEvent("filter_department", "click", "reset_changes");
+                  }}
+                >
+                  重設
+                </Button>
+              </Flex>
             </Flex>
             <ModalCloseButton />
           </ModalHeader>
