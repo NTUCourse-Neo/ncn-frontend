@@ -20,6 +20,7 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
+  Center,
 } from "@chakra-ui/react";
 import { SearchOutlineIcon } from "components/CustomIcons";
 import React, {
@@ -255,8 +256,33 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
     setIsSelective(null);
   };
 
-  const modalBody = useMemo(
-    () => (
+  const modalBody = useMemo(() => {
+    const numOfMatchedDept = Object.keys(college_map)
+      .map((collegeKey) => {
+        const departments = searchDept(
+          searchString,
+          deptList.filter((dept) => dept.college_id === collegeKey)
+        );
+        return departments.length;
+      })
+      .reduce((acc, cur) => acc + cur, 0);
+    if (numOfMatchedDept === 0) {
+      return (
+        <Center
+          w="100%"
+          h="100%"
+          zIndex="100"
+          sx={{
+            fontSize: "14px",
+            lineHeight: "20px",
+            color: "#6f6f6f",
+          }}
+        >
+          找不到相關內容，請檢查是否打錯字
+        </Center>
+      );
+    }
+    return (
       <>
         {Object.keys(college_map).map((college_key, index) => {
           const departments = deptList.filter(
@@ -286,9 +312,8 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
           );
         })}
       </>
-    ),
-    [selectedDept, activeDept, collegeRefs, searchString]
-  );
+    );
+  }, [selectedDept, activeDept, collegeRefs, searchString]);
 
   return (
     <>
@@ -432,8 +457,9 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
                 h="100%"
                 __css={generateScrollBarCss("white", "#909090")}
               >
-                {deptList.filter((dept) => selectedDept.includes(dept.id))
-                  .length > 0 ? (
+                {searchDept(searchString, deptList).filter((dept) =>
+                  selectedDept.includes(dept.id)
+                ).length > 0 ? (
                   <Box mb={6}>
                     <Flex
                       p="2"
