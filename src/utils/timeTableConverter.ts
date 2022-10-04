@@ -1,42 +1,13 @@
 import { Interval } from "types/course";
+import _ from "lodash";
 
 const mapStateToTimeTable = (time_state: Interval[][]) => {
-  if (time_state === [[], [], [], [], [], [], []]) {
-    return [
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-    ];
+  if (_.isEqual(time_state, [[], [], [], [], [], [], []])) {
+    return new Array(15).fill(0).map((x) => new Array(7).fill(false));
   } else {
-    const time_table = [
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-      [false, false, false, false, false, false, false],
-    ];
+    const time_table = new Array(15)
+      .fill(0)
+      .map((x) => new Array(7).fill(false));
     for (let i = 0; i < 7; i++) {
       const day = time_state[i];
       for (let j = 0; j < day.length; j++) {
