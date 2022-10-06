@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 export default function useHorizontalScrollable(
   ref: React.RefObject<HTMLDivElement>,
-  scrollUnit: number = 100
+  scrollUnit = 100
 ) {
   const [isScrollable, setIsScrollable] = useState(false);
   const [reachLeft, setReachLeft] = useState(false);
