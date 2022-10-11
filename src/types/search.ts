@@ -10,6 +10,7 @@ export type Filter = {
   is_selective: boolean | null;
 };
 
+// deprecated
 export type SearchFieldName =
   | "name"
   | "teacher"

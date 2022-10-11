@@ -22,8 +22,8 @@ interface CourseSearchingContextType {
   setTotalCount: (totalCount: number) => void;
   batchSize: number;
   setBatchSize: (batchSize: number) => void;
-  searchColumns: SearchFieldName[];
-  setSearchColumns: (searchColumns: SearchFieldName[]) => void;
+  searchColumns: SearchFieldName[]; // deprecated
+  setSearchColumns: (searchColumns: SearchFieldName[]) => void; // deprecated
   searchSettings: SearchConfigType;
   setSearchSettings: (searchSettings: SearchConfigType) => void;
   searchFilters: Filter;
@@ -44,7 +44,7 @@ const CourseSearchingContext = createContext<CourseSearchingContextType>({
   searchLoading: false,
   totalCount: 0,
   batchSize: 20,
-  searchColumns: ["name", "teacher", "serial", "code", "identifier"],
+  searchColumns: ["name", "teacher", "serial", "code", "identifier"], // deprecated
   searchSettings: {
     show_selected_courses: false,
     only_show_not_conflicted_courses: false,
@@ -73,7 +73,7 @@ const CourseSearchingContext = createContext<CourseSearchingContextType>({
   setTotalCount: () => {},
   setBatchSize: () => {},
   setSearchSettings: () => {},
-  setSearchColumns: () => {},
+  setSearchColumns: () => {}, // deprecated
   setSearchFilters: () => {},
   setSearchSemester: () => {},
   setSearchMode: () => {},
@@ -91,6 +91,8 @@ const CourseSearchingProvider: React.FC<{
   const [searchLoading, setSearchLoading] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
   const [batchSize, setBatchSize] = useState(20);
+
+  // deprecated
   const [searchColumns, setSearchColumns] = useState<SearchFieldName[]>([
     "name",
     "teacher",
