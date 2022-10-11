@@ -25,7 +25,7 @@ interface CourseSearchingContextType {
   searchColumns: SearchFieldName[]; // deprecated
   setSearchColumns: (searchColumns: SearchFieldName[]) => void; // deprecated
   searchSettings: SearchConfigType;
-  setSearchSettings: (searchSettings: SearchConfigType) => void;
+  setSearchSettings: (searchSettings: SearchConfigType) => void; // only strict_search_mode is used
   searchFilters: Filter;
   setSearchFilters: (searchFilters: Filter) => void;
   searchSemester: string | null;
@@ -46,6 +46,7 @@ const CourseSearchingContext = createContext<CourseSearchingContextType>({
   batchSize: 20,
   searchColumns: ["name", "teacher", "serial", "code", "identifier"], // deprecated
   searchSettings: {
+    // only strict_search_mode is used
     show_selected_courses: false,
     only_show_not_conflicted_courses: false,
     sync_add_to_nol: false,
@@ -100,6 +101,7 @@ const CourseSearchingProvider: React.FC<{
     "code",
     "identifier",
   ]);
+  // only strict_search_mode is used
   const [searchSettings, setSearchSettings] = useState<SearchConfigType>({
     show_selected_courses: false,
     only_show_not_conflicted_courses: false,

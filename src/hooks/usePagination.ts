@@ -1,3 +1,5 @@
+// deprecated
+
 import { useEffect } from "react";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { useInView } from "react-intersection-observer";
