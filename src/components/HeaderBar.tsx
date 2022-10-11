@@ -29,6 +29,7 @@ import BeatLoader from "react-spinners/BeatLoader";
 import Image from "next/image";
 import { reportEvent } from "utils/ga";
 import useOutsideDetecter from "@/hooks/useOutsideDetecter";
+import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 
 interface MegaMenuLinkProps extends TextProps {
   readonly href: string;
@@ -263,6 +264,10 @@ function HeaderBar() {
   useOutsideDetecter(selectSitesRef, "selectSites", () => {
     setOpenPanel(null);
   });
+  const router = useRouter();
+  const { isSearchBoxInView } = useCourseSearchingContext();
+  const isSearchModeEnable =
+    router.pathname === "/course" ? (isSearchBoxInView ? false : true) : false; // TODO: used in /course page
 
   const hasNewPost = true; // TODO: check if there is new post
 

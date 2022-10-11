@@ -32,6 +32,8 @@ interface CourseSearchingContextType {
   setSearchSemester: (searchSemester: string | null) => void;
   searchMode: SearchMode;
   setSearchMode: (searchMode: SearchMode) => void;
+  isSearchBoxInView: boolean;
+  setIsSearchBoxInView: (isSearchBoxInView: boolean) => void;
   fetchNextPage: () => void;
   dispatchSearch: (search: string | null) => void;
   resetFilters: () => void;
@@ -67,6 +69,7 @@ const CourseSearchingContext = createContext<CourseSearchingContextType>({
     chinese: "快速搜尋",
     english: "Quick Search",
   },
+  isSearchBoxInView: true,
   setSearch: () => {},
   setPageNumber: () => {},
   setSearchLoading: () => {},
@@ -78,6 +81,7 @@ const CourseSearchingContext = createContext<CourseSearchingContextType>({
   setSearchFilters: () => {},
   setSearchSemester: () => {},
   setSearchMode: () => {},
+  setIsSearchBoxInView: () => {},
   fetchNextPage: () => {},
   dispatchSearch: () => {},
   resetFilters: () => {},
@@ -125,6 +129,7 @@ const CourseSearchingProvider: React.FC<{
     chinese: "快速搜尋",
     english: "Quick Search",
   });
+  const [isSearchBoxInView, setIsSearchBoxInView] = useState(true);
 
   const fetchNextPage = () => {
     setPageNumber(pageNumber + 1);
@@ -162,6 +167,7 @@ const CourseSearchingProvider: React.FC<{
         searchFilters,
         searchSemester,
         searchMode,
+        isSearchBoxInView,
         setSearch,
         setPageNumber,
         setBatchSize,
@@ -176,6 +182,7 @@ const CourseSearchingProvider: React.FC<{
         fetchNextPage,
         dispatchSearch,
         resetFilters,
+        setIsSearchBoxInView,
       }}
     >
       {children}

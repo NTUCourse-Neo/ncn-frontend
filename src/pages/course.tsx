@@ -4,35 +4,30 @@ import {
   Flex,
   Text,
   Collapse,
-  IconButton,
   Fade,
   useMediaQuery,
   Icon,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { BeatLoader } from "react-spinners";
-import { FaChevronDown, FaChevronUp, FaRegCalendarAlt } from "react-icons/fa";
+import { FaRegCalendarAlt } from "react-icons/fa";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
-import CourseInfoRowContainer from "components/CourseInfoRowContainer";
-import CourseSearchInput from "components/CourseSearchInput";
-import SkeletonRow from "components/SkeletonRow";
 import SideCourseTableContainer from "components/CourseTable/SideCourseTableContainer";
-import usePagination from "hooks/usePagination";
 import Head from "next/head";
 import { reportEvent } from "utils/ga";
+import { useInView } from "react-intersection-observer";
 
 function CoursePage() {
+  const { ref: searchBoxRef, inView: searchBoxInView } = useInView({
+    threshold: 0,
+  });
   const topRef = useRef<HTMLDivElement>(null);
-  const bottomRef = usePagination();
-  const { searchLoading, totalCount, setBatchSize } =
-    useCourseSearchingContext();
+  const { setIsSearchBoxInView, setBatchSize } = useCourseSearchingContext();
 
   const [isMobile, isHigherThan1325] = useMediaQuery([
     "(max-width: 1000px)",
     "(min-height: 1325px)",
   ]);
 
-  const [displayFilter, setDisplayFilter] = useState(false);
   const [displayTable, setDisplayTable] = useState(false);
 
   useEffect(() => {
@@ -41,9 +36,12 @@ function CoursePage() {
     }
   }, [isHigherThan1325, setBatchSize]);
 
+  useEffect(() => {
+    setIsSearchBoxInView(searchBoxInView);
+  }, [searchBoxInView, setIsSearchBoxInView]);
+
   const searchCallback = () => {
     topRef.current?.focus();
-    setDisplayFilter(false);
   };
 
   return (
@@ -57,101 +55,43 @@ function CoursePage() {
       </Head>
       <Flex
         w="100vw"
+        h="93vh"
         direction="row"
         justifyContent="center"
-        alignItems="center"
-        overflow="hidden"
-        bg={useColorModeValue("white", "black")}
+        alignItems="start"
+        overflow="auto"
+        bg={"black.100"}
       >
-        <Box
-          display="flex"
-          flexBasis="100vw"
-          flexDirection="column"
+        <Flex
+          w="100vw"
+          h="93vh"
+          flexDirection={"row"}
+          gap={10}
+          justifyContent="center"
           alignItems="start"
-          h="95vh"
-          overflow="auto"
-          maxW="screen-md"
-          mx="auto"
-          pt="64px"
-          pb="40px"
+          overflowY={"auto"}
+          position="relative"
         >
-          <div ref={topRef} />
-          <Flex
-            w="100%"
-            direction="column"
-            position="sticky"
-            top="0"
-            zIndex="100"
-            boxShadow="md"
-            borderBottom={useColorModeValue("gray.200", "gray.100")}
-            bg={useColorModeValue("white", "gray.800")}
-          >
-            <Flex
-              w="100%"
-              px={{ base: "5vw", md: "10vw" }}
-              py="4"
-              direction="column"
-              bg={useColorModeValue("white", "black")}
-            >
-              <CourseSearchInput
-                displayPanel={displayFilter}
-                searchCallback={searchCallback}
-              />
-            </Flex>
-            <IconButton
-              aria-label="searchInputDrawer"
-              size="xs"
-              variant="ghost"
-              bg={useColorModeValue("white", "black")}
-              icon={displayFilter ? <FaChevronUp /> : <FaChevronDown />}
-              onClick={() => {
-                setDisplayFilter(!displayFilter);
-                reportEvent("course_page", "click", "toggle_filter");
-              }}
-            />
+          <Flex w="60%" flexDirection={"column"} py={8}>
+            <Flex ref={searchBoxRef} w="100%" h="30vh" bg="red" mb={8}></Flex>
+            {Array.from({ length: 55 }, (v, i) => (
+              <Flex w="100%" bg="yellow">
+                <Box>I am placeholder</Box>
+              </Flex>
+            ))}
           </Flex>
           <Flex
+            w="20%"
+            py={8}
             flexDirection={"column"}
-            alignItems={{ base: "center", lg: "start" }}
-            ml={{
-              base: "0",
-              lg: displayTable ? "2vw" : "5vw",
-              xl: displayTable ? "2vw" : "10vw",
-            }}
-            w={{
-              base: "100%",
-              lg: displayTable ? "50vw" : "90vw",
-              xl: displayTable ? "55vw" : "80vw",
-            }}
-            transition="all 500ms ease-in-out"
+            position="sticky"
+            top={0}
+            gap={8}
           >
-            <Flex
-              flexDirection="row"
-              alignItems="center"
-              justifyContent="start"
-            >
-              {searchLoading ? <BeatLoader size={8} color="teal" /> : <></>}
-              <Text
-                fontSize="md"
-                fontWeight="medium"
-                color="gray.400"
-                my="2"
-                ml="1"
-              >
-                {searchLoading ? "載入中" : `共找到 ${totalCount} 筆結果`}
-              </Text>
-            </Flex>
-            <CourseInfoRowContainer displayTable={displayTable} />
-            <SkeletonRow times={3} />
+            <Box bg="blue" h="42vh" w="100%"></Box>
+            <Box bg="blue" h="42vh" w="100%"></Box>
           </Flex>
-          <Flex
-            alignItems="center"
-            w={displayTable ? "60%" : "100%"}
-            justifyContent={{ base: "center", lg: "start" }}
-            transition="all 500ms ease-in-out"
-          ></Flex>
-          <div ref={bottomRef} />
-        </Box>
+        </Flex>
       </Flex>
       <Fade in={!displayTable}>
         <Flex
