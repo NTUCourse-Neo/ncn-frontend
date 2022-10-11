@@ -2,7 +2,6 @@ import { ChakraProvider, Box } from "@chakra-ui/react";
 import { CourseSearchingProvider } from "components/Providers/CourseSearchingProvider";
 import { DisplayTagsProvider } from "components/Providers/DisplayTagsProvider";
 import HeaderBar from "components/HeaderBar";
-import Footer from "components/Footer";
 import DeadlineCountdown from "components/DeadlineCountdown";
 import { UserProvider as Auth0UserProvider } from "@auth0/nextjs-auth0";
 import theme from "styles/theme";
@@ -36,7 +35,6 @@ function MyApp({ Component, pageProps }: AppProps) {
                 <DeadlineCountdown />
                 <HeaderBar />
                 <Component {...pageProps} />
-                <Footer />
               </Box>
             </DisplayTagsProvider>
           </CourseSearchingProvider>
