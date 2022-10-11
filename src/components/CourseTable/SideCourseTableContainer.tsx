@@ -43,7 +43,6 @@ import CourseTableContainer from "components/CourseTable/CourseTableContainer";
 import CourseListContainer from "components/CourseTable/CourseListContainer";
 import { v4 as uuidv4 } from "uuid";
 import { useUser } from "@auth0/nextjs-auth0";
-import { useRouter } from "next/router";
 import { parseCoursesToTimeMap, TimeMap } from "utils/parseCourseTime";
 import useCourseTable from "hooks/useCourseTable";
 import useNeoLocalStorage from "hooks/useNeoLocalStorage";
@@ -151,13 +150,8 @@ function CourseTableNameEditor(props: {
   );
 }
 
-function SideCourseTableContent(props: {
-  readonly agreeToCreateTableWithoutLogin: boolean;
-  readonly setIsLoginWarningOpen: (isOpen: boolean) => void;
-}) {
-  const { agreeToCreateTableWithoutLogin, setIsLoginWarningOpen } = props;
+function SideCourseTableContent() {
   const headingColor = useColorModeValue("heading.light", "heading.dark");
-  const router = useRouter();
   const { user } = useUser();
   const toast = useToast();
   const {
@@ -364,10 +358,10 @@ function SideCourseTableContent(props: {
           colorScheme="teal"
           leftIcon={<FaPlusSquare />}
           onClick={() => {
-            if (user || agreeToCreateTableWithoutLogin) {
+            if (user) {
               handleCreateTable();
             } else {
-              setIsLoginWarningOpen(true);
+              alert("login first");
             }
             reportEvent("course_table", "click", "create_table");
           }}
@@ -462,15 +456,8 @@ function SideCourseTableContent(props: {
 function SideCourseTableContainer(props: {
   readonly isDisplay: boolean;
   readonly setIsDisplay: (isDisplay: boolean) => void;
-  readonly agreeToCreateTableWithoutLogin: boolean;
-  readonly setIsLoginWarningOpen: (isOpen: boolean) => void;
 }) {
-  const {
-    isDisplay,
-    setIsDisplay,
-    agreeToCreateTableWithoutLogin,
-    setIsLoginWarningOpen,
-  } = props;
+  const { isDisplay, setIsDisplay } = props;
   return (
     <Flex flexDirection={{ base: "column", lg: "row" }} h="100%" w="100%">
       <Flex justifyContent="center" alignItems="center">
@@ -495,10 +482,7 @@ function SideCourseTableContainer(props: {
           variant="ghost"
         />
       </Flex>
-      <SideCourseTableContent
-        agreeToCreateTableWithoutLogin={agreeToCreateTableWithoutLogin}
-        setIsLoginWarningOpen={setIsLoginWarningOpen}
-      />
+      <SideCourseTableContent />
     </Flex>
   );
 }

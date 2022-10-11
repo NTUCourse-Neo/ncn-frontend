@@ -5,114 +5,21 @@ import {
   Text,
   Collapse,
   IconButton,
-  Button,
   Fade,
   useMediaQuery,
-  AlertDialog,
-  AlertDialogOverlay,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogBody,
-  AlertDialogFooter,
-  Alert,
-  AlertIcon,
   Icon,
   useColorModeValue,
 } from "@chakra-ui/react";
 import { BeatLoader } from "react-spinners";
-import {
-  FaChevronDown,
-  FaChevronUp,
-  FaArrowRight,
-  FaRegCalendarAlt,
-} from "react-icons/fa";
+import { FaChevronDown, FaChevronUp, FaRegCalendarAlt } from "react-icons/fa";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import CourseInfoRowContainer from "components/CourseInfoRowContainer";
 import CourseSearchInput from "components/CourseSearchInput";
 import SkeletonRow from "components/SkeletonRow";
 import SideCourseTableContainer from "components/CourseTable/SideCourseTableContainer";
 import usePagination from "hooks/usePagination";
-import { useRouter } from "next/router";
 import Head from "next/head";
 import { reportEvent } from "utils/ga";
-
-function NoLoginWarningDialog({
-  isOpen,
-  setIsOpen,
-  setAgreeToCreateTableWithoutLogin,
-}: {
-  readonly isOpen: boolean;
-  readonly setIsOpen: (isOpen: boolean) => void;
-  readonly setAgreeToCreateTableWithoutLogin: (x: boolean) => void;
-}) {
-  const router = useRouter();
-  const leastDestructiveElement = useRef<HTMLDivElement>(null);
-  return (
-    <AlertDialog
-      isOpen={isOpen}
-      onClose={() => setIsOpen(false)}
-      motionPreset="slideInBottom"
-      isCentered
-      leastDestructiveRef={leastDestructiveElement}
-    >
-      <AlertDialogOverlay>
-        <AlertDialogContent>
-          <AlertDialogHeader fontSize="lg" fontWeight="bold">
-            等等，你還沒登入啊！
-          </AlertDialogHeader>
-          <AlertDialogBody>
-            <Alert status="warning">
-              <AlertIcon />
-              訪客課表將於一天後過期，屆時您將無法存取此課表。
-            </Alert>
-            <Text
-              mt={4}
-              color="gray.600"
-              fontWeight="700"
-              fontSize="lg"
-              ref={leastDestructiveElement}
-            >
-              真的啦！相信我。
-              <br />
-              註冊跟登入非常迅速，而且課表還能永久保存喔！
-            </Text>
-          </AlertDialogBody>
-          <AlertDialogFooter>
-            <Button
-              onClick={() => {
-                setIsOpen(false);
-                setAgreeToCreateTableWithoutLogin(true);
-                reportEvent(
-                  "course_page",
-                  "click",
-                  "agree_to_create_table_without_login"
-                );
-              }}
-            >
-              等等再說
-            </Button>
-            <Button
-              colorScheme="teal"
-              rightIcon={<FaArrowRight />}
-              onClick={() => {
-                setIsOpen(false);
-                reportEvent(
-                  "course_page",
-                  "click",
-                  "login_before_create_table"
-                );
-                router.push("/api/auth/login");
-              }}
-              ml={3}
-            >
-              去登入
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialogOverlay>
-    </AlertDialog>
-  );
-}
 
 function CoursePage() {
   const topRef = useRef<HTMLDivElement>(null);
@@ -126,12 +33,7 @@ function CoursePage() {
   ]);
 
   const [displayFilter, setDisplayFilter] = useState(false);
-  const [displayTable, setDisplayTable] = useState(!isMobile);
-
-  // state for no login warning when creating a course table.
-  const [isLoginWarningOpen, setIsLoginWarningOpen] = useState(false);
-  const [agreeToCreateTableWithoutLogin, setAgreeToCreateTableWithoutLogin] =
-    useState(false);
+  const [displayTable, setDisplayTable] = useState(false);
 
   useEffect(() => {
     if (isHigherThan1325) {
@@ -144,13 +46,6 @@ function CoursePage() {
     setDisplayFilter(false);
   };
 
-  // if isMobile, when show Alert Modal, set displayTable to false to prevent ugly overlapping
-  useEffect(() => {
-    if (isLoginWarningOpen || isMobile) {
-      setDisplayTable(false);
-    }
-  }, [isLoginWarningOpen, isMobile]);
-
   return (
     <>
       <Head>
@@ -160,11 +55,6 @@ function CoursePage() {
           content="課程搜尋頁面 | NTUCourse Neo，全新的臺大選課網站。"
         />
       </Head>
-      <NoLoginWarningDialog
-        isOpen={isLoginWarningOpen}
-        setIsOpen={setIsLoginWarningOpen}
-        setAgreeToCreateTableWithoutLogin={setAgreeToCreateTableWithoutLogin}
-      />
       <Flex
         w="100vw"
         direction="row"
@@ -321,8 +211,6 @@ function CoursePage() {
             <SideCourseTableContainer
               isDisplay={displayTable}
               setIsDisplay={setDisplayTable}
-              setIsLoginWarningOpen={setIsLoginWarningOpen}
-              agreeToCreateTableWithoutLogin={agreeToCreateTableWithoutLogin}
             />
           </Box>
         </Flex>
