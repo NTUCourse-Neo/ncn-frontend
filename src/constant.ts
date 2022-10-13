@@ -19,14 +19,4 @@ export const intervals: Interval[] = [
   "C",
   "D",
 ];
-export const availableSemesters = [
-  "1111",
-  "1102",
-  "1101",
-  "1092",
-  "1091",
-  "1082",
-  "1081",
-  "1072",
-  "1071",
-];
+export const availableSemesters = ["1111", "1102"];
