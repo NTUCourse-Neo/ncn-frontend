@@ -211,7 +211,17 @@ function CourseSearchInput({
                     "black"
                   )}`}
                 >
-                  <FaChevronDown height="37px" size={10} />
+                  <HStack>
+                    <Box>
+                      {searchSemester
+                        ? `${searchSemester.slice(0, 3)}-${searchSemester.slice(
+                            3,
+                            4
+                          )}`
+                        : null}
+                    </Box>
+                    <FaChevronDown height="37px" size={10} />
+                  </HStack>
                 </MenuButton>
               </Tooltip>
               <MenuList
