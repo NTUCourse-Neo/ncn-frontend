@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   Flex,
   Input,
@@ -6,152 +6,154 @@ import {
   Menu,
   MenuButton,
   MenuList,
-  useToast,
-  MenuItemOption,
-  MenuOptionGroup,
-  HStack,
   Text,
   useColorModeValue,
-  Icon,
+  InputLeftElement,
+  InputRightElement,
+  InputGroup,
+  Radio,
   ButtonGroup,
   Tooltip,
+  Box,
+  RadioGroup,
+  HStack,
 } from "@chakra-ui/react";
-import { FaSearch, FaChevronDown } from "react-icons/fa";
-import { TbListSearch } from "react-icons/tb";
+import { FaChevronDown } from "react-icons/fa";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { useSWRConfig } from "swr";
 import { reportEvent } from "utils/ga";
-import { SearchFieldName } from "types/search";
+import { ChevronDownIcon, SearchIcon } from "@chakra-ui/icons";
+import { availableSemesters } from "@/constant";
+import searchModeList from "@/data/searchMode";
 
-const availableSemesters = ["1102", "1111"];
+function SearchModeMenu() {
+  const { searchMode, setSearchMode } = useCourseSearchingContext();
+  return (
+    <Menu>
+      <MenuButton
+        as={Button}
+        w="105px"
+        bg="#909090"
+        sx={{
+          borderRadius: "8px",
+          _hover: {
+            bg: "black.700",
+          },
+          _active: {
+            bg: "black.700",
+          },
+        }}
+        size={"md"}
+        variant="solid"
+      >
+        <Flex
+          justifyContent={"center"}
+          alignItems={"center"}
+          w="100%"
+          sx={{
+            fontSize: "13px",
+            lineHeight: "22px",
+          }}
+        >
+          {searchMode.chinese} <ChevronDownIcon boxSize={"22px"} />
+        </Flex>
+      </MenuButton>
+      <MenuList
+        border="0.5px solid #6F6F6F"
+        borderRadius={"4px"}
+        minW={0}
+        w="fit-content"
+      >
+        <Box
+          py={6}
+          px={12}
+          sx={{
+            fontSize: "16px",
+            lineHeight: "1.4",
+            color: "#4b4b4b",
+          }}
+        >
+          {searchModeList.map((mode) => {
+            const fontStyle =
+              searchMode.id === mode.id
+                ? {
+                    color: "primary.500",
+                    fontWeight: 500,
+                  }
+                : {};
+            return (
+              <Box
+                key={mode.id}
+                py={2}
+                sx={{
+                  cursor: "pointer",
+                  ...fontStyle,
+                }}
+                onClick={() => {
+                  setSearchMode(mode);
+                }}
+              >
+                {mode.chinese}
+              </Box>
+            );
+          })}
+        </Box>
+      </MenuList>
+    </Menu>
+  );
+}
 
-function CourseSearchInputTextArea(props: {
-  readonly searchCallback?: () => void;
-}) {
-  const { searchCallback = () => {} } = props;
+export interface CourseSearchInputProps {
+  searchCallback?: () => void;
+}
+function CourseSearchInput({
+  searchCallback = () => {},
+}: CourseSearchInputProps) {
+  const semesterRef = useRef<HTMLInputElement>(null);
+  const semesterMenuRef = useRef<HTMLDivElement>(null);
   const { mutate } = useSWRConfig();
-  const toast = useToast();
-  const {
-    search,
-    searchColumns,
-    pageNumber,
-    setSearchColumns,
-    dispatchSearch,
-    setSearchResultCount,
-  } = useCourseSearchingContext();
+  const { search, pageNumber, dispatchSearch, setSearchResultCount } =
+    useCourseSearchingContext();
   const [searchText, setSearchText] = useState("");
   const { searchSemester, setSearchSemester } = useCourseSearchingContext();
 
-  const toggleSearchColumn = (col_name: SearchFieldName) => {
-    if (searchColumns.includes(col_name)) {
-      setSearchColumns(searchColumns.filter((col) => col !== col_name));
-    } else {
-      setSearchColumns([...searchColumns, col_name]);
-    }
-  };
-
+  // TODO: refactor this part since we use pagination now
   const startSearch = async () => {
-    // console.log(searchColumns);
-    if (searchColumns.length === 0) {
-      toast({
-        title: "搜尋失敗",
-        description: "您必須指定至少一個搜尋欄位",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-    if (searchText === search) {
-      setSearchResultCount(0);
-      for (let i = 0; i < pageNumber; i++) {
-        mutate(`/api/search/${search}/${i}`);
-      }
-    } else {
-      dispatchSearch(searchText);
-    }
+    // if (searchText === search) {
+    //   setSearchResultCount(0);
+    //   for (let i = 0; i < pageNumber; i++) {
+    //     mutate(`/api/search/${search}/${i}`);
+    //   }
+    // } else {
+    //   dispatchSearch(searchText);
+    // }
     searchCallback();
   };
 
   return (
-    <Flex flexDirection="column">
-      <Flex
-        flexDirection="row"
-        alignItems="center"
-        justifyContent="center"
-        flexWrap="wrap"
-        css={{ gap: "10px" }}
+    <HStack w="100%">
+      <SearchModeMenu />
+      <InputGroup
+        bg="#f9f9f9"
+        border="0.8px solid #9B9B9B"
+        borderRadius={"8px"}
+        h="fit-content"
       >
-        <Menu closeOnSelect={false}>
-          <MenuButton as={Button} size={{ base: "md", md: "md" }}>
-            <Icon
-              as={TbListSearch}
-              mr={{ base: "0", md: "2" }}
-              boxSize={{ base: "1.2em", md: "1em" }}
-            />
-            <Text display={{ base: "none", md: "inline-block" }}>設定</Text>
-          </MenuButton>
-          <MenuList>
-            <MenuOptionGroup
-              title="查詢欄位"
-              defaultValue={searchColumns}
-              type="checkbox"
-            >
-              <MenuItemOption
-                value="name"
-                onClick={(e) => {
-                  toggleSearchColumn("name");
-                  reportEvent("search", "toggle_search_column", "name");
-                }}
-              >
-                課程名稱
-              </MenuItemOption>
-              <MenuItemOption
-                value="teacher"
-                onClick={(e) => {
-                  toggleSearchColumn("teacher");
-                  reportEvent("search", "toggle_search_column", "teacher");
-                }}
-              >
-                教師姓名
-              </MenuItemOption>
-              <MenuItemOption
-                value="serial"
-                onClick={(e) => {
-                  toggleSearchColumn("serial");
-                  reportEvent("search", "toggle_search_column", "serial");
-                }}
-              >
-                流水號
-              </MenuItemOption>
-              <MenuItemOption
-                value="code"
-                onClick={(e) => {
-                  toggleSearchColumn("code");
-                  reportEvent("search", "toggle_search_column", "code");
-                }}
-              >
-                課號
-              </MenuItemOption>
-              <MenuItemOption
-                value="identifier"
-                onClick={(e) => {
-                  toggleSearchColumn("identifier");
-                  reportEvent("search", "toggle_search_column", "identifier");
-                }}
-              >
-                課程識別碼
-              </MenuItemOption>
-            </MenuOptionGroup>
-          </MenuList>
-        </Menu>
+        <InputLeftElement pointerEvents="none" h="100%" pl="2">
+          <SearchIcon boxSize="15px" color="#818181" />
+        </InputLeftElement>
         <Input
-          variant="flushed"
-          size={{ base: "sm", md: "md" }}
-          w={["50%", "60%", "60%", "60%"]}
-          focusBorderColor="teal.500"
-          placeholder="直接搜尋顯示全部課程"
-          value={searchText}
+          h="37px"
+          type={"text"}
+          placeholder="搜尋課程名稱/教師姓名/教室/課號/課程識別碼"
+          sx={{
+            fontSize: "14px",
+            lineHeight: "24px",
+            _placeholder: {
+              color: "#818181",
+            },
+            border: "none",
+          }}
           onChange={(e) => {
             setSearchText(e.target.value);
           }}
@@ -162,76 +164,130 @@ function CourseSearchInputTextArea(props: {
             }
           }}
         />
-        <ButtonGroup isAttached>
-          <Button
-            colorScheme="blue"
-            size={"md"}
-            variant="solid"
-            onClick={() => {
-              startSearch();
-              reportEvent("search", "click_search", searchText);
-            }}
-          >
-            <HStack>
-              <FaSearch />
-              <Text display={{ base: "none", md: "inline" }}>搜尋</Text>
-            </HStack>
-          </Button>
-          <Menu>
+        <InputRightElement w="fit-content" h="100%" px="2">
+          <ButtonGroup isAttached>
             <Tooltip
               hasArrow
               placement="top"
-              label={"選擇學期"}
+              label={"點擊搜尋查看所有課程"}
               bg="gray.600"
               color="white"
             >
-              <MenuButton
-                as={Button}
-                colorScheme="blue"
+              <Button
+                colorScheme="primary"
                 size={"md"}
                 variant="solid"
-                borderLeft={`0.1px solid ${useColorModeValue(
-                  "white",
-                  "black"
-                )}`}
+                onClick={() => {}}
+                px="8"
+                h="29px"
               >
-                <FaChevronDown size={10} />
-              </MenuButton>
+                <Text display={{ base: "none", md: "inline" }}>搜尋</Text>
+              </Button>
             </Tooltip>
-            <MenuList>
-              <MenuOptionGroup
-                value={searchSemester ?? undefined}
-                title="開課學期"
-                type="radio"
+            <Menu
+              onOpen={() => {
+                const offsetY =
+                  parseInt(semesterRef?.current?.id?.[0] ?? "0", 10) ?? 0;
+                if (semesterMenuRef?.current) {
+                  semesterMenuRef.current.scrollTop = 44 * offsetY;
+                }
+              }}
+            >
+              <Tooltip
+                hasArrow
+                placement="top"
+                label={"選擇學期"}
+                bg="gray.600"
+                color="white"
               >
-                {availableSemesters.map((semester) => (
-                  <MenuItemOption
-                    key={semester}
-                    value={semester}
-                    onClick={() => {
-                      setSearchSemester(semester);
-                    }}
+                <MenuButton
+                  h="29px"
+                  as={Button}
+                  colorScheme="primary"
+                  size={"md"}
+                  variant="solid"
+                  borderLeft={`0.1px solid ${useColorModeValue(
+                    "white",
+                    "black"
+                  )}`}
+                >
+                  <FaChevronDown height="37px" size={10} />
+                </MenuButton>
+              </Tooltip>
+              <MenuList
+                border="0.5px solid #6F6F6F"
+                borderRadius={"4px"}
+                minW={0}
+                w="fit-content"
+                position={"relative"}
+              >
+                <Box
+                  position="absolute"
+                  top="0"
+                  w="100%"
+                  h="54px"
+                  zIndex={2}
+                  pointerEvents="none"
+                  sx={{
+                    background:
+                      "linear-gradient(181.46deg, #FFFFFF -82.1%, #FFFFFF 32.01%, rgba(255, 255, 255, 0) 48.34%)",
+                  }}
+                />
+                <RadioGroup
+                  value={searchSemester ?? undefined}
+                  onChange={setSearchSemester}
+                  w="fit-content"
+                >
+                  <Flex
+                    px={6}
+                    py={6}
+                    flexDirection={"column"}
+                    h="180px"
+                    overflowY="scroll"
+                    ref={semesterMenuRef}
                   >
-                    {semester}
-                  </MenuItemOption>
-                ))}
-              </MenuOptionGroup>
-            </MenuList>
-          </Menu>
-        </ButtonGroup>
-      </Flex>
-    </Flex>
-  );
-}
-
-export interface CourseSearchInputProps {
-  searchCallback?: () => void;
-}
-function CourseSearchInput({ searchCallback }: CourseSearchInputProps) {
-  return (
-    <>
-      <CourseSearchInputTextArea searchCallback={searchCallback} />
-    </>
+                    {availableSemesters.map((semester, index) => (
+                      <Radio
+                        colorScheme={"green"}
+                        key={semester}
+                        value={semester}
+                        h="32px"
+                        py="6px"
+                        id={`${index}-${semester}`}
+                        ref={
+                          searchSemester === semester ? semesterRef : undefined
+                        }
+                        sx={{
+                          fontSize: "14px",
+                          fontWeight: 500,
+                          lineHeight: "20px",
+                          color: "#666666",
+                        }}
+                      >
+                        {` ${semester.slice(0, 3)}-${semester.slice(3, 4)}`}
+                      </Radio>
+                    ))}
+                  </Flex>
+                </RadioGroup>
+                <Box
+                  position="absolute"
+                  bottom="0"
+                  w="100%"
+                  h="54px"
+                  zIndex={2}
+                  pointerEvents="none"
+                  sx={{
+                    transform: "rotate(-180deg)",
+                    background:
+                      "linear-gradient(181.46deg, #FFFFFF -82.1%, #FFFFFF 32.01%, rgba(255, 255, 255, 0) 48.34%)",
+                  }}
+                />
+              </MenuList>
+            </Menu>
+          </ButtonGroup>
+        </InputRightElement>
+      </InputGroup>
+    </HStack>
   );
 }
 

@@ -15,6 +15,7 @@ import SideCourseTableContainer from "components/CourseTable/SideCourseTableCont
 import Head from "next/head";
 import { reportEvent } from "utils/ga";
 import { useInView } from "react-intersection-observer";
+import CourseSearchInput from "@/components/CourseSearchInput";
 
 function CoursePage() {
   const { ref: searchBoxRef, inView: searchBoxInView } = useInView({
@@ -73,7 +74,9 @@ function CoursePage() {
           position="relative"
         >
           <Flex w="60%" flexDirection={"column"} py={8}>
-            <Flex ref={searchBoxRef} w="100%" h="30vh" bg="red" mb={8}></Flex>
+            <Flex ref={searchBoxRef} w="100%" mb={8}>
+              <CourseSearchInput searchCallback={searchCallback} />
+            </Flex>
             {Array.from({ length: 55 }, (v, i) => (
               <Flex w="100%" bg="yellow">
                 <Box>I am placeholder</Box>
