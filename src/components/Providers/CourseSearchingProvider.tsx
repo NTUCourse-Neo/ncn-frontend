@@ -1,6 +1,11 @@
 import type { SearchMode } from "@/data/searchMode";
 import React, { createContext, useContext, useState } from "react";
 import type { SearchFieldName, Filter } from "types/search";
+import {
+  isEnrollMethodFilterActive,
+  isTargetGradeFilterActive,
+} from "utils/searchFilter";
+import { mapStateToIntervals } from "utils/timeTableConverter";
 
 export interface SearchConfigType {
   show_selected_courses: boolean;
@@ -37,6 +42,7 @@ interface CourseSearchingContextType {
   fetchNextPage: () => void;
   dispatchSearch: (search: string | null) => void;
   resetFilters: () => void;
+  isFiltersEdited: boolean;
 }
 
 const CourseSearchingContext = createContext<CourseSearchingContextType>({
@@ -70,6 +76,7 @@ const CourseSearchingContext = createContext<CourseSearchingContextType>({
     english: "Quick Search",
   },
   isSearchBoxInView: true,
+  isFiltersEdited: false,
   setSearch: () => {},
   setPageNumber: () => {},
   setSearchLoading: () => {},
@@ -153,6 +160,15 @@ const CourseSearchingProvider: React.FC<{
     });
   };
 
+  const isFiltersEdited =
+    mapStateToIntervals(searchFilters.time) > 0 ||
+    searchFilters.department.length > 0 ||
+    isEnrollMethodFilterActive(searchFilters.enroll_method) ||
+    isTargetGradeFilterActive(searchFilters.target_grade) ||
+    searchFilters.other_limit.length > 0 ||
+    searchFilters.is_full_year !== null ||
+    searchFilters.is_selective !== null;
+
   return (
     <CourseSearchingContext.Provider
       value={{
@@ -168,6 +184,7 @@ const CourseSearchingProvider: React.FC<{
         searchSemester,
         searchMode,
         isSearchBoxInView,
+        isFiltersEdited,
         setSearch,
         setPageNumber,
         setBatchSize,

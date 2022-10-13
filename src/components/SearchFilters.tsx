@@ -194,7 +194,7 @@ function SearchFilters(props: FlexProps) {
   useOutsideDetecter(otherLimitRef, "otherLimit", () => {
     setOpenPanel(null);
   });
-  const { searchFilters, setSearchFilters, resetFilters } =
+  const { searchFilters, setSearchFilters, resetFilters, isFiltersEdited } =
     useCourseSearchingContext();
 
   const [selectedEnrollMethod, setSelectedEnrollMethod] = useState<
@@ -210,15 +210,6 @@ function SearchFilters(props: FlexProps) {
     otherLimits,
     (limit) => limit.type_label
   );
-
-  const isFiltersEdited =
-    mapStateToIntervals(searchFilters.time) > 0 ||
-    searchFilters.department.length > 0 ||
-    isEnrollMethodFilterActive(searchFilters.enroll_method) ||
-    isTargetGradeFilterActive(searchFilters.target_grade) ||
-    searchFilters.other_limit.length > 0 ||
-    searchFilters.is_full_year !== null ||
-    searchFilters.is_selective !== null;
 
   return (
     <Flex alignItems={"center"} flexWrap="wrap" gap="3" {...props}>
