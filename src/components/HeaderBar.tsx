@@ -20,8 +20,13 @@ import {
   Divider,
   Center,
   TextProps,
+  Checkbox,
 } from "@chakra-ui/react";
-import { ChevronRightIcon, ChevronDownIcon } from "@chakra-ui/icons";
+import {
+  ChevronRightIcon,
+  ChevronDownIcon,
+  InfoOutlineIcon,
+} from "@chakra-ui/icons";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { FaCheck, FaExclamation } from "react-icons/fa";
@@ -33,6 +38,7 @@ import useOutsideDetecter from "@/hooks/useOutsideDetecter";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import CourseSearchInput from "@/components/CourseSearchInput";
 import { BiFilterAlt } from "react-icons/bi";
+import SearchFilters from "@/components/SearchFilters";
 
 interface MegaMenuLinkProps extends TextProps {
   readonly href: string;
@@ -268,8 +274,17 @@ function HeaderBar() {
   useOutsideDetecter(selectSitesRef, "selectSites", () => {
     setOpenPanel(null);
   });
+  const headerFilterRef = useRef(null);
+  useOutsideDetecter(headerFilterRef, "headerFilter", () => {
+    setIsHeaderFilterActive(false);
+  });
   const router = useRouter();
-  const { isSearchBoxInView, isFiltersEdited } = useCourseSearchingContext();
+  const {
+    isSearchBoxInView,
+    isFiltersEdited,
+    searchSettings,
+    setSearchSettings,
+  } = useCourseSearchingContext();
   const isSearchModeEnable =
     router.pathname === "/course" ? (isSearchBoxInView ? false : true) : false;
 
@@ -580,13 +595,14 @@ function HeaderBar() {
         </Flex>
       </Flex>
       <Flex
+        ref={headerFilterRef}
         w="100%"
-        h="30vh"
-        bg="white"
+        bg="transparent"
+        flexDirection={"column"}
         visibility={isHeaderFilterActive ? "visible" : "hidden"}
         top={0}
         position="absolute"
-        zIndex="100"
+        zIndex="990"
         transform={
           isHeaderFilterActive ? "translateY(0%)" : "translateY(-200%)"
         }
@@ -594,7 +610,56 @@ function HeaderBar() {
         shadow={
           isHeaderFilterActive ? "0px 1px 2px rgba(85, 105, 135, 0.1)" : "none"
         }
-      ></Flex>
+      >
+        <Flex h="64px" bg="transparent" />
+        <Flex px="9%" bg="white" w="100%" h="100%" pb="20px">
+          <Box py="20px" bg="white">
+            <Flex alignItems={"center"}>
+              <HStack
+                sx={{
+                  fontSize: "14px",
+                  lineHeight: "20px",
+                  color: "#6f6f6f",
+                }}
+                w="fit-content"
+                mr={3}
+                spacing={1}
+              >
+                <BiFilterAlt size={"20px"} />
+                <Flex>篩選條件</Flex>
+              </HStack>
+              <SearchFilters />
+            </Flex>
+            <Checkbox
+              mt="4"
+              w="fit-content"
+              isChecked={searchSettings.strict_search_mode}
+              onChange={(e) => {
+                setSearchSettings({
+                  ...searchSettings,
+                  strict_search_mode: e.currentTarget.checked,
+                });
+              }}
+            >
+              <Text
+                sx={{
+                  fontSize: "14px",
+                  lineHeight: "20px",
+                  color: "#666666",
+                }}
+              >
+                嚴格篩選條件
+              </Text>
+            </Checkbox>
+            <Flex mt={4} alignItems="center" gap={2}>
+              <Center h="100%" justifyContent={"center"}>
+                <InfoOutlineIcon boxSize={"20px"} color="primary.600" />
+              </Center>
+              <Text color="#4b4b4b50">External Links Placeholder</Text>
+            </Flex>
+          </Box>
+        </Flex>
+      </Flex>
     </Box>
   );
 }
