@@ -8,6 +8,9 @@ import {
   useMediaQuery,
   Icon,
   useColorModeValue,
+  Center,
+  Checkbox,
+  HStack,
 } from "@chakra-ui/react";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
@@ -16,18 +19,23 @@ import Head from "next/head";
 import { reportEvent } from "utils/ga";
 import { useInView } from "react-intersection-observer";
 import CourseSearchInput from "@/components/CourseSearchInput";
+import SearchFilters from "@/components/SearchFilters";
+import { InfoOutlineIcon } from "@chakra-ui/icons";
+import { BiFilterAlt } from "react-icons/bi";
 
 function CoursePage() {
   const { ref: searchBoxRef, inView: searchBoxInView } = useInView({
     threshold: 0,
   });
   const topRef = useRef<HTMLDivElement>(null);
-  const { setIsSearchBoxInView, setBatchSize } = useCourseSearchingContext();
+  const {
+    setIsSearchBoxInView,
+    setBatchSize,
+    searchSettings,
+    setSearchSettings,
+  } = useCourseSearchingContext();
 
-  const [isMobile, isHigherThan1325] = useMediaQuery([
-    "(max-width: 1000px)",
-    "(min-height: 1325px)",
-  ]);
+  const [isHigherThan1325] = useMediaQuery(["(min-height: 1325px)"]);
 
   const [displayTable, setDisplayTable] = useState(false);
 
@@ -74,8 +82,51 @@ function CoursePage() {
           position="relative"
         >
           <Flex w="60%" flexDirection={"column"} py={8}>
-            <Flex ref={searchBoxRef} w="100%" mb={8}>
+            <Flex ref={searchBoxRef} w="100%" mb={8} flexDirection={"column"}>
               <CourseSearchInput searchCallback={searchCallback} />
+              <Flex flexDirection={"row"} alignItems={"center"} mt={6}>
+                <HStack
+                  sx={{
+                    fontSize: "14px",
+                    lineHeight: "20px",
+                    color: "#6f6f6f",
+                  }}
+                  w="fit-content"
+                  mr={3}
+                  spacing={1}
+                >
+                  <BiFilterAlt size={"20px"} />
+                  <Flex>篩選條件</Flex>
+                </HStack>
+                <SearchFilters />
+              </Flex>
+              <Checkbox
+                mt="4"
+                w="fit-content"
+                isChecked={searchSettings.strict_search_mode}
+                onChange={(e) => {
+                  setSearchSettings({
+                    ...searchSettings,
+                    strict_search_mode: e.currentTarget.checked,
+                  });
+                }}
+              >
+                <Text
+                  sx={{
+                    fontSize: "14px",
+                    lineHeight: "20px",
+                    color: "#666666",
+                  }}
+                >
+                  嚴格篩選條件
+                </Text>
+              </Checkbox>
+              <Flex mt={4} alignItems="center" gap={2}>
+                <Center h="100%" justifyContent={"center"}>
+                  <InfoOutlineIcon boxSize={"20px"} color="primary.600" />
+                </Center>
+                <Text color="#4b4b4b50">External Links Placeholder</Text>
+              </Flex>
             </Flex>
             {Array.from({ length: 55 }, (v, i) => (
               <Flex w="100%" bg="yellow">

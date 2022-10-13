@@ -178,7 +178,7 @@ const FilterDropDown = forwardRef<
 });
 FilterDropDown.displayName = "FilterDropDown";
 
-function SearchFilters() {
+function SearchFilters(props: FlexProps) {
   const [openPanel, setOpenPanel] = useState<
     null | "registerMethod" | "targetGrade" | "otherLimit"
   >(null);
@@ -194,17 +194,8 @@ function SearchFilters() {
   useOutsideDetecter(otherLimitRef, "otherLimit", () => {
     setOpenPanel(null);
   });
-  const {
-    searchSemester,
-    setSearchSemester,
-    searchFilters,
-    setSearchFilters,
-    searchMode,
-    setSearchMode,
-    searchSettings,
-    setSearchSettings,
-    resetFilters,
-  } = useCourseSearchingContext();
+  const { searchFilters, setSearchFilters, resetFilters } =
+    useCourseSearchingContext();
 
   const [selectedEnrollMethod, setSelectedEnrollMethod] = useState<
     EnrollMethod[]
@@ -230,7 +221,7 @@ function SearchFilters() {
     searchFilters.is_selective !== null;
 
   return (
-    <Flex alignItems={"center"} flexWrap="wrap" gap="3">
+    <Flex alignItems={"center"} flexWrap="wrap" gap="3" {...props}>
       <TimeFilterModal
         title={`上課時間${
           mapStateToIntervals(searchFilters.time) === 0
