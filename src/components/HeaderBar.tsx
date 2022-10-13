@@ -359,7 +359,7 @@ function HeaderBar() {
           >
             <CourseSearchInput />
             <Center
-              p={1.5}
+              p={2}
               cursor={"pointer"}
               borderRadius="full"
               sx={{
@@ -371,9 +371,24 @@ function HeaderBar() {
               onClick={() => {
                 setIsHeaderFilterActive(!isHeaderFilterActive);
               }}
+              position="relative"
               transition="all ease-in-out 0.2s"
             >
               <BiFilterAlt size={"24px"} />
+              {isFiltersEdited ? (
+                <Box
+                  position={"absolute"}
+                  top={0.5}
+                  right={0.5}
+                  w="8px"
+                  h="8px"
+                  sx={{
+                    borderRadius: "full",
+                    bg: "blue.500",
+                    border: "0.1px solid white",
+                  }}
+                />
+              ) : null}
             </Center>
           </Flex>
         ) : (
