@@ -275,7 +275,15 @@ function HeaderBar() {
     setOpenPanel(null);
   });
   const headerFilterRef = useRef(null);
-  useOutsideDetecter(headerFilterRef, "headerFilter", () => {
+  const headerBarRef = useRef<HTMLDivElement>(null);
+  useOutsideDetecter(headerFilterRef, "headerFilter", (e) => {
+    // click inside header bar, don't close filter dropdown
+    if (
+      headerBarRef.current &&
+      headerBarRef.current.contains(e?.target as Node)
+    ) {
+      return;
+    }
     setIsHeaderFilterActive(false);
   });
   const router = useRouter();
@@ -314,6 +322,7 @@ function HeaderBar() {
         shadow={
           isHeaderFilterActive ? "none" : "0px 1px 2px rgba(85, 105, 135, 0.1)"
         }
+        ref={headerBarRef}
       >
         {isSearchModeEnable ? null : (
           <Flex justifyContent="flex-start" alignItems="center" flex={1}>
@@ -355,7 +364,9 @@ function HeaderBar() {
               borderRadius="full"
               sx={{
                 bg: isHeaderFilterActive ? "#ececec" : "white",
-                border: isFiltersEdited ? "0.6px solid #007AFF" : "none",
+                border: isFiltersEdited
+                  ? "0.6px solid #007AFF"
+                  : "0.6px solid #ffffff",
               }}
               onClick={() => {
                 setIsHeaderFilterActive(!isHeaderFilterActive);

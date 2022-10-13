@@ -8,14 +8,14 @@ interface IdNode extends Node {
 export default function useOutsideDetecter(
   ref: React.RefObject<HTMLDivElement>,
   id: string,
-  callback: () => void
+  callback: (event?: MouseEvent) => void
 ) {
   useEffect(() => {
     // Alert if clicked on outside of element
     function handleClickOutside(event: MouseEvent) {
       if (ref.current && !ref.current.contains(event.target as Node)) {
         if ((event?.target as IdNode)?.id !== id) {
-          callback();
+          callback(event);
         }
       }
     }
