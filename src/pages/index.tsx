@@ -66,6 +66,7 @@ import {
   isTargetGradeFilterActive,
 } from "utils/searchFilter";
 import _ from "lodash";
+import { availableSemesters } from "@/constant";
 
 function getNextCheckListState<T>(array: T[], member: T): T[] {
   const idx = array.indexOf(member);
@@ -213,6 +214,7 @@ const FilterDropDown = forwardRef<
 });
 FilterDropDown.displayName = "FilterDropDown";
 
+// deprecated
 interface NewRegisterModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -303,7 +305,6 @@ function NewRegisterModal({
 }
 
 function HomePage() {
-  const availableSemesters = ["1111", "1102"];
   const semesterRef = useRef<HTMLInputElement>(null);
   const semesterMenuRef = useRef<HTMLDivElement>(null);
   const searchModeRef = useRef<HTMLDivElement>(null);
