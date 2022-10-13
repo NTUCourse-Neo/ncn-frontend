@@ -1,12 +1,6 @@
 import { useMemo } from "react";
 import CourseInfoRow from "components/CourseInfoRow";
-import {
-  Box,
-  Flex,
-  Spacer,
-  Accordion,
-  useBreakpointValue,
-} from "@chakra-ui/react";
+import { Spacer, Accordion, useBreakpointValue } from "@chakra-ui/react";
 import useUserInfo from "hooks/useUserInfo";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { setHoveredCourseData } from "utils/hoverCourse";
@@ -19,7 +13,7 @@ interface CourseInfoRowPageProps {
   readonly displayTable: boolean;
   readonly pageIndex: number;
 }
-function CourseInfoRowPage({
+export default function CourseInfoRowPage({
   displayTable,
   pageIndex,
 }: CourseInfoRowPageProps): JSX.Element | null {
@@ -69,30 +63,3 @@ function CourseInfoRowPage({
     </>
   );
 }
-
-function CourseInfoRowContainer({
-  displayTable,
-}: {
-  readonly displayTable: boolean;
-}) {
-  const { pageNumber } = useCourseSearchingContext();
-
-  const pages: JSX.Element[] = useMemo(() => {
-    const res = [];
-    for (let i = 0; i < pageNumber; i++) {
-      res.push(
-        <CourseInfoRowPage key={i} displayTable={displayTable} pageIndex={i} />
-      );
-    }
-    return res;
-  }, [pageNumber, displayTable]);
-
-  return (
-    <Box w="100%">
-      <Flex direction="column" alignItems={"center"}>
-        {pages}
-      </Flex>
-    </Box>
-  );
-}
-export default CourseInfoRowContainer;

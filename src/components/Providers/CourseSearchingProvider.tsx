@@ -17,10 +17,10 @@ export interface SearchConfigType {
 interface CourseSearchingContextType {
   search: string | null;
   setSearch: (search: string | null) => void;
-  pageNumber: number;
-  setPageNumber: (pageNumber: number) => void;
-  searchResultCount: number;
-  setSearchResultCount: (searchResultCount: number) => void;
+  numOfPages: number;
+  setNumOfPages: (pageNumber: number) => void;
+  pageIndex: number;
+  setPageIndex: (pageIndex: number) => void;
   searchLoading: boolean;
   setSearchLoading: (searchLoading: boolean) => void;
   totalCount: number;
@@ -39,7 +39,6 @@ interface CourseSearchingContextType {
   setSearchMode: (searchMode: SearchMode) => void;
   isSearchBoxInView: boolean;
   setIsSearchBoxInView: (isSearchBoxInView: boolean) => void;
-  fetchNextPage: () => void;
   dispatchSearch: (search: string | null) => void;
   resetFilters: () => void;
   isFiltersEdited: boolean;
@@ -47,8 +46,8 @@ interface CourseSearchingContextType {
 
 const CourseSearchingContext = createContext<CourseSearchingContextType>({
   search: "",
-  pageNumber: 0,
-  searchResultCount: 0,
+  numOfPages: 0,
+  pageIndex: 0,
   searchLoading: false,
   totalCount: 0,
   batchSize: 20,
@@ -78,9 +77,9 @@ const CourseSearchingContext = createContext<CourseSearchingContextType>({
   isSearchBoxInView: true,
   isFiltersEdited: false,
   setSearch: () => {},
-  setPageNumber: () => {},
+  setNumOfPages: () => {},
+  setPageIndex: () => {},
   setSearchLoading: () => {},
-  setSearchResultCount: () => {},
   setTotalCount: () => {},
   setBatchSize: () => {},
   setSearchSettings: () => {},
@@ -89,7 +88,6 @@ const CourseSearchingContext = createContext<CourseSearchingContextType>({
   setSearchSemester: () => {},
   setSearchMode: () => {},
   setIsSearchBoxInView: () => {},
-  fetchNextPage: () => {},
   dispatchSearch: () => {},
   resetFilters: () => {},
 });
@@ -98,11 +96,11 @@ const CourseSearchingProvider: React.FC<{
   readonly children: React.ReactNode;
 }> = ({ children }) => {
   const [search, setSearch] = useState<string | null>(null);
-  const [pageNumber, setPageNumber] = useState(0);
-  const [searchResultCount, setSearchResultCount] = useState(0);
+  const [totalCount, setTotalCount] = useState(0); // total number of courses
+  const [numOfPages, setNumOfPages] = useState(0); // total number of pages
+  const [pageIndex, setPageIndex] = useState(0); // current page index
   const [searchLoading, setSearchLoading] = useState(false);
-  const [totalCount, setTotalCount] = useState(0);
-  const [batchSize, setBatchSize] = useState(20);
+  const [batchSize, setBatchSize] = useState(50);
 
   // deprecated
   const [searchColumns, setSearchColumns] = useState<SearchFieldName[]>([
@@ -138,14 +136,9 @@ const CourseSearchingProvider: React.FC<{
   });
   const [isSearchBoxInView, setIsSearchBoxInView] = useState(true);
 
-  const fetchNextPage = () => {
-    setPageNumber(pageNumber + 1);
-  };
-
   const dispatchSearch = (text: string | null) => {
     setSearch(text);
-    setSearchResultCount(0);
-    setPageNumber(1);
+    setPageIndex(0);
   };
 
   const resetFilters = () => {
@@ -173,8 +166,8 @@ const CourseSearchingProvider: React.FC<{
     <CourseSearchingContext.Provider
       value={{
         search,
-        pageNumber,
-        searchResultCount,
+        numOfPages,
+        pageIndex,
         searchLoading,
         totalCount,
         batchSize,
@@ -186,17 +179,16 @@ const CourseSearchingProvider: React.FC<{
         isSearchBoxInView,
         isFiltersEdited,
         setSearch,
-        setPageNumber,
+        setNumOfPages,
+        setPageIndex,
         setBatchSize,
         setSearchSettings,
         setSearchColumns,
         setSearchFilters,
         setSearchLoading,
-        setSearchResultCount,
         setTotalCount,
         setSearchSemester,
         setSearchMode,
-        fetchNextPage,
         dispatchSearch,
         resetFilters,
         setIsSearchBoxInView,

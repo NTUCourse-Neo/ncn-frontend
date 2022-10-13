@@ -22,6 +22,27 @@ import CourseSearchInput from "@/components/CourseSearchInput";
 import SearchFilters from "@/components/SearchFilters";
 import { InfoOutlineIcon } from "@chakra-ui/icons";
 import { BiFilterAlt } from "react-icons/bi";
+import CourseInfoRowPage from "@/components/CourseInfoRowPage";
+
+function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
+  const { setPageIndex } = useCourseSearchingContext();
+  return (
+    <Flex
+      w="100%"
+      justifyContent={"space-between"}
+      px={4}
+      py={2}
+      sx={{
+        borderBottom: isTop ? "1px solid #CCCCCC" : "none",
+        borderTop: !isTop ? "1px solid #CCCCCC" : "none",
+      }}
+    >
+      <Flex>共 100 筆結果</Flex>
+      <Flex>每頁顯示 50 筆</Flex>
+      <Flex>上一頁</Flex>
+    </Flex>
+  );
+}
 
 function CoursePage() {
   const { ref: searchBoxRef, inView: searchBoxInView } = useInView({
@@ -33,6 +54,7 @@ function CoursePage() {
     setBatchSize,
     searchSettings,
     setSearchSettings,
+    pageIndex,
   } = useCourseSearchingContext();
 
   const [isHigherThan1325] = useMediaQuery(["(min-height: 1325px)"]);
@@ -128,11 +150,19 @@ function CoursePage() {
                 <Text color="#4b4b4b50">External Links Placeholder</Text>
               </Flex>
             </Flex>
-            {Array.from({ length: 55 }, (v, i) => (
-              <Flex w="100%" bg="yellow">
-                <Box>I am placeholder</Box>
-              </Flex>
-            ))}
+            <Box
+              w="100%"
+              sx={{
+                border: "1px solid #CCCCCC",
+                borderRadius: "4px",
+              }}
+            >
+              <SearchResultTopBar />
+              <Box w="100%" minH="70vh">
+                <CourseInfoRowPage displayTable={false} pageIndex={pageIndex} />
+              </Box>
+              <SearchResultTopBar isTop={false} />
+            </Box>
           </Flex>
           <Flex
             w="20%"

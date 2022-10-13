@@ -112,21 +112,19 @@ function CourseSearchInput({
   const semesterRef = useRef<HTMLInputElement>(null);
   const semesterMenuRef = useRef<HTMLDivElement>(null);
   const { mutate } = useSWRConfig();
-  const { search, pageNumber, dispatchSearch, setSearchResultCount } =
+  const { search, dispatchSearch, pageIndex, batchSize } =
     useCourseSearchingContext();
   const [searchText, setSearchText] = useState("");
   const { searchSemester, setSearchSemester } = useCourseSearchingContext();
 
-  // TODO: refactor this part since we use pagination now
   const startSearch = async () => {
-    // if (searchText === search) {
-    //   setSearchResultCount(0);
-    //   for (let i = 0; i < pageNumber; i++) {
-    //     mutate(`/api/search/${search}/${i}`);
-    //   }
-    // } else {
-    //   dispatchSearch(searchText);
-    // }
+    if (searchText === search) {
+      // refresh current page
+      mutate(`/api/search/${search}/${pageIndex}/${batchSize}`);
+    } else {
+      // start new search
+      dispatchSearch(searchText);
+    }
     searchCallback();
   };
 
@@ -177,9 +175,11 @@ function CourseSearchInput({
                 colorScheme="primary"
                 size={"md"}
                 variant="solid"
-                onClick={() => {}}
                 px="8"
                 h="29px"
+                onClick={() => {
+                  startSearch();
+                }}
               >
                 <Text display={{ base: "none", md: "inline" }}>搜尋</Text>
               </Button>

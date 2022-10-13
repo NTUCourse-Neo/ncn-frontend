@@ -14,13 +14,12 @@ export default function useSearchResult(
     searchFilters,
     batchSize,
     searchSemester,
-    searchResultCount,
+    setNumOfPages,
     setTotalCount,
     setSearchLoading,
-    setSearchResultCount,
   } = useCourseSearchingContext();
   const { data, error, isValidating } = useSWR(
-    `/api/search/${searchKeyword}/${pageIndex}`,
+    `/api/search/${searchKeyword}/${pageIndex}/${batchSize}`,
     async () => {
       if (!searchSemester) {
         toast({
@@ -47,8 +46,10 @@ export default function useSearchResult(
     },
     {
       onSuccess: (d, k, c) => {
-        setTotalCount(d.total_count);
-        setSearchResultCount(searchResultCount + d?.courses?.length ?? 0);
+        // update total count && total number of pages
+        const numOfCourses = d.total_count;
+        setTotalCount(numOfCourses);
+        setNumOfPages(Math.ceil(numOfCourses / batchSize));
       },
       onError: (e, k, c) => {
         console.log(e);
