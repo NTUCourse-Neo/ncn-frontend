@@ -420,8 +420,24 @@ function CoursePage() {
             top={0}
             gap={8}
           >
-            <Box bg="blue" h="42vh" w="100%"></Box>
-            <Box bg="blue" h="42vh" w="100%"></Box>
+            <Box
+              bg="white"
+              h="42vh"
+              w="100%"
+              border="1px solid #CCCCCC"
+              color="#cccccc"
+            >
+              已加入課程 placeholder
+            </Box>
+            <Box
+              bg="white"
+              h="42vh"
+              w="100%"
+              border="1px solid #CCCCCC"
+              color="#cccccc"
+            >
+              我的收藏 placeholder
+            </Box>
           </Flex>
         </Flex>
       </Flex>
