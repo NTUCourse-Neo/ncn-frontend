@@ -14,13 +14,14 @@ export default function useSearchResult(
     searchFilters,
     batchSize,
     searchSemester,
+    sortOption,
     setNumOfPages,
     setTotalCount,
     setSearchLoading,
   } = useCourseSearchingContext();
   const { data, error, isValidating } = useSWR(
     searchKeyword !== null
-      ? `/api/search/${searchKeyword}/${pageIndex}/${batchSize}`
+      ? `/api/search/${searchKeyword}/${pageIndex}/${batchSize}/${sortOption}`
       : null,
     async () => {
       if (!searchSemester) {
