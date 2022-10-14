@@ -13,6 +13,7 @@ import {
   HStack,
   RadioGroup,
   Radio,
+  VStack,
 } from "@chakra-ui/react";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
@@ -26,6 +27,7 @@ import {
   ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  ChevronUpIcon,
   InfoOutlineIcon,
 } from "@chakra-ui/icons";
 import { BiFilterAlt } from "react-icons/bi";
@@ -35,8 +37,14 @@ import Dropdown from "@/components/Dropdown";
 function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
   const currentPageRef = useRef<HTMLDivElement>(null);
   const pageMenuRef = useRef<HTMLDivElement>(null);
-  const { setPageIndex, totalCount, pageIndex, numOfPages } =
-    useCourseSearchingContext();
+  const {
+    setPageIndex,
+    totalCount,
+    pageIndex,
+    numOfPages,
+    setBatchSize,
+    batchSize,
+  } = useCourseSearchingContext();
 
   return (
     <Flex
@@ -50,7 +58,7 @@ function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
       }}
       textStyle={"body2"}
     >
-      <Flex justifyContent="flex-start" flex={1} gap={2}>
+      <Flex justifyContent="flex-start" flex={1} gap={2} alignItems={"center"}>
         <Flex>{`共 ${totalCount} 筆結果`}</Flex>
         <Dropdown
           reverse={!isTop}
@@ -72,12 +80,12 @@ function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
           <Box>123</Box>
         </Dropdown>
       </Flex>
-      <Flex justifyContent={"center"}>
+      <Flex justifyContent={"center"} alignItems={"center"}>
         每頁顯示{" "}
         <Dropdown
           reverse={!isTop}
           dropdownButton={
-            <HStack
+            <Flex
               sx={{
                 border: "1px solid #CCCCCC",
                 borderRadius: "4px",
@@ -85,18 +93,40 @@ function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
                 mx: 1,
               }}
               minW="50px"
+              alignItems={"center"}
+              justifyContent={"space-between"}
             >
-              <Text noOfLines={1}>50</Text>
-              <ChevronDownIcon />
-            </HStack>
+              <Text noOfLines={1}>{batchSize}</Text>
+              <VStack h="22px" position={"relative"}>
+                <ChevronUpIcon position={"absolute"} />
+                <ChevronDownIcon position={"absolute"} />
+              </VStack>
+            </Flex>
           }
         >
-          <Box>123</Box>
+          <Box
+            sx={{
+              px: 4,
+              my: 2,
+            }}
+          >
+            <RadioGroup
+              value={batchSize}
+              onChange={(next) => {
+                setBatchSize(parseInt(next, 10));
+              }}
+            >
+              <Radio value={25}>25</Radio>
+              <Radio value={50}>50</Radio>
+              <Radio value={100}>100</Radio>
+              <Radio value={150}>150</Radio>
+            </RadioGroup>
+          </Box>
         </Dropdown>{" "}
         筆
       </Flex>
       <Flex justifyContent="flex-end" flex={1} gap={4}>
-        <Flex gap={2}>
+        <Flex gap={2} alignItems={"center"}>
           <Flex
             alignItems="center"
             cursor="pointer"
@@ -128,10 +158,11 @@ function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
             <ChevronRightIcon boxSize={"20px"} />
           </Flex>
         </Flex>
-        <Flex>
+        <Flex alignItems={"center"}>
           第
           <Dropdown
             reverse={!isTop}
+            disabled={numOfPages === 0}
             onOpen={() => {
               const offsetY =
                 parseInt(currentPageRef?.current?.id ?? "0", 10) ?? 0;
@@ -140,7 +171,7 @@ function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
               }
             }}
             dropdownButton={
-              <HStack
+              <Flex
                 sx={{
                   border: "1px solid #CCCCCC",
                   borderRadius: "4px",
@@ -148,10 +179,14 @@ function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
                   mx: 1,
                 }}
                 minW="50px"
+                justifyContent={"space-between"}
               >
                 <Text noOfLines={1}>{pageIndex + 1}</Text>
-                <ChevronDownIcon />
-              </HStack>
+                <VStack h="22px" position={"relative"}>
+                  <ChevronUpIcon position={"absolute"} />
+                  <ChevronDownIcon position={"absolute"} />
+                </VStack>
+              </Flex>
             }
           >
             <Box

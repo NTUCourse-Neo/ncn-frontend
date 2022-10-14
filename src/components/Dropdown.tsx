@@ -9,6 +9,7 @@ export interface DropdownProps {
   onOpen?: () => void;
   onClose?: () => void;
   reverse?: boolean;
+  disabled?: boolean;
 }
 
 function Dropdown(props: DropdownProps) {
@@ -19,6 +20,7 @@ function Dropdown(props: DropdownProps) {
     onOpen = () => {},
     onClose = () => {},
     reverse = false,
+    disabled = false,
   } = props;
   const buttonRef = useRef<HTMLDivElement>(null);
   const menuBoxRef = useRef<HTMLDivElement>(null);
@@ -84,7 +86,13 @@ function Dropdown(props: DropdownProps) {
       ) : null}
       <Flex
         onClick={() => {
-          setIsOpen(!isOpen);
+          if (!disabled) {
+            setIsOpen(!isOpen);
+          }
+        }}
+        sx={{
+          opacity: disabled ? 0.5 : 1,
+          cursor: disabled ? "not-allowed" : "pointer",
         }}
         cursor={"pointer"}
         ref={buttonRef}
