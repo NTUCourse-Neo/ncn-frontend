@@ -64,6 +64,7 @@ function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
       <Flex justifyContent="flex-start" flex={1} gap={2} alignItems={"center"}>
         <Flex>{`共 ${totalCount} 筆結果`}</Flex>
         <Dropdown
+          closeAfterClick={true}
           reverse={!isTop}
           renderDropdownButton={() => (
             <HStack
@@ -138,6 +139,7 @@ function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
               </VStack>
             </Flex>
           )}
+          closeAfterClick={true}
         >
           <Box
             sx={{
@@ -201,6 +203,7 @@ function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
           第
           <Dropdown
             reverse={!isTop}
+            closeAfterClick={true}
             disabled={numOfPages === 0}
             onOpen={() => {
               const offsetY =

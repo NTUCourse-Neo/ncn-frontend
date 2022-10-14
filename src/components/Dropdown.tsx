@@ -14,6 +14,7 @@ export interface DropdownProps {
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
   ) => React.ReactNode;
   readonly menuBoxProps?: BoxProps;
+  readonly closeAfterClick?: boolean;
 }
 
 function Dropdown(props: DropdownProps) {
@@ -27,6 +28,7 @@ function Dropdown(props: DropdownProps) {
     disabled = false,
     renderDropdownFooter = () => null,
     menuBoxProps = {},
+    closeAfterClick = false,
   } = props;
   const buttonRef = useRef<HTMLDivElement>(null);
   const menuBoxRef = useRef<HTMLDivElement>(null);
@@ -85,6 +87,11 @@ function Dropdown(props: DropdownProps) {
             color="black"
             p={2}
             zIndex={500}
+            onClick={() => {
+              if (closeAfterClick) {
+                setIsOpen(false);
+              }
+            }}
             {...menuBoxProps}
           >
             {children}
@@ -127,6 +134,11 @@ function Dropdown(props: DropdownProps) {
             color="black"
             p={2}
             zIndex={500}
+            onClick={() => {
+              if (closeAfterClick) {
+                setIsOpen(false);
+              }
+            }}
             {...menuBoxProps}
           >
             {children}
