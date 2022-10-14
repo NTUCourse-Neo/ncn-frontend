@@ -1,15 +1,19 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Flex, Fade, Box } from "@chakra-ui/react";
+import { Flex, Fade, Box, BoxProps } from "@chakra-ui/react";
 import useOutsideDetecter from "@/hooks/useOutsideDetecter";
 
 export interface DropdownProps {
-  children: React.ReactNode;
-  renderDropdownButton: (isOpen: boolean) => React.ReactNode;
-  enableOutsideDetecter?: boolean;
-  onOpen?: () => void;
-  onClose?: () => void;
-  reverse?: boolean;
-  disabled?: boolean;
+  readonly children: React.ReactNode;
+  readonly renderDropdownButton: (isOpen: boolean) => React.ReactNode;
+  readonly enableOutsideDetecter?: boolean;
+  readonly onOpen?: () => void;
+  readonly onClose?: () => void;
+  readonly reverse?: boolean;
+  readonly disabled?: boolean;
+  readonly renderDropdownFooter?: (
+    setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+  ) => React.ReactNode;
+  readonly menuBoxProps?: BoxProps;
 }
 
 function Dropdown(props: DropdownProps) {
@@ -21,6 +25,8 @@ function Dropdown(props: DropdownProps) {
     onClose = () => {},
     reverse = false,
     disabled = false,
+    renderDropdownFooter = () => null,
+    menuBoxProps = {},
   } = props;
   const buttonRef = useRef<HTMLDivElement>(null);
   const menuBoxRef = useRef<HTMLDivElement>(null);
@@ -79,8 +85,10 @@ function Dropdown(props: DropdownProps) {
             color="black"
             p={2}
             zIndex={500}
+            {...menuBoxProps}
           >
             {children}
+            {renderDropdownFooter(setIsOpen)}
           </Box>
         </Fade>
       ) : null}
@@ -119,8 +127,10 @@ function Dropdown(props: DropdownProps) {
             color="black"
             p={2}
             zIndex={500}
+            {...menuBoxProps}
           >
             {children}
+            {renderDropdownFooter(setIsOpen)}
           </Box>
         </Fade>
       ) : null}
