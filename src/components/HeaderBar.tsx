@@ -318,7 +318,8 @@ function HeaderBar() {
         justifyContent="center"
         alignItems="center"
         zIndex="1000"
-        px={{ base: 6, md: 10, lg: 20 }}
+        pr={{ base: 6, md: 10, lg: 20 }}
+        pl={!isSearchModeEnable ? { base: 6, md: 10, lg: 20 } : "9%"}
         shadow={
           isHeaderFilterActive ? "none" : "0px 1px 2px rgba(85, 105, 135, 0.1)"
         }
@@ -352,9 +353,7 @@ function HeaderBar() {
           <Flex
             flexDirection={"row"}
             alignItems="center"
-            w="60%"
-            ml={20}
-            pl={2}
+            w={{ lg: "75%", xl: "60%" }}
             gap={5}
           >
             <CourseSearchInput />

@@ -118,7 +118,9 @@ function CoursePage() {
                   spacing={1}
                 >
                   <BiFilterAlt size={"20px"} />
-                  <Flex>篩選條件</Flex>
+                  <Text noOfLines={1} w="60px">
+                    篩選條件
+                  </Text>
                 </HStack>
                 <SearchFilters />
               </Flex>
@@ -158,7 +160,7 @@ function CoursePage() {
               }}
             >
               <SearchResultTopBar />
-              <Box w="100%" minH="70vh">
+              <Box w="100%" minH="90vh">
                 <CourseInfoRowPage displayTable={false} pageIndex={pageIndex} />
               </Box>
               <SearchResultTopBar isTop={false} />
