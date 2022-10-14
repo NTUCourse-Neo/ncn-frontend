@@ -205,7 +205,7 @@ function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
                 my: 2,
               }}
               position="relative"
-              h="250px"
+              maxH="250px"
               overflowY="scroll"
               ref={pageMenuRef}
             >
