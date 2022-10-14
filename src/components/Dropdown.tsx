@@ -4,7 +4,7 @@ import useOutsideDetecter from "@/hooks/useOutsideDetecter";
 
 export interface DropdownProps {
   children: React.ReactNode;
-  dropdownButton: React.ReactNode;
+  renderDropdownButton: (isOpen: boolean) => React.ReactNode;
   enableOutsideDetecter?: boolean;
   onOpen?: () => void;
   onClose?: () => void;
@@ -15,7 +15,7 @@ export interface DropdownProps {
 function Dropdown(props: DropdownProps) {
   const {
     children,
-    dropdownButton,
+    renderDropdownButton,
     enableOutsideDetecter = true,
     onOpen = () => {},
     onClose = () => {},
@@ -84,6 +84,7 @@ function Dropdown(props: DropdownProps) {
           </Box>
         </Fade>
       ) : null}
+
       <Flex
         onClick={() => {
           if (!disabled) {
@@ -97,8 +98,9 @@ function Dropdown(props: DropdownProps) {
         cursor={"pointer"}
         ref={buttonRef}
       >
-        {dropdownButton}
+        {renderDropdownButton(isOpen)}
       </Flex>
+
       {!reverse ? (
         <Fade in={isOpen} unmountOnExit={true}>
           <Box

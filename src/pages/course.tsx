@@ -65,7 +65,7 @@ function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
         <Flex>{`共 ${totalCount} 筆結果`}</Flex>
         <Dropdown
           reverse={!isTop}
-          dropdownButton={
+          renderDropdownButton={() => (
             <HStack
               sx={{
                 border: "1px solid #CCCCCC",
@@ -80,7 +80,7 @@ function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
               </Text>
               <ChevronDownIcon />
             </HStack>
-          }
+          )}
         >
           <Box
             sx={{
@@ -118,7 +118,7 @@ function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
         每頁顯示{" "}
         <Dropdown
           reverse={!isTop}
-          dropdownButton={
+          renderDropdownButton={() => (
             <Flex
               sx={{
                 border: "1px solid #CCCCCC",
@@ -136,7 +136,7 @@ function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
                 <ChevronDownIcon position={"absolute"} />
               </VStack>
             </Flex>
-          }
+          )}
         >
           <Box
             sx={{
@@ -207,7 +207,7 @@ function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
                 pageMenuRef.current.scrollTop = 36 * Math.max(offsetY - 3, 0);
               }
             }}
-            dropdownButton={
+            renderDropdownButton={() => (
               <Flex
                 sx={{
                   border: "1px solid #CCCCCC",
@@ -224,7 +224,7 @@ function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
                   <ChevronDownIcon position={"absolute"} />
                 </VStack>
               </Flex>
-            }
+            )}
           >
             <Box
               w="100%"

@@ -16,7 +16,6 @@ import {
   Badge,
   useColorModeValue,
   Box,
-  Fade,
   Divider,
   Center,
   TextProps,
@@ -39,6 +38,7 @@ import { useCourseSearchingContext } from "components/Providers/CourseSearchingP
 import CourseSearchInput from "@/components/CourseSearchInput";
 import { BiFilterAlt } from "react-icons/bi";
 import SearchFilters from "@/components/SearchFilters";
+import Dropdown from "@/components/Dropdown";
 
 interface MegaMenuLinkProps extends TextProps {
   readonly href: string;
@@ -66,60 +66,25 @@ function MegaMenuLink(props: MegaMenuLinkProps) {
 }
 
 function DropdownButton(props: {
-  readonly id: string;
-  readonly title: string;
-  readonly children: React.ReactNode;
   readonly isOpen: boolean;
-  readonly onClick: () => void;
+  readonly title: string;
 }) {
-  const { id, title, children, isOpen, onClick } = props;
+  const { title, isOpen } = props;
   return (
-    <Flex
-      flexDirection={"column"}
-      justifyContent="center"
-      alignItems={"center"}
+    <HStack
+      spacing={0}
       sx={{
-        transition: "all 0.4s ease-in-out",
+        cursor: "pointer",
       }}
       color={isOpen ? "primary.main" : "black"}
     >
-      <HStack
-        spacing={0}
-        onClick={onClick}
-        sx={{
-          cursor: "pointer",
-        }}
-      >
-        <Text textStyle={"body1"} id={id}>
-          {title}
-        </Text>
-        <ChevronDownIcon
-          id={id}
-          boxSize={"24px"}
-          transform={isOpen ? "rotate(180deg)" : ""}
-          transition="all ease-in-out 0.4s"
-        />
-      </HStack>
-      <Fade in={isOpen} unmountOnExit={true}>
-        <Box
-          boxSizing="border-box"
-          sx={{
-            transition: "all 1s ease-in-out",
-            transform: "translate(-50%, 0)",
-            border: "0.5px solid #6F6F6F",
-            borderRadius: "4px",
-          }}
-          top="60px"
-          w="fit-content"
-          bg="white"
-          position="absolute"
-          color="black"
-          p={2}
-        >
-          {children}
-        </Box>
-      </Fade>
-    </Flex>
+      <Text textStyle={"body1"}>{title}</Text>
+      <ChevronDownIcon
+        boxSize={"24px"}
+        transform={isOpen ? "rotate(180deg)" : ""}
+        transition="all ease-in-out 0.4s"
+      />
+    </HStack>
   );
 }
 
@@ -259,21 +224,6 @@ function SignInButton() {
 
 function HeaderBar() {
   const [isHeaderFilterActive, setIsHeaderFilterActive] = useState(false);
-  const [openPanel, setOpenPanel] = useState<
-    null | "courseInfo" | "courseSites" | "selectSites"
-  >(null);
-  const courseInfoRef = useRef(null);
-  const courseSitesRef = useRef(null);
-  const selectSitesRef = useRef(null);
-  useOutsideDetecter(courseInfoRef, "courseInfo", () => {
-    setOpenPanel(null);
-  });
-  useOutsideDetecter(courseSitesRef, "courseSites", () => {
-    setOpenPanel(null);
-  });
-  useOutsideDetecter(selectSitesRef, "selectSites", () => {
-    setOpenPanel(null);
-  });
   const headerFilterRef = useRef(null);
   const headerBarRef = useRef<HTMLDivElement>(null);
   useOutsideDetecter(headerFilterRef, "headerFilter", (e) => {
@@ -299,9 +249,7 @@ function HeaderBar() {
   const hasNewPost = true; // TODO: check if there is new post
 
   useEffect(() => {
-    if (isSearchModeEnable) {
-      setOpenPanel(null);
-    } else {
+    if (!isSearchModeEnable) {
       setIsHeaderFilterActive(false);
     }
   }, [isSearchModeEnable]);
@@ -392,17 +340,10 @@ function HeaderBar() {
           </Flex>
         ) : (
           <Flex flexDirection={"row"} alignItems="center" gap={6}>
-            <DropdownButton
-              id="courseInfo"
-              title={"課程資訊"}
-              isOpen={openPanel === "courseInfo"}
-              onClick={() => {
-                if (openPanel === "courseInfo") {
-                  setOpenPanel(null);
-                } else {
-                  setOpenPanel("courseInfo");
-                }
-              }}
+            <Dropdown
+              renderDropdownButton={(isOpen) => (
+                <DropdownButton title={"課程資訊"} isOpen={isOpen} />
+              )}
             >
               <Flex
                 flexDirection={{ base: "column", md: "row" }}
@@ -410,7 +351,6 @@ function HeaderBar() {
                 px={10}
                 pt={4}
                 pb={6}
-                ref={courseInfoRef}
                 sx={{
                   fontSize: "16px",
                   lineHeight: 1.6,
@@ -490,18 +430,11 @@ function HeaderBar() {
                   </MegaMenuLink>
                 </Flex>
               </Flex>
-            </DropdownButton>
-            <DropdownButton
-              id="courseSites"
-              title={"課程網站"}
-              isOpen={openPanel === "courseSites"}
-              onClick={() => {
-                if (openPanel === "courseSites") {
-                  setOpenPanel(null);
-                } else {
-                  setOpenPanel("courseSites");
-                }
-              }}
+            </Dropdown>
+            <Dropdown
+              renderDropdownButton={(isOpen) => (
+                <DropdownButton title={"課程網站"} isOpen={isOpen} />
+              )}
             >
               <Flex
                 flexDirection={"column"}
@@ -515,7 +448,6 @@ function HeaderBar() {
                   lineHeight: 1.6,
                   color: "#484848",
                 }}
-                ref={courseSitesRef}
               >
                 <MegaMenuLink href="https://eclass.fltc.ntu.edu.tw/">
                   線上英語課程
@@ -536,18 +468,11 @@ function HeaderBar() {
                   臺大開放式課程
                 </MegaMenuLink>
               </Flex>
-            </DropdownButton>
-            <DropdownButton
-              id="selectSites"
-              title={"正式選課"}
-              isOpen={openPanel === "selectSites"}
-              onClick={() => {
-                if (openPanel === "selectSites") {
-                  setOpenPanel(null);
-                } else {
-                  setOpenPanel("selectSites");
-                }
-              }}
+            </Dropdown>
+            <Dropdown
+              renderDropdownButton={(isOpen) => (
+                <DropdownButton title={"正式選課"} isOpen={isOpen} />
+              )}
             >
               <Flex
                 flexDirection={"column"}
@@ -561,7 +486,6 @@ function HeaderBar() {
                   lineHeight: 1.6,
                   color: "#484848",
                 }}
-                ref={selectSitesRef}
               >
                 <MegaMenuLink href="https://if192.aca.ntu.edu.tw/index.php">
                   網路選課系統 1
@@ -573,7 +497,7 @@ function HeaderBar() {
                   選課結果查詢
                 </MegaMenuLink>
               </Flex>
-            </DropdownButton>
+            </Dropdown>
           </Flex>
         )}
         <Flex
