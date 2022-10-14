@@ -19,7 +19,7 @@ export default function useSearchResult(
     setSearchLoading,
   } = useCourseSearchingContext();
   const { data, error, isValidating } = useSWR(
-    searchKeyword
+    searchKeyword !== null
       ? `/api/search/${searchKeyword}/${pageIndex}/${batchSize}`
       : null,
     async () => {
