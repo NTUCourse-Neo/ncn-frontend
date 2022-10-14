@@ -22,7 +22,12 @@ const DisplayTagsContext = createContext<DisplayTagsContextType>({
 const DisplayTagsProvider: React.FC<{
   readonly children: React.ReactNode;
 }> = ({ children }) => {
-  const [displayTags, setDisplayTags] = useState<DisplayTagName[]>([]);
+  const [displayTags, setDisplayTags] = useState<DisplayTagName[]>([
+    "requirement",
+    "slot",
+    "enroll_method",
+    "areas",
+  ]);
   return (
     <DisplayTagsContext.Provider value={{ displayTags, setDisplayTags }}>
       {children}

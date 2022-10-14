@@ -92,6 +92,7 @@ function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
               value={sortOption}
               onChange={(next) => {
                 setSortOption(next as SortOption);
+                setPageIndex(0);
               }}
               gap={2}
             >
@@ -148,6 +149,7 @@ function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
               value={batchSize}
               onChange={(next) => {
                 setBatchSize(parseInt(next, 10));
+                setPageIndex(0);
               }}
               gap={2}
             >
