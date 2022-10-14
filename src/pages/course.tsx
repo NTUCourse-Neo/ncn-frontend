@@ -53,6 +53,7 @@ function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
       <Flex justifyContent="flex-start" flex={1} gap={2}>
         <Flex>{`共 ${totalCount} 筆結果`}</Flex>
         <Dropdown
+          reverse={!isTop}
           dropdownButton={
             <HStack
               sx={{
@@ -74,6 +75,7 @@ function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
       <Flex justifyContent={"center"}>
         每頁顯示{" "}
         <Dropdown
+          reverse={!isTop}
           dropdownButton={
             <HStack
               sx={{
@@ -129,6 +131,7 @@ function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
         <Flex>
           第
           <Dropdown
+            reverse={!isTop}
             onOpen={() => {
               const offsetY =
                 parseInt(currentPageRef?.current?.id ?? "0", 10) ?? 0;

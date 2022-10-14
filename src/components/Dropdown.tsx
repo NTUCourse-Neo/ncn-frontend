@@ -8,6 +8,7 @@ export interface DropdownProps {
   enableOutsideDetecter?: boolean;
   onOpen?: () => void;
   onClose?: () => void;
+  reverse?: boolean;
 }
 
 function Dropdown(props: DropdownProps) {
@@ -17,6 +18,7 @@ function Dropdown(props: DropdownProps) {
     enableOutsideDetecter = true,
     onOpen = () => {},
     onClose = () => {},
+    reverse = false,
   } = props;
   const buttonRef = useRef<HTMLDivElement>(null);
   const menuBoxRef = useRef<HTMLDivElement>(null);
@@ -57,6 +59,29 @@ function Dropdown(props: DropdownProps) {
         transition: "all 0.4s ease-in-out",
       }}
     >
+      {reverse ? (
+        <Fade in={isOpen} unmountOnExit={true}>
+          <Box
+            ref={menuBoxRef}
+            boxSizing="border-box"
+            sx={{
+              transition: "all 1s ease-in-out",
+              transform: "translate(-50%, 0)",
+              border: "0.5px solid #6F6F6F",
+              borderRadius: "4px",
+            }}
+            bottom={`${menuOffsetY}px`}
+            w="fit-content"
+            bg="white"
+            position="absolute"
+            color="black"
+            p={2}
+            zIndex={500}
+          >
+            {children}
+          </Box>
+        </Fade>
+      ) : null}
       <Flex
         onClick={() => {
           setIsOpen(!isOpen);
@@ -66,27 +91,29 @@ function Dropdown(props: DropdownProps) {
       >
         {dropdownButton}
       </Flex>
-      <Fade in={isOpen} unmountOnExit={true}>
-        <Box
-          ref={menuBoxRef}
-          boxSizing="border-box"
-          sx={{
-            transition: "all 1s ease-in-out",
-            transform: "translate(-50%, 0)",
-            border: "0.5px solid #6F6F6F",
-            borderRadius: "4px",
-          }}
-          top={`${menuOffsetY}px`}
-          w="fit-content"
-          bg="white"
-          position="absolute"
-          color="black"
-          p={2}
-          zIndex={100}
-        >
-          {children}
-        </Box>
-      </Fade>
+      {!reverse ? (
+        <Fade in={isOpen} unmountOnExit={true}>
+          <Box
+            ref={menuBoxRef}
+            boxSizing="border-box"
+            sx={{
+              transition: "all 1s ease-in-out",
+              transform: "translate(-50%, 0)",
+              border: "0.5px solid #6F6F6F",
+              borderRadius: "4px",
+            }}
+            top={`${menuOffsetY}px`}
+            w="fit-content"
+            bg="white"
+            position="absolute"
+            color="black"
+            p={2}
+            zIndex={500}
+          >
+            {children}
+          </Box>
+        </Fade>
+      ) : null}
     </Flex>
   );
 }
