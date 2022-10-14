@@ -11,6 +11,8 @@ import {
   Center,
   Checkbox,
   HStack,
+  RadioGroup,
+  Radio,
 } from "@chakra-ui/react";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
@@ -20,12 +22,22 @@ import { reportEvent } from "utils/ga";
 import { useInView } from "react-intersection-observer";
 import CourseSearchInput from "@/components/CourseSearchInput";
 import SearchFilters from "@/components/SearchFilters";
-import { InfoOutlineIcon } from "@chakra-ui/icons";
+import {
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  InfoOutlineIcon,
+} from "@chakra-ui/icons";
 import { BiFilterAlt } from "react-icons/bi";
 import CourseInfoRowPage from "@/components/CourseInfoRowPage";
+import Dropdown from "@/components/Dropdown";
 
 function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
-  const { setPageIndex } = useCourseSearchingContext();
+  const currentPageRef = useRef<HTMLDivElement>(null);
+  const pageMenuRef = useRef<HTMLDivElement>(null);
+  const { setPageIndex, totalCount, pageIndex, numOfPages } =
+    useCourseSearchingContext();
+
   return (
     <Flex
       w="100%"
@@ -36,10 +48,164 @@ function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
         borderBottom: isTop ? "1px solid #CCCCCC" : "none",
         borderTop: !isTop ? "1px solid #CCCCCC" : "none",
       }}
+      textStyle={"body2"}
     >
-      <Flex>共 100 筆結果</Flex>
-      <Flex>每頁顯示 50 筆</Flex>
-      <Flex>上一頁</Flex>
+      <Flex justifyContent="flex-start" flex={1} gap={2}>
+        <Flex>{`共 ${totalCount} 筆結果`}</Flex>
+        <Dropdown
+          dropdownButton={
+            <HStack
+              sx={{
+                border: "1px solid #CCCCCC",
+                borderRadius: "4px",
+                px: "8px",
+              }}
+            >
+              <Text minW="40px" noOfLines={1}>
+                排序
+              </Text>
+              <ChevronDownIcon />
+            </HStack>
+          }
+        >
+          <Box>123</Box>
+        </Dropdown>
+      </Flex>
+      <Flex justifyContent={"center"}>
+        每頁顯示{" "}
+        <Dropdown
+          dropdownButton={
+            <HStack
+              sx={{
+                border: "1px solid #CCCCCC",
+                borderRadius: "4px",
+                px: "8px",
+                mx: 1,
+              }}
+              minW="50px"
+            >
+              <Text noOfLines={1}>50</Text>
+              <ChevronDownIcon />
+            </HStack>
+          }
+        >
+          <Box>123</Box>
+        </Dropdown>{" "}
+        筆
+      </Flex>
+      <Flex justifyContent="flex-end" flex={1} gap={4}>
+        <Flex gap={2}>
+          <Flex
+            alignItems="center"
+            cursor="pointer"
+            sx={{
+              opacity: pageIndex === 0 ? 0.5 : 1,
+            }}
+            onClick={() => {
+              if (pageIndex > 0) {
+                setPageIndex(pageIndex - 1);
+              }
+            }}
+          >
+            <ChevronLeftIcon boxSize={"20px"} />
+            上一頁
+          </Flex>
+          <Flex
+            alignItems="center"
+            cursor="pointer"
+            sx={{
+              opacity: pageIndex === numOfPages - 1 ? 0.5 : 1,
+            }}
+            onClick={() => {
+              if (pageIndex < numOfPages - 1) {
+                setPageIndex(pageIndex + 1);
+              }
+            }}
+          >
+            下一頁
+            <ChevronRightIcon boxSize={"20px"} />
+          </Flex>
+        </Flex>
+        <Flex>
+          第
+          <Dropdown
+            onOpen={() => {
+              const offsetY =
+                parseInt(currentPageRef?.current?.id ?? "0", 10) ?? 0;
+              if (pageMenuRef?.current) {
+                pageMenuRef.current.scrollTop = 36 * Math.max(offsetY - 3, 0);
+              }
+            }}
+            dropdownButton={
+              <HStack
+                sx={{
+                  border: "1px solid #CCCCCC",
+                  borderRadius: "4px",
+                  px: "8px",
+                  mx: 1,
+                }}
+                minW="50px"
+              >
+                <Text noOfLines={1}>{pageIndex + 1}</Text>
+                <ChevronDownIcon />
+              </HStack>
+            }
+          >
+            <Box
+              w="100%"
+              h="48px"
+              position={"absolute"}
+              zIndex={101}
+              top={0}
+              left={0}
+              bg="linear-gradient(180.5deg, #FFFFFF -84.02%, #FFFFFF 31.81%, rgba(255, 255, 255, 0) 49.08%)s"
+              pointerEvents={"none"}
+            />
+            <Box
+              sx={{
+                px: 4,
+                my: 2,
+              }}
+              position="relative"
+              h="250px"
+              overflowY="scroll"
+              ref={pageMenuRef}
+            >
+              <Flex flexDirection={"column"} justifyContent={"center"}>
+                <RadioGroup
+                  onChange={(i) => {
+                    setPageIndex(parseInt(i));
+                  }}
+                  value={pageIndex}
+                >
+                  {Array.from({ length: numOfPages }, (_, i) => (
+                    <Radio value={i} height="36px" key={i}>
+                      <Box
+                        id={`${i}`}
+                        ref={pageIndex === i ? currentPageRef : undefined}
+                      >
+                        {i + 1}
+                      </Box>
+                    </Radio>
+                  ))}
+                </RadioGroup>
+              </Flex>
+            </Box>
+            <Box
+              w="100%"
+              h="48px"
+              position={"absolute"}
+              zIndex={101}
+              bottom={0}
+              left={0}
+              bg="linear-gradient(180.5deg, #FFFFFF -84.02%, #FFFFFF 31.81%, rgba(255, 255, 255, 0) 49.08%)"
+              transform={"rotate(180deg)"}
+              pointerEvents={"none"}
+            />
+          </Dropdown>
+          頁
+        </Flex>
+      </Flex>
     </Flex>
   );
 }

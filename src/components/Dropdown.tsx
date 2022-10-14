@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Flex, Fade, Box } from "@chakra-ui/react";
 import useOutsideDetecter from "@/hooks/useOutsideDetecter";
 
@@ -6,10 +6,18 @@ export interface DropdownProps {
   children: React.ReactNode;
   dropdownButton: React.ReactNode;
   enableOutsideDetecter?: boolean;
+  onOpen?: () => void;
+  onClose?: () => void;
 }
 
 function Dropdown(props: DropdownProps) {
-  const { children, dropdownButton, enableOutsideDetecter = true } = props;
+  const {
+    children,
+    dropdownButton,
+    enableOutsideDetecter = true,
+    onOpen = () => {},
+    onClose = () => {},
+  } = props;
   const buttonRef = useRef<HTMLDivElement>(null);
   const menuBoxRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -30,6 +38,15 @@ function Dropdown(props: DropdownProps) {
       : () => {}
   );
   const menuOffsetY = (buttonRef.current?.clientHeight ?? 50) + 5;
+
+  useEffect(() => {
+    if (isOpen) {
+      onOpen();
+    } else {
+      onClose();
+    }
+  }, [isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <Flex
       flexDirection={"column"}
@@ -39,12 +56,12 @@ function Dropdown(props: DropdownProps) {
       sx={{
         transition: "all 0.4s ease-in-out",
       }}
-      color={isOpen ? "primary.main" : "black"}
     >
       <Flex
         onClick={() => {
           setIsOpen(!isOpen);
         }}
+        cursor={"pointer"}
         ref={buttonRef}
       >
         {dropdownButton}
@@ -65,6 +82,7 @@ function Dropdown(props: DropdownProps) {
           position="absolute"
           color="black"
           p={2}
+          zIndex={100}
         >
           {children}
         </Box>
