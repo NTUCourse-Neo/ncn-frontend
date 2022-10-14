@@ -1,6 +1,6 @@
 import type { SearchMode } from "@/data/searchMode";
 import React, { createContext, useContext, useState } from "react";
-import type { SearchFieldName, Filter } from "types/search";
+import type { SearchFieldName, Filter, SortOption } from "types/search";
 import {
   isEnrollMethodFilterActive,
   isTargetGradeFilterActive,
@@ -37,6 +37,8 @@ interface CourseSearchingContextType {
   setSearchSemester: (searchSemester: string | null) => void;
   searchMode: SearchMode;
   setSearchMode: (searchMode: SearchMode) => void;
+  sortOption: SortOption;
+  setSortOption: (sortOption: SortOption) => void;
   isSearchBoxInView: boolean;
   setIsSearchBoxInView: (isSearchBoxInView: boolean) => void;
   dispatchSearch: (search: string | null) => void;
@@ -76,6 +78,7 @@ const CourseSearchingContext = createContext<CourseSearchingContextType>({
   },
   isSearchBoxInView: true,
   isFiltersEdited: false,
+  sortOption: "correlation",
   setSearch: () => {},
   setNumOfPages: () => {},
   setPageIndex: () => {},
@@ -90,6 +93,7 @@ const CourseSearchingContext = createContext<CourseSearchingContextType>({
   setIsSearchBoxInView: () => {},
   dispatchSearch: () => {},
   resetFilters: () => {},
+  setSortOption: () => {},
 });
 
 const CourseSearchingProvider: React.FC<{
@@ -134,6 +138,7 @@ const CourseSearchingProvider: React.FC<{
     chinese: "快速搜尋",
     english: "Quick Search",
   });
+  const [sortOption, setSortOption] = useState<SortOption>("correlation");
   const [isSearchBoxInView, setIsSearchBoxInView] = useState(true);
 
   const dispatchSearch = (text: string | null) => {
@@ -178,6 +183,7 @@ const CourseSearchingProvider: React.FC<{
         searchMode,
         isSearchBoxInView,
         isFiltersEdited,
+        sortOption,
         setSearch,
         setNumOfPages,
         setPageIndex,
@@ -191,6 +197,7 @@ const CourseSearchingProvider: React.FC<{
         setSearchMode,
         dispatchSearch,
         resetFilters,
+        setSortOption,
         setIsSearchBoxInView,
       }}
     >

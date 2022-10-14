@@ -33,6 +33,7 @@ import {
 import { BiFilterAlt } from "react-icons/bi";
 import CourseInfoRowPage from "@/components/CourseInfoRowPage";
 import Dropdown from "@/components/Dropdown";
+import { SortOption, sortOptions } from "@/types/search";
 
 function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
   const currentPageRef = useRef<HTMLDivElement>(null);
@@ -44,6 +45,8 @@ function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
     numOfPages,
     setBatchSize,
     batchSize,
+    setSortOption,
+    sortOption,
   } = useCourseSearchingContext();
 
   return (
@@ -71,13 +74,44 @@ function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
               }}
             >
               <Text minW="40px" noOfLines={1}>
-                排序
+                排序：
+                {sortOptions.find((option) => option.id === sortOption)
+                  ?.chinese ?? "請選擇排序方式"}
               </Text>
               <ChevronDownIcon />
             </HStack>
           }
         >
-          <Box>123</Box>
+          <Box
+            sx={{
+              px: 2,
+              my: 2,
+            }}
+          >
+            <RadioGroup
+              value={sortOption}
+              onChange={(next) => {
+                setSortOption(next as SortOption);
+              }}
+              gap={2}
+            >
+              {sortOptions.map((option) => (
+                <Radio key={option.id} p={2} value={option.id}>
+                  <Flex
+                    w="120px"
+                    sx={{
+                      fontWeight: 500,
+                      fontSize: "13px",
+                      lineHeight: "1.4",
+                      color: "#4b4b4b",
+                    }}
+                  >
+                    {option.chinese}
+                  </Flex>
+                </Radio>
+              ))}
+            </RadioGroup>
+          </Box>
         </Dropdown>
       </Flex>
       <Flex justifyContent={"center"} alignItems={"center"}>
@@ -115,11 +149,13 @@ function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
               onChange={(next) => {
                 setBatchSize(parseInt(next, 10));
               }}
+              gap={2}
             >
-              <Radio value={25}>25</Radio>
-              <Radio value={50}>50</Radio>
-              <Radio value={100}>100</Radio>
-              <Radio value={150}>150</Radio>
+              {[25, 50, 100, 150].map((size) => (
+                <Radio key={size} p={2} value={size}>
+                  {size}
+                </Radio>
+              ))}
             </RadioGroup>
           </Box>
         </Dropdown>{" "}
@@ -146,7 +182,8 @@ function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
             alignItems="center"
             cursor="pointer"
             sx={{
-              opacity: pageIndex === numOfPages - 1 ? 0.5 : 1,
+              opacity:
+                pageIndex === numOfPages - 1 || numOfPages === 0 ? 0.5 : 1,
             }}
             onClick={() => {
               if (pageIndex < numOfPages - 1) {
