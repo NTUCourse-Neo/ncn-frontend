@@ -28,7 +28,6 @@ import React, {
   useMemo,
   useState,
   useRef,
-  useEffect,
   forwardRef,
   RefObject,
   createRef,
@@ -315,7 +314,7 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
         })}
       </>
     );
-  }, [selectedDept, activeDept, collegeRefs, searchString]);
+  }, [selectedDept, collegeRefs, searchString]);
 
   return (
     <>
