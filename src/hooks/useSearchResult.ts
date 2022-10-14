@@ -19,7 +19,9 @@ export default function useSearchResult(
     setSearchLoading,
   } = useCourseSearchingContext();
   const { data, error, isValidating } = useSWR(
-    `/api/search/${searchKeyword}/${pageIndex}/${batchSize}`,
+    searchKeyword
+      ? `/api/search/${searchKeyword}/${pageIndex}/${batchSize}`
+      : null,
     async () => {
       if (!searchSemester) {
         toast({
