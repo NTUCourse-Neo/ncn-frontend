@@ -155,11 +155,20 @@ function HomePage() {
     setSearchMode,
     searchSettings,
     setSearchSettings,
+    setSearch,
   } = useCourseSearchingContext();
   const toast = useToast();
   const [isRegistering, setIsRegistering] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { user, isLoading: isAuthLoading } = useUser();
+
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const router = useRouter();
+  const startSearch = (keyword: string) => {
+    setSearch(keyword);
+    router.push("/course");
+  };
+
   useUserInfo(user?.sub ?? null, {
     onSuccessCallback: async (userData, key, config) => {
       if (!userData?.user?.db && user?.email) {
@@ -353,13 +362,21 @@ function HomePage() {
                   h="56px"
                   py={6}
                   type={"text"}
-                  placeholder="搜尋課程名稱/教師姓名/教室/課號/課程識別碼"
+                  placeholder="搜尋課程名稱 / 教師姓名 / 教室 / 流水號"
                   sx={{
                     fontSize: "18px",
                     lineHeight: "24px",
                     _placeholder: {
                       color: "#818181",
                     },
+                  }}
+                  onChange={(e) => {
+                    setSearchKeyword(e.target.value);
+                  }}
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter") {
+                      startSearch(searchKeyword);
+                    }
                   }}
                 />
                 <InputRightElement w="fit-content" h="100%" px="2">
@@ -375,7 +392,9 @@ function HomePage() {
                         colorScheme="blue"
                         size={"md"}
                         variant="solid"
-                        onClick={() => {}}
+                        onClick={() => {
+                          startSearch(searchKeyword);
+                        }}
                         px="8"
                       >
                         <Text display={{ base: "none", md: "inline" }}>
