@@ -22,7 +22,6 @@ import {
 import { FaPlus, FaHeart, FaRegHeart } from "react-icons/fa";
 import { info_view_map } from "data/mapping_table";
 import openPage from "utils/openPage";
-import { getNolAddUrl } from "utils/getNolUrls";
 import useCourseTable from "hooks/useCourseTable";
 import useNeoLocalStorage from "hooks/useNeoLocalStorage";
 import { useUser } from "@auth0/nextjs-auth0";
@@ -30,6 +29,7 @@ import { parseCourseTimeLocation } from "utils/parseCourseSchedule";
 import useUserInfo from "hooks/useUserInfo";
 import { reportEvent } from "utils/ga";
 import type { Course } from "types/course";
+import { useRouter } from "next/router";
 
 function DeptBadge({ course }: { readonly course: Course }) {
   if (course.departments.length === 0) {
@@ -110,25 +110,39 @@ function DrawerDataTag({
   label,
 }: {
   readonly fieldName: string;
-  readonly label: string;
+  readonly label: string | string[];
 }) {
-  if (label === "") {
-    return null;
-  }
   return (
     <Flex
       flexDirection="row"
-      alignItems="center"
+      alignItems="start"
       justifyContent="start"
       mr="4"
-      minW="10vw"
+      w="100%"
+      sx={{
+        fontSize: "12px",
+        lineHeight: "1.6",
+        fontWeight: 500,
+        color: "#333333",
+      }}
     >
-      <Badge variant="solid" colorScheme="gray">
-        {fieldName}
-      </Badge>
-      <Heading as="h3" color={"text.light"} fontSize="sm" ml="4px">
-        {label}
-      </Heading>
+      <Box>{fieldName}</Box>
+      <Box
+        ml="8px"
+        sx={{
+          fontWeight: 400,
+        }}
+      >
+        {typeof label === "string" ? (
+          label
+        ) : (
+          <>
+            {label.map((t, i) => (
+              <Flex key={`${t}-${i}`}>{t}</Flex>
+            ))}
+          </>
+        )}
+      </Box>
     </Flex>
   );
 }
@@ -138,6 +152,9 @@ function CourseDrawerContainer({
 }: {
   readonly courseInfo: Course;
 }) {
+  const router = useRouter();
+  const courseTimeLocationPairs = parseCourseTimeLocation(courseInfo.schedules);
+  const hasDifferentLocation = courseTimeLocationPairs.length > 1;
   return (
     <Flex
       px="1"
@@ -147,28 +164,53 @@ function CourseDrawerContainer({
       justifyContent="space-between"
     >
       <Flex
-        ml="2px"
+        py="12px"
         flexDirection="row"
-        alignItems="center"
-        justifyContent="start"
+        w="100%"
+        alignItems="start"
+        justifyContent="space-between"
         flexWrap="wrap"
-        css={{ gap: ".5rem" }}
       >
-        <DrawerDataTag fieldName={"課程識別碼"} label={courseInfo.identifier} />
-        <DrawerDataTag fieldName={"課號"} label={courseInfo.code} />
-        <DrawerDataTag fieldName={"班次"} label={courseInfo?.class ?? "未知"} />
-        <DrawerDataTag
-          fieldName={info_view_map.enroll_method.name}
-          label={info_view_map.enroll_method.map[courseInfo.enroll_method]}
-        />
-        <DrawerDataTag
-          fieldName={info_view_map.language.name}
-          label={info_view_map.language.map[courseInfo.language]}
-        />
-        <DrawerDataTag
-          fieldName={"開課單位"}
-          label={courseInfo.provider.toUpperCase()}
-        />
+        <Box w="33%" gap="6px">
+          <DrawerDataTag
+            fieldName={"課程識別碼"}
+            label={courseInfo.identifier}
+          />
+          <DrawerDataTag fieldName={"課號"} label={courseInfo.code} />
+          <DrawerDataTag
+            fieldName={info_view_map.enroll_method.name}
+            label={info_view_map.enroll_method.map[courseInfo.enroll_method]}
+          />
+        </Box>
+        <Box w="33%" gap="6px">
+          <DrawerDataTag
+            fieldName={"班次"}
+            label={courseInfo?.class ?? "未知"}
+          />
+          <DrawerDataTag
+            fieldName={"學分數"}
+            label={`${courseInfo.credits ? courseInfo.credits.toFixed(1) : ""}`}
+          />
+          <DrawerDataTag fieldName={"修課學生年級"} label={"unavailable"} />
+        </Box>
+        <Box w="33%" gap="6px">
+          <DrawerDataTag
+            fieldName={"上課地點"}
+            label={
+              hasDifferentLocation
+                ? courseTimeLocationPairs.map((p) => `${p.location}(${p.time})`)
+                : courseTimeLocationPairs?.[0]?.location ?? "未知"
+            }
+          />
+          <DrawerDataTag
+            fieldName={"修課總人數"}
+            label={`${courseInfo.slot} 人`}
+          />
+          <DrawerDataTag
+            fieldName={info_view_map.language.name}
+            label={info_view_map.language.map[courseInfo.language]}
+          />
+        </Box>
       </Flex>
       <Spacer my="2" />
       <Flex
@@ -236,15 +278,14 @@ function CourseDrawerContainer({
         w="100%"
         flexDirection={{ base: "column", md: "row" }}
         alignItems={{ base: "start", md: "center" }}
-        justifyContent={{ base: "start", md: "space-between" }}
+        justifyContent={{ base: "start", md: "end" }}
         flexWrap="wrap"
         css={{ gap: "2px" }}
       >
-        <ButtonGroup size="sm" isAttached variant="outline" colorScheme="blue">
+        <ButtonGroup>
           {courseInfo?.cool_url ? (
             <Button
-              size="sm"
-              mr="-px"
+              variant="outline"
               onClick={() => {
                 if (courseInfo?.cool_url) {
                   openPage(courseInfo.cool_url);
@@ -255,19 +296,12 @@ function CourseDrawerContainer({
               {"NTU COOL"}
             </Button>
           ) : null}
-        </ButtonGroup>
-        <ButtonGroup>
           <Button
-            variant="ghost"
-            colorScheme="blue"
-            leftIcon={<FaPlus />}
-            size="sm"
             onClick={() => {
-              openPage(getNolAddUrl(courseInfo), true);
-              reportEvent("course_info_row", "add_to_nol", courseInfo.id);
+              router.push(`/courseinfo/${courseInfo.id}`);
             }}
           >
-            加入課程網
+            查看課程大綱
           </Button>
         </ButtonGroup>
       </Flex>
@@ -389,146 +423,158 @@ function CourseInfoRow({
       border="none"
       shadow="0px 1px 2px rgba(85, 105, 135, 0.25)"
     >
-      <Flex
-        alignItems="center"
-        justifyContent="start"
-        flexDirection="row"
-        w="100%"
-        pr="2"
-        pl="2"
-        py="1"
-      >
-        <AccordionButton
-          flexDirection={{ base: "column", md: "row" }}
-          alignItems="center"
-          _hover={{
-            bg: "#f6f6f6",
-          }}
-          gap={6}
-        >
+      {({ isExpanded }) => (
+        <>
           <Flex
-            w={{ base: "100%", md: "40%" }}
-            flexDirection={"column"}
-            gap={"4px"}
-            lineHeight="1.6"
+            alignItems="center"
+            justifyContent="start"
+            flexDirection="row"
+            w="100%"
+            pr="2"
+            pl="2"
+            py="1"
           >
-            <Flex
-              sx={{
-                fontFamily: "Work Sans",
-                fontSize: "14px",
-                fontWeight: 500,
-                color: "#4b4b4b",
+            <AccordionButton
+              flexDirection={{ base: "column", md: "row" }}
+              alignItems="center"
+              _hover={{
+                bg: "#f6f6f6",
               }}
+              gap={6}
             >
-              {courseSerial}
-            </Flex>
-            <Flex
-              sx={{
-                fontSize: "16px",
-                fontWeight: 500,
-                color: "#333333",
-              }}
-            >
-              {courseName}
-            </Flex>
-            <Flex
-              sx={{
-                fontSize: "14px",
-                fontWeight: 400,
-                color: "#6f6f6f",
-              }}
-            >
-              {teacherName}
-            </Flex>
-            <Flex>{deptBadge}</Flex>
-          </Flex>
-          <Flex
-            w={{ base: "100%", md: "20%" }}
-            flexDirection="column"
-            alignItems={"start"}
-            sx={{
-              fontSize: "14px",
-              lineHeight: 1.6,
-              fontWeight: 400,
-              color: "#333333",
-              fontFamily: "Work Sans",
-            }}
-          >
-            {courseTimeLocationPairs.map((pair, index) => {
-              return (
-                <Text key={`${index}-${pair.time}-${pair.location}`}>
-                  {pair.time}
-                </Text>
-              );
-            })}
-          </Flex>
-          <Flex w={{ base: "100%", md: "20%" }} flexDirection={"column"}>
-            <HStack spacing={"4px"}>
-              <CustomTag>{selectiveOrNot}</CustomTag>
-              {courseArea}
-            </HStack>
-            <Flex></Flex>
-          </Flex>
-          <Flex w={{ base: "100%", md: "15%" }}>
-            <Button
-              size="sm"
-              ml={{ base: 0, md: "10px" }}
-              variant="unstyled"
-              colorScheme={"red"}
-              onClick={(e) => {
-                e.preventDefault();
-                handleAddFavorite(courseInfo.id);
-                reportEvent(
-                  "course_info_row",
-                  isFavorite ? "remove_favorite" : "add_favorite",
-                  courseInfo.id
-                );
-              }}
-              isLoading={addingFavoriteCourse}
-            >
-              <Center w="100%" h="24px">
-                {<Icon as={isFavorite ? FaHeart : FaRegHeart} boxSize="16px" />}
-              </Center>
-            </Button>
-            <Tooltip
-              label="非當學期課程"
-              hasArrow
-              shouldWrapChildren
-              placement="top"
-              isDisabled={
-                courseInfo.semester === process.env.NEXT_PUBLIC_SEMESTER
-              }
-            >
-              <Button
-                size="sm"
-                ml={{ base: 0, md: "10px" }}
-                colorScheme={selected ? "red" : "blue"}
-                onClick={(e) => {
-                  e.preventDefault();
-                  addCourseToTable(courseInfo);
-                  reportEvent(
-                    "course_info_row",
-                    selected ? "remove_course" : "add_course",
-                    courseInfo.id
-                  );
-                }}
-                isLoading={addingCourse}
-                disabled={
-                  courseInfo.semester !== process.env.NEXT_PUBLIC_SEMESTER
-                }
-                variant="outline"
-                borderRadius={"full"}
-                w="60px"
+              <Flex
+                w={{ base: "100%", md: "40%" }}
+                flexDirection={"column"}
+                gap={"4px"}
+                lineHeight="1.6"
               >
-                {selected ? "移除" : "加入"}
-              </Button>
-            </Tooltip>
+                <Flex
+                  sx={{
+                    fontFamily: "Work Sans",
+                    fontSize: "14px",
+                    fontWeight: 500,
+                    color: "#4b4b4b",
+                  }}
+                >
+                  {courseSerial}
+                </Flex>
+                <Flex
+                  sx={{
+                    fontSize: "16px",
+                    fontWeight: 500,
+                    color: "#333333",
+                  }}
+                >
+                  {courseName}
+                </Flex>
+                <Flex
+                  sx={{
+                    fontSize: "14px",
+                    fontWeight: 400,
+                    color: "#6f6f6f",
+                  }}
+                >
+                  {teacherName}
+                </Flex>
+                <Flex>{deptBadge}</Flex>
+              </Flex>
+              <Flex
+                w={{ base: "100%", md: "20%" }}
+                flexDirection="column"
+                alignItems={"start"}
+                sx={{
+                  fontSize: "14px",
+                  lineHeight: 1.6,
+                  fontWeight: 400,
+                  color: "#333333",
+                  fontFamily: "Work Sans",
+                }}
+              >
+                {courseTimeLocationPairs.map((pair, index) => {
+                  return (
+                    <Text key={`${index}-${pair.time}-${pair.location}`}>
+                      {pair.time}
+                    </Text>
+                  );
+                })}
+              </Flex>
+              <Flex w={{ base: "100%", md: "20%" }} flexDirection={"column"}>
+                <HStack spacing={"4px"}>
+                  <CustomTag>{selectiveOrNot}</CustomTag>
+                  {courseArea}
+                </HStack>
+                <Flex></Flex>
+              </Flex>
+              <Flex w={{ base: "100%", md: "15%" }}>
+                <Button
+                  size="sm"
+                  ml={{ base: 0, md: "10px" }}
+                  variant="unstyled"
+                  colorScheme={"red"}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleAddFavorite(courseInfo.id);
+                    reportEvent(
+                      "course_info_row",
+                      isFavorite ? "remove_favorite" : "add_favorite",
+                      courseInfo.id
+                    );
+                  }}
+                  isLoading={addingFavoriteCourse}
+                >
+                  <Center w="100%" h="24px">
+                    {
+                      <Icon
+                        as={isFavorite ? FaHeart : FaRegHeart}
+                        boxSize="16px"
+                      />
+                    }
+                  </Center>
+                </Button>
+                <Tooltip
+                  label="非當學期課程"
+                  hasArrow
+                  shouldWrapChildren
+                  placement="top"
+                  isDisabled={
+                    courseInfo.semester === process.env.NEXT_PUBLIC_SEMESTER
+                  }
+                >
+                  <Button
+                    size="sm"
+                    ml={{ base: 0, md: "10px" }}
+                    colorScheme={selected ? "error" : "primary"}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      addCourseToTable(courseInfo);
+                      reportEvent(
+                        "course_info_row",
+                        selected ? "remove_course" : "add_course",
+                        courseInfo.id
+                      );
+                    }}
+                    isLoading={addingCourse}
+                    disabled={
+                      courseInfo.semester !== process.env.NEXT_PUBLIC_SEMESTER
+                    }
+                    variant="outline"
+                    borderRadius={"full"}
+                    w="60px"
+                  >
+                    {selected ? "移除" : "加入"}
+                  </Button>
+                </Tooltip>
+              </Flex>
+            </AccordionButton>
           </Flex>
-        </AccordionButton>
-      </Flex>
-      <AccordionPanel>
-        <CourseDrawerContainer courseInfo={courseInfo} />
-      </AccordionPanel>
+          {isExpanded ? (
+            <Box borderTop="1px solid #CCCCCC" h="0" mx="3%" />
+          ) : null}
+          <AccordionPanel px="24px" bg="#f6f6f6">
+            <CourseDrawerContainer courseInfo={courseInfo} />
+          </AccordionPanel>
+        </>
+      )}
     </AccordionItem>
   );
 }
