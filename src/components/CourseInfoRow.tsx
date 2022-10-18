@@ -2,7 +2,6 @@ import { useState, useMemo, forwardRef } from "react";
 import {
   Box,
   Flex,
-  Heading,
   Badge,
   Spacer,
   AccordionItem,
@@ -14,12 +13,11 @@ import {
   Text,
   HStack,
   ButtonGroup,
-  useColorModeValue,
-  Icon,
   BoxProps,
+  Icon,
   Center,
 } from "@chakra-ui/react";
-import { FaPlus, FaHeart, FaRegHeart } from "react-icons/fa";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { info_view_map } from "data/mapping_table";
 import openPage from "utils/openPage";
 import useCourseTable from "hooks/useCourseTable";
@@ -30,6 +28,7 @@ import useUserInfo from "hooks/useUserInfo";
 import { reportEvent } from "utils/ga";
 import type { Course } from "types/course";
 import { useRouter } from "next/router";
+import { IoWarningOutline } from "react-icons/io5";
 
 function DeptBadge({ course }: { readonly course: Course }) {
   if (course.departments.length === 0) {
@@ -215,59 +214,74 @@ function CourseDrawerContainer({
       <Spacer my="2" />
       <Flex
         w="100%"
-        flexDirection="row"
+        bg="white"
+        flexDirection="column"
         alignItems="start"
         justifyContent="start"
-        borderRadius="md"
-        border="2px"
-        borderColor={useColorModeValue("gray.200", "gray.700")}
-        flexWrap="wrap"
-        css={{ gap: "4px" }}
+        borderRadius="4px"
+        gap={"12px"}
+        p={4}
       >
+        {courseInfo?.limitation ? (
+          <Flex
+            w="100%"
+            flexDirection="column"
+            alignItems="start"
+            justifyContent="start"
+            gap={2}
+          >
+            <HStack
+              spacing={1}
+              color="error.main"
+              sx={{
+                fontSize: "12px",
+                lineHeight: "1.4",
+                fontWeight: 500,
+              }}
+            >
+              <Center h="100%">
+                <IoWarningOutline />
+              </Center>
+              <Text> 修課限制 </Text>
+            </HStack>
+            <Text
+              mx="2px"
+              sx={{
+                fontSize: "12px",
+                lineHeight: "1.4",
+                fontWeight: 400,
+                color: "#2d2d2d",
+              }}
+            >
+              {courseInfo?.limitation ?? "無"}
+            </Text>
+          </Flex>
+        ) : null}
         <Flex
-          w={{ base: "100%", md: "30%" }}
+          w="100%"
           flexDirection="column"
           alignItems="start"
           justifyContent="start"
-          p="2"
+          gap={2}
         >
-          <Heading
-            as="h3"
-            color={useColorModeValue("heading.light", "heading.dark")}
-            fontSize="lg"
-            ml="4px"
-            mb="1"
+          <HStack
+            spacing={1}
+            color="#6f6f6f"
+            sx={{
+              fontSize: "12px",
+              lineHeight: "1.4",
+              fontWeight: 500,
+            }}
           >
-            修課限制
-          </Heading>
+            <Text> 備註 </Text>
+          </HStack>
           <Text
-            fontSize="sm"
-            color={useColorModeValue("text.light", "text.dark")}
-            mx="4px"
-          >
-            {courseInfo?.limitation ?? "無"}
-          </Text>
-        </Flex>
-        <Flex
-          w={{ base: "100%", md: "60%" }}
-          flexDirection="column"
-          alignItems="start"
-          justifyContent="start"
-          p="2"
-        >
-          <Heading
-            as="h3"
-            color={useColorModeValue("heading.light", "heading.dark")}
-            fontSize="lg"
-            ml="4px"
-            mb="1"
-          >
-            備註
-          </Heading>
-          <Text
-            fontSize="sm"
-            color={useColorModeValue("text.light", "text.dark")}
-            mx="4px"
+            sx={{
+              fontSize: "12px",
+              lineHeight: "1.4",
+              fontWeight: 400,
+              color: "#6f6f6f",
+            }}
           >
             {courseInfo?.note || "無"}
           </Text>

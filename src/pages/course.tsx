@@ -406,7 +406,7 @@ function CoursePage() {
               }}
             >
               <SearchResultTopBar />
-              <Box w="100%" minH="90vh">
+              <Box w="100%" minH="57vh">
                 <CourseInfoRowPage displayTable={false} pageIndex={pageIndex} />
               </Box>
               <SearchResultTopBar isTop={false} />
