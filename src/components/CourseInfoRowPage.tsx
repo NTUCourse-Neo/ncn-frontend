@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 import CourseInfoRow from "components/CourseInfoRow";
-import { Spacer, Accordion, useBreakpointValue } from "@chakra-ui/react";
+import { Accordion, useBreakpointValue } from "@chakra-ui/react";
 import useUserInfo from "hooks/useUserInfo";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
-import { setHoveredCourseData } from "utils/hoverCourse";
+// import { setHoveredCourseData } from "utils/hoverCourse";
 import useCourseTable from "hooks/useCourseTable";
 import { useUser } from "@auth0/nextjs-auth0";
 import useNeoLocalStorage from "hooks/useNeoLocalStorage";
@@ -35,31 +35,29 @@ export default function CourseInfoRowPage({
     return null;
   }
   return (
-    <>
+    <Accordion
+      allowToggle
+      allowMultiple={false}
+      w={{ base: "90vw", md: "100%" }}
+      onMouseEnter={() => {
+        // if (displayTable && isDesktop) {
+        //   setHoveredCourseData(course);
+        // }
+      }}
+      onMouseLeave={() => {
+        // if (displayTable && isDesktop) {
+        //   setHoveredCourseData(null);
+        // }
+      }}
+    >
       {courses.map((course, index) => (
-        <Accordion
-          allowToggle
-          w={{ base: "90vw", md: "100%" }}
-          key={index}
-          onMouseEnter={() => {
-            if (displayTable && isDesktop) {
-              setHoveredCourseData(course);
-            }
-          }}
-          onMouseLeave={() => {
-            if (displayTable && isDesktop) {
-              setHoveredCourseData(null);
-            }
-          }}
-        >
-          <CourseInfoRow
-            courseInfo={course}
-            selected={selectedCourses.includes(course.id)}
-            displayTable={displayTable}
-          />
-          <Spacer my={{ base: 2, md: 1 }} />
-        </Accordion>
+        <CourseInfoRow
+          courseInfo={course}
+          selected={selectedCourses.includes(course.id)}
+          displayTable={displayTable}
+          key={course.id}
+        />
       ))}
-    </>
+    </Accordion>
   );
 }

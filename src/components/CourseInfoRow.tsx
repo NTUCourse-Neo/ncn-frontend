@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, forwardRef } from "react";
 import {
   Box,
   Flex,
@@ -8,31 +8,25 @@ import {
   AccordionItem,
   AccordionButton,
   AccordionPanel,
-  Tag,
-  TagLeftIcon,
-  TagLabel,
   Button,
   Tooltip,
   useToast,
-  Collapse,
-  useBreakpointValue,
   Text,
   HStack,
   ButtonGroup,
   useColorModeValue,
   Icon,
+  BoxProps,
+  Center,
 } from "@chakra-ui/react";
-import { FaPlus, FaHeart, FaInfoCircle, FaRegHeart } from "react-icons/fa";
+import { FaPlus, FaHeart, FaRegHeart } from "react-icons/fa";
 import { info_view_map } from "data/mapping_table";
-import { hash_to_color_hex } from "utils/colorAgent";
 import openPage from "utils/openPage";
 import { getNolAddUrl } from "utils/getNolUrls";
 import useCourseTable from "hooks/useCourseTable";
 import useNeoLocalStorage from "hooks/useNeoLocalStorage";
-import { useRouter } from "next/router";
 import { useUser } from "@auth0/nextjs-auth0";
-import { useDisplayTags } from "components/Providers/DisplayTagsProvider";
-import parseCourseSchedlue from "utils/parseCourseSchedule";
+import { parseCourseTimeLocation } from "utils/parseCourseSchedule";
 import useUserInfo from "hooks/useUserInfo";
 import { reportEvent } from "utils/ga";
 import type { Course } from "types/course";
@@ -43,7 +37,27 @@ function DeptBadge({ course }: { readonly course: Course }) {
   }
   const dept_str = course.departments.map((d) => d.name_full).join(", ");
   const isMultipleDepts = course.departments.length > 1;
-  return (
+  const badgeContent = (
+    <Badge
+      bg="#ececec"
+      color="#4B4B4B"
+      variant="solid"
+      maxWidth={"125px"}
+      noOfLines={1}
+    >
+      <Text
+        sx={{
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+        }}
+      >
+        {isMultipleDepts
+          ? "多個系所"
+          : course?.departments?.[0]?.name_full ?? ""}
+      </Text>
+    </Badge>
+  );
+  return isMultipleDepts ? (
     <Tooltip
       hasArrow
       placement="top"
@@ -51,26 +65,45 @@ function DeptBadge({ course }: { readonly course: Course }) {
       bg="gray.600"
       color="white"
     >
-      <Badge
-        colorScheme={isMultipleDepts ? "teal" : "blue"}
-        variant="solid"
-        maxWidth={"125px"}
-        noOfLines={1}
-      >
-        <Text
-          sx={{
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-        >
-          {isMultipleDepts
-            ? "多個系所"
-            : course?.departments?.[0]?.name_full ?? ""}
-        </Text>
-      </Badge>
+      {badgeContent}
     </Tooltip>
+  ) : (
+    badgeContent
   );
 }
+
+const CustomTag = forwardRef<HTMLDivElement, BoxProps>((props, ref) => {
+  const { children, ...restProps } = props;
+  return (
+    <Box
+      ref={ref}
+      sx={{
+        border: "0.4px solid #4B4B4B",
+        borderRadius: "2px",
+      }}
+      justifyContent="center"
+      alignItems="center"
+      padding={"2px 8px"}
+      boxSizing="border-box"
+      {...restProps}
+    >
+      <Text
+        sx={{
+          color: "#4b4b4b",
+          fontSize: "12px",
+          lineHeight: "1.4",
+          fontWeight: 400,
+        }}
+        noOfLines={1}
+        minW="25px"
+        align={"start"}
+      >
+        {children}
+      </Text>
+    </Box>
+  );
+});
+CustomTag.displayName = "CustomTag";
 
 function DrawerDataTag({
   fieldName,
@@ -79,7 +112,6 @@ function DrawerDataTag({
   readonly fieldName: string;
   readonly label: string;
 }) {
-  const textColor = useColorModeValue("text.light", "text.dark");
   if (label === "") {
     return null;
   }
@@ -94,7 +126,7 @@ function DrawerDataTag({
       <Badge variant="solid" colorScheme="gray">
         {fieldName}
       </Badge>
-      <Heading as="h3" color={textColor} fontSize="sm" ml="4px">
+      <Heading as="h3" color={"text.light"} fontSize="sm" ml="4px">
         {label}
       </Heading>
     </Flex>
@@ -253,17 +285,8 @@ function CourseInfoRow({
   selected,
   displayTable,
 }: CourseInfoRowProps) {
-  const rowColor = useColorModeValue("card.light", "card.dark");
-  const textColor = useColorModeValue("text.light", "text.dark");
-  const headingColor = useColorModeValue("heading.light", "heading.dark");
-  const tooltipBg = useColorModeValue("gray.600", "gray.300");
-  const tooltipText = useColorModeValue("white", "black");
-  const selectedColor = useColorModeValue(
-    hash_to_color_hex(courseInfo.id, 0.92, 0.3),
-    hash_to_color_hex(courseInfo.id, 0.2, 0.1)
-  );
-  const { displayTags } = useDisplayTags();
-  const router = useRouter();
+  const toast = useToast();
+
   const { neoLocalCourseTableKey } = useNeoLocalStorage();
   const { user } = useUser();
   const { userInfo, addOrRemoveFavorite, isLoading } = useUserInfo(
@@ -284,8 +307,6 @@ function CourseInfoRow({
     () => (userInfo?.favorites ?? []).map((c) => c.id).includes(courseInfo.id),
     [userInfo, courseInfo.id]
   );
-
-  const toast = useToast();
 
   const addCourseToTable = async (course: Course) => {
     if (!isLoading && !isCourseTableLoading) {
@@ -324,11 +345,49 @@ function CourseInfoRow({
     }
   };
 
+  // data pieces
+  const courseSerial = courseInfo.serial;
+  const courseName = courseInfo.name;
+  const teacherName = courseInfo.teacher;
+  const deptBadge = useMemo(
+    () => <DeptBadge course={courseInfo} />,
+    [courseInfo]
+  );
+  const courseTimeLocationPairs = useMemo(
+    () => parseCourseTimeLocation(courseInfo.schedules),
+    [courseInfo]
+  );
+  // 必帶/必修/選修/其他
+  const selectiveOrNot =
+    info_view_map["requirement"]["map"][courseInfo.requirement];
+  const courseArea = useMemo(() => {
+    if (courseInfo.areas.length === 0) {
+      return null;
+    }
+    const areasString = courseInfo.areas
+      .map(
+        (area) =>
+          info_view_map["areas"]["map"]?.[area.area_id]?.full_name ?? null
+      )
+      .filter((x) => x !== null)
+      .join(", ");
+    return (
+      <Tooltip label={areasString} placement="top" hasArrow>
+        <CustomTag>{areasString.trim()}</CustomTag>
+      </Tooltip>
+    );
+  }, [courseInfo]);
+  // TODO: 領域專長 Tag
+
   return (
     <AccordionItem
-      bg={selected ? selectedColor : rowColor}
-      borderRadius="md"
-      transition="all ease-in-out 500ms"
+      transition="all ease-in-out 100ms"
+      _hover={{
+        bg: "#f6f6f6",
+      }}
+      borderRadius="0"
+      border="none"
+      shadow="0px 1px 2px rgba(85, 105, 135, 0.25)"
     >
       <Flex
         alignItems="center"
@@ -341,276 +400,131 @@ function CourseInfoRow({
       >
         <AccordionButton
           flexDirection={{ base: "column", md: "row" }}
-          alignItems="start"
+          alignItems="center"
+          _hover={{
+            bg: "#f6f6f6",
+          }}
+          gap={6}
         >
           <Flex
-            flexDirection={{ base: "column", md: "row" }}
-            alignItems={{ base: "start", md: "center" }}
-            justifyContent="start"
-            flexWrap="wrap"
-            css={{ gap: "8px" }}
+            w={{ base: "100%", md: "40%" }}
+            flexDirection={"column"}
+            gap={"4px"}
+            lineHeight="1.6"
           >
             <Flex
-              w="8vw"
-              alignItems="center"
-              justifyContent="start"
-              display={{ base: "none", md: "flex" }}
+              sx={{
+                fontFamily: "Work Sans",
+                fontSize: "14px",
+                fontWeight: 500,
+                color: "#4b4b4b",
+              }}
             >
-              <Tooltip
-                hasArrow
-                placement="top"
-                label="課程流水號"
-                bg={tooltipBg}
-                color={tooltipText}
-              >
-                <Badge variant="outline" mr="4px">
-                  {courseInfo.serial}
-                </Badge>
-              </Tooltip>
-              <DeptBadge course={courseInfo} />
+              {courseSerial}
             </Flex>
-            <HStack>
-              <Heading
-                as="h3"
-                size={useBreakpointValue({ base: "sm", md: "md" }) ?? "sm"}
-                color={headingColor}
-                textAlign="start"
-              >
-                {courseInfo.name}
-              </Heading>
-              <Heading
-                as="h3"
-                size={useBreakpointValue({ base: "xs", md: "sm" }) ?? "xs"}
-                color={textColor}
-                fontWeight="500"
-                textAlign="start"
-                minW={{ base: "42px", md: "auto" }}
-                display={{ base: "inline-block", md: "none" }}
-              >
-                {courseInfo.teacher}
-              </Heading>
-            </HStack>
-            <HStack>
-              <Tooltip
-                hasArrow
-                placement="top"
-                label="課程流水號"
-                bg={tooltipBg}
-                color={tooltipText}
-              >
-                <Badge
-                  variant="outline"
-                  display={{ base: "inline-block", md: "none" }}
-                >
-                  {courseInfo.serial ? courseInfo.serial : "無流水號"}
-                </Badge>
-              </Tooltip>
-              <Tooltip
-                hasArrow
-                placement="top"
-                label={courseInfo.credits + " 學分"}
-                bg={tooltipBg}
-                color={tooltipText}
-              >
-                <Badge variant="outline" mx={{ base: 0, md: 4 }}>
-                  {courseInfo.credits}
-                </Badge>
-              </Tooltip>
-              <Flex display={{ base: "inline-block", md: "none" }}>
-                <DeptBadge course={courseInfo} />
-              </Flex>
-            </HStack>
-            <Heading
-              as="h3"
-              size="sm"
-              color={textColor}
-              fontWeight="500"
-              display={{ base: "none", md: "flex" }}
+            <Flex
+              sx={{
+                fontSize: "16px",
+                fontWeight: 500,
+                color: "#333333",
+              }}
             >
-              {courseInfo.teacher}
-            </Heading>
-            <Collapse in={!displayTable}>
-              <Tooltip
-                hasArrow
-                placement="top"
-                label={parseCourseSchedlue(courseInfo) ?? null}
-                bg={tooltipBg}
-                color={tooltipText}
-              >
-                <Badge
-                  variant="outline"
-                  ml={{ base: 0, md: 4 }}
-                  px="1"
-                  size="lg"
-                  noOfLines={1}
-                  maxWidth="150px"
-                >
-                  <Text
-                    sx={{
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                    }}
-                  >
-                    {parseCourseSchedlue(courseInfo)
-                      ? parseCourseSchedlue(courseInfo)
-                      : "無課程時間"}
-                  </Text>
-                </Badge>
-              </Tooltip>
-            </Collapse>
+              {courseName}
+            </Flex>
+            <Flex
+              sx={{
+                fontSize: "14px",
+                fontWeight: 400,
+                color: "#6f6f6f",
+              }}
+            >
+              {teacherName}
+            </Flex>
+            <Flex>{deptBadge}</Flex>
           </Flex>
-          <Spacer />
           <Flex
-            alignItems="start"
-            justifyContent="start"
-            mt={{ base: 4, md: 0 }}
-            flexWrap="wrap"
-            css={{ gap: "2px" }}
+            w={{ base: "100%", md: "20%" }}
+            flexDirection="column"
+            alignItems={"start"}
+            sx={{
+              fontSize: "14px",
+              lineHeight: 1.6,
+              fontWeight: 400,
+              color: "#333333",
+              fontFamily: "Work Sans",
+            }}
           >
-            {displayTags.map((tag, index) => {
-              if (tag === "areas") {
-                let display_str = "";
-                let tooltip_str = "";
-                if (courseInfo.areas.length === 0) {
-                  display_str = "無";
-                  tooltip_str = info_view_map[tag].name + ": 無";
-                } else {
-                  display_str = "多個領域";
-                  tooltip_str = courseInfo.areas
-                    .map((area) => area.area.name ?? null)
-                    .filter((x) => x !== null)
-                    .join(", ");
-                }
-                return (
-                  <Tooltip
-                    hasArrow
-                    placement="top"
-                    label={tooltip_str}
-                    bg={tooltipBg}
-                    color={tooltipText}
-                    key={index}
-                  >
-                    <Tag
-                      mx="2px"
-                      variant="subtle"
-                      colorScheme={info_view_map[tag].color}
-                      hidden={!courseInfo[tag]}
-                    >
-                      <TagLeftIcon
-                        boxSize="12px"
-                        as={info_view_map[tag].logo}
-                      />
-                      <TagLabel>{display_str}</TagLabel>
-                    </Tag>
-                  </Tooltip>
-                );
-              }
-              const tagLabel =
-                (tag === "slot"
-                  ? courseInfo?.[tag]
-                  : info_view_map?.[tag]?.map?.[courseInfo?.[tag]] ??
-                    courseInfo?.[tag]) ?? "未知";
+            {courseTimeLocationPairs.map((pair, index) => {
               return (
-                <Tooltip
-                  hasArrow
-                  placement="top"
-                  label={info_view_map[tag].name}
-                  bg={tooltipBg}
-                  color={tooltipText}
-                  key={index}
-                >
-                  <Tag
-                    mx="2px"
-                    variant="subtle"
-                    colorScheme={info_view_map[tag].color}
-                    hidden={!courseInfo[tag]}
-                  >
-                    <TagLeftIcon boxSize="12px" as={info_view_map[tag].logo} />
-                    <TagLabel>{tagLabel}</TagLabel>
-                  </Tag>
-                </Tooltip>
+                <Text key={`${index}-${pair.time}-${pair.location}`}>
+                  {pair.time}
+                </Text>
               );
             })}
           </Flex>
-        </AccordionButton>
-        <Flex
-          alignItems="center"
-          justifyContent="end"
-          flexDirection={{ base: "column", md: "row" }}
-        >
-          <Button
-            size="sm"
-            colorScheme="blue"
-            variant="ghost"
-            onClick={() => {
-              reportEvent(
-                "course_info_row",
-                "course_detailed_info",
-                courseInfo.id
-              );
-
-              router.push(`/courseinfo/${courseInfo.id}`);
-            }}
-          >
-            <HStack>
-              <Icon as={FaInfoCircle} boxSize="4" />
-              <Text display={{ base: "none", md: "inline-block" }}>詳細</Text>
+          <Flex w={{ base: "100%", md: "20%" }} flexDirection={"column"}>
+            <HStack spacing={"4px"}>
+              <CustomTag>{selectiveOrNot}</CustomTag>
+              {courseArea}
             </HStack>
-          </Button>
-          <Button
-            size="sm"
-            ml={{ base: 0, md: "10px" }}
-            variant="ghost"
-            colorScheme={"red"}
-            onClick={() => {
-              handleAddFavorite(courseInfo.id);
-              reportEvent(
-                "course_info_row",
-                isFavorite ? "remove_favorite" : "add_favorite",
-                courseInfo.id
-              );
-            }}
-            isLoading={addingFavoriteCourse}
-          >
-            <Box>
-              {<Icon as={isFavorite ? FaHeart : FaRegHeart} boxSize="4" />}
-            </Box>
-          </Button>
-          <Tooltip
-            label="非當學期課程"
-            hasArrow
-            shouldWrapChildren
-            placement="top"
-            isDisabled={
-              courseInfo.semester === process.env.NEXT_PUBLIC_SEMESTER
-            }
-          >
+            <Flex></Flex>
+          </Flex>
+          <Flex w={{ base: "100%", md: "15%" }}>
             <Button
               size="sm"
               ml={{ base: 0, md: "10px" }}
-              colorScheme={selected ? "red" : "blue"}
-              onClick={() => {
-                addCourseToTable(courseInfo);
+              variant="unstyled"
+              colorScheme={"red"}
+              onClick={(e) => {
+                e.preventDefault();
+                handleAddFavorite(courseInfo.id);
                 reportEvent(
                   "course_info_row",
-                  selected ? "remove_course" : "add_course",
+                  isFavorite ? "remove_favorite" : "add_favorite",
                   courseInfo.id
                 );
               }}
-              isLoading={addingCourse}
-              disabled={
-                courseInfo.semester !== process.env.NEXT_PUBLIC_SEMESTER
+              isLoading={addingFavoriteCourse}
+            >
+              <Center w="100%" h="24px">
+                {<Icon as={isFavorite ? FaHeart : FaRegHeart} boxSize="16px" />}
+              </Center>
+            </Button>
+            <Tooltip
+              label="非當學期課程"
+              hasArrow
+              shouldWrapChildren
+              placement="top"
+              isDisabled={
+                courseInfo.semester === process.env.NEXT_PUBLIC_SEMESTER
               }
             >
-              <Box
-                transform={selected ? "rotate(45deg)" : ""}
-                transition="all ease-in-out 200ms"
+              <Button
+                size="sm"
+                ml={{ base: 0, md: "10px" }}
+                colorScheme={selected ? "red" : "blue"}
+                onClick={(e) => {
+                  e.preventDefault();
+                  addCourseToTable(courseInfo);
+                  reportEvent(
+                    "course_info_row",
+                    selected ? "remove_course" : "add_course",
+                    courseInfo.id
+                  );
+                }}
+                isLoading={addingCourse}
+                disabled={
+                  courseInfo.semester !== process.env.NEXT_PUBLIC_SEMESTER
+                }
+                variant="outline"
+                borderRadius={"full"}
+                w="60px"
               >
-                <FaPlus />
-              </Box>
-            </Button>
-          </Tooltip>
-        </Flex>
+                {selected ? "移除" : "加入"}
+              </Button>
+            </Tooltip>
+          </Flex>
+        </AccordionButton>
       </Flex>
       <AccordionPanel>
         <CourseDrawerContainer courseInfo={courseInfo} />
