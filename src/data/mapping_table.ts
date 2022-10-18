@@ -176,7 +176,7 @@ const info_view_map: CourseInfoTranslateMap = {
     },
   },
   enroll_method: {
-    name: "加簽方式",
+    name: "加選方式",
     logo: FaFileImport,
     color: "blue",
     map: {
