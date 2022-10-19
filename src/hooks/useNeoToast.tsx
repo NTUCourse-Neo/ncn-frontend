@@ -11,28 +11,38 @@ export type NeoToastType =
 export interface NeoToast {
   type: NeoToastType;
   icon: IconType;
-  color: string;
+  isSuccess: boolean;
+  chineseTitle: string;
+  englishTitle: string;
 }
 export const neoToasts: NeoToast[] = [
   {
     type: "add_course",
     icon: MdCheckCircle,
-    color: "success.main",
+    isSuccess: true,
+    chineseTitle: "已加入課程",
+    englishTitle: "Course added",
   },
   {
     type: "remove_course",
     icon: MdCancel,
-    color: "error.main",
+    isSuccess: false,
+    chineseTitle: "已移除課程",
+    englishTitle: "Course removed",
   },
   {
     type: "add_favorite",
     icon: MdFavorite,
-    color: "success.main",
+    isSuccess: true,
+    chineseTitle: "已收藏課程",
+    englishTitle: "Course added to favorites",
   },
   {
     type: "remove_favorite",
     icon: MdCancel,
-    color: "error.main",
+    isSuccess: false,
+    chineseTitle: "已移除課程",
+    englishTitle: "Course removed from favorites",
   },
 ];
 
@@ -49,7 +59,6 @@ export default function useNeoToast(option?: UseToastOptions) {
 
   function neoToast(
     toastType: NeoToastType,
-    title: string,
     description: string,
     toastOptions?: UseToastOptions,
     undoCallback?: () => void
@@ -59,14 +68,11 @@ export default function useNeoToast(option?: UseToastOptions) {
       // TODO: other error handling?
       return;
     }
-    const { icon, color } = neoToastObj;
     toast({
       render: (props) => (
         <CustomToast
-          title={title}
           description={description}
-          icon={icon as IconType}
-          color={color as string}
+          toast={neoToastObj}
           undoCallback={undoCallback}
           {...props}
         />

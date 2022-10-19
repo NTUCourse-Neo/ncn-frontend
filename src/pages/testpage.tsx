@@ -8,7 +8,18 @@ export default function TestPage() {
       <Center h="80vh" w="10vw" bg="#fff">
         <Button
           onClick={() => {
-            toast("remove_course", "title", "desc");
+            toast("add_favorite", "森林生物多樣性哈囉導論", {}, () => {
+              console.log("undo");
+            });
+          }}
+        >
+          123
+        </Button>
+        <Button
+          onClick={() => {
+            toast("remove_favorite", "森林生物多樣性哈囉導論", {}, () => {
+              console.log("undo");
+            });
           }}
         >
           123
