@@ -15,7 +15,6 @@ import {
   Radio,
   VStack,
 } from "@chakra-ui/react";
-import { FaRegCalendarAlt } from "react-icons/fa";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import SideCourseTableContainer from "components/CourseTable/SideCourseTableContainer";
 import Head from "next/head";
@@ -34,6 +33,7 @@ import { BiFilterAlt } from "react-icons/bi";
 import CourseInfoRowPage from "@/components/CourseInfoRowPage";
 import Dropdown from "@/components/Dropdown";
 import { SortOption, sortOptions } from "@/types/search";
+import { FiCalendar } from "react-icons/fi";
 
 function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
   const currentPageRef = useRef<HTMLDivElement>(null);
@@ -444,17 +444,20 @@ function CoursePage() {
       <Fade in={!displayTable}>
         <Flex
           as="button"
-          flexDirection="row"
+          flexDirection="column"
           alignItems="center"
           justifyContent="center"
           position="absolute"
-          top={{ base: "85vh", lg: "80vh" }}
-          left={{ base: "70vw", md: "85vw", lg: "90vw" }}
-          bg={useColorModeValue("gray.100", "gray.600")}
-          boxShadow="md"
-          py="1"
-          px="4"
-          borderRadius="xl"
+          bottom="10vh"
+          right="4vw"
+          bg={"white"}
+          border="4px solid #A3A3A3"
+          borderRadius={"5.5px"}
+          sx={{
+            w: "80px",
+            h: "80px",
+            p: 2,
+          }}
           onClick={() => {
             setDisplayTable(!displayTable);
             reportEvent("course_page", "click", "expand_table");
@@ -465,19 +468,17 @@ function CoursePage() {
           }}
           transition="all 200ms"
         >
-          <Icon
-            mr="1"
-            as={FaRegCalendarAlt}
-            boxSize="4"
-            color={useColorModeValue("teal.500", "teal.300")}
-          />
+          <Icon mr="1" as={FiCalendar} boxSize="40px" color={"black"} />
           <Text
-            my="2"
-            fontWeight={800}
-            fontSize={{ base: "md", lg: "lg" }}
-            color={useColorModeValue("text.light", "text.dark")}
+            mt={"6px"}
+            sx={{
+              fontWeight: 500,
+              fontSize: "14px",
+              lineHeight: "14px",
+              color: "#000000",
+            }}
           >
-            課表
+            我的課表
           </Text>
         </Flex>
       </Fade>
