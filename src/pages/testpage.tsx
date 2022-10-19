@@ -1,17 +1,18 @@
-import { Center } from "@chakra-ui/react";
-import PaginationButton from "@/components/PaginationButton";
+import { Button, Center } from "@chakra-ui/react";
+import useNeoToast from "@/hooks/useNeoToast";
 
 export default function TestPage() {
+  const toast = useNeoToast();
   return (
     <Center w="100vw" h="80vh">
       <Center h="80vh" w="10vw" bg="#fff">
-        <PaginationButton
-          numberOfPages={20}
-          maxVisiblePages={10}
-          onClick={(page) => {
-            console.log(`Page ${page} !`);
+        <Button
+          onClick={() => {
+            toast("remove_course", "title", "desc");
           }}
-        />
+        >
+          123
+        </Button>
       </Center>
     </Center>
   );
