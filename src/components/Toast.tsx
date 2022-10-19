@@ -17,7 +17,7 @@ export interface ToastProps extends RenderProps {
 
 export function CustomToast(props: ToastProps) {
   const { id, onClose, description, toast, undoCallback = () => {} } = props;
-  const { icon: Icon, isSuccess, chineseTitle } = toast;
+  const { icon: Icon, isSuccess, chineseTitle, type } = toast;
   const themeColor = isSuccess ? "success.600" : "error.600";
   return (
     <Flex
@@ -26,7 +26,7 @@ export function CustomToast(props: ToastProps) {
       px={4}
       borderRadius={4}
       border="0.5px solid #6F6F6F"
-      justifyContent="space-between"
+      justifyContent="start"
       gap={"12px"}
       alignItems="center"
       w="300px"
@@ -66,7 +66,7 @@ export function CustomToast(props: ToastProps) {
         <Box whiteSpace={"nowrap"}>{chineseTitle}</Box>
       </HStack>
       <Flex
-        flexShrink={1}
+        flexGrow={1}
         noOfLines={1}
         wrap="nowrap"
         sx={{
@@ -76,7 +76,7 @@ export function CustomToast(props: ToastProps) {
       >
         {description}
       </Flex>
-      {!isSuccess ? (
+      {type === "remove_course" || type === "remove_favorite" ? (
         <Button
           variant={"unstyled"}
           h="25px"

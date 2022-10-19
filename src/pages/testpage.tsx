@@ -17,7 +17,7 @@ export default function TestPage() {
         </Button>
         <Button
           onClick={() => {
-            toast("remove_favorite", "森林生物多樣性哈囉導論", {}, () => {
+            toast("remove_favorite", "森林", {}, () => {
               console.log("undo");
             });
           }}

@@ -1,13 +1,14 @@
 import { useToast, UseToastOptions } from "@chakra-ui/react";
 import { CustomToast } from "@/components/Toast";
-import { MdFavorite, MdCheckCircle, MdCancel } from "react-icons/md";
+import { MdFavorite, MdCheckCircle, MdCancel, MdWarning } from "react-icons/md";
 import { IconType } from "react-icons/lib";
 
 export type NeoToastType =
   | "add_course"
   | "remove_course"
   | "add_favorite"
-  | "remove_favorite";
+  | "remove_favorite"
+  | "operation_failed";
 export interface NeoToast {
   type: NeoToastType;
   icon: IconType;
@@ -43,6 +44,13 @@ export const neoToasts: NeoToast[] = [
     isSuccess: false,
     chineseTitle: "已移除課程",
     englishTitle: "Course removed from favorites",
+  },
+  {
+    type: "operation_failed",
+    icon: MdWarning,
+    isSuccess: false,
+    chineseTitle: "操作失敗",
+    englishTitle: "Operation failed",
   },
 ];
 

@@ -9,7 +9,6 @@ import {
   AccordionPanel,
   Button,
   Tooltip,
-  useToast,
   Text,
   HStack,
   ButtonGroup,
@@ -29,6 +28,7 @@ import { reportEvent } from "utils/ga";
 import type { Course } from "types/course";
 import { useRouter } from "next/router";
 import { IoWarningOutline } from "react-icons/io5";
+import useNeoToast from "@/hooks/useNeoToast";
 
 function DeptBadge({ course }: { readonly course: Course }) {
   if (course.departments.length === 0) {
@@ -333,7 +333,7 @@ function CourseInfoRow({
   selected,
   displayTable,
 }: CourseInfoRowProps) {
-  const toast = useToast();
+  const toast = useNeoToast();
 
   const { neoLocalCourseTableKey } = useNeoLocalStorage();
   const { user } = useUser();
@@ -363,13 +363,7 @@ function CourseInfoRow({
         await addOrRemoveCourse(course);
       } else {
         // do not have course table id in local storage
-        toast({
-          title: `新增 ${course.name} 失敗`,
-          description: `尚未建立課表`,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
+        toast("operation_failed", "尚未建立課表");
       }
       setAddingCourse(false);
     }
@@ -382,13 +376,7 @@ function CourseInfoRow({
         await addOrRemoveFavorite(course_id);
         setAddingFavoriteCourse(false);
       } else {
-        toast({
-          title: `請先登入`,
-          // description: `請先登入`,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
+        toast("operation_failed", "請先登入");
       }
     }
   };
