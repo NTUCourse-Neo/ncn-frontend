@@ -61,7 +61,7 @@ const CourseSearchingContext = createContext<CourseSearchingContextType>({
     show_selected_courses: false,
     only_show_not_conflicted_courses: false,
     sync_add_to_nol: false,
-    strict_search_mode: true,
+    strict_search_mode: false,
   },
   searchFilters: {
     time: [[], [], [], [], [], [], []],
@@ -123,7 +123,7 @@ const CourseSearchingProvider: React.FC<{
     show_selected_courses: false,
     only_show_not_conflicted_courses: false,
     sync_add_to_nol: false,
-    strict_search_mode: true,
+    strict_search_mode: false,
   });
   const [searchFilters, setSearchFilters] = useState<Filter>({
     time: [[], [], [], [], [], [], []],

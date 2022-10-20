@@ -22,7 +22,6 @@ import {
   Menu,
   MenuButton,
   MenuList,
-  Checkbox,
   Radio,
   RadioGroup,
 } from "@chakra-ui/react";
@@ -524,27 +523,6 @@ function HomePage() {
                 </Text>
                 <SearchFilters />
               </Flex>
-              <Checkbox
-                mt="4"
-                w="fit-content"
-                isChecked={searchSettings.strict_search_mode}
-                onChange={(e) => {
-                  setSearchSettings({
-                    ...searchSettings,
-                    strict_search_mode: e.currentTarget.checked,
-                  });
-                }}
-              >
-                <Text
-                  sx={{
-                    fontSize: "14px",
-                    lineHeight: "20px",
-                    color: "#666666",
-                  }}
-                >
-                  嚴格篩選條件
-                </Text>
-              </Checkbox>
             </Flex>
           </Flex>
           <Flex w="100vw" h="50vh" justify={"center"} alignItems="center">

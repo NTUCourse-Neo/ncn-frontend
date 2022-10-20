@@ -14,6 +14,9 @@ import {
   RadioGroup,
   Stack,
   FlexProps,
+  Checkbox,
+  Text,
+  Tooltip,
 } from "@chakra-ui/react";
 import TimetableSelector from "components/FilterModals/components/TimetableSelector";
 import { mapStateToTimeTable } from "utils/timeTableConverter";
@@ -21,7 +24,7 @@ import { useCourseSearchingContext } from "components/Providers/CourseSearchingP
 import { reportEvent } from "utils/ga";
 import type { Interval } from "types/course";
 import { intervals } from "constant";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const countInterval = (timeTable: boolean[][]): number => {
   let count = 0;
@@ -84,9 +87,13 @@ export interface TimeFilterModalProps {
 
 function TimeFilterModal(props: TimeFilterModalProps) {
   const { title, isActive = false } = props;
-  const { searchFilters, setSearchFilters } = useCourseSearchingContext();
+  const { searchFilters, setSearchFilters, setSearchSettings, searchSettings } =
+    useCourseSearchingContext();
   const [selectedTime, setSelectedTime] = useState(
     mapStateToTimeTable(searchFilters.time)
+  );
+  const [isStrictSearch, setIsStrictSearch] = useState(
+    searchSettings.strict_search_mode
   );
   const [isFullYear, setIsFullYear] = useState<null | boolean>(
     searchFilters.is_full_year
@@ -110,6 +117,10 @@ function TimeFilterModal(props: TimeFilterModalProps) {
       time: timeTable,
       is_full_year: isFullYear,
     });
+    setSearchSettings({
+      ...searchSettings,
+      strict_search_mode: isStrictSearch,
+    });
   };
 
   const onReset = () => {
@@ -131,7 +142,14 @@ function TimeFilterModal(props: TimeFilterModalProps) {
       [false, false, false, false, false, false, false],
     ]);
     setIsFullYear(null);
+    setIsStrictSearch(false);
   };
+
+  useEffect(() => {
+    if (countInterval(selectedTime) === 0) {
+      setIsStrictSearch(false);
+    }
+  }, [selectedTime]);
 
   return (
     <>
@@ -152,6 +170,7 @@ function TimeFilterModal(props: TimeFilterModalProps) {
           onOpen();
           setSelectedTime(mapStateToTimeTable(searchFilters.time));
           setIsFullYear(searchFilters.is_full_year);
+          setIsStrictSearch(searchSettings.strict_search_mode);
           reportEvent("filter_time", "click", "open_modal");
         }}
         bg={isActive ? "#cccccc" : "white"}
@@ -217,6 +236,31 @@ function TimeFilterModal(props: TimeFilterModalProps) {
                 重設
               </Button>
             </Flex>
+            <Checkbox
+              ml={4}
+              w="fit-content"
+              isChecked={isStrictSearch}
+              onChange={(e) => {
+                setIsStrictSearch(e.currentTarget.checked);
+              }}
+              disabled={countInterval(selectedTime) === 0}
+            >
+              <Tooltip
+                label="搜尋結果將不出現包含選定節次以外的課程"
+                placement="top"
+                hasArrow
+              >
+                <Text
+                  sx={{
+                    fontSize: "14px",
+                    lineHeight: "20px",
+                    color: "#666666",
+                  }}
+                >
+                  嚴格搜尋節次
+                </Text>
+              </Tooltip>
+            </Checkbox>
             <ModalCloseButton />
           </ModalHeader>
           <ModalBody pt="8">
