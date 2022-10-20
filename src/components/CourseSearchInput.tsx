@@ -23,7 +23,7 @@ import { reportEvent } from "utils/ga";
 import { ChevronDownIcon, SearchIcon } from "@chakra-ui/icons";
 import { availableSemesters } from "@/constant";
 import searchModeList from "@/data/searchMode";
-import useSearchResult from "@/hooks/useSearchResult";
+import { useSWRConfig } from "swr";
 
 function SearchModeMenu() {
   const { searchMode, setSearchMode } = useCourseSearchingContext();
@@ -105,17 +105,27 @@ function SearchModeMenu() {
 function CourseSearchInput() {
   const semesterRef = useRef<HTMLInputElement>(null);
   const semesterMenuRef = useRef<HTMLDivElement>(null);
-  const { search, dispatchSearch, pageIndex, setPageIndex } =
-    useCourseSearchingContext();
+  const {
+    search,
+    dispatchSearch,
+    pageIndex,
+    setPageIndex,
+    batchSize,
+    sortOption,
+    searchFilters,
+  } = useCourseSearchingContext();
   const [searchText, setSearchText] = useState("");
   const { searchSemester, setSearchSemester, searchCallback } =
     useCourseSearchingContext();
-  const { mutate: refetchSearchResult } = useSearchResult(search, pageIndex);
+  const { mutate } = useSWRConfig();
 
   const startSearch = async () => {
     if (searchText === search) {
       setPageIndex(0);
-      refetchSearchResult();
+      mutate([
+        `/api/search/${search}/${pageIndex}/${batchSize}/${sortOption}/${searchSemester}`,
+        searchFilters,
+      ]);
     } else {
       // start new search
       dispatchSearch(searchText);
