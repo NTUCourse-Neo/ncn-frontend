@@ -249,7 +249,11 @@ function CourseSearchInput() {
                     />
                     <RadioGroup
                       value={searchSemester ?? undefined}
-                      onChange={setSearchSemester}
+                      onChange={(val) => {
+                        setSearchSemester(val);
+                        // reset page index
+                        setPageIndex(0);
+                      }}
                       w="fit-content"
                     >
                       <Flex
