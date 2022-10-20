@@ -138,7 +138,7 @@ function CourseSearchInput() {
         <Input
           h="37px"
           type={"text"}
-          placeholder="搜尋課程名稱/教師姓名/教室/課號/課程識別碼"
+          placeholder="搜尋課程名稱 / 教師姓名 / 教室 / 流水號"
           sx={{
             fontSize: "14px",
             lineHeight: "24px",
