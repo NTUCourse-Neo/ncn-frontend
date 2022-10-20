@@ -25,13 +25,13 @@ const searchModeList: SearchMode[] = [
   },
   {
     id: "dept",
-    chinese: "系所課程",
-    english: "Department Courses",
+    chinese: "系所",
+    english: "Department",
   },
   {
     id: "general",
-    chinese: "通識",
-    english: "General Education",
+    chinese: "通識/新生",
+    english: "General Education/Freshman",
   },
   {
     id: "common",
@@ -40,7 +40,7 @@ const searchModeList: SearchMode[] = [
   },
   {
     id: "pearmy",
-    chinese: "體育軍訓",
+    chinese: "體育/國防",
     english: "PE/Army",
   },
   {
@@ -55,7 +55,7 @@ const searchModeList: SearchMode[] = [
   },
   {
     id: "interschool",
-    chinese: "校際課程",
+    chinese: "校際",
     english: "Inter-School Courses",
   },
   {
