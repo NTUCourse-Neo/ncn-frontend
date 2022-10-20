@@ -266,7 +266,7 @@ function SearchFilters(props: FlexProps) {
         </Stack>
       </FilterDropdown>
       <FilterDropdown
-        title={`授課年級${
+        title={`限修年級${
           isTargetGradeFilterActive(searchFilters.target_grade)
             ? ` (${searchFilters.target_grade.length})`
             : ""

@@ -20,11 +20,7 @@ import {
   Center,
   TextProps,
 } from "@chakra-ui/react";
-import {
-  ChevronRightIcon,
-  ChevronDownIcon,
-  InfoOutlineIcon,
-} from "@chakra-ui/icons";
+import { ChevronRightIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { FaCheck, FaExclamation } from "react-icons/fa";
@@ -572,12 +568,6 @@ function HeaderBar() {
                 <Flex>篩選條件</Flex>
               </HStack>
               <SearchFilters />
-            </Flex>
-            <Flex mt={4} alignItems="center" gap={2}>
-              <Center h="100%" justifyContent={"center"}>
-                <InfoOutlineIcon boxSize={"20px"} color="primary.600" />
-              </Center>
-              <Text color="#4b4b4b50">External Links Placeholder</Text>
             </Flex>
           </Box>
         </Flex>
