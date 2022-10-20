@@ -109,7 +109,7 @@ function DrawerDataTag({
   label,
 }: {
   readonly fieldName: string;
-  readonly label: string | string[];
+  readonly label: string | string[] | null;
 }) {
   return (
     <Flex
@@ -132,7 +132,9 @@ function DrawerDataTag({
           fontWeight: 400,
         }}
       >
-        {typeof label === "string" ? (
+        {!label ? (
+          "--"
+        ) : typeof label === "string" ? (
           label
         ) : (
           <>
@@ -178,14 +180,14 @@ function CourseDrawerContainer({
           <DrawerDataTag fieldName={"課號"} label={courseInfo.code} />
           <DrawerDataTag
             fieldName={info_view_map.enroll_method.name}
-            label={info_view_map.enroll_method.map[courseInfo.enroll_method]}
+            label={
+              info_view_map.enroll_method["map"]?.[courseInfo.enroll_method] ??
+              null
+            }
           />
         </Box>
         <Box w="33%" gap="6px">
-          <DrawerDataTag
-            fieldName={"班次"}
-            label={courseInfo?.class ?? "未知"}
-          />
+          <DrawerDataTag fieldName={"班次"} label={courseInfo?.class || ""} />
           <DrawerDataTag
             fieldName={"學分數"}
             label={`${courseInfo.credits ? courseInfo.credits.toFixed(1) : ""}`}
@@ -198,7 +200,7 @@ function CourseDrawerContainer({
             label={
               hasDifferentLocation
                 ? courseTimeLocationPairs.map((p) => `${p.location}(${p.time})`)
-                : courseTimeLocationPairs?.[0]?.location ?? "未知"
+                : courseTimeLocationPairs?.[0]?.location || "--"
             }
           />
           <DrawerDataTag
