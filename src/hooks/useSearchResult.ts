@@ -21,7 +21,7 @@ export default function useSearchResult(
   } = useCourseSearchingContext();
   const { data, error, isValidating } = useSWR(
     searchKeyword !== null
-      ? `/api/search/${searchKeyword}/${pageIndex}/${batchSize}/${sortOption}`
+      ? `/api/search/${searchKeyword}/${pageIndex}/${batchSize}/${sortOption}/${searchSemester}`
       : null,
     async () => {
       if (!searchSemester) {

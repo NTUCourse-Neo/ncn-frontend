@@ -7,7 +7,6 @@ import {
   MenuButton,
   MenuList,
   Text,
-  useColorModeValue,
   InputLeftElement,
   InputRightElement,
   InputGroup,
@@ -189,106 +188,110 @@ function CourseSearchInput() {
                 }
               }}
             >
-              <Tooltip
-                hasArrow
-                placement="top"
-                label={"選擇學期"}
-                bg="gray.600"
-                color="white"
-              >
-                <MenuButton
-                  h="29px"
-                  as={Button}
-                  colorScheme="primary"
-                  size={"md"}
-                  variant="solid"
-                  borderLeft={`0.1px solid ${useColorModeValue(
-                    "white",
-                    "black"
-                  )}`}
-                >
-                  <HStack>
-                    <Box>
-                      {searchSemester
-                        ? `${searchSemester.slice(0, 3)}-${searchSemester.slice(
-                            3,
-                            4
-                          )}`
-                        : null}
-                    </Box>
-                    <FaChevronDown height="37px" size={10} />
-                  </HStack>
-                </MenuButton>
-              </Tooltip>
-              <MenuList
-                border="0.5px solid #6F6F6F"
-                borderRadius={"4px"}
-                minW={0}
-                w="fit-content"
-                position={"relative"}
-              >
-                <Box
-                  position="absolute"
-                  top="0"
-                  w="100%"
-                  h="54px"
-                  zIndex={2}
-                  pointerEvents="none"
-                  sx={{
-                    background:
-                      "linear-gradient(181.46deg, #FFFFFF -82.1%, #FFFFFF 32.01%, rgba(255, 255, 255, 0) 48.34%)",
-                  }}
-                />
-                <RadioGroup
-                  value={searchSemester ?? undefined}
-                  onChange={setSearchSemester}
-                  w="fit-content"
-                >
-                  <Flex
-                    px={6}
-                    py={6}
-                    flexDirection={"column"}
-                    h="180px"
-                    overflowY="scroll"
-                    ref={semesterMenuRef}
+              {({ onClose }) => (
+                <>
+                  <Tooltip
+                    hasArrow
+                    placement="top"
+                    label={"選擇學期"}
+                    bg="gray.600"
+                    color="white"
                   >
-                    {availableSemesters.map((semester, index) => (
-                      <Radio
-                        colorScheme={"green"}
-                        key={semester}
-                        value={semester}
-                        h="32px"
-                        py="6px"
-                        id={`${index}-${semester}`}
-                        ref={
-                          searchSemester === semester ? semesterRef : undefined
-                        }
-                        sx={{
-                          fontSize: "14px",
-                          fontWeight: 500,
-                          lineHeight: "20px",
-                          color: "#666666",
-                        }}
+                    <MenuButton
+                      h="29px"
+                      as={Button}
+                      colorScheme="primary"
+                      size={"md"}
+                      variant="solid"
+                      borderLeft={`0.1px solid white`}
+                    >
+                      <HStack>
+                        <Box>
+                          {searchSemester
+                            ? `${searchSemester.slice(
+                                0,
+                                3
+                              )}-${searchSemester.slice(3, 4)}`
+                            : null}
+                        </Box>
+                        <FaChevronDown height="37px" size={10} />
+                      </HStack>
+                    </MenuButton>
+                  </Tooltip>
+                  <MenuList
+                    border="0.5px solid #6F6F6F"
+                    borderRadius={"4px"}
+                    minW={0}
+                    w="fit-content"
+                    position={"relative"}
+                  >
+                    <Box
+                      position="absolute"
+                      top="0"
+                      w="100%"
+                      h="54px"
+                      zIndex={2}
+                      pointerEvents="none"
+                      sx={{
+                        background:
+                          "linear-gradient(181.46deg, #FFFFFF -82.1%, #FFFFFF 32.01%, rgba(255, 255, 255, 0) 48.34%)",
+                      }}
+                    />
+                    <RadioGroup
+                      value={searchSemester ?? undefined}
+                      onChange={setSearchSemester}
+                      w="fit-content"
+                    >
+                      <Flex
+                        px={6}
+                        py={6}
+                        flexDirection={"column"}
+                        h="180px"
+                        overflowY="scroll"
+                        ref={semesterMenuRef}
+                        onClick={onClose}
                       >
-                        {` ${semester.slice(0, 3)}-${semester.slice(3, 4)}`}
-                      </Radio>
-                    ))}
-                  </Flex>
-                </RadioGroup>
-                <Box
-                  position="absolute"
-                  bottom="0"
-                  w="100%"
-                  h="54px"
-                  zIndex={2}
-                  pointerEvents="none"
-                  sx={{
-                    transform: "rotate(-180deg)",
-                    background:
-                      "linear-gradient(181.46deg, #FFFFFF -82.1%, #FFFFFF 32.01%, rgba(255, 255, 255, 0) 48.34%)",
-                  }}
-                />
-              </MenuList>
+                        {availableSemesters.map((semester, index) => (
+                          <Radio
+                            colorScheme={"green"}
+                            key={semester}
+                            value={semester}
+                            h="32px"
+                            py="6px"
+                            id={`${index}-${semester}`}
+                            ref={
+                              searchSemester === semester
+                                ? semesterRef
+                                : undefined
+                            }
+                            sx={{
+                              fontSize: "14px",
+                              fontWeight: 500,
+                              lineHeight: "20px",
+                              color: "#666666",
+                            }}
+                          >
+                            {` ${semester.slice(0, 3)}-${semester.slice(3, 4)}`}
+                          </Radio>
+                        ))}
+                      </Flex>
+                    </RadioGroup>
+                    <Box
+                      position="absolute"
+                      bottom="0"
+                      w="100%"
+                      h="54px"
+                      zIndex={2}
+                      pointerEvents="none"
+                      sx={{
+                        transform: "rotate(-180deg)",
+                        background:
+                          "linear-gradient(181.46deg, #FFFFFF -82.1%, #FFFFFF 32.01%, rgba(255, 255, 255, 0) 48.34%)",
+                      }}
+                    />
+                  </MenuList>
+                </>
+              )}
             </Menu>
           </ButtonGroup>
         </InputRightElement>
