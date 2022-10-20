@@ -457,6 +457,7 @@ function CoursePage() {
             w: "80px",
             h: "80px",
             p: 2,
+            filter: "drop-shadow(0px 0px 20.5932px rgba(85, 105, 135, 0.15))",
           }}
           onClick={() => {
             setDisplayTable(!displayTable);
