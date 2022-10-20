@@ -19,9 +19,12 @@ export default function useSearchResult(
     setTotalCount,
     setSearchLoading,
   } = useCourseSearchingContext();
-  const { data, error, isValidating } = useSWR(
+  const { data, error, isValidating, mutate } = useSWR(
     searchKeyword !== null
-      ? `/api/search/${searchKeyword}/${pageIndex}/${batchSize}/${sortOption}/${searchSemester}`
+      ? [
+          `/api/search/${searchKeyword}/${pageIndex}/${batchSize}/${sortOption}/${searchSemester}`,
+          searchFilters,
+        ]
       : null,
     async () => {
       if (!searchSemester) {
@@ -72,5 +75,6 @@ export default function useSearchResult(
     courses: data?.courses ?? [],
     isLoading: (!data && !error) || isValidating,
     error,
+    mutate,
   };
 }
