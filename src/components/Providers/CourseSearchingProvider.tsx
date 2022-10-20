@@ -1,5 +1,5 @@
 import type { SearchMode } from "@/data/searchMode";
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useRef } from "react";
 import type { SearchFieldName, Filter, SortOption } from "types/search";
 import {
   isEnrollMethodFilterActive,
@@ -44,6 +44,8 @@ interface CourseSearchingContextType {
   dispatchSearch: (search: string | null) => void;
   resetFilters: () => void;
   isFiltersEdited: boolean;
+  searchPageTopRef: React.RefObject<HTMLDivElement>;
+  searchCallback: () => void;
 }
 
 const CourseSearchingContext = createContext<CourseSearchingContextType>({
@@ -79,6 +81,8 @@ const CourseSearchingContext = createContext<CourseSearchingContextType>({
   isSearchBoxInView: true,
   isFiltersEdited: false,
   sortOption: "correlation",
+  searchPageTopRef: React.createRef(),
+  searchCallback: () => {},
   setSearch: () => {},
   setNumOfPages: () => {},
   setPageIndex: () => {},
@@ -167,6 +171,16 @@ const CourseSearchingProvider: React.FC<{
     searchFilters.is_full_year !== null ||
     searchFilters.is_selective !== null;
 
+  const searchPageTopRef = useRef<HTMLDivElement>(null);
+  const searchCallback = () => {
+    if (searchPageTopRef.current) {
+      searchPageTopRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
+
   return (
     <CourseSearchingContext.Provider
       value={{
@@ -184,6 +198,8 @@ const CourseSearchingProvider: React.FC<{
         isSearchBoxInView,
         isFiltersEdited,
         sortOption,
+        searchPageTopRef,
+        searchCallback,
         setSearch,
         setNumOfPages,
         setPageIndex,

@@ -294,13 +294,13 @@ function CoursePage() {
   const { ref: searchBoxRef, inView: searchBoxInView } = useInView({
     threshold: 0,
   });
-  const topRef = useRef<HTMLDivElement>(null);
   const {
     setIsSearchBoxInView,
     setBatchSize,
     searchSettings,
     setSearchSettings,
     pageIndex,
+    searchPageTopRef,
   } = useCourseSearchingContext();
 
   const [isHigherThan1325] = useMediaQuery(["(min-height: 1325px)"]);
@@ -316,10 +316,6 @@ function CoursePage() {
   useEffect(() => {
     setIsSearchBoxInView(searchBoxInView);
   }, [searchBoxInView, setIsSearchBoxInView]);
-
-  const searchCallback = () => {
-    topRef.current?.focus();
-  };
 
   return (
     <>
@@ -347,11 +343,19 @@ function CoursePage() {
           justifyContent="center"
           alignItems="start"
           overflowY={"auto"}
+          overflowX={"hidden"}
           position="relative"
         >
           <Flex w="60%" flexDirection={"column"} py={8}>
+            <Box
+              ref={searchPageTopRef}
+              h="1px"
+              w="100vw"
+              position="relative"
+              bottom="30px"
+            />
             <Flex ref={searchBoxRef} w="100%" mb={8} flexDirection={"column"}>
-              <CourseSearchInput searchCallback={searchCallback} />
+              <CourseSearchInput />
               <Flex flexDirection={"row"} alignItems={"center"} mt={6}>
                 <HStack
                   sx={{

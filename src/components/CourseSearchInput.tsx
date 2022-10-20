@@ -103,19 +103,15 @@ function SearchModeMenu() {
   );
 }
 
-export interface CourseSearchInputProps {
-  searchCallback?: () => void;
-}
-function CourseSearchInput({
-  searchCallback = () => {},
-}: CourseSearchInputProps) {
+function CourseSearchInput() {
   const semesterRef = useRef<HTMLInputElement>(null);
   const semesterMenuRef = useRef<HTMLDivElement>(null);
   const { mutate } = useSWRConfig();
   const { search, dispatchSearch, pageIndex, batchSize } =
     useCourseSearchingContext();
   const [searchText, setSearchText] = useState("");
-  const { searchSemester, setSearchSemester } = useCourseSearchingContext();
+  const { searchSemester, setSearchSemester, searchCallback } =
+    useCourseSearchingContext();
 
   const startSearch = async () => {
     if (searchText === search) {
