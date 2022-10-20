@@ -19,7 +19,6 @@ import {
   Divider,
   Center,
   TextProps,
-  Checkbox,
 } from "@chakra-ui/react";
 import {
   ChevronRightIcon,
@@ -237,12 +236,7 @@ function HeaderBar() {
     setIsHeaderFilterActive(false);
   });
   const router = useRouter();
-  const {
-    isSearchBoxInView,
-    isFiltersEdited,
-    searchSettings,
-    setSearchSettings,
-  } = useCourseSearchingContext();
+  const { isSearchBoxInView, isFiltersEdited } = useCourseSearchingContext();
   const isSearchModeEnable =
     router.pathname === "/course" ? (isSearchBoxInView ? false : true) : false;
 
@@ -579,27 +573,6 @@ function HeaderBar() {
               </HStack>
               <SearchFilters />
             </Flex>
-            <Checkbox
-              mt="4"
-              w="fit-content"
-              isChecked={searchSettings.strict_search_mode}
-              onChange={(e) => {
-                setSearchSettings({
-                  ...searchSettings,
-                  strict_search_mode: e.currentTarget.checked,
-                });
-              }}
-            >
-              <Text
-                sx={{
-                  fontSize: "14px",
-                  lineHeight: "20px",
-                  color: "#666666",
-                }}
-              >
-                嚴格篩選條件
-              </Text>
-            </Checkbox>
             <Flex mt={4} alignItems="center" gap={2}>
               <Center h="100%" justifyContent={"center"}>
                 <InfoOutlineIcon boxSize={"20px"} color="primary.600" />

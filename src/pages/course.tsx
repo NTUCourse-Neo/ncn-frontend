@@ -9,7 +9,6 @@ import {
   Icon,
   useColorModeValue,
   Center,
-  Checkbox,
   HStack,
   RadioGroup,
   Radio,
@@ -295,14 +294,8 @@ function CoursePage() {
   const { ref: searchBoxRef, inView: searchBoxInView } = useInView({
     threshold: 0,
   });
-  const {
-    setIsSearchBoxInView,
-    setBatchSize,
-    searchSettings,
-    setSearchSettings,
-    pageIndex,
-    searchPageTopRef,
-  } = useCourseSearchingContext();
+  const { setIsSearchBoxInView, setBatchSize, pageIndex, searchPageTopRef } =
+    useCourseSearchingContext();
 
   const [isHigherThan1325] = useMediaQuery(["(min-height: 1325px)"]);
 
@@ -375,27 +368,6 @@ function CoursePage() {
                 </HStack>
                 <SearchFilters />
               </Flex>
-              <Checkbox
-                mt="4"
-                w="fit-content"
-                isChecked={searchSettings.strict_search_mode}
-                onChange={(e) => {
-                  setSearchSettings({
-                    ...searchSettings,
-                    strict_search_mode: e.currentTarget.checked,
-                  });
-                }}
-              >
-                <Text
-                  sx={{
-                    fontSize: "14px",
-                    lineHeight: "20px",
-                    color: "#666666",
-                  }}
-                >
-                  嚴格篩選條件
-                </Text>
-              </Checkbox>
               <Flex mt={4} alignItems="center" gap={2}>
                 <Center h="100%" justifyContent={"center"}>
                   <InfoOutlineIcon boxSize={"20px"} color="primary.600" />
