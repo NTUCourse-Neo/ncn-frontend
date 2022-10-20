@@ -87,8 +87,13 @@ export interface TimeFilterModalProps {
 
 function TimeFilterModal(props: TimeFilterModalProps) {
   const { title, isActive = false } = props;
-  const { searchFilters, setSearchFilters, setSearchSettings, searchSettings } =
-    useCourseSearchingContext();
+  const {
+    searchFilters,
+    setSearchFilters,
+    setSearchSettings,
+    searchSettings,
+    setPageIndex,
+  } = useCourseSearchingContext();
   const [selectedTime, setSelectedTime] = useState(
     mapStateToTimeTable(searchFilters.time)
   );
@@ -121,6 +126,8 @@ function TimeFilterModal(props: TimeFilterModalProps) {
       ...searchSettings,
       strict_search_mode: isStrictSearch,
     });
+    // Reset indexed page
+    setPageIndex(0);
   };
 
   const onReset = () => {

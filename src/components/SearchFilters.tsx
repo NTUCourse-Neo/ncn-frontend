@@ -151,8 +151,13 @@ function FilterDropdown(props: {
 }
 
 function SearchFilters(props: FlexProps) {
-  const { searchFilters, setSearchFilters, resetFilters, isFiltersEdited } =
-    useCourseSearchingContext();
+  const {
+    searchFilters,
+    setSearchFilters,
+    resetFilters,
+    isFiltersEdited,
+    setPageIndex,
+  } = useCourseSearchingContext();
 
   const [selectedEnrollMethod, setSelectedEnrollMethod] = useState<
     EnrollMethod[]
@@ -167,6 +172,9 @@ function SearchFilters(props: FlexProps) {
     otherLimits,
     (limit) => limit.type_label
   );
+  const backToFirstPage = () => {
+    setPageIndex(0);
+  };
 
   return (
     <Flex alignItems={"center"} flexWrap="wrap" gap="3" {...props}>
@@ -206,6 +214,7 @@ function SearchFilters(props: FlexProps) {
             ...searchFilters,
             enroll_method: selectedEnrollMethod,
           });
+          backToFirstPage();
         }}
         onClear={() => {
           setSelectedEnrollMethod([]);
@@ -270,6 +279,7 @@ function SearchFilters(props: FlexProps) {
             ...searchFilters,
             target_grade: selectedTargetGrade,
           });
+          backToFirstPage();
         }}
         onClear={() => {
           setSelectedTargetGrade([]);
@@ -319,6 +329,7 @@ function SearchFilters(props: FlexProps) {
             ...searchFilters,
             other_limit: selectedOtherLimit,
           });
+          backToFirstPage();
         }}
         onClear={() => {
           setSelectedOtherLimit([]);

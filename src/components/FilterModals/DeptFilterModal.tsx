@@ -204,7 +204,8 @@ export interface DeptFilterModalProps {
   readonly isActive?: boolean;
 }
 function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
-  const { searchFilters, setSearchFilters } = useCourseSearchingContext();
+  const { searchFilters, setSearchFilters, setPageIndex } =
+    useCourseSearchingContext();
   const [selectedDept, setSelectedDept] = useState(searchFilters.department);
   const [isSelective, setIsSelective] = useState<boolean | null>(
     searchFilters.is_selective
@@ -248,6 +249,8 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
       department: selectedDept,
       is_selective: isSelective,
     });
+    // Reset indexed page
+    setPageIndex(0);
     onClose();
   };
   const onResetEditing = () => {
