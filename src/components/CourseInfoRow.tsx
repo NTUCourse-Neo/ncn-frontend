@@ -133,7 +133,7 @@ function DrawerDataTag({
         }}
       >
         {!label ? (
-          "--"
+          "-"
         ) : typeof label === "string" ? (
           label
         ) : (
@@ -200,7 +200,7 @@ function CourseDrawerContainer({
             label={
               hasDifferentLocation
                 ? courseTimeLocationPairs.map((p) => `${p.location}(${p.time})`)
-                : courseTimeLocationPairs?.[0]?.location || "--"
+                : courseTimeLocationPairs?.[0]?.location || "-"
             }
           />
           <DrawerDataTag
