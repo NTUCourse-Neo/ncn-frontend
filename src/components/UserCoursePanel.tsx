@@ -9,6 +9,7 @@ import {
   MenuList,
   MenuItem,
   Divider,
+  Portal,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { FiCalendar, FiHeart } from "react-icons/fi";
@@ -75,38 +76,40 @@ function CourseInfoCard(props: CourseInfoCardProps) {
                 <Icon as={BsThreeDotsVertical} boxSize="20px" color={"black"} />
               </Center>
             </MenuButton>
-            <MenuList
-              minW="0"
-              w={"fit-content"}
-              sx={{
-                shadow:
-                  "0px 20px 24px -4px rgba(85, 105, 135, 0.04), 0px 8px 8px -4px rgba(85, 105, 135, 0.02)",
-                border: "0.5px solid #6F6F6F",
-                borderRadius: "6px",
-                p: "8px 24px",
-              }}
-            >
-              {menuOptions.map((option, index) => {
-                return (
-                  <>
-                    {index !== 0 ? <Divider /> : null}
-                    <Flex>
-                      <MenuItem
-                        py="8px"
-                        sx={{
-                          fontSize: "14px",
-                          lineHeight: "1.4",
-                          color: option?.isRemove ? "#F56153" : "#4b4b4b",
-                        }}
-                        transition="all 0.2s ease-in-out"
-                      >
-                        {option.chinese}
-                      </MenuItem>
-                    </Flex>
-                  </>
-                );
-              })}
-            </MenuList>
+            <Portal>
+              <MenuList
+                minW="0"
+                w={"fit-content"}
+                sx={{
+                  shadow:
+                    "0px 20px 24px -4px rgba(85, 105, 135, 0.04), 0px 8px 8px -4px rgba(85, 105, 135, 0.02)",
+                  border: "0.5px solid #6F6F6F",
+                  borderRadius: "6px",
+                  p: "8px 24px",
+                }}
+              >
+                {menuOptions.map((option, index) => {
+                  return (
+                    <>
+                      {index !== 0 ? <Divider /> : null}
+                      <Flex>
+                        <MenuItem
+                          py="8px"
+                          sx={{
+                            fontSize: "14px",
+                            lineHeight: "1.4",
+                            color: option?.isRemove ? "#F56153" : "#4b4b4b",
+                          }}
+                          transition="all 0.2s ease-in-out"
+                        >
+                          {option.chinese}
+                        </MenuItem>
+                      </Flex>
+                    </>
+                  );
+                })}
+              </MenuList>
+            </Portal>
           </Menu>
         </Flex>
       </Flex>
