@@ -148,10 +148,10 @@ function Panel(props: PanelProps) {
       w="100%"
       h={layout === "default" ? "45%" : isOpen ? "90%" : "8%"}
       flexGrow={isOpen ? 1 : 0}
-      overflow="scroll"
+      overflow="hidden"
       justifyContent="start"
       flexDirection={"column"}
-      transition="all 0.3s linear"
+      transition="all 0.3s ease-in-out"
     >
       <Flex
         sx={{
@@ -191,7 +191,7 @@ function Panel(props: PanelProps) {
         }}
         overflowY="auto"
         flexDirection={"column"}
-        transition="all 0.3s linear"
+        transition="all 0.3s ease-in-out"
       >
         {isOpen ? children : null}
       </Flex>
