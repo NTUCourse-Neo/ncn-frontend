@@ -221,7 +221,7 @@ function UserCoursePanel() {
     <Flex flexDirection={"column"} h="100%" gap={8}>
       <Panel
         layout={layout}
-        title={`已加入課程 (${courseTable?.courses.length})`}
+        title={`已加入課程 (${courseTable?.courses?.length ?? 0})`}
         icon={FiCalendar}
         isOpen={layout === "default" || layout === "course"}
         onClick={() => {
@@ -258,7 +258,7 @@ function UserCoursePanel() {
       </Panel>
       <Panel
         layout={layout}
-        title={`我的收藏 (${userInfo?.favorites.length})`}
+        title={`我的收藏 (${userInfo?.favorites?.length ?? 0})`}
         icon={FiHeart}
         isOpen={layout === "default" || layout === "favorite"}
         onClick={() => {
