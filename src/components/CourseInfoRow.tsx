@@ -371,11 +371,11 @@ function CourseInfoRow({
     }
   };
 
-  const handleAddFavorite = async (course_id: string) => {
+  const handleAddFavorite = async (course_id: string, course_name: string) => {
     if (!isLoading) {
       if (userInfo) {
         setAddingFavoriteCourse(true);
-        await addOrRemoveFavorite(course_id);
+        await addOrRemoveFavorite(course_id, course_name);
         setAddingFavoriteCourse(false);
       } else {
         toast("operation_failed", "請先登入");
@@ -517,7 +517,7 @@ function CourseInfoRow({
                   colorScheme={"red"}
                   onClick={(e) => {
                     e.preventDefault();
-                    handleAddFavorite(courseInfo.id);
+                    handleAddFavorite(courseInfo.id, courseInfo.name);
                     reportEvent(
                       "course_info_row",
                       isFavorite ? "remove_favorite" : "add_favorite",

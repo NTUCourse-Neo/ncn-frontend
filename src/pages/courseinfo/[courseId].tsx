@@ -172,11 +172,11 @@ function CourseInfoPage({ code, course }: PageProps) {
     }
   };
 
-  const handleAddFavorite = async (course_id: string) => {
+  const handleAddFavorite = async (course_id: string, course_name: string) => {
     if (!isLoading) {
       if (userInfo) {
         setIsAddingFavorite(true);
-        await addOrRemoveFavorite(course_id);
+        await addOrRemoveFavorite(course_id, course_name);
         setIsAddingFavorite(false);
       } else {
         toast({
@@ -353,7 +353,7 @@ function CourseInfoPage({ code, course }: PageProps) {
                   isLoading={isLoading || isAddingFavorite}
                   disabled={!userInfo}
                   onClick={() => {
-                    handleAddFavorite(course.id);
+                    handleAddFavorite(course.id, course.name);
                     reportEvent(
                       "course_info_page",
                       isFavorite ? "remove_favorite" : "add_favorite",
@@ -498,7 +498,7 @@ function CourseInfoPage({ code, course }: PageProps) {
                   icon={isFavorite ? <FaMinus /> : <FaRegHeart />}
                   disabled={!userInfo}
                   onClick={() => {
-                    handleAddFavorite(course.id);
+                    handleAddFavorite(course.id, course.name);
                     reportEvent(
                       "course_info_page",
                       isFavorite ? "remove_favorite" : "add_favorite",
