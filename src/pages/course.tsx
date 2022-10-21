@@ -34,6 +34,7 @@ import Dropdown from "@/components/Dropdown";
 import { SortOption, sortOptions } from "@/types/search";
 import { FiCalendar } from "react-icons/fi";
 import SkeletonRow from "@/components/SkeletonRow";
+import UserCoursePanel from "@/components/UserCoursePanel";
 
 function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
   const currentPageRef = useRef<HTMLDivElement>(null);
@@ -392,30 +393,13 @@ function CoursePage() {
           </Flex>
           <Flex
             w="20%"
+            h="92vh"
             py={8}
             flexDirection={"column"}
             position="sticky"
             top={0}
-            gap={8}
           >
-            <Box
-              bg="white"
-              h="42vh"
-              w="100%"
-              border="1px solid #CCCCCC"
-              color="#cccccc"
-            >
-              已加入課程 placeholder
-            </Box>
-            <Box
-              bg="white"
-              h="42vh"
-              w="100%"
-              border="1px solid #CCCCCC"
-              color="#cccccc"
-            >
-              我的收藏 placeholder
-            </Box>
+            <UserCoursePanel />
           </Flex>
         </Flex>
       </Flex>
