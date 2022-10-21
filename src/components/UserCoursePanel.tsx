@@ -146,8 +146,9 @@ function Panel(props: PanelProps) {
     <Flex
       bg="white"
       w="100%"
-      h={layout === "default" ? "45%" : "auto"}
+      h={layout === "default" ? "45%" : isOpen ? "90%" : "8%"}
       flexGrow={isOpen ? 1 : 0}
+      overflow="scroll"
       justifyContent="start"
       flexDirection={"column"}
       transition="all 0.3s linear"
@@ -266,6 +267,11 @@ function UserCoursePanel() {
               {
                 chinese: "查看課程大綱",
                 english: "View Course Outline",
+                callback: () => {},
+              },
+              {
+                chinese: "加入課表",
+                english: "Add to Course Table",
                 callback: () => {},
               },
               {
