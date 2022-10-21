@@ -22,7 +22,7 @@ function Panel(props: PanelProps) {
       flexGrow={isOpen ? 1 : 0}
       justifyContent="start"
       flexDirection={"column"}
-      transition="all 0.2s ease-in-out"
+      transition="all 0.3s ease-in-out"
     >
       <Flex
         sx={{
@@ -63,7 +63,7 @@ function Panel(props: PanelProps) {
           }}
           overflowY="auto"
           flexDirection={"column"}
-          transition="all 0.2s ease-in-out"
+          transition="all 0.3s ease-in-out"
         >
           {children}
         </Flex>
