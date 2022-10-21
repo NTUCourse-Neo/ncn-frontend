@@ -1,4 +1,15 @@
-import { Flex, HStack, Text, Icon, Center } from "@chakra-ui/react";
+import {
+  Flex,
+  HStack,
+  Text,
+  Icon,
+  Center,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Divider,
+} from "@chakra-ui/react";
 import { useState } from "react";
 import { FiCalendar, FiHeart } from "react-icons/fi";
 import { FaChevronDown } from "react-icons/fa";
@@ -11,11 +22,19 @@ import { Course } from "@/types/course";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { parseCourseTimeLocation } from "@/utils/parseCourseSchedule";
 
+interface CourseInfoCardMenuOption {
+  chinese: string;
+  english: string;
+  callback: () => void;
+  isRemove?: boolean;
+}
+
 interface CourseInfoCardProps {
   readonly course: Course;
+  readonly menuOptions: CourseInfoCardMenuOption[];
 }
 function CourseInfoCard(props: CourseInfoCardProps) {
-  const { course } = props;
+  const { course, menuOptions } = props;
   const timeLocation = parseCourseTimeLocation(course.schedules);
   return (
     <Flex
@@ -40,19 +59,55 @@ function CourseInfoCard(props: CourseInfoCardProps) {
           {course.name}
         </Flex>
         <Flex>
-          <Center
-            h="24px"
-            w="24px"
-            borderRadius={"12px"}
-            cursor="pointer"
-            sx={{
-              _hover: {
-                bg: "black.300",
-              },
-            }}
-          >
-            <Icon as={BsThreeDotsVertical} boxSize="20px" color={"black"} />
-          </Center>
+          <Menu flip={false}>
+            <MenuButton>
+              <Center
+                h="24px"
+                w="24px"
+                borderRadius={"12px"}
+                cursor="pointer"
+                sx={{
+                  _hover: {
+                    bg: "black.300",
+                  },
+                }}
+              >
+                <Icon as={BsThreeDotsVertical} boxSize="20px" color={"black"} />
+              </Center>
+            </MenuButton>
+            <MenuList
+              minW="0"
+              w={"fit-content"}
+              sx={{
+                shadow:
+                  "0px 20px 24px -4px rgba(85, 105, 135, 0.04), 0px 8px 8px -4px rgba(85, 105, 135, 0.02)",
+                border: "0.5px solid #6F6F6F",
+                borderRadius: "6px",
+                p: "8px 24px",
+              }}
+            >
+              {menuOptions.map((option, index) => {
+                return (
+                  <>
+                    {index !== 0 ? <Divider /> : null}
+                    <Flex>
+                      <MenuItem
+                        py="8px"
+                        sx={{
+                          fontSize: "14px",
+                          lineHeight: "1.4",
+                          color: option?.isRemove ? "#F56153" : "#4b4b4b",
+                        }}
+                        transition="all 0.2s ease-in-out"
+                      >
+                        {option.chinese}
+                      </MenuItem>
+                    </Flex>
+                  </>
+                );
+              })}
+            </MenuList>
+          </Menu>
         </Flex>
       </Flex>
       <Flex
@@ -95,7 +150,7 @@ function Panel(props: PanelProps) {
       flexGrow={isOpen ? 1 : 0}
       justifyContent="start"
       flexDirection={"column"}
-      transition="all 0.3s ease-in-out"
+      transition="all 0.3s linear"
     >
       <Flex
         sx={{
@@ -124,23 +179,21 @@ function Panel(props: PanelProps) {
           transition="all ease-in-out 0.4s"
         />
       </Flex>
-      {isOpen ? (
-        <Flex
-          bg="white"
-          w="100%"
-          mt={"8px"}
-          flex={"1 1 auto"}
-          sx={{
-            border: "1px solid #CCCCCC",
-            borderRadius: "4px",
-          }}
-          overflowY="auto"
-          flexDirection={"column"}
-          transition="all 0.3s ease-in-out"
-        >
-          {children}
-        </Flex>
-      ) : null}
+      <Flex
+        bg="white"
+        w="100%"
+        mt={"8px"}
+        flex={"1 1 auto"}
+        sx={{
+          border: `1px solid ${isOpen ? `#CCCCCC` : `white`}`,
+          borderRadius: "4px",
+        }}
+        overflowY="auto"
+        flexDirection={"column"}
+        transition="all 0.3s linear"
+      >
+        {isOpen ? children : null}
+      </Flex>
     </Flex>
   );
 }
@@ -173,7 +226,23 @@ function UserCoursePanel() {
         }}
       >
         {courseTable?.courses.map((course) => (
-          <CourseInfoCard key={course.id} course={course} />
+          <CourseInfoCard
+            key={course.id}
+            course={course}
+            menuOptions={[
+              {
+                chinese: "查看課程大綱",
+                english: "View Course Outline",
+                callback: () => {},
+              },
+              {
+                chinese: "移除",
+                english: "Remove",
+                callback: () => {},
+                isRemove: true,
+              },
+            ]}
+          />
         ))}
       </Panel>
       <Panel
@@ -190,7 +259,23 @@ function UserCoursePanel() {
         }}
       >
         {userInfo?.favorites.map((course) => (
-          <CourseInfoCard key={course.id} course={course} />
+          <CourseInfoCard
+            key={course.id}
+            course={course}
+            menuOptions={[
+              {
+                chinese: "查看課程大綱",
+                english: "View Course Outline",
+                callback: () => {},
+              },
+              {
+                chinese: "移除",
+                english: "Remove",
+                callback: () => {},
+                isRemove: true,
+              },
+            ]}
+          />
         ))}
       </Panel>
     </Flex>
