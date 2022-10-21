@@ -22,6 +22,7 @@ import useUserInfo from "@/hooks/useUserInfo";
 import { Course } from "@/types/course";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { parseCourseTimeLocation } from "@/utils/parseCourseSchedule";
+import { useRouter } from "next/router";
 
 interface CourseInfoCardMenuOption {
   chinese: string;
@@ -101,6 +102,7 @@ function CourseInfoCard(props: CourseInfoCardProps) {
                             color: option?.isRemove ? "#F56153" : "#4b4b4b",
                           }}
                           transition="all 0.2s ease-in-out"
+                          onClick={option.callback}
                         >
                           {option.chinese}
                         </MenuItem>
@@ -208,11 +210,12 @@ function UserCoursePanel() {
   );
   const { neoLocalCourseTableKey } = useNeoLocalStorage();
   const { user } = useUser();
-  const { userInfo } = useUserInfo(user?.sub ?? null);
+  const { userInfo, addOrRemoveFavorite } = useUserInfo(user?.sub ?? null);
   const courseTableKey = userInfo
     ? userInfo?.course_tables?.[0] ?? null
     : neoLocalCourseTableKey;
-  const { courseTable } = useCourseTable(courseTableKey);
+  const { courseTable, addOrRemoveCourse } = useCourseTable(courseTableKey);
+  const router = useRouter();
 
   return (
     <Flex flexDirection={"column"} h="100%" gap={8}>
@@ -237,12 +240,16 @@ function UserCoursePanel() {
               {
                 chinese: "查看課程大綱",
                 english: "View Course Outline",
-                callback: () => {},
+                callback: () => {
+                  router.push(`/courseinfo/${course.id}`);
+                },
               },
               {
                 chinese: "移除",
                 english: "Remove",
-                callback: () => {},
+                callback: () => {
+                  addOrRemoveCourse(course);
+                },
                 isRemove: true,
               },
             ]}
@@ -270,17 +277,23 @@ function UserCoursePanel() {
               {
                 chinese: "查看課程大綱",
                 english: "View Course Outline",
-                callback: () => {},
+                callback: () => {
+                  router.push(`/courseinfo/${course.id}`);
+                },
               },
               {
                 chinese: "加入課表",
                 english: "Add to Course Table",
-                callback: () => {},
+                callback: () => {
+                  addOrRemoveCourse(course);
+                },
               },
               {
                 chinese: "移除",
                 english: "Remove",
-                callback: () => {},
+                callback: () => {
+                  addOrRemoveFavorite(course.id, course.name);
+                },
                 isRemove: true,
               },
             ]}
