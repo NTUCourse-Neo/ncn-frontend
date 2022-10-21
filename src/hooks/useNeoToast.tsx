@@ -59,6 +59,7 @@ export default function useNeoToast(option?: UseToastOptions) {
     containerStyle: {
       position: "relative",
       top: "74px",
+      right: "20px",
     },
     position: "top-right",
     isClosable: true,
