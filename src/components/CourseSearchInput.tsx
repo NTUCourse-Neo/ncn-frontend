@@ -29,75 +29,80 @@ function SearchModeMenu() {
   const { searchMode, setSearchMode } = useCourseSearchingContext();
   return (
     <Menu>
-      <MenuButton
-        as={Button}
-        w="105px"
-        bg="#909090"
-        sx={{
-          borderRadius: "8px",
-          _hover: {
-            bg: "black.700",
-          },
-          _active: {
-            bg: "black.700",
-          },
-        }}
-        size={"md"}
-        variant="solid"
-      >
-        <Flex
-          justifyContent={"center"}
-          alignItems={"center"}
-          w="100%"
-          sx={{
-            fontSize: "13px",
-            lineHeight: "22px",
-          }}
-        >
-          {searchMode.chinese} <ChevronDownIcon boxSize={"22px"} />
-        </Flex>
-      </MenuButton>
-      <MenuList
-        border="0.5px solid #6F6F6F"
-        borderRadius={"4px"}
-        minW={0}
-        w="fit-content"
-      >
-        <Box
-          py={6}
-          px={12}
-          sx={{
-            fontSize: "16px",
-            lineHeight: "1.4",
-            color: "#4b4b4b",
-          }}
-        >
-          {searchModeList.map((mode) => {
-            const fontStyle =
-              searchMode.id === mode.id
-                ? {
-                    color: "primary.500",
-                    fontWeight: 500,
-                  }
-                : {};
-            return (
-              <Box
-                key={mode.id}
-                py={2}
-                sx={{
-                  cursor: "pointer",
-                  ...fontStyle,
-                }}
-                onClick={() => {
-                  setSearchMode(mode);
-                }}
-              >
-                {mode.chinese}
-              </Box>
-            );
-          })}
-        </Box>
-      </MenuList>
+      {({ onClose }) => (
+        <>
+          <MenuButton
+            as={Button}
+            w="105px"
+            bg="#909090"
+            sx={{
+              borderRadius: "8px",
+              _hover: {
+                bg: "black.700",
+              },
+              _active: {
+                bg: "black.700",
+              },
+            }}
+            size={"md"}
+            variant="solid"
+          >
+            <Flex
+              justifyContent={"center"}
+              alignItems={"center"}
+              w="100%"
+              sx={{
+                fontSize: "13px",
+                lineHeight: "22px",
+              }}
+            >
+              {searchMode.chinese} <ChevronDownIcon boxSize={"22px"} />
+            </Flex>
+          </MenuButton>
+          <MenuList
+            border="0.5px solid #6F6F6F"
+            borderRadius={"4px"}
+            minW={0}
+            w="fit-content"
+          >
+            <Box
+              py={6}
+              px={12}
+              sx={{
+                fontSize: "16px",
+                lineHeight: "1.4",
+                color: "#4b4b4b",
+              }}
+            >
+              {searchModeList.map((mode) => {
+                const fontStyle =
+                  searchMode.id === mode.id
+                    ? {
+                        color: "primary.500",
+                        fontWeight: 500,
+                      }
+                    : {};
+                return (
+                  <Box
+                    key={mode.id}
+                    py={2}
+                    sx={{
+                      cursor: "pointer",
+                      ...fontStyle,
+                    }}
+                    onClick={() => {
+                      onClose();
+                      setSearchMode(mode);
+                    }}
+                  >
+                    {mode.chinese}
+                  </Box>
+                );
+              })}
+            </Box>
+          </MenuList>
+        </>
+      )}
     </Menu>
   );
 }
