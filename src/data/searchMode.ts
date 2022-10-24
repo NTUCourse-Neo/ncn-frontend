@@ -45,7 +45,7 @@ const searchModeList: SearchMode[] = [
   },
   {
     id: "program",
-    chinese: "學程",
+    chinese: "學分學程",
     english: "Program",
   },
   {
