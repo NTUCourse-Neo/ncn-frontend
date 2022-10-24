@@ -24,6 +24,8 @@ import {
   OtherLimit,
   GeneralCourseType,
   generalCourseTypes,
+  CommonTargetDepartment,
+  commonTargetDepartments,
 } from "types/search";
 import {
   isEnrollMethodFilterActive,
@@ -475,6 +477,74 @@ export function GeneralCourseTypeFilter() {
               }}
             >
               {courseType.chinese_label}
+            </Checkbox>
+          );
+        })}
+      </Stack>
+    </FilterDropdown>
+  );
+}
+
+export function CommonTargetDeptFilter() {
+  const { searchFilters, setSearchFilters, setPageIndex } =
+    useCourseSearchingContext();
+  const [selectedCommonTargetDepartment, setSelectedCommonTargetDepartment] =
+    useState<CommonTargetDepartment[]>(searchFilters.common_target_department);
+  const backToFirstPage = () => {
+    setPageIndex(0);
+  };
+
+  return (
+    <FilterDropdown
+      title={`授課對象${
+        searchFilters.common_target_department.length > 0
+          ? ` (${searchFilters.common_target_department.length})`
+          : ``
+      }`}
+      onClick={() => {
+        setSelectedCommonTargetDepartment(
+          searchFilters.common_target_department
+        );
+      }}
+      onSave={() => {
+        setSearchFilters({
+          ...searchFilters,
+          common_target_department: selectedCommonTargetDepartment,
+        });
+        backToFirstPage();
+      }}
+      onClear={() => {
+        setSelectedCommonTargetDepartment([]);
+      }}
+      isEmpty={selectedCommonTargetDepartment.length === 0}
+      isActive={searchFilters.common_target_department.length > 0}
+    >
+      <Stack
+        spacing={3}
+        sx={{
+          fontSize: "14px",
+          lineHeight: "20px",
+          fontWeight: 500,
+          color: "#666666",
+          letterSpacing: "0.05em",
+        }}
+        w="300px"
+      >
+        {commonTargetDepartments.map((dept) => {
+          return (
+            <Checkbox
+              key={dept.value}
+              isChecked={selectedCommonTargetDepartment.includes(dept.value)}
+              onChange={() => {
+                setSelectedCommonTargetDepartment(
+                  getNextCheckListState(
+                    selectedCommonTargetDepartment,
+                    dept.value
+                  )
+                );
+              }}
+            >
+              {`${dept.value}000 ${dept.chinese_label}`}
             </Checkbox>
           );
         })}

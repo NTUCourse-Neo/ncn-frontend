@@ -55,6 +55,7 @@ const emptyFilterObject: Filter = {
   enroll_method: [],
   other_limit: [],
   general_course_type: [],
+  common_target_department: [],
   is_full_year: null,
   is_selective: null,
 };

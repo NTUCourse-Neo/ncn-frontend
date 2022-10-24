@@ -7,6 +7,7 @@ export type Filter = {
   target_grade: Grade[];
   other_limit: OtherLimit[];
   general_course_type: GeneralCourseType[];
+  common_target_department: CommonTargetDepartment[];
   is_full_year: boolean | null;
   is_selective: boolean | null;
 };
@@ -154,6 +155,72 @@ export const generalCourseTypes = [
   },
 ] as const;
 export type GeneralCourseType = typeof generalCourseTypes[number]["value"];
+
+// common target department // TODO: need english label
+export const commonTargetDepartments = [
+  {
+    value: "1",
+    chinese_label: "文學院",
+  },
+  {
+    value: "2",
+    chinese_label: "理學院",
+  },
+  {
+    value: "3",
+    chinese_label: "社會科學院",
+  },
+  {
+    value: "4",
+    chinese_label: "醫學院",
+  },
+  {
+    value: "5",
+    chinese_label: "工學院",
+  },
+  {
+    value: "6",
+    chinese_label: "生物資源暨農學院",
+  },
+  {
+    value: "7",
+    chinese_label: "管理學院",
+  },
+  {
+    value: "8",
+    chinese_label: "公共衛生學院",
+  },
+  {
+    value: "9",
+    chinese_label: "電機資訊學院",
+  },
+  {
+    value: "A",
+    chinese_label: "法律學院",
+  },
+  {
+    value: "B",
+    chinese_label: "生命科學院",
+  },
+  {
+    value: "H",
+    chinese_label: "共同教育中心",
+  },
+  {
+    value: "I",
+    chinese_label: "國際學院",
+  },
+  {
+    value: "K",
+    chinese_label: "重點科技研究學院與三校聯盟",
+  },
+  {
+    value: "Z",
+    chinese_label: "創新設計學院",
+  },
+] as const;
+export type CommonTargetDepartment =
+  typeof commonTargetDepartments[number]["value"];
 
 // for sorting
 export const sortOptions = [
