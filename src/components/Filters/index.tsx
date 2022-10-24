@@ -30,6 +30,8 @@ import {
   commonCourseTypes,
   PeArmyCourseType,
   peArmyCourseTypes,
+  HostCollege,
+  hostColleges,
 } from "types/search";
 import {
   isEnrollMethodFilterActive,
@@ -675,6 +677,69 @@ export function PeArmyCourseTypeFilter() {
               }}
             >
               {`${ctype.chinese_label}`}
+            </Checkbox>
+          );
+        })}
+      </Stack>
+    </FilterDropdown>
+  );
+}
+
+export function HostCollegeFilter() {
+  const { searchFilters, setSearchFilters, setPageIndex } =
+    useCourseSearchingContext();
+  const [selectedHostCollege, setSelectedHostCollege] = useState<HostCollege[]>(
+    searchFilters.host_college
+  );
+  const backToFirstPage = () => {
+    setPageIndex(0);
+  };
+
+  return (
+    <FilterDropdown
+      title={`開課學校${
+        searchFilters.host_college.length > 0
+          ? ` (${searchFilters.host_college.length})`
+          : ``
+      }`}
+      onClick={() => {
+        setSelectedHostCollege(searchFilters.host_college);
+      }}
+      onSave={() => {
+        setSearchFilters({
+          ...searchFilters,
+          host_college: selectedHostCollege,
+        });
+        backToFirstPage();
+      }}
+      onClear={() => {
+        setSelectedHostCollege([]);
+      }}
+      isEmpty={selectedHostCollege.length === 0}
+      isActive={searchFilters.host_college.length > 0}
+    >
+      <Stack
+        spacing={3}
+        sx={{
+          fontSize: "14px",
+          lineHeight: "20px",
+          fontWeight: 500,
+          color: "#666666",
+          letterSpacing: "0.05em",
+        }}
+      >
+        {hostColleges.map((c) => {
+          return (
+            <Checkbox
+              key={c.value}
+              isChecked={selectedHostCollege.includes(c.value)}
+              onChange={() => {
+                setSelectedHostCollege(
+                  getNextCheckListState(selectedHostCollege, c.value)
+                );
+              }}
+            >
+              {`${c.chinese_label}`}
             </Checkbox>
           );
         })}

@@ -10,6 +10,7 @@ export type Filter = {
   common_target_department: CommonTargetDepartment[];
   common_course_type: CommonCourseType[];
   pearmy_course_type: PeArmyCourseType[];
+  host_college: HostCollege[];
   is_full_year: boolean | null;
   is_selective: boolean | null;
 };
@@ -273,6 +274,18 @@ export const peArmyCourseTypes = [
   },
 ] as const;
 export type PeArmyCourseType = typeof peArmyCourseTypes[number]["value"];
+
+export const hostColleges = [
+  {
+    value: "NTNU",
+    chinese_label: "臺師大",
+  },
+  {
+    value: "NTUST",
+    chinese_label: "臺科大",
+  },
+];
+export type HostCollege = typeof hostColleges[number]["value"];
 
 // for sorting
 export const sortOptions = [

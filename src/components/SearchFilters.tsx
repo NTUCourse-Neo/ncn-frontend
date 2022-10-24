@@ -11,6 +11,7 @@ import {
   CommonTargetDeptFilter,
   CommonCourseTypeFilter,
   PeArmyCourseTypeFilter,
+  HostCollegeFilter,
 } from "@/components/Filters/index";
 
 function SearchFilters(props: FlexProps) {
@@ -27,6 +28,7 @@ function SearchFilters(props: FlexProps) {
       <CommonTargetDeptFilter />
       <CommonCourseTypeFilter />
       <PeArmyCourseTypeFilter />
+      <HostCollegeFilter />
       {isFiltersEdited ? (
         <Box
           sx={{

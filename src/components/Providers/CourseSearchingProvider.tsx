@@ -58,6 +58,7 @@ const emptyFilterObject: Filter = {
   common_target_department: [],
   common_course_type: [],
   pearmy_course_type: [],
+  host_college: [],
   is_full_year: null,
   is_selective: null,
 };
