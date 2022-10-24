@@ -12,8 +12,8 @@ import {
   Button,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
-import TimeFilterModal from "@/components/FilterModals/TimeFilterModal";
-import DeptFilterModal from "@/components/FilterModals/DeptFilterModal";
+import TimeFilterModal from "@/components/Filters/TimeFilterModal";
+import DeptFilterModal from "@/components/Filters/DeptFilterModal";
 import { FaChevronDown } from "react-icons/fa";
 import { mapStateToIntervals } from "utils/timeTableConverter";
 import { useCourseSearchingContext } from "@/components/Providers/CourseSearchingProvider";

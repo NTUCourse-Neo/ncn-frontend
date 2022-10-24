@@ -18,7 +18,7 @@ import {
   Text,
   Tooltip,
 } from "@chakra-ui/react";
-import TimetableSelector from "components/FilterModals/components/TimetableSelector";
+import TimetableSelector from "@/components/Filters/components/TimetableSelector";
 import { mapStateToTimeTable } from "utils/timeTableConverter";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { reportEvent } from "utils/ga";

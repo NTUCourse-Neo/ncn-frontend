@@ -34,7 +34,7 @@ import React, {
 } from "react";
 import { college_map } from "data/college";
 import { deptList } from "data/department";
-import FilterElement from "components/FilterModals/components/FilterElement";
+import FilterElement from "@/components/Filters/components/FilterElement";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { reportEvent } from "utils/ga";
 import type { Department } from "types/course";
