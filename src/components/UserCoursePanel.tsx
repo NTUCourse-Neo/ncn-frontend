@@ -24,6 +24,47 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import { parseCourseTimeLocation } from "@/utils/parseCourseSchedule";
 import { useRouter } from "next/router";
 
+function PanelPlaceholder({
+  title,
+  desc,
+}: {
+  readonly title: string;
+  readonly desc: string;
+}) {
+  return (
+    <Flex
+      w="100%"
+      h="100%"
+      bg="white"
+      justify={"center"}
+      align="center"
+      flexDirection={"column"}
+      sx={{
+        color: "#909090",
+      }}
+      textAlign={"center"}
+    >
+      <Flex
+        sx={{
+          fontSize: "16px",
+          lineHeight: "1.6",
+          fontWeight: 500,
+        }}
+      >
+        {title}
+      </Flex>
+      <Flex
+        sx={{
+          fontSize: "12px",
+          lineHeight: "1.4",
+        }}
+      >
+        {desc}
+      </Flex>
+    </Flex>
+  );
+}
+
 interface CourseInfoCardMenuOption {
   chinese: string;
   english: string;
@@ -232,29 +273,36 @@ function UserCoursePanel() {
           }
         }}
       >
-        {courseTable?.courses.map((course) => (
-          <CourseInfoCard
-            key={course.id}
-            course={course}
-            menuOptions={[
-              {
-                chinese: "查看課程大綱",
-                english: "View Course Outline",
-                callback: () => {
-                  router.push(`/courseinfo/${course.id}`);
+        {(courseTable?.courses ?? []).length > 0 ? (
+          courseTable?.courses.map((course) => (
+            <CourseInfoCard
+              key={course.id}
+              course={course}
+              menuOptions={[
+                {
+                  chinese: "查看課程大綱",
+                  english: "View Course Outline",
+                  callback: () => {
+                    router.push(`/courseinfo/${course.id}`);
+                  },
                 },
-              },
-              {
-                chinese: "移除",
-                english: "Remove",
-                callback: () => {
-                  addOrRemoveCourse(course);
+                {
+                  chinese: "移除",
+                  english: "Remove",
+                  callback: () => {
+                    addOrRemoveCourse(course);
+                  },
+                  isRemove: true,
                 },
-                isRemove: true,
-              },
-            ]}
+              ]}
+            />
+          ))
+        ) : (
+          <PanelPlaceholder
+            title={"尚未加入任何課程"}
+            desc={"加入課程並可在「我的課表」中檢視"}
           />
-        ))}
+        )}
       </Panel>
       <Panel
         layout={layout}
@@ -269,36 +317,43 @@ function UserCoursePanel() {
           }
         }}
       >
-        {userInfo?.favorites.map((course) => (
-          <CourseInfoCard
-            key={course.id}
-            course={course}
-            menuOptions={[
-              {
-                chinese: "查看課程大綱",
-                english: "View Course Outline",
-                callback: () => {
-                  router.push(`/courseinfo/${course.id}`);
+        {(userInfo?.favorites ?? []).length > 0 ? (
+          userInfo?.favorites.map((course) => (
+            <CourseInfoCard
+              key={course.id}
+              course={course}
+              menuOptions={[
+                {
+                  chinese: "查看課程大綱",
+                  english: "View Course Outline",
+                  callback: () => {
+                    router.push(`/courseinfo/${course.id}`);
+                  },
                 },
-              },
-              {
-                chinese: "加入課表",
-                english: "Add to Course Table",
-                callback: () => {
-                  addOrRemoveCourse(course);
+                {
+                  chinese: "加入課表",
+                  english: "Add to Course Table",
+                  callback: () => {
+                    addOrRemoveCourse(course);
+                  },
                 },
-              },
-              {
-                chinese: "移除",
-                english: "Remove",
-                callback: () => {
-                  addOrRemoveFavorite(course.id, course.name);
+                {
+                  chinese: "移除",
+                  english: "Remove",
+                  callback: () => {
+                    addOrRemoveFavorite(course.id, course.name);
+                  },
+                  isRemove: true,
                 },
-                isRemove: true,
-              },
-            ]}
+              ]}
+            />
+          ))
+        ) : (
+          <PanelPlaceholder
+            title={"尚未收藏任何課程"}
+            desc={"還在想要不要修這門課嗎？先收藏起來慢慢考慮"}
           />
-        ))}
+        )}
       </Panel>
     </Flex>
   );
