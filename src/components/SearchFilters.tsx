@@ -9,6 +9,7 @@ import {
   TargetGradeFilter,
   GeneralCourseTypeFilter,
   CommonTargetDeptFilter,
+  CommonCourseTypeFilter,
 } from "@/components/Filters/index";
 
 function SearchFilters(props: FlexProps) {
@@ -23,6 +24,7 @@ function SearchFilters(props: FlexProps) {
       <OtherLimitFilter />
       <GeneralCourseTypeFilter />
       <CommonTargetDeptFilter />
+      <CommonCourseTypeFilter />
       {isFiltersEdited ? (
         <Box
           sx={{

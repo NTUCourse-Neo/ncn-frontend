@@ -8,6 +8,7 @@ export type Filter = {
   other_limit: OtherLimit[];
   general_course_type: GeneralCourseType[];
   common_target_department: CommonTargetDepartment[];
+  common_course_type: CommonCourseType[];
   is_full_year: boolean | null;
   is_selective: boolean | null;
 };
@@ -221,6 +222,31 @@ export const commonTargetDepartments = [
 ] as const;
 export type CommonTargetDepartment =
   typeof commonTargetDepartments[number]["value"];
+
+// common course type
+export const commonCourseTypes = [
+  {
+    value: "chinese",
+    chinese_label: "國文",
+  },
+  {
+    value: "english",
+    chinese_label: "英文",
+  },
+  {
+    value: "foreign_language",
+    chinese_label: "外文",
+  },
+  {
+    value: "can_be_foreign_language",
+    chinese_label: "可充當外文",
+  },
+  {
+    value: "common_selective",
+    chinese_label: "共同選修",
+  },
+] as const;
+export type CommonCourseType = typeof commonCourseTypes[number]["value"];
 
 // for sorting
 export const sortOptions = [

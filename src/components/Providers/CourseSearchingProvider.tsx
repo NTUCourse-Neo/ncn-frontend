@@ -56,6 +56,7 @@ const emptyFilterObject: Filter = {
   other_limit: [],
   general_course_type: [],
   common_target_department: [],
+  common_course_type: [],
   is_full_year: null,
   is_selective: null,
 };

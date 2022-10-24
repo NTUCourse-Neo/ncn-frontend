@@ -26,6 +26,8 @@ import {
   generalCourseTypes,
   CommonTargetDepartment,
   commonTargetDepartments,
+  CommonCourseType,
+  commonCourseTypes,
 } from "types/search";
 import {
   isEnrollMethodFilterActive,
@@ -545,6 +547,69 @@ export function CommonTargetDeptFilter() {
               }}
             >
               {`${dept.value}000 ${dept.chinese_label}`}
+            </Checkbox>
+          );
+        })}
+      </Stack>
+    </FilterDropdown>
+  );
+}
+
+export function CommonCourseTypeFilter() {
+  const { searchFilters, setSearchFilters, setPageIndex } =
+    useCourseSearchingContext();
+  const [selectedCommonCourseType, setSelectedCommonCourseType] = useState<
+    CommonCourseType[]
+  >(searchFilters.common_course_type);
+  const backToFirstPage = () => {
+    setPageIndex(0);
+  };
+
+  return (
+    <FilterDropdown
+      title={`領域別${
+        searchFilters.common_course_type.length > 0
+          ? ` (${searchFilters.common_course_type.length})`
+          : ``
+      }`}
+      onClick={() => {
+        setSelectedCommonCourseType(searchFilters.common_course_type);
+      }}
+      onSave={() => {
+        setSearchFilters({
+          ...searchFilters,
+          common_course_type: selectedCommonCourseType,
+        });
+        backToFirstPage();
+      }}
+      onClear={() => {
+        setSelectedCommonCourseType([]);
+      }}
+      isEmpty={selectedCommonCourseType.length === 0}
+      isActive={searchFilters.common_course_type.length > 0}
+    >
+      <Stack
+        spacing={3}
+        sx={{
+          fontSize: "14px",
+          lineHeight: "20px",
+          fontWeight: 500,
+          color: "#666666",
+          letterSpacing: "0.05em",
+        }}
+      >
+        {commonCourseTypes.map((ctype) => {
+          return (
+            <Checkbox
+              key={ctype.value}
+              isChecked={selectedCommonCourseType.includes(ctype.value)}
+              onChange={() => {
+                setSelectedCommonCourseType(
+                  getNextCheckListState(selectedCommonCourseType, ctype.value)
+                );
+              }}
+            >
+              {`${ctype.chinese_label}`}
             </Checkbox>
           );
         })}
