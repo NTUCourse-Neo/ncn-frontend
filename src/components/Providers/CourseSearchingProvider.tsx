@@ -1,4 +1,4 @@
-import type { SearchMode } from "@/data/searchMode";
+import searchModeList, { SearchMode } from "@/data/searchMode";
 import React, { createContext, useContext, useState, useRef } from "react";
 import type { SearchFieldName, Filter, SortOption } from "types/search";
 import {
@@ -137,11 +137,7 @@ const CourseSearchingProvider: React.FC<{
   const [searchSemester, setSearchSemester] = useState(
     process.env.NEXT_PUBLIC_SEMESTER ?? null
   );
-  const [searchMode, setSearchMode] = useState<SearchMode>({
-    id: "fast",
-    chinese: "快速搜尋",
-    english: "Quick Search",
-  });
+  const [searchMode, setSearchMode] = useState<SearchMode>(searchModeList[0]);
   const [sortOption, setSortOption] = useState<SortOption>("correlation");
   const [isSearchBoxInView, setIsSearchBoxInView] = useState(true);
 
