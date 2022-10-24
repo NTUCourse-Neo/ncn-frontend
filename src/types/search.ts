@@ -6,6 +6,7 @@ export type Filter = {
   enroll_method: EnrollMethod[];
   target_grade: Grade[];
   other_limit: OtherLimit[];
+  general_course_type: GeneralCourseType[];
   is_full_year: boolean | null;
   is_selective: boolean | null;
 };
@@ -98,6 +99,61 @@ export const otherLimits = [
   },
 ] as const;
 export type OtherLimit = typeof otherLimits[number]["value"];
+
+// general course type
+export const generalCourseTypes = [
+  {
+    value: "A1",
+    chinese_label: "A1 - 文學與藝術領域",
+    english_label: "A1 - Humanities and Arts",
+  },
+  {
+    value: "A2",
+    chinese_label: "A2 - 歷史思維領域",
+    english_label: "A2 - Historical Thinking",
+  },
+  {
+    value: "A3",
+    chinese_label: "A3 - 世界文明領域",
+    english_label: "A3 - World Civilization",
+  },
+  {
+    value: "A4",
+    chinese_label: "A4 - 哲學與道德思考領域",
+    english_label: "A4 - Philosophy and Moral Thinking",
+  },
+  {
+    value: "A5",
+    chinese_label: "A5 - 公民意識與社會分析領域",
+    english_label: "A5 - Civic Consciousness and Social Analysis",
+  },
+  {
+    value: "A6",
+    chinese_label: "A6 - 量化分析與數學素養領域",
+    english_label: "A6 - Quantitative Analysis and Mathematical Literacy",
+  },
+  {
+    value: "A7",
+    chinese_label: "A7 - 物質科學領域",
+    english_label: "A7 - Physical Science",
+  },
+  {
+    value: "A8",
+    chinese_label: "A8 - 生命科學領域",
+    english_label: "A8 - Life Science",
+  },
+  {
+    value: "BasicAbility",
+    chinese_label: "基本能力課程",
+    english_label: "Basic Ability Course",
+  },
+  {
+    value: "Freshman",
+    chinese_label: "新生專題/新生講座課程(非通識)",
+    english_label: "Freshman Seminar/Lecture Course (Non-General Education)",
+  },
+] as const;
+export type GeneralCourseType = typeof generalCourseTypes[number]["value"];
 
 // for sorting
 export const sortOptions = [

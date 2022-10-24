@@ -7,6 +7,7 @@ import {
   EnrollMethodFilter,
   OtherLimitFilter,
   TargetGradeFilter,
+  GeneralCourseTypeFilter,
 } from "@/components/Filters/index";
 
 function SearchFilters(props: FlexProps) {
@@ -19,6 +20,7 @@ function SearchFilters(props: FlexProps) {
       <EnrollMethodFilter />
       <TargetGradeFilter />
       <OtherLimitFilter />
+      <GeneralCourseTypeFilter />
       {isFiltersEdited ? (
         <Box
           sx={{

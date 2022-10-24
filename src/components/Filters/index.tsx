@@ -22,6 +22,8 @@ import {
   Grade,
   otherLimits,
   OtherLimit,
+  GeneralCourseType,
+  generalCourseTypes,
 } from "types/search";
 import {
   isEnrollMethodFilterActive,
@@ -142,7 +144,7 @@ function FilterDropdown(props: {
         </Flex>
       )}
     >
-      <Flex flexDirection={"column"} p={6}>
+      <Flex flexDirection={"column"} p={6} whiteSpace="nowrap">
         {children}
       </Flex>
     </Dropdown>
@@ -406,6 +408,74 @@ export function OtherLimitFilter() {
                 ))}
               </Stack>
             </React.Fragment>
+          );
+        })}
+      </Stack>
+    </FilterDropdown>
+  );
+}
+
+export function GeneralCourseTypeFilter() {
+  const { searchFilters, setSearchFilters, setPageIndex } =
+    useCourseSearchingContext();
+  const [selectedGeneralCourseType, setSelectedGeneralCourseType] = useState<
+    GeneralCourseType[]
+  >(searchFilters.general_course_type);
+  const backToFirstPage = () => {
+    setPageIndex(0);
+  };
+
+  return (
+    <FilterDropdown
+      title={`課程類別${
+        searchFilters.general_course_type.length > 0
+          ? ` (${searchFilters.general_course_type.length})`
+          : ""
+      }`}
+      onClick={() => {
+        setSelectedGeneralCourseType(searchFilters.general_course_type);
+      }}
+      onSave={() => {
+        setSearchFilters({
+          ...searchFilters,
+          general_course_type: selectedGeneralCourseType,
+        });
+        backToFirstPage();
+      }}
+      onClear={() => {
+        setSelectedGeneralCourseType([]);
+      }}
+      isEmpty={selectedGeneralCourseType.length === 0}
+      isActive={searchFilters.general_course_type.length > 0}
+    >
+      <Stack
+        spacing={3}
+        sx={{
+          fontSize: "14px",
+          lineHeight: "20px",
+          fontWeight: 500,
+          color: "#666666",
+          letterSpacing: "0.05em",
+        }}
+        w="fit-content"
+        gap={1}
+      >
+        {generalCourseTypes.map((courseType) => {
+          return (
+            <Checkbox
+              key={courseType.value}
+              isChecked={selectedGeneralCourseType.includes(courseType.value)}
+              onChange={() => {
+                setSelectedGeneralCourseType(
+                  getNextCheckListState(
+                    selectedGeneralCourseType,
+                    courseType.value
+                  )
+                );
+              }}
+            >
+              {courseType.chinese_label}
+            </Checkbox>
           );
         })}
       </Stack>

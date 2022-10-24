@@ -48,6 +48,17 @@ interface CourseSearchingContextType {
   searchCallback: () => void;
 }
 
+const emptyFilterObject: Filter = {
+  time: [[], [], [], [], [], [], []],
+  department: [],
+  target_grade: [],
+  enroll_method: [],
+  other_limit: [],
+  general_course_type: [],
+  is_full_year: null,
+  is_selective: null,
+};
+
 const CourseSearchingContext = createContext<CourseSearchingContextType>({
   search: "",
   numOfPages: 0,
@@ -63,15 +74,7 @@ const CourseSearchingContext = createContext<CourseSearchingContextType>({
     sync_add_to_nol: false,
     strict_search_mode: false,
   },
-  searchFilters: {
-    time: [[], [], [], [], [], [], []],
-    department: [],
-    target_grade: [],
-    enroll_method: [],
-    other_limit: [],
-    is_full_year: null,
-    is_selective: null,
-  },
+  searchFilters: emptyFilterObject,
   searchSemester: "",
   searchMode: {
     id: "fast",
@@ -125,15 +128,7 @@ const CourseSearchingProvider: React.FC<{
     sync_add_to_nol: false,
     strict_search_mode: false,
   });
-  const [searchFilters, setSearchFilters] = useState<Filter>({
-    time: [[], [], [], [], [], [], []],
-    department: [],
-    target_grade: [],
-    enroll_method: [],
-    other_limit: [],
-    is_full_year: null,
-    is_selective: null,
-  });
+  const [searchFilters, setSearchFilters] = useState<Filter>(emptyFilterObject);
   const [searchSemester, setSearchSemester] = useState(
     process.env.NEXT_PUBLIC_SEMESTER ?? null
   );
@@ -147,15 +142,7 @@ const CourseSearchingProvider: React.FC<{
   };
 
   const resetFilters = () => {
-    setSearchFilters({
-      time: [[], [], [], [], [], [], []],
-      department: [],
-      target_grade: [],
-      enroll_method: [],
-      other_limit: [],
-      is_full_year: null,
-      is_selective: null,
-    });
+    setSearchFilters(emptyFilterObject);
   };
 
   const isFiltersEdited =
