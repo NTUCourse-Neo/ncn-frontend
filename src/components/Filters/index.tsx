@@ -28,6 +28,8 @@ import {
   commonTargetDepartments,
   CommonCourseType,
   commonCourseTypes,
+  PeArmyCourseType,
+  peArmyCourseTypes,
 } from "types/search";
 import {
   isEnrollMethodFilterActive,
@@ -606,6 +608,69 @@ export function CommonCourseTypeFilter() {
               onChange={() => {
                 setSelectedCommonCourseType(
                   getNextCheckListState(selectedCommonCourseType, ctype.value)
+                );
+              }}
+            >
+              {`${ctype.chinese_label}`}
+            </Checkbox>
+          );
+        })}
+      </Stack>
+    </FilterDropdown>
+  );
+}
+
+export function PeArmyCourseTypeFilter() {
+  const { searchFilters, setSearchFilters, setPageIndex } =
+    useCourseSearchingContext();
+  const [selectedPeArmyCourseType, setSelectedPeArmyCourseType] = useState<
+    PeArmyCourseType[]
+  >(searchFilters.pearmy_course_type);
+  const backToFirstPage = () => {
+    setPageIndex(0);
+  };
+
+  return (
+    <FilterDropdown
+      title={`課程類別${
+        searchFilters.pearmy_course_type.length > 0
+          ? ` (${searchFilters.pearmy_course_type.length})`
+          : ``
+      }`}
+      onClick={() => {
+        setSelectedPeArmyCourseType(searchFilters.pearmy_course_type);
+      }}
+      onSave={() => {
+        setSearchFilters({
+          ...searchFilters,
+          pearmy_course_type: selectedPeArmyCourseType,
+        });
+        backToFirstPage();
+      }}
+      onClear={() => {
+        setSelectedPeArmyCourseType([]);
+      }}
+      isEmpty={selectedPeArmyCourseType.length === 0}
+      isActive={searchFilters.pearmy_course_type.length > 0}
+    >
+      <Stack
+        spacing={3}
+        sx={{
+          fontSize: "14px",
+          lineHeight: "20px",
+          fontWeight: 500,
+          color: "#666666",
+          letterSpacing: "0.05em",
+        }}
+      >
+        {peArmyCourseTypes.map((ctype) => {
+          return (
+            <Checkbox
+              key={ctype.value}
+              isChecked={selectedPeArmyCourseType.includes(ctype.value)}
+              onChange={() => {
+                setSelectedPeArmyCourseType(
+                  getNextCheckListState(selectedPeArmyCourseType, ctype.value)
                 );
               }}
             >

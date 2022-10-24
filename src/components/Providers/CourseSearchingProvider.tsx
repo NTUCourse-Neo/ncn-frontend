@@ -57,6 +57,7 @@ const emptyFilterObject: Filter = {
   general_course_type: [],
   common_target_department: [],
   common_course_type: [],
+  pearmy_course_type: [],
   is_full_year: null,
   is_selective: null,
 };

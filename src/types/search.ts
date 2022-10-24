@@ -9,6 +9,7 @@ export type Filter = {
   general_course_type: GeneralCourseType[];
   common_target_department: CommonTargetDepartment[];
   common_course_type: CommonCourseType[];
+  pearmy_course_type: PeArmyCourseType[];
   is_full_year: boolean | null;
   is_selective: boolean | null;
 };
@@ -247,6 +248,31 @@ export const commonCourseTypes = [
   },
 ] as const;
 export type CommonCourseType = typeof commonCourseTypes[number]["value"];
+
+// PE/Army course type
+export const peArmyCourseTypes = [
+  {
+    chinese_label: "健康體適能",
+    value: "health",
+  },
+  {
+    chinese_label: "專項運動學群",
+    value: "special_sport",
+  },
+  {
+    chinese_label: "選修體育",
+    value: "elective_pe",
+  },
+  {
+    chinese_label: "校隊體育",
+    value: "school_team_pe",
+  },
+  {
+    chinese_label: "國防教育",
+    value: "army",
+  },
+] as const;
+export type PeArmyCourseType = typeof peArmyCourseTypes[number]["value"];
 
 // for sorting
 export const sortOptions = [
