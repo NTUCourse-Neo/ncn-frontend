@@ -150,21 +150,153 @@ function FilterDropdown(props: {
   );
 }
 
-function SearchFilters(props: FlexProps) {
-  const {
-    searchFilters,
-    setSearchFilters,
-    resetFilters,
-    isFiltersEdited,
-    setPageIndex,
-  } = useCourseSearchingContext();
+function EnrollMethodFilter() {
+  const { searchFilters, setSearchFilters, setPageIndex } =
+    useCourseSearchingContext();
 
   const [selectedEnrollMethod, setSelectedEnrollMethod] = useState<
     EnrollMethod[]
   >(searchFilters.enroll_method);
+  const backToFirstPage = () => {
+    setPageIndex(0);
+  };
+
+  return (
+    <FilterDropdown
+      title={`加選方式${
+        isEnrollMethodFilterActive(searchFilters.enroll_method)
+          ? ` (${[...searchFilters.enroll_method].sort().join(", ")})`
+          : ""
+      }`}
+      onClick={() => {
+        setSelectedEnrollMethod(searchFilters.enroll_method);
+      }}
+      onSave={() => {
+        setSearchFilters({
+          ...searchFilters,
+          enroll_method: selectedEnrollMethod,
+        });
+        backToFirstPage();
+      }}
+      onClear={() => {
+        setSelectedEnrollMethod([]);
+      }}
+      isEmpty={selectedEnrollMethod.length === 0}
+      isActive={isEnrollMethodFilterActive(searchFilters.enroll_method)}
+    >
+      <Stack
+        w="280px"
+        spacing={3}
+        sx={{
+          fontSize: "14px",
+          lineHeight: "20px",
+          fontWeight: 500,
+          color: "#666666",
+          letterSpacing: "0.05em",
+        }}
+      >
+        <Checkbox
+          isChecked={selectedEnrollMethod.includes("1")}
+          onChange={() => {
+            setSelectedEnrollMethod(
+              getNextCheckListState(selectedEnrollMethod, "1")
+            );
+          }}
+        >
+          1 - 不限人數，直接上網加選
+        </Checkbox>
+        <Checkbox
+          isChecked={selectedEnrollMethod.includes("2")}
+          onChange={() => {
+            setSelectedEnrollMethod(
+              getNextCheckListState(selectedEnrollMethod, "2")
+            );
+          }}
+        >
+          2 - 向教師取得授權碼後加選
+        </Checkbox>
+        <Checkbox
+          isChecked={selectedEnrollMethod.includes("3")}
+          onChange={() => {
+            setSelectedEnrollMethod(
+              getNextCheckListState(selectedEnrollMethod, "3")
+            );
+          }}
+        >
+          3 - 有人數限制，上網登記後分發
+        </Checkbox>
+      </Stack>
+    </FilterDropdown>
+  );
+}
+
+function TargetGradeFilter() {
+  const { searchFilters, setSearchFilters, setPageIndex } =
+    useCourseSearchingContext();
   const [selectedTargetGrade, setSelectedTargetGrade] = useState<Grade[]>(
     searchFilters.target_grade
   );
+  const backToFirstPage = () => {
+    setPageIndex(0);
+  };
+
+  return (
+    <FilterDropdown
+      title={`限修年級${
+        isTargetGradeFilterActive(searchFilters.target_grade)
+          ? ` (${searchFilters.target_grade.length})`
+          : ""
+      }`}
+      onClick={() => {
+        setSelectedTargetGrade(searchFilters.target_grade);
+      }}
+      onSave={() => {
+        setSearchFilters({
+          ...searchFilters,
+          target_grade: selectedTargetGrade,
+        });
+        backToFirstPage();
+      }}
+      onClear={() => {
+        setSelectedTargetGrade([]);
+      }}
+      isEmpty={selectedTargetGrade.length === 0}
+      isActive={isTargetGradeFilterActive(searchFilters.target_grade)}
+    >
+      <Stack
+        spacing={3}
+        sx={{
+          fontSize: "14px",
+          lineHeight: "20px",
+          fontWeight: 500,
+          color: "#666666",
+          letterSpacing: "0.05em",
+        }}
+        w="fit-content"
+      >
+        {grades.map((grade) => {
+          return (
+            <Checkbox
+              key={grade.value}
+              isChecked={selectedTargetGrade.includes(grade.value)}
+              onChange={() => {
+                setSelectedTargetGrade(
+                  getNextCheckListState(selectedTargetGrade, grade.value)
+                );
+              }}
+            >
+              {grade.label}
+            </Checkbox>
+          );
+        })}
+      </Stack>
+    </FilterDropdown>
+  );
+}
+
+function OtherLimitFilter() {
+  const { searchFilters, setSearchFilters, setPageIndex } =
+    useCourseSearchingContext();
   const [selectedOtherLimit, setSelectedOtherLimit] = useState<OtherLimit[]>(
     searchFilters.other_limit
   );
@@ -175,6 +307,82 @@ function SearchFilters(props: FlexProps) {
   const backToFirstPage = () => {
     setPageIndex(0);
   };
+
+  return (
+    <FilterDropdown
+      title={`其他限制${
+        searchFilters.other_limit.length > 0
+          ? ` (${searchFilters.other_limit.length})`
+          : ``
+      }`}
+      onClick={() => {
+        setSelectedOtherLimit(searchFilters.other_limit);
+      }}
+      onSave={() => {
+        setSearchFilters({
+          ...searchFilters,
+          other_limit: selectedOtherLimit,
+        });
+        backToFirstPage();
+      }}
+      onClear={() => {
+        setSelectedOtherLimit([]);
+      }}
+      isEmpty={selectedOtherLimit.length === 0}
+      isActive={searchFilters.other_limit.length > 0}
+    >
+      <Stack
+        spacing={3}
+        sx={{
+          fontSize: "14px",
+          lineHeight: "20px",
+          fontWeight: 500,
+          color: "#666666",
+          letterSpacing: "0.05em",
+        }}
+        w="300px"
+      >
+        {Object.entries(otherLimitsGroupByType).map(([type, limits], index) => {
+          return (
+            <React.Fragment key={type}>
+              {index !== 0 ? <Divider /> : null}
+              <Stack spacing={3} w="fit-content">
+                <Text
+                  sx={{
+                    fontSize: "16px",
+                    lineHeight: "21px",
+                    fontWeight: 600,
+                  }}
+                >
+                  {type}
+                </Text>
+                {limits.map((limit) => (
+                  <Checkbox
+                    key={limit.label}
+                    isDisabled={!limit.avaliable}
+                    isChecked={selectedOtherLimit.includes(limit.value)}
+                    onChange={() => {
+                      setSelectedOtherLimit(
+                        getNextCheckListState(selectedOtherLimit, limit.value)
+                      );
+                    }}
+                  >
+                    {limit.label}{" "}
+                    {!limit.avaliable ? <Badge>即將推出</Badge> : null}
+                  </Checkbox>
+                ))}
+              </Stack>
+            </React.Fragment>
+          );
+        })}
+      </Stack>
+    </FilterDropdown>
+  );
+}
+
+function SearchFilters(props: FlexProps) {
+  const { searchFilters, resetFilters, isFiltersEdited } =
+    useCourseSearchingContext();
 
   return (
     <Flex alignItems={"center"} flexWrap="wrap" gap="3" {...props}>
@@ -200,194 +408,9 @@ function SearchFilters(props: FlexProps) {
           searchFilters.is_selective !== null
         }
       />
-      <FilterDropdown
-        title={`加選方式${
-          isEnrollMethodFilterActive(searchFilters.enroll_method)
-            ? ` (${[...searchFilters.enroll_method].sort().join(", ")})`
-            : ""
-        }`}
-        onClick={() => {
-          setSelectedEnrollMethod(searchFilters.enroll_method);
-        }}
-        onSave={() => {
-          setSearchFilters({
-            ...searchFilters,
-            enroll_method: selectedEnrollMethod,
-          });
-          backToFirstPage();
-        }}
-        onClear={() => {
-          setSelectedEnrollMethod([]);
-        }}
-        isEmpty={selectedEnrollMethod.length === 0}
-        isActive={isEnrollMethodFilterActive(searchFilters.enroll_method)}
-      >
-        <Stack
-          w="280px"
-          spacing={3}
-          sx={{
-            fontSize: "14px",
-            lineHeight: "20px",
-            fontWeight: 500,
-            color: "#666666",
-            letterSpacing: "0.05em",
-          }}
-        >
-          <Checkbox
-            isChecked={selectedEnrollMethod.includes("1")}
-            onChange={() => {
-              setSelectedEnrollMethod(
-                getNextCheckListState(selectedEnrollMethod, "1")
-              );
-            }}
-          >
-            1 - 不限人數，直接上網加選
-          </Checkbox>
-          <Checkbox
-            isChecked={selectedEnrollMethod.includes("2")}
-            onChange={() => {
-              setSelectedEnrollMethod(
-                getNextCheckListState(selectedEnrollMethod, "2")
-              );
-            }}
-          >
-            2 - 向教師取得授權碼後加選
-          </Checkbox>
-          <Checkbox
-            isChecked={selectedEnrollMethod.includes("3")}
-            onChange={() => {
-              setSelectedEnrollMethod(
-                getNextCheckListState(selectedEnrollMethod, "3")
-              );
-            }}
-          >
-            3 - 有人數限制，上網登記後分發
-          </Checkbox>
-        </Stack>
-      </FilterDropdown>
-      <FilterDropdown
-        title={`限修年級${
-          isTargetGradeFilterActive(searchFilters.target_grade)
-            ? ` (${searchFilters.target_grade.length})`
-            : ""
-        }`}
-        onClick={() => {
-          setSelectedTargetGrade(searchFilters.target_grade);
-        }}
-        onSave={() => {
-          setSearchFilters({
-            ...searchFilters,
-            target_grade: selectedTargetGrade,
-          });
-          backToFirstPage();
-        }}
-        onClear={() => {
-          setSelectedTargetGrade([]);
-        }}
-        isEmpty={selectedTargetGrade.length === 0}
-        isActive={isTargetGradeFilterActive(searchFilters.target_grade)}
-      >
-        <Stack
-          spacing={3}
-          sx={{
-            fontSize: "14px",
-            lineHeight: "20px",
-            fontWeight: 500,
-            color: "#666666",
-            letterSpacing: "0.05em",
-          }}
-          w="fit-content"
-        >
-          {grades.map((grade) => {
-            return (
-              <Checkbox
-                key={grade.value}
-                isChecked={selectedTargetGrade.includes(grade.value)}
-                onChange={() => {
-                  setSelectedTargetGrade(
-                    getNextCheckListState(selectedTargetGrade, grade.value)
-                  );
-                }}
-              >
-                {grade.label}
-              </Checkbox>
-            );
-          })}
-        </Stack>
-      </FilterDropdown>
-      <FilterDropdown
-        title={`其他限制${
-          searchFilters.other_limit.length > 0
-            ? ` (${searchFilters.other_limit.length})`
-            : ``
-        }`}
-        onClick={() => {
-          setSelectedOtherLimit(searchFilters.other_limit);
-        }}
-        onSave={() => {
-          setSearchFilters({
-            ...searchFilters,
-            other_limit: selectedOtherLimit,
-          });
-          backToFirstPage();
-        }}
-        onClear={() => {
-          setSelectedOtherLimit([]);
-        }}
-        isEmpty={selectedOtherLimit.length === 0}
-        isActive={searchFilters.other_limit.length > 0}
-      >
-        <Stack
-          spacing={3}
-          sx={{
-            fontSize: "14px",
-            lineHeight: "20px",
-            fontWeight: 500,
-            color: "#666666",
-            letterSpacing: "0.05em",
-          }}
-          w="300px"
-        >
-          {Object.entries(otherLimitsGroupByType).map(
-            ([type, limits], index) => {
-              return (
-                <React.Fragment key={type}>
-                  {index !== 0 ? <Divider /> : null}
-                  <Stack spacing={3} w="fit-content">
-                    <Text
-                      sx={{
-                        fontSize: "16px",
-                        lineHeight: "21px",
-                        fontWeight: 600,
-                      }}
-                    >
-                      {type}
-                    </Text>
-                    {limits.map((limit) => (
-                      <Checkbox
-                        key={limit.label}
-                        isDisabled={!limit.avaliable}
-                        isChecked={selectedOtherLimit.includes(limit.value)}
-                        onChange={() => {
-                          setSelectedOtherLimit(
-                            getNextCheckListState(
-                              selectedOtherLimit,
-                              limit.value
-                            )
-                          );
-                        }}
-                      >
-                        {limit.label}{" "}
-                        {!limit.avaliable ? <Badge>即將推出</Badge> : null}
-                      </Checkbox>
-                    ))}
-                  </Stack>
-                </React.Fragment>
-              );
-            }
-          )}
-        </Stack>
-      </FilterDropdown>
+      <EnrollMethodFilter />
+      <TargetGradeFilter />
+      <OtherLimitFilter />
       {isFiltersEdited ? (
         <Box
           sx={{
