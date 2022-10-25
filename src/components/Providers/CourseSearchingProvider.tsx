@@ -1,9 +1,25 @@
 import searchModeList, { SearchMode } from "@/data/searchMode";
-import React, { createContext, useContext, useState, useRef } from "react";
-import type { SearchFieldName, Filter, SortOption } from "types/search";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useRef,
+  useMemo,
+  useCallback,
+} from "react";
+import type {
+  SearchFieldName,
+  Filter,
+  SortOption,
+  FilterType,
+} from "types/search";
 import {
   isEnrollMethodFilterActive,
   isTargetGradeFilterActive,
+  isGeneralCourseTypeFilterActive,
+  isCommonCourseTypeFilterActive,
+  isCommonTargetDeptFilterActive,
+  isPeArmyCourseTypeFilterActive,
 } from "utils/searchFilter";
 import { mapStateToIntervals } from "utils/timeTableConverter";
 
@@ -44,6 +60,7 @@ interface CourseSearchingContextType {
   dispatchSearch: (search: string | null) => void;
   resetFilters: () => void;
   isFiltersEdited: boolean;
+  isFilterEdited: (filterType: FilterType) => boolean;
   searchPageTopRef: React.RefObject<HTMLDivElement>;
   searchCallback: () => void;
 }
@@ -63,6 +80,8 @@ const emptyFilterObject: Filter = {
   is_selective: null,
 };
 
+const defaultSearchMode = searchModeList[0];
+
 const CourseSearchingContext = createContext<CourseSearchingContextType>({
   search: "",
   numOfPages: 0,
@@ -80,12 +99,9 @@ const CourseSearchingContext = createContext<CourseSearchingContextType>({
   },
   searchFilters: emptyFilterObject,
   searchSemester: "",
-  searchMode: {
-    id: "fast",
-    chinese: "快速搜尋",
-    english: "Quick Search",
-  },
+  searchMode: defaultSearchMode,
   isSearchBoxInView: true,
+  isFilterEdited: () => false,
   isFiltersEdited: false,
   sortOption: "correlation",
   searchPageTopRef: React.createRef(),
@@ -149,14 +165,67 @@ const CourseSearchingProvider: React.FC<{
     setSearchFilters(emptyFilterObject);
   };
 
-  const isFiltersEdited =
-    mapStateToIntervals(searchFilters.time) > 0 ||
-    searchFilters.department.length > 0 ||
-    isEnrollMethodFilterActive(searchFilters.enroll_method) ||
-    isTargetGradeFilterActive(searchFilters.target_grade) ||
-    searchFilters.other_limit.length > 0 ||
-    searchFilters.is_full_year !== null ||
-    searchFilters.is_selective !== null;
+  const isFilterEdited = useCallback(
+    (filterId: FilterType) => {
+      // enumerate all the filter types
+      switch (filterId) {
+        case "time": {
+          return (
+            mapStateToIntervals(searchFilters.time) > 0 ||
+            searchFilters.is_full_year !== null
+          );
+        }
+        case "dept": {
+          return (
+            searchFilters.department.length > 0 ||
+            searchFilters.is_selective !== null
+          );
+        }
+        case "enroll_method": {
+          return isEnrollMethodFilterActive(searchFilters.enroll_method);
+        }
+        case "target_grade": {
+          return isTargetGradeFilterActive(searchFilters.target_grade);
+        }
+        case "other_limit": {
+          return searchFilters.other_limit.length > 0;
+        }
+        case "general_course_type": {
+          return isGeneralCourseTypeFilterActive(
+            searchFilters.general_course_type
+          );
+        }
+        case "common_target_dept": {
+          return isCommonTargetDeptFilterActive(
+            searchFilters.common_target_department
+          );
+        }
+        case "common_course_type": {
+          return isCommonCourseTypeFilterActive(
+            searchFilters.common_course_type
+          );
+        }
+        case "pearmy_course_type": {
+          return isPeArmyCourseTypeFilterActive(
+            searchFilters.pearmy_course_type
+          );
+        }
+        case "host_college": {
+          return searchFilters.host_college.length > 0;
+        }
+        default: {
+          return false;
+        }
+      }
+    },
+    [searchFilters]
+  );
+
+  const isFiltersEdited = useMemo(() => {
+    return Object.values(searchMode.filters).some((filterId) =>
+      isFilterEdited(filterId)
+    );
+  }, [searchMode, isFilterEdited]);
 
   const searchPageTopRef = useRef<HTMLDivElement>(null);
   const searchCallback = () => {
@@ -183,6 +252,7 @@ const CourseSearchingProvider: React.FC<{
         searchSemester,
         searchMode,
         isSearchBoxInView,
+        isFilterEdited,
         isFiltersEdited,
         sortOption,
         searchPageTopRef,

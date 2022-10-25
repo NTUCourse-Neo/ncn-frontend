@@ -33,10 +33,6 @@ import {
   HostCollege,
   hostColleges,
 } from "types/search";
-import {
-  isEnrollMethodFilterActive,
-  isTargetGradeFilterActive,
-} from "utils/searchFilter";
 import _ from "lodash";
 import Dropdown from "@/components/Dropdown";
 
@@ -160,7 +156,7 @@ function FilterDropdown(props: {
 }
 
 export function TimeFilter() {
-  const { searchFilters } = useCourseSearchingContext();
+  const { searchFilters, isFilterEdited } = useCourseSearchingContext();
   return (
     <TimeFilterModal
       title={`上課時間${
@@ -168,16 +164,13 @@ export function TimeFilter() {
           ? ""
           : ` (${mapStateToIntervals(searchFilters.time)})`
       }`}
-      isActive={
-        mapStateToIntervals(searchFilters.time) > 0 ||
-        searchFilters.is_full_year !== null
-      }
+      isActive={isFilterEdited("time")}
     />
   );
 }
 
 export function DeptFilter() {
-  const { searchFilters } = useCourseSearchingContext();
+  const { searchFilters, isFilterEdited } = useCourseSearchingContext();
   return (
     <DeptFilterModal
       title={`開課系所${
@@ -185,16 +178,13 @@ export function DeptFilter() {
           ? ` (${searchFilters.department.length})`
           : ""
       }`}
-      isActive={
-        searchFilters.department.length > 0 ||
-        searchFilters.is_selective !== null
-      }
+      isActive={isFilterEdited("dept")}
     />
   );
 }
 
 export function EnrollMethodFilter() {
-  const { searchFilters, setSearchFilters, setPageIndex } =
+  const { searchFilters, setSearchFilters, setPageIndex, isFilterEdited } =
     useCourseSearchingContext();
 
   const [selectedEnrollMethod, setSelectedEnrollMethod] = useState<
@@ -207,7 +197,7 @@ export function EnrollMethodFilter() {
   return (
     <FilterDropdown
       title={`加選方式${
-        isEnrollMethodFilterActive(searchFilters.enroll_method)
+        isFilterEdited("enroll_method")
           ? ` (${[...searchFilters.enroll_method].sort().join(", ")})`
           : ""
       }`}
@@ -225,7 +215,7 @@ export function EnrollMethodFilter() {
         setSelectedEnrollMethod([]);
       }}
       isEmpty={selectedEnrollMethod.length === 0}
-      isActive={isEnrollMethodFilterActive(searchFilters.enroll_method)}
+      isActive={isFilterEdited("enroll_method")}
     >
       <Stack
         w="280px"
@@ -274,7 +264,7 @@ export function EnrollMethodFilter() {
 }
 
 export function TargetGradeFilter() {
-  const { searchFilters, setSearchFilters, setPageIndex } =
+  const { searchFilters, setSearchFilters, setPageIndex, isFilterEdited } =
     useCourseSearchingContext();
   const [selectedTargetGrade, setSelectedTargetGrade] = useState<Grade[]>(
     searchFilters.target_grade
@@ -286,7 +276,7 @@ export function TargetGradeFilter() {
   return (
     <FilterDropdown
       title={`限修年級${
-        isTargetGradeFilterActive(searchFilters.target_grade)
+        isFilterEdited("target_grade")
           ? ` (${searchFilters.target_grade.length})`
           : ""
       }`}
@@ -304,7 +294,7 @@ export function TargetGradeFilter() {
         setSelectedTargetGrade([]);
       }}
       isEmpty={selectedTargetGrade.length === 0}
-      isActive={isTargetGradeFilterActive(searchFilters.target_grade)}
+      isActive={isFilterEdited("target_grade")}
     >
       <Stack
         spacing={3}
@@ -338,7 +328,7 @@ export function TargetGradeFilter() {
 }
 
 export function OtherLimitFilter() {
-  const { searchFilters, setSearchFilters, setPageIndex } =
+  const { searchFilters, setSearchFilters, setPageIndex, isFilterEdited } =
     useCourseSearchingContext();
   const [selectedOtherLimit, setSelectedOtherLimit] = useState<OtherLimit[]>(
     searchFilters.other_limit
@@ -354,7 +344,7 @@ export function OtherLimitFilter() {
   return (
     <FilterDropdown
       title={`其他限制${
-        searchFilters.other_limit.length > 0
+        isFilterEdited("other_limit")
           ? ` (${searchFilters.other_limit.length})`
           : ``
       }`}
@@ -372,7 +362,7 @@ export function OtherLimitFilter() {
         setSelectedOtherLimit([]);
       }}
       isEmpty={selectedOtherLimit.length === 0}
-      isActive={searchFilters.other_limit.length > 0}
+      isActive={isFilterEdited("other_limit")}
     >
       <Stack
         spacing={3}
@@ -424,7 +414,7 @@ export function OtherLimitFilter() {
 }
 
 export function GeneralCourseTypeFilter() {
-  const { searchFilters, setSearchFilters, setPageIndex } =
+  const { searchFilters, setSearchFilters, setPageIndex, isFilterEdited } =
     useCourseSearchingContext();
   const [selectedGeneralCourseType, setSelectedGeneralCourseType] = useState<
     GeneralCourseType[]
@@ -436,7 +426,7 @@ export function GeneralCourseTypeFilter() {
   return (
     <FilterDropdown
       title={`課程類別${
-        searchFilters.general_course_type.length > 0
+        isFilterEdited("general_course_type")
           ? ` (${searchFilters.general_course_type.length})`
           : ""
       }`}
@@ -454,7 +444,7 @@ export function GeneralCourseTypeFilter() {
         setSelectedGeneralCourseType([]);
       }}
       isEmpty={selectedGeneralCourseType.length === 0}
-      isActive={searchFilters.general_course_type.length > 0}
+      isActive={isFilterEdited("general_course_type")}
     >
       <Stack
         spacing={3}
@@ -492,7 +482,7 @@ export function GeneralCourseTypeFilter() {
 }
 
 export function CommonTargetDeptFilter() {
-  const { searchFilters, setSearchFilters, setPageIndex } =
+  const { searchFilters, setSearchFilters, setPageIndex, isFilterEdited } =
     useCourseSearchingContext();
   const [selectedCommonTargetDepartment, setSelectedCommonTargetDepartment] =
     useState<CommonTargetDepartment[]>(searchFilters.common_target_department);
@@ -503,7 +493,7 @@ export function CommonTargetDeptFilter() {
   return (
     <FilterDropdown
       title={`授課對象${
-        searchFilters.common_target_department.length > 0
+        isFilterEdited("common_target_dept")
           ? ` (${searchFilters.common_target_department.length})`
           : ``
       }`}
@@ -523,7 +513,7 @@ export function CommonTargetDeptFilter() {
         setSelectedCommonTargetDepartment([]);
       }}
       isEmpty={selectedCommonTargetDepartment.length === 0}
-      isActive={searchFilters.common_target_department.length > 0}
+      isActive={isFilterEdited("common_target_dept")}
     >
       <Stack
         spacing={3}
@@ -560,7 +550,7 @@ export function CommonTargetDeptFilter() {
 }
 
 export function CommonCourseTypeFilter() {
-  const { searchFilters, setSearchFilters, setPageIndex } =
+  const { searchFilters, setSearchFilters, setPageIndex, isFilterEdited } =
     useCourseSearchingContext();
   const [selectedCommonCourseType, setSelectedCommonCourseType] = useState<
     CommonCourseType[]
@@ -572,7 +562,7 @@ export function CommonCourseTypeFilter() {
   return (
     <FilterDropdown
       title={`領域別${
-        searchFilters.common_course_type.length > 0
+        isFilterEdited("common_course_type")
           ? ` (${searchFilters.common_course_type.length})`
           : ``
       }`}
@@ -590,7 +580,7 @@ export function CommonCourseTypeFilter() {
         setSelectedCommonCourseType([]);
       }}
       isEmpty={selectedCommonCourseType.length === 0}
-      isActive={searchFilters.common_course_type.length > 0}
+      isActive={isFilterEdited("common_course_type")}
     >
       <Stack
         spacing={3}
@@ -623,7 +613,7 @@ export function CommonCourseTypeFilter() {
 }
 
 export function PeArmyCourseTypeFilter() {
-  const { searchFilters, setSearchFilters, setPageIndex } =
+  const { searchFilters, setSearchFilters, setPageIndex, isFilterEdited } =
     useCourseSearchingContext();
   const [selectedPeArmyCourseType, setSelectedPeArmyCourseType] = useState<
     PeArmyCourseType[]
@@ -635,7 +625,7 @@ export function PeArmyCourseTypeFilter() {
   return (
     <FilterDropdown
       title={`課程類別${
-        searchFilters.pearmy_course_type.length > 0
+        isFilterEdited("pearmy_course_type")
           ? ` (${searchFilters.pearmy_course_type.length})`
           : ``
       }`}
@@ -653,7 +643,7 @@ export function PeArmyCourseTypeFilter() {
         setSelectedPeArmyCourseType([]);
       }}
       isEmpty={selectedPeArmyCourseType.length === 0}
-      isActive={searchFilters.pearmy_course_type.length > 0}
+      isActive={isFilterEdited("pearmy_course_type")}
     >
       <Stack
         spacing={3}
@@ -686,7 +676,7 @@ export function PeArmyCourseTypeFilter() {
 }
 
 export function HostCollegeFilter() {
-  const { searchFilters, setSearchFilters, setPageIndex } =
+  const { searchFilters, setSearchFilters, setPageIndex, isFilterEdited } =
     useCourseSearchingContext();
   const [selectedHostCollege, setSelectedHostCollege] = useState<HostCollege[]>(
     searchFilters.host_college
@@ -698,7 +688,7 @@ export function HostCollegeFilter() {
   return (
     <FilterDropdown
       title={`開課學校${
-        searchFilters.host_college.length > 0
+        isFilterEdited("host_college")
           ? ` (${searchFilters.host_college.length})`
           : ``
       }`}
@@ -716,7 +706,7 @@ export function HostCollegeFilter() {
         setSelectedHostCollege([]);
       }}
       isEmpty={selectedHostCollege.length === 0}
-      isActive={searchFilters.host_college.length > 0}
+      isActive={isFilterEdited("host_college")}
     >
       <Stack
         spacing={3}

@@ -1,4 +1,16 @@
 import { Interval } from "types/course";
+import {
+  TimeFilter,
+  DeptFilter,
+  EnrollMethodFilter,
+  OtherLimitFilter,
+  TargetGradeFilter,
+  GeneralCourseTypeFilter,
+  CommonTargetDeptFilter,
+  CommonCourseTypeFilter,
+  PeArmyCourseTypeFilter,
+  HostCollegeFilter,
+} from "@/components/Filters/index";
 
 export type Filter = {
   time: Interval[][];
@@ -286,6 +298,51 @@ export const hostColleges = [
   },
 ];
 export type HostCollege = typeof hostColleges[number]["value"];
+
+// All filters
+export const filters = {
+  time: {
+    id: "time",
+    component: <TimeFilter />,
+  },
+  dept: {
+    id: "dept",
+    component: <DeptFilter />,
+  },
+  enroll_method: {
+    id: "enroll_method",
+    component: <EnrollMethodFilter />,
+  },
+  other_limit: {
+    id: "other_limit",
+    component: <OtherLimitFilter />,
+  },
+  target_grade: {
+    id: "target_grade",
+    component: <TargetGradeFilter />,
+  },
+  general_course_type: {
+    id: "general_course_type",
+    component: <GeneralCourseTypeFilter />,
+  },
+  common_target_dept: {
+    id: "common_target_dept",
+    component: <CommonTargetDeptFilter />,
+  },
+  common_course_type: {
+    id: "common_course_type",
+    component: <CommonCourseTypeFilter />,
+  },
+  pearmy_course_type: {
+    id: "pearmy_course_type",
+    component: <PeArmyCourseTypeFilter />,
+  },
+  host_college: {
+    id: "host_college",
+    component: <HostCollegeFilter />,
+  },
+} as const;
+export type FilterType = keyof typeof filters;
 
 // for sorting
 export const sortOptions = [

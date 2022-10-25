@@ -1,34 +1,21 @@
 import { Flex, Box, FlexProps } from "@chakra-ui/react";
 import React from "react";
 import { useCourseSearchingContext } from "@/components/Providers/CourseSearchingProvider";
-import {
-  TimeFilter,
-  DeptFilter,
-  EnrollMethodFilter,
-  OtherLimitFilter,
-  TargetGradeFilter,
-  GeneralCourseTypeFilter,
-  CommonTargetDeptFilter,
-  CommonCourseTypeFilter,
-  PeArmyCourseTypeFilter,
-  HostCollegeFilter,
-} from "@/components/Filters/index";
+import { filters } from "@/types/search";
 
 function SearchFilters(props: FlexProps) {
-  const { resetFilters, isFiltersEdited } = useCourseSearchingContext();
+  const { resetFilters, isFiltersEdited, searchMode } =
+    useCourseSearchingContext();
 
   return (
     <Flex alignItems={"center"} flexWrap="wrap" gap="3" {...props}>
-      <TimeFilter />
-      <DeptFilter />
-      <EnrollMethodFilter />
-      <TargetGradeFilter />
-      <OtherLimitFilter />
-      <GeneralCourseTypeFilter />
-      <CommonTargetDeptFilter />
-      <CommonCourseTypeFilter />
-      <PeArmyCourseTypeFilter />
-      <HostCollegeFilter />
+      {searchMode.filters.map((filterId) => {
+        return (
+          <React.Fragment key={`${filterId}`}>
+            {filters?.[filterId]?.["component"] ?? null}
+          </React.Fragment>
+        );
+      })}
       {isFiltersEdited ? (
         <Box
           sx={{
