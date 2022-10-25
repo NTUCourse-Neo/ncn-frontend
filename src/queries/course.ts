@@ -7,41 +7,28 @@ import type {
   PTTData,
   CourseSyllabus,
 } from "types/course";
-import {
-  isEnrollMethodFilterActive,
-  isTargetGradeFilterActive,
-} from "@/utils/searchFilter";
-import { mapStateToIntervals } from "utils/timeTableConverter";
 const api_version = "v2";
+
+type NullableSearchFilterBase = {
+  [P in keyof Filter]: Filter[P] | null;
+};
+
+export interface NullableSearchFilter extends NullableSearchFilterBase {
+  strict_match: boolean;
+}
 
 export const fetchSearchResult = async (
   searchString: string,
   fields: SearchFieldName[],
-  filter_obj: Filter,
+  filter_obj: NullableSearchFilter,
   batchSize: number,
   offset: number,
-  semester: string,
-  strict_match_bool: boolean
+  semester: string
 ) => {
-  const filter = {
-    time: mapStateToIntervals(filter_obj.time) > 0 ? filter_obj.time : null,
-    department: filter_obj.department.length > 0 ? filter_obj.department : null,
-    target_grade: isTargetGradeFilterActive(filter_obj.target_grade)
-      ? filter_obj.target_grade
-      : null,
-    enroll_method: isEnrollMethodFilterActive(filter_obj.enroll_method)
-      ? filter_obj.enroll_method
-      : null,
-    other_limit:
-      filter_obj.other_limit.length > 0 ? filter_obj.other_limit : null,
-    is_full_year: filter_obj.is_full_year,
-    is_selective: filter_obj.is_selective,
-    strict_match: strict_match_bool,
-  };
   const { data } = await instance.post(`${api_version}/courses/search`, {
     keyword: searchString,
     fields: fields,
-    filter: filter,
+    filter: filter_obj,
     batch_size: batchSize,
     offset: offset,
     semester: semester,

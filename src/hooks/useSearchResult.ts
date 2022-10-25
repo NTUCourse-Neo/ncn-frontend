@@ -2,6 +2,78 @@ import useSWR from "swr";
 import { fetchSearchResult } from "queries/course";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { useToast } from "@chakra-ui/react";
+import type { NullableSearchFilter } from "queries/course";
+import { SearchMode } from "@/data/searchMode";
+import { Filter, FilterType } from "@/types/search";
+
+// generate filter for search API, only current searchMode-related filter will be used, otherwise null.
+// if it is not edited, then it will also be null
+function generateSearchAPIFilterObject(
+  searchMode: SearchMode,
+  searchFilters: Filter,
+  strict_match: boolean,
+  isFilterEdited: (filterId: FilterType) => boolean
+): NullableSearchFilter {
+  return {
+    time:
+      searchMode.filters.includes("time") && isFilterEdited("time")
+        ? searchFilters.time
+        : null,
+    department:
+      searchMode.filters.includes("dept") && isFilterEdited("dept")
+        ? searchFilters.department
+        : null,
+    enroll_method:
+      searchMode.filters.includes("enroll_method") &&
+      isFilterEdited("enroll_method")
+        ? searchFilters.enroll_method
+        : null,
+    target_grade:
+      searchMode.filters.includes("target_grade") &&
+      isFilterEdited("target_grade")
+        ? searchFilters.target_grade
+        : null,
+    other_limit:
+      searchMode.filters.includes("other_limit") &&
+      isFilterEdited("other_limit")
+        ? searchFilters.other_limit
+        : null,
+    general_course_type:
+      searchMode.filters.includes("general_course_type") &&
+      isFilterEdited("general_course_type")
+        ? searchFilters.general_course_type
+        : null,
+    common_target_department:
+      searchMode.filters.includes("common_target_dept") &&
+      isFilterEdited("common_target_dept")
+        ? searchFilters.common_target_department
+        : null,
+    common_course_type:
+      searchMode.filters.includes("common_course_type") &&
+      isFilterEdited("common_course_type")
+        ? searchFilters.common_course_type
+        : null,
+    pearmy_course_type:
+      searchMode.filters.includes("pearmy_course_type") &&
+      isFilterEdited("pearmy_course_type")
+        ? searchFilters.pearmy_course_type
+        : null,
+    host_college:
+      searchMode.filters.includes("host_college") &&
+      isFilterEdited("host_college")
+        ? searchFilters.host_college
+        : null,
+    is_full_year:
+      searchMode.filters.includes("time") && isFilterEdited("time")
+        ? searchFilters.is_full_year
+        : null,
+    is_selective:
+      searchMode.filters.includes("dept") && isFilterEdited("dept")
+        ? searchFilters.is_selective
+        : null,
+    strict_match: strict_match,
+  };
+}
 
 export default function useSearchResult(
   searchKeyword: string | null,
@@ -15,6 +87,8 @@ export default function useSearchResult(
     batchSize,
     searchSemester,
     sortOption,
+    searchMode,
+    isFilterEdited,
     setNumOfPages,
     setTotalCount,
     setSearchLoading,
@@ -38,14 +112,19 @@ export default function useSearchResult(
         throw new Error("Missing semester env variable");
       }
       setSearchLoading(true);
+      const filters = generateSearchAPIFilterObject(
+        searchMode,
+        searchFilters,
+        searchSettings.strict_search_mode,
+        isFilterEdited
+      );
       const coursesData = await fetchSearchResult(
         searchKeyword ?? "",
         searchColumns,
-        searchFilters,
+        filters,
         batchSize,
         pageIndex * batchSize,
-        searchSemester,
-        searchSettings.strict_search_mode
+        searchSemester
       );
       setSearchLoading(false);
       return coursesData;
