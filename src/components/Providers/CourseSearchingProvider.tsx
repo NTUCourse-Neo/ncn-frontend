@@ -76,6 +76,7 @@ const emptyFilterObject: Filter = {
   common_course_type: [],
   pearmy_course_type: [],
   host_college: [],
+  program: [],
   is_full_year: null,
   is_selective: null,
 };
@@ -212,6 +213,9 @@ const CourseSearchingProvider: React.FC<{
         }
         case "host_college": {
           return searchFilters.host_college.length > 0;
+        }
+        case "program": {
+          return searchFilters.program.length > 0;
         }
         default: {
           return false;

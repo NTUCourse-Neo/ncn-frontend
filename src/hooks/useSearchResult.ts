@@ -63,6 +63,10 @@ function generateSearchAPIFilterObject(
       isFilterEdited("host_college")
         ? searchFilters.host_college
         : null,
+    program:
+      searchMode.filters.includes("program") && isFilterEdited("program")
+        ? searchFilters.program
+        : null,
     is_full_year:
       searchMode.filters.includes("time") && isFilterEdited("time")
         ? searchFilters.is_full_year

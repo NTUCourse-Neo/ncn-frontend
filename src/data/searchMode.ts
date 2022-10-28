@@ -61,7 +61,7 @@ const searchModeList: SearchMode[] = [
     id: "program",
     chinese: "學分學程",
     english: "Program",
-    filters: ["time", "enroll_method", "other_limit"],
+    filters: ["time", "program", "enroll_method", "other_limit"],
   },
   {
     id: "expertise",

@@ -13,6 +13,7 @@ import {
 import React, { useState } from "react";
 import TimeFilterModal from "@/components/Filters/TimeFilterModal";
 import DeptFilterModal from "@/components/Filters/DeptFilterModal";
+import ProgramFilterModal from "@/components/Filters/ProgramFilterModal";
 import { FaChevronDown } from "react-icons/fa";
 import { mapStateToIntervals } from "utils/timeTableConverter";
 import { useCourseSearchingContext } from "@/components/Providers/CourseSearchingProvider";
@@ -179,6 +180,18 @@ export function DeptFilter() {
           : ""
       }`}
       isActive={isFilterEdited("dept")}
+    />
+  );
+}
+
+export function ProgramFilter() {
+  const { searchFilters, isFilterEdited } = useCourseSearchingContext();
+  return (
+    <ProgramFilterModal
+      title={`開課學程${
+        isFilterEdited("program") ? ` (${searchFilters.program.length})` : ""
+      }`}
+      isActive={isFilterEdited("program")}
     />
   );
 }
