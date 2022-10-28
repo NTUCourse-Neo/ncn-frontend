@@ -75,6 +75,7 @@ export default function ProgramFilterModal(props: ProgramFilterModalProps) {
         </Flex>
         <Divider pt={2} />
         {programs
+          .filter((p) => p.chinese_label.includes(searchString.trim()))
           .filter((p) => !selectedProgram.includes(p.value))
           .map((program, index) => {
             return (
@@ -91,7 +92,7 @@ export default function ProgramFilterModal(props: ProgramFilterModalProps) {
           })}
       </>
     );
-  }, [selectedProgram]);
+  }, [selectedProgram, searchString]);
 
   return (
     <>
@@ -226,6 +227,9 @@ export default function ProgramFilterModal(props: ProgramFilterModalProps) {
                     </Flex>
                     <Divider pt={2} />
                     {programs
+                      .filter((p) =>
+                        p.chinese_label.includes(searchString.trim())
+                      )
                       .filter((program) =>
                         selectedProgram.includes(program.value)
                       )
