@@ -481,40 +481,58 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
                 h="100%"
                 __css={generateScrollBarCss("white", "#909090")}
               >
-                {searchDept(searchString, deptList).filter((dept) =>
-                  selectedDept.includes(dept.id)
-                ).length > 0 ? (
-                  <Box mb={6}>
-                    <Flex
-                      p="2"
-                      h="40px"
-                      flexDirection="column"
-                      justifyContent="center"
-                      bg={"white"}
-                    >
-                      <Heading fontSize="2xl" color={"heading.light"}>
-                        {`已選開課系所`}
-                      </Heading>
+                <Box mb={6}>
+                  <Flex
+                    p="2"
+                    h="40px"
+                    flexDirection="column"
+                    justifyContent="center"
+                    bg={"white"}
+                  >
+                    <Heading fontSize="2xl" color={"heading.light"}>
+                      {`已選開課系所`}
+                    </Heading>
+                  </Flex>
+                  <Divider pt={2} />
+
+                  {deptList.filter((dept) => selectedDept.includes(dept.id))
+                    .length > 0 ? (
+                    <Flex w="100%" minH="80px" flexWrap={"wrap"}>
+                      {deptList
+                        .filter((dept) => selectedDept.includes(dept.id))
+                        .map((dept, index) => (
+                          <FilterElement
+                            key={`${dept.id}-${index}-modalHeader`}
+                            id={dept.id}
+                            name={dept.name_full}
+                            selected={true}
+                            onClick={() => {
+                              setSelectedDept(
+                                selectedDept.filter((code) => code !== dept.id)
+                              );
+                              reportEvent(
+                                "filter_department",
+                                "click",
+                                dept.id
+                              );
+                            }}
+                          />
+                        ))}
                     </Flex>
-                    <Divider pt={2} />
-                    {searchDept(searchString, deptList)
-                      .filter((dept) => selectedDept.includes(dept.id))
-                      .map((dept, index) => (
-                        <FilterElement
-                          key={`${dept.id}-${index}-modalHeader`}
-                          id={dept.id}
-                          name={dept.name_full}
-                          selected={true}
-                          onClick={() => {
-                            setSelectedDept(
-                              selectedDept.filter((code) => code !== dept.id)
-                            );
-                            reportEvent("filter_department", "click", dept.id);
-                          }}
-                        />
-                      ))}
-                  </Box>
-                ) : null}
+                  ) : (
+                    <Flex
+                      w="100%"
+                      h="80px"
+                      justify={"center"}
+                      alignItems="center"
+                      sx={{
+                        color: "#909090",
+                      }}
+                    >
+                      尚未選擇課程
+                    </Flex>
+                  )}
+                </Box>
                 {modalBody}
               </Box>
             </Flex>
