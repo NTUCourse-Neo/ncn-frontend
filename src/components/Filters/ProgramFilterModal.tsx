@@ -210,46 +210,57 @@ export default function ProgramFilterModal(props: ProgramFilterModalProps) {
           <ModalBody p={8} overflowY="auto">
             <Flex flexWrap={"wrap"} w="100%">
               <Flex w="100%">
-                {programs.filter((program) =>
-                  selectedProgram.includes(program.value)
-                ).length > 0 ? (
-                  <Box mb={6} w="100%">
-                    <Flex
-                      p="2"
-                      h="40px"
-                      flexDirection="column"
-                      justifyContent="center"
-                      bg={"white"}
-                    >
-                      <Heading fontSize="2xl" color={"heading.light"}>
-                        {`已選開課學程`}
-                      </Heading>
+                <Box mb={6} w="100%">
+                  <Flex
+                    p="2"
+                    h="40px"
+                    flexDirection="column"
+                    justifyContent="center"
+                    bg={"white"}
+                  >
+                    <Heading fontSize="2xl" color={"heading.light"}>
+                      {`已選開課學程`}
+                    </Heading>
+                  </Flex>
+                  <Divider pt={2} />
+                  {programs.filter((program) =>
+                    selectedProgram.includes(program.value)
+                  ).length > 0 ? (
+                    <Flex w="100%" minH="80px" flexWrap={"wrap"}>
+                      {programs
+                        .filter((program) =>
+                          selectedProgram.includes(program.value)
+                        )
+                        .map((program, index) => (
+                          <FilterElement
+                            key={`${program.value}-${index}-modalHeader`}
+                            id={program.value}
+                            name={program.chinese_label}
+                            selected={true}
+                            onClick={() => {
+                              setSelectedProgram(
+                                selectedProgram.filter(
+                                  (code) => code !== program.value
+                                )
+                              );
+                            }}
+                          />
+                        ))}
                     </Flex>
-                    <Divider pt={2} />
-                    {programs
-                      .filter((p) =>
-                        p.chinese_label.includes(searchString.trim())
-                      )
-                      .filter((program) =>
-                        selectedProgram.includes(program.value)
-                      )
-                      .map((program, index) => (
-                        <FilterElement
-                          key={`${program.value}-${index}-modalHeader`}
-                          id={program.value}
-                          name={program.chinese_label}
-                          selected={true}
-                          onClick={() => {
-                            setSelectedProgram(
-                              selectedProgram.filter(
-                                (code) => code !== program.value
-                              )
-                            );
-                          }}
-                        />
-                      ))}
-                  </Box>
-                ) : null}
+                  ) : (
+                    <Flex
+                      w="100%"
+                      h="80px"
+                      justify={"center"}
+                      alignItems="center"
+                      sx={{
+                        color: "#909090",
+                      }}
+                    >
+                      尚未選擇學程
+                    </Flex>
+                  )}
+                </Box>
               </Flex>
               {modalBody}
             </Flex>
