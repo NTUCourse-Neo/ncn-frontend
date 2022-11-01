@@ -21,7 +21,7 @@ interface ModalButtonProps extends FlexProps {
 export function ModalButton(props: ModalButtonProps) {
   const { title, isExternal = false, ...rest } = props;
   return (
-    <HStack spacing={0} mx={4}>
+    <HStack spacing={0} ml={4}>
       <Flex
         mr={isExternal ? 1 : 0}
         sx={{
@@ -44,7 +44,7 @@ export function ModalButton(props: ModalButtonProps) {
 
 interface InstructionModalProps {
   readonly title: string;
-  readonly children: React.ReactNode;
+  readonly children?: React.ReactNode;
 }
 function InstructionModal(props: InstructionModalProps) {
   const { title, children } = props;
@@ -67,6 +67,10 @@ function InstructionModal(props: InstructionModalProps) {
             borderRadius="4px"
             sx={{
               shadow: "0px 32px 64px -12px rgba(85, 105, 135, 0.08)",
+              color: "#2d2d2d",
+              fontWeight: 400,
+              fontSize: "16px",
+              lineHeight: 1.4,
             }}
           >
             {title}
