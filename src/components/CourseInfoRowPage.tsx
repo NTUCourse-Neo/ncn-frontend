@@ -1,6 +1,12 @@
 import { useMemo } from "react";
 import CourseInfoRow from "components/CourseInfoRow";
-import { Accordion, useBreakpointValue, Center, Flex } from "@chakra-ui/react";
+import {
+  Accordion,
+  useBreakpointValue,
+  Center,
+  Flex,
+  Box,
+} from "@chakra-ui/react";
 import useUserInfo from "hooks/useUserInfo";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 // import { setHoveredCourseData } from "utils/hoverCourse";
@@ -46,7 +52,11 @@ export default function CourseInfoRowPage({
     );
   }
   if (isLoading) {
-    return <SkeletonRow isLoading={isLoading} />;
+    return (
+      <Box w="100%">
+        <SkeletonRow isLoading={isLoading} />
+      </Box>
+    );
   }
   if (courses.length === 0) {
     return (
