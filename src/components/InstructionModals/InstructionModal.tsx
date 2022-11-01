@@ -8,28 +8,37 @@ import {
   ModalHeader,
   ModalBody,
   ModalCloseButton,
+  HStack,
+  Icon,
 } from "@chakra-ui/react";
 import { Global } from "@emotion/react";
+import { ImArrowUpRight2 } from "react-icons/im";
 
 interface ModalButtonProps extends FlexProps {
   readonly title: string;
+  readonly isExternal?: boolean;
 }
 export function ModalButton(props: ModalButtonProps) {
-  const { title, ...rest } = props;
+  const { title, isExternal = false, ...rest } = props;
   return (
-    <Flex
-      mx={4}
-      sx={{
-        fontSize: "14px",
-        lineHeight: "20px",
-        color: "#007aff",
-        textDecoration: "underline",
-        cursor: "pointer",
-      }}
-      {...rest}
-    >
-      {title}
-    </Flex>
+    <HStack spacing={0} mx={4}>
+      <Flex
+        mr={isExternal ? 1 : 0}
+        sx={{
+          fontSize: "14px",
+          lineHeight: "20px",
+          color: "#007aff",
+          textDecoration: "underline",
+          cursor: "pointer",
+        }}
+        {...rest}
+      >
+        {title}
+      </Flex>
+      {isExternal ? (
+        <Icon as={ImArrowUpRight2} w={4} h={4} color="#6f6f6f" />
+      ) : null}
+    </HStack>
   );
 }
 
