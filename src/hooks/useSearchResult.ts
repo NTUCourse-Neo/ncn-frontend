@@ -156,7 +156,8 @@ export default function useSearchResult(
 
   return {
     courses: data?.courses ?? [],
-    isLoading: (!data && !error) || isValidating,
+    isLoading:
+      searchKeyword === null ? false : (!data && !error) || isValidating,
     error,
     mutate,
   };
