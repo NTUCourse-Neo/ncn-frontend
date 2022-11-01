@@ -10,10 +10,11 @@ import {
   ModalCloseButton,
   HStack,
   Icon,
+  Box,
 } from "@chakra-ui/react";
 import { Global } from "@emotion/react";
 import { ImArrowUpRight2 } from "react-icons/im";
-
+import { customScrollBarCss } from "styles/customScrollBar";
 interface ModalButtonProps extends FlexProps {
   readonly title: string;
   readonly isExternal?: boolean;
@@ -62,7 +63,7 @@ function InstructionModal(props: InstructionModalProps) {
       <ModalButton title={title} onClick={onOpen} />
       <Modal size="xl" isCentered isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent maxH="670px" maxW="850px" overflowY="auto">
+        <ModalContent maxW="850px" overflowY="hidden">
           <ModalHeader
             borderRadius="4px"
             sx={{
@@ -76,19 +77,24 @@ function InstructionModal(props: InstructionModalProps) {
             {title}
           </ModalHeader>
           <ModalCloseButton />
-          <ModalBody
-            pt={8}
-            px={16}
-            pb={16}
-            sx={{
-              fontFamily: "SF Pro Text",
-              fontSize: "14px",
-              lineHeight: "18px",
-              letterSpacing: "-0.078px",
-              color: "#2d2d2d",
-            }}
-          >
-            {children}
+          <ModalBody px={0}>
+            <Box
+              pt={8}
+              px={16}
+              pb={16}
+              maxH="670px"
+              overflowY="scroll"
+              sx={{
+                fontFamily: "SF Pro Text",
+                fontSize: "14px",
+                lineHeight: "18px",
+                letterSpacing: "-0.078px",
+                color: "#2d2d2d",
+              }}
+              __css={customScrollBarCss}
+            >
+              {children}
+            </Box>
           </ModalBody>
         </ModalContent>
       </Modal>

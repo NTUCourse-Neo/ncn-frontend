@@ -43,6 +43,11 @@ import useHorizontalScrollable from "@/hooks/useHorizontalScrollable";
 import searchModeList from "@/data/searchMode";
 import { availableSemesters } from "@/constant";
 import SearchFilters from "@/components/SearchFilters";
+import {
+  ChineseCoursePrecautionModal,
+  CourseSelectionRulesModal,
+  GeneralCommonCoursePrecautionModal,
+} from "@/components/InstructionModals";
 
 // deprecated
 interface NewRegisterModalProps {
@@ -523,6 +528,11 @@ function HomePage() {
                 </Text>
                 <SearchFilters />
               </Flex>
+            </Flex>
+            <Flex w="80%" bg="transparent">
+              <CourseSelectionRulesModal />
+              <GeneralCommonCoursePrecautionModal />
+              <ChineseCoursePrecautionModal />
             </Flex>
           </Flex>
           <Flex w="100vw" h="50vh" justify={"center"} alignItems="center">
