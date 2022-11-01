@@ -33,7 +33,6 @@ import CourseInfoRowPage from "@/components/CourseInfoRowPage";
 import Dropdown from "@/components/Dropdown";
 import { SortOption, sortOptions } from "@/types/search";
 import { FiCalendar } from "react-icons/fi";
-import SkeletonRow from "@/components/SkeletonRow";
 import UserCoursePanel from "@/components/UserCoursePanel";
 
 function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
@@ -385,7 +384,6 @@ function CoursePage() {
             >
               <SearchResultTopBar />
               <Box w="100%" minH="57vh">
-                <SkeletonRow />
                 <CourseInfoRowPage displayTable={false} pageIndex={pageIndex} />
               </Box>
               <SearchResultTopBar isTop={false} />

@@ -8,6 +8,7 @@ import useCourseTable from "hooks/useCourseTable";
 import { useUser } from "@auth0/nextjs-auth0";
 import useNeoLocalStorage from "hooks/useNeoLocalStorage";
 import useSearchResult from "hooks/useSearchResult";
+import SkeletonRow from "@/components/SkeletonRow";
 
 interface CourseInfoRowPageProps {
   readonly displayTable: boolean;
@@ -30,9 +31,22 @@ export default function CourseInfoRowPage({
     return courseTable?.courses ? courseTable?.courses.map((c) => c.id) : [];
   }, [courseTable]);
   const isDesktop = useBreakpointValue({ base: false, lg: true });
-
-  if (isLoading || error) {
-    return null;
+  if (error) {
+    return (
+      <Center
+        h="55vh"
+        w="100%"
+        sx={{
+          color: "#909090",
+          lineHeight: 1.4,
+        }}
+      >
+        發生錯誤
+      </Center>
+    );
+  }
+  if (isLoading) {
+    return <SkeletonRow isLoading={isLoading} />;
   }
   if (courses.length === 0) {
     return (

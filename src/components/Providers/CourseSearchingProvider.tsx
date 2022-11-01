@@ -37,8 +37,6 @@ interface CourseSearchingContextType {
   setNumOfPages: (pageNumber: number) => void;
   pageIndex: number;
   setPageIndex: (pageIndex: number) => void;
-  searchLoading: boolean;
-  setSearchLoading: (searchLoading: boolean) => void;
   totalCount: number;
   setTotalCount: (totalCount: number) => void;
   batchSize: number;
@@ -87,7 +85,6 @@ const CourseSearchingContext = createContext<CourseSearchingContextType>({
   search: "",
   numOfPages: 0,
   pageIndex: 0,
-  searchLoading: false,
   totalCount: 0,
   batchSize: 20,
   searchColumns: ["name", "teacher", "serial", "code", "identifier"], // deprecated
@@ -110,7 +107,6 @@ const CourseSearchingContext = createContext<CourseSearchingContextType>({
   setSearch: () => {},
   setNumOfPages: () => {},
   setPageIndex: () => {},
-  setSearchLoading: () => {},
   setTotalCount: () => {},
   setBatchSize: () => {},
   setSearchSettings: () => {},
@@ -131,7 +127,6 @@ const CourseSearchingProvider: React.FC<{
   const [totalCount, setTotalCount] = useState(0); // total number of courses
   const [numOfPages, setNumOfPages] = useState(0); // total number of pages
   const [pageIndex, setPageIndex] = useState(0); // current page index
-  const [searchLoading, setSearchLoading] = useState(false);
   const [batchSize, setBatchSize] = useState(50);
 
   // deprecated
@@ -247,7 +242,6 @@ const CourseSearchingProvider: React.FC<{
         search,
         numOfPages,
         pageIndex,
-        searchLoading,
         totalCount,
         batchSize,
         searchColumns,
@@ -268,7 +262,6 @@ const CourseSearchingProvider: React.FC<{
         setSearchSettings,
         setSearchColumns,
         setSearchFilters,
-        setSearchLoading,
         setTotalCount,
         setSearchSemester,
         setSearchMode,

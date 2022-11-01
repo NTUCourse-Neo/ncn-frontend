@@ -95,7 +95,6 @@ export default function useSearchResult(
     isFilterEdited,
     setNumOfPages,
     setTotalCount,
-    setSearchLoading,
   } = useCourseSearchingContext();
   const { data, error, isValidating, mutate } = useSWR(
     searchKeyword !== null
@@ -115,7 +114,6 @@ export default function useSearchResult(
         });
         throw new Error("Missing semester env variable");
       }
-      setSearchLoading(true);
       const filters = generateSearchAPIFilterObject(
         searchMode,
         searchFilters,
@@ -130,7 +128,6 @@ export default function useSearchResult(
         pageIndex * batchSize,
         searchSemester
       );
-      setSearchLoading(false);
       return coursesData;
     },
     {
