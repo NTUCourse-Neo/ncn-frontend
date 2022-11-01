@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import CourseInfoRow from "components/CourseInfoRow";
-import { Accordion, useBreakpointValue } from "@chakra-ui/react";
+import { Accordion, useBreakpointValue, Center, Flex } from "@chakra-ui/react";
 import useUserInfo from "hooks/useUserInfo";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 // import { setHoveredCourseData } from "utils/hoverCourse";
@@ -33,6 +33,36 @@ export default function CourseInfoRowPage({
 
   if (isLoading || error) {
     return null;
+  }
+  if (courses.length === 0) {
+    return (
+      <Center
+        h="55vh"
+        w="100%"
+        flexDirection={"column"}
+        sx={{
+          color: "#909090",
+          lineHeight: 1.4,
+        }}
+        gap={3}
+      >
+        <Flex
+          sx={{
+            fontSize: "20px",
+            fontWeight: 500,
+          }}
+        >
+          搜尋不到任何課程
+        </Flex>
+        <Flex
+          sx={{
+            fontSize: "14px",
+          }}
+        >
+          請試著把搜尋範圍拉大或換個搜尋方式
+        </Flex>
+      </Center>
+    );
   }
   return (
     <Accordion
