@@ -12,7 +12,6 @@ import { useCourseSearchingContext } from "components/Providers/CourseSearchingP
 // import { setHoveredCourseData } from "utils/hoverCourse";
 import useCourseTable from "hooks/useCourseTable";
 import { useUser } from "@auth0/nextjs-auth0";
-import useNeoLocalStorage from "hooks/useNeoLocalStorage";
 import useSearchResult from "hooks/useSearchResult";
 import SkeletonRow from "@/components/SkeletonRow";
 
@@ -26,17 +25,15 @@ export default function CourseInfoRowPage({
 }: CourseInfoRowPageProps): JSX.Element | null {
   const { search } = useCourseSearchingContext();
   const { courses, isLoading, error } = useSearchResult(search, pageIndex);
-  const { neoLocalCourseTableKey } = useNeoLocalStorage();
   const { user } = useUser();
   const { userInfo } = useUserInfo(user?.sub ?? null);
-  const courseTableKey = userInfo
-    ? userInfo?.course_tables?.[0] ?? null
-    : neoLocalCourseTableKey;
+  const courseTableKey = userInfo?.course_tables?.[0] ?? null;
   const { courseTable } = useCourseTable(courseTableKey);
   const selectedCourses = useMemo(() => {
     return courseTable?.courses ? courseTable?.courses.map((c) => c.id) : [];
   }, [courseTable]);
   const isDesktop = useBreakpointValue({ base: false, lg: true });
+
   if (error) {
     return (
       <Center

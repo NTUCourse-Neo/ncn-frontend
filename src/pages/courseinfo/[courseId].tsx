@@ -38,7 +38,6 @@ import openPage from "utils/openPage";
 import useUserInfo from "hooks/useUserInfo";
 import { fetchCourse } from "queries/course";
 import useCourseTable from "hooks/useCourseTable";
-import useNeoLocalStorage from "hooks/useNeoLocalStorage";
 import Head from "next/head";
 import { useUser } from "@auth0/nextjs-auth0";
 import { reportEvent } from "utils/ga";
@@ -111,10 +110,7 @@ function CourseInfoPage({ code, course }: PageProps) {
   const { userInfo, addOrRemoveFavorite, isLoading } = useUserInfo(
     user?.sub ?? null
   );
-  const { neoLocalCourseTableKey } = useNeoLocalStorage();
-  const courseTableKey = userInfo
-    ? userInfo?.course_tables?.[0] ?? null
-    : neoLocalCourseTableKey;
+  const courseTableKey = userInfo?.course_tables?.[0] ?? null;
   const {
     courseTable,
     isLoading: isCourseTableLoading,

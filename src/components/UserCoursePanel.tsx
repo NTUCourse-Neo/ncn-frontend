@@ -17,7 +17,6 @@ import { FiCalendar, FiHeart } from "react-icons/fi";
 import { FaChevronDown } from "react-icons/fa";
 import type { IconType } from "react-icons";
 import { useUser } from "@auth0/nextjs-auth0";
-import useNeoLocalStorage from "hooks/useNeoLocalStorage";
 import useCourseTable from "@/hooks/useCourseTable";
 import useUserInfo from "@/hooks/useUserInfo";
 import { Course } from "@/types/course";
@@ -268,16 +267,13 @@ function UserCoursePanel() {
   const [layout, setLayout] = useState<"default" | "course" | "favorite">(
     "default"
   );
-  const { neoLocalCourseTableKey } = useNeoLocalStorage();
   const { user } = useUser();
   const {
     userInfo,
     isLoading: isUserFavoriteLoading,
     addOrRemoveFavorite,
   } = useUserInfo(user?.sub ?? null);
-  const courseTableKey = userInfo
-    ? userInfo?.course_tables?.[0] ?? null
-    : neoLocalCourseTableKey;
+  const courseTableKey = userInfo?.course_tables?.[0] ?? null;
   const {
     courseTable,
     isLoading: isCourseTableLoading,

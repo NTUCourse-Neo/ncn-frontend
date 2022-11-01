@@ -27,7 +27,6 @@ import openPage from "utils/openPage";
 import useCourseTable from "hooks/useCourseTable";
 import useUserInfo from "hooks/useUserInfo";
 import { useUser } from "@auth0/nextjs-auth0";
-import useNeoLocalStorage from "hooks/useNeoLocalStorage";
 import { useRouter } from "next/router";
 import { patchCourseTable } from "queries/courseTable";
 import { reportEvent } from "utils/ga";
@@ -218,12 +217,9 @@ function CourseListContainer(props: {
   };
 }) {
   const { courses, loading } = props;
-  const { neoLocalCourseTableKey } = useNeoLocalStorage();
   const { user } = useUser();
   const { userInfo } = useUserInfo(user?.sub ?? null);
-  const courseTableKey = userInfo
-    ? userInfo?.course_tables?.[0] ?? null
-    : neoLocalCourseTableKey;
+  const courseTableKey = userInfo?.course_tables?.[0] ?? null;
   const { courseTable, mutate: mutateCourseTable } =
     useCourseTable(courseTableKey);
   const toast = useToast();

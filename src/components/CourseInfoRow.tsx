@@ -20,7 +20,6 @@ import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { info_view_map } from "data/mapping_table";
 import openPage from "utils/openPage";
 import useCourseTable from "hooks/useCourseTable";
-import useNeoLocalStorage from "hooks/useNeoLocalStorage";
 import { useUser } from "@auth0/nextjs-auth0";
 import { parseCourseTimeLocation } from "utils/parseCourseSchedule";
 import useUserInfo from "hooks/useUserInfo";
@@ -337,14 +336,11 @@ function CourseInfoRow({
 }: CourseInfoRowProps) {
   const toast = useNeoToast();
 
-  const { neoLocalCourseTableKey } = useNeoLocalStorage();
   const { user } = useUser();
   const { userInfo, addOrRemoveFavorite, isLoading } = useUserInfo(
     user?.sub ?? null
   );
-  const courseTableKey = userInfo
-    ? userInfo?.course_tables?.[0] ?? null
-    : neoLocalCourseTableKey;
+  const courseTableKey = userInfo?.course_tables?.[0] ?? null;
   const {
     courseTable,
     isLoading: isCourseTableLoading,

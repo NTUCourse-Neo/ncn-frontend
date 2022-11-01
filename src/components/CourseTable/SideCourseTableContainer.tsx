@@ -1,4 +1,4 @@
-import { useRef, forwardRef, useEffect, useState, useMemo } from "react";
+import { useRef, forwardRef, useEffect, useState } from "react";
 import FocusLock from "react-focus-lock";
 import {
   Flex,
@@ -45,7 +45,6 @@ import { v4 as uuidv4 } from "uuid";
 import { useUser } from "@auth0/nextjs-auth0";
 import { parseCoursesToTimeMap, TimeMap } from "utils/parseCourseTime";
 import useCourseTable from "hooks/useCourseTable";
-import useNeoLocalStorage from "hooks/useNeoLocalStorage";
 import { createCourseTable, patchCourseTable } from "queries/courseTable";
 import handleFetch from "utils/CustomFetch";
 import useUserInfo from "hooks/useUserInfo";
@@ -53,8 +52,6 @@ import { reportEvent } from "utils/ga";
 import { useSWRConfig } from "swr";
 import { Course } from "types/course";
 import { User } from "types/user";
-import { NCN_COURSE_TABLE_LOCAL_STORAGE_KEY as LOCAL_STORAGE_KEY } from "constant";
-import { cipherId } from "utils/cipher";
 
 const courseTableScrollBarCss = {
   "&::-webkit-scrollbar": {
@@ -159,12 +156,7 @@ function SideCourseTableContent() {
     isLoading,
     mutate: mutateUser,
   } = useUserInfo(user?.sub ?? null);
-  const { neoLocalCourseTableKey, setNeoLocalStorage } = useNeoLocalStorage();
-  const courseTableKey = useMemo(
-    () =>
-      userInfo ? userInfo?.course_tables?.[0] ?? null : neoLocalCourseTableKey,
-    [userInfo, neoLocalCourseTableKey]
-  );
+  const courseTableKey = userInfo?.course_tables?.[0] ?? null;
   const {
     courseTable,
     isLoading: isCourseTableLoading,
@@ -241,40 +233,6 @@ function SideCourseTableContent() {
           }
         );
       } catch (e) {
-        toast({
-          title: `新增課表失敗`,
-          description: `請聯繫客服(?)`,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      }
-    } else {
-      // Guest mode
-      try {
-        const newCourseTableData = await createCourseTable(
-          new_uuid,
-          "我的課表",
-          null,
-          process.env.NEXT_PUBLIC_SEMESTER ?? "error_secret_key"
-        );
-        // set State
-        const ctKey = cipherId(newCourseTableData.course_table.id);
-        if (ctKey) {
-          localStorage.setItem(LOCAL_STORAGE_KEY, ctKey);
-          setNeoLocalStorage({
-            courseTableKey: newCourseTableData.course_table.id,
-          }); // have to setState to trigger request to new course table
-        } else {
-          toast({
-            title: `新增課表失敗`,
-            description: `請至 Discord 回報錯誤`,
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-      } catch (error) {
         toast({
           title: `新增課表失敗`,
           description: `請聯繫客服(?)`,

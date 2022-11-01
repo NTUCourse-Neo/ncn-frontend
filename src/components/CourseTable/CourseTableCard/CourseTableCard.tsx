@@ -27,7 +27,6 @@ import { FaExclamationTriangle } from "react-icons/fa";
 import useCourseTable from "hooks/useCourseTable";
 import useUserInfo from "hooks/useUserInfo";
 import { useUser } from "@auth0/nextjs-auth0";
-import useNeoLocalStorage from "hooks/useNeoLocalStorage";
 import SortablePopover from "components/CourseTable/CourseTableCard/SortablePopover";
 import { patchCourseTable } from "queries/courseTable";
 import { reportEvent } from "utils/ga";
@@ -83,12 +82,9 @@ function CourseTableCard(props: {
   readonly hoverId: string;
 }) {
   const { courseInitialOrder, courseData, day, interval, hoverId = "" } = props;
-  const { neoLocalCourseTableKey } = useNeoLocalStorage();
   const { user } = useUser();
   const { userInfo } = useUserInfo(user?.sub ?? null);
-  const courseTableKey = userInfo
-    ? userInfo?.course_tables?.[0] ?? null
-    : neoLocalCourseTableKey;
+  const courseTableKey = userInfo?.course_tables?.[0] ?? null;
   const { courseTable, mutate: mutateCourseTable } =
     useCourseTable(courseTableKey);
   const { isOpen, onOpen, onClose } = useDisclosure();

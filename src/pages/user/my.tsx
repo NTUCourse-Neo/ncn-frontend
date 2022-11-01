@@ -12,7 +12,6 @@ import SkeletonRow from "components/SkeletonRow";
 import { HashLoader, BeatLoader } from "react-spinners";
 import CourseInfoRow from "components/CourseInfoRow";
 import useCourseTable from "hooks/useCourseTable";
-import useNeoLocalStorage from "hooks/useNeoLocalStorage";
 import { withPageAuthRequired, UserProfile } from "@auth0/nextjs-auth0";
 import Head from "next/head";
 import useUserInfo from "hooks/useUserInfo";
@@ -30,11 +29,7 @@ export default function UserMyPage({ user }: { readonly user: UserProfile }) {
     },
   });
   const toast = useToast();
-  const { neoLocalCourseTableKey } = useNeoLocalStorage();
-  const courseTableKey = userInfo
-    ? userInfo?.course_tables?.[0] ?? null
-    : neoLocalCourseTableKey;
-  const { courseTable } = useCourseTable(courseTableKey);
+  const { courseTable } = useCourseTable(userInfo?.course_tables?.[0] ?? null);
 
   const bgColor = useColorModeValue("white", "black");
   const selectedCourses = useMemo(() => {
@@ -111,7 +106,7 @@ export default function UserMyPage({ user }: { readonly user: UserProfile }) {
           </Box>
 
           <Box ml="48vw" transition="all 500ms ease-in-out">
-            <SkeletonRow loading={!userInfo} />
+            <SkeletonRow isLoading={!userInfo} />
           </Box>
         </Flex>
       </Flex>
