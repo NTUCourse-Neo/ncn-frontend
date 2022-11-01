@@ -10,6 +10,7 @@ import {
   MenuItem,
   Divider,
   Portal,
+  SkeletonText,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { FiCalendar, FiHeart } from "react-icons/fi";
@@ -61,6 +62,24 @@ function PanelPlaceholder({
       >
         {desc}
       </Flex>
+    </Flex>
+  );
+}
+
+function SkeletonBox() {
+  return (
+    <Flex
+      w="100%"
+      sx={{
+        shadow: "0px 1px 2px rgba(112, 123, 139, 0.25)",
+      }}
+      flexDirection="column"
+      p={4}
+      gap={1}
+    >
+      <SkeletonText noOfLines={1} w="80%" skeletonHeight={"15px"} />
+      <SkeletonText noOfLines={1} w="40%" skeletonHeight={"15px"} />
+      <SkeletonText noOfLines={1} w="70%" skeletonHeight={"15px"} />
     </Flex>
   );
 }
@@ -251,11 +270,19 @@ function UserCoursePanel() {
   );
   const { neoLocalCourseTableKey } = useNeoLocalStorage();
   const { user } = useUser();
-  const { userInfo, addOrRemoveFavorite } = useUserInfo(user?.sub ?? null);
+  const {
+    userInfo,
+    isLoading: isUserFavoriteLoading,
+    addOrRemoveFavorite,
+  } = useUserInfo(user?.sub ?? null);
   const courseTableKey = userInfo
     ? userInfo?.course_tables?.[0] ?? null
     : neoLocalCourseTableKey;
-  const { courseTable, addOrRemoveCourse } = useCourseTable(courseTableKey);
+  const {
+    courseTable,
+    isLoading: isCourseTableLoading,
+    addOrRemoveCourse,
+  } = useCourseTable(courseTableKey);
   const router = useRouter();
 
   return (
@@ -273,7 +300,9 @@ function UserCoursePanel() {
           }
         }}
       >
-        {(courseTable?.courses ?? []).length > 0 ? (
+        {isCourseTableLoading ? (
+          Array.from({ length: 5 }).map((_, i) => <SkeletonBox key={i} />)
+        ) : (courseTable?.courses ?? []).length > 0 ? (
           courseTable?.courses.map((course) => (
             <CourseInfoCard
               key={course.id}
@@ -317,7 +346,9 @@ function UserCoursePanel() {
           }
         }}
       >
-        {(userInfo?.favorites ?? []).length > 0 ? (
+        {isUserFavoriteLoading ? (
+          Array.from({ length: 5 }).map((_, i) => <SkeletonBox key={i} />)
+        ) : (userInfo?.favorites ?? []).length > 0 ? (
           userInfo?.favorites.map((course) => (
             <CourseInfoCard
               key={course.id}
