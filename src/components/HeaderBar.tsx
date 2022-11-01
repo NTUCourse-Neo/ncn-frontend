@@ -34,6 +34,8 @@ import CourseSearchInput from "@/components/CourseSearchInput";
 import { BiFilterAlt } from "react-icons/bi";
 import SearchFilters from "@/components/SearchFilters";
 import Dropdown from "@/components/Dropdown";
+import { LATEST_NEWS_LASTCHECK_TS } from "@/constant";
+import useNeoLocalStorage from "@/hooks/useNeoLocalStorage";
 
 interface MegaMenuLinkProps extends TextProps {
   readonly href: string;
@@ -218,6 +220,7 @@ function SignInButton() {
 }
 
 function HeaderBar() {
+  const { neoLocalStorage, setNeoLocalStorage } = useNeoLocalStorage();
   const [isHeaderFilterActive, setIsHeaderFilterActive] = useState(false);
   const headerFilterRef = useRef(null);
   const headerBarRef = useRef<HTMLDivElement>(null);
@@ -500,7 +503,18 @@ function HeaderBar() {
             <Flex gap={{ base: 2, xl: 6 }}>
               <Box position={"relative"}>
                 <Link href="/newPost">
-                  <Text textStyle={"body1"} cursor="pointer">
+                  <Text
+                    textStyle={"body1"}
+                    cursor="pointer"
+                    onClick={() => {
+                      const now = Math.floor(Date.now() / 1000);
+                      setNeoLocalStorage({
+                        ...neoLocalStorage,
+                        latestNewsLastCheckTs: now,
+                      });
+                      localStorage.setItem(LATEST_NEWS_LASTCHECK_TS, `${now}`);
+                    }}
+                  >
                     最新消息
                   </Text>
                 </Link>
