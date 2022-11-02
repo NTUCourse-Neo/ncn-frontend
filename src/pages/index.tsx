@@ -48,6 +48,7 @@ import {
   CourseSelectionRulesModal,
   GeneralCommonCoursePrecautionModal,
   ForeignLanguageCoursePrecautionModal,
+  PECoursePrecautionModal,
 } from "@/components/InstructionModals";
 
 // deprecated
@@ -535,6 +536,7 @@ function HomePage() {
               <GeneralCommonCoursePrecautionModal />
               <ChineseCoursePrecautionModal />
               <ForeignLanguageCoursePrecautionModal />
+              <PECoursePrecautionModal />
             </Flex>
           </Flex>
           <Flex w="100vw" h="50vh" justify={"center"} alignItems="center">

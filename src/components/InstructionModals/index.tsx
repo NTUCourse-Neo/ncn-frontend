@@ -464,3 +464,73 @@ export function ForeignLanguageCoursePrecautionModal() {
     </InstructionModal>
   );
 }
+
+export function PECoursePrecautionModal() {
+  return (
+    <InstructionModal title="體育選課注意事項">
+      <Flex flexDirection={"column"} gap={"24px"}>
+        <Text>111.08.03</Text>
+        <Text>
+          本校體育課為電腦選課，請同學務必依自己的條件並配合下列說明選課：
+        </Text>
+        <Text>
+          一、本校學士班一、二年級體育課為必修課程，課程規劃為「健康體適能」課程
+          1 學分與「專項運動學群」課程 3 學分。學士班學生必須修完兩大學群共 4
+          學分後方可畢業(體育學分不計入學系應修畢業學分)。
+        </Text>
+        <Text>
+          二、「健康體適能」僅於每年上學期開課，會預先帶入大一新生必修課程中，學生若因個人特殊因素無法隨班上課而退選，且欲選擇其他時段健康體適能課程，則請先取得該時段授課教師同意後始至體育室領取授權碼。
+          <OrderedList ml={6} mt={6} spacing={2}>
+            <ListItem>大一健康體適能“不開放”初選，退選後即無法加選。</ListItem>
+            <ListItem>
+              大一上學期健康體適能退選後，也不能選修專項運動學群課程。
+            </ListItem>
+          </OrderedList>
+        </Text>
+        <Text>
+          三、「專項運動學群」課程採興趣選項分組上課，得自大一下學期起開始修習。(專項運動課程同課名同課號之運動項目可重複選修)
+          。
+        </Text>
+        <Text>
+          四、體育選修課程限下列學生選修：
+          <Box ml={2} mt={4} gap={2}>
+            <Flex>
+              (一)已修滿必修課程之學士班學生。(尚未修習完體育必修4學分之學士班學生如欲選「選修體育」，請於開學第三週辦理人工加簽。)
+            </Flex>
+            <Flex>(二) 碩、博士班研究生。</Flex>
+          </Box>
+        </Text>
+        <Text>
+          五、已修滿必修課程之學士班學生及碩、博士班研究生如欲修習「健康體適能」或「專項運動學群」等必修課程當選修學分，請於開學第三週辦理人工加簽。
+        </Text>
+        <Text>
+          六、選修課程不能抵必修學分，「健康體適能」課程 1
+          學分與「專項運動學群」課程 3 學分亦不得互抵。
+        </Text>
+        <Text>
+          七、體育課程每學期以修習二門課程為限，且以修習必修學分者為優先。初選階段限分發上最多一門體育，如需加選第二門，應於開學後之加退選期間始得以授權碼。
+        </Text>
+        <Text>
+          八、同學期如選修兩門專項運動學群課程中「同課號、不同班次」之運動項目，其中一門請於第
+          3 週下載教師同意加簽單給老師加簽。
+        </Text>
+        <Text>
+          九、校隊體育學分可優先抵免專項運動學群學分，俟專項運動學群 3
+          學分抵滿後，始得抵免健康體適能 1 學分。
+        </Text>
+        <Text>十、凡在體育館內上課者，請自備乾淨球鞋。</Text>
+        <Text>
+          十一、其餘體育課程相關規定，請參閱{" "}
+          <ELink href="https://sec.ntu.edu.tw/001/Upload/18/relfile/9783/25300/08b8dc92-49cf-4514-9b02-a14cabf5ad8d.pdf">
+            本校學生體育課程修課辦法.pdf
+          </ELink>{" "}
+        </Text>
+        <Text>
+          十二、臺大體育室網址：
+          <ELink href="https://pe.ntu.edu.tw">https://pe.ntu.edu.tw</ELink>
+          <Flex>體育室教學組聯絡電話：(02)3366-9513</Flex>
+        </Text>
+      </Flex>
+    </InstructionModal>
+  );
+}
