@@ -82,7 +82,7 @@ function InstructionModal(props: InstructionModalProps) {
               pt={8}
               px={16}
               pb={16}
-              maxH="670px"
+              maxH="70vh"
               overflowY="scroll"
               sx={{
                 fontFamily: "SF Pro Text",
