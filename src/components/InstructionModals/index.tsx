@@ -1,4 +1,6 @@
-import InstructionModal from "@/components/InstructionModals/InstructionModal";
+import InstructionModal, {
+  ModalButton,
+} from "@/components/InstructionModals/InstructionModal";
 import {
   Text,
   Flex,
@@ -16,6 +18,7 @@ import {
   TableContainer,
 } from "@chakra-ui/react";
 import React from "react";
+import openPage from "@/utils/openPage";
 
 function ELink({
   children,
@@ -529,6 +532,55 @@ export function PECoursePrecautionModal() {
           十二、臺大體育室網址：
           <ELink href="https://pe.ntu.edu.tw">https://pe.ntu.edu.tw</ELink>
           <Flex>體育室教學組聯絡電話：(02)3366-9513</Flex>
+        </Text>
+      </Flex>
+    </InstructionModal>
+  );
+}
+
+export function ArmyCoursePrecautionLink() {
+  return (
+    <ModalButton
+      title="國防教育選課注意事項"
+      isExternal
+      onClick={() => {
+        openPage(
+          "https://ssc.ntu.edu.tw/nationaldefenseeducation1/Courseinformation#anchorPageTitle"
+        );
+      }}
+    />
+  );
+}
+
+export function ProgramApplicationInfoLink() {
+  return (
+    <ModalButton
+      title="各學程申請詳細資訊"
+      isExternal
+      onClick={() => {
+        openPage("https://ifsel3.aca.ntu.edu.tw/cou_stu/index.php");
+      }}
+    />
+  );
+}
+
+export function NTUSystemCourseUpdateScheduleModal() {
+  return (
+    <InstructionModal title="臺大系統課程更新日程">
+      <Flex flexDirection={"column"} gap={6}>
+        <Text>111 學年第 1 學期臺大系統課程更新日程</Text>
+        <Text>
+          為配合臺大系統(臺灣大學、臺灣科技大學、臺灣師範大學)學校選課時間，三校課程預定更新時間如下，請學生依所屬學校規定辦理相關事宜。
+        </Text>
+        <Box>
+          <Flex>111/08/16(二)</Flex> <Flex>111/09/02 (五) </Flex>
+          <Flex>111/09/06 (二) </Flex>
+          <Flex>111/09/08 (四) </Flex>
+          <Flex>111/09/13 (二)</Flex> <Flex>111/09/15 (四)</Flex>
+          <Flex>111/09/19 (一)</Flex>
+        </Box>
+        <Text>
+          臺大收到校際選課開放名額後，需要一些轉檔時間，感謝同學的耐心配合 🥺
         </Text>
       </Flex>
     </InstructionModal>
