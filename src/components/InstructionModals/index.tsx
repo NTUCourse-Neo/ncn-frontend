@@ -1072,3 +1072,321 @@ export function CalculasCoursePrecautionModal() {
     </InstructionModal>
   );
 }
+
+export function AdvancedEnglishCoursePrecautionModal() {
+  const advancedEnglishCourseTableData: TableData = [
+    [
+      {
+        text: "004 20110",
+        rowSpan: 6,
+      },
+      {
+        text: "01",
+      },
+      {
+        text: "進階英語一\n（綜合）\nG101綜合班",
+        rowSpan: 3,
+      },
+      {
+        text: "劉威辰",
+      },
+      {
+        text: "教學方式主要是教師授課，講解課文重點，例如字彙或是文法概念，以及閱讀策略方面的教學，教師也會另外補充教材主題相關的聽力練習。",
+        fontSize: 11,
+        rowSpan: 2,
+      },
+    ],
+    [
+      null,
+      {
+        text: "02",
+      },
+      null,
+      {
+        text: "陳逸軒",
+      },
+      null,
+    ],
+    [
+      null,
+      {
+        text: "03",
+      },
+      null,
+      {
+        text: "莊世全",
+      },
+      {
+        text: "綜合學術英語專班，課程內容將以G101為基礎，並增加一些學術英語內容與教材;教學方式主要是教師授課，講解課文重點，例如字彙或是文法概念，以及閱讀策略方面的教學，教師也會另外補充教材主題相關的聽力練習。",
+        fontSize: 11,
+      },
+    ],
+    [
+      null,
+      {
+        text: "04",
+      },
+      {
+        text: "進階英語一\n（綜合）\nG201綜合班",
+      },
+      {
+        text: "俞燕妮",
+      },
+      {
+        text: "The course introduces ICT-based (Information and Communication Technology) foreign language learning strategies that seek to build up the students’ own personal eLearning framework (i.e., awareness of self, language learning processes and structures, linguistic knowledge, and communication skills), a vital element of second/foreign language learning which allows students to define, manage and self-regulate their learning continuously while equipping them with core knowledge of General/Specialized Education. This course also trains students in academic skills such as critical thinking and research.",
+        fontSize: 11,
+      },
+    ],
+    [
+      null,
+      {
+        text: "05",
+      },
+      {
+        text: "進階英語一\n（綜合）\nG101綜合班",
+        rowSpan: 2,
+      },
+      {
+        text: "王珊珊",
+      },
+      {
+        text: "為「進階英語」課程綜合班的最高級別，課程內容以主教材的閱讀策略為主，搭配影音材料與練習題，提供學生所需的聽力與閱讀學習資源。授課老師另規劃口說活動，增加學生較具挑戰性的英語練習機會。",
+        fontSize: 11,
+        rowSpan: 2,
+      },
+    ],
+    [
+      null,
+      {
+        text: "06",
+      },
+      null,
+      {
+        text: "劉威辰",
+      },
+      null,
+    ],
+    [
+      {
+        text: "004 20310",
+        rowSpan: 2,
+      },
+      {
+        text: "01",
+      },
+      {
+        text: "進階英語一\n（聽力）\nL101聽力班",
+      },
+      {
+        text: "徐維娟",
+      },
+      {
+        text: "以「Drill Exercise」為學習方式，著重日常生活中常見主題的談話大意理解訓練，並藉由線上英語學習軟體提供互動教學，另搭配聽力技巧訓練及口說練習",
+        fontSize: 11,
+      },
+    ],
+    [
+      null,
+      {
+        text: "02",
+      },
+      {
+        text: "進階英語一\n（聽力）\nL201聽力班",
+      },
+      {
+        text: "莊世全",
+      },
+      {
+        text: "以聽力技巧訓練為主，著重聽取大意及重要細節，同時搭配課本教材的線上練習，另外亦包含以大學課堂英語為學習聽力的素材，加強學術英語與訓練做筆記的概念，並運用新聞及學習技巧相關線上英語學習軟體供學生自學。",
+        fontSize: 11,
+      },
+    ],
+    [
+      {
+        text: "004 20410",
+      },
+      {
+        text: "01",
+      },
+      {
+        text: "進階英語一\n（口說）\n口說班",
+      },
+      {
+        text: "徐維娟",
+      },
+      {
+        text: "本課程目標為幫助同學勇敢以英語表達意見。學期內容涵蓋醫藥、經濟、金融、政治、環保、科技、教育、文化、娛樂等領域。上課時密集練習，積極提升同學的口語、聽力與發音。",
+        fontSize: 11,
+      },
+    ],
+  ];
+  return (
+    <InstructionModal title={"「進階英文一」課程選課須知"}>
+      <Flex flexDirection={"column"} gap={6}>
+        <Box>111學年第一學期「進階英語一」課程選課須知 </Box>
+        <Box>
+          一、
+          選課對象：本校尚未修習，或未達本課程免修標準之學士班二年級（含）以上及進修學士班同學。
+        </Box>
+        <Box>
+          二、 選課前注意事項及說明：
+          <OrderedList ml={6} mt={6} spacing={6}>
+            <ListItem>
+              有意於畢業後參加國家考試、證照考試，或服預官役的同學，如需修讀「進階英語」課程，請儘早規劃完成修讀本課程的時間，以免屆臨畢業時因未修畢本課程而無法如期取得畢業證書，影響自身權益。
+            </ListItem>
+            <ListItem>
+              本中心因課程規劃，110
+              學年暑假起不再開設「進階英語」暑期班課程。無意參加英語檢定，擬以修讀「進階英語」課程方式於明年準時畢業的學士班同學，請於本學年
+              (111) 至本校選課網完成課程選讀，以免影響畢業時程。
+            </ListItem>
+            <ListItem>
+              基於課程設計理念，進階英語課程開放給含學士班二年級以上及進修學士班同學修讀，不開放學士班一年級、研究所博士班、碩士班學生選課。每學期一位同學僅能分發選讀一門進階英語課程，重複選課將註銷本課程全部選課紀錄。
+            </ListItem>
+            <ListItem>
+              進階英語課程開放網路選課：
+              <Flex my={4} gap={2} flexDirection={"column"}>
+                <Flex>
+                  4-1
+                  各班級網路預選（課）人數超過修課人數上限時，由高年級至低年級依序分發。
+                </Flex>
+                <Flex>
+                  4-2
+                  倘高年級預選（課）人數已超過修課人數上限，則高年級全部預選人選以亂數分配方式分發。
+                </Flex>
+                <Flex>
+                  4-3
+                  未達修課人數上限班級之餘額，開放於開學第一週至第二週由各班級授課教師核發加選授權碼，授權碼核發規則由授課教師決定，不一定以高至低年級為核發規則。
+                </Flex>
+                <Flex>
+                  4-4 本學年 (111) 將新增進階英語一 (綜合)
+                  第03班，此班為綜合學術英語班，為鼓勵同學們提早選讀進階英語課程，為未來修習全英語授課課程預作準備，網路選課期間將僅開放大二學士班同學選讀，網路選課結束後之餘額，於開學第一週至第二週期間，由授課教師以核發加選授權碼方式，發給學士班二年級(含)以上學士班同學(即除一年級以外，不限年級的學士班同學)，授權碼核發規則仍由授課教師決定。
+                </Flex>
+              </Flex>
+            </ListItem>
+            <ListItem>
+              所有班級之任課老師均保有同意學生上課與否的最後決定權利。第一次上課未到課，且未向授課老師請假並獲同意者，授課老師得請註冊組註銷該學生選課資格，並將名額轉給其他同班候補學生，不得異議。
+            </ListItem>
+          </OrderedList>
+        </Box>
+        <Box>
+          三、 課程種類：
+          <OrderedList mt={6} ml={6} spacing={4}>
+            <ListItem>
+              為全學年上、下兩學期課程，上學期為「進階英語一」，下學期為「進階英語二」。
+            </ListItem>
+            <ListItem>
+              每學期課程分三類：(1) 綜合班 (2) 聽力班 (3)口說班。
+            </ListItem>
+            <ListItem>
+              各類班別如下，同學可依課程教學內容說明，選擇符合自己學習需求的班級修讀：
+              <Flex mt={4}>
+                3-1
+                班別主要依全民英語能力分級檢定測驗之中高級聽讀測驗成績為主要分班依據，各班級分數區間如下：
+              </Flex>
+              <Flex>綜合班：</Flex>
+              <TableContainer my={4}>
+                <Table>
+                  <Tbody>
+                    <Tr>
+                      <Td>G101綜合班</Td>
+                      <Td>
+                        {`聽力(L)測驗及閱讀(R)測驗成績總和小於 104 分(R+L<104)`}
+                      </Td>
+                    </Tr>
+                    <Tr>
+                      <Td>G201綜合班</Td>
+                      <Td>
+                        {`聽力(L)測驗及閱讀(R)測驗成績總和達 104 分，並小於 134 分(104≦L+R<134)`}
+                      </Td>
+                    </Tr>
+                    <Tr>
+                      <Td>G301綜合班</Td>
+                      <Td>
+                        {`聽力(L)測驗及閱讀(R)測驗成績總和達 134 分，並小於 160 分(134≦L+R<160)`}
+                      </Td>
+                    </Tr>
+                  </Tbody>
+                </Table>
+              </TableContainer>
+              <Flex>聽力班(本表分數以中高級聽讀測驗成績為班級區分依據)：</Flex>
+              <TableContainer my={4}>
+                <Table>
+                  <Tbody>
+                    <Tr>
+                      <Td>聽力</Td>
+                      <Td>{`60（含）以下`}</Td>
+                      <Td>{`61（含）~79（含）`}</Td>
+                    </Tr>
+                    <Tr>
+                      <Td>閱讀</Td>
+                      <Td>{`60（含）以下`}</Td>
+                      <Td>{`61（含）~79（含）`}</Td>
+                    </Tr>
+                  </Tbody>
+                </Table>
+              </TableContainer>
+              <Flex>
+                *全民英檢中高級初試通過標準：兩項測驗成績總和達160分，且其中任一項成績不低於72分。
+              </Flex>
+              <Flex mt={4}>
+                範例一：甲生成績為聽力67分、閱讀52分，適合修讀G201/G202班。
+              </Flex>
+              <Flex mb={4}>
+                範例二：乙生成績為聽力35分、閱讀82分，適合修讀L101/L102班。
+              </Flex>
+              <Flex>
+                3-2
+                上表以全民英語能力分級檢定測驗中高級聽讀測驗成績訂定之班級分類，僅為同學選課參考之一；未曾參加任何英語檢定的同學，亦可依適合自己的時間或興趣，選讀適合自己的班級課程。
+              </Flex>
+              <TableContainer my={4}>
+                <Table>
+                  <Tbody>
+                    <Tr>
+                      <Td colSpan={5}>
+                        111學年第一學期「進階英語一」課程各班開課資訊
+                      </Td>
+                    </Tr>
+                    <Tr>
+                      <Td>課程識別碼</Td>
+                      <Td>班次</Td>
+                      <Td>班別/級別</Td>
+                      <Td>授課教師</Td>
+                      <Td>課程教學內容說明</Td>
+                    </Tr>
+                    {advancedEnglishCourseTableData.map((row) => (
+                      <Tr>
+                        {row.map((cell) =>
+                          cell === null ? null : (
+                            <Td
+                              rowSpan={cell?.rowSpan ?? 1}
+                              whiteSpace={"pre-wrap"}
+                              px={1}
+                            >
+                              <Flex
+                                justify={"center"}
+                                sx={{
+                                  fontSize: `${cell?.fontSize ?? 14}px`,
+                                  color: "#2d2d2d",
+                                }}
+                              >
+                                {cell.text}
+                              </Flex>
+                            </Td>
+                          )
+                        )}
+                      </Tr>
+                    ))}
+                  </Tbody>
+                </Table>
+              </TableContainer>
+            </ListItem>
+          </OrderedList>
+        </Box>
+        <Box>
+          四、 若還有其他問題，歡迎同學來信詢問，本中心公務信箱
+          <ELink href="mailto:ntufltc@ntu.edu.tw">ntufltc@ntu.edu.tw</ELink>
+        </Box>
+      </Flex>
+    </InstructionModal>
+  );
+}
