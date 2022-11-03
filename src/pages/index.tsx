@@ -43,20 +43,7 @@ import useHorizontalScrollable from "@/hooks/useHorizontalScrollable";
 import searchModeList from "@/data/searchMode";
 import { availableSemesters } from "@/constant";
 import SearchFilters from "@/components/SearchFilters";
-import {
-  ChineseCoursePrecautionModal,
-  CourseSelectionRulesModal,
-  GeneralCommonCoursePrecautionModal,
-  ForeignLanguageCoursePrecautionModal,
-  PECoursePrecautionModal,
-  ArmyCoursePrecautionLink,
-  ProgramApplicationInfoLink,
-  NTUSystemCourseUpdateScheduleModal,
-  NTUSystemCourseSelectionPlatformLink,
-  ChemistryCoursePrecautionModal,
-  CalculasCoursePrecautionModal,
-  AdvancedEnglishCoursePrecautionModal,
-} from "@/components/InstructionModals";
+import { precautions } from "@/components/InstructionModals";
 
 // deprecated
 interface NewRegisterModalProps {
@@ -539,18 +526,10 @@ function HomePage() {
               </Flex>
             </Flex>
             <Flex w="80%" bg="transparent" flexWrap={"wrap"}>
-              <CourseSelectionRulesModal />
-              <GeneralCommonCoursePrecautionModal />
-              <ChineseCoursePrecautionModal />
-              <ForeignLanguageCoursePrecautionModal />
-              <PECoursePrecautionModal />
-              <ArmyCoursePrecautionLink />
-              <ProgramApplicationInfoLink />
-              <NTUSystemCourseUpdateScheduleModal />
-              <NTUSystemCourseSelectionPlatformLink />
-              <ChemistryCoursePrecautionModal />
-              <CalculasCoursePrecautionModal />
-              <AdvancedEnglishCoursePrecautionModal />
+              {searchMode.precautions.map((precaution) => {
+                const component = precautions[precaution];
+                return component;
+              })}
             </Flex>
           </Flex>
           <Flex w="100vw" h="50vh" justify={"center"} alignItems="center">

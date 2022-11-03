@@ -1390,3 +1390,19 @@ export function AdvancedEnglishCoursePrecautionModal() {
     </InstructionModal>
   );
 }
+
+export const precautions = {
+  courseSelectionRule: <CourseSelectionRulesModal />,
+  generalCommonCoursePrecaution: <GeneralCommonCoursePrecautionModal />,
+  chineseCoursePrecaution: <ChineseCoursePrecautionModal />,
+  foreignLanguageCoursePrecaution: <ForeignLanguageCoursePrecautionModal />,
+  peCoursePrecaution: <PECoursePrecautionModal />,
+  armyCoursePrecaution: <ArmyCoursePrecautionLink />,
+  programApplicationInfo: <ProgramApplicationInfoLink />,
+  ntuSystemCourseUpdateSchedule: <NTUSystemCourseUpdateScheduleModal />,
+  ntuSystemCourseSelectionPlatform: <NTUSystemCourseSelectionPlatformLink />,
+  chemistryCoursePrecaution: <ChemistryCoursePrecautionModal />,
+  calculasCoursePrecaution: <CalculasCoursePrecautionModal />,
+  advancedEnglishCoursePrecaution: <AdvancedEnglishCoursePrecautionModal />,
+};
+export type PrecautionName = keyof typeof precautions;

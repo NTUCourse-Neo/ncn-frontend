@@ -34,6 +34,7 @@ import Dropdown from "@/components/Dropdown";
 import { SortOption, sortOptions } from "@/types/search";
 import { FiCalendar } from "react-icons/fi";
 import UserCoursePanel from "@/components/UserCoursePanel";
+import { precautions } from "@/components/InstructionModals";
 
 function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
   const currentPageRef = useRef<HTMLDivElement>(null);
@@ -294,8 +295,13 @@ function CoursePage() {
   const { ref: searchBoxRef, inView: searchBoxInView } = useInView({
     threshold: 0,
   });
-  const { setIsSearchBoxInView, setBatchSize, pageIndex, searchPageTopRef } =
-    useCourseSearchingContext();
+  const {
+    setIsSearchBoxInView,
+    setBatchSize,
+    pageIndex,
+    searchPageTopRef,
+    searchMode,
+  } = useCourseSearchingContext();
 
   const [isHigherThan1325] = useMediaQuery(["(min-height: 1325px)"]);
 
@@ -372,7 +378,10 @@ function CoursePage() {
                 <Center h="100%" justifyContent={"center"}>
                   <InfoOutlineIcon boxSize={"20px"} color="primary.600" />
                 </Center>
-                <Text color="#4b4b4b50">External Links Placeholder</Text>
+                {searchMode.precautions.map((precaution) => {
+                  const component = precautions[precaution];
+                  return component;
+                })}
               </Flex>
             </Flex>
             <Box
