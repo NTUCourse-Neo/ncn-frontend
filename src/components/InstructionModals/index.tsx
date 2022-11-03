@@ -15,6 +15,8 @@ import {
   Tr,
   Th as ChakraTh,
   Td as ChakraTd,
+  TableColumnHeaderProps,
+  TableCellProps,
   TableContainer,
 } from "@chakra-ui/react";
 import React from "react";
@@ -43,7 +45,10 @@ function ELink({
   );
 }
 
-const Th: React.FC<{ readonly children: React.ReactNode }> = ({ children }) => {
+interface ThProps extends TableColumnHeaderProps {
+  readonly children: React.ReactNode;
+}
+const Th: React.FC<ThProps> = ({ children, ...rest }) => {
   return (
     <ChakraTh
       sx={{
@@ -54,13 +59,17 @@ const Th: React.FC<{ readonly children: React.ReactNode }> = ({ children }) => {
         fontWeight: 400,
         fontSize: "14px",
       }}
+      {...rest}
     >
       {children}
     </ChakraTh>
   );
 };
 
-const Td: React.FC<{ readonly children: React.ReactNode }> = ({ children }) => {
+interface TdProps extends TableCellProps {
+  readonly children: React.ReactNode;
+}
+const Td: React.FC<TdProps> = ({ children, ...rest }) => {
   return (
     <ChakraTd
       sx={{
@@ -71,6 +80,7 @@ const Td: React.FC<{ readonly children: React.ReactNode }> = ({ children }) => {
         fontWeight: 400,
         fontSize: "14px",
       }}
+      {...rest}
     >
       {children}
     </ChakraTd>
@@ -720,6 +730,344 @@ export function ChemistryCoursePrecautionModal() {
           </ELink>
           )。如有疑義請洽化學系辦課務櫃檯同仁尤靜嫺小姐 (33661139)。
         </Text>
+      </Flex>
+    </InstructionModal>
+  );
+}
+
+type TableCell = {
+  text: string;
+  rowSpan?: number;
+  fontSize?: number;
+};
+type TableData = (TableCell | null)[][];
+export function CalculasCoursePrecautionModal() {
+  const calculasCourseTable: TableData = [
+    [
+      { text: "微積分1/\n微積分2\n 01班" },
+      { text: "半" },
+      { text: "2+2" },
+      { text: "4" },
+      { text: "1" },
+      { text: "180" },
+      {
+        text: "密集課程。限電機系學生修習。每班大二以上限20人，為統一教學班，有實習課。",
+        fontSize: 11,
+      },
+      {
+        text: "為配合統一教學班之進度，故期中、期末考會在周末考試。此為模組班，第1~8週上「微積分1」，停修截止時間為10/14；第9~16週上「微積分2」，退選截止時間為11/4，停修截止時間為11/25。僅需選微積分1，微積分2於初選階段直接帶入，不修微積分2的同學請自行退選微積分2。加退選階段不會自動帶入微積分2，需自行選課。",
+        rowSpan: 11,
+        fontSize: 11,
+      },
+    ],
+    [
+      { text: "微積分1/\n微積分2\n 03班" },
+      { text: "半" },
+      { text: "2+2" },
+      { text: "4" },
+      { text: "1" },
+      { text: "150" },
+      {
+        text: "密集課程。限材料、資工、資管系學生修習。每班大二以上限20人，為統一教學班，有實習課。",
+        fontSize: 11,
+      },
+      null,
+    ],
+    [
+      { text: "微積分1/\n微積分2\n 04班" },
+      { text: "半" },
+      { text: "2+2" },
+      { text: "4" },
+      { text: "1" },
+      { text: "110" },
+      {
+        text: "密集課程。限材料、資工、資管系學生修習。英文授課。每班大二以上限20人，為統一教學班，有實習課。",
+        fontSize: 11,
+      },
+      null,
+    ],
+    [
+      { text: "微積分1/\n微積分2\n 05班" },
+      { text: "半" },
+      { text: "2+2" },
+      { text: "4" },
+      { text: "1" },
+      { text: "80" },
+      {
+        text: "密集課程。限物理系學生修習。每班大二以上限20人，為統一教學班，有實習課。",
+        fontSize: 11,
+      },
+      null,
+    ],
+    [
+      { text: "微積分1/\n微積分2\n 06-07班" },
+      { text: "半" },
+      { text: "2+2" },
+      { text: "4" },
+      { text: "1" },
+      { text: "140" },
+      {
+        text: "密集課程。限機械、化工、化學、大氣、醫工系學生修習。每班大二以上限20人，為統一教學班，有實習課。",
+        fontSize: 11,
+      },
+      null,
+    ],
+    [
+      { text: "微積分1/\n微積分2\n 09-10班" },
+      { text: "半" },
+      { text: "2+2" },
+      { text: "4" },
+      { text: "1" },
+      { text: "120" },
+      {
+        text: "密集課程。限生機、生工、地質、工科海洋系學生修習。每班大二以上限20人，為統一教學班，有實習課。",
+        fontSize: 11,
+      },
+      null,
+    ],
+    [
+      { text: "微積分1/\n微積分2\n 11班" },
+      { text: "半" },
+      { text: "2+2" },
+      { text: "4" },
+      { text: "1" },
+      { text: "120" },
+      {
+        text: "密集課程。限土木系學生修習。英文授課。每班大二以上限20人，為統一教學班，有實習課。",
+        fontSize: 11,
+      },
+      null,
+    ],
+    [
+      { text: "微積分1/\n微積分2\n 12班" },
+      { text: "半" },
+      { text: "2+2" },
+      { text: "4" },
+      { text: "1" },
+      { text: "140" },
+      {
+        text: "密集課程。限機械、化工、化學、大氣、醫工系學生修習。英文授課。每班大二以上限20人，為統一教學班，有實習課。",
+        fontSize: 11,
+      },
+      null,
+    ],
+    [
+      { text: "微積分1/\n微積分2\n 13班" },
+      { text: "半" },
+      { text: "2+2" },
+      { text: "4" },
+      { text: "1" },
+      { text: "180" },
+      {
+        text: "密集課程。限經濟系學生修習。英文授課。每班大二以上限20人，為統一教學班，有實習課。",
+        fontSize: 11,
+      },
+      null,
+    ],
+    [
+      { text: "微積分1/\n微積分2\n 14-16班" },
+      { text: "半" },
+      { text: "2+2" },
+      { text: "4" },
+      { text: "1" },
+      { text: "180" },
+      {
+        text: "密集課程。限工管、會計、財金、國企、地理系學生修習。每班大二以上限20人，為統一教學班，有實習課。",
+        fontSize: 11,
+      },
+      null,
+    ],
+    [
+      { text: "微積分1/\n微積分2\n 17-18班" },
+      { text: "半" },
+      { text: "2+2" },
+      { text: "4" },
+      { text: "1" },
+      { text: "140" },
+      {
+        text: "限農藝、森林、農經、 昆蟲、心理、生科院各系(生技、生科)系學生修習。每班大二以上限20人，為統一教學班，有實習課。",
+        fontSize: 11,
+      },
+      null,
+    ],
+    [
+      { text: "微積分1/\n微積分2\n 17-18班" },
+      { text: "半" },
+      { text: "2+2" },
+      { text: "4" },
+      { text: "1" },
+      { text: "140" },
+      {
+        text: "限農藝、森林、農經、 昆蟲、心理、生科院各系(生技、生科)系學生修習。每班大二以上限20人，為統一教學班，有實習課。",
+        fontSize: 11,
+      },
+      {
+        text: "此為模組班，第1~8週上「微積分1」，停修截止時間為10/14；第9~16週上「微積分2」，退選截止時間為11/4，停修截止時間為11/25。微積分2於初選階段直接帶入，不修微積分2的同學請自行退選微積分2。僅需選微積分1，微積分2於初選階段直接帶入，不修微積分2的同學請自行退選微積分2。加退選階段不會自動帶入微積分2，需自行選課。",
+        fontSize: 11,
+        rowSpan: 2,
+      },
+    ],
+    [
+      { text: "微積分1/\n微積分2\n 19班" },
+      { text: "半" },
+      { text: "2+2" },
+      { text: "4" },
+      { text: "1" },
+      { text: "140" },
+      {
+        text: "限農藝、森林、農經、 昆蟲、心理、生科院各系(生技、生科)系學生修習。英文授課。每班大二以上限20人，為統一教學班，有實習課。",
+        fontSize: 11,
+      },
+      null,
+    ],
+    [
+      { text: "微積分乙上\n01-02班" },
+      { text: "全" },
+      { text: "3" },
+      { text: "3" },
+      { text: "0" },
+      { text: "120" },
+      {
+        text: "限限醫學院各系(牙醫、藥學、醫技、物治)、農化、公衛系學生修習。每班大二以上限20人。",
+        fontSize: 11,
+      },
+      {
+        text: "",
+      },
+    ],
+    [
+      { text: "微積分乙上\n01班" },
+      { text: "半" },
+      { text: "3" },
+      { text: "4" },
+      { text: "0" },
+      { text: "170" },
+      {
+        text: "限醫學系學生修習。",
+        fontSize: 11,
+      },
+      {
+        text: "",
+      },
+    ],
+  ];
+  return (
+    <InstructionModal title="微積分分班編組選課注意事項">
+      <Flex flexDirection="column" gap={6}>
+        <Box>111學年度第1學期『微積分』課程選課說明</Box>
+        <Box>
+          一、本系為達到區別系所特性設計課程，並提高學習效果，而採分組限制選課。
+        </Box>
+        <Box>
+          二、111學年度微積分課程開設類別及班數如下：
+          <TableContainer my={6} py={1}>
+            <Table w="100%">
+              <Thead>
+                <Tr>
+                  <Th>課程名稱</Th>
+                  <Th px={1}>全/半年</Th>
+                  <Th>學分</Th>
+                  <Th px={1}>講演時數</Th>
+                  <Th>實習</Th>
+                  <Th px={1}>修課人數</Th>
+                  <Th>修課對象</Th>
+                  <Th>備註</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {calculasCourseTable.map((row) => (
+                  <Tr>
+                    {row.map((cell) =>
+                      cell === null ? null : (
+                        <Td
+                          rowSpan={cell?.rowSpan ?? 1}
+                          whiteSpace={"pre-wrap"}
+                          px={1}
+                        >
+                          <Flex
+                            justify={"center"}
+                            sx={{
+                              fontSize: `${cell?.fontSize ?? 14}px`,
+                              color: "#2d2d2d",
+                            }}
+                          >
+                            {cell.text}
+                          </Flex>
+                        </Td>
+                      )
+                    )}
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          </TableContainer>
+          <Flex>
+            註：微積分1 + 微積分2 = 微積分甲上；微積分3 + 微積分4 =
+            微積分甲下；微積分1 + 微積分2 + 微積分 3 = 微積分乙上 + 微積分乙下
+          </Flex>
+        </Box>
+        <Box>
+          三、網路選課
+          <OrderedList ml={6} mt={6}>
+            <ListItem>
+              <Flex color="error.main" display={"inline"}>
+                電腦初選 第一階段時間 為111年8月17日至111年8月19日止
+              </Flex>
+              ，學生請依所屬學系分配之時段、可修習之微積分班級上網選課，非該時段、非可修習該班級之系所學生將在選課後統一刪除。
+            </ListItem>
+            <ListItem>
+              <Flex color="error.main" display={"inline"}>
+                電腦初選 第二階段時間 為111年8月24日至111年8月25日止
+              </Flex>
+              ，學生可上網查詢自己所選上之班次；未選上的同學，仍須依所屬學系分配之時段、可修習之微積分班級就尚有餘額之班次加選。非該時段、非可修習該班級之系所學生將在選課後統一刪除。
+            </ListItem>
+            <ListItem>
+              <Flex color="error.main" display={"inline"}>
+                網路加退選課程時間 為111年9月5日至111年9月19日(上午8點止)
+              </Flex>
+              ，電腦初選未選上或電腦選課已選上欲退換班之同學，
+              請於網路加退選期間自行上網作業，此時段
+              <Flex color="error.main" display={"inline"}>
+                無系所身份限制。
+              </Flex>
+            </ListItem>
+          </OrderedList>
+        </Box>
+        <Box>
+          四、教師同意加簽單
+          <OrderedList ml={6} mt={6}>
+            <ListItem>
+              受理時間：
+              <Flex color="error.main" display={"inline"}>
+                111年9月19日至111年9月23日 每日上午08:30至下午5:00止。
+              </Flex>
+            </ListItem>
+            <ListItem>
+              加簽班級與方式：
+              <Flex color="error.main" display={"inline"}>
+                僅能加簽人數未滿之班級。
+              </Flex>
+            </ListItem>
+            <ListItem>
+              核章流程：由系辦公室確認後發出加簽單後，請交由班級教師簽名，請於
+              <Flex color="error.main" display={"inline"}>
+                111年9月23日下午5:00前
+              </Flex>
+              送至學校註冊組。
+            </ListItem>
+            <ListItem>
+              加簽週
+              <Flex color="error.main" display={"inline"}>
+                不授理更換微積分班級(已有選到微積分課程者，不再受理加簽，也不辦理退選)。
+              </Flex>
+            </ListItem>
+          </OrderedList>
+        </Box>
+        <Box>五、微積分課程問題諮詢</Box>
+        <Box>
+          <Flex>聯絡人：天文數學館503系辦公室 趙怡茹</Flex>
+          <Flex>聯絡電話：3366-2819</Flex>
+        </Box>
       </Flex>
     </InstructionModal>
   );

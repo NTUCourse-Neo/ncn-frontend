@@ -54,6 +54,7 @@ import {
   NTUSystemCourseUpdateScheduleModal,
   NTUSystemCourseSelectionPlatformLink,
   ChemistryCoursePrecautionModal,
+  CalculasCoursePrecautionModal,
 } from "@/components/InstructionModals";
 
 // deprecated
@@ -547,6 +548,7 @@ function HomePage() {
               <NTUSystemCourseUpdateScheduleModal />
               <NTUSystemCourseSelectionPlatformLink />
               <ChemistryCoursePrecautionModal />
+              <CalculasCoursePrecautionModal />
             </Flex>
           </Flex>
           <Flex w="100vw" h="50vh" justify={"center"} alignItems="center">
