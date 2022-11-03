@@ -586,3 +586,141 @@ export function NTUSystemCourseUpdateScheduleModal() {
     </InstructionModal>
   );
 }
+
+export function NTUSystemCourseSelectionPlatformLink() {
+  return (
+    <ModalButton
+      title="臺灣大學系統選課資訊共同平台"
+      isExternal
+      onClick={() => {
+        openPage("https://ifweb.aca.ntu.edu.tw/UniversityAlliance/");
+      }}
+    />
+  );
+}
+
+export function ChemistryCoursePrecautionModal() {
+  return (
+    <InstructionModal title="化學分班編組選課注意事項">
+      <Flex flexDirection={"column"} gap={6}>
+        <Text>
+          修習「普通化學」、「有機化學」、「分析化學」、「物理化學」課程及實驗注意事項
+          <Flex>修訂日：111.04</Flex>
+        </Text>
+
+        <Box>
+          一、 選課絕對條件：
+          <OrderedList ml={6} mt={4}>
+            <ListItem>
+              未修課程者絕對不得先修實驗(即課程應與實驗併修，或先於實驗修習)，期中停修課程者，實驗需一併停修。
+            </ListItem>
+            <ListItem>
+              全年課程及實驗未修上學期(或相當科目1學期)者，絕對不得先修下學期課程或實驗。
+            </ListItem>
+            <ListItem>
+              未曾修習普化實驗者，絕對不得先修有機實驗或分析實驗。
+            </ListItem>
+            <ListItem>
+              未符修課/分班條件或授課教師不同意修習者須自行退選。
+            </ListItem>
+            <ListItem>
+              各系有更嚴格規定者從其規定。(例：醫學系生第一次修習者需於學期中修原班次，不可換班及暑修)。
+            </ListItem>
+          </OrderedList>
+        </Box>
+
+        <Box>
+          二、 分班規定：
+          <OrderedList ml={6} mt={4}>
+            <ListItem>
+              各系應依「分班編組上課時間表」中授課對象別，選定所屬之分班課程及實驗班次；高年級補、選修之學生亦同。
+            </ListItem>
+            <ListItem>全年課程之上下學期，應選同一班次。</ListItem>
+            <ListItem>
+              請修習者（課程及實驗）依規定進行網路加選事宜：
+              <ol
+                type="a"
+                style={{
+                  marginLeft: "24px",
+                }}
+              >
+                <li>實驗課加選前需先與助教確定 </li>
+                <li>加選方式為『2』者須先向教師/助教取得加選授權碼</li>
+                <li>
+                  除普通化學課程外，需經教師/助教要求填寫申請書後至化學系辦公室領取授權碼。
+                </li>
+              </ol>
+            </ListItem>
+          </OrderedList>
+        </Box>
+
+        <Box>
+          三、 課程先後修習規定：
+          <OrderedList ml={6} mt={4}>
+            <ListItem>
+              未修習「普通化學」者，不得修習有機、分析、物化課程。
+            </ListItem>
+            <ListItem>
+              曾修習「普通化學」(通過或未通過)，可續修習有機、分析、物化課程。
+            </ListItem>
+            <ListItem>
+              本系所開全年課程(含普化/有機/分析/物化)，上學期未曾修習者不得直接修習下學期；上學期曾經修習但未及格者，仍可繼續修習下學期課程。(有機一、二視為全年課程)
+            </ListItem>
+          </OrderedList>
+        </Box>
+        <Box>
+          四、 實驗修習規定：
+          <OrderedList ml={6} mt={4}>
+            <ListItem>
+              未修「普通化學」、「有機化學」、「分析化學」課程者，絕對不得先修該課程之實驗。
+            </ListItem>
+            <ListItem>
+              未修習「普通化學實驗」者，絕對不得先修習「有機化學實驗」、「分析化學實驗」。曾修習「普通化學實驗」者(通過或未通過)，可修習有機實驗/分析實驗。
+            </ListItem>
+            <ListItem>
+              全年實驗，上學期(或相當科目1學期)未修習者，絕對不得修習下學期實驗。
+            </ListItem>
+            <ListItem>
+              有機/分析化學全年實驗與半年實驗不同。全年課程需搭配全年實驗，半年課程需搭配半年實驗。如有特殊情形需全年課程搭配半年實驗者，僅同意於下學期修習實驗。並請提出書面申請，經實驗負責教師同意後修習。
+            </ListItem>
+            <ListItem>
+              94學年度起普化實驗(1學期)
+              與普化實驗上(全年實驗之上學期)實驗內容相同，可以互相充抵，免填申請書，如需化學系開立證明，請向化學系辦公室索取
+            </ListItem>
+            <ListItem>
+              因每一實驗室空間有限，故須有修課學生人數之限制；當選課人數超過實驗室容量時，實驗教師及助教得視情況，請非該班次指定之授課對象或選修生轉班或退選。
+            </ListItem>
+            <ListItem>
+              96學年度開始網路加退選，學校會經由檔修規定審核學生選課情形，原則上系統會剔除不符合修課規定者，即便系統未剔除，不合修課規定者仍不得修習。
+            </ListItem>
+          </OrderedList>
+        </Box>
+        <Text>
+          五、全校外系學生，請依
+          <ELink href="https://www.ch.ntu.edu.tw/office/eform/doc/r221.pdf">
+            臺大化學系抵免/充抵審查規則(外系分班課程及實驗).pdf{" "}
+          </ELink>
+          核可充抵及補修科目。(充抵申請書下載 _____)
+        </Text>
+        <Text>
+          ※
+          請注意各選課相關規定上網路加退選（加選方式為『2』者須先向教師/助教取得授權碼），除普通化學課程外，須經教師/助教要求填寫申請書後至化學系辦公室領取授權碼。
+        </Text>
+        <Text>
+          ※ 若需使用化學系表單，可至化學系網站查詢(
+          <ELink href="https://www.ch.ntu.edu.tw/edoc/form/">
+            https://www.ch.ntu.edu.tw/edoc/form/
+          </ELink>
+          )，或至化學系辦課程表單櫃取用
+        </Text>
+        <Text>
+          ※ 未竟事宜詳學校及化學系相關規定(
+          <ELink href="https://www.ch.ntu.edu.tw/edoc/rule/">
+            https://www.ch.ntu.edu.tw/edoc/rule/
+          </ELink>
+          )。如有疑義請洽化學系辦課務櫃檯同仁尤靜嫺小姐 (33661139)。
+        </Text>
+      </Flex>
+    </InstructionModal>
+  );
+}

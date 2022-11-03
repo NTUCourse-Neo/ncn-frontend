@@ -52,6 +52,8 @@ import {
   ArmyCoursePrecautionLink,
   ProgramApplicationInfoLink,
   NTUSystemCourseUpdateScheduleModal,
+  NTUSystemCourseSelectionPlatformLink,
+  ChemistryCoursePrecautionModal,
 } from "@/components/InstructionModals";
 
 // deprecated
@@ -534,7 +536,7 @@ function HomePage() {
                 <SearchFilters />
               </Flex>
             </Flex>
-            <Flex w="80%" bg="transparent">
+            <Flex w="80%" bg="transparent" flexWrap={"wrap"}>
               <CourseSelectionRulesModal />
               <GeneralCommonCoursePrecautionModal />
               <ChineseCoursePrecautionModal />
@@ -543,6 +545,8 @@ function HomePage() {
               <ArmyCoursePrecautionLink />
               <ProgramApplicationInfoLink />
               <NTUSystemCourseUpdateScheduleModal />
+              <NTUSystemCourseSelectionPlatformLink />
+              <ChemistryCoursePrecautionModal />
             </Flex>
           </Flex>
           <Flex w="100vw" h="50vh" justify={"center"} alignItems="center">
