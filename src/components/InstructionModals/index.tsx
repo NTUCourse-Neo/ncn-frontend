@@ -409,10 +409,10 @@ export function ForeignLanguageCoursePrecautionModal() {
                 </Tr>
               </Thead>
               <Tbody>
-                {tableOneData.map((row) => (
-                  <Tr>
+                {tableOneData.map((row, index) => (
+                  <Tr key={index}>
                     {row.map((cell) => (
-                      <Td>{cell}</Td>
+                      <Td key={cell}>{cell}</Td>
                     ))}
                   </Tr>
                 ))}
@@ -462,10 +462,10 @@ export function ForeignLanguageCoursePrecautionModal() {
                 </Tr>
               </Thead>
               <Tbody>
-                {tableTwoData.map((row) => (
-                  <Tr>
+                {tableTwoData.map((row, index) => (
+                  <Tr key={index}>
                     {row.map((data) => (
-                      <Td>{data}</Td>
+                      <Td key={data}>{data}</Td>
                     ))}
                   </Tr>
                 ))}
@@ -975,14 +975,15 @@ export function CalculasCoursePrecautionModal() {
                 </Tr>
               </Thead>
               <Tbody>
-                {calculasCourseTable.map((row) => (
-                  <Tr>
+                {calculasCourseTable.map((row, index) => (
+                  <Tr key={index}>
                     {row.map((cell) =>
                       cell === null ? null : (
                         <Td
                           rowSpan={cell?.rowSpan ?? 1}
                           whiteSpace={"pre-wrap"}
                           px={1}
+                          key={cell.text}
                         >
                           <Flex
                             justify={"center"}
@@ -1353,14 +1354,15 @@ export function AdvancedEnglishCoursePrecautionModal() {
                       <Td>授課教師</Td>
                       <Td>課程教學內容說明</Td>
                     </Tr>
-                    {advancedEnglishCourseTableData.map((row) => (
-                      <Tr>
+                    {advancedEnglishCourseTableData.map((row, index) => (
+                      <Tr key={index}>
                         {row.map((cell) =>
                           cell === null ? null : (
                             <Td
                               rowSpan={cell?.rowSpan ?? 1}
                               whiteSpace={"pre-wrap"}
                               px={1}
+                              key={cell.text}
                             >
                               <Flex
                                 justify={"center"}
