@@ -367,7 +367,7 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
               alignItems="center"
             >
               <Flex w="40%">{`已選擇 ${selectedDept.length} 個系所`}</Flex>
-              <Flex w="30%">
+              <Flex w={{ base: "50%", md: "35%" }}>
                 <InputGroup>
                   <InputLeftElement pointerEvents="none" pl="2" pt="1">
                     <SearchOutlineIcon boxSize="22px" color="#909090" />
