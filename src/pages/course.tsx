@@ -3,11 +3,9 @@ import {
   Box,
   Flex,
   Text,
-  Collapse,
   Fade,
   useMediaQuery,
   Icon,
-  useColorModeValue,
   Center,
   HStack,
   RadioGroup,
@@ -15,9 +13,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
-import SideCourseTableContainer from "components/CourseTable/SideCourseTableContainer";
 import Head from "next/head";
-import { reportEvent } from "utils/ga";
 import { useInView } from "react-intersection-observer";
 import CourseSearchInput from "@/components/CourseSearchInput";
 import SearchFilters from "@/components/SearchFilters";
@@ -32,9 +28,10 @@ import { BiFilterAlt } from "react-icons/bi";
 import CourseInfoRowPage from "@/components/CourseInfoRowPage";
 import Dropdown from "@/components/Dropdown";
 import { SortOption, sortOptions } from "@/types/search";
-import { FiCalendar } from "react-icons/fi";
+import { FaCalendarWeek } from "react-icons/fa";
 import UserCoursePanel from "@/components/UserCoursePanel";
 import { precautions } from "@/components/InstructionModals";
+import { useRouter } from "next/router";
 
 function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
   const currentPageRef = useRef<HTMLDivElement>(null);
@@ -305,8 +302,6 @@ function CoursePage() {
 
   const [isHigherThan1325] = useMediaQuery(["(min-height: 1325px)"]);
 
-  const [displayTable, setDisplayTable] = useState(false);
-
   useEffect(() => {
     if (isHigherThan1325) {
       setBatchSize(25);
@@ -316,6 +311,8 @@ function CoursePage() {
   useEffect(() => {
     setIsSearchBoxInView(searchBoxInView);
   }, [searchBoxInView, setIsSearchBoxInView]);
+
+  const router = useRouter();
 
   return (
     <>
@@ -393,7 +390,7 @@ function CoursePage() {
             >
               <SearchResultTopBar />
               <Box w="100%" minH="57vh">
-                <CourseInfoRowPage displayTable={false} pageIndex={pageIndex} />
+                <CourseInfoRowPage pageIndex={pageIndex} />
               </Box>
               <SearchResultTopBar isTop={false} />
             </Box>
@@ -410,70 +407,46 @@ function CoursePage() {
           </Flex>
         </Flex>
       </Flex>
-      <Fade in={!displayTable}>
-        <Flex
-          as="button"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="center"
-          position="absolute"
-          bottom="10vh"
-          right="4vw"
-          bg={"white"}
-          border="4px solid #A3A3A3"
-          borderRadius={"5.5px"}
+      <Flex
+        as="button"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        position="absolute"
+        bottom="10vh"
+        right="0vw"
+        bg={"white"}
+        border="1px solid #CCCCCC"
+        borderRadius={"4px 0px 0px 4px"}
+        sx={{
+          w: "52px",
+          p: "12px 16px",
+          gap: "4px",
+          filter: "drop-shadow(0px 0px 20.5932px rgba(85, 105, 135, 0.15))",
+        }}
+        onClick={() => {
+          router.push("/courseTable");
+        }}
+        _hover={{
+          boxShadow: "lg",
+          transform: "translateY(-2px) scale(1.02)",
+        }}
+        transition="all 200ms"
+      >
+        <Icon as={FaCalendarWeek} boxSize="20px" color={"black"} />
+        <Text
+          mt={"6px"}
           sx={{
-            w: "80px",
-            h: "80px",
-            p: 2,
-            filter: "drop-shadow(0px 0px 20.5932px rgba(85, 105, 135, 0.15))",
+            fontWeight: 500,
+            fontSize: "14px",
+            lineHeight: "1.35",
+            color: "#2D2D2D",
+            letterSpacing: "0.05em",
           }}
-          onClick={() => {
-            setDisplayTable(!displayTable);
-            reportEvent("course_page", "click", "expand_table");
-          }}
-          _hover={{
-            boxShadow: "lg",
-            transform: "translateY(-2px) scale(1.02)",
-          }}
-          transition="all 200ms"
         >
-          <Icon mr="1" as={FiCalendar} boxSize="40px" color={"black"} />
-          <Text
-            mt={"6px"}
-            sx={{
-              fontWeight: 500,
-              fontSize: "14px",
-              lineHeight: "14px",
-              color: "#000000",
-            }}
-          >
-            我的課表
-          </Text>
-        </Flex>
-      </Fade>
-      <Collapse in={displayTable} animateOpacity>
-        <Flex justifyContent="end" mr="2">
-          <Box
-            position="absolute"
-            top={{ base: "", lg: "8vh" }}
-            bottom="0"
-            right="0"
-            zIndex={{ base: "10000", lg: "1" }}
-            w={{ base: "100vw", lg: "45vw", xl: "40vw" }}
-            h={{ base: "90vh", lg: "70vh" }}
-            bg={useColorModeValue("card.light", "card.dark")}
-            mt="128px"
-            borderRadius="lg"
-            boxShadow="xl"
-          >
-            <SideCourseTableContainer
-              isDisplay={displayTable}
-              setIsDisplay={setDisplayTable}
-            />
-          </Box>
-        </Flex>
-      </Collapse>
+          我的課表
+        </Text>
+      </Flex>
     </>
   );
 }

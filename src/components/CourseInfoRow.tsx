@@ -327,13 +327,8 @@ function CourseDrawerContainer({
 export interface CourseInfoRowProps {
   readonly courseInfo: Course;
   readonly selected: boolean;
-  readonly displayTable: boolean;
 }
-function CourseInfoRow({
-  courseInfo,
-  selected,
-  displayTable,
-}: CourseInfoRowProps) {
+function CourseInfoRow({ courseInfo, selected }: CourseInfoRowProps) {
   const toast = useNeoToast();
 
   const { user } = useUser();

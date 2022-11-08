@@ -16,11 +16,9 @@ import useSearchResult from "hooks/useSearchResult";
 import SkeletonRow from "@/components/SkeletonRow";
 
 interface CourseInfoRowPageProps {
-  readonly displayTable: boolean;
   readonly pageIndex: number;
 }
 export default function CourseInfoRowPage({
-  displayTable,
   pageIndex,
 }: CourseInfoRowPageProps): JSX.Element | null {
   const { search } = useCourseSearchingContext();
@@ -105,7 +103,6 @@ export default function CourseInfoRowPage({
         <CourseInfoRow
           courseInfo={course}
           selected={selectedCourses.includes(course.id)}
-          displayTable={displayTable}
           key={course.id}
         />
       ))}
