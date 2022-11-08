@@ -191,7 +191,7 @@ function CourseDrawerContainer({
             fieldName={"學分數"}
             label={`${courseInfo.credits ? courseInfo.credits.toFixed(1) : ""}`}
           />
-          <DrawerDataTag fieldName={"修課學生年級"} label={"unavailable"} />
+          <DrawerDataTag fieldName={"修課年級限制"} label={"-"} />
         </Box>
         <Box w="33%" gap="6px">
           <DrawerDataTag
