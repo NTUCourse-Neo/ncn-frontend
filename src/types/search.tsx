@@ -111,7 +111,7 @@ export const otherLimits = [
   },
   {
     type_label: "個人設定",
-    label: "只顯示未選課程",
+    label: "只顯示未加入課程",
     value: "no_enroll",
     avaliable: false,
   },
