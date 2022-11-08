@@ -474,6 +474,9 @@ function HeaderBar() {
                 <MegaMenuLink href="http://ocw.aca.ntu.edu.tw/ntu-ocw/">
                   臺大開放式課程
                 </MegaMenuLink>
+                <MegaMenuLink href="https://www.n2.org.tw/enter/main">
+                  全國夏季學院
+                </MegaMenuLink>
               </Flex>
             </Dropdown>
             <Dropdown
