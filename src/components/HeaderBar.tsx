@@ -20,7 +20,11 @@ import {
   Center,
   TextProps,
 } from "@chakra-ui/react";
-import { ChevronRightIcon, ChevronDownIcon } from "@chakra-ui/icons";
+import {
+  ChevronRightIcon,
+  ChevronDownIcon,
+  ArrowForwardIcon,
+} from "@chakra-ui/icons";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { FaCheck, FaExclamation } from "react-icons/fa";
@@ -43,22 +47,30 @@ interface MegaMenuLinkProps extends TextProps {
 }
 function MegaMenuLink(props: MegaMenuLinkProps) {
   const { href, isExternal = true, children, ...restProps } = props;
+  const router = useRouter();
   return (
-    <Text
-      sx={{
-        cursor: "pointer",
-        transition: "all 0.2s ease-in-out",
-        _hover: {
-          opacity: 0.7,
-        },
-      }}
-      onClick={() => {
-        window.open(href, isExternal ? "_blank" : "_self");
-      }}
-      {...restProps}
-    >
-      {children}
-    </Text>
+    <Flex alignItems={"center"} gap={1}>
+      <Text
+        sx={{
+          cursor: "pointer",
+          transition: "all 0.2s ease-in-out",
+          _hover: {
+            opacity: 0.7,
+          },
+        }}
+        onClick={() => {
+          if (isExternal) {
+            window.open(href, "_blank");
+          } else {
+            router.push(href);
+          }
+        }}
+        {...restProps}
+      >
+        {children}
+      </Text>
+      {!isExternal ? <ArrowForwardIcon /> : null}
+    </Flex>
   );
 }
 
@@ -367,6 +379,9 @@ function HeaderBar() {
                     修課認識
                   </Text>
                   <Divider />
+                  <MegaMenuLink href="/courseDocuments" isExternal={false}>
+                    課程相關說明文件
+                  </MegaMenuLink>
                   <MegaMenuLink href="http://140.112.161.31/NTUVoxCourse/index.php/uquery/index">
                     必修科目及應修學分
                   </MegaMenuLink>
@@ -375,9 +390,6 @@ function HeaderBar() {
                   </MegaMenuLink>
                   <MegaMenuLink href="http://coursemap.aca.ntu.edu.tw/course_map_all/index.php.htm">
                     台大課程地圖
-                  </MegaMenuLink>
-                  <MegaMenuLink href="/courseDocuments" isExternal={false}>
-                    課程相關說明文件
                   </MegaMenuLink>
                 </Flex>
                 <Flex
