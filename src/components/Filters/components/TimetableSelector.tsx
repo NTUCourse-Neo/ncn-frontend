@@ -27,7 +27,7 @@ function TimetableSelector({
   readonly selectedTime: boolean[][];
   readonly setSelectedTime: (time: boolean[][]) => void;
 }) {
-  const days = ["一", "二", "三", "四", "五", "六", "日"];
+  const days = ["一", "二", "三", "四", "五", "六"];
 
   return (
     <Flex flexDirection="column" alignItems={"center"} minW="628px">
