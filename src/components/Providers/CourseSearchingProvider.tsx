@@ -101,7 +101,7 @@ const CourseSearchingContext = createContext<CourseSearchingContextType>({
   isSearchBoxInView: true,
   isFilterEdited: () => false,
   isFiltersEdited: false,
-  sortOption: "correlation",
+  sortOption: "serial",
   searchPageTopRef: React.createRef(),
   searchCallback: () => {},
   setSearch: () => {},
@@ -149,7 +149,7 @@ const CourseSearchingProvider: React.FC<{
     process.env.NEXT_PUBLIC_SEMESTER ?? null
   );
   const [searchMode, setSearchMode] = useState<SearchMode>(searchModeList[0]);
-  const [sortOption, setSortOption] = useState<SortOption>("correlation");
+  const [sortOption, setSortOption] = useState<SortOption>("serial");
   const [isSearchBoxInView, setIsSearchBoxInView] = useState(true);
 
   const dispatchSearch = (text: string | null) => {
