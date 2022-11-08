@@ -12,6 +12,7 @@ import nProgress from "nprogress";
 import { useEffect } from "react";
 import GoogleAnalytics from "components/GoogleAnalytics";
 import type { AppProps } from "next/app";
+import CourseTableFloatingButton from "@/components/CourseTableFloatingButton";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -34,6 +35,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               <Box w="100vw" h={{ base: "100%", lg: "" }}>
                 <DeadlineCountdown />
                 <HeaderBar />
+                <CourseTableFloatingButton />
                 <Component {...pageProps} />
               </Box>
             </DisplayTagsProvider>

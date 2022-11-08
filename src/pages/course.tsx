@@ -1,11 +1,9 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef } from "react";
 import {
   Box,
   Flex,
   Text,
-  Fade,
   useMediaQuery,
-  Icon,
   Center,
   HStack,
   RadioGroup,
@@ -28,10 +26,8 @@ import { BiFilterAlt } from "react-icons/bi";
 import CourseInfoRowPage from "@/components/CourseInfoRowPage";
 import Dropdown from "@/components/Dropdown";
 import { SortOption, sortOptions } from "@/types/search";
-import { FaCalendarWeek } from "react-icons/fa";
 import UserCoursePanel from "@/components/UserCoursePanel";
 import { precautions } from "@/components/InstructionModals";
-import { useRouter } from "next/router";
 
 function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
   const currentPageRef = useRef<HTMLDivElement>(null);
@@ -312,8 +308,6 @@ function CoursePage() {
     setIsSearchBoxInView(searchBoxInView);
   }, [searchBoxInView, setIsSearchBoxInView]);
 
-  const router = useRouter();
-
   return (
     <>
       <Head>
@@ -406,46 +400,6 @@ function CoursePage() {
             <UserCoursePanel />
           </Flex>
         </Flex>
-      </Flex>
-      <Flex
-        as="button"
-        flexDirection="column"
-        alignItems="center"
-        justifyContent="center"
-        position="absolute"
-        bottom="10vh"
-        right="0vw"
-        bg={"white"}
-        border="1px solid #CCCCCC"
-        borderRadius={"4px 0px 0px 4px"}
-        sx={{
-          w: "52px",
-          p: "12px 16px",
-          gap: "4px",
-          filter: "drop-shadow(0px 0px 20.5932px rgba(85, 105, 135, 0.15))",
-        }}
-        onClick={() => {
-          router.push("/courseTable");
-        }}
-        _hover={{
-          boxShadow: "lg",
-          transform: "translateY(-2px) scale(1.02)",
-        }}
-        transition="all 200ms"
-      >
-        <Icon as={FaCalendarWeek} boxSize="20px" color={"black"} />
-        <Text
-          mt={"6px"}
-          sx={{
-            fontWeight: 500,
-            fontSize: "14px",
-            lineHeight: "1.35",
-            color: "#2D2D2D",
-            letterSpacing: "0.05em",
-          }}
-        >
-          我的課表
-        </Text>
       </Flex>
     </>
   );
