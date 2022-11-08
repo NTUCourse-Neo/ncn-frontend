@@ -84,8 +84,8 @@ const searchModeList: SearchMode[] = [
     id: "expertise",
     chinese: "領域專長",
     english: "Domain Expertise",
-    filters: [], // TODO:
-    precautions: [], // TODO:
+    filters: ["time", "dept", "enroll_method", "target_grade", "other_limit"],
+    precautions: ["domainExpertisePrecaution"],
   },
   {
     id: "interschool",

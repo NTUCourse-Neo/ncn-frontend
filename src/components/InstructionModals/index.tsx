@@ -1391,6 +1391,20 @@ export function AdvancedEnglishCoursePrecautionModal() {
   );
 }
 
+export function DomainExpertisePrecautionLink() {
+  return (
+    <ModalButton
+      title="領域專長查詢系統"
+      isExternal
+      onClick={() => {
+        openPage(
+          "https://specom.aca.ntu.edu.tw/Domain/doma-list?searchText=&searchType=course_name&college=0&department=0"
+        );
+      }}
+    />
+  );
+}
+
 export const precautions = {
   courseSelectionRule: <CourseSelectionRulesModal />,
   generalCommonCoursePrecaution: <GeneralCommonCoursePrecautionModal />,
@@ -1404,5 +1418,6 @@ export const precautions = {
   chemistryCoursePrecaution: <ChemistryCoursePrecautionModal />,
   calculasCoursePrecaution: <CalculasCoursePrecautionModal />,
   advancedEnglishCoursePrecaution: <AdvancedEnglishCoursePrecautionModal />,
+  domainExpertisePrecaution: <DomainExpertisePrecautionLink />,
 };
 export type PrecautionName = keyof typeof precautions;
