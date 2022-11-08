@@ -262,7 +262,9 @@ function HeaderBar() {
         pr={{ base: 6, md: 10, lg: 20 }}
         pl={!isSearchModeEnable ? { base: 6, md: 10, lg: 20 } : "9%"}
         shadow={
-          isHeaderFilterActive ? "none" : "0px 1px 2px rgba(85, 105, 135, 0.1)"
+          isHeaderFilterActive
+            ? "none"
+            : "0px 20px 24px -4px rgba(85, 105, 135, 0.04), 0px 8px 8px -4px rgba(85, 105, 135, 0.02)"
         }
         ref={headerBarRef}
       >
@@ -534,7 +536,7 @@ function HeaderBar() {
                   />
                 ) : null}
               </Box>
-              <Link href="/helpCenter">
+              <Link href="/help">
                 <Text textStyle={"body1"} cursor="pointer">
                   幫助中心
                 </Text>
