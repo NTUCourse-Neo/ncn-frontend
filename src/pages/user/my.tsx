@@ -97,7 +97,6 @@ export default function UserMyPage({ user }: { readonly user: UserProfile }) {
                   <CourseInfoRow
                     courseInfo={course}
                     selected={selectedCourses.includes(course.id)}
-                    displayTable={false}
                   />
                   <Spacer my={{ base: 2, md: 1 }} />
                 </Accordion>
