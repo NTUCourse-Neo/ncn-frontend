@@ -528,7 +528,11 @@ function HomePage() {
             <Flex w="80%" bg="transparent" flexWrap={"wrap"}>
               {searchMode.precautions.map((precaution) => {
                 const component = precautions[precaution];
-                return component;
+                return (
+                  <React.Fragment key={`${precaution}`}>
+                    {component}
+                  </React.Fragment>
+                );
               })}
             </Flex>
           </Flex>
