@@ -288,7 +288,7 @@ export function TargetGradeFilter() {
 
   return (
     <FilterDropdown
-      title={`限修年級${
+      title={`可修課年級${
         isFilterEdited("target_grade")
           ? ` (${searchFilters.target_grade.length})`
           : ""
