@@ -44,9 +44,16 @@ import useNeoLocalStorage from "@/hooks/useNeoLocalStorage";
 interface MegaMenuLinkProps extends TextProps {
   readonly href: string;
   readonly isExternal?: boolean;
+  readonly hasArrow?: boolean;
 }
 function MegaMenuLink(props: MegaMenuLinkProps) {
-  const { href, isExternal = true, children, ...restProps } = props;
+  const {
+    href,
+    isExternal = true,
+    hasArrow = false,
+    children,
+    ...restProps
+  } = props;
   const router = useRouter();
   return (
     <Flex alignItems={"center"} gap={1}>
@@ -69,7 +76,7 @@ function MegaMenuLink(props: MegaMenuLinkProps) {
       >
         {children}
       </Text>
-      {!isExternal ? <ArrowForwardIcon /> : null}
+      {hasArrow ? <ArrowForwardIcon /> : null}
     </Flex>
   );
 }
@@ -379,7 +386,11 @@ function HeaderBar() {
                     修課認識
                   </Text>
                   <Divider />
-                  <MegaMenuLink href="/courseDocuments" isExternal={false}>
+                  <MegaMenuLink
+                    href="/courseDocuments"
+                    isExternal={false}
+                    hasArrow
+                  >
                     課程相關說明文件
                   </MegaMenuLink>
                   <MegaMenuLink href="http://140.112.161.31/NTUVoxCourse/index.php/uquery/index">
