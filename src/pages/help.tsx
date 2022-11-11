@@ -51,7 +51,7 @@ const sections = [
         Tutorial PPT / Video{" "}
       </Center>
     ),
-    faq: <></>,
+    faq: null,
   },
   {
     id: "selection1",
@@ -61,7 +61,11 @@ const sections = [
         Tutorial PPT / Video{" "}
       </Center>
     ),
-    faq: <></>,
+    faq: (
+      <Center my={5} w="80%" h="100vh" bg="#d9d9d9">
+        Accordion Placeholder
+      </Center>
+    ),
   },
   {
     id: "selection2",
@@ -71,7 +75,7 @@ const sections = [
         Tutorial PPT / Video{" "}
       </Center>
     ),
-    faq: <></>,
+    faq: null,
   },
   {
     id: "enrollWeeks",
@@ -81,7 +85,7 @@ const sections = [
         Tutorial PPT / Video{" "}
       </Center>
     ),
-    faq: <></>,
+    faq: null,
   },
   {
     id: "manualEnrollWeeks",
@@ -91,7 +95,7 @@ const sections = [
         Tutorial PPT / Video{" "}
       </Center>
     ),
-    faq: <></>,
+    faq: null,
   },
 ] as const;
 type SectionId = typeof sections[number]["id"];
@@ -226,6 +230,7 @@ function ContactTab() {
   );
 }
 
+// can be moved to custom hook
 const SectionWrapper = forwardRef<
   HTMLDivElement,
   {
@@ -260,7 +265,7 @@ const SectionWrapper = forwardRef<
       <Box
         ref={inViewRef}
         id={id}
-        h="5px"
+        h="1px"
         w="100%"
         bg="transparent"
         position={"absolute"}
@@ -364,12 +369,107 @@ function TutorialTab() {
   );
 }
 
+function FAQTab() {
+  // these code can be moved to custom hook -------
+  const containerBodyRef = useRef<HTMLDivElement>(null);
+  const [currentSection, setCurrentSection] = useState<SectionId>("selection1");
+  // clickable navigation link && scrollIntoView effect
+  const sectionRefs = sections.reduce((refsObj, section) => {
+    refsObj[section.id] = createRef<HTMLDivElement>();
+    return refsObj;
+  }, {} as Record<string, RefObject<HTMLDivElement>>);
+  const scrollToSection = (sectionId: SectionId) => {
+    sectionRefs?.[sectionId]?.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+  // ---------------------------------------------
+
+  return (
+    <Flex w="100%" h="65vh" position="relative" ref={containerBodyRef}>
+      <Flex
+        w="25%"
+        justifyContent={"end"}
+        overflow="hidden"
+        pr={"52px"}
+        position="sticky"
+        top={0}
+      >
+        <Box mt={9}>
+          {sections.map((section, index) => {
+            return (
+              <Box alignItems={"center"}>
+                {index !== 0 ? <Divider w="60%" mx="auto" /> : null}
+                <Flex
+                  justify={"center"}
+                  p="16px 10px"
+                  sx={{
+                    color: currentSection === section.id ? "black" : "#6F6F6F",
+                    cursor: "pointer",
+                    fontWeight: currentSection === section.id ? 500 : 400,
+                  }}
+                  onClick={() => {
+                    scrollToSection(section.id);
+                  }}
+                >
+                  {section.name}
+                </Flex>
+              </Box>
+            );
+          })}
+        </Box>
+      </Flex>
+      <Box
+        h="100%"
+        w="75%"
+        justifyContent={"column"}
+        overflowY="scroll"
+        sx={{
+          ...customScrollBarCss,
+        }}
+      >
+        {sections.map((section) => {
+          if (!section.faq) {
+            return null;
+          }
+          return (
+            <SectionWrapper
+              id={section.id}
+              sectionRefs={sectionRefs}
+              setCurrentSection={setCurrentSection}
+              ref={containerBodyRef}
+            >
+              <Flex
+                w="100%"
+                flexDirection={"column"}
+                ref={sectionRefs[section.id]}
+              >
+                <Flex
+                  sx={{
+                    color: "#2d2d2d",
+                    fontWeight: 500,
+                    fontSize: "18px",
+                    lineHeight: 1.4,
+                    py: 6,
+                  }}
+                >{`${section.name} FAQs`}</Flex>
+                {section.faq}
+              </Flex>
+            </SectionWrapper>
+          );
+        })}
+      </Box>
+    </Flex>
+  );
+}
+
 export default function HelpCenterPage() {
   const [tab, setTab] = useState<TabId>("tutorial");
 
   const tabContent: Record<TabId, React.ReactNode> = {
     tutorial: <TutorialTab />,
-    FAQ: <></>,
+    FAQ: <FAQTab />,
     contact: <ContactTab />,
   };
 
