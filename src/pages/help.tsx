@@ -12,10 +12,19 @@ import {
   TableColumnHeaderProps,
   TableCellProps,
   Text,
+  Divider,
+  Center,
 } from "@chakra-ui/react";
 import CustomBreadcrumb from "@/components/Breadcrumb";
 import { customScrollBarCss } from "@/styles/customScrollBar";
-import React, { useState } from "react";
+import { useInView } from "react-intersection-observer";
+import React, {
+  useState,
+  createRef,
+  RefObject,
+  forwardRef,
+  useRef,
+} from "react";
 
 const tabs = [
   {
@@ -32,6 +41,60 @@ const tabs = [
   },
 ] as const;
 type TabId = typeof tabs[number]["id"];
+
+const sections = [
+  {
+    id: "nol",
+    name: "課程網",
+    tutorial: (
+      <Center my={5} w="80%" h="52vh" bg="#d9d9d9">
+        Tutorial PPT / Video{" "}
+      </Center>
+    ),
+    faq: <></>,
+  },
+  {
+    id: "selection1",
+    name: "初選第一階段",
+    tutorial: (
+      <Center my={5} w="80%" h="52vh" bg="#d9d9d9">
+        Tutorial PPT / Video{" "}
+      </Center>
+    ),
+    faq: <></>,
+  },
+  {
+    id: "selection2",
+    name: "初選第二階段",
+    tutorial: (
+      <Center my={5} w="80%" h="52vh" bg="#d9d9d9">
+        Tutorial PPT / Video{" "}
+      </Center>
+    ),
+    faq: <></>,
+  },
+  {
+    id: "enrollWeeks",
+    name: "加退選",
+    tutorial: (
+      <Center my={5} w="80%" h="52vh" bg="#d9d9d9">
+        Tutorial PPT / Video{" "}
+      </Center>
+    ),
+    faq: <></>,
+  },
+  {
+    id: "manualEnrollWeeks",
+    name: "人工加簽",
+    tutorial: (
+      <Center my={5} w="80%" h="52vh" bg="#d9d9d9">
+        Tutorial PPT / Video{" "}
+      </Center>
+    ),
+    faq: <></>,
+  },
+] as const;
+type SectionId = typeof sections[number]["id"];
 
 function ELink({
   children,
@@ -163,13 +226,149 @@ function ContactTab() {
   );
 }
 
-function TutorialTab() {}
+const SectionWrapper = forwardRef<
+  HTMLDivElement,
+  {
+    readonly sectionRefs: Record<string, RefObject<HTMLDivElement>>;
+    readonly setCurrentSection: (sectionId: SectionId) => void;
+    readonly id: SectionId;
+    readonly children: React.ReactNode;
+  }
+>((props, ref) => {
+  const { sectionRefs, setCurrentSection, id, children } = props;
+  const scrollSectionRef = sectionRefs[id];
+  const container = ref as RefObject<HTMLDivElement>;
+  const containerBody = container?.current;
+  const ROOT_MARGIN_BOX_HEIGHT = 50;
+  const offsetBottom = containerBody?.clientHeight
+    ? `-${containerBody.clientHeight - ROOT_MARGIN_BOX_HEIGHT}px`
+    : "-88%";
+
+  const { ref: inViewRef } = useInView({
+    /* Optional options */
+    root: containerBody ?? null,
+    rootMargin: `0px 0px ${offsetBottom} 0px`,
+    onChange: (inView, entry) => {
+      if (inView) {
+        setCurrentSection((entry?.target?.id as SectionId) ?? "nol");
+      }
+    },
+  });
+
+  return (
+    <Flex position={"relative"} w="100%">
+      <Box
+        ref={inViewRef}
+        id={id}
+        h="5px"
+        w="100%"
+        bg="transparent"
+        position={"absolute"}
+        top={0}
+      />
+      <Flex ref={scrollSectionRef} id={id} w="100%">
+        {children}
+      </Flex>
+    </Flex>
+  );
+});
+
+function TutorialTab() {
+  const containerBodyRef = useRef<HTMLDivElement>(null);
+  const [currentSection, setCurrentSection] = useState<SectionId>("selection1");
+  // clickable navigation link && scrollIntoView effect
+  const sectionRefs = sections.reduce((refsObj, section) => {
+    refsObj[section.id] = createRef<HTMLDivElement>();
+    return refsObj;
+  }, {} as Record<string, RefObject<HTMLDivElement>>);
+  const scrollToSection = (sectionId: SectionId) => {
+    sectionRefs?.[sectionId]?.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
+  return (
+    <Flex w="100%" h="65vh" position="relative" ref={containerBodyRef}>
+      <Flex
+        w="25%"
+        justifyContent={"end"}
+        overflow="hidden"
+        pr={"52px"}
+        position="sticky"
+        top={0}
+      >
+        <Box mt={9}>
+          {sections.map((section, index) => {
+            return (
+              <Box alignItems={"center"}>
+                {index !== 0 ? <Divider w="60%" mx="auto" /> : null}
+                <Flex
+                  justify={"center"}
+                  p="16px 10px"
+                  sx={{
+                    color: currentSection === section.id ? "black" : "#6F6F6F",
+                    cursor: "pointer",
+                    fontWeight: currentSection === section.id ? 500 : 400,
+                  }}
+                  onClick={() => {
+                    scrollToSection(section.id);
+                  }}
+                >
+                  {section.name}
+                </Flex>
+              </Box>
+            );
+          })}
+        </Box>
+      </Flex>
+      <Box
+        h="100%"
+        w="75%"
+        justifyContent={"column"}
+        overflowY="scroll"
+        sx={{
+          ...customScrollBarCss,
+        }}
+      >
+        {sections.map((section) => {
+          return (
+            <SectionWrapper
+              id={section.id}
+              sectionRefs={sectionRefs}
+              setCurrentSection={setCurrentSection}
+              ref={containerBodyRef}
+            >
+              <Flex
+                w="100%"
+                flexDirection={"column"}
+                ref={sectionRefs[section.id]}
+              >
+                <Flex
+                  sx={{
+                    color: "#2d2d2d",
+                    fontWeight: 500,
+                    fontSize: "18px",
+                    lineHeight: 1.4,
+                    py: 6,
+                  }}
+                >{`使用教學 - ${section.name}`}</Flex>
+                <Flex w="80%" borderBottom="1px solid #000000" />
+                {section.tutorial}
+              </Flex>
+            </SectionWrapper>
+          );
+        })}
+      </Box>
+    </Flex>
+  );
+}
 
 export default function HelpCenterPage() {
   const [tab, setTab] = useState<TabId>("tutorial");
 
   const tabContent: Record<TabId, React.ReactNode> = {
-    tutorial: <></>,
+    tutorial: <TutorialTab />,
     FAQ: <></>,
     contact: <ContactTab />,
   };
@@ -266,11 +465,8 @@ export default function HelpCenterPage() {
               flexDirection={"column"}
               h="65vh"
               w="100%"
-              overflowY={"auto"}
-              sx={{
-                ...customScrollBarCss,
-              }}
-              justifyContent="center"
+              overflowY={"hidden"}
+              justifyContent={tab === "contact" ? "center" : "start"}
               alignItems={"center"}
             >
               {tabContent[tab]}
