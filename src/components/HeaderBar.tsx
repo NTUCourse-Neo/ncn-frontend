@@ -530,7 +530,7 @@ function HeaderBar() {
           {isSearchModeEnable ? null : (
             <Flex gap={{ base: 2, xl: 6 }}>
               <Box position={"relative"}>
-                <Link href="/newPost">
+                <Link href="/news">
                   <Text
                     textStyle={"body1"}
                     cursor="pointer"
