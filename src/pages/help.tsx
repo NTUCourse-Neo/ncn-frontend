@@ -75,7 +75,11 @@ const sections = [
         Tutorial PPT / Video{" "}
       </Center>
     ),
-    faq: null,
+    faq: (
+      <Center my={5} w="80%" h="100vh" bg="#d9d9d9">
+        Accordion Placeholder
+      </Center>
+    ),
   },
   {
     id: "enrollWeeks",
@@ -312,7 +316,8 @@ function TutorialTab() {
                   justify={"center"}
                   p="16px 10px"
                   sx={{
-                    color: currentSection === section.id ? "black" : "#6F6F6F",
+                    color:
+                      currentSection === section.id ? "#081D59" : "#6F6F6F",
                     cursor: "pointer",
                     fontWeight: currentSection === section.id ? 500 : 400,
                   }}
@@ -397,27 +402,30 @@ function FAQTab() {
         top={0}
       >
         <Box mt={9}>
-          {sections.map((section, index) => {
-            return (
-              <Box alignItems={"center"}>
-                {index !== 0 ? <Divider w="60%" mx="auto" /> : null}
-                <Flex
-                  justify={"center"}
-                  p="16px 10px"
-                  sx={{
-                    color: currentSection === section.id ? "black" : "#6F6F6F",
-                    cursor: "pointer",
-                    fontWeight: currentSection === section.id ? 500 : 400,
-                  }}
-                  onClick={() => {
-                    scrollToSection(section.id);
-                  }}
-                >
-                  {section.name}
-                </Flex>
-              </Box>
-            );
-          })}
+          {sections
+            .filter((s) => s.faq !== null)
+            .map((section, index) => {
+              return (
+                <Box alignItems={"center"}>
+                  {index !== 0 ? <Divider w="60%" mx="auto" /> : null}
+                  <Flex
+                    justify={"center"}
+                    p="16px 10px"
+                    sx={{
+                      color:
+                        currentSection === section.id ? "#081D59" : "#6F6F6F",
+                      cursor: "pointer",
+                      fontWeight: currentSection === section.id ? 500 : 400,
+                    }}
+                    onClick={() => {
+                      scrollToSection(section.id);
+                    }}
+                  >
+                    {section.name}
+                  </Flex>
+                </Box>
+              );
+            })}
         </Box>
       </Flex>
       <Box
