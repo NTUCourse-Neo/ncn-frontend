@@ -8,10 +8,10 @@ import {
   Box,
 } from "@chakra-ui/react";
 
-interface AccordionItemProps
+export interface AccordionItemProps
   extends Omit<ChakraAccordionItemProps, "children"> {
   readonly title: string;
-  readonly children?: React.ReactNode | string;
+  readonly children?: React.ReactNode;
 }
 
 function AccordionItem(props: AccordionItemProps) {
@@ -63,22 +63,19 @@ function AccordionItem(props: AccordionItemProps) {
   );
 }
 
-export default function FaqAccordion() {
+export default function FaqAccordion({
+  items,
+}: {
+  readonly items: ReadonlyArray<AccordionItemProps>;
+}) {
   return (
     <Box w="80%">
       <Accordion allowToggle defaultIndex={0}>
-        <AccordionItem title={"Q1"}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat.
-        </AccordionItem>
-        <AccordionItem title={"Q2122"}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat.
-        </AccordionItem>
+        {items.map((item, index) => (
+          <AccordionItem title={item.title} key={`${item.title}-${index}`}>
+            {item.children}
+          </AccordionItem>
+        ))}
       </Accordion>
     </Box>
   );
