@@ -51,7 +51,7 @@ function AccordionItem(props: AccordionItemProps) {
       </AccordionButton>
       <AccordionPanel
         sx={{
-          p: "16px 40px 32px 44px",
+          p: "16px 80px 32px 44px",
           fontSize: "12px",
           lineHeight: "1.4",
           color: "#6f6f6f",
@@ -69,10 +69,13 @@ export default function FaqAccordion({
   readonly items: ReadonlyArray<AccordionItemProps>;
 }) {
   return (
-    <Box w="80%">
+    <Box w="80%" minH="58vh">
       <Accordion allowToggle defaultIndex={0}>
         {items.map((item, index) => (
-          <AccordionItem title={item.title} key={`${item.title}-${index}`}>
+          <AccordionItem
+            title={`Q${index + 1}. ${item.title}`}
+            key={`${item.title}-${index}`}
+          >
             {item.children}
           </AccordionItem>
         ))}

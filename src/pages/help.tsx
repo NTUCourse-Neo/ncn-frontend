@@ -25,6 +25,8 @@ import React, {
   forwardRef,
   useRef,
 } from "react";
+import FaqAccordion from "@/components/FAQ/FaqAccordion";
+import { sectionOneFaq, sectionTwoFaq } from "@/data/faq";
 
 const tabs = [
   {
@@ -61,11 +63,7 @@ const sections = [
         Tutorial PPT / Video{" "}
       </Center>
     ),
-    faq: (
-      <Center my={5} w="80%" h="100vh" bg="#d9d9d9">
-        Accordion Placeholder
-      </Center>
-    ),
+    faq: sectionOneFaq,
   },
   {
     id: "selection2",
@@ -75,11 +73,7 @@ const sections = [
         Tutorial PPT / Video{" "}
       </Center>
     ),
-    faq: (
-      <Center my={5} w="80%" h="100vh" bg="#d9d9d9">
-        Accordion Placeholder
-      </Center>
-    ),
+    faq: sectionTwoFaq,
   },
   {
     id: "enrollWeeks",
@@ -462,7 +456,7 @@ function FAQTab() {
                     py: 6,
                   }}
                 >{`${section.name} FAQs`}</Flex>
-                {section.faq}
+                <FaqAccordion items={section.faq} />
               </Flex>
             </SectionWrapper>
           );
