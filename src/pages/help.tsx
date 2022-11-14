@@ -292,7 +292,7 @@ function TutorialTab() {
   };
 
   return (
-    <Flex w="100%" h="65vh" position="relative" ref={containerBodyRef}>
+    <Flex w="100%" h="60vh" position="relative" ref={containerBodyRef}>
       <Flex
         w="25%"
         justifyContent={"end"}
@@ -386,7 +386,7 @@ function FAQTab() {
   // ---------------------------------------------
 
   return (
-    <Flex w="100%" h="65vh" position="relative" ref={containerBodyRef}>
+    <Flex w="100%" h="60vh" position="relative" ref={containerBodyRef}>
       <Flex
         w="25%"
         justifyContent={"end"}
@@ -565,7 +565,7 @@ export default function HelpCenterPage() {
             </Flex>
             <Flex
               flexDirection={"column"}
-              h="65vh"
+              h="60vh"
               w="100%"
               overflowY={"hidden"}
               justifyContent={tab === "contact" ? "center" : "start"}
