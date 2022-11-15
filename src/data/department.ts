@@ -1,5 +1,6 @@
 import type { Department } from "@/types/course";
 import { collegeIds } from "data/college";
+import { programs } from "@/types/search";
 
 // IMPORTANT: Should keep these data consistent with DB's department table
 const dBDeptList: Department[] = [
@@ -2174,6 +2175,13 @@ const dBDeptList: Department[] = [
     name_alt: null,
   },
   {
+    id: "I000",
+    college_id: "I",
+    name_short: null,
+    name_full: "國際學院",
+    name_alt: null,
+  },
+  {
     id: "J000",
     college_id: "J",
     name_short: null,
@@ -2243,6 +2251,13 @@ const dBDeptList: Department[] = [
     name_full: "奈米工程與科學碩士學位學程",
     name_alt: null,
   },
+  ...programs.map((program) => ({
+    id: program.value,
+    college_id: "P",
+    name_short: null,
+    name_full: program.chinese_label,
+    name_alt: null,
+  })),
   {
     id: "Q010",
     college_id: "Q",

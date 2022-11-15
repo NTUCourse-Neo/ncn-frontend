@@ -46,13 +46,19 @@ const college_map: CollegeMap = {
     name: "進修推廣學院",
   },
   H: {
-    name: "學位學程",
+    name: "共同教育中心",
+  },
+  I: {
+    name: "國際學院",
   },
   J: {
     name: "產業研發碩士專班",
   },
   K: {
     name: "重點科技研究學院與三校聯盟",
+  },
+  P: {
+    name: "學分學程",
   },
   Q: {
     name: "寫作教學中心",
