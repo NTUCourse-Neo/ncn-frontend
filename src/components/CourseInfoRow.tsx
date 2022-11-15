@@ -191,7 +191,10 @@ function CourseDrawerContainer({
             fieldName={"學分數"}
             label={`${courseInfo.credits ? courseInfo.credits.toFixed(1) : ""}`}
           />
-          <DrawerDataTag fieldName={"修課年級限制"} label={"-"} />
+          <DrawerDataTag
+            fieldName={info_view_map.language.name}
+            label={info_view_map.language.map[courseInfo.language]}
+          />
         </Box>
         <Box w="33%" gap="6px">
           <DrawerDataTag
@@ -205,10 +208,6 @@ function CourseDrawerContainer({
           <DrawerDataTag
             fieldName={"修課總人數"}
             label={`${courseInfo.slot} 人`}
-          />
-          <DrawerDataTag
-            fieldName={info_view_map.language.name}
-            label={info_view_map.language.map[courseInfo.language]}
           />
         </Box>
       </Flex>
