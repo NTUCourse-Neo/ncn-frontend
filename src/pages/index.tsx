@@ -44,6 +44,7 @@ import searchModeList from "@/data/searchMode";
 import { availableSemesters } from "@/constant";
 import SearchFilters from "@/components/SearchFilters";
 import { precautions } from "@/components/InstructionModals";
+import Footer from "@/components/Footer";
 
 // deprecated
 interface NewRegisterModalProps {
@@ -536,10 +537,11 @@ function HomePage() {
               })}
             </Flex>
           </Flex>
-          <Flex w="100vw" h="50vh" justify={"center"} alignItems="center">
+          <Flex w="100vw" h="80vh" justify={"center"} alignItems="center">
             資訊介紹版位 (In progress)
           </Flex>
         </Flex>
+        <Footer />
       </Box>
     </>
   );
