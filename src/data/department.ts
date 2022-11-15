@@ -1,6 +1,6 @@
 import type { Department } from "@/types/course";
 import { collegeIds } from "data/college";
-import { programs } from "@/types/search";
+import { programs } from "@/data/program";
 
 // IMPORTANT: Should keep these data consistent with DB's department table
 const dBDeptList: Department[] = [
