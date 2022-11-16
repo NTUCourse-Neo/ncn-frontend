@@ -23,31 +23,19 @@ import {
   useColorModeValue,
   FlexProps,
 } from "@chakra-ui/react";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { PieChart } from "react-minimal-pie-chart";
 import {
   FaCircle,
   FaExclamationTriangle,
   FaQuestionCircle,
-  FaChevronLeft,
   FaChevronRight,
   FaInfoCircle,
 } from "react-icons/fa";
-import { IoMdOpen } from "react-icons/io";
-import PTTContentRowContainer from "components/CourseInfo/PTTContentRowContainer";
-import SignUpCard from "components/CourseInfo/SignUpCard";
-import SignUpSubmitForm from "components/CourseInfo/SignUpSubmitForm";
 import { useUser } from "@auth0/nextjs-auth0";
 import { useRouter } from "next/router";
 import Image from "next/image";
-import {
-  useCourseEnrollData,
-  useNTURatingData,
-  usePTTReviewData,
-  usePTTExamData,
-  useSyllabusData,
-  useSignUpPostData,
-} from "hooks/useCourseInfo";
+import { useCourseEnrollData, useSyllabusData } from "hooks/useCourseInfo";
 import { reportEvent } from "utils/ga";
 import {
   syllabusFields,
@@ -187,111 +175,6 @@ function PanelWrapper({
   return <>{children}</>;
 }
 
-export function SignUpPanel({ courseId }: { readonly courseId: string }) {
-  const { user, isLoading: isAuth0Loading } = useUser();
-  const {
-    data: signUpPostData,
-    isLoading,
-    mutate,
-  } = useSignUpPostData(courseId);
-  const [signUpCardIdx, setSignUpCardIdx] = useState(0);
-  const textColor = useColorModeValue("text.light", "text.dark");
-
-  // trigger after delete sign up card
-  useEffect(() => {
-    if (
-      Array.isArray(signUpPostData) &&
-      signUpCardIdx >= signUpPostData.length
-    ) {
-      setSignUpCardIdx(Math.max(signUpPostData.length - 1, 0));
-    }
-  }, [signUpPostData, setSignUpCardIdx, signUpCardIdx]);
-
-  return (
-    <PanelWrapper
-      isLoading={isLoading || isAuth0Loading}
-      isUnauth={!user}
-      loadingFallback={
-        <LoadingPanel title="努力跑加簽大地中..." height="100%" />
-      }
-    >
-      {!signUpPostData ? (
-        <PanelPlaceholder title="無加簽相關資訊" height="100%" />
-      ) : signUpPostData.length === 0 ? (
-        <Flex
-          w="100%"
-          h="100%"
-          mt="4"
-          flexDirection="column"
-          justifyContent="center"
-          alignItems={{ base: "start", lg: "center" }}
-        >
-          <PanelPlaceholder title="無加簽相關資訊" h="100%" pt="0" />
-          <HStack w="100%" pr="8" mt="8" justify="end">
-            <SignUpSubmitForm
-              courseId={courseId}
-              haveSubmitted={signUpPostData.some((obj) => obj.is_owner)}
-            />
-          </HStack>
-        </Flex>
-      ) : (
-        <Flex
-          w="100%"
-          h="100%"
-          mt="4"
-          flexDirection="column"
-          justifyContent="center"
-          alignItems={{ base: "start", lg: "center" }}
-        >
-          <SignUpCard
-            post={signUpPostData[signUpCardIdx]}
-            courseId={courseId}
-          />
-          <HStack w="100%" pr="8" mt="8">
-            <HStack>
-              <IconButton
-                aria-label="prev"
-                size="md"
-                variant="ghost"
-                icon={<FaChevronLeft />}
-                onClick={() =>
-                  setSignUpCardIdx(
-                    signUpCardIdx === 0
-                      ? signUpPostData.length - 1
-                      : signUpCardIdx - 1
-                  )
-                }
-              />
-              <IconButton
-                aria-label="next"
-                size="md"
-                variant="ghost"
-                icon={<FaChevronRight />}
-                onClick={() =>
-                  setSignUpCardIdx((signUpCardIdx + 1) % signUpPostData.length)
-                }
-              />
-              <Text
-                fontSize="sm"
-                fontWeight="800"
-                color={textColor}
-                textAlign="center"
-              >
-                {signUpCardIdx + 1}/{signUpPostData.length}
-              </Text>
-            </HStack>
-            <Spacer />
-            <SignUpSubmitForm
-              courseId={courseId}
-              haveSubmitted={signUpPostData.some((obj) => obj.is_owner)}
-            />
-          </HStack>
-        </Flex>
-      )}
-    </PanelWrapper>
-  );
-}
-
 export function EnrollStatusPanel({
   courseSerial,
 }: {
@@ -345,125 +228,6 @@ export function EnrollStatusPanel({
             <StatHelpText>空位</StatHelpText>
           </Stat>
         </Flex>
-      )}
-    </PanelWrapper>
-  );
-}
-
-export function NTURatingPanel({ courseId }: { readonly courseId: string }) {
-  const { user, isLoading: isAuth0Loading } = useUser();
-  const { data: ntuRatingData, isLoading } = useNTURatingData(courseId);
-  return (
-    <PanelWrapper
-      isLoading={isLoading || isAuth0Loading}
-      isUnauth={!user}
-      loadingFallback={
-        <LoadingPanel title="查詢評價中..." height="100%" pt={8} />
-      }
-    >
-      {!ntuRatingData ? (
-        <Flex h="100%" flexDirection="column" alignItems="center">
-          <PanelPlaceholder title="無評價資訊" h="100%" pt="8" />
-          <Button
-            mt="4"
-            colorScheme="blue"
-            variant="outline"
-            size="sm"
-            rightIcon={<IoMdOpen />}
-            onClick={() => {
-              window.open(
-                "https://rating.myntu.me/?referrer=ntucourse_neo",
-                "_blank"
-              );
-              reportEvent("rating_panel", "click_external", "nturating");
-            }}
-          >
-            前往 NTURating 撰寫評價
-          </Button>
-        </Flex>
-      ) : (
-        <Flex h="100%" flexDirection="column" alignItems="start">
-          <Text fontSize="md" fontWeight="600" color="gray.700">
-            NTURating 上共有 {ntuRatingData.count} 筆評價
-          </Text>
-          <HStack w="100%" justify="space-between" my="2">
-            <Stat>
-              <StatLabel>甜度</StatLabel>
-              <StatNumber>{ntuRatingData.sweety}</StatNumber>
-              <StatHelpText>平均值</StatHelpText>
-            </Stat>
-            <Stat>
-              <StatLabel>涼度</StatLabel>
-              <StatNumber>{ntuRatingData.breeze}</StatNumber>
-              <StatHelpText>平均值</StatHelpText>
-            </Stat>
-            <Stat>
-              <StatLabel>紮實度</StatLabel>
-              <StatNumber>{ntuRatingData.workload}</StatNumber>
-              <StatHelpText>平均值</StatHelpText>
-            </Stat>
-            <Stat>
-              <StatLabel>品質</StatLabel>
-              <StatNumber>{ntuRatingData.quality}</StatNumber>
-              <StatHelpText>平均值</StatHelpText>
-            </Stat>
-          </HStack>
-          <Button
-            colorScheme="blue"
-            variant="outline"
-            size="sm"
-            rightIcon={<IoMdOpen />}
-            onClick={() => {
-              window.open(
-                ntuRatingData?.url + "&referrer=ntucourse_neo",
-                "_blank"
-              );
-              reportEvent("rating_panel", "click_external", ntuRatingData?.url);
-            }}
-          >
-            前往 NTURating 查看該課程評價
-          </Button>
-        </Flex>
-      )}
-    </PanelWrapper>
-  );
-}
-
-export function PTTReviewPanel({ courseId }: { readonly courseId: string }) {
-  const { user, isLoading: isAuth0Loading } = useUser();
-  const { data: pttReviewData, isLoading } = usePTTReviewData(courseId);
-  return (
-    <PanelWrapper
-      isLoading={isLoading || isAuth0Loading}
-      isUnauth={!user}
-      loadingFallback={
-        <LoadingPanel title="努力爬文中..." height="100%" pt={8} />
-      }
-    >
-      {!pttReviewData || !Array.isArray(pttReviewData) ? (
-        <PanelPlaceholder title="無相關貼文資訊" h="100%" pt="8" />
-      ) : (
-        <PTTContentRowContainer info={pttReviewData} height="150px" />
-      )}
-    </PanelWrapper>
-  );
-}
-
-export function PTTExamPanel({ courseId }: { readonly courseId: string }) {
-  const { user, isLoading: isAuth0Loading } = useUser();
-  const { data: pttExamData, isLoading } = usePTTExamData(courseId);
-  return (
-    <PanelWrapper
-      isLoading={isLoading || isAuth0Loading}
-      isUnauth={!user}
-      loadingFallback={
-        <LoadingPanel title="努力爬文中..." height="100%" pt={8} />
-      }
-    >
-      {!pttExamData || !Array.isArray(pttExamData) ? (
-        <PanelPlaceholder title="無相關貼文資訊" h="100%" pt="8" />
-      ) : (
-        <PTTContentRowContainer info={pttExamData} height="150px" />
       )}
     </PanelWrapper>
   );
