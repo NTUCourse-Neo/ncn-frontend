@@ -1,8 +1,7 @@
 import { Flex, Box } from "@chakra-ui/react";
 import React, { useState, useMemo } from "react";
-import { FaCircle } from "react-icons/fa";
 import { info_view_map } from "data/mapping_table";
-import parseCourseSchedlue from "utils/parseCourseSchedule";
+// import parseCourseSchedlue from "utils/parseCourseSchedule";
 import {
   EnrollStatusPanel,
   SyllabusPanel,
@@ -25,6 +24,11 @@ const tabs = [
   },
 ] as const;
 type TabId = typeof tabs[number]["id"];
+
+// TODO:
+function BasicInfoTab({ course }: { readonly course: Course }) {
+  return <Box>123</Box>;
+}
 
 function CourseDetailInfoContainer({ course }: { readonly course: Course }) {
   const course_codes_1 = [
@@ -49,11 +53,11 @@ function CourseDetailInfoContainer({ course }: { readonly course: Course }) {
   const [tabId, setTabId] = useState<TabId>("basicInfo");
   const tabContent = useMemo<Record<TabId, JSX.Element>>(
     () => ({
-      basicInfo: <></>,
+      basicInfo: <BasicInfoTab course={course} />,
       courseRules: <></>,
       courseSchedule: <></>,
     }),
-    []
+    [course]
   );
 
   return (
@@ -104,6 +108,7 @@ function CourseDetailInfoContainer({ course }: { readonly course: Course }) {
           borderRadius: "0 0 4px 4px",
           shadow: "0px 3px 8px rgba(75, 75, 75, 0.08)",
           border: "1px solid rgba(204, 204, 204, 0.4)",
+          p: 10,
         }}
       >
         {tabContent[tabId]}
