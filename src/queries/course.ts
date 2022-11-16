@@ -1,12 +1,6 @@
 import instance from "@/queries/axiosInstance";
 import type { SearchFieldName, Filter } from "@/types/search";
-import type {
-  Course,
-  CourseEnrollStatus,
-  CourseRatingData,
-  PTTData,
-  CourseSyllabus,
-} from "types/course";
+import type { Course, CourseEnrollStatus, CourseSyllabus } from "types/course";
 const api_version = "v2";
 
 type NullableSearchFilterBase = {
@@ -59,45 +53,6 @@ export const getCourseEnrollInfo = async (token: string, course_id: string) => {
   return data as {
     course_id: string;
     course_status: CourseEnrollStatus | null;
-    update_ts: string;
-    message: string;
-  };
-};
-
-export const getNTURatingData = async (token: string, course_id: string) => {
-  const { data } = await instance.get(
-    `${api_version}/courses/${course_id}/rating`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-  return data as {
-    course_id: string;
-    course_rating: CourseRatingData | null;
-    update_ts: string;
-    message: string;
-  };
-};
-
-type PTTRequestType = "review" | "exam";
-export const getPTTData = async (
-  token: string,
-  course_id: string,
-  type: PTTRequestType
-) => {
-  const { data } = await instance.get(
-    `${api_version}/courses/${course_id}/ptt/${type}`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-  return data as {
-    course_id: string;
-    course_rating: PTTData | null;
     update_ts: string;
     message: string;
   };

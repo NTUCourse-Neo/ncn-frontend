@@ -5,12 +5,7 @@ import { useToast } from "@chakra-ui/react";
 import { getCourseSyllabusData } from "queries/course";
 import { hash_to_color_hex_with_hue } from "utils/colorAgent";
 import { useUser } from "@auth0/nextjs-auth0";
-import type {
-  CourseEnrollStatus,
-  CourseRatingData,
-  PTTData,
-  SignUpPost,
-} from "@/types/course";
+import type { CourseEnrollStatus } from "@/types/course";
 
 interface Options {
   readonly onSuccessCallback?: (

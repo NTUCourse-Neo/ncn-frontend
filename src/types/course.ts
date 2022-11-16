@@ -81,15 +81,6 @@ export type CourseEnrollStatus = {
   registered: string;
   remain: string;
 };
-// from ntu rating
-export type CourseRatingData = {
-  breeze: number;
-  count: number;
-  quality: number;
-  sweety: number;
-  url: string;
-  workload: number;
-};
 export const syllabusFieldSource = {
   intro: "概述",
   objective: "目標",
@@ -113,32 +104,3 @@ export type CourseSyllabus = {
       }[];
   syllabus: Record<SyllabusFieldName, string>;
 };
-export type PTTData = PTTArticle[];
-export type SignUpPostData = SignUpPost[] | null;
-
-export interface SignUpPost {
-  content: {
-    amount: number;
-    comment: string;
-    rule: string;
-    when: string;
-    _id: string;
-  };
-  course_id: string;
-  create_ts: string;
-  is_owner: boolean;
-  self_vote_status: number;
-  type: string;
-  upvotes: number;
-  downvotes: number;
-  user_type: SocialUser;
-  _id: string;
-}
-
-interface PTTArticle {
-  aid: string;
-  author: string;
-  date: string;
-  title: string;
-  url: string;
-}
