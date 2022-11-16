@@ -215,8 +215,8 @@ function ContactTab() {
           </Tr>
         </Thead>
         <Tbody>
-          {rows.map((row) => (
-            <Tr>
+          {rows.map((row, index) => (
+            <Tr key={`${row.questionType}-${row.office}-${index}`}>
               <Td alignStart>{row.questionType}</Td>
               <Td>{row.office}</Td>
               <Td alignStart>{row.contactInfo}</Td>
@@ -275,6 +275,7 @@ const SectionWrapper = forwardRef<
     </Flex>
   );
 });
+SectionWrapper.displayName = "SectionWrapper";
 
 function TutorialTab() {
   const containerBodyRef = useRef<HTMLDivElement>(null);
@@ -304,7 +305,7 @@ function TutorialTab() {
         <Box mt={9}>
           {sections.map((section, index) => {
             return (
-              <Box alignItems={"center"}>
+              <Box alignItems={"center"} key={`${section.id}-${index}`}>
                 {index !== 0 ? <Divider w="60%" mx="auto" /> : null}
                 <Flex
                   justify={"center"}
@@ -338,6 +339,7 @@ function TutorialTab() {
         {sections.map((section) => {
           return (
             <SectionWrapper
+              key={section.id}
               id={section.id}
               sectionRefs={sectionRefs}
               setCurrentSection={setCurrentSection}
@@ -400,7 +402,7 @@ function FAQTab() {
             .filter((s) => s.faq !== null)
             .map((section, index) => {
               return (
-                <Box alignItems={"center"}>
+                <Box alignItems={"center"} key={section.id}>
                   {index !== 0 ? <Divider w="60%" mx="auto" /> : null}
                   <Flex
                     justify={"center"}
@@ -437,6 +439,7 @@ function FAQTab() {
           }
           return (
             <SectionWrapper
+              key={section.id}
               id={section.id}
               sectionRefs={sectionRefs}
               setCurrentSection={setCurrentSection}

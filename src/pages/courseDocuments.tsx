@@ -171,8 +171,9 @@ export default function CourseDocumentsPage() {
                 ...customScrollBarCss,
               }}
             >
-              {documents.map((document) => (
+              {documents.map((document, index) => (
                 <DocumentRow
+                  key={`${document.title}-${index}`}
                   updateDate={document.date}
                   documentName={document.title}
                   documentLink={document.href}

@@ -18,8 +18,6 @@ import {
   PopoverCloseButton,
   PopoverHeader,
   PopoverBody,
-  Spacer,
-  IconButton,
   useColorModeValue,
   FlexProps,
 } from "@chakra-ui/react";

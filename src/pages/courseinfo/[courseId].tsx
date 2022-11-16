@@ -6,7 +6,6 @@ import {
   Flex,
   useToast,
   useColorModeValue,
-  Box,
 } from "@chakra-ui/react";
 import Image from "next/image";
 import { useState, useMemo } from "react";
