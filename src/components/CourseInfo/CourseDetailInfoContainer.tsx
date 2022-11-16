@@ -36,7 +36,37 @@ const tabs = [
 ] as const;
 type TabId = typeof tabs[number]["id"];
 
-// TODO:
+function BasicInfoDataCell({
+  title,
+  content,
+}: {
+  readonly title: string;
+  readonly content?: string | null;
+}) {
+  return (
+    <Flex
+      w="100%"
+      borderBottom={"1px solid #909090"}
+      pb={4}
+      justifyContent="space-between"
+      sx={{
+        fontWeight: 500,
+        fontSize: "14px",
+        lineHeight: 1.4,
+      }}
+    >
+      <Text
+        sx={{
+          color: "#4b4b4b",
+        }}
+      >
+        {title}
+      </Text>
+      <Text color="#2d2d2d">{content ?? "-"}</Text>
+    </Flex>
+  );
+}
+
 function BasicInfoTab({ course }: { readonly course: Course }) {
   return (
     <Box>
@@ -50,8 +80,27 @@ function BasicInfoTab({ course }: { readonly course: Course }) {
           }}
         >{`授課語言：${info_view_map.language.map[course.language]}`}</Flex>
       </Flex>
-      <Flex mt={8} w="100%" h="320px" justify={"center"} alignItems={"center"}>
-        Data Placeholder
+      <Flex
+        mt={8}
+        w="100%"
+        h="320px"
+        justify={"space-between"}
+        alignItems={"start"}
+      >
+        <Flex w="20%" flexDirection={"column"} gap={6}>
+          <BasicInfoDataCell title="流水號" content={course.serial} />
+          <BasicInfoDataCell title="課程識別碼" content={course.identifier} />
+          <BasicInfoDataCell title="課號" content={course.code} />
+          <BasicInfoDataCell title="班次" content={course?.class} />
+          <BasicInfoDataCell
+            title="學分"
+            content={
+              course?.credits ? course.credits.toString().padStart(2, "0") : "-"
+            }
+          />
+        </Flex>
+        <Flex w="33%" flexDirection={"column"}></Flex>
+        <Flex w="35%" flexDirection={"column"}></Flex>
       </Flex>
       <Flex w="100%" justifyContent={"space-between"}>
         <Flex
