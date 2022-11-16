@@ -2,14 +2,14 @@ import {
   Flex,
   Text,
   Stat,
-  StatLabel,
-  StatNumber,
+  StatLabel as ChakraStatLabel,
+  StatNumber as ChakraStatNumber,
+  StatNumberProps,
   HStack,
   Icon,
   Box,
   Button,
   VStack,
-  StatHelpText,
   Divider,
   Popover,
   PopoverTrigger,
@@ -20,6 +20,7 @@ import {
   PopoverBody,
   useColorModeValue,
   FlexProps,
+  StatLabelProps,
 } from "@chakra-ui/react";
 import React from "react";
 import { PieChart } from "react-minimal-pie-chart";
@@ -39,6 +40,35 @@ import {
   syllabusFields,
   syllabusFieldSource as syllabusTitle,
 } from "types/course";
+
+function StatNumber(props: StatNumberProps) {
+  return (
+    <ChakraStatNumber
+      textAlign="center"
+      sx={{
+        fontWeight: 500,
+        fontSize: "18px",
+        lineHeight: 1.4,
+        color: "#2d2d2d",
+      }}
+      {...props}
+    />
+  );
+}
+
+function StatLabel(props: StatLabelProps) {
+  return (
+    <ChakraStatLabel
+      textAlign="center"
+      sx={{
+        fontSize: "12px",
+        lineHeight: 1.4,
+        color: "#4b4b4b",
+      }}
+      {...props}
+    />
+  );
+}
 
 interface LoadingPanelProps extends FlexProps {
   readonly title: string;
@@ -199,31 +229,27 @@ export function EnrollStatusPanel({
       ) : (
         <Flex
           w="100%"
-          mt="4"
+          mt="6"
           flexDirection="row"
           justifyContent="center"
           alignItems={{ base: "start", lg: "center" }}
           flexWrap="wrap"
         >
           <Stat>
-            <StatLabel>選上</StatLabel>
             <StatNumber>{courseEnrollStatus.enrolled}</StatNumber>
-            <StatHelpText>人</StatHelpText>
+            <StatLabel>已選上</StatLabel>
           </Stat>
           <Stat>
-            <StatLabel>選上外系</StatLabel>
             <StatNumber>{courseEnrollStatus.enrolled_other}</StatNumber>
-            <StatHelpText>人</StatHelpText>
+            <StatLabel>外系已選上</StatLabel>
           </Stat>
           <Stat>
-            <StatLabel>登記</StatLabel>
             <StatNumber>{courseEnrollStatus.registered}</StatNumber>
-            <StatHelpText>人</StatHelpText>
+            <StatLabel>登記</StatLabel>
           </Stat>
           <Stat>
-            <StatLabel>剩餘</StatLabel>
             <StatNumber>{courseEnrollStatus.remain}</StatNumber>
-            <StatHelpText>空位</StatHelpText>
+            <StatLabel>剩餘</StatLabel>
           </Stat>
         </Flex>
       )}
