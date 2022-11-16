@@ -7,12 +7,13 @@ import {
   Tag,
   TagLabel,
   TagLeftIcon,
+  Tooltip,
 } from "@chakra-ui/react";
 import { ArrowForwardIcon } from "@chakra-ui/icons";
 import { IoWarningOutline } from "react-icons/io5";
 import React, { useState, useMemo } from "react";
 import { info_view_map } from "data/mapping_table";
-// import parseCourseSchedlue from "utils/parseCourseSchedule";
+import { parseCourseTimeLocation } from "utils/parseCourseSchedule";
 import {
   EnrollStatusPanel,
   SyllabusPanel,
@@ -39,9 +40,13 @@ type TabId = typeof tabs[number]["id"];
 function BasicInfoDataCell({
   title,
   content,
+  useTooltip = false,
+  tooltipText = "",
 }: {
   readonly title: string;
   readonly content?: string | null;
+  readonly useTooltip?: boolean;
+  readonly tooltipText?: string;
 }) {
   return (
     <Flex
@@ -62,12 +67,23 @@ function BasicInfoDataCell({
       >
         {title}
       </Text>
-      <Text color="#2d2d2d">{content ?? "-"}</Text>
+      {!useTooltip ? (
+        <Text color="#2d2d2d" noOfLines={1}>
+          {content || "-"}
+        </Text>
+      ) : (
+        <Tooltip label={tooltipText}>
+          <Text color="#2d2d2d" noOfLines={1} cursor="pointer">
+            {content || "-"}
+          </Text>
+        </Tooltip>
+      )}
     </Flex>
   );
 }
 
 function BasicInfoTab({ course }: { readonly course: Course }) {
+  const timeLocationPairs = parseCourseTimeLocation(course.schedules);
   return (
     <Box>
       <Flex w="100%">
@@ -99,12 +115,51 @@ function BasicInfoTab({ course }: { readonly course: Course }) {
             }
           />
         </Flex>
-        <Flex w="33%" flexDirection={"column"}></Flex>
-        <Flex w="35%" flexDirection={"column"}></Flex>
+        <Flex w="33%" flexDirection={"column"} gap={6}>
+          <BasicInfoDataCell
+            title="開課系所"
+            content={
+              course.departments.length > 1
+                ? "多個系所"
+                : course.departments?.[0]?.name_full ?? "-"
+            }
+            useTooltip={course.departments.length > 1}
+            tooltipText={course.departments.map((d) => d.name_full).join(", ")}
+          />
+          <BasicInfoDataCell title="授課教師" content={course.teacher} />
+          <BasicInfoDataCell
+            title="上課時間"
+            content={timeLocationPairs.map((p) => p.time).join(", ")}
+          />
+          <BasicInfoDataCell
+            title="上課地點"
+            content={timeLocationPairs.map((p) => p.location).join(", ")}
+          />
+          <BasicInfoDataCell
+            title="加選方式"
+            content={
+              `${course.enroll_method} - ${
+                info_view_map.enroll_method.map[course.enroll_method]
+              }` ?? "-"
+            }
+          />
+        </Flex>
+        <Flex w="33%" flexDirection={"column"} gap={6}>
+          <BasicInfoDataCell
+            title="課程類別"
+            content={info_view_map.requirement.map[course.requirement]}
+          />
+          <BasicInfoDataCell title="領域專長" content={"-"} />
+          <BasicInfoDataCell
+            title="修課總人數"
+            content={course.slot.toString()}
+          />
+          <BasicInfoDataCell title="Office Hour" content={"-"} />
+        </Flex>
       </Flex>
       <Flex w="100%" justifyContent={"space-between"}>
         <Flex
-          w="68%"
+          w="60%"
           flexDirection="column"
           alignItems="start"
           justifyContent="start"
@@ -182,7 +237,7 @@ function BasicInfoTab({ course }: { readonly course: Course }) {
           </Flex>
         </Flex>
         <Flex
-          w="28%"
+          w="33%"
           flexDirection="column"
           sx={{
             bg: "#F6F6F6",
@@ -215,21 +270,6 @@ function BasicInfoTab({ course }: { readonly course: Course }) {
 }
 
 function CourseDetailInfoContainer({ course }: { readonly course: Course }) {
-  const course_codes_1 = [
-    { title: "流水號", value: course.serial },
-    { title: "課號", value: course.code },
-    { title: "課程識別碼", value: course.identifier },
-    { title: "班次", value: course?.class ?? "無" },
-  ];
-  const course_codes_2 = [
-    { title: "人數上限", value: course.slot },
-    {
-      title: "必選修",
-      value: info_view_map.requirement.map[course.requirement],
-    },
-    { title: "開課學期", value: course.semester },
-    { title: "授課語言", value: info_view_map.language.map[course.language] },
-  ];
   const syllabusPanel = <SyllabusPanel courseId={course.id} />;
   const gradingPolicyPanel = <GradePolicyPanel courseId={course.id} />;
 
