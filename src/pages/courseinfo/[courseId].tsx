@@ -27,6 +27,7 @@ import { GetServerSideProps } from "next";
 import { Course } from "types/course";
 import { ParsedUrlQuery } from "querystring";
 import CustomBreadcrumb from "@/components/Breadcrumb";
+import CourseDetailInfoContainer from "@/components/CourseInfo/CourseDetailInfoContainer";
 
 interface PageProps {
   readonly code: string;
@@ -186,7 +187,7 @@ function CourseInfoPage({ code, course }: PageProps) {
         />
       </Head>
       <Flex w="100vw" justifyContent={"center"} alignItems="center" py={6}>
-        <Flex flexDirection={"column"} w="90%">
+        <Flex flexDirection={"column"} w="80%">
           <CustomBreadcrumb
             pageItems={[
               {
@@ -299,21 +300,7 @@ function CourseInfoPage({ code, course }: PageProps) {
               </Button>
             </Flex>
           </Flex>
-          <Box
-            mt={4}
-            sx={{
-              borderRadius: "4px",
-            }}
-          >
-            <Flex
-              h="46px"
-              justify={"center"}
-              bg="#002F94"
-              sx={{
-                borderRadius: "4px 4px 0 0",
-              }}
-            ></Flex>
-          </Box>
+          <CourseDetailInfoContainer course={course} />
         </Flex>
       </Flex>
     </>
