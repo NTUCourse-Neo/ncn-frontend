@@ -14,6 +14,7 @@ import React, { useState } from "react";
 import TimeFilterModal from "@/components/Filters/TimeFilterModal";
 import DeptFilterModal from "@/components/Filters/DeptFilterModal";
 import ProgramFilterModal from "@/components/Filters/ProgramFilterModal";
+import GroupingCourseFilterModal from "@/components/Filters/GroupingCourseFilter";
 import { FaChevronDown } from "react-icons/fa";
 import { mapStateToIntervals } from "utils/timeTableConverter";
 import { useCourseSearchingContext } from "@/components/Providers/CourseSearchingProvider";
@@ -192,6 +193,20 @@ export function ProgramFilter() {
         isFilterEdited("program") ? ` (${searchFilters.program.length})` : ""
       }`}
       isActive={isFilterEdited("program")}
+    />
+  );
+}
+
+export function GroupingCourseTypeFilter() {
+  const { searchFilters, isFilterEdited } = useCourseSearchingContext();
+  return (
+    <GroupingCourseFilterModal
+      title={`課程種類${
+        isFilterEdited("grouping_course_type")
+          ? ` (${searchFilters.grouping_course_type.length})`
+          : ""
+      }`}
+      isActive={isFilterEdited("grouping_course_type")}
     />
   );
 }
@@ -749,9 +764,4 @@ export function HostCollegeFilter() {
       </Stack>
     </FilterDropdown>
   );
-}
-
-export function GroupingCourseTypeFilter() {
-  const { searchFilters, isFilterEdited } = useCourseSearchingContext();
-  return <></>;
 }
