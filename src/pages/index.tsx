@@ -153,8 +153,6 @@ function HomePage() {
     setSearchSemester,
     searchMode,
     setSearchMode,
-    searchSettings,
-    setSearchSettings,
     setSearch,
   } = useCourseSearchingContext();
   const toast = useToast();
