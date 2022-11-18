@@ -15,7 +15,6 @@ import {
 } from "@/components/Filters/index";
 import { programs as AllPrograms } from "@/data/program";
 
-// TODO: new: grouping_course_type
 export type Filter = {
   time: Interval[][];
   department: string[];
