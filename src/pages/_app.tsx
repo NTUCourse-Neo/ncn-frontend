@@ -1,6 +1,5 @@
 import { ChakraProvider, Box } from "@chakra-ui/react";
 import { CourseSearchingProvider } from "components/Providers/CourseSearchingProvider";
-import { DisplayTagsProvider } from "components/Providers/DisplayTagsProvider";
 import HeaderBar from "components/HeaderBar";
 import DeadlineCountdown from "components/DeadlineCountdown";
 import { UserProvider as Auth0UserProvider } from "@auth0/nextjs-auth0";
@@ -31,14 +30,12 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Auth0UserProvider>
         <ChakraProvider theme={theme}>
           <CourseSearchingProvider>
-            <DisplayTagsProvider>
-              <Box w="100vw" h={{ base: "100%", lg: "" }}>
-                <DeadlineCountdown />
-                <HeaderBar />
-                <CourseTableFloatingButton />
-                <Component {...pageProps} />
-              </Box>
-            </DisplayTagsProvider>
+            <Box w="100vw" h={{ base: "100%", lg: "" }}>
+              <DeadlineCountdown />
+              <HeaderBar />
+              <CourseTableFloatingButton />
+              <Component {...pageProps} />
+            </Box>
           </CourseSearchingProvider>
         </ChakraProvider>
       </Auth0UserProvider>
