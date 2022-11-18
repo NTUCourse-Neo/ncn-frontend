@@ -750,3 +750,8 @@ export function HostCollegeFilter() {
     </FilterDropdown>
   );
 }
+
+export function GroupingCourseTypeFilter() {
+  const { searchFilters, isFilterEdited } = useCourseSearchingContext();
+  return <></>;
+}

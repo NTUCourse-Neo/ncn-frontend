@@ -11,6 +11,7 @@ import {
   PeArmyCourseTypeFilter,
   HostCollegeFilter,
   ProgramFilter,
+  GroupingCourseTypeFilter,
 } from "@/components/Filters/index";
 import { programs as AllPrograms } from "@/data/program";
 
@@ -30,6 +31,7 @@ export type Filter = {
   is_full_year: boolean | null;
   is_selective: boolean | null;
   time_strict_match: boolean;
+  grouping_course_type: string[];
 };
 
 // deprecated
@@ -353,6 +355,10 @@ export const filters = {
   program: {
     id: "program",
     component: <ProgramFilter />,
+  },
+  grouping_course_type: {
+    id: "grouping_course_type",
+    component: <GroupingCourseTypeFilter />,
   },
 } as const;
 export type FilterType = keyof typeof filters;

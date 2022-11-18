@@ -69,6 +69,7 @@ const emptyFilterObject: Filter = {
   is_full_year: null,
   is_selective: null,
   time_strict_match: false,
+  grouping_course_type: [],
 };
 
 const defaultSearchMode = searchModeList[0];
@@ -188,6 +189,9 @@ const CourseSearchingProvider: React.FC<{
         }
         case "program": {
           return searchFilters.program.length > 0;
+        }
+        case "grouping_course_type": {
+          return searchFilters.grouping_course_type.length > 0;
         }
         default: {
           return false;

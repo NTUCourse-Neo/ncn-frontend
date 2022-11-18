@@ -102,7 +102,7 @@ const searchModeList: SearchMode[] = [
     id: "grouping",
     chinese: "分組編班",
     english: "Grouping",
-    filters: ["time", "enroll_method", "other_limit"],
+    filters: ["time", "grouping_course_type", "enroll_method", "other_limit"],
     precautions: [
       "courseSelectionRule",
       "chemistryCoursePrecaution",

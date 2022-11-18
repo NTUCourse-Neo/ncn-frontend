@@ -66,6 +66,11 @@ function generateSearchAPIFilterObject(
       searchMode.filters.includes("program") && isFilterEdited("program")
         ? searchFilters.program
         : null,
+    grouping_course_type:
+      searchMode.filters.includes("grouping_course_type") &&
+      isFilterEdited("grouping_course_type")
+        ? searchFilters.grouping_course_type
+        : null,
     is_full_year:
       searchMode.filters.includes("time") && isFilterEdited("time")
         ? searchFilters.is_full_year
