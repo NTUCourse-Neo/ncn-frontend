@@ -299,7 +299,7 @@ export const hostColleges = [
     value: "NTUST",
     chinese_label: "臺科大",
   },
-];
+] as const;
 export type HostCollege = typeof hostColleges[number]["value"];
 
 // Program
