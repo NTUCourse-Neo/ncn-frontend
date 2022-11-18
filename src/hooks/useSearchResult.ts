@@ -11,7 +11,6 @@ import { Filter, FilterType } from "@/types/search";
 function generateSearchAPIFilterObject(
   searchMode: SearchMode,
   searchFilters: Filter,
-  strict_match: boolean,
   isFilterEdited: (filterId: FilterType) => boolean
 ): NullableSearchFilter {
   return {
@@ -75,7 +74,10 @@ function generateSearchAPIFilterObject(
       searchMode.filters.includes("dept") && isFilterEdited("dept")
         ? searchFilters.is_selective
         : null,
-    strict_match: strict_match,
+    time_strict_match:
+      searchMode.filters.includes("time") && isFilterEdited("time")
+        ? searchFilters.time_strict_match
+        : null,
   };
 }
 
@@ -86,7 +88,6 @@ export default function useSearchResult(
   const toast = useToast();
   const {
     searchColumns,
-    searchSettings,
     searchFilters,
     batchSize,
     searchSemester,
@@ -117,7 +118,6 @@ export default function useSearchResult(
       const filters = generateSearchAPIFilterObject(
         searchMode,
         searchFilters,
-        searchSettings.strict_search_mode,
         isFilterEdited
       );
       const coursesData = await fetchSearchResult(

@@ -3,13 +3,9 @@ import type { SearchFieldName, Filter } from "@/types/search";
 import type { Course, CourseEnrollStatus, CourseSyllabus } from "types/course";
 const api_version = "v2";
 
-type NullableSearchFilterBase = {
+export type NullableSearchFilter = {
   [P in keyof Filter]: Filter[P] | null;
 };
-
-export interface NullableSearchFilter extends NullableSearchFilterBase {
-  strict_match: boolean;
-}
 
 export const fetchSearchResult = async (
   searchString: string,

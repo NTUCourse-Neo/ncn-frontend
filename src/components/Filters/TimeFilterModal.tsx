@@ -87,18 +87,13 @@ export interface TimeFilterModalProps {
 
 function TimeFilterModal(props: TimeFilterModalProps) {
   const { title, isActive = false } = props;
-  const {
-    searchFilters,
-    setSearchFilters,
-    setSearchSettings,
-    searchSettings,
-    setPageIndex,
-  } = useCourseSearchingContext();
+  const { searchFilters, setSearchFilters, setPageIndex } =
+    useCourseSearchingContext();
   const [selectedTime, setSelectedTime] = useState(
     mapStateToTimeTable(searchFilters.time)
   );
   const [isStrictSearch, setIsStrictSearch] = useState(
-    searchSettings.strict_search_mode
+    searchFilters.time_strict_match
   );
   const [isFullYear, setIsFullYear] = useState<null | boolean>(
     searchFilters.is_full_year
@@ -121,10 +116,7 @@ function TimeFilterModal(props: TimeFilterModalProps) {
       ...searchFilters,
       time: timeTable,
       is_full_year: isFullYear,
-    });
-    setSearchSettings({
-      ...searchSettings,
-      strict_search_mode: isStrictSearch,
+      time_strict_match: isStrictSearch,
     });
     // Reset indexed page
     setPageIndex(0);
@@ -177,7 +169,7 @@ function TimeFilterModal(props: TimeFilterModalProps) {
           onOpen();
           setSelectedTime(mapStateToTimeTable(searchFilters.time));
           setIsFullYear(searchFilters.is_full_year);
-          setIsStrictSearch(searchSettings.strict_search_mode);
+          setIsStrictSearch(searchFilters.time_strict_match);
           reportEvent("filter_time", "click", "open_modal");
         }}
         bg={isActive ? "#cccccc" : "white"}

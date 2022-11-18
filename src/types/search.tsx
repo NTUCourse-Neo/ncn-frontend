@@ -14,6 +14,7 @@ import {
 } from "@/components/Filters/index";
 import { programs as AllPrograms } from "@/data/program";
 
+// TODO: new: grouping_course_type
 export type Filter = {
   time: Interval[][];
   department: string[];
@@ -28,6 +29,7 @@ export type Filter = {
   program: ProgramCode[];
   is_full_year: boolean | null;
   is_selective: boolean | null;
+  time_strict_match: boolean;
 };
 
 // deprecated

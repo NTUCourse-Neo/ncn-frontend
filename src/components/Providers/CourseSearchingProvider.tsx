@@ -23,13 +23,6 @@ import {
 } from "utils/searchFilter";
 import { mapStateToIntervals } from "utils/timeTableConverter";
 
-export interface SearchConfigType {
-  show_selected_courses: boolean;
-  only_show_not_conflicted_courses: boolean;
-  sync_add_to_nol: boolean;
-  strict_search_mode: boolean;
-}
-
 interface CourseSearchingContextType {
   search: string | null;
   setSearch: (search: string | null) => void;
@@ -43,8 +36,6 @@ interface CourseSearchingContextType {
   setBatchSize: (batchSize: number) => void;
   searchColumns: SearchFieldName[]; // deprecated
   setSearchColumns: (searchColumns: SearchFieldName[]) => void; // deprecated
-  searchSettings: SearchConfigType;
-  setSearchSettings: (searchSettings: SearchConfigType) => void; // only strict_search_mode is used
   searchFilters: Filter;
   setSearchFilters: (searchFilters: Filter) => void;
   searchSemester: string | null;
@@ -77,6 +68,7 @@ const emptyFilterObject: Filter = {
   program: [],
   is_full_year: null,
   is_selective: null,
+  time_strict_match: false,
 };
 
 const defaultSearchMode = searchModeList[0];
@@ -88,13 +80,6 @@ const CourseSearchingContext = createContext<CourseSearchingContextType>({
   totalCount: 0,
   batchSize: 20,
   searchColumns: ["name", "teacher", "serial", "code", "identifier"], // deprecated
-  searchSettings: {
-    // only strict_search_mode is used
-    show_selected_courses: false,
-    only_show_not_conflicted_courses: false,
-    sync_add_to_nol: false,
-    strict_search_mode: false,
-  },
   searchFilters: emptyFilterObject,
   searchSemester: "",
   searchMode: defaultSearchMode,
@@ -109,7 +94,6 @@ const CourseSearchingContext = createContext<CourseSearchingContextType>({
   setPageIndex: () => {},
   setTotalCount: () => {},
   setBatchSize: () => {},
-  setSearchSettings: () => {},
   setSearchColumns: () => {}, // deprecated
   setSearchFilters: () => {},
   setSearchSemester: () => {},
@@ -137,13 +121,6 @@ const CourseSearchingProvider: React.FC<{
     "code",
     "identifier",
   ]);
-  // only strict_search_mode is used
-  const [searchSettings, setSearchSettings] = useState<SearchConfigType>({
-    show_selected_courses: false,
-    only_show_not_conflicted_courses: false,
-    sync_add_to_nol: false,
-    strict_search_mode: false,
-  });
   const [searchFilters, setSearchFilters] = useState<Filter>(emptyFilterObject);
   const [searchSemester, setSearchSemester] = useState(
     process.env.NEXT_PUBLIC_SEMESTER ?? null
@@ -245,7 +222,6 @@ const CourseSearchingProvider: React.FC<{
         totalCount,
         batchSize,
         searchColumns,
-        searchSettings,
         searchFilters,
         searchSemester,
         searchMode,
@@ -259,7 +235,6 @@ const CourseSearchingProvider: React.FC<{
         setNumOfPages,
         setPageIndex,
         setBatchSize,
-        setSearchSettings,
         setSearchColumns,
         setSearchFilters,
         setTotalCount,
