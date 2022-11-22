@@ -327,7 +327,6 @@ function PanelBlock(props: PanelBlockProps) {
 
 export function SyllabusPanel({ courseId }: { readonly courseId: string }) {
   const { data: syllabusData, isLoading } = useSyllabusData(courseId);
-  console.log(syllabusData);
 
   const leftBlocks: { section: SyllabusFieldName; h: number }[] = [
     { section: "intro", h: 320 },
