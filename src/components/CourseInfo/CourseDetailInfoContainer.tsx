@@ -269,15 +269,31 @@ function BasicInfoTab({ course }: { readonly course: Course }) {
   );
 }
 
-function CourseDetailInfoContainer({ course }: { readonly course: Course }) {
-  const syllabusPanel = <SyllabusPanel courseId={course.id} />;
-  const gradingPolicyPanel = <GradePolicyPanel courseId={course.id} />;
+function CourseRulesTab({ course }: { readonly course: Course }) {
+  const a = <GradePolicyPanel courseId={course.id} />;
+  return (
+    <Box>
+      {/* TODO: syllabus.workload */}
+      <Flex
+        w="100%"
+        sx={{
+          fontSize: "14px",
+          fontWeight: 500,
+          lineHeight: "1.4",
+          color: "#2d2d2d",
+        }}
+      >{`預計每週課後學習時數：${"2~3 小時"}`}</Flex>{" "}
+      <SyllabusPanel courseId={course.id} />
+    </Box>
+  );
+}
 
+function CourseDetailInfoContainer({ course }: { readonly course: Course }) {
   const [tabId, setTabId] = useState<TabId>("basicInfo");
   const tabContent = useMemo<Record<TabId, JSX.Element>>(
     () => ({
       basicInfo: <BasicInfoTab course={course} />,
-      courseRules: <></>,
+      courseRules: <CourseRulesTab course={course} />,
       courseSchedule: <></>,
     }),
     [course]
@@ -331,7 +347,8 @@ function CourseDetailInfoContainer({ course }: { readonly course: Course }) {
           borderRadius: "0 0 4px 4px",
           shadow: "0px 3px 8px rgba(75, 75, 75, 0.08)",
           border: "1px solid rgba(204, 204, 204, 0.4)",
-          p: 10,
+          px: 10,
+          py: 6,
         }}
       >
         {tabContent[tabId]}

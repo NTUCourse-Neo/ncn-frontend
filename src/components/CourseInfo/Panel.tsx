@@ -9,7 +9,6 @@ import {
   Icon,
   Box,
   VStack,
-  Divider,
   Popover,
   PopoverTrigger,
   PopoverContent,
@@ -20,8 +19,10 @@ import {
   useColorModeValue,
   FlexProps,
   StatLabelProps,
+  Center,
+  Skeleton,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useRef } from "react";
 import { PieChart } from "react-minimal-pie-chart";
 import {
   FaCircle,
@@ -34,7 +35,11 @@ import { useCourseEnrollData, useSyllabusData } from "hooks/useCourseInfo";
 import {
   syllabusFields,
   syllabusFieldSource as syllabusTitle,
+  SyllabusFieldName,
 } from "types/course";
+import { customScrollBarCss } from "@/styles/customScrollBar";
+import { useInView } from "react-intersection-observer";
+import { CoffeeOutlineIcon } from "@/components/CustomIcons";
 
 function StatNumber(props: StatNumberProps) {
   return (
@@ -202,71 +207,182 @@ export function EnrollStatusPanel({
   );
 }
 
+interface PanelBlockProps extends FlexProps {
+  readonly title: string;
+  readonly content: string | null;
+  readonly blockH: number;
+  readonly isLoading?: boolean;
+}
+function PanelBlock(props: PanelBlockProps) {
+  const {
+    isLoading = false,
+    title,
+    content: rawContent,
+    blockH,
+    ...restProps
+  } = props;
+  const contentRef = useRef<HTMLDivElement>(null);
+  const contentContainerRef = useRef<HTMLDivElement>(null);
+  const { ref: reachBottomDetecter, inView } = useInView({
+    /* Optional options */
+    threshold: 0,
+  });
+  const scrollable =
+    contentRef.current?.clientHeight &&
+    contentContainerRef.current?.clientHeight
+      ? contentRef.current?.clientHeight >
+        contentContainerRef.current?.clientHeight
+      : false;
+
+  const content =
+    rawContent === null ? (
+      <Center h="100%" ref={contentRef}>
+        <Flex
+          flexDirection={"column"}
+          justifyContent="center"
+          alignItems={"center"}
+        >
+          <CoffeeOutlineIcon boxSize={"40px"} />
+          <Flex
+            mt={2}
+            sx={{
+              fontSize: "14px",
+              fontWeight: 500,
+              lineHeight: 1.4,
+              color: "#909090",
+            }}
+          >{`尚未提供`}</Flex>
+        </Flex>
+      </Center>
+    ) : (
+      <Box ref={contentRef}>
+        {rawContent.split("\n").map((item, index) => {
+          return (
+            <Text key={index} mb={1}>
+              {item.trim()}
+            </Text>
+          );
+        })}
+      </Box>
+    );
+  return (
+    <Skeleton isLoaded={!isLoading}>
+      <Flex
+        bg="#f6f6f6"
+        gap={"10px"}
+        borderRadius={"4px"}
+        flexDirection="column"
+        h={`${blockH}px`}
+        position="relative"
+        {...restProps}
+      >
+        <Flex
+          sx={{
+            fontWeight: 500,
+            fontSize: "14px",
+            lineHeight: 1.4,
+            color: "#2d2d2d",
+          }}
+          pt="16px"
+          px="24px"
+        >
+          {title}
+        </Flex>
+        <Flex
+          ref={contentContainerRef}
+          flexDirection={"column"}
+          sx={{
+            fontWeight: 400,
+            fontSize: "14px",
+            lineHeight: 1.4,
+            color: "#6f6f6f",
+            ...customScrollBarCss,
+          }}
+          pb="16px"
+          px="24px"
+          flexGrow={1}
+          overflowY={"auto"}
+        >
+          {content}
+          <Box ref={reachBottomDetecter} h="2px" bg="transparent" />
+        </Flex>
+        {scrollable && !inView ? (
+          <Box
+            w="100%"
+            h="36px"
+            position="absolute"
+            bottom={0}
+            sx={{
+              bg: "linear-gradient(180deg, rgba(246, 246, 246, 0.12) 0%, rgba(246, 246, 246, 0.599779) 24.59%, #F6F6F6 62.79%)",
+              borderRadius: "0px 0px 4px 4px",
+            }}
+          />
+        ) : null}
+      </Flex>
+    </Skeleton>
+  );
+}
+
 export function SyllabusPanel({ courseId }: { readonly courseId: string }) {
   const { data: syllabusData, isLoading } = useSyllabusData(courseId);
-  const headingColor = useColorModeValue("heading.light", "heading.dark");
-  const textColor = useColorModeValue("text.light", "text.dark");
+  console.log(syllabusData);
+
+  const leftBlocks: { section: SyllabusFieldName; h: number }[] = [
+    { section: "intro", h: 320 },
+    { section: "objective", h: 320 },
+    { section: "requirement", h: 320 },
+  ];
+  const rightBlocks: { section: SyllabusFieldName; h: number }[] = [
+    { section: "material", h: 240 },
+    { section: "specify", h: 240 },
+  ];
 
   return (
-    <PanelWrapper isLoading={isLoading}>
-      {!syllabusData || !syllabusData?.syllabus ? (
-        <PanelPlaceholder title="無課程大綱資訊" h="100%" pt="8" />
-      ) : (
+    <Flex w="100%" justify={"space-between"} mt={6}>
+      <Flex w="48%" gap={4} flexDirection="column">
+        {leftBlocks.map((block) => {
+          const section = block.section;
+          const content = syllabusData?.syllabus?.[section] || null;
+          return (
+            <PanelBlock
+              title={syllabusTitle[section]}
+              content={content}
+              blockH={block.h}
+              isLoading={isLoading}
+            />
+          );
+        })}
+      </Flex>
+      <Flex w="48%" gap={4} flexDirection="column">
         <Flex
-          w="100%"
-          my="4"
+          bg="#f6f6f6"
+          gap={"10px"}
+          borderRadius={"4px"}
           flexDirection="column"
-          justifyContent="start"
-          alignItems="start"
-          wordBreak="break-all"
-          overflow="auto"
-        >
-          {syllabusFields.map((key) => {
-            const line = syllabusData.syllabus[key].split("\n");
-            const content = line.map((item, index) => {
-              return (
-                <Text
-                  key={syllabusTitle[key] + "content" + index}
-                  mb="0.5"
-                  fontSize="md"
-                  fontWeight="400"
-                  color={textColor}
-                >
-                  {item.trim()}
-                </Text>
-              );
-            });
-
-            return (
-              <React.Fragment key={syllabusTitle[key]}>
-                <Text
-                  flexBasis="20%"
-                  mb="1"
-                  fontSize="lg"
-                  fontWeight="600"
-                  color={headingColor}
-                >
-                  {syllabusTitle[key]}
-                </Text>
-                {syllabusData.syllabus[key] !== "" ? (
-                  content
-                ) : (
-                  <Text
-                    key={syllabusTitle[key] + "content"}
-                    fontSize="md"
-                    fontWeight="400"
-                    color="gray.500"
-                  >
-                    無
-                  </Text>
-                )}
-                <Divider my="4" />
-              </React.Fragment>
-            );
-          })}
-        </Flex>
-      )}
-    </PanelWrapper>
+          h={`320px`}
+          position="relative"
+          flexGrow={1}
+        />
+        {rightBlocks.map((block) => {
+          const section = block.section;
+          const content = syllabusData?.syllabus?.[section] ?? null;
+          return (
+            <PanelBlock
+              title={syllabusTitle[section]}
+              content={content}
+              blockH={block.h}
+              isLoading={isLoading}
+            />
+          );
+        })}
+        <PanelBlock
+          title={"針對學生困難提供學生調整方式"}
+          content={null}
+          blockH={144}
+          isLoading={isLoading}
+        />
+      </Flex>
+    </Flex>
   );
 }
 
