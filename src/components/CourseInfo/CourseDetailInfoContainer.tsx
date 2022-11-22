@@ -20,6 +20,7 @@ import {
   GradePolicyPanel,
 } from "components/CourseInfo/Panel";
 import type { Course } from "types/course";
+import { CoffeeOutlineIcon } from "@/components/CustomIcons";
 
 const tabs = [
   {
@@ -288,13 +289,36 @@ function CourseRulesTab({ course }: { readonly course: Course }) {
   );
 }
 
+function CourseScheduleTab({ course }: { readonly course: Course }) {
+  return (
+    <Center h="60vh">
+      <Flex
+        flexDirection={"column"}
+        justifyContent="center"
+        alignItems={"center"}
+      >
+        <CoffeeOutlineIcon color="#909090" boxSize={"40px"} />
+        <Flex
+          mt={2}
+          sx={{
+            fontSize: "14px",
+            fontWeight: 500,
+            lineHeight: 1.4,
+            color: "#909090",
+          }}
+        >{`尚未提供`}</Flex>
+      </Flex>
+    </Center>
+  );
+}
+
 function CourseDetailInfoContainer({ course }: { readonly course: Course }) {
   const [tabId, setTabId] = useState<TabId>("basicInfo");
   const tabContent = useMemo<Record<TabId, JSX.Element>>(
     () => ({
       basicInfo: <BasicInfoTab course={course} />,
       courseRules: <CourseRulesTab course={course} />,
-      courseSchedule: <></>,
+      courseSchedule: <CourseScheduleTab course={course} />,
     }),
     [course]
   );

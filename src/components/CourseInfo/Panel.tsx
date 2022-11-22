@@ -244,7 +244,7 @@ function PanelBlock(props: PanelBlockProps) {
           justifyContent="center"
           alignItems={"center"}
         >
-          <CoffeeOutlineIcon boxSize={"40px"} />
+          <CoffeeOutlineIcon color="#909090" boxSize={"40px"} />
           <Flex
             mt={2}
             sx={{
