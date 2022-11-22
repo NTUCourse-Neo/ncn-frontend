@@ -8,7 +8,6 @@ import {
   HStack,
   Icon,
   Box,
-  Button,
   VStack,
   Divider,
   Popover,
@@ -28,14 +27,10 @@ import {
   FaCircle,
   FaExclamationTriangle,
   FaQuestionCircle,
-  FaChevronRight,
-  FaInfoCircle,
 } from "react-icons/fa";
 import { useUser } from "@auth0/nextjs-auth0";
-import { useRouter } from "next/router";
 import Image from "next/image";
 import { useCourseEnrollData, useSyllabusData } from "hooks/useCourseInfo";
-import { reportEvent } from "utils/ga";
 import {
   syllabusFields,
   syllabusFieldSource as syllabusTitle,
