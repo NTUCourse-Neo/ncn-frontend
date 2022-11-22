@@ -138,65 +138,16 @@ function PanelPlaceholder({
   );
 }
 
-function UnauthenticatedPanel({ ...restProps }: FlexProps) {
-  const router = useRouter();
-  return (
-    <Flex
-      flexDirection={"column"}
-      py={2}
-      my={3}
-      h="100%"
-      w="100%"
-      align="center"
-      justify="center"
-      {...restProps}
-    >
-      <Icon as={FaInfoCircle} boxSize="32px" color="gray.500" />
-      <Text
-        mt="2"
-        fontSize="lg"
-        fontWeight="800"
-        color="gray.500"
-        textAlign="center"
-      >
-        會員專屬功能
-      </Text>
-      <Button
-        rightIcon={<FaChevronRight />}
-        size="md"
-        my={2}
-        py={2}
-        colorScheme="blue"
-        fontSize="md"
-        fontWeight="800"
-        onClick={() => {
-          reportEvent("member_only_panel", "click", "login");
-          router.push("/api/auth/login");
-        }}
-      >
-        來去登入
-      </Button>
-    </Flex>
-  );
-}
-
 interface PanelWrapperProps {
   readonly children: JSX.Element;
   readonly isLoading: boolean;
-  readonly isUnauth: boolean | null;
   readonly loadingFallback?: JSX.Element;
-  readonly unauthFallback?: JSX.Element;
 }
 function PanelWrapper({
   isLoading,
   loadingFallback = <LoadingPanel title="載入中..." height="100%" />,
-  isUnauth,
-  unauthFallback = <UnauthenticatedPanel />,
   children,
 }: PanelWrapperProps): JSX.Element {
-  if (isUnauth) {
-    return unauthFallback;
-  }
   if (isLoading) {
     return loadingFallback;
   }
@@ -214,7 +165,6 @@ export function EnrollStatusPanel({
   return (
     <PanelWrapper
       isLoading={isLoading || isAuth0Loading}
-      isUnauth={!user}
       loadingFallback={
         <LoadingPanel title="努力取得資訊中..." height="100%" pt={8} />
       }
@@ -263,7 +213,7 @@ export function SyllabusPanel({ courseId }: { readonly courseId: string }) {
   const textColor = useColorModeValue("text.light", "text.dark");
 
   return (
-    <PanelWrapper isLoading={isLoading} isUnauth={null}>
+    <PanelWrapper isLoading={isLoading}>
       {!syllabusData || !syllabusData?.syllabus ? (
         <PanelPlaceholder title="無課程大綱資訊" h="100%" pt="8" />
       ) : (
@@ -341,7 +291,6 @@ export function GradePolicyPanel({ courseId }: { readonly courseId: string }) {
   return (
     <PanelWrapper
       isLoading={isLoading}
-      isUnauth={null}
       loadingFallback={
         <LoadingPanel title="查看配分中..." height="100%" pt={8} />
       }
