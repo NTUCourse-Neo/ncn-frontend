@@ -212,6 +212,7 @@ interface PanelBlockProps extends FlexProps {
   readonly content: string | null;
   readonly blockH: number;
   readonly isLoading?: boolean;
+  readonly index?: number;
 }
 function PanelBlock(props: PanelBlockProps) {
   const {
@@ -219,6 +220,7 @@ function PanelBlock(props: PanelBlockProps) {
     title,
     content: rawContent,
     blockH,
+    index = 0,
     ...restProps
   } = props;
   const contentRef = useRef<HTMLDivElement>(null);
@@ -266,7 +268,7 @@ function PanelBlock(props: PanelBlockProps) {
       </Box>
     );
   return (
-    <Skeleton isLoaded={!isLoading}>
+    <Skeleton isLoaded={!isLoading} speed={1 + index * 0.2}>
       <Flex
         bg="#f6f6f6"
         gap={"10px"}
@@ -340,7 +342,7 @@ export function SyllabusPanel({ courseId }: { readonly courseId: string }) {
   return (
     <Flex w="100%" justify={"space-between"} mt={6}>
       <Flex w="48%" gap={4} flexDirection="column">
-        {leftBlocks.map((block) => {
+        {leftBlocks.map((block, index) => {
           const section = block.section;
           const content = syllabusData?.syllabus?.[section] || null;
           return (
@@ -349,6 +351,7 @@ export function SyllabusPanel({ courseId }: { readonly courseId: string }) {
               content={content}
               blockH={block.h}
               isLoading={isLoading}
+              index={index}
             />
           );
         })}
@@ -363,7 +366,7 @@ export function SyllabusPanel({ courseId }: { readonly courseId: string }) {
           position="relative"
           flexGrow={1}
         />
-        {rightBlocks.map((block) => {
+        {rightBlocks.map((block, index) => {
           const section = block.section;
           const content = syllabusData?.syllabus?.[section] ?? null;
           return (
@@ -372,6 +375,7 @@ export function SyllabusPanel({ courseId }: { readonly courseId: string }) {
               content={content}
               blockH={block.h}
               isLoading={isLoading}
+              index={index}
             />
           );
         })}
@@ -380,6 +384,7 @@ export function SyllabusPanel({ courseId }: { readonly courseId: string }) {
           content={null}
           blockH={144}
           isLoading={isLoading}
+          index={2}
         />
       </Flex>
     </Flex>
