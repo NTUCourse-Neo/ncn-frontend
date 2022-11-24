@@ -237,34 +237,7 @@ function BasicInfoTab({ course }: { readonly course: Course }) {
             </Text>
           </Flex>
         </Flex>
-        <Flex
-          w="33%"
-          flexDirection="column"
-          sx={{
-            bg: "#F6F6F6",
-            borderRadius: "4px",
-            pt: 4,
-            px: 4,
-            pb: 6,
-          }}
-        >
-          <Flex
-            sx={{
-              fontWeight: 500,
-              fontSize: "14px",
-              lineHeight: 1.4,
-              color: "#2d2d2d",
-            }}
-            cursor="default"
-          >
-            已選人數
-            <Tag colorScheme={"secondary"} size="sm" ml={3}>
-              <TagLeftIcon as={ArrowForwardIcon} color={"#BBF7D0"} />
-              <TagLabel>即時</TagLabel>
-            </Tag>
-          </Flex>
-          <EnrollStatusPanel courseSerial={course.serial} />
-        </Flex>
+        <EnrollStatusPanel courseSerial={course.serial} />
       </Flex>
     </Box>
   );

@@ -21,6 +21,9 @@ import {
   StatLabelProps,
   Center,
   Skeleton,
+  Tag,
+  TagLabel,
+  TagLeftIcon,
 } from "@chakra-ui/react";
 import React, { useRef } from "react";
 import { PieChart } from "react-minimal-pie-chart";
@@ -40,6 +43,7 @@ import {
 import { customScrollBarCss } from "@/styles/customScrollBar";
 import { useInView } from "react-intersection-observer";
 import { CoffeeOutlineIcon } from "@/components/CustomIcons";
+import { ArrowForwardIcon } from "@chakra-ui/icons";
 
 function StatNumber(props: StatNumberProps) {
   return (
@@ -103,6 +107,7 @@ function LoadingPanel({ title, ...restProps }: LoadingPanelProps) {
   );
 }
 
+// deprecated
 interface PanelPlaceholderProps extends FlexProps {
   readonly title: string;
   readonly isEmpty?: boolean;
@@ -159,51 +164,80 @@ export function EnrollStatusPanel({
 }: {
   readonly courseSerial: string | null;
 }) {
-  const { user, isLoading: isAuth0Loading } = useUser();
   const { data: courseEnrollStatus, isLoading } =
     useCourseEnrollData(courseSerial);
   return (
-    <PanelWrapper
-      isLoading={isLoading || isAuth0Loading}
-      loadingFallback={
-        <LoadingPanel title="努力取得資訊中..." height="100%" pt={8} />
-      }
+    <Skeleton
+      isLoaded={isLoading}
+      w="33%"
+      startColor="black.200"
+      endColor="black.500"
+      sx={{
+        borderRadius: "4px",
+      }}
     >
-      {!courseEnrollStatus || courseSerial === null ? (
-        <PanelPlaceholder
-          title="無法取得課程即時資訊"
-          isEmpty={false}
-          h="100%"
-          pt="8"
-        />
-      ) : (
+      <Flex
+        w="100%"
+        flexDirection="column"
+        sx={{
+          bg: "#F6F6F6",
+          borderRadius: "4px",
+          pt: 4,
+          px: 4,
+          pb: 6,
+        }}
+      >
         <Flex
-          w="100%"
-          mt="6"
-          flexDirection="row"
-          justifyContent="center"
-          alignItems={{ base: "start", lg: "center" }}
-          flexWrap="wrap"
+          sx={{
+            fontWeight: 500,
+            fontSize: "14px",
+            lineHeight: 1.4,
+            color: "#2d2d2d",
+          }}
+          cursor="default"
         >
-          <Stat>
-            <StatNumber>{courseEnrollStatus.enrolled}</StatNumber>
-            <StatLabel>已選上</StatLabel>
-          </Stat>
-          <Stat>
-            <StatNumber>{courseEnrollStatus.enrolled_other}</StatNumber>
-            <StatLabel>外系已選上</StatLabel>
-          </Stat>
-          <Stat>
-            <StatNumber>{courseEnrollStatus.registered}</StatNumber>
-            <StatLabel>登記</StatLabel>
-          </Stat>
-          <Stat>
-            <StatNumber>{courseEnrollStatus.remain}</StatNumber>
-            <StatLabel>剩餘</StatLabel>
-          </Stat>
+          已選人數
+          <Tag colorScheme={"secondary"} size="sm" ml={3}>
+            <TagLeftIcon as={ArrowForwardIcon} color={"#BBF7D0"} />
+            <TagLabel>即時</TagLabel>
+          </Tag>
         </Flex>
-      )}
-    </PanelWrapper>
+        {!courseEnrollStatus || courseSerial === null ? (
+          <PanelPlaceholder
+            title="無法取得課程即時資訊"
+            isEmpty={false}
+            h="100%"
+            pt="8"
+          />
+        ) : (
+          <Flex
+            w="100%"
+            mt="6"
+            flexDirection="row"
+            justifyContent="center"
+            alignItems={{ base: "start", lg: "center" }}
+            flexWrap="wrap"
+          >
+            <Stat>
+              <StatNumber>{courseEnrollStatus.enrolled}</StatNumber>
+              <StatLabel>已選上</StatLabel>
+            </Stat>
+            <Stat>
+              <StatNumber>{courseEnrollStatus.enrolled_other}</StatNumber>
+              <StatLabel>外系已選上</StatLabel>
+            </Stat>
+            <Stat>
+              <StatNumber>{courseEnrollStatus.registered}</StatNumber>
+              <StatLabel>登記</StatLabel>
+            </Stat>
+            <Stat>
+              <StatNumber>{courseEnrollStatus.remain}</StatNumber>
+              <StatLabel>剩餘</StatLabel>
+            </Stat>
+          </Flex>
+        )}
+      </Flex>
+    </Skeleton>
   );
 }
 
@@ -268,7 +302,12 @@ function PanelBlock(props: PanelBlockProps) {
       </Box>
     );
   return (
-    <Skeleton isLoaded={!isLoading} speed={1 + index * 0.2}>
+    <Skeleton
+      isLoaded={!isLoading}
+      speed={1 + index * 0.2}
+      startColor="black.200"
+      endColor="black.500"
+    >
       <Flex
         bg="#f6f6f6"
         gap={"10px"}

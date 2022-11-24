@@ -3,7 +3,14 @@ import { Flex, SkeletonText, SkeletonTextProps, Box } from "@chakra-ui/react";
 
 function SkeletonBox(props: SkeletonTextProps) {
   return (
-    <SkeletonText noOfLines={1} w="100%" skeletonHeight={"15px"} {...props} />
+    <SkeletonText
+      noOfLines={1}
+      startColor="black.200"
+      endColor="black.500"
+      w="100%"
+      skeletonHeight={"15px"}
+      {...props}
+    />
   );
 }
 
