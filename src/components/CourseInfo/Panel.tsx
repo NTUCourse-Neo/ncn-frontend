@@ -16,7 +16,6 @@ import {
   PopoverCloseButton,
   PopoverHeader,
   PopoverBody,
-  useColorModeValue,
   FlexProps,
   StatLabelProps,
   Center,
@@ -27,15 +26,9 @@ import {
 } from "@chakra-ui/react";
 import React, { useRef, forwardRef } from "react";
 import { PieChart } from "react-minimal-pie-chart";
-import {
-  FaCircle,
-  FaExclamationTriangle,
-  FaQuestionCircle,
-} from "react-icons/fa";
-import Image from "next/image";
+import { FaCircle } from "react-icons/fa";
 import { useCourseEnrollData, useSyllabusData } from "hooks/useCourseInfo";
 import {
-  syllabusFields,
   syllabusFieldSource as syllabusTitle,
   SyllabusFieldName,
 } from "types/course";
@@ -103,6 +96,7 @@ const PanelPlaceholder = forwardRef<HTMLDivElement, PanelPlaceholderProps>(
     );
   }
 );
+PanelPlaceholder.displayName = "PanelPlaceholder";
 
 export function EnrollStatusPanel({
   courseSerial,
@@ -319,6 +313,7 @@ export function SyllabusPanel({ courseId }: { readonly courseId: string }) {
           const content = syllabusData?.syllabus?.[section] || null;
           return (
             <PanelBlock
+              key={section}
               title={syllabusTitle[section]}
               content={content}
               blockH={block.h}
@@ -444,6 +439,7 @@ export function SyllabusPanel({ courseId }: { readonly courseId: string }) {
           const content = syllabusData?.syllabus?.[section] ?? null;
           return (
             <PanelBlock
+              key={section}
               title={syllabusTitle[section]}
               content={content}
               blockH={block.h}

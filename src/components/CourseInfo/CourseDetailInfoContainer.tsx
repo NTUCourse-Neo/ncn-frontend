@@ -1,15 +1,4 @@
-import {
-  Flex,
-  Box,
-  Text,
-  HStack,
-  Center,
-  Tag,
-  TagLabel,
-  TagLeftIcon,
-  Tooltip,
-} from "@chakra-ui/react";
-import { ArrowForwardIcon } from "@chakra-ui/icons";
+import { Flex, Box, Text, HStack, Center, Tooltip } from "@chakra-ui/react";
 import { IoWarningOutline } from "react-icons/io5";
 import React, { useState, useMemo } from "react";
 import { info_view_map } from "data/mapping_table";
