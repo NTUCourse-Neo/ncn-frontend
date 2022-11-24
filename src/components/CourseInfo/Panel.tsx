@@ -291,11 +291,23 @@ interface ChartDatum {
   value: number;
 }
 const getPercentage = (d: ChartDatum) => d.value;
+const donutChartColors = [
+  "#072164",
+  "#0D40C4",
+  "#1552EF",
+  "#4575F3",
+  "#7499F6",
+  "#A4BCF9",
+  "#D4DFFC",
+];
+const getPieColor = (index: number) => donutChartColors?.[index] ?? "#D4DFFC";
 
 export function SyllabusPanel({ courseId }: { readonly courseId: string }) {
   const { data: syllabusData, isLoading } = useSyllabusData(courseId);
   const pieChartData = syllabusData?.grade
-    ? (syllabusData?.grade.filter((g) => g.color !== null) as ChartDatum[])
+    ? (syllabusData?.grade
+        .sort((a, b) => b.value - a.value)
+        .filter((g) => g.color !== null) as ChartDatum[])
     : undefined;
 
   const leftBlocks: { section: SyllabusFieldName; h: number }[] = [
@@ -358,7 +370,7 @@ export function SyllabusPanel({ courseId }: { readonly courseId: string }) {
                   />
                 </Box>
                 <VStack mt={{ base: 4, lg: 0 }} align="start">
-                  {syllabusData.grade.map((item, index) => {
+                  {pieChartData.map((item, index) => {
                     const line = item.comment.split("\n");
                     const content = line.map((item, index) => {
                       return (
@@ -374,18 +386,18 @@ export function SyllabusPanel({ courseId }: { readonly courseId: string }) {
                       );
                     });
                     return (
-                      <Popover key={"SyllabusData" + index}>
+                      <Popover key={"SyllabusData" + index} autoFocus={false}>
                         <PopoverTrigger>
                           <HStack justify="start" cursor="pointer">
                             <Icon
                               as={FaCircle}
                               size="20px"
-                              color={item.color ?? "current"}
+                              color={getPieColor(index)}
                             />
                             <Text
                               fontSize="lg"
                               fontWeight="800"
-                              color={item.color ?? "current"}
+                              color={getPieColor(index)}
                             >
                               {item.value}%
                             </Text>
@@ -406,7 +418,7 @@ export function SyllabusPanel({ courseId }: { readonly courseId: string }) {
                               <Text
                                 fontSize="lg"
                                 fontWeight="800"
-                                color={item.color ?? "current"}
+                                color={getPieColor(index)}
                               >
                                 {item.value}%
                               </Text>
@@ -496,8 +508,8 @@ function DonutChart(props: DonutChartProps<ChartDatum>) {
           pieValue={getPercentage}
           outerRadius={radius}
           innerRadius={radius - donutThickness}
-          cornerRadius={3}
-          padAngle={0.005}
+          cornerRadius={6}
+          padAngle={0.05}
         >
           {(pie) => {
             return pie.arcs.map((arc, index) => {
@@ -505,7 +517,7 @@ function DonutChart(props: DonutChartProps<ChartDatum>) {
               // const [centroidX, centroidY] = pie.path.centroid(arc);
               // const hasSpaceForLabel = arc.endAngle - arc.startAngle >= 0.1;
               const arcPath = pie.path(arc);
-              const arcFill = chartDatum.color;
+              const arcFill = getPieColor(index);
               return (
                 <g key={`arc-${chartDatum.title ?? ""}-${index}`}>
                   <path d={`${arcPath}` ?? undefined} fill={arcFill} />
