@@ -25,7 +25,6 @@ import {
   TagLeftIcon,
 } from "@chakra-ui/react";
 import React, { useRef, forwardRef } from "react";
-import { PieChart } from "react-minimal-pie-chart";
 import { FaCircle } from "react-icons/fa";
 import { useCourseEnrollData, useSyllabusData } from "hooks/useCourseInfo";
 import {
@@ -36,6 +35,8 @@ import { customScrollBarCss } from "@/styles/customScrollBar";
 import { useInView } from "react-intersection-observer";
 import { CoffeeOutlineIcon } from "@/components/CustomIcons";
 import { ArrowForwardIcon } from "@chakra-ui/icons";
+import { Pie } from "@visx/shape";
+import { Group } from "@visx/group";
 
 function StatNumber(props: StatNumberProps) {
   return (
@@ -218,7 +219,7 @@ function PanelBlock(props: PanelBlockProps) {
         })}
       </Box>
     ) : (
-      rawContent
+      <Box ref={contentRef}>{rawContent}</Box>
     );
   return (
     <Skeleton
@@ -283,16 +284,18 @@ function PanelBlock(props: PanelBlockProps) {
   );
 }
 
+interface ChartDatum {
+  color: string;
+  comment: string;
+  title: string;
+  value: number;
+}
+const getPercentage = (d: ChartDatum) => d.value;
+
 export function SyllabusPanel({ courseId }: { readonly courseId: string }) {
   const { data: syllabusData, isLoading } = useSyllabusData(courseId);
   const pieChartData = syllabusData?.grade
-    ? (syllabusData?.grade.filter((g) => g.color !== null) as {
-        title?: string | number;
-        color: string;
-        value: number;
-        key?: string | number;
-        [key: string]: unknown;
-      }[]) // Type def: https://github.com/toomuchdesign/react-minimal-pie-chart/blob/master/src/commonTypes.ts
+    ? (syllabusData?.grade.filter((g) => g.color !== null) as ChartDatum[])
     : undefined;
 
   const leftBlocks: { section: SyllabusFieldName; h: number }[] = [
@@ -306,8 +309,14 @@ export function SyllabusPanel({ courseId }: { readonly courseId: string }) {
   ];
 
   return (
-    <Flex w="100%" justify={"space-between"} mt={6}>
-      <Flex w="48%" gap={4} flexDirection="column">
+    <Flex
+      w="100%"
+      justify={"space-between"}
+      mt={6}
+      flexDirection={{ base: "column", md: "row" }}
+      gap={{ base: 4, md: 0 }}
+    >
+      <Flex w={{ base: "100%", md: "48%" }} gap={4} flexDirection="column">
         {leftBlocks.map((block, index) => {
           const section = block.section;
           const content = syllabusData?.syllabus?.[section] || null;
@@ -323,14 +332,14 @@ export function SyllabusPanel({ courseId }: { readonly courseId: string }) {
           );
         })}
       </Flex>
-      <Flex w="48%" gap={4} flexDirection="column">
+      <Flex w={{ base: "100%", md: "48%" }} gap={4} flexDirection="column">
         <PanelBlock
           title={"評量方式"}
           blockH={320}
           isLoading={isLoading}
           index={3}
           content={
-            !syllabusData || !syllabusData.grade ? null : (
+            !syllabusData || !syllabusData.grade || !pieChartData ? null : (
               <Flex
                 my="4"
                 flexDirection={{ base: "column", lg: "row" }}
@@ -338,16 +347,14 @@ export function SyllabusPanel({ courseId }: { readonly courseId: string }) {
                 alignItems="center"
               >
                 <Box w="200px" h="200px">
-                  <PieChart
-                    lineWidth={50}
-                    label={({ dataEntry }) => dataEntry.value + "%"}
-                    labelPosition={75}
+                  <DonutChart
                     data={pieChartData}
-                    labelStyle={() => ({
-                      fill: "white",
-                      fontSize: "10px",
-                      fontFamily: "sans-serif",
-                    })}
+                    w={200}
+                    h={200}
+                    mt={30}
+                    mb={30}
+                    ml={30}
+                    mr={30}
                   />
                 </Box>
                 <VStack mt={{ base: 4, lg: 0 }} align="start">
@@ -457,5 +464,57 @@ export function SyllabusPanel({ courseId }: { readonly courseId: string }) {
         />
       </Flex>
     </Flex>
+  );
+}
+
+interface DonutChartProps<T> {
+  data: T[];
+  w: number;
+  h: number;
+  mt?: number;
+  mr?: number;
+  mb?: number;
+  ml?: number;
+}
+
+function DonutChart(props: DonutChartProps<ChartDatum>) {
+  const { data, w, h, mt = 0, mb = 0, mr = 0, ml = 0 } = props;
+  const innerWidth = w - ml - mr;
+  const innerHeight = h - mt - mb;
+  const radius = Math.min(innerWidth, innerHeight) / 2;
+  const centerY = innerHeight / 2;
+  const centerX = innerWidth / 2;
+  const top = centerY + mt;
+  const left = centerX + ml;
+  const donutThickness = 40;
+
+  return (
+    <svg width={w} height={h}>
+      <Group top={top} left={left}>
+        <Pie
+          data={data}
+          pieValue={getPercentage}
+          outerRadius={radius}
+          innerRadius={radius - donutThickness}
+          cornerRadius={3}
+          padAngle={0.005}
+        >
+          {(pie) => {
+            return pie.arcs.map((arc, index) => {
+              const chartDatum = arc.data;
+              // const [centroidX, centroidY] = pie.path.centroid(arc);
+              // const hasSpaceForLabel = arc.endAngle - arc.startAngle >= 0.1;
+              const arcPath = pie.path(arc);
+              const arcFill = chartDatum.color;
+              return (
+                <g key={`arc-${chartDatum.title ?? ""}-${index}`}>
+                  <path d={`${arcPath}` ?? undefined} fill={arcFill} />
+                </g>
+              );
+            });
+          }}
+        </Pie>
+      </Group>
+    </svg>
   );
 }
