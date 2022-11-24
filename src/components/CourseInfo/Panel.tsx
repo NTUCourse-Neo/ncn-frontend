@@ -25,14 +25,13 @@ import {
   TagLabel,
   TagLeftIcon,
 } from "@chakra-ui/react";
-import React, { useRef } from "react";
+import React, { useRef, forwardRef } from "react";
 import { PieChart } from "react-minimal-pie-chart";
 import {
   FaCircle,
   FaExclamationTriangle,
   FaQuestionCircle,
 } from "react-icons/fa";
-import { useUser } from "@auth0/nextjs-auth0";
 import Image from "next/image";
 import { useCourseEnrollData, useSyllabusData } from "hooks/useCourseInfo";
 import {
@@ -74,90 +73,36 @@ function StatLabel(props: StatLabelProps) {
   );
 }
 
-interface LoadingPanelProps extends FlexProps {
-  readonly title: string;
-}
-function LoadingPanel({ title, ...restProps }: LoadingPanelProps) {
-  return (
-    <Flex
-      w="100%"
-      flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      {...restProps}
-    >
-      <VStack>
-        <Image
-          alt=""
-          src={"/img/parrot/parrot.gif"}
-          height={32}
-          width={32}
-          layout="fixed"
-        />
-        <Text
-          fontSize="lg"
-          fontWeight="800"
-          color="gray.500"
-          textAlign="center"
-        >
-          {title}
-        </Text>
-      </VStack>
-    </Flex>
-  );
-}
-
-// deprecated
 interface PanelPlaceholderProps extends FlexProps {
-  readonly title: string;
-  readonly isEmpty?: boolean;
+  readonly title?: string;
 }
-function PanelPlaceholder({
-  title = "暫無資訊",
-  isEmpty = true,
-  ...restProps
-}: PanelPlaceholderProps) {
-  return (
-    <Flex
-      w="100%"
-      flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      {...restProps}
-    >
-      <Icon
-        as={isEmpty ? FaQuestionCircle : FaExclamationTriangle}
-        boxSize="32px"
-        color="gray.500"
-      />
-      <Text
-        mt="2"
-        fontSize="lg"
-        fontWeight="800"
-        color="gray.500"
-        textAlign="center"
-      >
-        {title}
-      </Text>
-    </Flex>
-  );
-}
-
-interface PanelWrapperProps {
-  readonly children: JSX.Element;
-  readonly isLoading: boolean;
-  readonly loadingFallback?: JSX.Element;
-}
-function PanelWrapper({
-  isLoading,
-  loadingFallback = <LoadingPanel title="載入中..." height="100%" />,
-  children,
-}: PanelWrapperProps): JSX.Element {
-  if (isLoading) {
-    return loadingFallback;
+const PanelPlaceholder = forwardRef<HTMLDivElement, PanelPlaceholderProps>(
+  (props, ref) => {
+    const { title } = props;
+    return (
+      <Center h="100%" ref={ref}>
+        <Flex
+          flexDirection={"column"}
+          justifyContent="center"
+          alignItems={"center"}
+        >
+          <CoffeeOutlineIcon color="#909090" boxSize={"40px"} />
+          <Flex
+            mt={2}
+            sx={{
+              fontSize: "14px",
+              fontWeight: 500,
+              lineHeight: 1.4,
+              color: "#909090",
+            }}
+          >
+            {title || `尚未提供`}
+          </Flex>
+        </Flex>
+      </Center>
+    );
   }
-  return <>{children}</>;
-}
+);
 
 export function EnrollStatusPanel({
   courseSerial,
@@ -203,12 +148,7 @@ export function EnrollStatusPanel({
           </Tag>
         </Flex>
         {!courseEnrollStatus || courseSerial === null ? (
-          <PanelPlaceholder
-            title="無法取得課程即時資訊"
-            isEmpty={false}
-            h="100%"
-            pt="8"
-          />
+          <PanelPlaceholder title="無法取得課程即時資訊" />
         ) : (
           <Flex
             w="100%"
@@ -243,7 +183,7 @@ export function EnrollStatusPanel({
 
 interface PanelBlockProps extends FlexProps {
   readonly title: string;
-  readonly content: string | null;
+  readonly content: string | JSX.Element | null;
   readonly blockH: number;
   readonly isLoading?: boolean;
   readonly index?: number;
@@ -272,25 +212,8 @@ function PanelBlock(props: PanelBlockProps) {
 
   const content =
     rawContent === null ? (
-      <Center h="100%" ref={contentRef}>
-        <Flex
-          flexDirection={"column"}
-          justifyContent="center"
-          alignItems={"center"}
-        >
-          <CoffeeOutlineIcon color="#909090" boxSize={"40px"} />
-          <Flex
-            mt={2}
-            sx={{
-              fontSize: "14px",
-              fontWeight: 500,
-              lineHeight: 1.4,
-              color: "#909090",
-            }}
-          >{`尚未提供`}</Flex>
-        </Flex>
-      </Center>
-    ) : (
+      <PanelPlaceholder ref={contentRef} />
+    ) : typeof rawContent === "string" ? (
       <Box ref={contentRef}>
         {rawContent.split("\n").map((item, index) => {
           return (
@@ -300,6 +223,8 @@ function PanelBlock(props: PanelBlockProps) {
           );
         })}
       </Box>
+    ) : (
+      rawContent
     );
   return (
     <Skeleton
@@ -366,6 +291,15 @@ function PanelBlock(props: PanelBlockProps) {
 
 export function SyllabusPanel({ courseId }: { readonly courseId: string }) {
   const { data: syllabusData, isLoading } = useSyllabusData(courseId);
+  const pieChartData = syllabusData?.grade
+    ? (syllabusData?.grade.filter((g) => g.color !== null) as {
+        title?: string | number;
+        color: string;
+        value: number;
+        key?: string | number;
+        [key: string]: unknown;
+      }[]) // Type def: https://github.com/toomuchdesign/react-minimal-pie-chart/blob/master/src/commonTypes.ts
+    : undefined;
 
   const leftBlocks: { section: SyllabusFieldName; h: number }[] = [
     { section: "intro", h: 320 },
@@ -395,14 +329,115 @@ export function SyllabusPanel({ courseId }: { readonly courseId: string }) {
         })}
       </Flex>
       <Flex w="48%" gap={4} flexDirection="column">
-        <Flex
-          bg="#f6f6f6"
-          gap={"10px"}
-          borderRadius={"4px"}
-          flexDirection="column"
-          h={`320px`}
-          position="relative"
-          flexGrow={1}
+        <PanelBlock
+          title={"評量方式"}
+          blockH={320}
+          isLoading={isLoading}
+          index={3}
+          content={
+            !syllabusData || !syllabusData.grade ? null : (
+              <Flex
+                my="4"
+                flexDirection={{ base: "column", lg: "row" }}
+                justifyContent="space-evenly"
+                alignItems="center"
+              >
+                <Box w="200px" h="200px">
+                  <PieChart
+                    lineWidth={50}
+                    label={({ dataEntry }) => dataEntry.value + "%"}
+                    labelPosition={75}
+                    data={pieChartData}
+                    labelStyle={() => ({
+                      fill: "white",
+                      fontSize: "10px",
+                      fontFamily: "sans-serif",
+                    })}
+                  />
+                </Box>
+                <VStack mt={{ base: 4, lg: 0 }} align="start">
+                  {syllabusData.grade.map((item, index) => {
+                    const line = item.comment.split("\n");
+                    const content = line.map((item, index) => {
+                      return (
+                        <Text
+                          key={"SyllabusDataContent" + index}
+                          mb="1"
+                          fontSize="md"
+                          fontWeight="400"
+                          color={"text.light"}
+                        >
+                          {item.trim()}
+                        </Text>
+                      );
+                    });
+                    return (
+                      <Popover key={"SyllabusData" + index}>
+                        <PopoverTrigger>
+                          <HStack justify="start" cursor="pointer">
+                            <Icon
+                              as={FaCircle}
+                              size="20px"
+                              color={item.color ?? "current"}
+                            />
+                            <Text
+                              fontSize="lg"
+                              fontWeight="800"
+                              color={item.color ?? "current"}
+                            >
+                              {item.value}%
+                            </Text>
+                            <Text
+                              fontSize="md"
+                              fontWeight="600"
+                              color={"heading.light"}
+                            >
+                              {item.title}
+                            </Text>
+                          </HStack>
+                        </PopoverTrigger>
+                        <PopoverContent>
+                          <PopoverArrow />
+                          <PopoverCloseButton />
+                          <PopoverHeader>
+                            <HStack>
+                              <Text
+                                fontSize="lg"
+                                fontWeight="800"
+                                color={item.color ?? "current"}
+                              >
+                                {item.value}%
+                              </Text>
+                              <Text
+                                fontSize="md"
+                                fontWeight="600"
+                                color="gray.700"
+                              >
+                                {item.title}
+                              </Text>
+                            </HStack>
+                          </PopoverHeader>
+                          <PopoverBody>
+                            {item.comment === "" ? (
+                              <Text
+                                fontSize="md"
+                                fontWeight="400"
+                                color="gray.700"
+                              >
+                                無詳細資訊
+                              </Text>
+                            ) : (
+                              content
+                            )}
+                          </PopoverBody>
+                        </PopoverContent>
+                      </Popover>
+                    );
+                  })}
+                </VStack>
+              </Flex>
+            )
+          }
         />
         {rightBlocks.map((block, index) => {
           const section = block.section;
@@ -426,121 +461,5 @@ export function SyllabusPanel({ courseId }: { readonly courseId: string }) {
         />
       </Flex>
     </Flex>
-  );
-}
-
-export function GradePolicyPanel({ courseId }: { readonly courseId: string }) {
-  const { data: syllabusData, isLoading } = useSyllabusData(courseId);
-  const headingColor = useColorModeValue("heading.light", "heading.dark");
-  const textColor = useColorModeValue("text.light", "text.dark");
-  const pieChartData = syllabusData?.grade
-    ? (syllabusData?.grade.filter((g) => g.color !== null) as {
-        title?: string | number;
-        color: string;
-        value: number;
-        key?: string | number;
-        [key: string]: unknown;
-      }[]) // Type def: https://github.com/toomuchdesign/react-minimal-pie-chart/blob/master/src/commonTypes.ts
-    : undefined;
-  return (
-    <PanelWrapper
-      isLoading={isLoading}
-      loadingFallback={
-        <LoadingPanel title="查看配分中..." height="100%" pt={8} />
-      }
-    >
-      {!syllabusData || !syllabusData.grade ? (
-        <PanelPlaceholder title="無評分相關資訊" h="100%" pt="8" />
-      ) : (
-        <Flex
-          my="4"
-          flexDirection={{ base: "column", lg: "row" }}
-          justifyContent="space-evenly"
-          alignItems="center"
-        >
-          <Box w="200px" h="200px">
-            <PieChart
-              lineWidth={50}
-              label={({ dataEntry }) => dataEntry.value + "%"}
-              labelPosition={75}
-              data={pieChartData}
-              labelStyle={() => ({
-                fill: "white",
-                fontSize: "10px",
-                fontFamily: "sans-serif",
-              })}
-            />
-          </Box>
-          <VStack mt={{ base: 4, lg: 0 }} align="start">
-            {syllabusData.grade.map((item, index) => {
-              const line = item.comment.split("\n");
-              const content = line.map((item, index) => {
-                return (
-                  <Text
-                    key={"SyllabusDataContent" + index}
-                    mb="1"
-                    fontSize="md"
-                    fontWeight="400"
-                    color={textColor}
-                  >
-                    {item.trim()}
-                  </Text>
-                );
-              });
-              return (
-                <Popover key={"SyllabusData" + index}>
-                  <PopoverTrigger>
-                    <HStack justify="start" cursor="pointer">
-                      <Icon
-                        as={FaCircle}
-                        size="20px"
-                        color={item.color ?? "current"}
-                      />
-                      <Text
-                        fontSize="lg"
-                        fontWeight="800"
-                        color={item.color ?? "current"}
-                      >
-                        {item.value}%
-                      </Text>
-                      <Text fontSize="md" fontWeight="600" color={headingColor}>
-                        {item.title}
-                      </Text>
-                    </HStack>
-                  </PopoverTrigger>
-                  <PopoverContent>
-                    <PopoverArrow />
-                    <PopoverCloseButton />
-                    <PopoverHeader>
-                      <HStack>
-                        <Text
-                          fontSize="lg"
-                          fontWeight="800"
-                          color={item.color ?? "current"}
-                        >
-                          {item.value}%
-                        </Text>
-                        <Text fontSize="md" fontWeight="600" color="gray.700">
-                          {item.title}
-                        </Text>
-                      </HStack>
-                    </PopoverHeader>
-                    <PopoverBody>
-                      {item.comment === "" ? (
-                        <Text fontSize="md" fontWeight="400" color="gray.700">
-                          無詳細資訊
-                        </Text>
-                      ) : (
-                        content
-                      )}
-                    </PopoverBody>
-                  </PopoverContent>
-                </Popover>
-              );
-            })}
-          </VStack>
-        </Flex>
-      )}
-    </PanelWrapper>
   );
 }

@@ -14,11 +14,7 @@ import { IoWarningOutline } from "react-icons/io5";
 import React, { useState, useMemo } from "react";
 import { info_view_map } from "data/mapping_table";
 import { parseCourseTimeLocation } from "utils/parseCourseSchedule";
-import {
-  EnrollStatusPanel,
-  SyllabusPanel,
-  GradePolicyPanel,
-} from "components/CourseInfo/Panel";
+import { EnrollStatusPanel, SyllabusPanel } from "components/CourseInfo/Panel";
 import type { Course } from "types/course";
 import { CoffeeOutlineIcon } from "@/components/CustomIcons";
 
@@ -244,7 +240,6 @@ function BasicInfoTab({ course }: { readonly course: Course }) {
 }
 
 function CourseRulesTab({ course }: { readonly course: Course }) {
-  const a = <GradePolicyPanel courseId={course.id} />;
   return (
     <Box>
       {/* TODO: syllabus.workload */}
