@@ -498,7 +498,7 @@ function DonutChart(props: DonutChartProps<ChartDatum>) {
   const centerX = innerWidth / 2;
   const top = centerY + mt;
   const left = centerX + ml;
-  const donutThickness = 40;
+  const donutThickness = 33;
 
   return (
     <svg width={w} height={h}>
