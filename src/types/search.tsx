@@ -365,9 +365,9 @@ export type FilterType = keyof typeof filters;
 // for sorting
 export const sortOptions = [
   {
-    id: "serial",
-    chinese: "流水號",
-    english: "Serial Number",
+    id: "correlation",
+    chinese: "相關性",
+    english: "Correlation",
   },
   {
     id: "limit_asc",

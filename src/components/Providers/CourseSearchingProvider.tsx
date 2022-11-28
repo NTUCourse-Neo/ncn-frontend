@@ -13,6 +13,7 @@ import type {
   SortOption,
   FilterType,
 } from "types/search";
+import { sortOptions } from "types/search";
 import {
   isEnrollMethodFilterActive,
   isTargetGradeFilterActive,
@@ -73,6 +74,7 @@ const emptyFilterObject: Filter = {
 };
 
 const defaultSearchMode = searchModeList[0];
+const defaultSortOption = sortOptions[0];
 
 const CourseSearchingContext = createContext<CourseSearchingContextType>({
   search: "",
@@ -87,7 +89,7 @@ const CourseSearchingContext = createContext<CourseSearchingContextType>({
   isSearchBoxInView: true,
   isFilterEdited: () => false,
   isFiltersEdited: false,
-  sortOption: "serial",
+  sortOption: defaultSortOption.id,
   searchPageTopRef: React.createRef(),
   searchCallback: () => {},
   setSearch: () => {},
@@ -127,7 +129,9 @@ const CourseSearchingProvider: React.FC<{
     process.env.NEXT_PUBLIC_SEMESTER ?? null
   );
   const [searchMode, setSearchMode] = useState<SearchMode>(searchModeList[0]);
-  const [sortOption, setSortOption] = useState<SortOption>("serial");
+  const [sortOption, setSortOption] = useState<SortOption>(
+    defaultSortOption.id
+  );
   const [isSearchBoxInView, setIsSearchBoxInView] = useState(true);
 
   const dispatchSearch = (text: string | null) => {
