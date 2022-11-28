@@ -421,7 +421,7 @@ function HeaderBar() {
                   <MegaMenuLink href="http://curri.aca.ntu.edu.tw/aca_doc/waive.asp">
                     學分抵免申請
                   </MegaMenuLink>
-                  <MegaMenuLink href="/courseDocuments" isExternal={false}>
+                  <MegaMenuLink href="http://curri.aca.ntu.edu.tw/cur/N1.htm">
                     進階英語免修
                   </MegaMenuLink>
                 </Flex>
