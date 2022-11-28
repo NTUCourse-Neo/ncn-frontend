@@ -227,6 +227,14 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
       block: "start",
     });
   };
+  const { ref: inViewRef } = useInView({
+    onChange: (inView, entry) => {
+      if (inView) {
+        setActiveDept("selected");
+      }
+    },
+  });
+  const topRef = useRef<HTMLDivElement>(null);
 
   const onOpenModal = () => {
     // overwrite local states by context
@@ -449,6 +457,26 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
                 bg="#f2f2f2"
                 __css={generateScrollBarCss("#f2f2f2", "#909090")}
               >
+                <Flex
+                  py={3}
+                  px={8}
+                  alignItems="start"
+                  sx={{
+                    fontSize: activeDept === "selected" ? "17px" : "15px",
+                    lineHeight: activeDept === "selected" ? "22px" : "23px",
+                    color: activeDept === "selected" ? "#2d2d2d" : "#4b4b4b",
+                    fontWeight: activeDept === "selected" ? 600 : 400,
+                  }}
+                  cursor="pointer"
+                  onClick={() => {
+                    topRef.current?.scrollIntoView({
+                      behavior: "smooth",
+                      block: "start",
+                    });
+                  }}
+                >
+                  <Box>{`所選開課系所`}</Box>
+                </Flex>
                 {Object.keys(college_map).map((college_key, index) => {
                   const deptName = college_map[college_key].name;
                   const isActive = activeDept === college_key;
@@ -481,7 +509,21 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
                 h="100%"
                 __css={generateScrollBarCss("white", "#909090")}
               >
-                <Box mb={6}>
+                <Box mb={6} position="relative">
+                  <Box
+                    w="100%"
+                    h={"1px"}
+                    ref={inViewRef}
+                    position="absolute"
+                    top="0"
+                  />
+                  <Box
+                    w="100%"
+                    h={"1px"}
+                    ref={topRef}
+                    position="absolute"
+                    top="0"
+                  />
                   <Flex
                     p="2"
                     h="40px"
@@ -494,7 +536,6 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
                     </Heading>
                   </Flex>
                   <Divider pt={2} />
-
                   {deptList.filter((dept) => selectedDept.includes(dept.id))
                     .length > 0 ? (
                     <Flex w="100%" minH="80px" flexWrap={"wrap"}>
