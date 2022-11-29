@@ -7,19 +7,16 @@ import {
   Menu,
   MenuButton,
   MenuList,
-  MenuGroup,
-  MenuItem,
-  MenuDivider,
   Text,
   HStack,
-  AvatarBadge,
-  Badge,
-  useColorModeValue,
   Box,
   Divider,
   Center,
   TextProps,
+  Stack,
+  Icon,
 } from "@chakra-ui/react";
+import { TbBookmark } from "react-icons/tb";
 import {
   ChevronRightIcon,
   ChevronDownIcon,
@@ -27,7 +24,6 @@ import {
 } from "@chakra-ui/icons";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { FaCheck, FaExclamation } from "react-icons/fa";
 import { useUser } from "@auth0/nextjs-auth0";
 import BeatLoader from "react-spinners/BeatLoader";
 import Image from "next/image";
@@ -40,6 +36,7 @@ import SearchFilters from "@/components/SearchFilters";
 import Dropdown from "@/components/Dropdown";
 import { LATEST_NEWS_LASTCHECK_TS } from "@/constant";
 import useNeoLocalStorage from "@/hooks/useNeoLocalStorage";
+import openPage from "@/utils/openPage";
 
 interface MegaMenuLinkProps extends TextProps {
   readonly href: string;
@@ -107,8 +104,6 @@ function DropdownButton(props: {
 function SignInButton() {
   const { user, isLoading } = useUser();
   const router = useRouter();
-  const textColor = useColorModeValue("gray.600", "gray.300");
-  const loginBtnBg = useColorModeValue("yellow.300", "yellow.600");
 
   if (isLoading) {
     return (
@@ -131,62 +126,120 @@ function SignInButton() {
           src={user?.picture ?? null}
           _hover={{ cursor: "pointer" }}
           boxSize="10"
-        >
-          {user.email_verified ? (
-            <AvatarBadge boxSize="1em" bg="green.500" borderWidth="0.15em">
-              <FaCheck size="8" />
-            </AvatarBadge>
-          ) : (
-            <AvatarBadge boxSize="1em" bg="orange.500" borderWidth="0.15em">
-              <FaExclamation size="8" />
-            </AvatarBadge>
-          )}
-        </MenuButton>
+        />
         <MenuList>
-          <MenuGroup title="帳戶">
-            <Link href="/user/info">
-              <MenuItem>個人資料</MenuItem>
-            </Link>
-            <Link href="/user/my">
-              <MenuItem>最愛</MenuItem>
-            </Link>
-          </MenuGroup>
-          <MenuDivider />
-          <Flex justifyContent="end" alignItems="center">
-            <Flex
-              flexDirection="column"
-              justifyContent="center"
-              alignItems="start"
-              m="2"
-              ml="4"
-            >
-              <Badge
-                colorScheme={user.email_verified ? "green" : "yellow"}
-                mb="1"
+          <Box
+            sx={{
+              px: 5,
+              py: 7,
+            }}
+          >
+            <Stack alignItems={"center"}>
+              <Avatar
+                name={user?.name ?? "User"}
+                src={user?.picture ?? undefined}
+                w={"64px"}
+                h="64px"
+              />
+              <Flex
+                mt="14px"
+                sx={{
+                  fontSize: "12px",
+                  lineHeight: "16px",
+                  color: "#909090",
+                }}
               >
-                {user.email_verified ? "已驗證" : "未驗證"}
-              </Badge>
-              <Text fontSize="sm" color={textColor} fontWeight="700">
-                {user.name}
-              </Text>
-              <Text fontSize="xs" color={textColor} fontWeight="500">
-                {user.email}
-              </Text>
-            </Flex>
-            <Button
-              colorScheme="red"
-              variant="outline"
-              size="md"
-              m="2"
-              mr="4"
-              onClick={() => {
-                reportEvent("header", "click", "logout");
-                router.push("/api/auth/logout");
+                系級 placeholder
+              </Flex>
+              <Flex
+                mt="12px"
+                sx={{
+                  fontSize: "20px",
+                  lineHeight: "24px",
+                  color: "black",
+                }}
+              >
+                {user?.name}
+              </Flex>
+              <Flex
+                mt="6px"
+                sx={{
+                  fontSize: "13px",
+                  lineHeight: "18px",
+                  color: "#4b4b4b",
+                }}
+              >
+                {"學號 placeholder"}
+              </Flex>
+            </Stack>
+            <Flex mt="13px" borderTop={"0.5px solid #6F6F6F50"} />
+            <Stack
+              my={6}
+              sx={{
+                lineHeight: "21px",
+                color: "#484848",
               }}
+              spacing={4}
             >
-              登出
-            </Button>
-          </Flex>
+              <Flex
+                alignItems={"center"}
+                cursor="pointer"
+                onClick={() => {
+                  router.push("/user/my");
+                }}
+              >
+                <Icon as={TbBookmark} w="20px" h="20px" mr={2} />
+                <Text>我的收藏</Text>
+              </Flex>
+              <Flex
+                alignItems={"center"}
+                cursor="pointer"
+                onClick={() => {
+                  router.push("/user/preselection");
+                }}
+              >
+                <Icon as={TbBookmark} w="20px" h="20px" mr={2} />
+                <Text>預選課表</Text>
+              </Flex>
+              <Flex
+                alignItems={"center"}
+                cursor="pointer"
+                onClick={() => {
+                  router.push("/user/schedule");
+                }}
+              >
+                <Icon as={TbBookmark} w="20px" h="20px" mr={2} />
+                <Text>學期課表</Text>
+              </Flex>
+              <Flex
+                alignItems={"center"}
+                cursor="pointer"
+                onClick={() => {
+                  openPage(
+                    "https://reg.aca.ntu.edu.tw/GradeCheck/MessageForm?code=1"
+                  );
+                }}
+              >
+                <Icon as={TbBookmark} w="20px" h="20px" mr={2} />
+                <Text>修課檢視</Text>
+              </Flex>
+            </Stack>
+            <Flex mb="30px" borderTop={"0.5px solid #6F6F6F50"} />
+            <Stack alignItems="center">
+              <Button
+                w="64px"
+                colorScheme={"black"}
+                bg="white"
+                color="#484848"
+                variant="outline"
+                onClick={() => {
+                  router.push("/api/auth/logout");
+                }}
+              >
+                登出
+              </Button>
+            </Stack>
+          </Box>
         </MenuList>
       </Menu>
     );
@@ -220,7 +273,7 @@ function SignInButton() {
         </MenuList>
       </Menu>
       <Button
-        bg={loginBtnBg}
+        bg={"yellow.300"}
         _hover={{
           bg: "yellow.400",
         }}
