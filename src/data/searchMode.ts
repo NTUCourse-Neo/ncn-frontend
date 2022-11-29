@@ -34,7 +34,13 @@ const searchModeList: SearchMode[] = [
     id: "dept",
     chinese: "系所",
     english: "Department",
-    filters: ["time", "dept", "enroll_method", "target_grade", "other_limit"],
+    filters: [
+      "time",
+      "single_dept",
+      "enroll_method",
+      "target_grade",
+      "other_limit",
+    ],
     precautions: ["courseSelectionRule"],
   },
   {

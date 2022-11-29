@@ -12,6 +12,7 @@ import {
   HostCollegeFilter,
   ProgramFilter,
   GroupingCourseTypeFilter,
+  SingleDeptFilter,
 } from "@/components/Filters/index";
 import { programs as AllPrograms } from "@/data/program";
 
@@ -31,6 +32,8 @@ export type Filter = {
   is_selective: boolean | null;
   time_strict_match: boolean;
   grouping_course_type: string[];
+  deptCode: string | null;
+  department_course_type: string | null;
 };
 
 // deprecated
@@ -358,6 +361,10 @@ export const filters = {
   grouping_course_type: {
     id: "grouping_course_type",
     component: <GroupingCourseTypeFilter />,
+  },
+  single_dept: {
+    id: "single_dept",
+    component: <SingleDeptFilter />,
   },
 } as const;
 export type FilterType = keyof typeof filters;

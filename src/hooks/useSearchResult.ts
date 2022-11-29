@@ -83,6 +83,16 @@ function generateSearchAPIFilterObject(
       searchMode.filters.includes("time") && isFilterEdited("time")
         ? searchFilters.time_strict_match
         : null,
+    deptCode:
+      searchMode.filters.includes("single_dept") &&
+      isFilterEdited("single_dept")
+        ? searchFilters.deptCode
+        : null,
+    department_course_type:
+      searchMode.filters.includes("single_dept") &&
+      isFilterEdited("single_dept")
+        ? searchFilters.department_course_type
+        : null,
   };
 }
 

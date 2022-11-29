@@ -185,6 +185,12 @@ export function DeptFilter() {
   );
 }
 
+// TODO:
+export function SingleDeptFilter() {
+  const { searchFilters, isFilterEdited } = useCourseSearchingContext();
+  return <></>;
+}
+
 export function ProgramFilter() {
   const { searchFilters, isFilterEdited } = useCourseSearchingContext();
   return (
