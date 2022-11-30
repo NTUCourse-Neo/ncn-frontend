@@ -71,7 +71,7 @@ const emptyFilterObject: Filter = {
   is_selective: null,
   time_strict_match: false,
   grouping_course_type: [],
-  deptCode: null,
+  dept: null,
   department_course_type: null,
   singleDeptIsSelective: null,
 };
@@ -202,7 +202,7 @@ const CourseSearchingProvider: React.FC<{
         }
         case "single_dept": {
           return (
-            searchFilters.deptCode !== null ||
+            searchFilters.dept !== null ||
             searchFilters.department_course_type !== null ||
             searchFilters.singleDeptIsSelective !== null
           );

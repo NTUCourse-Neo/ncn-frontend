@@ -83,10 +83,10 @@ function generateSearchAPIFilterObject(
       searchMode.filters.includes("time") && isFilterEdited("time")
         ? searchFilters.time_strict_match
         : null,
-    deptCode:
+    dept:
       searchMode.filters.includes("single_dept") &&
       isFilterEdited("single_dept")
-        ? searchFilters.deptCode
+        ? searchFilters.dept
         : null,
     department_course_type:
       searchMode.filters.includes("single_dept") &&

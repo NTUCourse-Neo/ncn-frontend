@@ -1,5 +1,3 @@
-import { SocialUser } from "data/mapping_table";
-
 export interface Course {
   id: string;
   serial: string | null;

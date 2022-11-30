@@ -15,6 +15,7 @@ import {
   SingleDeptFilter,
 } from "@/components/Filters/index";
 import { programs as AllPrograms } from "@/data/program";
+import { Department } from "types/course";
 
 export type Filter = {
   time: Interval[][]; // time
@@ -32,7 +33,7 @@ export type Filter = {
   is_selective: boolean | null; // isSelective
   time_strict_match: boolean; // timeStrictMatch
   grouping_course_type: string[]; // groupingCourseTypes
-  deptCode: string | null; // for singleDept, department
+  dept: Department | null; // for singleDept, department
   department_course_type: string | null; // for singleDept, departmentCourseTypes
   singleDeptIsSelective: boolean | null; // for singleDept, isSelectiveSingleDept
 };

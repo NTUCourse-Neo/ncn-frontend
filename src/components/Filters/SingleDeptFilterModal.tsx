@@ -94,8 +94,8 @@ function IsSeleciveRadioGroup(props: IsSeleciveRadioGroupProps) {
 interface ModalDeptSectionProps {
   readonly college_key: string;
   readonly departments: Department[];
-  readonly selectedDept: string | null;
-  readonly setSelectedDept: (selectedDept: string | null) => void;
+  readonly selectedDept: Department | null;
+  readonly setSelectedDept: (selectedDept: Department | null) => void;
   readonly setActiveDept: (activeDept: string | null) => void;
   readonly collegeRefs: Record<string, React.RefObject<HTMLDivElement>>;
   readonly flexProps?: FlexProps;
@@ -174,16 +174,16 @@ const ModalDeptSection = forwardRef<HTMLDivElement, ModalDeptSectionProps>(
               onClick={(e) => {
                 e.stopPropagation();
                 e.preventDefault();
-                if (selectedDept === dept.id) {
+                if (selectedDept?.id === dept.id) {
                   setSelectedDept(null);
                 } else {
-                  setSelectedDept(dept.id);
+                  setSelectedDept(dept);
                 }
               }}
             >
               <Radio
                 value={dept.id}
-                isChecked={dept.id === selectedDept}
+                isChecked={dept.id === selectedDept?.id}
                 defaultChecked={false}
               />
               <Badge bg="#ececec" color="primary.500" fontWeight={400}>
@@ -218,9 +218,7 @@ function SingleDeptFilterModal({
 }: SingleDeptFilterModalProps) {
   const { searchFilters, setSearchFilters, setPageIndex } =
     useCourseSearchingContext();
-  const [selectedDept, setSelectedDept] = useState<string | null>(
-    searchFilters.deptCode
-  );
+  const [selectedDept, setSelectedDept] = useState(searchFilters.dept);
   const [selectedCourseType, setSelectedCourseType] = useState<string | null>(
     searchFilters.department_course_type
   );
@@ -248,7 +246,7 @@ function SingleDeptFilterModal({
 
   const onOpenModal = () => {
     // overwrite local states by context
-    setSelectedDept(searchFilters.deptCode);
+    setSelectedDept(searchFilters.dept);
     setIsSingleDeptSelective(searchFilters.singleDeptIsSelective);
     setSelectedCourseType(searchFilters.department_course_type);
     onOpen();
@@ -257,7 +255,7 @@ function SingleDeptFilterModal({
     // fire when click "X" or outside of modal
     // overwrite local state by context
     onClose();
-    setSelectedDept(searchFilters.deptCode);
+    setSelectedDept(searchFilters.dept);
     setIsSingleDeptSelective(searchFilters.singleDeptIsSelective);
     setSelectedCourseType(searchFilters.department_course_type);
   };
@@ -266,7 +264,7 @@ function SingleDeptFilterModal({
     // overwrite redux state by local state
     setSearchFilters({
       ...searchFilters,
-      deptCode: selectedDept,
+      dept: selectedDept,
       singleDeptIsSelective: isSingleDeptSelective,
       department_course_type: selectedCourseType,
     });
@@ -388,7 +386,16 @@ function SingleDeptFilterModal({
               flexDirection={{ base: "column", md: "row" }}
               alignItems="center"
             >
-              <Flex w="40%">{`已選擇 ${"TODO"} 個系所`}</Flex>
+              <Flex w="40%">
+                {selectedDept === null ? (
+                  <Flex>請選擇 1 個開課系所</Flex>
+                ) : (
+                  <Flex>
+                    已選擇開課系所：
+                    <Flex color="#002F94">{selectedDept?.name_full ?? ""}</Flex>
+                  </Flex>
+                )}
+              </Flex>
               <Flex w={{ base: "50%", md: "35%" }}>
                 <InputGroup>
                   <InputLeftElement pointerEvents="none" pl="2" pt="1">
