@@ -12,11 +12,7 @@ import {
   Divider,
   Flex,
   useBreakpointValue,
-  Radio,
-  RadioGroup,
-  Stack,
   FlexProps,
-  Box,
   Input,
   InputGroup,
   InputLeftElement,
@@ -25,6 +21,9 @@ import {
   HStack,
   Badge,
   Text,
+  Box,
+  RadioGroup,
+  Radio,
 } from "@chakra-ui/react";
 import { SearchOutlineIcon } from "components/CustomIcons";
 import React, {
@@ -44,50 +43,117 @@ import { generateScrollBarCss } from "styles/customScrollBar";
 import { useInView } from "react-intersection-observer";
 import { CloseIcon } from "@chakra-ui/icons";
 import { searchDept } from "@/components/Filters/DeptFilterModal";
+import Dropdown from "@/components/Dropdown";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 
-// TODO: to dropdown
+// TODO: add API & hook to fetch options
 interface DropdownGroupProps extends FlexProps {
-  readonly isSelective: boolean | null;
-  readonly setIsSelective: (isSelective: boolean | null) => void;
+  readonly deptId: string | null;
+  readonly selectedCourseType: string | null;
+  readonly setSelectedCourseType: (courseType: string | null) => void;
+  readonly isSingleDeptSelective: boolean | null;
+  readonly setIsSingleDeptSelective: (
+    isSingleDeptSelective: boolean | null
+  ) => void;
+  readonly suggestedGrade: string | null;
+  readonly setSuggestedGrade: (suggestedGrade: string | null) => void;
 }
 function DropdownGroup(props: DropdownGroupProps) {
-  const { isSelective, setIsSelective, ...rest } = props;
+  const {
+    deptId,
+    selectedCourseType,
+    setSelectedCourseType,
+    isSingleDeptSelective,
+    setIsSingleDeptSelective,
+    suggestedGrade,
+    setSuggestedGrade,
+    ...rest
+  } = props;
+  const selectiveOptions = {
+    All: {
+      label: "必修 + 選修",
+      value: null,
+    },
+    Selective: {
+      label: "選修",
+      value: true,
+    },
+    Required: {
+      label: "必修",
+      value: false,
+    },
+  } as const;
+  const findSelevtiveOption = (value: boolean | null) => {
+    if (value === null) {
+      return selectiveOptions.All;
+    }
+    return value ? selectiveOptions.Selective : selectiveOptions.Required;
+  };
   return (
     <Flex alignItems={"center"} {...rest}>
-      <RadioGroup
-        onChange={(next) => {
-          if (next === "all") {
-            setIsSelective(null);
-          } else if (next === "selective") {
-            setIsSelective(true);
-          } else if (next === "required") {
-            setIsSelective(false);
-          }
-        }}
-        value={
-          isSelective === null
-            ? "all"
-            : isSelective === false
-            ? "required"
-            : "selective"
-        }
+      <Dropdown
+        reverse={true}
+        closeAfterClick={true}
+        renderDropdownButton={() => (
+          <HStack
+            sx={{
+              border: "1px solid #CCCCCC",
+              borderRadius: "4px",
+              p: "4px 12px",
+            }}
+          >
+            <Text
+              minW="40px"
+              noOfLines={1}
+              sx={{
+                fontSize: "12px",
+              }}
+            >
+              {findSelevtiveOption(isSingleDeptSelective).label}
+            </Text>
+            <ChevronDownIcon />
+          </HStack>
+        )}
       >
-        <Stack
-          direction="row"
-          spacing={4}
+        <Box
           sx={{
-            fontSize: "14px",
-            lineHeight: "20px",
-            fontWeight: 500,
-            color: "#666666",
-            letterSpacing: "0.05em",
+            px: 2,
+            my: 2,
           }}
         >
-          <Radio value={"all"}>全部</Radio>
-          <Radio value={"required"}>必修課程</Radio>
-          <Radio value={"selective"}>選修課程</Radio>
-        </Stack>
-      </RadioGroup>
+          <RadioGroup
+            value={
+              isSingleDeptSelective === null
+                ? "All"
+                : isSingleDeptSelective
+                ? "Selective"
+                : "Required"
+            }
+            onChange={(next) => {
+              setIsSingleDeptSelective(
+                next === "All" ? null : next === "Selective" ? true : false
+              );
+            }}
+            gap={2}
+          >
+            {Object.entries(selectiveOptions).map(([key, option]) => (
+              <Radio p={2} value={key} key={key}>
+                <Flex
+                  w="120px"
+                  sx={{
+                    fontWeight: 500,
+                    fontSize: "13px",
+                    lineHeight: "1.4",
+                    color: "#4b4b4b",
+                  }}
+                >
+                  {option.label}
+                </Flex>
+              </Radio>
+            ))}
+          </RadioGroup>
+        </Box>
+      </Dropdown>
     </Flex>
   );
 }
@@ -226,6 +292,9 @@ function SingleDeptFilterModal({
   const [isSingleDeptSelective, setIsSingleDeptSelective] = useState<
     boolean | null
   >(searchFilters.singleDeptIsSelective);
+  const [suggestedGrade, setSuggestedGrade] = useState(
+    searchFilters.suggestedGrade
+  );
 
   const modalBodyRef = useRef<HTMLDivElement>(null);
   const [activeDept, setActiveDept] = useState<string | null>(null);
@@ -250,6 +319,7 @@ function SingleDeptFilterModal({
     setSelectedDept(searchFilters.dept);
     setIsSingleDeptSelective(searchFilters.singleDeptIsSelective);
     setSelectedCourseType(searchFilters.department_course_type);
+    setSuggestedGrade(searchFilters.suggestedGrade);
     onOpen();
   };
   const onCancelEditing = () => {
@@ -259,6 +329,7 @@ function SingleDeptFilterModal({
     setSelectedDept(searchFilters.dept);
     setIsSingleDeptSelective(searchFilters.singleDeptIsSelective);
     setSelectedCourseType(searchFilters.department_course_type);
+    setSuggestedGrade(searchFilters.suggestedGrade);
   };
   const onSaveEditing = () => {
     // fire when click "Save"
@@ -268,6 +339,7 @@ function SingleDeptFilterModal({
       dept: selectedDept,
       singleDeptIsSelective: isSingleDeptSelective,
       department_course_type: selectedCourseType,
+      suggestedGrade: suggestedGrade,
     });
     // Reset indexed page
     setPageIndex(0);
@@ -279,6 +351,7 @@ function SingleDeptFilterModal({
     setSelectedDept(null);
     setIsSingleDeptSelective(null);
     setSelectedCourseType(null);
+    setSuggestedGrade(null);
   };
 
   const modalBody = useMemo(() => {
@@ -442,8 +515,13 @@ function SingleDeptFilterModal({
                 display={{ base: "block", md: "none" }}
               >
                 <DropdownGroup
-                  isSelective={isSingleDeptSelective}
-                  setIsSelective={setIsSingleDeptSelective}
+                  deptId={selectedDept?.id ?? null}
+                  isSingleDeptSelective={isSingleDeptSelective}
+                  setIsSingleDeptSelective={setIsSingleDeptSelective}
+                  selectedCourseType={selectedCourseType}
+                  setSelectedCourseType={setSelectedCourseType}
+                  suggestedGrade={suggestedGrade}
+                  setSuggestedGrade={setSuggestedGrade}
                   my={2}
                 />
                 <Button
@@ -528,8 +606,14 @@ function SingleDeptFilterModal({
           >
             <Flex justifyContent={"space-between"} w="100%">
               <DropdownGroup
-                isSelective={isSingleDeptSelective}
-                setIsSelective={setIsSingleDeptSelective}
+                deptId={selectedDept?.id ?? null}
+                isSingleDeptSelective={isSingleDeptSelective}
+                setIsSingleDeptSelective={setIsSingleDeptSelective}
+                selectedCourseType={selectedCourseType}
+                setSelectedCourseType={setSelectedCourseType}
+                suggestedGrade={suggestedGrade}
+                setSuggestedGrade={setSuggestedGrade}
+                my={2}
               />
               <Flex alignItems={"center"}>
                 <Button
