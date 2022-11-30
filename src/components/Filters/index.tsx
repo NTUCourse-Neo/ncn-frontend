@@ -14,6 +14,7 @@ import React, { useState } from "react";
 import TimeFilterModal from "@/components/Filters/TimeFilterModal";
 import DeptFilterModal from "@/components/Filters/DeptFilterModal";
 import ProgramFilterModal from "@/components/Filters/ProgramFilterModal";
+import SingleDeptFilterModal from "@/components/Filters/SingleDeptFilterModal";
 import GroupingCourseFilterModal from "@/components/Filters/GroupingCourseFilter";
 import { FaChevronDown } from "react-icons/fa";
 import { mapStateToIntervals } from "utils/timeTableConverter";
@@ -185,10 +186,14 @@ export function DeptFilter() {
   );
 }
 
-// TODO:
 export function SingleDeptFilter() {
   const { searchFilters, isFilterEdited } = useCourseSearchingContext();
-  return <></>;
+  return (
+    <SingleDeptFilterModal
+      title={`系所必選修`}
+      isActive={isFilterEdited("single_dept")}
+    />
+  );
 }
 
 export function ProgramFilter() {

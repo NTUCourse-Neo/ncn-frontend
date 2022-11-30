@@ -22,6 +22,8 @@ import {
   InputLeftElement,
   Center,
   InputRightElement,
+  HStack,
+  Badge,
 } from "@chakra-ui/react";
 import { SearchOutlineIcon } from "components/CustomIcons";
 import React, {
@@ -34,7 +36,6 @@ import React, {
 } from "react";
 import { college_map } from "data/college";
 import { deptList } from "data/department";
-import FilterElement from "@/components/Filters/components/FilterElement";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import { reportEvent } from "utils/ga";
 import type { Department } from "types/course";
@@ -162,23 +163,45 @@ const ModalDeptSection = forwardRef<HTMLDivElement, ModalDeptSectionProps>(
           </Heading>
         </Flex>
         <Divider pt={2} />
-        {departments.map(
-          (
-            dept,
-            dept_index // TODO: to radio btn
-          ) => (
-            <FilterElement
-              key={`${dept.id}-${dept_index}-modalBody`}
-              id={dept.id}
-              name={dept.name_full}
-              selected={false}
-              onClick={() => {
-                setSelectedDept(dept.id);
-                reportEvent("filter_department", "click", dept.id);
+        <Flex flexWrap={"wrap"}>
+          {departments.map((dept) => (
+            <HStack
+              p={2}
+              spacing={"6px"}
+              w="fit-content"
+              key={dept.id}
+              cursor={"pointer"}
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                if (selectedDept === dept.id) {
+                  setSelectedDept(null);
+                } else {
+                  setSelectedDept(dept.id);
+                }
               }}
-            />
-          )
-        )}
+            >
+              <Radio
+                value={dept.id}
+                isChecked={dept.id === selectedDept}
+                defaultChecked={false}
+              />
+              <Badge bg="#ececec" color="primary.500" fontWeight={400}>
+                {dept.id}
+              </Badge>
+              <Flex
+                w="fit-content"
+                sx={{
+                  fontSize: "14px",
+                  lineHeight: "20px",
+                  color: "#0D40C3",
+                }}
+              >
+                {dept.name_full}
+              </Flex>
+            </HStack>
+          ))}
+        </Flex>
       </Box>
     );
   }
