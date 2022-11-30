@@ -93,6 +93,11 @@ function generateSearchAPIFilterObject(
       isFilterEdited("single_dept")
         ? searchFilters.department_course_type
         : null,
+    singleDeptIsSelective:
+      searchMode.filters.includes("single_dept") &&
+      isFilterEdited("single_dept")
+        ? searchFilters.singleDeptIsSelective
+        : null,
   };
 }
 

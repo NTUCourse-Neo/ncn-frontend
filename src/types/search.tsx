@@ -17,23 +17,24 @@ import {
 import { programs as AllPrograms } from "@/data/program";
 
 export type Filter = {
-  time: Interval[][];
-  department: string[];
-  enroll_method: EnrollMethod[];
-  target_grade: Grade[];
-  other_limit: OtherLimit[];
-  general_course_type: GeneralCourseType[];
-  common_target_department: CommonTargetDepartment[];
-  common_course_type: CommonCourseType[];
-  pearmy_course_type: PeArmyCourseType[];
-  host_college: HostCollege[];
-  program: ProgramCode[];
-  is_full_year: boolean | null;
-  is_selective: boolean | null;
-  time_strict_match: boolean;
-  grouping_course_type: string[];
-  deptCode: string | null;
-  department_course_type: string | null;
+  time: Interval[][]; // time
+  department: string[]; // departments
+  enroll_method: EnrollMethod[]; // enrollMethods
+  target_grade: Grade[]; // targetGrades
+  other_limit: OtherLimit[]; // otherLimits
+  general_course_type: GeneralCourseType[]; // generalCourseTypes
+  common_target_department: CommonTargetDepartment[]; // commonTargetDepartments
+  common_course_type: CommonCourseType[]; // commonCourseTypes
+  pearmy_course_type: PeArmyCourseType[]; // peArmyCourseTypes
+  host_college: HostCollege[]; // hostColleges
+  program: ProgramCode[]; // programs
+  is_full_year: boolean | null; // isFullYear
+  is_selective: boolean | null; // isSelective
+  time_strict_match: boolean; // timeStrictMatch
+  grouping_course_type: string[]; // groupingCourseTypes
+  deptCode: string | null; // for singleDept, department
+  department_course_type: string | null; // for singleDept, departmentCourseTypes
+  singleDeptIsSelective: boolean | null; // for singleDept, isSelectiveSingleDept
 };
 
 // deprecated
