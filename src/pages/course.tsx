@@ -28,6 +28,7 @@ import Dropdown from "@/components/Dropdown";
 import { SortOption, sortOptions } from "@/types/search";
 import UserCoursePanel from "@/components/UserCoursePanel";
 import { precautions } from "@/components/InstructionModals";
+import CustomBreadcrumb from "@/components/Breadcrumb";
 
 function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
   const currentPageRef = useRef<HTMLDivElement>(null);
@@ -344,6 +345,19 @@ function CoursePage() {
               w="80vw"
               position="relative"
               bottom="30px"
+            />
+            <CustomBreadcrumb
+              pageItems={[
+                {
+                  text: "首頁",
+                  href: "/",
+                },
+                {
+                  text: "課程搜尋",
+                  href: "/course",
+                },
+              ]}
+              mb={6}
             />
             <Flex ref={searchBoxRef} w="100%" mb={8} flexDirection={"column"}>
               <CourseSearchInput />
