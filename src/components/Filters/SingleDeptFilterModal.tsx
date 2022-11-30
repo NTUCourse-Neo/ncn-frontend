@@ -41,26 +41,9 @@ import type { Department } from "types/course";
 import { generateScrollBarCss } from "styles/customScrollBar";
 import { useInView } from "react-intersection-observer";
 import { CloseIcon } from "@chakra-ui/icons";
+import { searchDept } from "@/components/Filters/DeptFilterModal";
 
-export function searchDept(
-  searchText: string,
-  departments: Department[]
-): Department[] {
-  const keyword = searchText.trim();
-  const result: Department[] = [];
-  for (const department of departments) {
-    if (
-      department.name_full.includes(keyword) ||
-      department.id.includes(keyword) ||
-      (department?.name_alt ?? "").includes(keyword) ||
-      (department?.name_short ?? "").includes(keyword)
-    ) {
-      result.push(department);
-    }
-  }
-  return result;
-}
-
+// TODO: to dropdown
 interface IsSeleciveRadioGroupProps extends FlexProps {
   readonly isSelective: boolean | null;
   readonly setIsSelective: (isSelective: boolean | null) => void;
@@ -110,8 +93,8 @@ function IsSeleciveRadioGroup(props: IsSeleciveRadioGroupProps) {
 interface ModalDeptSectionProps {
   readonly college_key: string;
   readonly departments: Department[];
-  readonly selectedDept: string[];
-  readonly setSelectedDept: (selectedDept: string[]) => void;
+  readonly selectedDept: string | null;
+  readonly setSelectedDept: (selectedDept: string | null) => void;
   readonly setActiveDept: (activeDept: string | null) => void;
   readonly collegeRefs: Record<string, React.RefObject<HTMLDivElement>>;
   readonly flexProps?: FlexProps;
@@ -179,37 +162,49 @@ const ModalDeptSection = forwardRef<HTMLDivElement, ModalDeptSectionProps>(
           </Heading>
         </Flex>
         <Divider pt={2} />
-        {departments
-          .filter((dept) => !selectedDept.includes(dept.id))
-          .map((dept, dept_index) => (
+        {departments.map(
+          (
+            dept,
+            dept_index // TODO: to radio btn
+          ) => (
             <FilterElement
               key={`${dept.id}-${dept_index}-modalBody`}
               id={dept.id}
               name={dept.name_full}
               selected={false}
               onClick={() => {
-                setSelectedDept([...selectedDept, dept.id]);
+                setSelectedDept(dept.id);
                 reportEvent("filter_department", "click", dept.id);
               }}
             />
-          ))}
+          )
+        )}
       </Box>
     );
   }
 );
 ModalDeptSection.displayName = "ModalDeptSection";
 
-export interface DeptFilterModalProps {
+export interface SingleDeptFilterModalProps {
   readonly title: string;
   readonly isActive?: boolean;
 }
-function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
+function SingleDeptFilterModal({
+  title,
+  isActive = false,
+}: SingleDeptFilterModalProps) {
   const { searchFilters, setSearchFilters, setPageIndex } =
     useCourseSearchingContext();
-  const [selectedDept, setSelectedDept] = useState(searchFilters.department);
-  const [isSelective, setIsSelective] = useState<boolean | null>(
-    searchFilters.is_selective
+  const [selectedDept, setSelectedDept] = useState<string | null>(
+    searchFilters.deptCode
   );
+  const [selectedCourseType, setSelectedCourseType] = useState<string | null>(
+    searchFilters.department_course_type
+  );
+  const [isSingleDeptSelective, setIsSingleDeptSelective] = useState<
+    boolean | null
+  >(searchFilters.singleDeptIsSelective);
+
   const modalBodyRef = useRef<HTMLDivElement>(null);
   const [activeDept, setActiveDept] = useState<string | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -227,35 +222,30 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
       block: "start",
     });
   };
-  const { ref: inViewRef } = useInView({
-    onChange: (inView, entry) => {
-      if (inView) {
-        setActiveDept("selected");
-      }
-    },
-  });
-  const topRef = useRef<HTMLDivElement>(null);
 
   const onOpenModal = () => {
     // overwrite local states by context
-    setSelectedDept(searchFilters.department);
-    setIsSelective(searchFilters.is_selective);
+    setSelectedDept(searchFilters.deptCode);
+    setIsSingleDeptSelective(searchFilters.singleDeptIsSelective);
+    setSelectedCourseType(searchFilters.department_course_type);
     onOpen();
   };
   const onCancelEditing = () => {
     // fire when click "X" or outside of modal
     // overwrite local state by context
     onClose();
-    setSelectedDept(searchFilters.department);
-    setIsSelective(searchFilters.is_selective);
+    setSelectedDept(searchFilters.deptCode);
+    setIsSingleDeptSelective(searchFilters.singleDeptIsSelective);
+    setSelectedCourseType(searchFilters.department_course_type);
   };
   const onSaveEditing = () => {
     // fire when click "Save"
     // overwrite redux state by local state
     setSearchFilters({
       ...searchFilters,
-      department: selectedDept,
-      is_selective: isSelective,
+      deptCode: selectedDept,
+      singleDeptIsSelective: isSingleDeptSelective,
+      department_course_type: selectedCourseType,
     });
     // Reset indexed page
     setPageIndex(0);
@@ -264,8 +254,9 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
   const onResetEditing = () => {
     // fire when click "Reset"
     // set local state to empty array
-    setSelectedDept([]);
-    setIsSelective(null);
+    setSelectedDept(null);
+    setIsSingleDeptSelective(null);
+    setSelectedCourseType(null);
   };
 
   const modalBody = useMemo(() => {
@@ -374,7 +365,7 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
               flexDirection={{ base: "column", md: "row" }}
               alignItems="center"
             >
-              <Flex w="40%">{`已選擇 ${selectedDept.length} 個系所`}</Flex>
+              <Flex w="40%">{`已選擇 ${"TODO"} 個系所`}</Flex>
               <Flex w={{ base: "50%", md: "35%" }}>
                 <InputGroup>
                   <InputLeftElement pointerEvents="none" pl="2" pt="1">
@@ -418,8 +409,8 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
                 display={{ base: "block", md: "none" }}
               >
                 <IsSeleciveRadioGroup
-                  isSelective={isSelective}
-                  setIsSelective={setIsSelective}
+                  isSelective={isSingleDeptSelective}
+                  setIsSelective={setIsSingleDeptSelective}
                   my={2}
                 />
                 <Button
@@ -436,7 +427,11 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
                 <Button
                   size="sm"
                   variant="ghost"
-                  isDisabled={selectedDept.length === 0 && isSelective === null}
+                  isDisabled={
+                    selectedDept === null &&
+                    isSingleDeptSelective === null &&
+                    selectedCourseType === null
+                  }
                   onClick={() => {
                     onResetEditing();
                     reportEvent("filter_department", "click", "reset_changes");
@@ -457,26 +452,6 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
                 bg="#f2f2f2"
                 __css={generateScrollBarCss("#f2f2f2", "#909090")}
               >
-                <Flex
-                  py={3}
-                  px={8}
-                  alignItems="start"
-                  sx={{
-                    fontSize: activeDept === "selected" ? "17px" : "15px",
-                    lineHeight: activeDept === "selected" ? "22px" : "23px",
-                    color: activeDept === "selected" ? "#2d2d2d" : "#4b4b4b",
-                    fontWeight: activeDept === "selected" ? 600 : 400,
-                  }}
-                  cursor="pointer"
-                  onClick={() => {
-                    topRef.current?.scrollIntoView({
-                      behavior: "smooth",
-                      block: "start",
-                    });
-                  }}
-                >
-                  <Box>{`所選開課系所`}</Box>
-                </Flex>
                 {Object.keys(college_map).map((college_key, index) => {
                   const deptName = college_map[college_key].name;
                   const isActive = activeDept === college_key;
@@ -509,71 +484,6 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
                 h="100%"
                 __css={generateScrollBarCss("white", "#909090")}
               >
-                <Box mb={6} position="relative">
-                  <Box
-                    w="100%"
-                    h={"1px"}
-                    ref={inViewRef}
-                    position="absolute"
-                    top="0"
-                  />
-                  <Box
-                    w="100%"
-                    h={"1px"}
-                    ref={topRef}
-                    position="absolute"
-                    top="0"
-                  />
-                  <Flex
-                    p="2"
-                    h="40px"
-                    flexDirection="column"
-                    justifyContent="center"
-                    bg={"white"}
-                  >
-                    <Heading fontSize="2xl" color={"heading.light"}>
-                      {`已選開課系所`}
-                    </Heading>
-                  </Flex>
-                  <Divider pt={2} />
-                  {deptList.filter((dept) => selectedDept.includes(dept.id))
-                    .length > 0 ? (
-                    <Flex w="100%" minH="80px" flexWrap={"wrap"}>
-                      {deptList
-                        .filter((dept) => selectedDept.includes(dept.id))
-                        .map((dept, index) => (
-                          <FilterElement
-                            key={`${dept.id}-${index}-modalHeader`}
-                            id={dept.id}
-                            name={dept.name_full}
-                            selected={true}
-                            onClick={() => {
-                              setSelectedDept(
-                                selectedDept.filter((code) => code !== dept.id)
-                              );
-                              reportEvent(
-                                "filter_department",
-                                "click",
-                                dept.id
-                              );
-                            }}
-                          />
-                        ))}
-                    </Flex>
-                  ) : (
-                    <Flex
-                      w="100%"
-                      h="80px"
-                      justify={"center"}
-                      alignItems="center"
-                      sx={{
-                        color: "#909090",
-                      }}
-                    >
-                      尚未選擇課程
-                    </Flex>
-                  )}
-                </Box>
                 {modalBody}
               </Box>
             </Flex>
@@ -585,8 +495,8 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
           >
             <Flex justifyContent={"space-between"} w="100%">
               <IsSeleciveRadioGroup
-                isSelective={isSelective}
-                setIsSelective={setIsSelective}
+                isSelective={isSingleDeptSelective}
+                setIsSelective={setIsSingleDeptSelective}
               />
               <Flex alignItems={"center"}>
                 <Button
@@ -598,7 +508,11 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
                     fontWeight: 600,
                   }}
                   mx={6}
-                  isDisabled={selectedDept.length === 0 && isSelective === null}
+                  isDisabled={
+                    selectedDept === null &&
+                    isSingleDeptSelective === null &&
+                    selectedCourseType === null
+                  }
                   onClick={() => {
                     onResetEditing();
                     reportEvent("filter_department", "click", "reset_changes");
@@ -641,4 +555,4 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
   );
 }
 
-export default DeptFilterModal;
+export default SingleDeptFilterModal;
