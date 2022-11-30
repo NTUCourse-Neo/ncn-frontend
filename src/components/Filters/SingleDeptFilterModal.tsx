@@ -46,11 +46,11 @@ import { CloseIcon } from "@chakra-ui/icons";
 import { searchDept } from "@/components/Filters/DeptFilterModal";
 
 // TODO: to dropdown
-interface IsSeleciveRadioGroupProps extends FlexProps {
+interface DropdownGroupProps extends FlexProps {
   readonly isSelective: boolean | null;
   readonly setIsSelective: (isSelective: boolean | null) => void;
 }
-function IsSeleciveRadioGroup(props: IsSeleciveRadioGroupProps) {
+function DropdownGroup(props: DropdownGroupProps) {
   const { isSelective, setIsSelective, ...rest } = props;
   return (
     <Flex alignItems={"center"} {...rest}>
@@ -441,7 +441,7 @@ function SingleDeptFilterModal({
                 mt="2"
                 display={{ base: "block", md: "none" }}
               >
-                <IsSeleciveRadioGroup
+                <DropdownGroup
                   isSelective={isSingleDeptSelective}
                   setIsSelective={setIsSingleDeptSelective}
                   my={2}
@@ -527,7 +527,7 @@ function SingleDeptFilterModal({
             boxSizing="border-box"
           >
             <Flex justifyContent={"space-between"} w="100%">
-              <IsSeleciveRadioGroup
+              <DropdownGroup
                 isSelective={isSingleDeptSelective}
                 setIsSelective={setIsSingleDeptSelective}
               />

@@ -98,6 +98,11 @@ function generateSearchAPIFilterObject(
       isFilterEdited("single_dept")
         ? searchFilters.singleDeptIsSelective
         : null,
+    suggestedGrade:
+      searchMode.filters.includes("single_dept") &&
+      isFilterEdited("single_dept")
+        ? searchFilters.suggestedGrade
+        : null,
   };
 }
 

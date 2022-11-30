@@ -36,6 +36,7 @@ export type Filter = {
   dept: Department | null; // for singleDept, department
   department_course_type: string | null; // for singleDept, departmentCourseTypes
   singleDeptIsSelective: boolean | null; // for singleDept, isSelectiveSingleDept
+  suggestedGrade: string | null; // for singleDept, suggestedGrade
 };
 
 // deprecated

@@ -74,6 +74,7 @@ const emptyFilterObject: Filter = {
   dept: null,
   department_course_type: null,
   singleDeptIsSelective: null,
+  suggestedGrade: null,
 };
 
 const defaultSearchMode = searchModeList[0];
@@ -204,7 +205,8 @@ const CourseSearchingProvider: React.FC<{
           return (
             searchFilters.dept !== null ||
             searchFilters.department_course_type !== null ||
-            searchFilters.singleDeptIsSelective !== null
+            searchFilters.singleDeptIsSelective !== null ||
+            searchFilters.suggestedGrade !== null
           );
         }
         default: {
