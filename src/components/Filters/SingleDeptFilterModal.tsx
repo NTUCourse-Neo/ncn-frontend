@@ -24,6 +24,7 @@ import {
   InputRightElement,
   HStack,
   Badge,
+  Text,
 } from "@chakra-ui/react";
 import { SearchOutlineIcon } from "components/CustomIcons";
 import React, {
@@ -391,8 +392,10 @@ function SingleDeptFilterModal({
                   <Flex>請選擇 1 個開課系所</Flex>
                 ) : (
                   <Flex>
-                    已選擇開課系所：
-                    <Flex color="#002F94">{selectedDept?.name_full ?? ""}</Flex>
+                    <Flex whiteSpace={"nowrap"}>已選擇開課系所：</Flex>
+                    <Text color="#002F94" noOfLines={1}>
+                      {selectedDept?.name_full ?? ""}
+                    </Text>
                   </Flex>
                 )}
               </Flex>
