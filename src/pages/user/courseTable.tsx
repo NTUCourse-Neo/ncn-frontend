@@ -8,6 +8,7 @@ import CustomBreadcrumb from "@/components/Breadcrumb";
 import UserCoursePanel from "@/components/UserCoursePanel";
 import { CalendarOutlineIcon } from "@/components/CustomIcons";
 import CourseTable from "@/components/CourseTable";
+import filterConflictedCourse from "@/utils/filterConflictedCourse";
 
 export default function CourseTablePage({
   user,
@@ -128,7 +129,9 @@ export default function CourseTablePage({
                 borderRadius: "4px",
               }}
             >
-              <CourseTable courses={courseTable?.courses ?? []} />
+              <CourseTable
+                courses={filterConflictedCourse(courseTable?.courses ?? [])}
+              />
             </Box>
           </Flex>
           <Flex

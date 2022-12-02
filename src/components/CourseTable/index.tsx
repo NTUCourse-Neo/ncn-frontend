@@ -74,6 +74,7 @@ const Td: React.FC<TdProps> = ({
         borderBottom: `${isLastInterval ? 2 : 1}px solid #CCCCCC`,
         overflow: "visible",
         position: "relative",
+        bg: "linear-gradient(0deg, rgba(204, 204, 204, 0.24), rgba(204, 204, 204, 0.24)), #FFFFFF",
       }}
       {...rest}
     >
@@ -96,8 +97,8 @@ interface CourseTableProps {
 }
 
 function CourseTable(props: CourseTableProps) {
+  const { courses } = props;
   const days = ["一", "二", "三", "四", "五", "六"];
-
   const tableCellProperty = {
     w: 100,
     h: 50,
@@ -177,7 +178,7 @@ function CourseTable(props: CourseTableProps) {
                         (dayIndex === 1 && intervalIndex === 1) ? (
                           <Box h="98px" w="100px" bg="red" />
                         ) : (
-                          `${dayIndex} ${intervalIndex}`
+                          <Box>{`${dayIndex} ${intervalIndex}`}</Box>
                         )}
                       </Td>
                     );
