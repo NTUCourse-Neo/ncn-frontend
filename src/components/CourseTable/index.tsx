@@ -69,10 +69,21 @@ const Td: React.FC<TdProps> = ({
         borderLeft: `${isFirstDay ? 2 : 1}px solid #CCCCCC`,
         borderRight: `${isLastDay ? 2 : 1}px solid #CCCCCC`,
         borderBottom: `${isLastInterval ? 2 : 1}px solid #CCCCCC`,
+        overflow: "visible",
+        position: "relative",
       }}
       {...rest}
     >
-      {children}
+      <Flex
+        position="absolute"
+        sx={{
+          top: isFirstInterval ? "-1px" : 0,
+          left: 0,
+          zIndex: 100,
+        }}
+      >
+        {children}
+      </Flex>
     </ChakraTd>
   );
 };
@@ -136,28 +147,35 @@ function CourseTable(props: CourseTableProps) {
               borderRadius: "4px",
             }}
           >
-            {Array.from({ length: intervals.length }, (_, i) => {
+            {Array.from({ length: intervals.length }, (_, intervalIndex) => {
               return (
                 <Tr
-                  key={i}
+                  key={intervalIndex}
                   sx={{
                     borderRadius: "4px",
                   }}
+                  h={`${tableCellProperty.h}px`}
+                  maxH={`${tableCellProperty.h}px`}
                 >
-                  {days.map((day, j) => {
+                  {days.map((day, dayIndex) => {
                     return (
                       <Td
-                        key={j}
+                        key={dayIndex}
                         minW={`${tableCellProperty.w}px`}
                         w={`${tableCellProperty.w}px`}
                         minH={`${tableCellProperty.h}px`}
                         h={`${tableCellProperty.h}px`}
-                        isFirstDay={j === 0}
-                        isLastDay={j === days.length - 1}
-                        isFirstInterval={i === 0}
-                        isLastInterval={i === intervals.length - 1}
+                        isFirstDay={dayIndex === 0}
+                        isLastDay={dayIndex === days.length - 1}
+                        isFirstInterval={intervalIndex === 0}
+                        isLastInterval={intervalIndex === intervals.length - 1}
                       >
-                        123
+                        {(dayIndex === 0 && intervalIndex === 0) ||
+                        (dayIndex === 1 && intervalIndex === 1) ? (
+                          <Box h="100px" w="100px" bg="red" />
+                        ) : (
+                          `${dayIndex} ${intervalIndex}`
+                        )}
                       </Td>
                     );
                   })}
