@@ -65,9 +65,43 @@ const CoffeeOutlineIcon = (props: IconProps) => (
   </Icon>
 );
 
+const CalendarOutlineIcon = (props: IconProps) => (
+  <Icon viewBox="0 0 22 25" fill="none" {...props}>
+    <path
+      d="M1 9H21"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M19.75 4H2.25C1.55964 4 1 4.55964 1 5.25V22.75C1 23.4404 1.55964 24 2.25 24H19.75C20.4404 24 21 23.4404 21 22.75V5.25C21 4.55964 20.4404 4 19.75 4Z"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M16 1.5V4"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      stroke="currentColor"
+      d="M6 1.5V4"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </Icon>
+);
+
 export {
   DiscordIcon,
   StopWatchOutlineIcon,
   SearchOutlineIcon,
   CoffeeOutlineIcon,
+  CalendarOutlineIcon,
 };
