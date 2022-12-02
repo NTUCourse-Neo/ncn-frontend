@@ -1,20 +1,4 @@
-import {
-  Flex,
-  useToast,
-  Box,
-  HStack,
-  Text,
-  Center,
-  Table,
-  Tbody,
-  Tr,
-  Th as ChakraTh,
-  Td as ChakraTd,
-  TableColumnHeaderProps,
-  TableCellProps,
-  TableContainer,
-  Thead,
-} from "@chakra-ui/react";
+import { Flex, useToast, Box, HStack, Text, Center } from "@chakra-ui/react";
 import { HashLoader } from "react-spinners";
 import useCourseTable from "hooks/useCourseTable";
 import { withPageAuthRequired, UserProfile } from "@auth0/nextjs-auth0";
@@ -23,67 +7,7 @@ import useUserInfo from "hooks/useUserInfo";
 import CustomBreadcrumb from "@/components/Breadcrumb";
 import UserCoursePanel from "@/components/UserCoursePanel";
 import { CalendarOutlineIcon } from "@/components/CustomIcons";
-import { intervals } from "@/constant";
-
-interface ThProps extends TableColumnHeaderProps {
-  readonly children: React.ReactNode;
-}
-const Th: React.FC<ThProps> = ({ children, ...rest }) => {
-  return (
-    <ChakraTh
-      sx={{
-        textAlign: "center",
-        lineHeight: 1.4,
-        color: "#2d2d2d",
-        fontWeight: 400,
-        fontSize: "14px",
-      }}
-      {...rest}
-    >
-      {children}
-    </ChakraTh>
-  );
-};
-
-interface TdProps extends TableCellProps {
-  readonly children: React.ReactNode;
-  readonly isFirstDay: boolean;
-  readonly isLastDay: boolean;
-  readonly isFirstInterval: boolean;
-  readonly isLastInterval: boolean;
-}
-const Td: React.FC<TdProps> = ({
-  children,
-  isFirstDay,
-  isLastDay,
-  isFirstInterval,
-  isLastInterval,
-  ...rest
-}) => {
-  return (
-    <ChakraTd
-      sx={{
-        textAlign: "center",
-        lineHeight: 1.4,
-        color: "#2d2d2d",
-        fontWeight: 400,
-        fontSize: "14px",
-        borderRadius: `${isFirstDay && isFirstInterval ? "4px" : "0px"} ${
-          isLastDay && isFirstInterval ? "4px" : "0px"
-        } ${isLastDay && isLastInterval ? "4px" : "0px"} ${
-          isFirstDay && isLastInterval ? "4px" : "0px"
-        }`,
-        borderTop: `1px solid ${isFirstInterval ? "#909090" : "#ECECEC"}`,
-        borderLeft: `1px solid ${isFirstDay ? "#909090" : "#ECECEC"}`,
-        borderBottom: `1px solid ${isLastInterval ? "#909090" : "#ECECEC"}`,
-        borderRight: `1px solid ${isLastDay ? "#909090" : "#ECECEC"}`,
-      }}
-      {...rest}
-    >
-      {children}
-    </ChakraTd>
-  );
-};
+import CourseTable from "@/components/CourseTable";
 
 export default function CourseTablePage({
   user,
@@ -103,13 +27,6 @@ export default function CourseTablePage({
   });
   const toast = useToast();
   const { courseTable } = useCourseTable(userInfo?.course_tables?.[0] ?? null);
-
-  const days = ["一", "二", "三", "四", "五", "六", "日"];
-
-  const tableCellProperty = {
-    w: 120,
-    h: 50,
-  } as const;
 
   if (isLoading) {
     return (
@@ -211,63 +128,7 @@ export default function CourseTablePage({
                 borderRadius: "4px",
               }}
             >
-              <TableContainer>
-                <Table
-                  variant={"unstyled"}
-                  sx={{
-                    borderCollapse: "separate",
-                    borderSpacing: "0 0",
-                  }}
-                >
-                  <Thead>
-                    <Tr>
-                      {days.map((day) => {
-                        return (
-                          <Th key={day}>
-                            <Center minW={`${tableCellProperty.w}px`}>
-                              {day}
-                            </Center>
-                          </Th>
-                        );
-                      })}
-                    </Tr>
-                  </Thead>
-                  <Flex w="100%" h="8px" />
-                  <Tbody
-                    sx={{
-                      border: "1px solid #909090",
-                      borderRadius: "4px",
-                    }}
-                  >
-                    {Array.from({ length: intervals.length }, (_, i) => {
-                      return (
-                        <Tr
-                          key={i}
-                          sx={{
-                            borderRadius: "4px",
-                          }}
-                        >
-                          {days.map((day, j) => {
-                            return (
-                              <Td
-                                key={j}
-                                minW={`${tableCellProperty.w}px`}
-                                minH={`${tableCellProperty.h}px`}
-                                isFirstDay={j === 0}
-                                isLastDay={j === days.length - 1}
-                                isFirstInterval={i === 0}
-                                isLastInterval={i === intervals.length - 1}
-                              >
-                                123
-                              </Td>
-                            );
-                          })}
-                        </Tr>
-                      );
-                    })}
-                  </Tbody>
-                </Table>
-              </TableContainer>
+              <CourseTable courses={courseTable?.courses ?? []} />
             </Box>
           </Flex>
           <Flex
