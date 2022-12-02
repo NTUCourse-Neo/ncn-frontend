@@ -15,9 +15,9 @@ import {
 } from "@chakra-ui/react";
 
 import { intervals } from "@/constant";
+import courses2rle from "@/utils/courses2rle";
 
 // TODO: add courseTableCard components
-// TODO: add filter unconflicted course algorithm
 
 interface ThProps extends TableColumnHeaderProps {
   readonly children: React.ReactNode;
@@ -103,6 +103,8 @@ function CourseTable(props: CourseTableProps) {
     w: 100,
     h: 50,
   } as const;
+
+  console.log(courses2rle(courses));
 
   return (
     <Flex>
