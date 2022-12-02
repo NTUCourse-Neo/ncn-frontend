@@ -172,7 +172,7 @@ function CourseTable(props: CourseTableProps) {
                       >
                         {(dayIndex === 0 && intervalIndex === 0) ||
                         (dayIndex === 1 && intervalIndex === 1) ? (
-                          <Box h="100px" w="100px" bg="red" />
+                          <Box h="98px" w="100px" bg="red" />
                         ) : (
                           `${dayIndex} ${intervalIndex}`
                         )}
