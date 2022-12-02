@@ -27,7 +27,7 @@ import { FaExclamationTriangle } from "react-icons/fa";
 import useCourseTable from "hooks/useCourseTable";
 import useUserInfo from "hooks/useUserInfo";
 import { useUser } from "@auth0/nextjs-auth0";
-import SortablePopover from "components/CourseTable/CourseTableCard/SortablePopover";
+import SortablePopover from "@/components/CourseTableOld/CourseTableCard/SortablePopover";
 import { patchCourseTable } from "queries/courseTable";
 import { reportEvent } from "utils/ga";
 import { Interval, Course } from "types/course";

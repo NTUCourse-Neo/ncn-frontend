@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import * as React from "react";
 import { useState, useCallback } from "react";
-import CourseTableCard from "components/CourseTable/CourseTableCard/CourseTableCard";
+import CourseTableCard from "@/components/CourseTableOld/CourseTableCard/CourseTableCard";
 import { weekdays_map, Weekday } from "data/mapping_table";
 import { hash_to_color_hex } from "utils/colorAgent";
 import { hoverCourseState } from "utils/hoverCourse";

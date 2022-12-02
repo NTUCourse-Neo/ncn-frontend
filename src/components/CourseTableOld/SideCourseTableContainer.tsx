@@ -39,8 +39,8 @@ import {
   FaPlusSquare,
   FaAngleDown,
 } from "react-icons/fa";
-import CourseTableContainer from "components/CourseTable/CourseTableContainer";
-import CourseListContainer from "components/CourseTable/CourseListContainer";
+import CourseTableContainer from "@/components/CourseTableOld/CourseTableContainer";
+import CourseListContainer from "@/components/CourseTableOld/CourseListContainer";
 import { v4 as uuidv4 } from "uuid";
 import { useUser } from "@auth0/nextjs-auth0";
 import { parseCoursesToTimeMap, TimeMap } from "utils/parseCourseTime";
