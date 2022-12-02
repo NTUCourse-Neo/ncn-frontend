@@ -16,6 +16,9 @@ import {
 
 import { intervals } from "@/constant";
 
+// TODO: add courseTableCard components
+// TODO: add filter unconflicted course algorithm
+
 interface ThProps extends TableColumnHeaderProps {
   readonly children: React.ReactNode;
 }
