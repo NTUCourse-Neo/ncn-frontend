@@ -18,7 +18,7 @@ export default function courses2rle(courses: Course[]): CourseRLE[] {
       schedules,
       (schedule) => `${schedule.weekday}`
     );
-    console.log(groupedSchedules);
+    // console.log(groupedSchedules);
     Object.values(groupedSchedules).forEach((schedules) => {
       const { weekday, interval } = schedules[0];
       const duration = schedules.length;
