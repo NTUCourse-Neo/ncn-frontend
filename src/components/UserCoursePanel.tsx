@@ -12,7 +12,7 @@ import {
   Portal,
   SkeletonText,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { FiCalendar, FiHeart } from "react-icons/fi";
 import { FaChevronDown } from "react-icons/fa";
 import type { IconType } from "react-icons";
@@ -150,7 +150,7 @@ function CourseInfoCard(props: CourseInfoCardProps) {
               >
                 {menuOptions.map((option, index) => {
                   return (
-                    <>
+                    <React.Fragment key={`${index}`}>
                       {index !== 0 ? <Divider /> : null}
                       <Flex>
                         <MenuItem
@@ -166,7 +166,7 @@ function CourseInfoCard(props: CourseInfoCardProps) {
                           {option.chinese}
                         </MenuItem>
                       </Flex>
-                    </>
+                    </React.Fragment>
                   );
                 })}
               </MenuList>

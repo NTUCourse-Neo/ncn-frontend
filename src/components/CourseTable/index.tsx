@@ -146,7 +146,13 @@ function CourseTable(props: CourseTableProps) {
               })}
             </Tr>
           </Thead>
-          <Flex w="100%" h="8px" />
+          <Tbody>
+            <Tr>
+              <ChakraTd h="8px" p="0" m="0">
+                {null}
+              </ChakraTd>
+            </Tr>
+          </Tbody>
           <Tbody
             sx={{
               border: "1px solid #909090",
