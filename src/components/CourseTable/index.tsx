@@ -12,11 +12,15 @@ import {
   TableContainer,
   Thead,
   Box,
+  Fade,
 } from "@chakra-ui/react";
 import CourseTableCard from "@/components/CourseTable/CourseTableCard";
 import { intervals } from "@/constant";
 import courses2rle from "@/utils/courses2rle";
 import { customScrollBarCss } from "@/styles/customScrollBar";
+import { useState } from "react";
+import { usePopper } from "react-popper";
+import { createPortal } from "react-dom";
 
 const TABLE_BORDER_WIDTH = 1; //px
 
@@ -46,6 +50,9 @@ interface TdProps extends TableCellProps {
   readonly isLastDay: boolean;
   readonly isFirstInterval: boolean;
   readonly isLastInterval: boolean;
+  readonly id: string;
+  readonly openPortal: string | null;
+  readonly setOpenPortal: (id: string | null) => void;
 }
 const Td: React.FC<TdProps> = ({
   children,
@@ -53,8 +60,19 @@ const Td: React.FC<TdProps> = ({
   isLastDay,
   isFirstInterval,
   isLastInterval,
+  id,
+  openPortal,
+  setOpenPortal,
   ...rest
 }) => {
+  const [referenceElement, setReferenceElement] = useState<HTMLElement | null>(
+    null
+  );
+  const [popperElement, setPopperElement] = useState<HTMLElement | null>(null);
+  const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    placement: "right-start",
+    strategy: "fixed",
+  });
   return (
     <ChakraTd
       sx={{
@@ -103,9 +121,39 @@ const Td: React.FC<TdProps> = ({
           left: 0,
           zIndex: 100,
         }}
+        ref={setReferenceElement}
+        onClick={
+          children !== null
+            ? () => {
+                if (openPortal === id) {
+                  setOpenPortal(null);
+                } else {
+                  setOpenPortal(id);
+                }
+              }
+            : undefined
+        }
       >
         {children}
       </Box>
+      {createPortal(
+        <Box
+          ref={setPopperElement}
+          style={{ ...styles.popper, zIndex: 200 }}
+          {...attributes.popper}
+        >
+          <Fade in={id === openPortal} unmountOnExit>
+            <Box
+              sx={{
+                w: 200,
+                h: 200,
+                bg: "yellow",
+              }}
+            ></Box>
+          </Fade>
+        </Box>,
+        document.querySelector("#destination") as Element
+      )}
     </ChakraTd>
   );
 };
@@ -122,6 +170,7 @@ interface CourseTableProps {
 function CourseTable(props: CourseTableProps) {
   const { courses } = props;
   const days = ["一", "二", "三", "四", "五", "六"];
+  const [openPortal, setOpenPortal] = useState<string | null>(null);
 
   const coursesRle = courses2rle(courses);
 
@@ -204,6 +253,9 @@ function CourseTable(props: CourseTableProps) {
                         isLastDay={dayIndex === days.length - 1}
                         isFirstInterval={intervalIndex === 0}
                         isLastInterval={intervalIndex === intervals.length - 1}
+                        id={`${dayIndex + 1}-${intervalIndex}`}
+                        openPortal={openPortal}
+                        setOpenPortal={setOpenPortal}
                       >
                         {coursesRle?.[`${dayIndex + 1}-${intervalIndex}`] ? (
                           <CourseTableCard
