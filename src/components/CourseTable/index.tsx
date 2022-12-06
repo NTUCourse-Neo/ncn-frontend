@@ -206,9 +206,8 @@ function CourseTable(props: CourseTableProps) {
                       >
                         {coursesRle?.[`${dayIndex + 1}-${intervalIndex}`] ? (
                           <CourseTableCard
-                            course={
+                            courseRle={
                               coursesRle[`${dayIndex + 1}-${intervalIndex}`]
-                                .course
                             }
                             h={
                               coursesRle[`${dayIndex + 1}-${intervalIndex}`]
