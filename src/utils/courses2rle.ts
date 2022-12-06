@@ -4,7 +4,7 @@ import intervalToNumber from "@/utils/intervalToNumber";
 import { groupBy } from "lodash";
 
 export interface CoursesRLE {
-  [key: string]: {
+  [key: `${number}-${number}`]: {
     course: Course;
     duration: number;
   };
