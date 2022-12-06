@@ -20,7 +20,7 @@ import courses2rle from "@/utils/courses2rle";
 import { customScrollBarCss } from "@/styles/customScrollBar";
 import { useState } from "react";
 import { usePopper } from "react-popper";
-import { createPortal } from "react-dom";
+import Portal from "@/components/Portal";
 
 const TABLE_BORDER_WIDTH = 1; //px
 
@@ -136,7 +136,7 @@ const Td: React.FC<TdProps> = ({
       >
         {children}
       </Box>
-      {createPortal(
+      <Portal>
         <Box
           ref={setPopperElement}
           style={{ ...styles.popper, zIndex: 200 }}
@@ -151,9 +151,8 @@ const Td: React.FC<TdProps> = ({
               }}
             ></Box>
           </Fade>
-        </Box>,
-        document.querySelector("#destination") as Element
-      )}
+        </Box>
+      </Portal>
     </ChakraTd>
   );
 };
