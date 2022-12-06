@@ -13,11 +13,11 @@ import {
   Thead,
   Box,
 } from "@chakra-ui/react";
-
+import CourseTableCard from "@/components/CourseTable/CourseTableCard";
 import { intervals } from "@/constant";
 import courses2rle from "@/utils/courses2rle";
+import { customScrollBarCss } from "@/styles/customScrollBar";
 
-// TODO: add courseTableCard components
 const TABLE_BORDER_WIDTH = 1; //px
 
 interface ThProps extends TableColumnHeaderProps {
@@ -69,18 +69,33 @@ const Td: React.FC<TdProps> = ({
         } ${isLastDay && isLastInterval ? "4px" : "0px"} ${
           isFirstDay && isLastInterval ? "4px" : "0px"
         }`,
-        borderTop: `${TABLE_BORDER_WIDTH}px solid #CCCCCC`,
-        borderLeft: `${TABLE_BORDER_WIDTH}px solid #CCCCCC`,
+        borderTop: `${TABLE_BORDER_WIDTH}px solid #CCCCCC${
+          isFirstInterval ? "" : "80"
+        }`,
+        borderLeft: `${TABLE_BORDER_WIDTH}px solid #CCCCCC${
+          isFirstDay ? "" : "80"
+        }`,
         borderRight: `${isLastDay ? TABLE_BORDER_WIDTH : 0}px solid #CCCCCC`,
         borderBottom: `${
           isLastInterval ? TABLE_BORDER_WIDTH : 0
         }px solid #CCCCCC`,
         overflow: "visible",
         position: "relative",
-        bg: "linear-gradient(0deg, rgba(204, 204, 204, 0.24), rgba(204, 204, 204, 0.24)), #FFFFFF",
       }}
       {...rest}
     >
+      <Box
+        sx={{
+          zIndex: 99,
+          position: "absolute",
+          top: isFirstInterval ? `-${TABLE_BORDER_WIDTH / 2}px` : 0,
+          left: 0,
+          bg: "linear-gradient(0deg, rgba(204, 204, 204, 0.24), rgba(204, 204, 204, 0.24)), #FFFFFF",
+          opacity: 0.32,
+          w: "100%",
+          h: "100%",
+        }}
+      />
       <Box
         position="absolute"
         sx={{
@@ -115,7 +130,6 @@ function CourseTable(props: CourseTableProps) {
         <Box h={`${tableCellProperty.h + 8}px`} />
         {intervals.map((interval) => (
           <Center
-            flexGrow={1}
             key={interval}
             sx={{
               h: `${tableCellProperty.h}px`,
@@ -130,7 +144,7 @@ function CourseTable(props: CourseTableProps) {
           </Center>
         ))}
       </Flex>
-      <TableContainer>
+      <TableContainer sx={customScrollBarCss}>
         <Table
           variant={"unstyled"}
           sx={{
@@ -191,15 +205,18 @@ function CourseTable(props: CourseTableProps) {
                         isLastInterval={intervalIndex === intervals.length - 1}
                       >
                         {coursesRle?.[`${dayIndex + 1}-${intervalIndex}`] ? (
-                          <Box
+                          <CourseTableCard
+                            course={
+                              coursesRle[`${dayIndex + 1}-${intervalIndex}`]
+                                .course
+                            }
                             h={
-                              coursesRle?.[`${dayIndex + 1}-${intervalIndex}`]
+                              coursesRle[`${dayIndex + 1}-${intervalIndex}`]
                                 .duration *
                                 tableCellProperty.h -
                               TABLE_BORDER_WIDTH
                             }
                             w={`${tableCellProperty.w - TABLE_BORDER_WIDTH}px`}
-                            bg="red"
                           />
                         ) : null}
                       </Td>
