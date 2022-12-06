@@ -1,5 +1,7 @@
 import { Course, Schedule } from "@/types/course";
 
+// TODO: after integration with new API, modified
+// 國文 pick 1 --> 英文 pick 1 --> 微積分 pick 1 --> others
 function filterConflictedCourse(courses: Course[]): Course[] {
   const res: Course[] = [];
   const scheduledInterval: Schedule[] = [];

@@ -3,15 +3,15 @@ import { Course } from "@/types/course";
 import intervalToNumber from "@/utils/intervalToNumber";
 import { groupBy } from "lodash";
 
-export interface CourseRLE {
-  course: Course;
-  weekday: number;
-  interval: number;
-  duration: number;
+export interface CoursesRLE {
+  [key: string]: {
+    course: Course;
+    duration: number;
+  };
 }
 
-export default function courses2rle(courses: Course[]): CourseRLE[] {
-  const res: CourseRLE[] = [];
+export default function courses2rle(courses: Course[]): CoursesRLE {
+  const res: CoursesRLE = {};
   courses.forEach((course) => {
     const { schedules } = course;
     const groupedSchedules = groupBy(
@@ -22,12 +22,10 @@ export default function courses2rle(courses: Course[]): CourseRLE[] {
     Object.values(groupedSchedules).forEach((schedules) => {
       const { weekday, interval } = schedules[0];
       const duration = schedules.length;
-      res.push({
+      res[`${weekday}-${intervalToNumber(interval)}`] = {
         course,
-        weekday,
-        interval: intervalToNumber(interval),
         duration,
-      });
+      };
     });
   });
   return res;
