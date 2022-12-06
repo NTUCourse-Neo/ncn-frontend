@@ -110,6 +110,11 @@ const Td: React.FC<TdProps> = ({
   );
 };
 
+export const TableCellProperty = {
+  w: 160,
+  h: 50,
+} as const;
+
 interface CourseTableProps {
   readonly courses: Course[];
 }
@@ -117,22 +122,18 @@ interface CourseTableProps {
 function CourseTable(props: CourseTableProps) {
   const { courses } = props;
   const days = ["一", "二", "三", "四", "五", "六"];
-  const tableCellProperty = {
-    w: 160,
-    h: 50,
-  } as const;
 
   const coursesRle = courses2rle(courses);
 
   return (
     <Flex>
       <Flex flexDirection={"column"}>
-        <Box h={`${tableCellProperty.h + 8}px`} />
+        <Box h={`${TableCellProperty.h + 8}px`} />
         {intervals.map((interval) => (
           <Center
             key={interval}
             sx={{
-              h: `${tableCellProperty.h}px`,
+              h: `${TableCellProperty.h}px`,
               w: 12,
               fontWeight: 500,
               fontSize: "18px",
@@ -153,13 +154,13 @@ function CourseTable(props: CourseTableProps) {
           }}
         >
           <Thead>
-            <Tr h={`${tableCellProperty.h}px`}>
+            <Tr h={`${TableCellProperty.h}px`}>
               {days.map((day) => {
                 return (
                   <Th
                     key={day}
-                    w={`${tableCellProperty.w}px`}
-                    maxW={`${tableCellProperty.w}px`}
+                    w={`${TableCellProperty.w}px`}
+                    maxW={`${TableCellProperty.w}px`}
                   >
                     <Center>{day}</Center>
                   </Th>
@@ -187,18 +188,18 @@ function CourseTable(props: CourseTableProps) {
                   sx={{
                     borderRadius: "4px",
                   }}
-                  h={`${tableCellProperty.h}px`}
-                  maxH={`${tableCellProperty.h}px`}
+                  h={`${TableCellProperty.h}px`}
+                  maxH={`${TableCellProperty.h}px`}
                 >
                   {days.map((day, dayIndex) => {
                     return (
                       <Td
                         key={dayIndex}
-                        minW={`${tableCellProperty.w}px`}
-                        w={`${tableCellProperty.w}px`}
-                        maxW={`${tableCellProperty.w}px`}
-                        minH={`${tableCellProperty.h}px`}
-                        h={`${tableCellProperty.h}px`}
+                        minW={`${TableCellProperty.w}px`}
+                        w={`${TableCellProperty.w}px`}
+                        maxW={`${TableCellProperty.w}px`}
+                        minH={`${TableCellProperty.h}px`}
+                        h={`${TableCellProperty.h}px`}
                         isFirstDay={dayIndex === 0}
                         isLastDay={dayIndex === days.length - 1}
                         isFirstInterval={intervalIndex === 0}
@@ -212,10 +213,10 @@ function CourseTable(props: CourseTableProps) {
                             h={
                               coursesRle[`${dayIndex + 1}-${intervalIndex}`]
                                 .duration *
-                                tableCellProperty.h -
+                                TableCellProperty.h -
                               TABLE_BORDER_WIDTH
                             }
-                            w={`${tableCellProperty.w - TABLE_BORDER_WIDTH}px`}
+                            w={`${TableCellProperty.w - TABLE_BORDER_WIDTH}px`}
                           />
                         ) : null}
                       </Td>
