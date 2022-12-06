@@ -78,7 +78,7 @@ const Td: React.FC<TdProps> = ({
       }}
       {...rest}
     >
-      <Flex
+      <Box
         position="absolute"
         sx={{
           top: isFirstInterval ? "-1px" : 0,
@@ -87,7 +87,7 @@ const Td: React.FC<TdProps> = ({
         }}
       >
         {children}
-      </Flex>
+      </Box>
     </ChakraTd>
   );
 };
@@ -100,11 +100,11 @@ function CourseTable(props: CourseTableProps) {
   const { courses } = props;
   const days = ["一", "二", "三", "四", "五", "六"];
   const tableCellProperty = {
-    w: 100,
+    w: 160,
     h: 50,
   } as const;
 
-  console.log(courses2rle(courses));
+  const coursesRle = courses2rle(courses);
 
   return (
     <Flex>
@@ -139,8 +139,12 @@ function CourseTable(props: CourseTableProps) {
             <Tr h={`${tableCellProperty.h}px`}>
               {days.map((day) => {
                 return (
-                  <Th key={day}>
-                    <Center minW={`${tableCellProperty.w}px`}>{day}</Center>
+                  <Th
+                    key={day}
+                    w={`${tableCellProperty.w}px`}
+                    maxW={`${tableCellProperty.w}px`}
+                  >
+                    <Center>{day}</Center>
                   </Th>
                 );
               })}
@@ -175,6 +179,7 @@ function CourseTable(props: CourseTableProps) {
                         key={dayIndex}
                         minW={`${tableCellProperty.w}px`}
                         w={`${tableCellProperty.w}px`}
+                        maxW={`${tableCellProperty.w}px`}
                         minH={`${tableCellProperty.h}px`}
                         h={`${tableCellProperty.h}px`}
                         isFirstDay={dayIndex === 0}
@@ -182,9 +187,17 @@ function CourseTable(props: CourseTableProps) {
                         isFirstInterval={intervalIndex === 0}
                         isLastInterval={intervalIndex === intervals.length - 1}
                       >
-                        {(dayIndex === 0 && intervalIndex === 0) ||
-                        (dayIndex === 1 && intervalIndex === 1) ? (
-                          <Box h="98px" w="100px" bg="red" />
+                        {coursesRle?.[`${dayIndex + 1}-${intervalIndex}`] ? (
+                          <Box
+                            h={
+                              coursesRle?.[`${dayIndex + 1}-${intervalIndex}`]
+                                .duration *
+                                tableCellProperty.h -
+                              2
+                            }
+                            w={`${tableCellProperty.w - 2}px`}
+                            bg="red"
+                          />
                         ) : (
                           <Box>{`${dayIndex} ${intervalIndex}`}</Box>
                         )}
