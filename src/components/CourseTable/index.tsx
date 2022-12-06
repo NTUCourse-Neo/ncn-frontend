@@ -18,6 +18,7 @@ import { intervals } from "@/constant";
 import courses2rle from "@/utils/courses2rle";
 
 // TODO: add courseTableCard components
+const TABLE_BORDER_WIDTH = 1; //px
 
 interface ThProps extends TableColumnHeaderProps {
   readonly children: React.ReactNode;
@@ -68,10 +69,12 @@ const Td: React.FC<TdProps> = ({
         } ${isLastDay && isLastInterval ? "4px" : "0px"} ${
           isFirstDay && isLastInterval ? "4px" : "0px"
         }`,
-        borderTop: `${isFirstInterval ? 2 : 1}px solid #CCCCCC`,
-        borderLeft: `${isFirstDay ? 2 : 1}px solid #CCCCCC`,
-        borderRight: `${isLastDay ? 2 : 1}px solid #CCCCCC`,
-        borderBottom: `${isLastInterval ? 2 : 1}px solid #CCCCCC`,
+        borderTop: `${TABLE_BORDER_WIDTH}px solid #CCCCCC`,
+        borderLeft: `${TABLE_BORDER_WIDTH}px solid #CCCCCC`,
+        borderRight: `${isLastDay ? TABLE_BORDER_WIDTH : 0}px solid #CCCCCC`,
+        borderBottom: `${
+          isLastInterval ? TABLE_BORDER_WIDTH : 0
+        }px solid #CCCCCC`,
         overflow: "visible",
         position: "relative",
         bg: "linear-gradient(0deg, rgba(204, 204, 204, 0.24), rgba(204, 204, 204, 0.24)), #FFFFFF",
@@ -81,7 +84,7 @@ const Td: React.FC<TdProps> = ({
       <Box
         position="absolute"
         sx={{
-          top: isFirstInterval ? "-1px" : 0,
+          top: isFirstInterval ? `-${TABLE_BORDER_WIDTH / 2}px` : 0,
           left: 0,
           zIndex: 100,
         }}
@@ -193,14 +196,12 @@ function CourseTable(props: CourseTableProps) {
                               coursesRle?.[`${dayIndex + 1}-${intervalIndex}`]
                                 .duration *
                                 tableCellProperty.h -
-                              2
+                              TABLE_BORDER_WIDTH
                             }
-                            w={`${tableCellProperty.w - 2}px`}
+                            w={`${tableCellProperty.w - TABLE_BORDER_WIDTH}px`}
                             bg="red"
                           />
-                        ) : (
-                          <Box>{`${dayIndex} ${intervalIndex}`}</Box>
-                        )}
+                        ) : null}
                       </Td>
                     );
                   })}
