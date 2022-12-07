@@ -1,6 +1,6 @@
 // Course[] to run-length encoding
 import { Course } from "@/types/course";
-import intervalToNumber from "@/utils/intervalToNumber";
+import { intervalToNumber } from "@/utils/intervalNumberConverter";
 import { groupBy } from "lodash";
 
 export interface CourseRLE {

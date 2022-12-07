@@ -8,3 +8,9 @@ export function assertNotNil<T>(
   }
   return true;
 }
+
+export function assertNever(shouldBeNever: never): never {
+  throw new Error(
+    `Unhandled discriminated union member: ${JSON.stringify(shouldBeNever)}`
+  );
+}
