@@ -18,4 +18,5 @@ export const intervals: Interval[] = [
   "C",
   "D",
 ];
-export const availableSemesters = ["1111", "1102"];
+export const days = ["一", "二", "三", "四", "五", "六"] as const;
+export const availableSemesters = ["1111", "1102"] as const;

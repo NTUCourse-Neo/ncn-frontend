@@ -15,12 +15,14 @@ import {
   Fade,
 } from "@chakra-ui/react";
 import CourseTableCard from "@/components/CourseTable/CourseTableCard";
-import { intervals } from "@/constant";
+import { intervals, days } from "@/constant";
 import courses2rle from "@/utils/courses2rle";
 import { customScrollBarCss } from "@/styles/customScrollBar";
 import { useState } from "react";
 import { usePopper } from "react-popper";
 import Portal from "@/components/Portal";
+import { CourseRLE } from "@/utils/courses2rle";
+import { CourseTableCardPortal } from "@/components/CourseTable/CourseTableCard";
 
 const TABLE_BORDER_WIDTH = 1; //px
 
@@ -50,9 +52,11 @@ interface TdProps extends TableCellProps {
   readonly isLastDay: boolean;
   readonly isFirstInterval: boolean;
   readonly isLastInterval: boolean;
-  readonly id: string;
+  readonly dayIndex: number;
+  readonly intervalIndex: number;
   readonly openPortal: string | null;
   readonly setOpenPortal: (id: string | null) => void;
+  readonly courseRle: CourseRLE | null;
 }
 const Td: React.FC<TdProps> = ({
   children,
@@ -60,11 +64,14 @@ const Td: React.FC<TdProps> = ({
   isLastDay,
   isFirstInterval,
   isLastInterval,
-  id,
+  dayIndex,
+  intervalIndex,
   openPortal,
   setOpenPortal,
+  courseRle,
   ...rest
 }) => {
+  const id = `${dayIndex + 1}-${intervalIndex}`;
   const [referenceElement, setReferenceElement] = useState<HTMLElement | null>(
     null
   );
@@ -72,6 +79,14 @@ const Td: React.FC<TdProps> = ({
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: "right-start",
     strategy: "fixed",
+    modifiers: [
+      {
+        name: "offset",
+        options: {
+          offset: [0, 10],
+        },
+      },
+    ],
   });
   return (
     <ChakraTd
@@ -143,13 +158,16 @@ const Td: React.FC<TdProps> = ({
           {...attributes.popper}
         >
           <Fade in={id === openPortal} unmountOnExit>
-            <Box
-              sx={{
-                w: 200,
-                h: 200,
-                bg: "yellow",
-              }}
-            ></Box>
+            {courseRle ? (
+              <CourseTableCardPortal
+                courseRle={courseRle}
+                dayIndex={dayIndex}
+                intervalIndex={intervalIndex}
+                onClose={() => {
+                  setOpenPortal(null);
+                }}
+              />
+            ) : null}
           </Fade>
         </Box>
       </Portal>
@@ -168,7 +186,6 @@ interface CourseTableProps {
 
 function CourseTable(props: CourseTableProps) {
   const { courses } = props;
-  const days = ["一", "二", "三", "四", "五", "六"];
   const [openPortal, setOpenPortal] = useState<string | null>(null);
 
   const coursesRle = courses2rle(courses);
@@ -252,9 +269,14 @@ function CourseTable(props: CourseTableProps) {
                         isLastDay={dayIndex === days.length - 1}
                         isFirstInterval={intervalIndex === 0}
                         isLastInterval={intervalIndex === intervals.length - 1}
-                        id={`${dayIndex + 1}-${intervalIndex}`}
+                        dayIndex={dayIndex}
+                        intervalIndex={intervalIndex}
                         openPortal={openPortal}
                         setOpenPortal={setOpenPortal}
+                        courseRle={
+                          coursesRle?.[`${dayIndex + 1}-${intervalIndex}`] ??
+                          null
+                        }
                       >
                         {coursesRle?.[`${dayIndex + 1}-${intervalIndex}`] ? (
                           <CourseTableCard
