@@ -280,6 +280,9 @@ function CourseTable(props: CourseTableProps) {
                       >
                         {coursesRle?.[`${dayIndex + 1}-${intervalIndex}`] ? (
                           <CourseTableCard
+                            isActive={
+                              openPortal === `${dayIndex + 1}-${intervalIndex}`
+                            }
                             courseRle={
                               coursesRle[`${dayIndex + 1}-${intervalIndex}`]
                             }
