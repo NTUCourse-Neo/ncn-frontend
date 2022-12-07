@@ -1,8 +1,25 @@
-import { Box, BoxProps, Text, Flex, Button } from "@chakra-ui/react";
+import {
+  Box,
+  BoxProps,
+  Text,
+  Flex,
+  Button,
+  useDisclosure,
+  AlertDialog,
+  AlertDialogOverlay,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogBody,
+  AlertDialogHeader,
+} from "@chakra-ui/react";
 import { CourseRLE } from "@/utils/courses2rle";
 import { CloseIcon } from "@chakra-ui/icons";
 import { intervals, days } from "@/constant";
 import { useRouter } from "next/router";
+import { useRef } from "react";
+import useCourseTable from "hooks/useCourseTable";
+import { useUser } from "@auth0/nextjs-auth0";
+import useUserInfo from "hooks/useUserInfo";
 
 export function CourseTableCardPortal({
   courseRle,
@@ -15,6 +32,11 @@ export function CourseTableCardPortal({
   readonly dayIndex: number;
   readonly intervalIndex: number;
 }) {
+  const { user } = useUser();
+  const { userInfo } = useUserInfo(user?.sub ?? null);
+  const courseTableKey = userInfo?.course_tables?.[0] ?? null;
+  const { addOrRemoveCourse } = useCourseTable(courseTableKey);
+
   const router = useRouter();
   const { course, duration, location } = courseRle;
   const time = `${days[dayIndex]} ${Array.from({ length: duration })
@@ -22,6 +44,9 @@ export function CourseTableCardPortal({
       return intervals[intervalIndex + i];
     })
     .join(", ")}`;
+  const { isOpen, onOpen, onClose: closeDialog } = useDisclosure();
+  const cancelRef = useRef<HTMLButtonElement>(null);
+
   return (
     <Box
       sx={{
@@ -99,6 +124,7 @@ export function CourseTableCardPortal({
               fontSize: "12px",
               color: "error.500",
             }}
+            onClick={onOpen}
           >
             移除
           </Button>
@@ -117,6 +143,67 @@ export function CourseTableCardPortal({
           >
             課程大綱
           </Button>
+          <AlertDialog
+            motionPreset="slideInBottom"
+            leastDestructiveRef={cancelRef}
+            onClose={onClose}
+            isOpen={isOpen}
+            isCentered
+          >
+            <AlertDialogOverlay />
+            <AlertDialogContent p={6}>
+              <AlertDialogHeader
+                sx={{
+                  fontWeight: 500,
+                  fontSize: "18px",
+                  p: 0,
+                }}
+              >
+                移除提醒
+              </AlertDialogHeader>
+              <AlertDialogBody
+                p={0}
+                mt={"8px"}
+                sx={{
+                  color: "#6f6f6f",
+                }}
+              >
+                確定要移除 {`${course.id} ${course.name}`}？
+              </AlertDialogBody>
+              <AlertDialogFooter gap="8px" p={0} mt={8}>
+                <Button
+                  ref={cancelRef}
+                  sx={{
+                    w: "60px",
+                    h: "36px",
+                    borderRadius: "full",
+                    fontWeight: 500,
+                    fontSize: "14px",
+                  }}
+                  onClick={closeDialog}
+                >
+                  取消
+                </Button>
+                <Button
+                  variant={"unstyled"}
+                  sx={{
+                    w: "60px",
+                    h: "36px",
+                    fontWeight: 500,
+                    fontSize: "14px",
+                    color: "#4b4b4b",
+                  }}
+                  onClick={async () => {
+                    await addOrRemoveCourse(course);
+                    closeDialog();
+                    onClose();
+                  }}
+                >
+                  確定
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </Flex>
       </Flex>
     </Box>
