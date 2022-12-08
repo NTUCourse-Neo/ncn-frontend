@@ -24,7 +24,7 @@ import Portal from "@/components/Portal";
 import { CourseRLE } from "@/utils/courses2rle";
 import { CourseTableCardPortal } from "@/components/CourseTable/CourseTableCard";
 
-interface CellProps {
+interface CourseTableCellProps {
   readonly w: number;
   readonly h: number;
   readonly borderWidth: number;
@@ -61,7 +61,7 @@ interface TdProps extends TableCellProps {
   readonly openPortal: string | null;
   readonly setOpenPortal: (id: string | null) => void;
   readonly courseRle: CourseRLE | null;
-  readonly tableCellProperty: CellProps;
+  readonly tableCellProperty: CourseTableCellProps;
 }
 const Td: React.FC<TdProps> = ({
   children,
@@ -185,7 +185,7 @@ const Td: React.FC<TdProps> = ({
 
 interface CourseTableProps {
   readonly courses: Course[];
-  readonly tableCellProperty: CellProps;
+  readonly tableCellProperty: CourseTableCellProps;
 }
 
 function CourseTable(props: CourseTableProps) {
