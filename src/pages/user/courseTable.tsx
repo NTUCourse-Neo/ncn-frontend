@@ -9,6 +9,19 @@ import UserCoursePanel from "@/components/UserCoursePanel";
 import CourseTable from "@/components/CourseTable";
 import filterConflictedCourse from "@/utils/filterConflictedCourse";
 import { InfoOutlineIcon } from "@chakra-ui/icons";
+import { useState } from "react";
+
+const tabs = [
+  {
+    id: "courseTable",
+    label: "首選課表",
+  },
+  {
+    id: "courseOrder",
+    label: "志願序排序",
+  },
+] as const;
+type TabId = typeof tabs[number]["id"];
 
 export default function CourseTablePage({
   user,
@@ -28,6 +41,21 @@ export default function CourseTablePage({
   });
   const toast = useToast();
   const { courseTable } = useCourseTable(userInfo?.course_tables?.[0] ?? null);
+
+  const [tabId, setTabId] = useState<TabId>("courseTable");
+  const tabContentMap: Record<TabId, JSX.Element> = {
+    courseTable: (
+      <CourseTable
+        courses={filterConflictedCourse(courseTable?.courses ?? [])}
+        tableCellProperty={{
+          w: 160,
+          h: 50,
+          borderWidth: 1,
+        }}
+      />
+    ),
+    courseOrder: <></>,
+  };
 
   if (isLoading) {
     return (
@@ -68,13 +96,21 @@ export default function CourseTablePage({
           h="93vh"
           flexDirection={"row"}
           gap={10}
-          justifyContent="center"
+          justifyContent="start"
           alignItems="start"
           overflowY={"auto"}
           overflowX={"hidden"}
           position="relative"
+          px="10%"
         >
-          <Flex w="60%" flexDirection={"column"} py={8}>
+          <Flex
+            w={tabId === "courseOrder" ? "100%" : "75%"}
+            flexDirection={"column"}
+            py={8}
+            sx={{
+              transition: "all 0.3s ease-in-out",
+            }}
+          >
             <CustomBreadcrumb
               pageItems={[
                 {
@@ -90,8 +126,8 @@ export default function CourseTablePage({
             <Flex
               w="100%"
               mt={2}
-              mb={3}
-              alignItems="center"
+              mb={6}
+              alignItems="end"
               justifyContent={"space-between"}
             >
               <HStack>
@@ -145,24 +181,71 @@ export default function CourseTablePage({
               </Flex>
             </Flex>
             <Box
-              w="100%"
-              overflow={"auto"}
               sx={{
                 borderRadius: "4px",
+                shadow: "0px 3px 8px rgba(75, 75, 75, 0.08)",
+                bg: "#ffffff",
+                border: "1px solid rgba(204, 204, 204, 0.4)",
               }}
             >
-              <CourseTable
-                courses={filterConflictedCourse(courseTable?.courses ?? [])}
-                tableCellProperty={{
-                  w: 160,
-                  h: 50,
-                  borderWidth: 1,
+              <Flex
+                sx={{
+                  w: "100%",
+                  bg: "#002F94",
+                  h: "46px",
+                  borderRadius: "4px 4px 0px 0px",
+                  alignItems: "end",
+                  pl: 4,
                 }}
-              />
+              >
+                {tabs.map((tab) => {
+                  const isSelected = tab.id === tabId;
+                  return (
+                    <Flex
+                      key={tab.id}
+                      sx={{
+                        h: "100%",
+                        w: "fit-content",
+                        fontWeight: 500,
+                        mx: 6,
+                        cursor: "pointer",
+                        transition: "all 0.2s ease-in-out",
+                        color: isSelected ? "#ffffff" : "#ffffff56",
+                        borderBottom: isSelected
+                          ? "2px solid #ffffff"
+                          : "2px solid transparent",
+                      }}
+                      justifyContent="center"
+                      alignItems="center"
+                      onClick={() => {
+                        setTabId(tab.id);
+                      }}
+                    >
+                      {tab.label}
+                    </Flex>
+                  );
+                })}
+              </Flex>
+              <Flex
+                w="100%"
+                minH="69vh"
+                justifyContent={"center"}
+                alignItems="center"
+                overflow={"auto"}
+                pt={4}
+                px={4}
+                pb={12}
+              >
+                {tabContentMap[tabId]}
+              </Flex>
             </Box>
           </Flex>
           <Flex
-            w="20%"
+            w={tabId === "courseOrder" ? "0%" : "25%"}
+            display={tabId === "courseOrder" ? "none" : "flex"}
+            sx={{
+              transition: "all 2s ease-in-out",
+            }}
             h="92vh"
             py={8}
             flexDirection={"column"}
