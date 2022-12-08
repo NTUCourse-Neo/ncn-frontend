@@ -153,6 +153,11 @@ export default function CourseTablePage({
             >
               <CourseTable
                 courses={filterConflictedCourse(courseTable?.courses ?? [])}
+                tableCellProperty={{
+                  w: 160,
+                  h: 50,
+                  borderWidth: 1,
+                }}
               />
             </Box>
           </Flex>

@@ -24,7 +24,11 @@ import Portal from "@/components/Portal";
 import { CourseRLE } from "@/utils/courses2rle";
 import { CourseTableCardPortal } from "@/components/CourseTable/CourseTableCard";
 
-const TABLE_BORDER_WIDTH = 1; //px
+interface CellProps {
+  readonly w: number;
+  readonly h: number;
+  readonly borderWidth: number;
+}
 
 interface ThProps extends TableColumnHeaderProps {
   readonly children: React.ReactNode;
@@ -57,6 +61,7 @@ interface TdProps extends TableCellProps {
   readonly openPortal: string | null;
   readonly setOpenPortal: (id: string | null) => void;
   readonly courseRle: CourseRLE | null;
+  readonly tableCellProperty: CellProps;
 }
 const Td: React.FC<TdProps> = ({
   children,
@@ -69,6 +74,7 @@ const Td: React.FC<TdProps> = ({
   openPortal,
   setOpenPortal,
   courseRle,
+  tableCellProperty,
   ...rest
 }) => {
   const id = `${dayIndex + 1}-${intervalIndex}`;
@@ -102,15 +108,17 @@ const Td: React.FC<TdProps> = ({
         } ${isLastDay && isLastInterval ? "4px" : "0px"} ${
           isFirstDay && isLastInterval ? "4px" : "0px"
         }`,
-        borderTop: `${TABLE_BORDER_WIDTH}px solid #CCCCCC${
+        borderTop: `${tableCellProperty.borderWidth}px solid #CCCCCC${
           isFirstInterval ? "" : "80"
         }`,
-        borderLeft: `${TABLE_BORDER_WIDTH}px solid #CCCCCC${
+        borderLeft: `${tableCellProperty.borderWidth}px solid #CCCCCC${
           isFirstDay ? "" : "80"
         }`,
-        borderRight: `${isLastDay ? TABLE_BORDER_WIDTH : 0}px solid #CCCCCC`,
+        borderRight: `${
+          isLastDay ? tableCellProperty.borderWidth : 0
+        }px solid #CCCCCC`,
         borderBottom: `${
-          isLastInterval ? TABLE_BORDER_WIDTH : 0
+          isLastInterval ? tableCellProperty.borderWidth : 0
         }px solid #CCCCCC`,
         overflow: "visible",
         position: "relative",
@@ -121,7 +129,7 @@ const Td: React.FC<TdProps> = ({
         sx={{
           zIndex: 99,
           position: "absolute",
-          top: isFirstInterval ? `-${TABLE_BORDER_WIDTH / 2}px` : 0,
+          top: isFirstInterval ? `-${tableCellProperty.borderWidth / 2}px` : 0,
           left: 0,
           bg: "linear-gradient(0deg, rgba(204, 204, 204, 0.24), rgba(204, 204, 204, 0.24)), #FFFFFF",
           opacity: 0.32,
@@ -132,7 +140,7 @@ const Td: React.FC<TdProps> = ({
       <Box
         position="absolute"
         sx={{
-          top: isFirstInterval ? `-${TABLE_BORDER_WIDTH / 2}px` : 0,
+          top: isFirstInterval ? `-${tableCellProperty.borderWidth / 2}px` : 0,
           left: 0,
           zIndex: 100,
         }}
@@ -175,17 +183,13 @@ const Td: React.FC<TdProps> = ({
   );
 };
 
-export const TableCellProperty = {
-  w: 160,
-  h: 50,
-} as const;
-
 interface CourseTableProps {
   readonly courses: Course[];
+  readonly tableCellProperty: CellProps;
 }
 
 function CourseTable(props: CourseTableProps) {
-  const { courses } = props;
+  const { courses, tableCellProperty } = props;
   const [openPortal, setOpenPortal] = useState<string | null>(null);
 
   const coursesRle = courses2rle(courses);
@@ -193,12 +197,12 @@ function CourseTable(props: CourseTableProps) {
   return (
     <Flex>
       <Flex flexDirection={"column"}>
-        <Box h={`${TableCellProperty.h + 8}px`} />
+        <Box h={`${tableCellProperty.h + 8}px`} />
         {intervals.map((interval) => (
           <Center
             key={interval}
             sx={{
-              h: `${TableCellProperty.h}px`,
+              h: `${tableCellProperty.h}px`,
               w: 12,
               fontWeight: 500,
               fontSize: "18px",
@@ -219,13 +223,13 @@ function CourseTable(props: CourseTableProps) {
           }}
         >
           <Thead>
-            <Tr h={`${TableCellProperty.h}px`}>
+            <Tr h={`${tableCellProperty.h}px`}>
               {days.map((day) => {
                 return (
                   <Th
                     key={day}
-                    w={`${TableCellProperty.w}px`}
-                    maxW={`${TableCellProperty.w}px`}
+                    w={`${tableCellProperty.w}px`}
+                    maxW={`${tableCellProperty.w}px`}
                   >
                     <Center>{day}</Center>
                   </Th>
@@ -253,18 +257,18 @@ function CourseTable(props: CourseTableProps) {
                   sx={{
                     borderRadius: "4px",
                   }}
-                  h={`${TableCellProperty.h}px`}
-                  maxH={`${TableCellProperty.h}px`}
+                  h={`${tableCellProperty.h}px`}
+                  maxH={`${tableCellProperty.h}px`}
                 >
                   {days.map((day, dayIndex) => {
                     return (
                       <Td
                         key={dayIndex}
-                        minW={`${TableCellProperty.w}px`}
-                        w={`${TableCellProperty.w}px`}
-                        maxW={`${TableCellProperty.w}px`}
-                        minH={`${TableCellProperty.h}px`}
-                        h={`${TableCellProperty.h}px`}
+                        minW={`${tableCellProperty.w}px`}
+                        w={`${tableCellProperty.w}px`}
+                        maxW={`${tableCellProperty.w}px`}
+                        minH={`${tableCellProperty.h}px`}
+                        h={`${tableCellProperty.h}px`}
                         isFirstDay={dayIndex === 0}
                         isLastDay={dayIndex === days.length - 1}
                         isFirstInterval={intervalIndex === 0}
@@ -277,6 +281,7 @@ function CourseTable(props: CourseTableProps) {
                           coursesRle?.[`${dayIndex + 1}-${intervalIndex}`] ??
                           null
                         }
+                        tableCellProperty={tableCellProperty}
                       >
                         {coursesRle?.[`${dayIndex + 1}-${intervalIndex}`] ? (
                           <CourseTableCard
@@ -289,10 +294,13 @@ function CourseTable(props: CourseTableProps) {
                             h={
                               coursesRle[`${dayIndex + 1}-${intervalIndex}`]
                                 .duration *
-                                TableCellProperty.h -
-                              TABLE_BORDER_WIDTH
+                                tableCellProperty.h -
+                              tableCellProperty.borderWidth
                             }
-                            w={`${TableCellProperty.w - TABLE_BORDER_WIDTH}px`}
+                            w={`${
+                              tableCellProperty.w -
+                              tableCellProperty.borderWidth
+                            }px`}
                           />
                         ) : null}
                       </Td>
