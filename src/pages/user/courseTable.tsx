@@ -68,6 +68,8 @@ export default function CourseTablePage({
     ),
     courseOrder: <></>,
   };
+  const hideUserCoursePanel =
+    tabId === "courseOrder" && displayModeId === "all";
 
   if (isLoading) {
     return (
@@ -116,7 +118,7 @@ export default function CourseTablePage({
           px="10%"
         >
           <Flex
-            w={tabId === "courseOrder" ? "100%" : "75%"}
+            w={hideUserCoursePanel ? "100%" : "75%"}
             flexDirection={"column"}
             py={8}
             sx={{
@@ -257,6 +259,8 @@ export default function CourseTablePage({
                           h="auto"
                           sx={{
                             color: isSelected ? "#2d2d2d" : "#ffffff",
+                            bg: isSelected ? "#ffffff" : "transparent",
+                            transition: "all 0.2s ease-in-out",
                             cursor: "pointer",
                             borderRadius: "full",
                             px: "10px",
@@ -265,7 +269,8 @@ export default function CourseTablePage({
                             justifyContent: "center",
                             alignItems: "center",
                             m: 1,
-                            bg: isSelected ? "#ffffff" : "transparent",
+                            position: "relative",
+                            flexDirection: "column",
                           }}
                           onClick={() => {
                             setDisplayModeId(mode.id);
@@ -280,7 +285,7 @@ export default function CourseTablePage({
               </Flex>
               <Flex
                 w="100%"
-                minH="69vh"
+                minH="80vh"
                 justifyContent={"center"}
                 alignItems="center"
                 overflow={"auto"}
@@ -293,8 +298,8 @@ export default function CourseTablePage({
             </Box>
           </Flex>
           <Flex
-            w={tabId === "courseOrder" ? "0%" : "25%"}
-            display={tabId === "courseOrder" ? "none" : "flex"}
+            w={hideUserCoursePanel ? "0%" : "25%"}
+            display={hideUserCoursePanel ? "none" : "flex"}
             sx={{
               transition: "all 2s ease-in-out",
             }}
