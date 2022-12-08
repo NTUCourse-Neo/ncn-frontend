@@ -19,9 +19,20 @@ const tabs = [
   {
     id: "courseOrder",
     label: "志願序排序",
+    displayModes: [
+      {
+        id: "all",
+        label: "全部排序",
+      },
+      {
+        id: "interval",
+        label: "節次排序",
+      },
+    ],
   },
 ] as const;
 type TabId = typeof tabs[number]["id"];
+type DisplayModeId = typeof tabs[1]["displayModes"][number]["id"];
 
 export default function CourseTablePage({
   user,
@@ -43,6 +54,7 @@ export default function CourseTablePage({
   const { courseTable } = useCourseTable(userInfo?.course_tables?.[0] ?? null);
 
   const [tabId, setTabId] = useState<TabId>("courseTable");
+  const [displayModeId, setDisplayModeId] = useState<DisplayModeId>("all");
   const tabContentMap: Record<TabId, JSX.Element> = {
     courseTable: (
       <CourseTable
@@ -194,37 +206,77 @@ export default function CourseTablePage({
                   bg: "#002F94",
                   h: "46px",
                   borderRadius: "4px 4px 0px 0px",
-                  alignItems: "end",
                   pl: 4,
+                  pr: 8,
+                  justifyContent: "space-between",
+                  alignItems: "center",
                 }}
               >
-                {tabs.map((tab) => {
-                  const isSelected = tab.id === tabId;
-                  return (
-                    <Flex
-                      key={tab.id}
-                      sx={{
-                        h: "100%",
-                        w: "fit-content",
-                        fontWeight: 500,
-                        mx: 6,
-                        cursor: "pointer",
-                        transition: "all 0.2s ease-in-out",
-                        color: isSelected ? "#ffffff" : "#ffffff56",
-                        borderBottom: isSelected
-                          ? "2px solid #ffffff"
-                          : "2px solid transparent",
-                      }}
-                      justifyContent="center"
-                      alignItems="center"
-                      onClick={() => {
-                        setTabId(tab.id);
-                      }}
-                    >
-                      {tab.label}
-                    </Flex>
-                  );
-                })}
+                <Flex h="100%">
+                  {tabs.map((tab) => {
+                    const isSelected = tab.id === tabId;
+                    return (
+                      <Flex
+                        key={tab.id}
+                        sx={{
+                          h: "100%",
+                          w: "fit-content",
+                          fontWeight: 500,
+                          mx: 6,
+                          cursor: "pointer",
+                          transition: "all 0.2s ease-in-out",
+                          color: isSelected ? "#ffffff" : "#ffffff56",
+                          borderBottom: isSelected
+                            ? "2px solid #ffffff"
+                            : "2px solid transparent",
+                        }}
+                        justifyContent="center"
+                        alignItems="center"
+                        onClick={() => {
+                          setTabId(tab.id);
+                        }}
+                      >
+                        {tab.label}
+                      </Flex>
+                    );
+                  })}
+                </Flex>
+                {tabId === "courseOrder" ? (
+                  <Flex
+                    sx={{
+                      bg: "#081D59",
+                      h: "60%",
+                      borderRadius: "full",
+                    }}
+                  >
+                    {tabs[1].displayModes.map((mode) => {
+                      const isSelected = mode.id === displayModeId;
+                      return (
+                        <Flex
+                          key={mode.id}
+                          h="auto"
+                          sx={{
+                            color: isSelected ? "#2d2d2d" : "#ffffff",
+                            cursor: "pointer",
+                            borderRadius: "full",
+                            px: "10px",
+                            fontWeight: 500,
+                            fontSize: "12px",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            m: 1,
+                            bg: isSelected ? "#ffffff" : "transparent",
+                          }}
+                          onClick={() => {
+                            setDisplayModeId(mode.id);
+                          }}
+                        >
+                          {mode.label}
+                        </Flex>
+                      );
+                    })}
+                  </Flex>
+                ) : null}
               </Flex>
               <Flex
                 w="100%"
