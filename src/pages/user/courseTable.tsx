@@ -6,9 +6,9 @@ import Head from "next/head";
 import useUserInfo from "hooks/useUserInfo";
 import CustomBreadcrumb from "@/components/Breadcrumb";
 import UserCoursePanel from "@/components/UserCoursePanel";
-import { CalendarOutlineIcon } from "@/components/CustomIcons";
 import CourseTable from "@/components/CourseTable";
 import filterConflictedCourse from "@/utils/filterConflictedCourse";
+import { InfoOutlineIcon } from "@chakra-ui/icons";
 
 export default function CourseTablePage({
   user,
@@ -95,31 +95,53 @@ export default function CourseTablePage({
               justifyContent={"space-between"}
             >
               <HStack>
-                <Center>
-                  <CalendarOutlineIcon boxSize={"22px"} />
-                </Center>
                 <Text
                   sx={{
-                    fontSize: "24px",
+                    fontWeight: 500,
+                    fontSize: "28px",
                     lineHeight: 1.4,
                   }}
                 >
                   預選課表
                 </Text>
+                <Center>
+                  <InfoOutlineIcon
+                    boxSize={"15px"}
+                    color={"#6F6F6F"}
+                    sx={{
+                      cursor: "pointer",
+                    }}
+                  />
+                </Center>
               </HStack>
               <Flex
                 sx={{
                   letterSpacing: "0.02em",
-                  border: "0.5px solid #000000",
-                  borderRadius: "4px",
                   p: "6px 12px",
+                  fontSize: "14px",
+                  lineHeight: 1.4,
+                  color: "#2D2D2D",
+                  alignItems: "end",
                 }}
               >
-                總計{" "}
-                {(courseTable?.courses ?? []).reduce<number>((acc, course) => {
-                  return acc + (course.credits ?? 0);
-                }, 0)}{" "}
-                學分
+                <Text>總計</Text>
+                <Text
+                  sx={{
+                    fontWeight: 500,
+                    fontSize: "28px",
+                    lineHeight: 1.25,
+                    mx: 2,
+                    alignItems: "end",
+                  }}
+                >
+                  {(courseTable?.courses ?? []).reduce<number>(
+                    (acc, course) => {
+                      return acc + (course.credits ?? 0);
+                    },
+                    0
+                  )}
+                </Text>
+                <Text>學分</Text>
               </Flex>
             </Flex>
             <Box
