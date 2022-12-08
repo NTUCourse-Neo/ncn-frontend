@@ -39,9 +39,9 @@ const Th: React.FC<ThProps> = ({ children, ...rest }) => {
       sx={{
         textAlign: "center",
         lineHeight: 1.4,
-        color: "#2d2d2d",
-        fontWeight: 400,
-        fontSize: "14px",
+        color: "#1A181C",
+        fontWeight: 500,
+        fontSize: "18px",
       }}
       {...rest}
     >
