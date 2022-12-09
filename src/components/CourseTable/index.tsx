@@ -20,9 +20,9 @@ import { customScrollBarCss } from "@/styles/customScrollBar";
 import { useState } from "react";
 import { usePopper } from "react-popper";
 import Portal from "@/components/Portal";
-import { CourseRLE } from "@/utils/filterConflictedCourse";
+import { CourseRLE } from "@/utils/courseTableRle";
 import { CourseTableCardPortal } from "@/components/CourseTable/CourseTableCard";
-import { courses2courseTableRle } from "@/utils/filterConflictedCourse";
+import { courses2courseTableRle } from "@/utils/courseTableRle";
 
 interface CourseTableCellProps {
   readonly w: number;
