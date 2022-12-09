@@ -217,7 +217,8 @@ export interface CourseTableCardProps extends BoxProps {
 
 export default function CourseTableCard(props: CourseTableCardProps) {
   const { courseRle, isActive, ...restProps } = props;
-  const { course, duration, location } = courseRle;
+  const { course, duration, location, conflictedCourses } = courseRle;
+  const numOfConflict = Object.keys(conflictedCourses).length;
 
   // TODO: 必帶 flag
   const isPreallocated = false;
@@ -247,30 +248,55 @@ export default function CourseTableCard(props: CourseTableCardProps) {
           display: isPreallocated ? "block" : "none",
         }}
       />
-      <Text
-        textAlign={"start"}
-        noOfLines={duration}
-        sx={{
-          fontWeight: 500,
-          fontSize: "14px",
-          lineHeight: 1.4,
-          color: isActive ? "#ffffff" : "#2d2d2d",
-        }}
-      >
-        {course.name}
-      </Text>
-      <Text
-        mt="6px"
-        textAlign={"start"}
-        noOfLines={1}
-        sx={{
-          fontSize: "12px",
-          lineHeight: 1.4,
-          color: isActive ? "#f2f2f2" : "#909090",
-        }}
-      >
-        {location}
-      </Text>
+      <Flex h="100%" flexDirection={"column"} justifyContent="space-between">
+        <Flex flexDirection={"column"}>
+          <Text
+            textAlign={"start"}
+            noOfLines={duration}
+            sx={{
+              fontWeight: 500,
+              fontSize: "14px",
+              lineHeight: 1.4,
+              color: isActive ? "#ffffff" : "#2d2d2d",
+            }}
+          >
+            {course.name}
+          </Text>
+          <Text
+            mt="6px"
+            textAlign={"start"}
+            noOfLines={1}
+            sx={{
+              fontSize: "12px",
+              lineHeight: 1.4,
+              color: isActive ? "#f2f2f2" : "#909090",
+            }}
+          >
+            {location}
+          </Text>
+        </Flex>
+        {numOfConflict > 0 ? (
+          <Flex justify={"end"}>
+            <Flex
+              alignItems="center"
+              sx={{
+                bg: isActive ? "#ffffff" : "#4681FF",
+                color: isActive ? "#4681FF" : "#ffffff",
+                p: "4px 8px",
+                h: "22px",
+                borderRadius: "36px",
+                shadow: "0px 1px 2px rgba(105, 81, 255, 0.05)",
+                fontWeight: 500,
+                fontSize: "10px",
+                lineHeight: 1.4,
+                gap: "2px",
+              }}
+            >
+              衝堂 {numOfConflict}
+            </Flex>
+          </Flex>
+        ) : null}
+      </Flex>
     </Box>
   );
 }
