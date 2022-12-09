@@ -20,6 +20,8 @@ import { useRef } from "react";
 import useCourseTable from "hooks/useCourseTable";
 import { useUser } from "@auth0/nextjs-auth0";
 import useUserInfo from "hooks/useUserInfo";
+import { hoverCourseState } from "@/utils/hoverCourse";
+import { useSnapshot } from "valtio";
 
 export function CourseTableCardPortal({
   courseRle,
@@ -219,6 +221,8 @@ export default function CourseTableCard(props: CourseTableCardProps) {
   const { courseRle, isActive, ...restProps } = props;
   const { course, duration, location, conflictedCourses } = courseRle;
   const numOfConflict = Object.keys(conflictedCourses).length;
+  const { hoveredCourse } = useSnapshot(hoverCourseState);
+  const isHovered = hoveredCourse && hoveredCourse.id === course.id;
 
   // TODO: 必帶 flag
   const isPreallocated = false;
@@ -227,7 +231,11 @@ export default function CourseTableCard(props: CourseTableCardProps) {
     <Box
       sx={{
         position: "relative",
-        bg: isActive ? "#4681FF" : "#ffffff",
+        bg: isHovered
+          ? "linear-gradient(0deg, rgba(70, 129, 255, 0.5), rgba(70, 129, 255, 0.5)), #FFFFFF"
+          : isActive
+          ? "#4681FF"
+          : "#ffffff",
         borderRadius: "10px",
         boxShadow: "2px 2px 12px 0px rgba(75, 75, 75, 0.12)",
         cursor: "pointer",
@@ -257,7 +265,7 @@ export default function CourseTableCard(props: CourseTableCardProps) {
               fontWeight: 500,
               fontSize: "14px",
               lineHeight: 1.4,
-              color: isActive ? "#ffffff" : "#2d2d2d",
+              color: isHovered || isActive ? "#ffffff" : "#2d2d2d",
             }}
           >
             {course.name}
@@ -269,7 +277,7 @@ export default function CourseTableCard(props: CourseTableCardProps) {
             sx={{
               fontSize: "12px",
               lineHeight: 1.4,
-              color: isActive ? "#f2f2f2" : "#909090",
+              color: isHovered || isActive ? "#f2f2f2" : "#909090",
             }}
           >
             {location}
@@ -280,8 +288,8 @@ export default function CourseTableCard(props: CourseTableCardProps) {
             <Flex
               alignItems="center"
               sx={{
-                bg: isActive ? "#ffffff" : "#4681FF",
-                color: isActive ? "#4681FF" : "#ffffff",
+                bg: isHovered || isActive ? "#ffffff" : "#4681FF",
+                color: isHovered || isActive ? "#4681FF" : "#ffffff",
                 p: "4px 8px",
                 h: "22px",
                 borderRadius: "36px",

@@ -11,6 +11,7 @@ import {
   Divider,
   Portal,
   SkeletonText,
+  useMediaQuery,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { FiCalendar, FiHeart } from "react-icons/fi";
@@ -23,6 +24,7 @@ import { Course } from "@/types/course";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { parseCourseTimeLocation } from "@/utils/parseCourseSchedule";
 import { useRouter } from "next/router";
+import { setHoveredCourseState } from "@/utils/hoverCourse";
 
 function PanelPlaceholder({
   title,
@@ -97,6 +99,8 @@ interface CourseInfoCardProps {
 function CourseInfoCard(props: CourseInfoCardProps) {
   const { course, menuOptions } = props;
   const timeLocation = parseCourseTimeLocation(course.schedules);
+  const [isDesktop] = useMediaQuery("(min-width: 768px)");
+
   return (
     <Flex
       w="100%"
@@ -106,6 +110,16 @@ function CourseInfoCard(props: CourseInfoCardProps) {
       flexDirection="column"
       p={4}
       gap={1}
+      onMouseEnter={() => {
+        if (isDesktop) {
+          setHoveredCourseState(course);
+        }
+      }}
+      onMouseLeave={() => {
+        if (isDesktop) {
+          setHoveredCourseState(null);
+        }
+      }}
     >
       <Flex w="100%">
         <Flex
