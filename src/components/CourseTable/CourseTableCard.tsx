@@ -16,7 +16,7 @@ import { CourseRLE } from "@/utils/courseTableRle";
 import { CloseIcon } from "@chakra-ui/icons";
 import { intervals, days } from "@/constant";
 import { useRouter } from "next/router";
-import { useRef } from "react";
+import { useRef, useMemo } from "react";
 import useCourseTable from "hooks/useCourseTable";
 import { useUser } from "@auth0/nextjs-auth0";
 import useUserInfo from "hooks/useUserInfo";
@@ -223,6 +223,17 @@ export default function CourseTableCard(props: CourseTableCardProps) {
   const numOfConflict = Object.keys(conflictedCourses).length;
   const { hoveredCourse } = useSnapshot(hoverCourseState);
   const isHovered = hoveredCourse && hoveredCourse.id === course.id;
+  const needOffset = useMemo(() => {
+    if (isHovered || !hoveredCourse) return false;
+    const { schedules: hoveredSchedules } = hoveredCourse;
+    const isOverlapped = hoveredSchedules.some((schedule) => {
+      return course.schedules.some(
+        (s) =>
+          s.weekday === schedule.weekday && s.interval === schedule.interval
+      );
+    });
+    return isOverlapped;
+  }, [course.schedules, isHovered, hoveredCourse]);
 
   // TODO: 必帶 flag
   const isPreallocated = false;
@@ -231,6 +242,8 @@ export default function CourseTableCard(props: CourseTableCardProps) {
     <Box
       sx={{
         position: "relative",
+        top: needOffset ? "-14px" : 0,
+        left: needOffset ? "-14px" : 0,
         bg: isHovered
           ? "linear-gradient(0deg, rgba(70, 129, 255, 0.5), rgba(70, 129, 255, 0.5)), #FFFFFF"
           : isActive
