@@ -19,7 +19,7 @@ import { useState, useCallback } from "react";
 import CourseTableCard from "@/components/CourseTableOld/CourseTableCard/CourseTableCard";
 import { weekdays_map, Weekday } from "data/mapping_table";
 import { hash_to_color_hex } from "utils/colorAgent";
-import { hoverCourseState } from "utils/hoverCourse";
+import { hoverCourseState } from "@/utils/hoverCourseOld";
 import { useSnapshot } from "valtio";
 import { reportEvent } from "utils/ga";
 import { TimeMap } from "@/utils/parseCourseTime";
