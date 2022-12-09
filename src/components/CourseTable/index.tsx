@@ -195,7 +195,7 @@ function CourseTable(props: CourseTableProps) {
   const coursesRle = courses2courseTableRle(courses);
 
   return (
-    <Flex>
+    <Flex overflowX={"auto"}>
       <Flex flexDirection={"column"}>
         <Box h={`${tableCellProperty.h + 8}px`} />
         {intervals.map((interval) => (

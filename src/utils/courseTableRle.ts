@@ -9,6 +9,7 @@ export interface CourseRLE {
   course: Course;
   duration: number;
   location: string;
+  conflictedCourses: Record<string, Course>;
 }
 
 export interface CoursesRLE {
@@ -18,6 +19,7 @@ export interface CoursesRLE {
 export function courses2courseTableRle(courses: Course[]): CoursesRLE {
   const res: CoursesRLE = {};
   const scheduledInterval: Schedule[] = [];
+  const conflictedCourses: Course[] = [];
   courses.forEach((course) => {
     const { schedules } = course;
     const isConflicted = schedules.some((schedule) => {
@@ -41,9 +43,36 @@ export function courses2courseTableRle(courses: Course[]): CoursesRLE {
           course,
           duration,
           location,
+          conflictedCourses: {},
         };
       });
+    } else {
+      conflictedCourses.push(course);
     }
   });
+
+  // push conflictedCourses
+  conflictedCourses.forEach((course) => {
+    const { schedules } = course;
+    schedules.forEach((schedule) => {
+      const { weekday, interval } = schedule;
+      Object.values(res).forEach((courseRle) => {
+        const { course: scheduledCourse, conflictedCourses } =
+          courseRle as CourseRLE;
+        const alreadyConflicted = conflictedCourses?.[course.id] !== undefined;
+        if (!alreadyConflicted) {
+          const isOverlapped = scheduledCourse.schedules.some(
+            (scheduledCourseSchedule) =>
+              scheduledCourseSchedule.weekday === weekday &&
+              scheduledCourseSchedule.interval === interval
+          );
+          if (isOverlapped) {
+            courseRle.conflictedCourses[course.id] = course;
+          }
+        }
+      });
+    });
+  });
+
   return res;
 }
