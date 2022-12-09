@@ -145,6 +145,7 @@ const Td: React.FC<TdProps> = ({
       {...rest}
     >
       <Box
+        ref={setReferenceElement}
         sx={{
           zIndex: 98,
           position: "absolute",
@@ -178,7 +179,6 @@ const Td: React.FC<TdProps> = ({
           left: 0,
           zIndex: 100,
         }}
-        ref={setReferenceElement}
         onClick={
           children !== null
             ? () => {
