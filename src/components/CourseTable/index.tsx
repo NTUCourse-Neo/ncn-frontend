@@ -17,7 +17,7 @@ import {
 import CourseTableCard from "@/components/CourseTable/CourseTableCard";
 import { intervals, days } from "@/constant";
 import { customScrollBarCss } from "@/styles/customScrollBar";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { usePopper } from "react-popper";
 import Portal from "@/components/Portal";
 import { CourseRLE } from "@/utils/courseTableRle";
@@ -192,7 +192,7 @@ function CourseTable(props: CourseTableProps) {
   const { courses, tableCellProperty } = props;
   const [openPortal, setOpenPortal] = useState<string | null>(null);
 
-  const coursesRle = courses2courseTableRle(courses);
+  const coursesRle = useMemo(() => courses2courseTableRle(courses), [courses]);
 
   return (
     <Flex overflowX={"auto"}>
