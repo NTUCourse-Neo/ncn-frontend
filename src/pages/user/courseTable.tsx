@@ -7,7 +7,6 @@ import useUserInfo from "hooks/useUserInfo";
 import CustomBreadcrumb from "@/components/Breadcrumb";
 import UserCoursePanel from "@/components/UserCoursePanel";
 import CourseTable from "@/components/CourseTable";
-import filterConflictedCourse from "@/utils/filterConflictedCourse";
 import { InfoOutlineIcon } from "@chakra-ui/icons";
 import { useState } from "react";
 
@@ -58,7 +57,7 @@ export default function CourseTablePage({
   const tabContentMap: Record<TabId, JSX.Element> = {
     courseTable: (
       <CourseTable
-        courses={filterConflictedCourse(courseTable?.courses ?? [])}
+        courses={courseTable?.courses ?? []}
         tableCellProperty={{
           w: 160,
           h: 50,

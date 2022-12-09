@@ -12,7 +12,7 @@ import {
   AlertDialogBody,
   AlertDialogHeader,
 } from "@chakra-ui/react";
-import { CourseRLE } from "@/utils/courses2rle";
+import { CourseRLE } from "@/utils/filterConflictedCourse";
 import { CloseIcon } from "@chakra-ui/icons";
 import { intervals, days } from "@/constant";
 import { useRouter } from "next/router";

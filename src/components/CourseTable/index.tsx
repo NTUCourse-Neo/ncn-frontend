@@ -16,13 +16,13 @@ import {
 } from "@chakra-ui/react";
 import CourseTableCard from "@/components/CourseTable/CourseTableCard";
 import { intervals, days } from "@/constant";
-import courses2rle from "@/utils/courses2rle";
 import { customScrollBarCss } from "@/styles/customScrollBar";
 import { useState } from "react";
 import { usePopper } from "react-popper";
 import Portal from "@/components/Portal";
-import { CourseRLE } from "@/utils/courses2rle";
+import { CourseRLE } from "@/utils/filterConflictedCourse";
 import { CourseTableCardPortal } from "@/components/CourseTable/CourseTableCard";
+import { courses2courseTableRle } from "@/utils/filterConflictedCourse";
 
 interface CourseTableCellProps {
   readonly w: number;
@@ -192,7 +192,7 @@ function CourseTable(props: CourseTableProps) {
   const { courses, tableCellProperty } = props;
   const [openPortal, setOpenPortal] = useState<string | null>(null);
 
-  const coursesRle = courses2rle(courses);
+  const coursesRle = courses2courseTableRle(courses);
 
   return (
     <Flex>
