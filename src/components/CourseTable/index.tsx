@@ -23,6 +23,9 @@ import Portal from "@/components/Portal";
 import { CourseRLE } from "@/utils/courseTableRle";
 import { CourseTableCardPortal } from "@/components/CourseTable/CourseTableCard";
 import { courses2courseTableRle } from "@/utils/courseTableRle";
+import { hoverCourseState } from "@/utils/hoverCourse";
+import { useSnapshot } from "valtio";
+import { intervalToNumber } from "@/utils/intervalNumberConverter";
 
 interface CourseTableCellProps {
   readonly w: number;
@@ -60,6 +63,7 @@ interface TdProps extends TableCellProps {
   readonly intervalIndex: number;
   readonly openPortal: string | null;
   readonly setOpenPortal: (id: string | null) => void;
+  readonly coursesOnTable: string[];
   readonly courseRle: CourseRLE | null;
   readonly tableCellProperty: CourseTableCellProps;
 }
@@ -73,6 +77,7 @@ const Td: React.FC<TdProps> = ({
   intervalIndex,
   openPortal,
   setOpenPortal,
+  coursesOnTable,
   courseRle,
   tableCellProperty,
   ...rest
@@ -94,6 +99,20 @@ const Td: React.FC<TdProps> = ({
       },
     ],
   });
+
+  // hover feature
+  const { hoveredCourse } = useSnapshot(hoverCourseState);
+  const isHovered = useMemo(() => {
+    if (!hoveredCourse) return false;
+    const { schedules } = hoveredCourse;
+    const timeMatched = schedules.some(
+      (schedule) =>
+        schedule.weekday === dayIndex + 1 &&
+        intervalToNumber(schedule.interval) === intervalIndex
+    );
+    return !coursesOnTable.includes(hoveredCourse.id) && timeMatched;
+  }, [coursesOnTable, hoveredCourse, dayIndex, intervalIndex]);
+
   return (
     <ChakraTd
       sx={{
@@ -127,9 +146,9 @@ const Td: React.FC<TdProps> = ({
     >
       <Box
         sx={{
-          zIndex: 99,
+          zIndex: 98,
           position: "absolute",
-          top: isFirstInterval ? `-${tableCellProperty.borderWidth / 2}px` : 0,
+          top: 0,
           left: 0,
           bg: "linear-gradient(0deg, rgba(204, 204, 204, 0.24), rgba(204, 204, 204, 0.24)), #FFFFFF",
           opacity: 0.32,
@@ -137,10 +156,25 @@ const Td: React.FC<TdProps> = ({
           h: "100%",
         }}
       />
+      {isHovered ? (
+        <Box
+          sx={{
+            zIndex: 99,
+            position: "absolute",
+            top: `-${tableCellProperty.borderWidth}px`,
+            left: `-${tableCellProperty.borderWidth}px`,
+            border: `1px solid #D69600`,
+            bg: "#FFCA4D",
+            opacity: 1,
+            w: `${tableCellProperty.w + tableCellProperty.borderWidth}px`,
+            h: `${tableCellProperty.h + tableCellProperty.borderWidth}px`,
+          }}
+        />
+      ) : null}
       <Box
         position="absolute"
         sx={{
-          top: isFirstInterval ? `-${tableCellProperty.borderWidth / 2}px` : 0,
+          top: 0,
           left: 0,
           zIndex: 100,
         }}
@@ -193,6 +227,11 @@ function CourseTable(props: CourseTableProps) {
   const [openPortal, setOpenPortal] = useState<string | null>(null);
 
   const coursesRle = useMemo(() => courses2courseTableRle(courses), [courses]);
+  const coursesOnTable: string[] = useMemo(() => {
+    return Object.values(coursesRle).map(
+      (courseRle) => courseRle?.course?.id ?? ""
+    );
+  }, [coursesRle]);
 
   return (
     <Flex overflowX={"auto"}>
@@ -277,6 +316,7 @@ function CourseTable(props: CourseTableProps) {
                         intervalIndex={intervalIndex}
                         openPortal={openPortal}
                         setOpenPortal={setOpenPortal}
+                        coursesOnTable={coursesOnTable}
                         courseRle={
                           coursesRle?.[`${dayIndex + 1}-${intervalIndex}`] ??
                           null
