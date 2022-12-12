@@ -49,22 +49,69 @@ export interface CourseSpecialty {
   name: string;
 }
 
-export type Interval =
-  | "0"
-  | "1"
-  | "2"
-  | "3"
-  | "4"
-  | "5"
-  | "6"
-  | "7"
-  | "8"
-  | "9"
-  | "10"
-  | "A"
-  | "B"
-  | "C"
-  | "D";
+export const intervalSource = {
+  "0": {
+    startAt: "07:10",
+    endAt: "08:00",
+  },
+  "1": {
+    startAt: "08:10",
+    endAt: "09:00",
+  },
+  "2": {
+    startAt: "09:10",
+    endAt: "10:00",
+  },
+  "3": {
+    startAt: "10:20",
+    endAt: "11:10",
+  },
+  "4": {
+    startAt: "11:20",
+    endAt: "12:10",
+  },
+  "5": {
+    startAt: "12:20",
+    endAt: "13:10",
+  },
+  "6": {
+    startAt: "13:20",
+    endAt: "14:10",
+  },
+  "7": {
+    startAt: "14:20",
+    endAt: "15:10",
+  },
+  "8": {
+    startAt: "15:30",
+    endAt: "16:20",
+  },
+  "9": {
+    startAt: "16:30",
+    endAt: "17:20",
+  },
+  "10": {
+    startAt: "17:30",
+    endAt: "18:20",
+  },
+  A: {
+    startAt: "18:25",
+    endAt: "19:15",
+  },
+  B: {
+    startAt: "19:20",
+    endAt: "20:10",
+  },
+  C: {
+    startAt: "20:15",
+    endAt: "21:05",
+  },
+  D: {
+    startAt: "21:10",
+    endAt: "22:00",
+  },
+} as const;
+export type Interval = keyof typeof intervalSource;
 
 export interface Schedule {
   weekday: 1 | 2 | 3 | 4 | 5 | 6 | 7;

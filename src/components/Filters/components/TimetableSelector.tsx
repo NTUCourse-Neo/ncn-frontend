@@ -1,24 +1,7 @@
 import TableDragSelect from "react-table-drag-select";
 import { Flex, Text, Box, Center } from "@chakra-ui/react";
 import { intervals, days } from "constant";
-
-const intervalToTime = {
-  "0": "07:10 ı 08:00",
-  "1": "08:10 ı 09:00",
-  "2": "09:10 ı 10:00",
-  "3": "10:20 ı 11:10",
-  "4": "11:20 ı 12:10",
-  "5": "12:20 ı 13:10",
-  "6": "13:20 ı 14:10",
-  "7": "14:20 ı 15:10",
-  "8": "15:30 ı 16:20",
-  "9": "16:30 ı 17:20",
-  "10": "17:30 ı 18:20",
-  A: "18:25 ı 19:15",
-  B: "19:20 ı 20:10",
-  C: "20:15 ı 21:05",
-  D: "21:10 ı 22:00",
-};
+import { intervalSource } from "@/types/course";
 
 function TimetableSelector({
   selectedTime,
@@ -57,7 +40,8 @@ function TimetableSelector({
           mr="8px"
         >
           {intervals.map((interval, j) => {
-            const timeString = intervalToTime[interval];
+            const timeInterval = intervalSource[interval];
+            const timeString = `${timeInterval.startAt} ı ${timeInterval.endAt}`;
             return (
               <Flex
                 flexDirection={"column"}
