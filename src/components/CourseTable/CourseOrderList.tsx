@@ -20,6 +20,7 @@ import { parseCourseTimeLocation } from "utils/parseCourseSchedule";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { PuffLoader } from "react-spinners";
 import { useRouter } from "next/router";
+import { TrashCanOutlineIcon } from "@/components/CustomIcons";
 
 const tabs = [
   {
@@ -151,10 +152,9 @@ function SortableRowElement({ course }: { readonly course: Course }) {
           );
         })}
       </Flex>
-      <Flex w="20%" justify={"end"} gap={"10px"}>
+      <Flex w="20%" justify={"end"} gap={"30px"}>
         <Button
           size="sm"
-          ml={{ base: 0, md: "10px" }}
           variant="unstyled"
           colorScheme={"red"}
           onClick={(e) => {
@@ -170,6 +170,11 @@ function SortableRowElement({ course }: { readonly course: Course }) {
         >
           <Center w="100%" h="24px">
             {<Icon as={isFavorite ? FaHeart : FaRegHeart} boxSize="16px" />}
+          </Center>
+        </Button>
+        <Button size="sm" variant="unstyled" onClick={() => {}}>
+          <Center w="100%" h="24px">
+            {<TrashCanOutlineIcon boxSize="24px" />}
           </Center>
         </Button>
         <Button
