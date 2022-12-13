@@ -7,6 +7,7 @@ import {
   Tooltip,
   Center,
   Icon,
+  Input,
 } from "@chakra-ui/react";
 import { useState, useMemo } from "react";
 import { useUser } from "@auth0/nextjs-auth0";
@@ -21,6 +22,7 @@ import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { PuffLoader } from "react-spinners";
 import { useRouter } from "next/router";
 import { TrashCanOutlineIcon } from "@/components/CustomIcons";
+import { MdDragHandle } from "react-icons/md";
 
 const tabs = [
   {
@@ -104,7 +106,42 @@ function SortableRowElement({ course }: { readonly course: Course }) {
       }}
       gap={2}
     >
-      <Flex w="12%"></Flex>
+      <Flex w="12%" justify={"start"} alignItems="center" gap={7}>
+        <div
+          style={{
+            touchAction: "manipulation",
+          }}
+        >
+          <MdDragHandle cursor="row-resize" size="25" color="#4b4b4b" />
+        </div>
+        <Flex
+          sx={{
+            fontSize: "14px",
+            color: "#4b4b4b",
+            lineHeight: 1.4,
+          }}
+          alignItems="center"
+        >
+          <Text noOfLines={1}>排序</Text>
+          <Input
+            size="xs"
+            w="50px"
+            type={"number"}
+            onBlur={() => {
+              console.log("on focus out");
+            }}
+            sx={{
+              mx: "6px",
+              border: "0.8px solid #CCCCCC",
+              borderRadius: "4px",
+              fontWeight: 500,
+              fontSize: "16px",
+              color: "#1A181C",
+              lineHeight: 1,
+            }}
+          />
+        </Flex>
+      </Flex>
       <Flex w="20%" flexDirection={"column"}>
         <Text
           noOfLines={1}
