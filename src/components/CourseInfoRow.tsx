@@ -29,7 +29,7 @@ import { useRouter } from "next/router";
 import { IoWarningOutline } from "react-icons/io5";
 import useNeoToast from "@/hooks/useNeoToast";
 
-function DeptBadge({ course }: { readonly course: Course }) {
+export function DeptBadge({ course }: { readonly course: Course }) {
   if (course.departments.length === 0) {
     return null;
   }
@@ -70,7 +70,7 @@ function DeptBadge({ course }: { readonly course: Course }) {
   );
 }
 
-const CustomTag = forwardRef<HTMLDivElement, BoxProps>((props, ref) => {
+export const CustomTag = forwardRef<HTMLDivElement, BoxProps>((props, ref) => {
   const { children, ...restProps } = props;
   return (
     <Box
