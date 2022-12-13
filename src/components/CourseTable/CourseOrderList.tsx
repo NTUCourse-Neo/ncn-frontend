@@ -67,9 +67,13 @@ type CourseOrderListTabId = typeof tabs[number]["id"];
 function SortableRowElement({
   course,
   index,
+  isPrepareToRemoved,
+  onClickRemoveButton,
 }: {
   readonly course: Course;
   readonly index: number;
+  readonly isPrepareToRemoved: boolean;
+  readonly onClickRemoveButton: () => void;
 }) {
   const router = useRouter();
   const { user } = useUser();
@@ -293,12 +297,21 @@ function SortableRowElement({
       <Button
         size="sm"
         variant="unstyled"
-        onClick={() => {}}
+        onClick={onClickRemoveButton}
         mr="30px"
         zIndex={2}
       >
-        <Center w="100%" h="24px">
-          {<TrashCanOutlineIcon boxSize="24px" />}
+        <Center
+          w="100%"
+          h="24px"
+          color={isPrepareToRemoved ? "error.500" : "#4b4b4b"}
+        >
+          {
+            <TrashCanOutlineIcon
+              boxSize="24px"
+              transition="all 0.2s ease-in-out"
+            />
+          }
         </Center>
       </Button>
       <Button
@@ -357,6 +370,20 @@ export default function CourseOrderList() {
       Calculus: [],
       ForeignLanguage: [],
     });
+
+  const handleDelete = (courseId: string, tab: CourseOrderListTabId) => {
+    if (prepareToRemoveCourseId[tab].includes(courseId)) {
+      setPrepareToRemoveCourseId({
+        ...prepareToRemoveCourseId,
+        [tab]: prepareToRemoveCourseId[tab].filter((id) => id !== courseId),
+      });
+    } else {
+      setPrepareToRemoveCourseId({
+        ...prepareToRemoveCourseId,
+        [tab]: [...prepareToRemoveCourseId[tab], courseId],
+      });
+    }
+  };
 
   const sensors = useSensors(
     useSensor(MouseSensor),
@@ -473,6 +500,12 @@ export default function CourseOrderList() {
                       key={course.id}
                       course={course}
                       index={index}
+                      isPrepareToRemoved={prepareToRemoveCourseId[
+                        activeTabId
+                      ].includes(course.id)}
+                      onClickRemoveButton={() => {
+                        handleDelete(course.id, activeTabId);
+                      }}
                     />
                   );
                 })}
@@ -500,6 +533,14 @@ export default function CourseOrderList() {
               h: "36px",
             }}
             disabled={!isEdited}
+            onClick={() => {
+              setCourseListForSort({
+                Common: courseTable?.courses?.map((c) => c.id) ?? [],
+                Chinese: [],
+                Calculus: [],
+                ForeignLanguage: [],
+              });
+            }}
           >
             還原此次變更
           </Button>
