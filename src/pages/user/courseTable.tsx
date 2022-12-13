@@ -9,6 +9,7 @@ import UserCoursePanel from "@/components/UserCoursePanel";
 import CourseTable from "@/components/CourseTable";
 import { InfoOutlineIcon } from "@chakra-ui/icons";
 import { useState } from "react";
+import CourseOrderList from "@/components/CourseTable/CourseOrderList";
 
 const tabs = [
   {
@@ -56,16 +57,27 @@ export default function CourseTablePage({
   const [displayModeId, setDisplayModeId] = useState<DisplayModeId>("all");
   const tabContentMap: Record<TabId, JSX.Element> = {
     courseTable: (
-      <CourseTable
-        courses={courseTable?.courses ?? []}
-        tableCellProperty={{
-          w: 160,
-          h: 50,
-          borderWidth: 1,
-        }}
-      />
+      <Flex
+        w="100%"
+        minH="70vh"
+        justifyContent={"center"}
+        alignItems="center"
+        overflow={"auto"}
+        pt={4}
+        px={4}
+        pb={12}
+      >
+        <CourseTable
+          courses={courseTable?.courses ?? []}
+          tableCellProperty={{
+            w: 160,
+            h: 50,
+            borderWidth: 1,
+          }}
+        />
+      </Flex>
     ),
-    courseOrder: <></>,
+    courseOrder: displayModeId === "all" ? <CourseOrderList /> : <>456</>,
   };
   const hideUserCoursePanel =
     tabId === "courseOrder" && displayModeId === "all";
@@ -282,18 +294,7 @@ export default function CourseTablePage({
                   </Flex>
                 ) : null}
               </Flex>
-              <Flex
-                w="100%"
-                minH="80vh"
-                justifyContent={"center"}
-                alignItems="center"
-                overflow={"auto"}
-                pt={4}
-                px={4}
-                pb={12}
-              >
-                {tabContentMap[tabId]}
-              </Flex>
+              {tabContentMap[tabId]}
             </Box>
           </Flex>
           <Flex
