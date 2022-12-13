@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function CourseTableFloatingButton() {
   return (
-    <Link href="/courseTable">
+    <Link href="/user/courseTable">
       <Flex
         as="button"
         flexDirection="column"
