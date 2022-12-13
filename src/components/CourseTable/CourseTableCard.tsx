@@ -11,6 +11,7 @@ import {
   AlertDialogFooter,
   AlertDialogBody,
   AlertDialogHeader,
+  HStack,
 } from "@chakra-ui/react";
 import { CourseRLE } from "@/utils/courseTableRle";
 import { CloseIcon } from "@chakra-ui/icons";
@@ -22,6 +23,8 @@ import { useUser } from "@auth0/nextjs-auth0";
 import useUserInfo from "hooks/useUserInfo";
 import { hoverCourseState } from "@/utils/hoverCourse";
 import { useSnapshot } from "valtio";
+import { intervalSource } from "@/types/course";
+import { numberToInterval } from "@/utils/intervalNumberConverter";
 
 export function CourseTableCardPortal({
   courseRle,
@@ -46,6 +49,11 @@ export function CourseTableCardPortal({
       return intervals[intervalIndex + i];
     })
     .join(", ")}`;
+  const intervalTime = useMemo(() => {
+    const startInterval = numberToInterval(intervalIndex);
+    const endInterval = numberToInterval(intervalIndex + duration - 1);
+    return `${intervalSource[startInterval].startAt}~${intervalSource[endInterval].endAt}`;
+  }, [duration, intervalIndex]);
   const { isOpen, onOpen, onClose: closeDialog } = useDisclosure();
   const cancelRef = useRef<HTMLButtonElement>(null);
 
@@ -94,17 +102,21 @@ export function CourseTableCardPortal({
           >
             {course.teacher}
           </Text>
-          <Text
-            textAlign={"start"}
-            noOfLines={1}
+          <HStack
+            spacing={3}
             sx={{
               fontSize: "12px",
               lineHeight: 1.4,
               color: "#4b4b4b",
             }}
           >
-            {time}
-          </Text>
+            <Text textAlign={"start"} noOfLines={1}>
+              {time}
+            </Text>
+            <Text textAlign={"start"} noOfLines={1} color={"#909090"}>
+              {intervalTime}
+            </Text>
+          </HStack>
           <Text
             textAlign={"start"}
             noOfLines={1}
