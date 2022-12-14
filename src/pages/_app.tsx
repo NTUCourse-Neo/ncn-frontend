@@ -18,9 +18,11 @@ function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
     router.events.on("routeChangeStart", nProgress.start);
     router.events.on("routeChangeComplete", nProgress.done);
+    router.events.on("routeChangeError", nProgress.done);
     return () => {
       router.events.off("routeChangeStart", nProgress.start);
       router.events.off("routeChangeComplete", nProgress.done);
+      router.events.off("routeChangeError", nProgress.done);
     };
   }, [router.events]);
 

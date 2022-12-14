@@ -7,8 +7,14 @@ import {
   Center,
   Icon,
   Input,
+  AlertDialog,
+  AlertDialogOverlay,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogBody,
+  AlertDialogHeader,
 } from "@chakra-ui/react";
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { useUser } from "@auth0/nextjs-auth0";
 import useCourseTable from "@/hooks/useCourseTable";
 import useUserInfo from "@/hooks/useUserInfo";
@@ -45,6 +51,7 @@ import {
 } from "@dnd-kit/modifiers";
 import { patchCourseTable } from "queries/courseTable";
 import { IoWarningOutline, IoCheckmarkCircleOutline } from "react-icons/io5";
+import useWarnIfUnsavedChanges from "@/hooks/useWarnIfUnsavedChanges";
 
 const tabs = [
   {
@@ -518,6 +525,9 @@ export default function CourseOrderList() {
     );
     return hasDeletedCourses || hasReorderedCourses;
   }, [courseListForSort, prepareToRemoveCourseId, courseTable?.courses]);
+  const { showWarning, closeWarning, setProceedWithoutSaving } =
+    useWarnIfUnsavedChanges(isEdited);
+  const cancelRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (isEdited) {
@@ -713,6 +723,67 @@ export default function CourseOrderList() {
           </Button>
         </Flex>
       </Flex>
+      <AlertDialog
+        motionPreset="slideInBottom"
+        leastDestructiveRef={cancelRef}
+        onClose={closeWarning}
+        isOpen={showWarning}
+        isCentered
+        size="xs"
+      >
+        <AlertDialogOverlay />
+        <AlertDialogContent p={6}>
+          <AlertDialogHeader
+            sx={{
+              fontWeight: 500,
+              fontSize: "18px",
+              p: 0,
+            }}
+          >
+            系統提醒
+          </AlertDialogHeader>
+          <AlertDialogBody
+            p={0}
+            mt={"8px"}
+            sx={{
+              color: "#6f6f6f",
+            }}
+          >
+            志願序變更尚未儲存，離開此頁面變更記錄將消失，確定要離開？
+          </AlertDialogBody>
+          <AlertDialogFooter gap="8px" p={0} mt={8}>
+            <Button
+              ref={cancelRef}
+              sx={{
+                w: "60px",
+                h: "36px",
+                borderRadius: "full",
+                fontWeight: 500,
+                fontSize: "14px",
+              }}
+              onClick={closeWarning}
+            >
+              取消
+            </Button>
+            <Button
+              variant={"unstyled"}
+              sx={{
+                w: "60px",
+                h: "36px",
+                fontWeight: 500,
+                fontSize: "14px",
+                color: "#4b4b4b",
+              }}
+              onClick={() => {
+                setProceedWithoutSaving(true);
+                closeWarning();
+              }}
+            >
+              確定
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Flex>
   );
 }

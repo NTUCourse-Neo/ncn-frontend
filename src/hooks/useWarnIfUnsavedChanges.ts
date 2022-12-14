@@ -7,10 +7,6 @@ const useWarnIfUnsavedChanges = (unsavedChanges: boolean) => {
   const [showWarning, setShowWarning] = useState(false);
   const [proceedWithoutSaving, setProceedWithoutSaving] = useState(false);
 
-  console.log("showWarning", showWarning);
-  console.log("proceedWithoutSaving", proceedWithoutSaving);
-  console.log("url: ", url);
-
   const closeWarning = () => setShowWarning(false);
 
   // intercept route change when there are unsaved changes
