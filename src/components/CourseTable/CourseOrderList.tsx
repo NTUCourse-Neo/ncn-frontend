@@ -43,6 +43,7 @@ import {
   restrictToVerticalAxis,
   restrictToParentElement,
 } from "@dnd-kit/modifiers";
+import { patchCourseTable } from "queries/courseTable";
 
 const tabs = [
   {
@@ -368,8 +369,12 @@ export default function CourseOrderList() {
     user?.sub ?? null
   );
   const courseTableKey = userInfo?.course_tables?.[0] ?? null;
-  const { courseTable, isLoading: isCourseTableLoading } =
-    useCourseTable(courseTableKey);
+  const {
+    courseTable,
+    isLoading: isCourseTableLoading,
+    mutate: mutateCourseTable,
+  } = useCourseTable(courseTableKey);
+  const [isLoading, setIsLoading] = useState(false);
   const tabCoursesDict: Record<CourseOrderListTabId, Record<string, Course>> = {
     Common: (courseTable?.courses ?? []).reduce((acc, course) => {
       acc[course.id] = course;
@@ -425,6 +430,55 @@ export default function CourseOrderList() {
     },
     [courseListForSort]
   );
+
+  // TODO: refactor to support ForeignLanguage, Chinese, Calculus
+  const handleSaveCourseTable = async () => {
+    setIsLoading(true);
+    if (courseTable) {
+      try {
+        const updatedCourseTableData = await mutateCourseTable(
+          async (prev) => {
+            const data = await patchCourseTable(
+              courseTable.id,
+              courseTable.name,
+              courseTable.user_id,
+              courseListForSort["Common"].filter(
+                (id) => !prepareToRemoveCourseId["Common"].includes(id)
+              )
+            );
+            return data ?? prev;
+          },
+          {
+            revalidate: false,
+            populateCache: true,
+          }
+        );
+        if (updatedCourseTableData) {
+          setCourseListForSort({
+            ...courseListForSort,
+            Common: updatedCourseTableData.course_table.courses.map(
+              (c) => c.id
+            ),
+          });
+          setPrepareToRemoveCourseId({
+            Common: [],
+            Chinese: [],
+            Calculus: [],
+            ForeignLanguage: [],
+          });
+          // success
+          console.log("success");
+        }
+      } catch (err) {
+        // error
+        console.log("error");
+      }
+    } else {
+      // error
+      console.log("error");
+    }
+    setIsLoading(false);
+  };
 
   const sensors = useSensors(
     useSensor(MouseSensor),
@@ -600,6 +654,10 @@ export default function CourseOrderList() {
               h: "36px",
             }}
             disabled={!isEdited}
+            isLoading={isLoading}
+            onClick={async () => {
+              handleSaveCourseTable();
+            }}
           >
             儲存
           </Button>
