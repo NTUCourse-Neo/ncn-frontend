@@ -8,7 +8,7 @@ import {
   Icon,
   Input,
 } from "@chakra-ui/react";
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { useUser } from "@auth0/nextjs-auth0";
 import useCourseTable from "@/hooks/useCourseTable";
 import useUserInfo from "@/hooks/useUserInfo";
@@ -44,6 +44,7 @@ import {
   restrictToParentElement,
 } from "@dnd-kit/modifiers";
 import { patchCourseTable } from "queries/courseTable";
+import { IoWarningOutline, IoCheckmarkCircleOutline } from "react-icons/io5";
 
 const tabs = [
   {
@@ -356,6 +357,11 @@ function SortableRowElement({
   );
 }
 
+interface HintMessage {
+  message: string;
+  type: "success" | "warning";
+}
+
 type TempCourseOrderType = {
   [tab in CourseOrderListTabId]: string[];
 };
@@ -375,6 +381,8 @@ export default function CourseOrderList() {
     mutate: mutateCourseTable,
   } = useCourseTable(courseTableKey);
   const [isLoading, setIsLoading] = useState(false);
+  const [hintMessage, setHintMessage] = useState<HintMessage | null>(null);
+  const [isSaved, setIsSaved] = useState(false);
   const tabCoursesDict: Record<CourseOrderListTabId, Record<string, Course>> = {
     Common: (courseTable?.courses ?? []).reduce((acc, course) => {
       acc[course.id] = course;
@@ -468,6 +476,11 @@ export default function CourseOrderList() {
           });
           // success
           console.log("success");
+          setIsSaved(true);
+          setHintMessage({
+            type: "success",
+            message: "志願序變更已儲存",
+          });
         }
       } catch (err) {
         // error
@@ -505,6 +518,18 @@ export default function CourseOrderList() {
     );
     return hasDeletedCourses || hasReorderedCourses;
   }, [courseListForSort, prepareToRemoveCourseId, courseTable?.courses]);
+
+  useEffect(() => {
+    if (isEdited) {
+      setIsSaved(false);
+      setHintMessage({
+        type: "warning",
+        message: "志願序變更尚未儲存",
+      });
+    } else if (!isSaved) {
+      setHintMessage(null);
+    }
+  }, [isEdited, isSaved]);
 
   return (
     <Flex w="100%" h="70vh" flexDirection={"column"}>
@@ -621,7 +646,32 @@ export default function CourseOrderList() {
         p="10px 32px"
         zIndex={1001}
       >
-        <Flex></Flex>
+        <Flex>
+          {hintMessage === null ? null : (
+            <HStack
+              color={
+                hintMessage.type === "warning" ? "error.500" : "success.500"
+              }
+            >
+              <Icon
+                as={
+                  hintMessage.type === "warning"
+                    ? IoWarningOutline
+                    : IoCheckmarkCircleOutline
+                }
+              />
+              <Text
+                sx={{
+                  fontWeight: 500,
+                  fontSize: "14px",
+                  lineHeight: 1.4,
+                }}
+              >
+                {hintMessage.message}
+              </Text>
+            </HStack>
+          )}
+        </Flex>
         <Flex gap="28px">
           <Button
             variant={"unstyled"}
