@@ -330,7 +330,7 @@ function HeaderBar() {
         flexDirection="row"
         justifyContent="center"
         alignItems="center"
-        zIndex="1000"
+        zIndex="2000"
         pr={{ base: 6, md: 10, lg: 20 }}
         pl={!isSearchModeEnable ? { base: 6, md: 10, lg: 20 } : "9%"}
         shadow={
