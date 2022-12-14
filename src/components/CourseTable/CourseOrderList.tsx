@@ -719,7 +719,7 @@ export default function CourseOrderList() {
               handleSaveCourseTable();
             }}
           >
-            儲存
+            儲存{""}
           </Button>
         </Flex>
       </Flex>
