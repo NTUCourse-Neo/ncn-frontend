@@ -8,7 +8,7 @@ import {
   Icon,
   Input,
 } from "@chakra-ui/react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useUser } from "@auth0/nextjs-auth0";
 import useCourseTable from "@/hooks/useCourseTable";
 import useUserInfo from "@/hooks/useUserInfo";
@@ -67,14 +67,23 @@ type CourseOrderListTabId = typeof tabs[number]["id"];
 function SortableRowElement({
   course,
   index,
+  tab,
   isPrepareToRemoved,
   onClickRemoveButton,
+  handleReorder,
 }: {
   readonly course: Course;
   readonly index: number;
+  readonly tab: CourseOrderListTabId;
   readonly isPrepareToRemoved: boolean;
   readonly onClickRemoveButton: () => void;
+  readonly handleReorder: (
+    tab: CourseOrderListTabId,
+    oldIndex: number,
+    newIndex: number
+  ) => void;
 }) {
+  const [order, setOrder] = useState<number | null>(index + 1);
   const router = useRouter();
   const { user } = useUser();
   const { userInfo, addOrRemoveFavorite, isLoading } = useUserInfo(
@@ -195,8 +204,23 @@ function SortableRowElement({
             size="xs"
             w="50px"
             type={"number"}
+            value={order ?? ""}
+            onChange={(e) => {
+              setOrder((prev) => {
+                const newOrder = parseInt(e.target.value);
+                if (isNaN(newOrder)) {
+                  return null;
+                }
+                return newOrder;
+              });
+            }}
+            isInvalid={order !== null && order <= 0}
             onBlur={() => {
-              console.log("on focus out");
+              // update course order
+              if (order !== null && order >= 1) {
+                const newIndex = order - 1;
+                handleReorder(tab, index, newIndex);
+              }
             }}
             sx={{
               mx: "6px",
@@ -385,6 +409,23 @@ export default function CourseOrderList() {
     }
   };
 
+  const handleReorder = useCallback(
+    (tab: CourseOrderListTabId, oldIndex: number, newIndex: number) => {
+      const destIndex =
+        newIndex <= 0
+          ? 0
+          : newIndex >= courseListForSort[tab].length
+          ? courseListForSort[tab].length - 1
+          : newIndex;
+
+      setCourseListForSort((courseListForSort) => ({
+        ...courseListForSort,
+        [tab]: arrayMove(courseListForSort[tab], oldIndex, destIndex),
+      }));
+    },
+    [courseListForSort]
+  );
+
   const sensors = useSensors(
     useSensor(MouseSensor),
     useSensor(TouchSensor),
@@ -465,24 +506,26 @@ export default function CourseOrderList() {
               modifiers={[restrictToParentElement, restrictToVerticalAxis]}
               onDragEnd={(event) => {
                 const { active, over } = event;
-                if (active.id !== over?.id) {
-                  setCourseListForSort((courseListForSort) => {
-                    const oldIndex = courseListForSort[activeTabId].indexOf(
-                      String(active.id)
-                    );
-                    const newIndex = courseListForSort[activeTabId].indexOf(
-                      String(over?.id)
-                    );
+                if (over) {
+                  if (active.id !== over?.id) {
+                    setCourseListForSort((courseListForSort) => {
+                      const oldIndex = courseListForSort[activeTabId].indexOf(
+                        String(active.id)
+                      );
+                      const newIndex = courseListForSort[activeTabId].indexOf(
+                        String(over?.id)
+                      );
 
-                    return {
-                      ...courseListForSort,
-                      [activeTabId]: arrayMove(
-                        courseListForSort[activeTabId],
-                        oldIndex,
-                        newIndex
-                      ),
-                    };
-                  });
+                      return {
+                        ...courseListForSort,
+                        [activeTabId]: arrayMove(
+                          courseListForSort[activeTabId],
+                          oldIndex,
+                          newIndex
+                        ),
+                      };
+                    });
+                  }
                 }
               }}
             >
@@ -497,7 +540,7 @@ export default function CourseOrderList() {
                   }
                   return (
                     <SortableRowElement
-                      key={course.id}
+                      key={`${course.id}-${index}`}
                       course={course}
                       index={index}
                       isPrepareToRemoved={prepareToRemoveCourseId[
@@ -506,6 +549,8 @@ export default function CourseOrderList() {
                       onClickRemoveButton={() => {
                         handleDelete(course.id, activeTabId);
                       }}
+                      handleReorder={handleReorder}
+                      tab={activeTabId}
                     />
                   );
                 })}
