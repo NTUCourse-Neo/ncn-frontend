@@ -86,7 +86,7 @@ function Dropdown(props: DropdownProps) {
             position="absolute"
             color="black"
             p={2}
-            zIndex={500}
+            zIndex={2000}
             onClick={() => {
               if (closeAfterClick) {
                 setIsOpen(false);
@@ -133,7 +133,7 @@ function Dropdown(props: DropdownProps) {
             position="absolute"
             color="black"
             p={2}
-            zIndex={500}
+            zIndex={2000}
             onClick={() => {
               if (closeAfterClick) {
                 setIsOpen(false);
