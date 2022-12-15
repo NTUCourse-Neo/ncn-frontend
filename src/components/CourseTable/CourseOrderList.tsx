@@ -93,6 +93,8 @@ function SortableRowElement({
   ) => void;
 }) {
   const [order, setOrder] = useState<number | null>(index + 1);
+  const [isInputFocused, setIsInputFocused] = useState(false);
+
   const router = useRouter();
   const { user } = useUser();
   const { userInfo, addOrRemoveFavorite, isLoading } = useUserInfo(
@@ -151,7 +153,7 @@ function SortableRowElement({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: course.id });
+  } = useSortable({ id: course.id, disabled: isInputFocused });
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -224,12 +226,16 @@ function SortableRowElement({
               });
             }}
             isInvalid={order !== null && order <= 0}
+            onFocus={() => {
+              setIsInputFocused(true);
+            }}
             onBlur={() => {
               // update course order
               if (order !== null && order >= 1) {
                 const newIndex = order - 1;
                 handleReorder(tab, index, newIndex);
               }
+              setIsInputFocused(false);
             }}
             sx={{
               mx: "6px",
@@ -719,7 +725,7 @@ export default function CourseOrderList() {
               handleSaveCourseTable();
             }}
           >
-            儲存{""}
+            儲存
           </Button>
         </Flex>
       </Flex>
