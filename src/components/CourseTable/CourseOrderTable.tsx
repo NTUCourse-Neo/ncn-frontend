@@ -1,8 +1,13 @@
 import { Flex, Box, Td as ChakraTd, TableCellProps } from "@chakra-ui/react";
 import { CourseTable } from "@/types/courseTable";
+import { Course } from "@/types/course";
 import { CourseTableCellProps } from "@/components/CourseTable/NeoCourseTable";
 import { intervals, days } from "@/constant";
-import NeoCourseTable from "@/components/CourseTable/NeoCourseTable";
+import NeoCourseTable, {
+  // tabs,
+  CourseOrderListTabId,
+} from "@/components/CourseTable/NeoCourseTable";
+import { intervalToNumber } from "@/utils/intervalNumberConverter";
 
 interface TdProps extends TableCellProps {
   readonly children: React.ReactNode;
@@ -85,6 +90,69 @@ const Td: React.FC<TdProps> = ({
   );
 };
 
+type CourseOrder = {
+  course: Course;
+  order: number;
+};
+
+type IntervalCourseOrderDict = {
+  [tab in CourseOrderListTabId]: CourseOrder[];
+};
+type CourseTableCourseOrderDict = {
+  [key: `${number}-${number}`]: IntervalCourseOrderDict;
+};
+
+function getNumberOfCourses(intervalCourseOrderDict: IntervalCourseOrderDict) {
+  return Object.values(intervalCourseOrderDict).reduce(
+    (acc, courseOrderList) => {
+      return acc + courseOrderList.length;
+    },
+    0
+  );
+}
+
+// TODO: refactor after integrated with new backend
+function getCourseTableCourseOrderDict(
+  courseTable: CourseTable | null
+): CourseTableCourseOrderDict {
+  if (courseTable === null) return {};
+  const res: CourseTableCourseOrderDict = {};
+  days.forEach((day, dayIndex) => {
+    intervals.forEach((interval, intervalIndex) => {
+      const key = `${dayIndex + 1}-${intervalIndex}` as `${number}-${number}`;
+      res[key] = {
+        Common: [],
+        Chinese: [],
+        ForeignLanguage: [],
+        Calculus: [],
+      } as IntervalCourseOrderDict;
+    });
+  });
+
+  // process Common courses
+  courseTable.courses.forEach((course, courseIndex) => {
+    const { schedules } = course;
+    schedules.forEach((schedule) => {
+      const { weekday, interval: intervalString } = schedule;
+      const interval = intervalToNumber(intervalString);
+      const key = `${weekday}-${interval}` as `${number}-${number}`;
+      res[key] = {
+        ...res[key],
+        Common: [
+          ...res[key]["Common"],
+          {
+            course: course,
+            order: courseIndex + 1,
+          },
+        ],
+      };
+    });
+  });
+  // TODO: add other tabs
+
+  return res;
+}
+
 interface CourseOrderTableProps {
   readonly courseTable: CourseTable | null;
   readonly tableCellProperty: CourseTableCellProps;
@@ -92,6 +160,9 @@ interface CourseOrderTableProps {
 
 export default function CourseOrderTable(props: CourseOrderTableProps) {
   const { courseTable, tableCellProperty } = props;
+  const courseTableCourseOrderDict = courseTable
+    ? getCourseTableCourseOrderDict(courseTable)
+    : {};
 
   return (
     <Flex
@@ -122,7 +193,11 @@ export default function CourseOrderTable(props: CourseOrderTableProps) {
               dayIndex={dayIndex}
               intervalIndex={intervalIndex}
               tableCellProperty={tableCellProperty}
-            >{`${dayIndex + 1}-${intervalIndex}`}</Td>
+            >{`${getNumberOfCourses(
+              courseTableCourseOrderDict?.[
+                `${dayIndex + 1}-${intervalIndex}`
+              ] ?? {}
+            )}`}</Td>
           );
         }}
       />
