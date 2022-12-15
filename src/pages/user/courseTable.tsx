@@ -58,25 +58,14 @@ export default function CourseTablePage({
   const [displayModeId, setDisplayModeId] = useState<DisplayModeId>("all");
   const tabContentMap: Record<TabId, JSX.Element> = {
     courseTable: (
-      <Flex
-        w="100%"
-        minH="70vh"
-        justifyContent={"center"}
-        alignItems="center"
-        overflow={"auto"}
-        pt={4}
-        px={4}
-        pb={12}
-      >
-        <CourseTable
-          courses={courseTable?.courses ?? []}
-          tableCellProperty={{
-            w: 160,
-            h: 50,
-            borderWidth: 1,
-          }}
-        />
-      </Flex>
+      <CourseTable
+        courses={courseTable?.courses ?? []}
+        tableCellProperty={{
+          w: 160,
+          h: 50,
+          borderWidth: 1,
+        }}
+      />
     ),
     courseOrder:
       displayModeId === "all" ? (

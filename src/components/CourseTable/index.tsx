@@ -1,5 +1,11 @@
 import { Course } from "@/types/course";
-import { Td as ChakraTd, TableCellProps, Box, Fade } from "@chakra-ui/react";
+import {
+  Td as ChakraTd,
+  TableCellProps,
+  Box,
+  Fade,
+  Flex,
+} from "@chakra-ui/react";
 import CourseTableCard from "@/components/CourseTable/CourseTableCard";
 import { intervals, days } from "@/constant";
 import { useState, useMemo } from "react";
@@ -196,45 +202,58 @@ function CourseTable(props: CourseTableProps) {
   }, [coursesRle]);
 
   return (
-    <NeoCourseTable
-      tableCellProperty={tableCellProperty}
-      renderCustomCell={(dayIndex, intervalIndex) => {
-        return (
-          <Td
-            key={dayIndex}
-            minW={`${tableCellProperty.w}px`}
-            w={`${tableCellProperty.w}px`}
-            maxW={`${tableCellProperty.w}px`}
-            minH={`${tableCellProperty.h}px`}
-            h={`${tableCellProperty.h}px`}
-            isFirstDay={dayIndex === 0}
-            isLastDay={dayIndex === days.length - 1}
-            isFirstInterval={intervalIndex === 0}
-            isLastInterval={intervalIndex === intervals.length - 1}
-            dayIndex={dayIndex}
-            intervalIndex={intervalIndex}
-            openPortal={openPortal}
-            setOpenPortal={setOpenPortal}
-            coursesOnTable={coursesOnTable}
-            courseRle={coursesRle?.[`${dayIndex + 1}-${intervalIndex}`] ?? null}
-            tableCellProperty={tableCellProperty}
-          >
-            {coursesRle?.[`${dayIndex + 1}-${intervalIndex}`] ? (
-              <CourseTableCard
-                isActive={openPortal === `${dayIndex + 1}-${intervalIndex}`}
-                courseRle={coursesRle[`${dayIndex + 1}-${intervalIndex}`]}
-                h={
-                  coursesRle[`${dayIndex + 1}-${intervalIndex}`].duration *
-                    tableCellProperty.h -
-                  tableCellProperty.borderWidth
-                }
-                w={`${tableCellProperty.w - tableCellProperty.borderWidth}px`}
-              />
-            ) : null}
-          </Td>
-        );
-      }}
-    />
+    <Flex
+      w="100%"
+      minH="70vh"
+      justifyContent={"center"}
+      alignItems="center"
+      overflow={"auto"}
+      pt={4}
+      px={4}
+      pb={12}
+    >
+      <NeoCourseTable
+        tableCellProperty={tableCellProperty}
+        renderCustomCell={(dayIndex, intervalIndex) => {
+          return (
+            <Td
+              key={dayIndex}
+              minW={`${tableCellProperty.w}px`}
+              w={`${tableCellProperty.w}px`}
+              maxW={`${tableCellProperty.w}px`}
+              minH={`${tableCellProperty.h}px`}
+              h={`${tableCellProperty.h}px`}
+              isFirstDay={dayIndex === 0}
+              isLastDay={dayIndex === days.length - 1}
+              isFirstInterval={intervalIndex === 0}
+              isLastInterval={intervalIndex === intervals.length - 1}
+              dayIndex={dayIndex}
+              intervalIndex={intervalIndex}
+              openPortal={openPortal}
+              setOpenPortal={setOpenPortal}
+              coursesOnTable={coursesOnTable}
+              courseRle={
+                coursesRle?.[`${dayIndex + 1}-${intervalIndex}`] ?? null
+              }
+              tableCellProperty={tableCellProperty}
+            >
+              {coursesRle?.[`${dayIndex + 1}-${intervalIndex}`] ? (
+                <CourseTableCard
+                  isActive={openPortal === `${dayIndex + 1}-${intervalIndex}`}
+                  courseRle={coursesRle[`${dayIndex + 1}-${intervalIndex}`]}
+                  h={
+                    coursesRle[`${dayIndex + 1}-${intervalIndex}`].duration *
+                      tableCellProperty.h -
+                    tableCellProperty.borderWidth
+                  }
+                  w={`${tableCellProperty.w - tableCellProperty.borderWidth}px`}
+                />
+              ) : null}
+            </Td>
+          );
+        }}
+      />
+    </Flex>
   );
 }
 
