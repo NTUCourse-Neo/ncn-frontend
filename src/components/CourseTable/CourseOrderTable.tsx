@@ -1,4 +1,11 @@
-import { Flex, Box, Td as ChakraTd, TableCellProps } from "@chakra-ui/react";
+import {
+  Flex,
+  Box,
+  Td as ChakraTd,
+  TableCellProps,
+  BoxProps,
+  Circle,
+} from "@chakra-ui/react";
 import { CourseTable } from "@/types/courseTable";
 import { Course } from "@/types/course";
 import { CourseTableCellProps } from "@/components/CourseTable/NeoCourseTable";
@@ -89,6 +96,82 @@ const Td: React.FC<TdProps> = ({
     </ChakraTd>
   );
 };
+interface CourseOrderTableCardProps extends BoxProps {
+  readonly numberOfCourses: number;
+  readonly intervalCourseOrderDict: IntervalCourseOrderDict;
+}
+function CourseOrderTableCard(props: CourseOrderTableCardProps) {
+  const { numberOfCourses, intervalCourseOrderDict, ...restProps } = props;
+  const numberBg =
+    numberOfCourses >= 1
+      ? numberOfCourses > 5
+        ? numberOfCourses > 10
+          ? numberOfCourses >= 20
+            ? "#072164"
+            : "#0D40C4"
+          : "#4575F3"
+        : "#7499F6"
+      : "#ffffff";
+  const coursesStr = Object.values(intervalCourseOrderDict)
+    .reduce((acc, courseOrders) => {
+      return [...acc, ...courseOrders];
+    }, [])
+    .map((courseOrder) => courseOrder.course.name)
+    .join(", ");
+  return (
+    <Box
+      sx={{
+        position: "relative",
+        bg: "#ffffff",
+        borderRadius: "10px",
+        boxShadow: "2px 2px 12px 0px rgba(75, 75, 75, 0.12)",
+        cursor: "pointer",
+        py: "9px",
+        pl: "8px",
+        pr: "22px",
+        overflow: "hidden",
+        transition: "all 0.2s ease-in-out",
+      }}
+      {...restProps}
+    >
+      <Flex w="100%" h="100%" gap={2}>
+        <Flex alignItems={"center"}>
+          <Circle
+            size="30px"
+            sx={{
+              bg: numberBg,
+              fontWeight: 500,
+              fontSize: "11px",
+              color: "#ffffff",
+            }}
+          >
+            {`${numberOfCourses > 1 ? "+" : ""}${numberOfCourses}`}
+          </Circle>
+        </Flex>
+        <Flex
+          w="70%"
+          flexDirection={"column"}
+          sx={{
+            fontSize: "11px",
+            color: "#4b4b4b",
+            textAlign: "left",
+          }}
+        >
+          <Flex maxW="100%">包含</Flex>
+          <Box
+            sx={{
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {coursesStr}
+          </Box>
+        </Flex>
+      </Flex>
+    </Box>
+  );
+}
 
 type CourseOrder = {
   course: Course;
@@ -193,11 +276,28 @@ export default function CourseOrderTable(props: CourseOrderTableProps) {
               dayIndex={dayIndex}
               intervalIndex={intervalIndex}
               tableCellProperty={tableCellProperty}
-            >{`${getNumberOfCourses(
-              courseTableCourseOrderDict?.[
-                `${dayIndex + 1}-${intervalIndex}`
-              ] ?? {}
-            )}`}</Td>
+            >
+              {getNumberOfCourses(
+                courseTableCourseOrderDict?.[
+                  `${dayIndex + 1}-${intervalIndex}`
+                ] ?? {}
+              ) > 0 ? (
+                <CourseOrderTableCard
+                  w={`${tableCellProperty.w - tableCellProperty.borderWidth}px`}
+                  h={`${tableCellProperty.h - tableCellProperty.borderWidth}px`}
+                  numberOfCourses={getNumberOfCourses(
+                    courseTableCourseOrderDict?.[
+                      `${dayIndex + 1}-${intervalIndex}`
+                    ] ?? {}
+                  )}
+                  intervalCourseOrderDict={
+                    courseTableCourseOrderDict?.[
+                      `${dayIndex + 1}-${intervalIndex}`
+                    ] ?? {}
+                  }
+                />
+              ) : null}
+            </Td>
           );
         }}
       />
