@@ -1,13 +1,8 @@
 import { Flex, Box, Td as ChakraTd, TableCellProps } from "@chakra-ui/react";
-import { Course } from "@/types/course";
+import { CourseTable } from "@/types/courseTable";
 import { CourseTableCellProps } from "@/components/CourseTable/NeoCourseTable";
 import { intervals, days } from "@/constant";
 import NeoCourseTable from "@/components/CourseTable/NeoCourseTable";
-
-interface CourseOrderTableProps {
-  readonly courses: Course[];
-  readonly tableCellProperty: CourseTableCellProps;
-}
 
 interface TdProps extends TableCellProps {
   readonly children: React.ReactNode;
@@ -90,8 +85,13 @@ const Td: React.FC<TdProps> = ({
   );
 };
 
+interface CourseOrderTableProps {
+  readonly courseTable: CourseTable | null;
+  readonly tableCellProperty: CourseTableCellProps;
+}
+
 export default function CourseOrderTable(props: CourseOrderTableProps) {
-  const { courses, tableCellProperty } = props;
+  const { courseTable, tableCellProperty } = props;
 
   return (
     <Flex

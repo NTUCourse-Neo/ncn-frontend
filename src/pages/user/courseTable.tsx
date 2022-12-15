@@ -59,7 +59,7 @@ export default function CourseTablePage({
   const tabContentMap: Record<TabId, JSX.Element> = {
     courseTable: (
       <CourseTable
-        courses={courseTable?.courses ?? []}
+        courseTable={courseTable}
         tableCellProperty={{
           w: 160,
           h: 50,
@@ -72,7 +72,7 @@ export default function CourseTablePage({
         <CourseOrderList />
       ) : (
         <CourseOrderTable
-          courses={courseTable?.courses ?? []}
+          courseTable={courseTable}
           tableCellProperty={{
             w: 160,
             h: 50,

@@ -1,4 +1,4 @@
-import { Course } from "@/types/course";
+import { CourseTable } from "@/types/courseTable";
 import {
   Td as ChakraTd,
   TableCellProps,
@@ -186,15 +186,18 @@ const Td: React.FC<TdProps> = ({
 };
 
 interface CourseTableProps {
-  readonly courses: Course[];
+  readonly courseTable: CourseTable | null;
   readonly tableCellProperty: CourseTableCellProps;
 }
 
 function CourseTable(props: CourseTableProps) {
-  const { courses, tableCellProperty } = props;
+  const { courseTable, tableCellProperty } = props;
   const [openPortal, setOpenPortal] = useState<string | null>(null);
 
-  const coursesRle = useMemo(() => courses2courseTableRle(courses), [courses]);
+  const coursesRle = useMemo(
+    () => (courseTable ? courses2courseTableRle(courseTable.courses) : {}),
+    [courseTable]
+  );
   const coursesOnTable: string[] = useMemo(() => {
     return Object.values(coursesRle).map(
       (courseRle) => courseRle?.course?.id ?? ""
