@@ -1,22 +1,7 @@
 import { Course } from "@/types/course";
-import {
-  Flex,
-  Center,
-  Table,
-  Tbody,
-  Tr,
-  Th as ChakraTh,
-  Td as ChakraTd,
-  TableColumnHeaderProps,
-  TableCellProps,
-  TableContainer,
-  Thead,
-  Box,
-  Fade,
-} from "@chakra-ui/react";
+import { Td as ChakraTd, TableCellProps, Box, Fade } from "@chakra-ui/react";
 import CourseTableCard from "@/components/CourseTable/CourseTableCard";
 import { intervals, days } from "@/constant";
-import { customScrollBarCss } from "@/styles/customScrollBar";
 import { useState, useMemo } from "react";
 import { usePopper } from "react-popper";
 import Portal from "@/components/Portal";
@@ -26,32 +11,9 @@ import { courses2courseTableRle } from "@/utils/courseTableRle";
 import { hoverCourseState } from "@/utils/hoverCourse";
 import { useSnapshot } from "valtio";
 import { intervalToNumber } from "@/utils/intervalNumberConverter";
-
-export interface CourseTableCellProps {
-  readonly w: number;
-  readonly h: number;
-  readonly borderWidth: number;
-}
-
-interface ThProps extends TableColumnHeaderProps {
-  readonly children: React.ReactNode;
-}
-const Th: React.FC<ThProps> = ({ children, ...rest }) => {
-  return (
-    <ChakraTh
-      sx={{
-        textAlign: "center",
-        lineHeight: 1.4,
-        color: "#1A181C",
-        fontWeight: 500,
-        fontSize: "18px",
-      }}
-      {...rest}
-    >
-      {children}
-    </ChakraTh>
-  );
-};
+import NeoCourseTable, {
+  CourseTableCellProps,
+} from "@/components/CourseTable/NeoCourseTable";
 
 interface TdProps extends TableCellProps {
   readonly children: React.ReactNode;
@@ -234,125 +196,45 @@ function CourseTable(props: CourseTableProps) {
   }, [coursesRle]);
 
   return (
-    <Flex overflowX={"auto"}>
-      <Flex flexDirection={"column"}>
-        <Box h={`${tableCellProperty.h + 8}px`} />
-        {intervals.map((interval) => (
-          <Center
-            key={interval}
-            sx={{
-              h: `${tableCellProperty.h}px`,
-              w: 12,
-              fontWeight: 500,
-              fontSize: "18px",
-              lineHeight: 1.4,
-              color: "#1A181C",
-            }}
+    <NeoCourseTable
+      tableCellProperty={tableCellProperty}
+      renderCustomCell={(dayIndex, intervalIndex) => {
+        return (
+          <Td
+            key={dayIndex}
+            minW={`${tableCellProperty.w}px`}
+            w={`${tableCellProperty.w}px`}
+            maxW={`${tableCellProperty.w}px`}
+            minH={`${tableCellProperty.h}px`}
+            h={`${tableCellProperty.h}px`}
+            isFirstDay={dayIndex === 0}
+            isLastDay={dayIndex === days.length - 1}
+            isFirstInterval={intervalIndex === 0}
+            isLastInterval={intervalIndex === intervals.length - 1}
+            dayIndex={dayIndex}
+            intervalIndex={intervalIndex}
+            openPortal={openPortal}
+            setOpenPortal={setOpenPortal}
+            coursesOnTable={coursesOnTable}
+            courseRle={coursesRle?.[`${dayIndex + 1}-${intervalIndex}`] ?? null}
+            tableCellProperty={tableCellProperty}
           >
-            {interval}
-          </Center>
-        ))}
-      </Flex>
-      <TableContainer sx={customScrollBarCss}>
-        <Table
-          variant={"unstyled"}
-          sx={{
-            borderCollapse: "separate",
-            borderSpacing: "0 0",
-          }}
-        >
-          <Thead>
-            <Tr h={`${tableCellProperty.h}px`}>
-              {days.map((day) => {
-                return (
-                  <Th
-                    key={day}
-                    w={`${tableCellProperty.w}px`}
-                    maxW={`${tableCellProperty.w}px`}
-                  >
-                    <Center>{day}</Center>
-                  </Th>
-                );
-              })}
-            </Tr>
-          </Thead>
-          <Tbody>
-            <Tr>
-              <ChakraTd h="8px" p="0" m="0">
-                {null}
-              </ChakraTd>
-            </Tr>
-          </Tbody>
-          <Tbody
-            sx={{
-              border: "1px solid #909090",
-              borderRadius: "4px",
-            }}
-          >
-            {Array.from({ length: intervals.length }, (_, intervalIndex) => {
-              return (
-                <Tr
-                  key={intervalIndex}
-                  sx={{
-                    borderRadius: "4px",
-                  }}
-                  h={`${tableCellProperty.h}px`}
-                  maxH={`${tableCellProperty.h}px`}
-                >
-                  {days.map((day, dayIndex) => {
-                    return (
-                      <Td
-                        key={dayIndex}
-                        minW={`${tableCellProperty.w}px`}
-                        w={`${tableCellProperty.w}px`}
-                        maxW={`${tableCellProperty.w}px`}
-                        minH={`${tableCellProperty.h}px`}
-                        h={`${tableCellProperty.h}px`}
-                        isFirstDay={dayIndex === 0}
-                        isLastDay={dayIndex === days.length - 1}
-                        isFirstInterval={intervalIndex === 0}
-                        isLastInterval={intervalIndex === intervals.length - 1}
-                        dayIndex={dayIndex}
-                        intervalIndex={intervalIndex}
-                        openPortal={openPortal}
-                        setOpenPortal={setOpenPortal}
-                        coursesOnTable={coursesOnTable}
-                        courseRle={
-                          coursesRle?.[`${dayIndex + 1}-${intervalIndex}`] ??
-                          null
-                        }
-                        tableCellProperty={tableCellProperty}
-                      >
-                        {coursesRle?.[`${dayIndex + 1}-${intervalIndex}`] ? (
-                          <CourseTableCard
-                            isActive={
-                              openPortal === `${dayIndex + 1}-${intervalIndex}`
-                            }
-                            courseRle={
-                              coursesRle[`${dayIndex + 1}-${intervalIndex}`]
-                            }
-                            h={
-                              coursesRle[`${dayIndex + 1}-${intervalIndex}`]
-                                .duration *
-                                tableCellProperty.h -
-                              tableCellProperty.borderWidth
-                            }
-                            w={`${
-                              tableCellProperty.w -
-                              tableCellProperty.borderWidth
-                            }px`}
-                          />
-                        ) : null}
-                      </Td>
-                    );
-                  })}
-                </Tr>
-              );
-            })}
-          </Tbody>
-        </Table>
-      </TableContainer>
-    </Flex>
+            {coursesRle?.[`${dayIndex + 1}-${intervalIndex}`] ? (
+              <CourseTableCard
+                isActive={openPortal === `${dayIndex + 1}-${intervalIndex}`}
+                courseRle={coursesRle[`${dayIndex + 1}-${intervalIndex}`]}
+                h={
+                  coursesRle[`${dayIndex + 1}-${intervalIndex}`].duration *
+                    tableCellProperty.h -
+                  tableCellProperty.borderWidth
+                }
+                w={`${tableCellProperty.w - tableCellProperty.borderWidth}px`}
+              />
+            ) : null}
+          </Td>
+        );
+      }}
+    />
   );
 }
 
