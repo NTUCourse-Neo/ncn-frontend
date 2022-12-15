@@ -27,7 +27,7 @@ import { hoverCourseState } from "@/utils/hoverCourse";
 import { useSnapshot } from "valtio";
 import { intervalToNumber } from "@/utils/intervalNumberConverter";
 
-interface CourseTableCellProps {
+export interface CourseTableCellProps {
   readonly w: number;
   readonly h: number;
   readonly borderWidth: number;

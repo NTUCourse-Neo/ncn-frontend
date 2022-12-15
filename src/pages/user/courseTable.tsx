@@ -10,6 +10,7 @@ import CourseTable from "@/components/CourseTable";
 import { InfoOutlineIcon } from "@chakra-ui/icons";
 import { useState } from "react";
 import CourseOrderList from "@/components/CourseTable/CourseOrderList";
+import CourseOrderTable from "@/components/CourseTable/CourseOrderTable";
 
 const tabs = [
   {
@@ -77,7 +78,19 @@ export default function CourseTablePage({
         />
       </Flex>
     ),
-    courseOrder: displayModeId === "all" ? <CourseOrderList /> : <>456</>,
+    courseOrder:
+      displayModeId === "all" ? (
+        <CourseOrderList />
+      ) : (
+        <CourseOrderTable
+          courses={courseTable?.courses ?? []}
+          tableCellProperty={{
+            w: 160,
+            h: 50,
+            borderWidth: 1,
+          }}
+        />
+      ),
   };
   const hideUserCoursePanel =
     tabId === "courseOrder" && displayModeId === "all";
