@@ -8,6 +8,7 @@ const useWarnIfUnsavedChanges = (unsavedChanges: boolean) => {
   const [proceedWithoutSaving, setProceedWithoutSaving] = useState(false);
 
   const closeWarning = () => setShowWarning(false);
+  const proceed = () => setProceedWithoutSaving(true);
 
   // intercept route change when there are unsaved changes
   // then store the "url" the user is trying to go to
@@ -41,7 +42,7 @@ const useWarnIfUnsavedChanges = (unsavedChanges: boolean) => {
   return {
     showWarning,
     closeWarning,
-    setProceedWithoutSaving,
+    proceed,
   };
 };
 

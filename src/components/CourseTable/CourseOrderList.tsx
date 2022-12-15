@@ -531,7 +531,7 @@ export default function CourseOrderList() {
     );
     return hasDeletedCourses || hasReorderedCourses;
   }, [courseListForSort, prepareToRemoveCourseId, courseTable?.courses]);
-  const { showWarning, closeWarning, setProceedWithoutSaving } =
+  const { showWarning, closeWarning, proceed } =
     useWarnIfUnsavedChanges(isEdited);
   const cancelRef = useRef<HTMLButtonElement>(null);
 
@@ -781,7 +781,7 @@ export default function CourseOrderList() {
                 color: "#4b4b4b",
               }}
               onClick={() => {
-                setProceedWithoutSaving(true);
+                proceed();
                 closeWarning();
               }}
             >
