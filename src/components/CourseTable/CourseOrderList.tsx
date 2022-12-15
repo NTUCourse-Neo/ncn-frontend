@@ -52,26 +52,10 @@ import {
 import { patchCourseTable } from "queries/courseTable";
 import { IoWarningOutline, IoCheckmarkCircleOutline } from "react-icons/io5";
 import useWarnIfUnsavedChanges from "@/hooks/useWarnIfUnsavedChanges";
-
-const tabs = [
-  {
-    id: "Common",
-    label: "一般科目",
-  },
-  {
-    id: "Chinese",
-    label: "國文",
-  },
-  {
-    id: "ForeignLanguage",
-    label: "英外文",
-  },
-  {
-    id: "Calculus",
-    label: "微積分",
-  },
-] as const;
-type CourseOrderListTabId = typeof tabs[number]["id"];
+import {
+  tabs,
+  CourseOrderListTabId,
+} from "@/components/CourseTable/NeoCourseTable";
 
 function SortableRowElement({
   course,

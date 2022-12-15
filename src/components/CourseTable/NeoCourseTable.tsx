@@ -15,6 +15,26 @@ import { intervals, days } from "@/constant";
 import { customScrollBarCss } from "@/styles/customScrollBar";
 import React from "react";
 
+export const tabs = [
+  {
+    id: "Common",
+    label: "一般科目",
+  },
+  {
+    id: "Chinese",
+    label: "國文",
+  },
+  {
+    id: "ForeignLanguage",
+    label: "英外文",
+  },
+  {
+    id: "Calculus",
+    label: "微積分",
+  },
+] as const;
+export type CourseOrderListTabId = typeof tabs[number]["id"];
+
 interface ThProps extends TableColumnHeaderProps {
   readonly children: React.ReactNode;
 }
