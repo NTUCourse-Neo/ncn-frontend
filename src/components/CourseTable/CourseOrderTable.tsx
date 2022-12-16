@@ -5,6 +5,13 @@ import {
   TableCellProps,
   BoxProps,
   Circle,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  useDisclosure,
+  Text,
 } from "@chakra-ui/react";
 import { CourseTable } from "@/types/courseTable";
 import { Course } from "@/types/course";
@@ -14,7 +21,13 @@ import NeoCourseTable, {
   // tabs,
   CourseOrderListTabId,
 } from "@/components/CourseTable/NeoCourseTable";
-import { intervalToNumber } from "@/utils/intervalNumberConverter";
+import {
+  intervalToNumber,
+  numberToInterval,
+} from "@/utils/intervalNumberConverter";
+import { intervalSource } from "@/types/course";
+import { customScrollBarCss } from "styles/customScrollBar";
+import { CloseIcon } from "@chakra-ui/icons";
 
 interface TdProps extends TableCellProps {
   readonly children: React.ReactNode;
@@ -89,7 +102,6 @@ const Td: React.FC<TdProps> = ({
           left: 0,
           zIndex: 100,
         }}
-        onClick={children !== null ? () => {} : undefined}
       >
         {children}
       </Box>
@@ -99,9 +111,17 @@ const Td: React.FC<TdProps> = ({
 interface CourseOrderTableCardProps extends BoxProps {
   readonly numberOfCourses: number;
   readonly intervalCourseOrderDict: IntervalCourseOrderDict;
+  readonly dayIndex: number;
+  readonly intervalIndex: number;
 }
 function CourseOrderTableCard(props: CourseOrderTableCardProps) {
-  const { numberOfCourses, intervalCourseOrderDict, ...restProps } = props;
+  const {
+    numberOfCourses,
+    intervalCourseOrderDict,
+    dayIndex,
+    intervalIndex,
+    ...restProps
+  } = props;
   const numberBg =
     numberOfCourses >= 1
       ? numberOfCourses > 5
@@ -118,58 +138,124 @@ function CourseOrderTableCard(props: CourseOrderTableCardProps) {
     }, [])
     .map((courseOrder) => courseOrder.course.name)
     .join(", ");
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
-    <Box
-      sx={{
-        position: "relative",
-        bg: "#ffffff",
-        borderRadius: "10px",
-        boxShadow: "2px 2px 12px 0px rgba(75, 75, 75, 0.12)",
-        cursor: "pointer",
-        py: "9px",
-        pl: "8px",
-        pr: "22px",
-        overflow: "hidden",
-        transition: "all 0.2s ease-in-out",
-      }}
-      {...restProps}
-    >
-      <Flex w="100%" h="100%" gap={2}>
-        <Flex alignItems={"center"}>
-          <Circle
-            size="30px"
+    <>
+      <Box
+        sx={{
+          position: "relative",
+          bg: "#ffffff",
+          borderRadius: "10px",
+          boxShadow: "2px 2px 12px 0px rgba(75, 75, 75, 0.12)",
+          cursor: "pointer",
+          py: "9px",
+          pl: "8px",
+          pr: "22px",
+          overflow: "hidden",
+          transition: "all 0.2s ease-in-out",
+        }}
+        onClick={onOpen}
+        {...restProps}
+      >
+        <Flex w="100%" h="100%" gap={2}>
+          <Flex alignItems={"center"}>
+            <Circle
+              size="30px"
+              sx={{
+                bg: numberBg,
+                fontWeight: 500,
+                fontSize: "11px",
+                color: "#ffffff",
+              }}
+            >
+              {`${numberOfCourses > 1 ? "+" : ""}${numberOfCourses}`}
+            </Circle>
+          </Flex>
+          <Flex
+            w="70%"
+            flexDirection={"column"}
             sx={{
-              bg: numberBg,
-              fontWeight: 500,
               fontSize: "11px",
-              color: "#ffffff",
+              color: "#4b4b4b",
+              textAlign: "left",
             }}
           >
-            {`${numberOfCourses > 1 ? "+" : ""}${numberOfCourses}`}
-          </Circle>
+            <Flex maxW="100%">包含</Flex>
+            <Box
+              sx={{
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {coursesStr}
+            </Box>
+          </Flex>
         </Flex>
-        <Flex
-          w="70%"
-          flexDirection={"column"}
-          sx={{
-            fontSize: "11px",
-            color: "#4b4b4b",
-            textAlign: "left",
-          }}
-        >
-          <Flex maxW="100%">包含</Flex>
-          <Box
+      </Box>
+      <Modal size="xl" isCentered isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent maxW="850px" overflowY="hidden">
+          <ModalHeader
+            py={6}
+            px={8}
+            borderRadius="4px"
             sx={{
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
+              shadow: "0px 32px 64px -12px rgba(85, 105, 135, 0.08)",
+              color: "#2d2d2d",
+              fontWeight: 500,
+              fontSize: "20px",
+              lineHeight: 1.4,
             }}
           >
-            {coursesStr}
-          </Box>
-        </Flex>
-      </Flex>
-    </Box>
+            <Flex alignItems="center" w="100%" justifyContent={"space-between"}>
+              <Flex gap={6} alignItems="center">
+                <Text>{`星期${days[dayIndex]}`}</Text>
+                <Text>{`第 ${intervalIndex} 節`}</Text>
+                <Text
+                  sx={{
+                    fontSize: "16px",
+                    color: "#909090",
+                  }}
+                >
+                  {`${
+                    intervalSource[numberToInterval(intervalIndex)].startAt
+                  }~${intervalSource[numberToInterval(intervalIndex)].endAt}`}
+                </Text>
+              </Flex>
+              <CloseIcon
+                boxSize="14px"
+                sx={{
+                  color: "#2d2d2d",
+                  cursor: "pointer",
+                }}
+                onClick={onClose}
+              />
+            </Flex>
+          </ModalHeader>
+          <ModalBody px={0}>
+            <Box
+              pt={8}
+              px={16}
+              pb={16}
+              h="60vh"
+              overflowY="scroll"
+              sx={{
+                fontFamily: "SF Pro Text",
+                fontSize: "14px",
+                lineHeight: "18px",
+                letterSpacing: "-0.078px",
+                color: "#2d2d2d",
+              }}
+              __css={customScrollBarCss}
+            >
+              {"123"}
+            </Box>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+    </>
   );
 }
 
@@ -177,7 +263,6 @@ type CourseOrder = {
   course: Course;
   order: number;
 };
-
 type IntervalCourseOrderDict = {
   [tab in CourseOrderListTabId]: CourseOrder[];
 };
@@ -263,7 +348,7 @@ export default function CourseOrderTable(props: CourseOrderTableProps) {
         renderCustomCell={(dayIndex, intervalIndex) => {
           return (
             <Td
-              key={dayIndex}
+              key={`${dayIndex + 1}-${intervalIndex}`}
               minW={`${tableCellProperty.w}px`}
               w={`${tableCellProperty.w}px`}
               maxW={`${tableCellProperty.w}px`}
@@ -285,6 +370,8 @@ export default function CourseOrderTable(props: CourseOrderTableProps) {
                 <CourseOrderTableCard
                   w={`${tableCellProperty.w - tableCellProperty.borderWidth}px`}
                   h={`${tableCellProperty.h - tableCellProperty.borderWidth}px`}
+                  dayIndex={dayIndex}
+                  intervalIndex={intervalIndex}
                   numberOfCourses={getNumberOfCourses(
                     courseTableCourseOrderDict?.[
                       `${dayIndex + 1}-${intervalIndex}`
