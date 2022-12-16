@@ -12,13 +12,14 @@ import {
   ModalBody,
   useDisclosure,
   Text,
+  Button,
 } from "@chakra-ui/react";
 import { CourseTable } from "@/types/courseTable";
 import { Course } from "@/types/course";
 import { CourseTableCellProps } from "@/components/CourseTable/NeoCourseTable";
 import { intervals, days } from "@/constant";
 import NeoCourseTable, {
-  // tabs,
+  tabs,
   CourseOrderListTabId,
 } from "@/components/CourseTable/NeoCourseTable";
 import {
@@ -28,6 +29,7 @@ import {
 import { intervalSource } from "@/types/course";
 import { customScrollBarCss } from "styles/customScrollBar";
 import { CloseIcon } from "@chakra-ui/icons";
+import { useState } from "react";
 
 interface TdProps extends TableCellProps {
   readonly children: React.ReactNode;
@@ -139,6 +141,8 @@ function CourseOrderTableCard(props: CourseOrderTableCardProps) {
     .map((courseOrder) => courseOrder.course.name)
     .join(", ");
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [activeTabId, setActiveTabId] =
+    useState<CourseOrderListTabId>("Common");
 
   return (
     <>
@@ -234,24 +238,111 @@ function CourseOrderTableCard(props: CourseOrderTableCardProps) {
               />
             </Flex>
           </ModalHeader>
-          <ModalBody px={0}>
-            <Box
-              pt={8}
-              px={16}
-              pb={16}
+          <ModalBody p={0}>
+            <Flex
               h="60vh"
-              overflowY="scroll"
-              sx={{
-                fontFamily: "SF Pro Text",
-                fontSize: "14px",
-                lineHeight: "18px",
-                letterSpacing: "-0.078px",
-                color: "#2d2d2d",
-              }}
-              __css={customScrollBarCss}
+              flexDirection={"column"}
+              justifyContent={"space-between"}
             >
-              {"123"}
-            </Box>
+              <Flex
+                h="46px"
+                w="100%"
+                bg="#002F94"
+                sx={{
+                  p: " 0px 32px 0px 16px",
+                }}
+              >
+                {tabs.map((tab) => {
+                  const isActive = tab.id === activeTabId;
+                  return (
+                    <Flex
+                      key={tab.id}
+                      sx={{
+                        alignItems: "center",
+                        color: isActive ? "#ffffff" : "#ffffff50",
+                        fontWeight: 500,
+                        mx: 6,
+                        cursor: "pointer",
+                        transition: "all 0.2s ease-in-out",
+                        borderTop: "2px solid transparent",
+                        borderBottom: isActive
+                          ? "2px solid #ffffff"
+                          : "2px solid transparent",
+                      }}
+                      onClick={() => {
+                        setActiveTabId(tab.id);
+                      }}
+                    >
+                      {tab.label}
+                    </Flex>
+                  );
+                })}
+              </Flex>
+              <Flex
+                flexGrow={1}
+                overflowY="auto"
+                flexDirection={"column"}
+                __css={customScrollBarCss}
+              >
+                {intervalCourseOrderDict[activeTabId].length === 0 ? (
+                  <Flex
+                    w="100%"
+                    h="100%"
+                    justifyContent={"center"}
+                    alignItems={"center"}
+                    sx={{
+                      color: "#6f6f6f",
+                      fontSize: "14px",
+                    }}
+                  >{`此節次尚未加入任何${
+                    tabs.find((t) => t.id === activeTabId)?.label
+                  }課程`}</Flex>
+                ) : (
+                  <Flex>DND Context placeholder</Flex>
+                )}
+              </Flex>
+              <Flex
+                h="68px"
+                w="100%"
+                alignItems="center"
+                justifyContent={"space-between"}
+                p="16px 32px"
+                shadow="0px -20px 24px -4px rgba(85, 105, 135, 0.04), 0px -8px 8px -4px rgba(85, 105, 135, 0.02)"
+              >
+                <Flex></Flex>
+                <Flex gap="28px">
+                  <Button
+                    variant={"unstyled"}
+                    sx={{
+                      fontWeight: 500,
+                      fontSize: "14px",
+                      lineHeight: 1.4,
+                      h: "36px",
+                    }}
+                    // disabled={!isEdited}
+                    onClick={() => {}}
+                  >
+                    還原此次變更
+                  </Button>
+                  <Button
+                    sx={{
+                      borderRadius: "full",
+                      fontWeight: 500,
+                      fontSize: "14px",
+                      lineHeight: 1.4,
+                      shadow: "0px 1px 2px rgba(105, 81, 255, 0.05)",
+                      p: "8px 16px",
+                      h: "36px",
+                    }}
+                    // disabled={!isEdited}
+                    // isLoading={isLoading}
+                    onClick={async () => {}}
+                  >
+                    儲存
+                  </Button>
+                </Flex>
+              </Flex>
+            </Flex>
           </ModalBody>
         </ModalContent>
       </Modal>
