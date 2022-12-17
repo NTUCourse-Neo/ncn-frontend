@@ -13,7 +13,11 @@ import {
   useDisclosure,
   Text,
   Button,
+  FlexProps,
+  Center,
+  Icon,
 } from "@chakra-ui/react";
+import { MdDragHandle } from "react-icons/md";
 import { CourseTable } from "@/types/courseTable";
 import { Course } from "@/types/course";
 import { CourseTableCellProps } from "@/components/CourseTable/NeoCourseTable";
@@ -30,6 +34,12 @@ import { intervalSource } from "@/types/course";
 import { customScrollBarCss } from "styles/customScrollBar";
 import { CloseIcon } from "@chakra-ui/icons";
 import { useState } from "react";
+import { PuffLoader } from "react-spinners";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { TrashCanOutlineIcon } from "@/components/CustomIcons";
+import { useUser } from "@auth0/nextjs-auth0";
+import useUserInfo from "@/hooks/useUserInfo";
+import { useMemo } from "react";
 
 interface TdProps extends TableCellProps {
   readonly children: React.ReactNode;
@@ -144,6 +154,9 @@ function CourseOrderTableCard(props: CourseOrderTableCardProps) {
   const [activeTabId, setActiveTabId] =
     useState<CourseOrderListTabId>("Common");
 
+  // sorting state
+  // prepare to remove state
+
   return (
     <>
       <Box
@@ -245,7 +258,7 @@ function CourseOrderTableCard(props: CourseOrderTableCardProps) {
               justifyContent={"space-between"}
             >
               <Flex
-                h="46px"
+                minH="46px"
                 w="100%"
                 bg="#002F94"
                 sx={{
@@ -302,8 +315,11 @@ function CourseOrderTableCard(props: CourseOrderTableCardProps) {
                     {intervalCourseOrderDict[activeTabId].map(
                       ({ course, order }, index) => {
                         return (
-                          <Flex
+                          <SortableCourseRow
                             key={course.id}
+                            course={course}
+                            order={order}
+                            isPrepareToRemoved={false}
                             sx={{
                               mt: index === 0 ? 0 : "1px",
                               shadow: "0px 0.5px 0px rgba(144, 144, 144, 0.8)",
@@ -311,10 +327,7 @@ function CourseOrderTableCard(props: CourseOrderTableCardProps) {
                               gap: 6,
                               minH: "72px",
                             }}
-                            alignItems={"center"}
-                          >
-                            {course.name}
-                          </Flex>
+                          />
                         );
                       }
                     )}
@@ -370,8 +383,143 @@ function CourseOrderTableCard(props: CourseOrderTableCardProps) {
   );
 }
 
-function SortableCourseRow() {
-  return <></>;
+interface SortableCourseRowProps extends FlexProps {
+  readonly course: Course;
+  readonly order: number;
+  readonly isPrepareToRemoved: boolean;
+}
+function SortableCourseRow({
+  course,
+  order,
+  isPrepareToRemoved,
+  sx,
+  ...restProps
+}: SortableCourseRowProps) {
+  const { user } = useUser();
+  const { userInfo, addOrRemoveFavorite, isLoading } = useUserInfo(
+    user?.sub ?? null
+  );
+  const [addingFavoriteCourse, setAddingFavoriteCourse] = useState(false);
+  const isFavorite = useMemo(
+    () => (userInfo?.favorites ?? []).map((c) => c.id).includes(course.id),
+    [userInfo, course.id]
+  );
+  const handleAddFavorite = async (course_id: string, course_name: string) => {
+    if (!isLoading && userInfo) {
+      setAddingFavoriteCourse(true);
+      await addOrRemoveFavorite(course_id, course_name);
+      setAddingFavoriteCourse(false);
+    }
+  };
+
+  return (
+    <Flex
+      alignItems={"center"}
+      position={"relative"}
+      sx={{
+        ...sx,
+      }}
+      {...restProps}
+    >
+      <Flex
+        position={"absolute"}
+        left={0}
+        w={"100%"}
+        h="100%"
+        bg="white"
+        // {...listeners}
+      />
+      <Flex zIndex={2} justifyContent={"space-between"} w="13%">
+        <div
+          style={{
+            touchAction: "manipulation",
+          }}
+          // {...listeners}
+        >
+          <MdDragHandle cursor="row-resize" size="25" color="#4b4b4b" />
+        </div>
+        <Flex
+          sx={{
+            fontSize: "14px",
+            color: "#4b4b4b",
+          }}
+          alignItems={"center"}
+        >
+          排序
+          <Text
+            ml="4px"
+            sx={{
+              fontWeight: 500,
+              fontSize: "16px",
+              color: "#1A181C",
+            }}
+          >
+            {order}
+          </Text>
+        </Flex>
+      </Flex>
+      <Flex
+        zIndex={2}
+        w="15%"
+        sx={{
+          fontSize: "14px",
+          color: "#4b4b4b",
+        }}
+        justifyContent={"center"}
+      >
+        {course.serial}
+      </Flex>
+      <Flex
+        zIndex={2}
+        flexGrow={1}
+        sx={{
+          fontWeight: 500,
+          color: "#2d2d2d",
+        }}
+      >
+        {course.name}
+      </Flex>
+      <Button
+        size="sm"
+        zIndex={2}
+        variant="unstyled"
+        colorScheme={"red"}
+        onClick={(e) => {
+          e.preventDefault();
+          handleAddFavorite(course.id, course.name);
+        }}
+        isLoading={addingFavoriteCourse}
+        spinner={
+          <Center w="100%" h="24px">
+            <PuffLoader size={32} />
+          </Center>
+        }
+      >
+        <Center w="100%" h="24px">
+          {<Icon as={isFavorite ? FaHeart : FaRegHeart} boxSize="16px" />}
+        </Center>
+      </Button>
+      <Button
+        size="sm"
+        variant="unstyled"
+        // onClick={onClickRemoveButton}
+        zIndex={2}
+      >
+        <Center
+          w="100%"
+          h="24px"
+          color={isPrepareToRemoved ? "error.500" : "#4b4b4b"}
+        >
+          {
+            <TrashCanOutlineIcon
+              boxSize="24px"
+              transition="all 0.2s ease-in-out"
+            />
+          }
+        </Center>
+      </Button>
+    </Flex>
+  );
 }
 
 type CourseOrder = {
