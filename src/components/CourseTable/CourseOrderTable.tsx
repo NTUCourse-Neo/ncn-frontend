@@ -298,7 +298,27 @@ function CourseOrderTableCard(props: CourseOrderTableCardProps) {
                     tabs.find((t) => t.id === activeTabId)?.label
                   }課程`}</Flex>
                 ) : (
-                  <Flex>DND Context placeholder</Flex>
+                  <Box>
+                    {intervalCourseOrderDict[activeTabId].map(
+                      ({ course, order }, index) => {
+                        return (
+                          <Flex
+                            key={course.id}
+                            sx={{
+                              mt: index === 0 ? 0 : "1px",
+                              shadow: "0px 0.5px 0px rgba(144, 144, 144, 0.8)",
+                              p: "16px 32px",
+                              gap: 6,
+                              minH: "72px",
+                            }}
+                            alignItems={"center"}
+                          >
+                            {course.name}
+                          </Flex>
+                        );
+                      }
+                    )}
+                  </Box>
                 )}
               </Flex>
               <Flex
@@ -348,6 +368,10 @@ function CourseOrderTableCard(props: CourseOrderTableCardProps) {
       </Modal>
     </>
   );
+}
+
+function SortableCourseRow() {
+  return <></>;
 }
 
 type CourseOrder = {
