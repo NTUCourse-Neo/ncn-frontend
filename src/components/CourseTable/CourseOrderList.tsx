@@ -689,6 +689,12 @@ export default function CourseOrderList() {
                 Calculus: [],
                 ForeignLanguage: [],
               });
+              setPrepareToRemoveCourseId({
+                Common: [],
+                Chinese: [],
+                Calculus: [],
+                ForeignLanguage: [],
+              });
             }}
           >
             還原此次變更
