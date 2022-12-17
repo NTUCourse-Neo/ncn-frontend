@@ -39,6 +39,8 @@ import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { TrashCanOutlineIcon } from "@/components/CustomIcons";
 import { useUser } from "@auth0/nextjs-auth0";
 import useUserInfo from "@/hooks/useUserInfo";
+import useCourseTable from "@/hooks/useCourseTable";
+import { patchCourseTable } from "queries/courseTable";
 import { useMemo } from "react";
 import {
   useSortable,
@@ -155,6 +157,16 @@ function CourseOrderTableCard(props: CourseOrderTableCardProps) {
     intervalIndex,
     ...restProps
   } = props;
+  const { user } = useUser();
+  const { userInfo, isLoading: isUserInfoLoading } = useUserInfo(
+    user?.sub ?? null
+  );
+  const courseTableKey = userInfo?.course_tables?.[0] ?? null;
+  const {
+    courseTable,
+    isLoading: isCourseTableLoading,
+    mutate: mutateCourseTable,
+  } = useCourseTable(courseTableKey);
   const numberBg =
     numberOfCourses >= 1
       ? numberOfCourses > 5
@@ -202,6 +214,67 @@ function CourseOrderTableCard(props: CourseOrderTableCardProps) {
     }
   };
 
+  // TODO: refactor for other tabs
+  const handleSaveCourseTable = async () => {
+    setIsLoading(true);
+    if (courseTable) {
+      try {
+        const coursesArrayCopy = [...courseTable.courses].map((c) => c.id);
+        const affectedIndices = courseListForSort["Common"]
+          .map((co) => co.order - 1)
+          .sort((a, b) => a - b);
+        courseListForSort["Common"].forEach((co, i) => {
+          const { course } = co;
+          const destIndex = affectedIndices[i];
+          coursesArrayCopy[destIndex] = course.id;
+        });
+        const updatedCourseTableData = await mutateCourseTable(
+          async (prev) => {
+            const data = await patchCourseTable(
+              courseTable.id,
+              courseTable.name,
+              courseTable.user_id,
+              coursesArrayCopy.filter((cid) => {
+                return !prepareToRemoveCourseId["Common"].includes(cid);
+              })
+            );
+            return data ?? prev;
+          },
+          {
+            revalidate: false,
+            populateCache: true,
+          }
+        );
+        if (updatedCourseTableData) {
+          const ctDict = getCourseTableCourseOrderDict(
+            updatedCourseTableData.course_table
+          );
+          setCourseListForSort(ctDict[`${dayIndex + 1}-${intervalIndex}`]);
+          setPrepareToRemoveCourseId({
+            Common: [],
+            Chinese: [],
+            Calculus: [],
+            ForeignLanguage: [],
+          });
+          // success
+          console.log("success");
+          // setIsSaved(true);
+          // setHintMessage({
+          //   type: "success",
+          //   message: "志願序變更已儲存",
+          // });
+        }
+      } catch (err) {
+        // error
+        console.log("error");
+      }
+    } else {
+      // error
+      console.log("error");
+    }
+    setIsLoading(false);
+  };
+
   const sensors = useSensors(
     useSensor(MouseSensor),
     useSensor(TouchSensor),
@@ -247,7 +320,12 @@ function CourseOrderTableCard(props: CourseOrderTableCardProps) {
           overflow: "hidden",
           transition: "all 0.2s ease-in-out",
         }}
-        onClick={onOpen}
+        onClick={() => {
+          // sync data to modal before open
+          const ctDict = getCourseTableCourseOrderDict(courseTable);
+          setCourseListForSort(ctDict[`${dayIndex + 1}-${intervalIndex}`]);
+          onOpen();
+        }}
         {...restProps}
       >
         <Flex w="100%" h="100%" gap={2}>
@@ -504,7 +582,7 @@ function CourseOrderTableCard(props: CourseOrderTableCardProps) {
                     }}
                     disabled={!isEdited}
                     isLoading={isLoading}
-                    onClick={async () => {}}
+                    onClick={handleSaveCourseTable}
                   >
                     儲存
                   </Button>
