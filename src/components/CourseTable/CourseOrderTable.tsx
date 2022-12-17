@@ -40,6 +40,27 @@ import { TrashCanOutlineIcon } from "@/components/CustomIcons";
 import { useUser } from "@auth0/nextjs-auth0";
 import useUserInfo from "@/hooks/useUserInfo";
 import { useMemo } from "react";
+import {
+  useSortable,
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import { CSS } from "@dnd-kit/utilities";
+import {
+  restrictToVerticalAxis,
+  restrictToParentElement,
+} from "@dnd-kit/modifiers";
 
 interface TdProps extends TableCellProps {
   readonly children: React.ReactNode;
@@ -154,8 +175,24 @@ function CourseOrderTableCard(props: CourseOrderTableCardProps) {
   const [activeTabId, setActiveTabId] =
     useState<CourseOrderListTabId>("Common");
 
-  // sorting state
-  // prepare to remove state
+  // dnd
+  const [courseListForSort, setCourseListForSort] =
+    useState<IntervalCourseOrderDict>(intervalCourseOrderDict);
+  const [prepareToRemoveCourseId, setPrepareToRemoveCourseId] =
+    useState<IntervalCourseOrderDict>({
+      Common: [],
+      Chinese: [],
+      Calculus: [],
+      ForeignLanguage: [],
+    });
+
+  const sensors = useSensors(
+    useSensor(MouseSensor),
+    useSensor(TouchSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   return (
     <>
@@ -311,27 +348,75 @@ function CourseOrderTableCard(props: CourseOrderTableCardProps) {
                     tabs.find((t) => t.id === activeTabId)?.label
                   }課程`}</Flex>
                 ) : (
-                  <Box>
-                    {intervalCourseOrderDict[activeTabId].map(
-                      ({ course, order }, index) => {
-                        return (
-                          <SortableCourseRow
-                            key={course.id}
-                            course={course}
-                            order={order}
-                            isPrepareToRemoved={false}
-                            sx={{
-                              mt: index === 0 ? 0 : "1px",
-                              shadow: "0px 0.5px 0px rgba(144, 144, 144, 0.8)",
-                              p: "16px 32px",
-                              gap: 6,
-                              minH: "72px",
-                            }}
-                          />
-                        );
-                      }
-                    )}
-                  </Box>
+                  <div>
+                    <DndContext
+                      sensors={sensors}
+                      collisionDetection={closestCenter}
+                      modifiers={[
+                        restrictToParentElement,
+                        restrictToVerticalAxis,
+                      ]}
+                      onDragEnd={(event) => {
+                        const { active, over } = event;
+                        if (over) {
+                          if (active.id !== over?.id) {
+                            setCourseListForSort((courseListForSort) => {
+                              const oldIndex = courseListForSort[
+                                activeTabId
+                              ].findIndex(
+                                (courseOrder) =>
+                                  courseOrder.course.id === String(active.id)
+                              );
+                              const newIndex = courseListForSort[
+                                activeTabId
+                              ].findIndex(
+                                (courseOrder) =>
+                                  courseOrder.course.id === String(over.id)
+                              );
+
+                              return {
+                                ...courseListForSort,
+                                [activeTabId]: arrayMove(
+                                  courseListForSort[activeTabId],
+                                  oldIndex,
+                                  newIndex
+                                ),
+                              };
+                            });
+                          }
+                        }
+                      }}
+                    >
+                      <SortableContext
+                        items={courseListForSort[activeTabId].map(
+                          (co) => co.course.id
+                        )}
+                        strategy={verticalListSortingStrategy}
+                      >
+                        {courseListForSort[activeTabId].map(
+                          ({ course, order }, index) => {
+                            return (
+                              <SortableCourseRow
+                                key={`${course.id}-${index}`}
+                                course={course}
+                                order={order}
+                                isPrepareToRemoved={false}
+                                onClickRemoveButton={() => {}}
+                                sx={{
+                                  mt: index === 0 ? 0 : "1px",
+                                  shadow:
+                                    "0px 0.5px 0px rgba(144, 144, 144, 0.8)",
+                                  p: "16px 32px",
+                                  gap: 6,
+                                  minH: "72px",
+                                }}
+                              />
+                            );
+                          }
+                        )}
+                      </SortableContext>
+                    </DndContext>
+                  </div>
                 )}
               </Flex>
               <Flex
@@ -387,11 +472,13 @@ interface SortableCourseRowProps extends FlexProps {
   readonly course: Course;
   readonly order: number;
   readonly isPrepareToRemoved: boolean;
+  readonly onClickRemoveButton: () => void;
 }
 function SortableCourseRow({
   course,
   order,
   isPrepareToRemoved,
+  onClickRemoveButton,
   sx,
   ...restProps
 }: SortableCourseRowProps) {
@@ -411,15 +498,32 @@ function SortableCourseRow({
       setAddingFavoriteCourse(false);
     }
   };
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: course.id });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    position: "relative",
+    zIndex: isDragging ? 1000 : undefined,
+  };
 
   return (
     <Flex
       alignItems={"center"}
       position={"relative"}
       sx={{
+        ...style,
         ...sx,
       }}
       {...restProps}
+      ref={setNodeRef}
+      {...attributes}
     >
       <Flex
         position={"absolute"}
@@ -427,14 +531,13 @@ function SortableCourseRow({
         w={"100%"}
         h="100%"
         bg="white"
-        // {...listeners}
+        {...listeners}
       />
-      <Flex zIndex={2} justifyContent={"space-between"} w="13%">
+      <Flex zIndex={2} justifyContent={"space-between"} w="13%" {...listeners}>
         <div
           style={{
             touchAction: "manipulation",
           }}
-          // {...listeners}
         >
           <MdDragHandle cursor="row-resize" size="25" color="#4b4b4b" />
         </div>
@@ -466,6 +569,7 @@ function SortableCourseRow({
           color: "#4b4b4b",
         }}
         justifyContent={"center"}
+        {...listeners}
       >
         {course.serial}
       </Flex>
@@ -476,6 +580,7 @@ function SortableCourseRow({
           fontWeight: 500,
           color: "#2d2d2d",
         }}
+        {...listeners}
       >
         {course.name}
       </Flex>
@@ -502,7 +607,7 @@ function SortableCourseRow({
       <Button
         size="sm"
         variant="unstyled"
-        // onClick={onClickRemoveButton}
+        onClick={onClickRemoveButton}
         zIndex={2}
       >
         <Center
