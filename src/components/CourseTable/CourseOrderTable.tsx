@@ -174,17 +174,33 @@ function CourseOrderTableCard(props: CourseOrderTableCardProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [activeTabId, setActiveTabId] =
     useState<CourseOrderListTabId>("Common");
+  const [isLoading, setIsLoading] = useState(false);
 
   // dnd
   const [courseListForSort, setCourseListForSort] =
     useState<IntervalCourseOrderDict>(intervalCourseOrderDict);
-  const [prepareToRemoveCourseId, setPrepareToRemoveCourseId] =
-    useState<IntervalCourseOrderDict>({
-      Common: [],
-      Chinese: [],
-      Calculus: [],
-      ForeignLanguage: [],
-    });
+  const [prepareToRemoveCourseId, setPrepareToRemoveCourseId] = useState<{
+    [tab in CourseOrderListTabId]: string[];
+  }>({
+    Common: [],
+    Chinese: [],
+    Calculus: [],
+    ForeignLanguage: [],
+  });
+
+  const handleDelete = (courseId: string, tab: CourseOrderListTabId) => {
+    if (prepareToRemoveCourseId[tab].includes(courseId)) {
+      setPrepareToRemoveCourseId({
+        ...prepareToRemoveCourseId,
+        [tab]: prepareToRemoveCourseId[tab].filter((id) => id !== courseId),
+      });
+    } else {
+      setPrepareToRemoveCourseId({
+        ...prepareToRemoveCourseId,
+        [tab]: [...prepareToRemoveCourseId[tab], courseId],
+      });
+    }
+  };
 
   const sensors = useSensors(
     useSensor(MouseSensor),
@@ -193,6 +209,28 @@ function CourseOrderTableCard(props: CourseOrderTableCardProps) {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+
+  const isEdited: boolean = useMemo(() => {
+    const hasDeletedCourses = Object.values(prepareToRemoveCourseId).some(
+      (ids) => ids.length > 0
+    );
+    const hasReorderedCourses = Object.entries(courseListForSort).some(
+      ([tabId, courseOrders]) => {
+        if (tabId === "Common") {
+          // if not edited, must be sorted
+          return !courseOrders.every((courseOrder, index, courseOrders) => {
+            if (index !== courseOrders.length - 1) {
+              return courseOrder.order < courseOrders[index + 1].order;
+            }
+            return true;
+          });
+        }
+        // TODO: Calculus, Chinese, ForeignLanguage tabs
+        return false;
+      }
+    );
+    return hasDeletedCourses || hasReorderedCourses;
+  }, [courseListForSort, prepareToRemoveCourseId]);
 
   return (
     <>
@@ -400,8 +438,12 @@ function CourseOrderTableCard(props: CourseOrderTableCardProps) {
                                 key={`${course.id}-${index}`}
                                 course={course}
                                 order={order}
-                                isPrepareToRemoved={false}
-                                onClickRemoveButton={() => {}}
+                                isPrepareToRemoved={prepareToRemoveCourseId[
+                                  activeTabId
+                                ].includes(course.id)}
+                                onClickRemoveButton={() => {
+                                  handleDelete(course.id, activeTabId);
+                                }}
                                 sx={{
                                   mt: index === 0 ? 0 : "1px",
                                   shadow:
@@ -437,8 +479,16 @@ function CourseOrderTableCard(props: CourseOrderTableCardProps) {
                       lineHeight: 1.4,
                       h: "36px",
                     }}
-                    // disabled={!isEdited}
-                    onClick={() => {}}
+                    disabled={!isEdited}
+                    onClick={() => {
+                      setCourseListForSort(intervalCourseOrderDict);
+                      setPrepareToRemoveCourseId({
+                        Common: [],
+                        Chinese: [],
+                        Calculus: [],
+                        ForeignLanguage: [],
+                      });
+                    }}
                   >
                     還原此次變更
                   </Button>
@@ -452,8 +502,8 @@ function CourseOrderTableCard(props: CourseOrderTableCardProps) {
                       p: "8px 16px",
                       h: "36px",
                     }}
-                    // disabled={!isEdited}
-                    // isLoading={isLoading}
+                    disabled={!isEdited}
+                    isLoading={isLoading}
                     onClick={async () => {}}
                   >
                     儲存
