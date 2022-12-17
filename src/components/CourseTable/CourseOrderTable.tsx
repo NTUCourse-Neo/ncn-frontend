@@ -17,6 +17,12 @@ import {
   Center,
   Icon,
   HStack,
+  AlertDialog,
+  AlertDialogOverlay,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogBody,
+  AlertDialogHeader,
 } from "@chakra-ui/react";
 import { MdDragHandle } from "react-icons/md";
 import { CourseTable } from "@/types/courseTable";
@@ -34,7 +40,7 @@ import {
 import { intervalSource } from "@/types/course";
 import { customScrollBarCss } from "styles/customScrollBar";
 import { CloseIcon } from "@chakra-ui/icons";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { PuffLoader } from "react-spinners";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { TrashCanOutlineIcon } from "@/components/CustomIcons";
@@ -191,6 +197,12 @@ function CourseOrderTableCard(props: CourseOrderTableCardProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [hintMessage, setHintMessage] = useState<HintMessage | null>(null);
   const [isSaved, setIsSaved] = useState(false);
+  const cancelRef = useRef<HTMLButtonElement>(null);
+  const {
+    isOpen: isOpenAlertDialog,
+    onOpen: openAlertDialog,
+    onClose: closeAlertDialog,
+  } = useDisclosure();
 
   // dnd
   const [courseListForSort, setCourseListForSort] =
@@ -380,7 +392,13 @@ function CourseOrderTableCard(props: CourseOrderTableCardProps) {
           </Flex>
         </Flex>
       </Box>
-      <Modal size="xl" isCentered isOpen={isOpen} onClose={onClose}>
+      <Modal
+        size="xl"
+        isCentered
+        isOpen={isOpen}
+        onClose={onClose}
+        closeOnOverlayClick={false}
+      >
         <ModalOverlay />
         <ModalContent maxW="850px" overflowY="hidden">
           <ModalHeader
@@ -416,7 +434,13 @@ function CourseOrderTableCard(props: CourseOrderTableCardProps) {
                   color: "#2d2d2d",
                   cursor: "pointer",
                 }}
-                onClick={onClose}
+                onClick={() => {
+                  if (isEdited) {
+                    openAlertDialog();
+                  } else {
+                    onClose();
+                  }
+                }}
               />
             </Flex>
           </ModalHeader>
@@ -635,6 +659,67 @@ function CourseOrderTableCard(props: CourseOrderTableCardProps) {
           </ModalBody>
         </ModalContent>
       </Modal>
+      <AlertDialog
+        motionPreset="slideInBottom"
+        leastDestructiveRef={cancelRef}
+        onClose={closeAlertDialog}
+        isOpen={isOpenAlertDialog}
+        isCentered
+        size="xs"
+      >
+        <AlertDialogOverlay />
+        <AlertDialogContent p={6}>
+          <AlertDialogHeader
+            sx={{
+              fontWeight: 500,
+              fontSize: "18px",
+              p: 0,
+            }}
+          >
+            系統提醒
+          </AlertDialogHeader>
+          <AlertDialogBody
+            p={0}
+            mt={"8px"}
+            sx={{
+              color: "#6f6f6f",
+            }}
+          >
+            志願序變更尚未儲存，離開此頁面變更記錄將消失，確定要離開？
+          </AlertDialogBody>
+          <AlertDialogFooter gap="8px" p={0} mt={8}>
+            <Button
+              ref={cancelRef}
+              sx={{
+                w: "60px",
+                h: "36px",
+                borderRadius: "full",
+                fontWeight: 500,
+                fontSize: "14px",
+              }}
+              onClick={closeAlertDialog}
+            >
+              取消
+            </Button>
+            <Button
+              variant={"unstyled"}
+              sx={{
+                w: "60px",
+                h: "36px",
+                fontWeight: 500,
+                fontSize: "14px",
+                color: "#4b4b4b",
+              }}
+              onClick={() => {
+                closeAlertDialog();
+                onClose();
+              }}
+            >
+              確定
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
