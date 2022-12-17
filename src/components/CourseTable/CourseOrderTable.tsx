@@ -16,6 +16,7 @@ import {
   FlexProps,
   Center,
   Icon,
+  HStack,
 } from "@chakra-ui/react";
 import { MdDragHandle } from "react-icons/md";
 import { CourseTable } from "@/types/courseTable";
@@ -33,7 +34,7 @@ import {
 import { intervalSource } from "@/types/course";
 import { customScrollBarCss } from "styles/customScrollBar";
 import { CloseIcon } from "@chakra-ui/icons";
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { PuffLoader } from "react-spinners";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { TrashCanOutlineIcon } from "@/components/CustomIcons";
@@ -41,7 +42,7 @@ import { useUser } from "@auth0/nextjs-auth0";
 import useUserInfo from "@/hooks/useUserInfo";
 import useCourseTable from "@/hooks/useCourseTable";
 import { patchCourseTable } from "queries/courseTable";
-import { useMemo } from "react";
+import { IoWarningOutline, IoCheckmarkCircleOutline } from "react-icons/io5";
 import {
   useSortable,
   arrayMove,
@@ -63,6 +64,7 @@ import {
   restrictToVerticalAxis,
   restrictToParentElement,
 } from "@dnd-kit/modifiers";
+import { HintMessage } from "@/components/CourseTable/CourseOrderList";
 
 interface TdProps extends TableCellProps {
   readonly children: React.ReactNode;
@@ -187,6 +189,8 @@ function CourseOrderTableCard(props: CourseOrderTableCardProps) {
   const [activeTabId, setActiveTabId] =
     useState<CourseOrderListTabId>("Common");
   const [isLoading, setIsLoading] = useState(false);
+  const [hintMessage, setHintMessage] = useState<HintMessage | null>(null);
+  const [isSaved, setIsSaved] = useState(false);
 
   // dnd
   const [courseListForSort, setCourseListForSort] =
@@ -258,11 +262,11 @@ function CourseOrderTableCard(props: CourseOrderTableCardProps) {
           });
           // success
           console.log("success");
-          // setIsSaved(true);
-          // setHintMessage({
-          //   type: "success",
-          //   message: "志願序變更已儲存",
-          // });
+          setIsSaved(true);
+          setHintMessage({
+            type: "success",
+            message: "志願序變更已儲存",
+          });
         }
       } catch (err) {
         // error
@@ -304,6 +308,18 @@ function CourseOrderTableCard(props: CourseOrderTableCardProps) {
     );
     return hasDeletedCourses || hasReorderedCourses;
   }, [courseListForSort, prepareToRemoveCourseId]);
+
+  useEffect(() => {
+    if (isEdited) {
+      setIsSaved(false);
+      setHintMessage({
+        type: "warning",
+        message: "志願序變更尚未儲存",
+      });
+    } else if (!isSaved) {
+      setHintMessage(null);
+    }
+  }, [isEdited, isSaved]);
 
   return (
     <>
@@ -547,7 +563,34 @@ function CourseOrderTableCard(props: CourseOrderTableCardProps) {
                 p="16px 32px"
                 shadow="0px -20px 24px -4px rgba(85, 105, 135, 0.04), 0px -8px 8px -4px rgba(85, 105, 135, 0.02)"
               >
-                <Flex></Flex>
+                <Flex>
+                  {hintMessage === null ? null : (
+                    <HStack
+                      color={
+                        hintMessage.type === "warning"
+                          ? "error.500"
+                          : "success.500"
+                      }
+                    >
+                      <Icon
+                        as={
+                          hintMessage.type === "warning"
+                            ? IoWarningOutline
+                            : IoCheckmarkCircleOutline
+                        }
+                      />
+                      <Text
+                        sx={{
+                          fontWeight: 500,
+                          fontSize: "14px",
+                          lineHeight: 1.4,
+                        }}
+                      >
+                        {hintMessage.message}
+                      </Text>
+                    </HStack>
+                  )}
+                </Flex>
                 <Flex gap="28px">
                   <Button
                     variant={"unstyled"}

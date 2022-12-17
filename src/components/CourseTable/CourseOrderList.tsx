@@ -354,7 +354,7 @@ function SortableRowElement({
   );
 }
 
-interface HintMessage {
+export interface HintMessage {
   message: string;
   type: "success" | "warning";
 }
