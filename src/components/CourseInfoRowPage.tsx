@@ -9,7 +9,6 @@ import {
 } from "@chakra-ui/react";
 import useUserInfo from "hooks/useUserInfo";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
-// import { setHoveredCourseData } from "utils/hoverCourse";
 import useCourseTable from "hooks/useCourseTable";
 import { useUser } from "@auth0/nextjs-auth0";
 import useSearchResult from "hooks/useSearchResult";
