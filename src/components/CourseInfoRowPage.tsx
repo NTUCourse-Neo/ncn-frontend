@@ -88,16 +88,6 @@ export default function CourseInfoRowPage({
       allowToggle
       allowMultiple={false}
       w={{ base: "90vw", md: "100%" }}
-      onMouseEnter={() => {
-        // if (displayTable && isDesktop) {
-        //   setHoveredCourseData(course);
-        // }
-      }}
-      onMouseLeave={() => {
-        // if (displayTable && isDesktop) {
-        //   setHoveredCourseData(null);
-        // }
-      }}
     >
       {courses.map((course, index) => (
         <CourseInfoRow

@@ -6,6 +6,8 @@ import {
   Box,
   useColorModeValue,
   HStack,
+  VStack,
+  Accordion,
 } from "@chakra-ui/react";
 import useCourseTable from "hooks/useCourseTable";
 import { withPageAuthRequired, UserProfile } from "@auth0/nextjs-auth0";
@@ -20,6 +22,7 @@ import {
 } from "@/components/UserCoursePanel";
 import { FiCalendar } from "react-icons/fi";
 import { useRouter } from "next/router";
+import CourseInfoRow from "@/components/CourseInfoRow";
 
 export default function UserCollectionPage({
   user,
@@ -53,6 +56,8 @@ export default function UserCollectionPage({
   }, [courseTable]);
   const favoriteList = useMemo(() => userInfo?.favorites ?? [], [userInfo]);
   const router = useRouter();
+
+  console.log(favoriteList);
 
   return (
     <>
@@ -143,18 +148,67 @@ export default function UserCollectionPage({
                   alignItems: "center",
                 }}
               >
-                <Flex h="100%">{/* blue bar */}</Flex>
+                <Flex
+                  h="100%"
+                  sx={{
+                    color: "white",
+                    fontWeight: 500,
+                    fontSize: "12px",
+                    alignItems: "center",
+                  }}
+                >
+                  共 {favoriteList.length} 門收藏課程
+                </Flex>
               </Flex>
               <Flex
                 w="100%"
                 minH="70vh"
                 justifyContent={"center"}
-                alignItems="center"
                 overflow={"auto"}
-                pt={4}
-                px={4}
-                pb={12}
-              ></Flex>
+              >
+                {favoriteList.length > 0 ? (
+                  <Accordion
+                    allowToggle
+                    allowMultiple={false}
+                    w={{ base: "90vw", md: "100%" }}
+                  >
+                    {favoriteList.map((course) => (
+                      <CourseInfoRow
+                        key={course.id}
+                        courseInfo={course}
+                        selected={selectedCourses.includes(course.id)}
+                      />
+                    ))}
+                  </Accordion>
+                ) : (
+                  <Flex
+                    flexGrow={1}
+                    justify="center"
+                    alignItems={"center"}
+                    flexDirection={"column"}
+                    color="#909090"
+                  >
+                    <Flex
+                      sx={{
+                        fontSize: "20px",
+                        fontWeight: 500,
+                        mb: 6,
+                      }}
+                    >
+                      尚未收藏任何課程
+                    </Flex>
+                    <VStack
+                      spacing={0}
+                      sx={{
+                        fontSize: "14px",
+                      }}
+                    >
+                      <Flex>還在想要不要修這門課嗎？</Flex>
+                      <Flex>先收藏起來慢慢考慮</Flex>
+                    </VStack>
+                  </Flex>
+                )}
+              </Flex>
             </Box>
           </Flex>
           <Flex
