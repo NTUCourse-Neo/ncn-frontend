@@ -15,6 +15,7 @@ import {
   TextProps,
   Stack,
   Icon,
+  Badge,
 } from "@chakra-ui/react";
 import { TbBookmark } from "react-icons/tb";
 import {
@@ -203,13 +204,14 @@ function SignInButton() {
               </Flex>
               <Flex
                 alignItems={"center"}
-                cursor="pointer"
+                cursor="not-allowed"
                 onClick={() => {
-                  router.push("/user/schedule");
+                  // router.push("/user/schedule");
                 }}
               >
                 <Icon as={TbBookmark} w="20px" h="20px" mr={2} />
                 <Text>學期課表</Text>
+                <Badge ml={1}>即將推出</Badge>
               </Flex>
               <Flex
                 alignItems={"center"}
