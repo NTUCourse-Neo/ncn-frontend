@@ -1,14 +1,16 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   Flex,
   Text,
   useToast,
   Box,
-  useColorModeValue,
   HStack,
   VStack,
   Accordion,
+  Radio,
+  RadioGroup,
 } from "@chakra-ui/react";
+import { HashLoader } from "react-spinners";
 import useCourseTable from "hooks/useCourseTable";
 import { withPageAuthRequired, UserProfile } from "@auth0/nextjs-auth0";
 import Head from "next/head";
@@ -23,26 +25,60 @@ import {
 import { FiCalendar } from "react-icons/fi";
 import { useRouter } from "next/router";
 import CourseInfoRow from "@/components/CourseInfoRow";
+import Dropdown from "@/components/Dropdown";
+import { ChevronDownIcon } from "@chakra-ui/icons";
+
+const sortOptions = [
+  {
+    id: "add_time_asc",
+    chinese: "加入時間（新→舊）",
+    english: "Add Time (New→Old)",
+  },
+  {
+    id: "add_time_desc",
+    chinese: "加入時間（舊→新）",
+    english: "Add Time (Old→New)",
+  },
+  {
+    id: "limit_asc",
+    chinese: "修課總人數 (遞增)",
+    english: "Enrollment Limit (Ascending)",
+  },
+  {
+    id: "limit_desc",
+    chinese: "修課總人數 (遞減)",
+    english: "Enrollment Limit (Descending)",
+  },
+  {
+    id: "credits_asc",
+    chinese: "學分數 (遞增)",
+    english: "Credits (Ascending)",
+  },
+  {
+    id: "credits_desc",
+    chinese: "學分數 (遞減)",
+    english: "Credits (Descending)",
+  },
+] as const;
+type SortOption = typeof sortOptions[number]["id"];
 
 export default function UserCollectionPage({
   user,
 }: {
   readonly user: UserProfile;
 }) {
-  const { userInfo, isLoading, addOrRemoveFavorite } = useUserInfo(
-    user?.sub ?? null,
-    {
-      onErrorCallback: (e, k, c) => {
-        toast({
-          title: "取得用戶資料失敗.",
-          description: "請聯繫客服(?)",
-          status: "error",
-          duration: 9000,
-          isClosable: true,
-        });
-      },
-    }
-  );
+  const [sortOption, setSortOption] = useState<SortOption>(sortOptions[0].id);
+  const { userInfo, isLoading } = useUserInfo(user?.sub ?? null, {
+    onErrorCallback: (e, k, c) => {
+      toast({
+        title: "取得用戶資料失敗.",
+        description: "請聯繫客服(?)",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    },
+  });
   const toast = useToast();
   const {
     courseTable,
@@ -50,14 +86,27 @@ export default function UserCollectionPage({
     isLoading: isCourseTableLoading,
   } = useCourseTable(userInfo?.course_tables?.[0] ?? null);
 
-  const bgColor = useColorModeValue("white", "black");
   const selectedCourses = useMemo(() => {
     return courseTable?.courses.map((c) => c.id) ?? [];
   }, [courseTable]);
   const favoriteList = useMemo(() => userInfo?.favorites ?? [], [userInfo]);
   const router = useRouter();
 
-  console.log(favoriteList);
+  if (isLoading) {
+    return (
+      <Box maxW="screen-md" h="95vh" mx="auto" overflow="visible" p="64px">
+        <Flex
+          h="90vh"
+          justifyContent="center"
+          flexDirection="column"
+          alignItems="center"
+          bg={"white"}
+        >
+          <HashLoader size="60px" color="teal" />
+        </Flex>
+      </Box>
+    );
+  }
 
   return (
     <>
@@ -159,6 +208,63 @@ export default function UserCollectionPage({
                 >
                   共 {favoriteList.length} 門收藏課程
                 </Flex>
+                <Flex>
+                  <Dropdown
+                    closeAfterClick={true}
+                    reverse={false}
+                    renderDropdownButton={() => (
+                      <HStack
+                        sx={{
+                          border: "1px solid #CCCCCC",
+                          borderRadius: "4px",
+                          px: "12px",
+                          bg: "white",
+                          fontSize: "12px",
+                          py: "5.5px",
+                        }}
+                      >
+                        <Text minW="40px" noOfLines={1}>
+                          排序：
+                          {sortOptions.find(
+                            (option) => option.id === sortOption
+                          )?.chinese ?? "請選擇排序方式"}
+                        </Text>
+                        <ChevronDownIcon />
+                      </HStack>
+                    )}
+                  >
+                    <Box
+                      sx={{
+                        px: 2,
+                        my: 2,
+                      }}
+                    >
+                      <RadioGroup
+                        value={sortOption}
+                        onChange={(next) => {
+                          setSortOption(next as SortOption);
+                        }}
+                        gap={2}
+                      >
+                        {sortOptions.map((option) => (
+                          <Radio key={option.id} p={2} value={option.id}>
+                            <Flex
+                              w="120px"
+                              sx={{
+                                fontWeight: 500,
+                                fontSize: "13px",
+                                lineHeight: "1.4",
+                                color: "#4b4b4b",
+                              }}
+                            >
+                              {option.chinese}
+                            </Flex>
+                          </Radio>
+                        ))}
+                      </RadioGroup>
+                    </Box>
+                  </Dropdown>
+                </Flex>
               </Flex>
               <Flex
                 w="100%"
@@ -172,13 +278,19 @@ export default function UserCollectionPage({
                     allowMultiple={false}
                     w={{ base: "90vw", md: "100%" }}
                   >
-                    {favoriteList.map((course) => (
-                      <CourseInfoRow
-                        key={course.id}
-                        courseInfo={course}
-                        selected={selectedCourses.includes(course.id)}
-                      />
-                    ))}
+                    {favoriteList
+                      .sort((a, b) => {
+                        // TODO: implement sorting logic
+                        // switch-case
+                        return (a?.credits ?? 0) - (b?.credits ?? 0);
+                      })
+                      .map((course) => (
+                        <CourseInfoRow
+                          key={course.id}
+                          courseInfo={course}
+                          selected={selectedCourses.includes(course.id)}
+                        />
+                      ))}
                   </Accordion>
                 ) : (
                   <Flex
