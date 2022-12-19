@@ -7,54 +7,52 @@ import {
   useColorModeValue,
   HStack,
 } from "@chakra-ui/react";
-import { HashLoader } from "react-spinners";
 import useCourseTable from "hooks/useCourseTable";
 import { withPageAuthRequired, UserProfile } from "@auth0/nextjs-auth0";
 import Head from "next/head";
 import useUserInfo from "hooks/useUserInfo";
 import CustomBreadcrumb from "@/components/Breadcrumb";
-import UserCoursePanel from "@/components/UserCoursePanel";
+import {
+  Panel,
+  PanelPlaceholder,
+  SkeletonBox,
+  CourseInfoCard,
+} from "@/components/UserCoursePanel";
+import { FiCalendar } from "react-icons/fi";
+import { useRouter } from "next/router";
 
 export default function UserCollectionPage({
   user,
 }: {
   readonly user: UserProfile;
 }) {
-  const { userInfo, isLoading } = useUserInfo(user?.sub ?? null, {
-    onErrorCallback: (e, k, c) => {
-      toast({
-        title: "取得用戶資料失敗.",
-        description: "請聯繫客服(?)",
-        status: "error",
-        duration: 9000,
-        isClosable: true,
-      });
-    },
-  });
+  const { userInfo, isLoading, addOrRemoveFavorite } = useUserInfo(
+    user?.sub ?? null,
+    {
+      onErrorCallback: (e, k, c) => {
+        toast({
+          title: "取得用戶資料失敗.",
+          description: "請聯繫客服(?)",
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+        });
+      },
+    }
+  );
   const toast = useToast();
-  const { courseTable } = useCourseTable(userInfo?.course_tables?.[0] ?? null);
+  const {
+    courseTable,
+    addOrRemoveCourse,
+    isLoading: isCourseTableLoading,
+  } = useCourseTable(userInfo?.course_tables?.[0] ?? null);
 
   const bgColor = useColorModeValue("white", "black");
   const selectedCourses = useMemo(() => {
     return courseTable?.courses.map((c) => c.id) ?? [];
   }, [courseTable]);
   const favoriteList = useMemo(() => userInfo?.favorites ?? [], [userInfo]);
-
-  if (isLoading) {
-    return (
-      <Box maxW="screen-md" h="95vh" mx="auto" overflow="visible" p="64px">
-        <Flex
-          h="90vh"
-          justifyContent="center"
-          flexDirection="column"
-          alignItems="center"
-          bg={bgColor}
-        >
-          <HashLoader size="60px" color="teal" />
-        </Flex>
-      </Box>
-    );
-  }
+  const router = useRouter();
 
   return (
     <>
@@ -121,7 +119,7 @@ export default function UserCollectionPage({
                     lineHeight: 1.4,
                   }}
                 >
-                  預選課表
+                  我的收藏
                 </Text>
               </HStack>
             </Flex>
@@ -170,7 +168,46 @@ export default function UserCollectionPage({
             position="sticky"
             top={0}
           >
-            <UserCoursePanel />
+            <Panel
+              title={`已加入課程 (${courseTable?.courses?.length ?? 0})`}
+              icon={FiCalendar}
+              isOpen={true}
+              onClick={() => {}}
+              fixedHeight={true}
+            >
+              {isCourseTableLoading ? (
+                Array.from({ length: 5 }).map((_, i) => <SkeletonBox key={i} />)
+              ) : (courseTable?.courses ?? []).length > 0 ? (
+                courseTable?.courses.map((course) => (
+                  <CourseInfoCard
+                    key={course.id}
+                    course={course}
+                    menuOptions={[
+                      {
+                        chinese: "查看課程大綱",
+                        english: "View Course Outline",
+                        callback: () => {
+                          router.push(`/courseinfo/${course.id}`);
+                        },
+                      },
+                      {
+                        chinese: "移除",
+                        english: "Remove",
+                        callback: () => {
+                          addOrRemoveCourse(course);
+                        },
+                        isRemove: true,
+                      },
+                    ]}
+                  />
+                ))
+              ) : (
+                <PanelPlaceholder
+                  title={"尚未加入任何課程"}
+                  desc={"加入課程並可在「我的課表」中檢視"}
+                />
+              )}
+            </Panel>
           </Flex>
         </Flex>
       </Flex>

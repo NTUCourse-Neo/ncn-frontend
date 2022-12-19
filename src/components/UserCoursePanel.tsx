@@ -26,7 +26,7 @@ import { parseCourseTimeLocation } from "@/utils/parseCourseSchedule";
 import { useRouter } from "next/router";
 import { setHoveredCourseState } from "@/utils/hoverCourse";
 
-function PanelPlaceholder({
+export function PanelPlaceholder({
   title,
   desc,
 }: {
@@ -67,7 +67,7 @@ function PanelPlaceholder({
   );
 }
 
-function SkeletonBox() {
+export function SkeletonBox() {
   return (
     <Flex
       w="100%"
@@ -96,7 +96,7 @@ interface CourseInfoCardProps {
   readonly course: Course;
   readonly menuOptions: CourseInfoCardMenuOption[];
 }
-function CourseInfoCard(props: CourseInfoCardProps) {
+export function CourseInfoCard(props: CourseInfoCardProps) {
   const { course, menuOptions } = props;
   const timeLocation = parseCourseTimeLocation(course.schedules);
   const [isDesktop] = useMediaQuery("(min-width: 768px)");
@@ -211,15 +211,24 @@ function CourseInfoCard(props: CourseInfoCardProps) {
 }
 
 interface PanelProps {
-  readonly layout: string;
+  readonly layout?: string;
   readonly isOpen: boolean;
   readonly title: string;
   readonly onClick: () => void;
   readonly icon: IconType;
   readonly children?: React.ReactNode;
+  readonly fixedHeight?: boolean;
 }
-function Panel(props: PanelProps) {
-  const { layout, isOpen, title, onClick, icon, children = null } = props;
+export function Panel(props: PanelProps) {
+  const {
+    layout = "",
+    isOpen,
+    title,
+    onClick,
+    icon,
+    fixedHeight = false,
+    children = null,
+  } = props;
   return (
     <Flex
       bg="white"
@@ -244,7 +253,7 @@ function Panel(props: PanelProps) {
         justifyContent={"space-between"}
         alignItems={"center"}
         onClick={onClick}
-        cursor="pointer"
+        cursor={fixedHeight ? "auto" : "pointer"}
       >
         <HStack alignItems={"center"}>
           <Center h="100%">
@@ -252,11 +261,13 @@ function Panel(props: PanelProps) {
           </Center>
           <Text>{title}</Text>
         </HStack>
-        <Icon
-          as={FaChevronDown}
-          transform={isOpen ? "rotate(180deg)" : ""}
-          transition="all ease-in-out 0.4s"
-        />
+        {fixedHeight ? null : (
+          <Icon
+            as={FaChevronDown}
+            transform={isOpen ? "rotate(180deg)" : ""}
+            transition="all ease-in-out 0.4s"
+          />
+        )}
       </Flex>
       <Flex
         bg="white"
