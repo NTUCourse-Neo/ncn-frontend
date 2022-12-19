@@ -185,7 +185,7 @@ function SignInButton() {
                 alignItems={"center"}
                 cursor="pointer"
                 onClick={() => {
-                  router.push("/user/my");
+                  router.push("/user/collection");
                 }}
               >
                 <Icon as={TbBookmark} w="20px" h="20px" mr={2} />
