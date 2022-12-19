@@ -27,7 +27,6 @@ function generateSearchAPIFilterObject(
       isFilterEdited("enroll_method")
         ? searchFilters.enroll_method
         : null,
-    target_grade: searchFilters.target_grade,
     other_limit:
       searchMode.filters.includes("other_limit") &&
       isFilterEdited("other_limit")

@@ -20,7 +20,6 @@ export type Filter = {
   time: Interval[][]; // time
   department: string[]; // departments
   enroll_method: EnrollMethod[]; // enrollMethods
-  target_grade: string[]; // targetGrades
   other_limit: OtherLimit[]; // otherLimits
   general_course_type: GeneralCourseType[]; // generalCourseTypes
   common_target_department: CommonTargetDepartment[]; // commonTargetDepartments

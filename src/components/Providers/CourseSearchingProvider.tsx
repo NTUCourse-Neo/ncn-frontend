@@ -57,7 +57,6 @@ interface CourseSearchingContextType {
 const emptyFilterObject: Filter = {
   time: [[], [], [], [], [], [], []],
   department: [],
-  target_grade: [],
   enroll_method: [],
   other_limit: [],
   general_course_type: [],
