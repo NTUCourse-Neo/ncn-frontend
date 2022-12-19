@@ -21,8 +21,6 @@ import { mapStateToIntervals } from "utils/timeTableConverter";
 import { useCourseSearchingContext } from "@/components/Providers/CourseSearchingProvider";
 import {
   EnrollMethod,
-  grades,
-  Grade,
   otherLimits,
   OtherLimit,
   GeneralCourseType,
@@ -297,70 +295,6 @@ export function EnrollMethodFilter() {
         >
           3 - 有人數限制，上網登記後分發
         </Checkbox>
-      </Stack>
-    </FilterDropdown>
-  );
-}
-
-export function TargetGradeFilter() {
-  const { searchFilters, setSearchFilters, setPageIndex, isFilterEdited } =
-    useCourseSearchingContext();
-  const [selectedTargetGrade, setSelectedTargetGrade] = useState<Grade[]>(
-    searchFilters.target_grade
-  );
-  const backToFirstPage = () => {
-    setPageIndex(0);
-  };
-
-  return (
-    <FilterDropdown
-      title={`可修課年級${
-        isFilterEdited("target_grade")
-          ? ` (${searchFilters.target_grade.length})`
-          : ""
-      }`}
-      onClick={() => {
-        setSelectedTargetGrade(searchFilters.target_grade);
-      }}
-      onSave={() => {
-        setSearchFilters({
-          ...searchFilters,
-          target_grade: selectedTargetGrade,
-        });
-        backToFirstPage();
-      }}
-      onClear={() => {
-        setSelectedTargetGrade([]);
-      }}
-      isEmpty={selectedTargetGrade.length === 0}
-      isActive={isFilterEdited("target_grade")}
-    >
-      <Stack
-        spacing={3}
-        sx={{
-          fontSize: "14px",
-          lineHeight: "20px",
-          fontWeight: 500,
-          color: "#666666",
-          letterSpacing: "0.05em",
-        }}
-        w="fit-content"
-      >
-        {grades.map((grade) => {
-          return (
-            <Checkbox
-              key={grade.value}
-              isChecked={selectedTargetGrade.includes(grade.value)}
-              onChange={() => {
-                setSelectedTargetGrade(
-                  getNextCheckListState(selectedTargetGrade, grade.value)
-                );
-              }}
-            >
-              {grade.label}
-            </Checkbox>
-          );
-        })}
       </Stack>
     </FilterDropdown>
   );

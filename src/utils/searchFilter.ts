@@ -1,6 +1,5 @@
 import {
   EnrollMethod,
-  Grade,
   GeneralCourseType,
   generalCourseTypes,
   commonTargetDepartments,
@@ -20,12 +19,6 @@ export function isEnrollMethodFilterActive(
     enrollMethods.length !== 0 &&
     enrollMethods.length !== MAX_ENROLL_METHOD_NUMBER
   );
-}
-
-// targetGrade
-export const MAX_TARGET_GRADE_NUMBER = 6;
-export function isTargetGradeFilterActive(grades: Grade[]): boolean {
-  return grades.length !== 0 && grades.length !== MAX_TARGET_GRADE_NUMBER;
 }
 
 // general course type

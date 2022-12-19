@@ -4,7 +4,6 @@ import {
   DeptFilter,
   EnrollMethodFilter,
   OtherLimitFilter,
-  TargetGradeFilter,
   GeneralCourseTypeFilter,
   CommonTargetDeptFilter,
   CommonCourseTypeFilter,
@@ -21,7 +20,7 @@ export type Filter = {
   time: Interval[][]; // time
   department: string[]; // departments
   enroll_method: EnrollMethod[]; // enrollMethods
-  target_grade: Grade[]; // targetGrades
+  target_grade: string[]; // targetGrades
   other_limit: OtherLimit[]; // otherLimits
   general_course_type: GeneralCourseType[]; // generalCourseTypes
   common_target_department: CommonTargetDepartment[]; // commonTargetDepartments
@@ -49,36 +48,6 @@ export type SearchFieldName =
 
 // enroll method filter
 export type EnrollMethod = "1" | "2" | "3";
-
-// targetGrade filter
-// need english label in the future
-export const grades = [
-  {
-    label: "大一",
-    value: "1",
-  },
-  {
-    label: "大二",
-    value: "2",
-  },
-  {
-    label: "大三",
-    value: "3",
-  },
-  {
-    label: "大四",
-    value: "4",
-  },
-  {
-    label: "碩士",
-    value: "m",
-  },
-  {
-    label: "博士",
-    value: "d",
-  },
-] as const;
-export type Grade = typeof grades[number]["value"];
 
 // otherLimit filter
 // need english label in the future
@@ -316,7 +285,7 @@ export const programs = AllPrograms;
 export type ProgramCode = typeof programs[number]["value"];
 
 // All filters
-export const filters = {
+export const filterComponentMap = {
   time: {
     id: "time",
     component: <TimeFilter />,
@@ -332,10 +301,6 @@ export const filters = {
   other_limit: {
     id: "other_limit",
     component: <OtherLimitFilter />,
-  },
-  target_grade: {
-    id: "target_grade",
-    component: <TargetGradeFilter />,
   },
   general_course_type: {
     id: "general_course_type",
@@ -370,7 +335,7 @@ export const filters = {
     component: <SingleDeptFilter />,
   },
 } as const;
-export type FilterType = keyof typeof filters;
+export type FilterComponentId = keyof typeof filterComponentMap;
 
 // for sorting
 export const sortOptions = [

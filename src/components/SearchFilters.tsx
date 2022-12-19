@@ -1,7 +1,7 @@
 import { Flex, Box, FlexProps } from "@chakra-ui/react";
 import React from "react";
 import { useCourseSearchingContext } from "@/components/Providers/CourseSearchingProvider";
-import { filters } from "@/types/search";
+import { filterComponentMap } from "@/types/search";
 
 function SearchFilters(props: FlexProps) {
   const { resetFilters, isFiltersEdited, searchMode } =
@@ -12,7 +12,7 @@ function SearchFilters(props: FlexProps) {
       {searchMode.filters.map((filterId) => {
         return (
           <React.Fragment key={`${filterId}`}>
-            {filters?.[filterId]?.["component"] ?? null}
+            {filterComponentMap?.[filterId]?.["component"] ?? null}
           </React.Fragment>
         );
       })}

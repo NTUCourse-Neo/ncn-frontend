@@ -11,12 +11,11 @@ import type {
   SearchFieldName,
   Filter,
   SortOption,
-  FilterType,
+  FilterComponentId,
 } from "types/search";
 import { sortOptions } from "types/search";
 import {
   isEnrollMethodFilterActive,
-  isTargetGradeFilterActive,
   isGeneralCourseTypeFilterActive,
   isCommonCourseTypeFilterActive,
   isCommonTargetDeptFilterActive,
@@ -50,7 +49,7 @@ interface CourseSearchingContextType {
   dispatchSearch: (search: string | null) => void;
   resetFilters: () => void;
   isFiltersEdited: boolean;
-  isFilterEdited: (filterType: FilterType) => boolean;
+  isFilterEdited: (filterComponentId: FilterComponentId) => boolean;
   searchPageTopRef: React.RefObject<HTMLDivElement>;
   searchCallback: () => void;
 }
@@ -148,9 +147,9 @@ const CourseSearchingProvider: React.FC<{
   };
 
   const isFilterEdited = useCallback(
-    (filterId: FilterType) => {
+    (filterComponentId: FilterComponentId) => {
       // enumerate all the filter types
-      switch (filterId) {
+      switch (filterComponentId) {
         case "time": {
           return (
             mapStateToIntervals(searchFilters.time) > 0 ||
@@ -165,9 +164,6 @@ const CourseSearchingProvider: React.FC<{
         }
         case "enroll_method": {
           return isEnrollMethodFilterActive(searchFilters.enroll_method);
-        }
-        case "target_grade": {
-          return isTargetGradeFilterActive(searchFilters.target_grade);
         }
         case "other_limit": {
           return searchFilters.other_limit.length > 0;

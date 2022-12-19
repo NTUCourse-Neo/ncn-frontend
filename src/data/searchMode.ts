@@ -1,4 +1,4 @@
-import { FilterType } from "@/types/search";
+import { FilterComponentId } from "@/types/search";
 import type { PrecautionName } from "@/components/InstructionModals";
 
 export type SearchModeID =
@@ -18,7 +18,7 @@ export interface SearchMode {
   id: SearchModeID; // used for letting backend know
   chinese: string;
   english: string;
-  filters: FilterType[];
+  filters: FilterComponentId[];
   precautions: PrecautionName[];
 }
 
@@ -27,20 +27,14 @@ const searchModeList: SearchMode[] = [
     id: "fast",
     chinese: "快速搜尋",
     english: "Quick Search",
-    filters: ["time", "dept", "enroll_method", "target_grade", "other_limit"],
+    filters: ["time", "dept", "enroll_method", "other_limit"],
     precautions: ["courseSelectionRule"],
   },
   {
     id: "dept",
     chinese: "系所",
     english: "Department",
-    filters: [
-      "time",
-      "single_dept",
-      "enroll_method",
-      "target_grade",
-      "other_limit",
-    ],
+    filters: ["time", "single_dept", "enroll_method", "other_limit"],
     precautions: ["courseSelectionRule"],
   },
   {
@@ -90,7 +84,7 @@ const searchModeList: SearchMode[] = [
     id: "expertise",
     chinese: "領域專長",
     english: "Domain Expertise",
-    filters: ["time", "dept", "enroll_method", "target_grade", "other_limit"],
+    filters: ["time", "dept", "enroll_method", "other_limit"],
     precautions: ["domainExpertisePrecaution"],
   },
   {
@@ -119,14 +113,14 @@ const searchModeList: SearchMode[] = [
     id: "intensive",
     chinese: "密集",
     english: "Intensive",
-    filters: ["time", "dept", "enroll_method", "target_grade", "other_limit"],
+    filters: ["time", "dept", "enroll_method", "other_limit"],
     precautions: ["courseSelectionRule"],
   },
   {
     id: "english",
     chinese: "進階英語",
     english: "Advanced English",
-    filters: ["time", "dept", "enroll_method", "target_grade", "other_limit"],
+    filters: ["time", "dept", "enroll_method", "other_limit"],
     precautions: ["courseSelectionRule", "advancedEnglishCoursePrecaution"],
   },
 ];
