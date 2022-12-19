@@ -4,19 +4,22 @@ import {
   Text,
   useToast,
   Box,
-  Spacer,
-  Accordion,
   useColorModeValue,
+  HStack,
 } from "@chakra-ui/react";
-import SkeletonRow from "components/SkeletonRow";
-import { HashLoader, BeatLoader } from "react-spinners";
-import CourseInfoRow from "components/CourseInfoRow";
+import { HashLoader } from "react-spinners";
 import useCourseTable from "hooks/useCourseTable";
 import { withPageAuthRequired, UserProfile } from "@auth0/nextjs-auth0";
 import Head from "next/head";
 import useUserInfo from "hooks/useUserInfo";
+import CustomBreadcrumb from "@/components/Breadcrumb";
+import UserCoursePanel from "@/components/UserCoursePanel";
 
-export default function UserMyPage({ user }: { readonly user: UserProfile }) {
+export default function UserCollectionPage({
+  user,
+}: {
+  readonly user: UserProfile;
+}) {
   const { userInfo, isLoading } = useUserInfo(user?.sub ?? null, {
     onErrorCallback: (e, k, c) => {
       toast({
@@ -62,51 +65,113 @@ export default function UserMyPage({ user }: { readonly user: UserProfile }) {
           content={`我的收藏頁面 | NTUCourse Neo，全新的臺大選課網站。`}
         />
       </Head>
-      <Flex h={{ base: "90vh", md: "95vh" }} w="100vw" bg={bgColor}>
+      <Flex
+        w="100vw"
+        h="93vh"
+        direction="row"
+        justifyContent="center"
+        alignItems="start"
+        overflow="auto"
+        bg={"black.100"}
+      >
         <Flex
           w="100vw"
-          direction="column"
+          h="93vh"
+          flexDirection={"row"}
+          gap={10}
           justifyContent="start"
-          alignItems="center"
-          overflow="auto"
-          transition="all 500ms ease-in-out"
-          pt="64px"
+          alignItems="start"
+          overflowY={"auto"}
+          overflowX={"hidden"}
+          position="relative"
+          px="10%"
         >
-          <Flex flexDirection="row" alignItems="center" justifyContent="start">
-            {!userInfo ? <BeatLoader size={8} color="teal" /> : <></>}
-            <Text
-              fontSize="md"
-              fontWeight="medium"
-              color="gray.400"
-              my="2"
-              ml="1"
+          <Flex
+            w={"75%"}
+            flexDirection={"column"}
+            py={8}
+            sx={{
+              transition: "all 0.3s ease-in-out",
+            }}
+          >
+            <CustomBreadcrumb
+              pageItems={[
+                {
+                  text: "首頁",
+                  href: "/",
+                },
+                {
+                  text: "我的收藏",
+                  href: "/user/collection",
+                },
+              ]}
+            />
+            <Flex
+              w="100%"
+              mt={6}
+              mb={6}
+              alignItems="end"
+              justifyContent={"space-between"}
             >
-              {!userInfo
-                ? "載入中"
-                : `我的最愛課程 共有 ${favoriteList.length} 筆結果`}
-            </Text>
-          </Flex>
-          <Box w={{ base: "100%", md: "80%", lg: "70%" }}>
-            <Flex direction="column" alignItems={"center"}>
-              {favoriteList.map((course, index) => (
-                <Accordion
-                  allowToggle
-                  w={{ base: "90vw", md: "100%" }}
-                  key={index}
+              <HStack>
+                <Text
+                  sx={{
+                    fontWeight: 500,
+                    fontSize: "28px",
+                    lineHeight: 1.4,
+                  }}
                 >
-                  <CourseInfoRow
-                    courseInfo={course}
-                    selected={selectedCourses.includes(course.id)}
-                  />
-                  <Spacer my={{ base: 2, md: 1 }} />
-                </Accordion>
-              ))}
+                  預選課表
+                </Text>
+              </HStack>
             </Flex>
-          </Box>
-
-          <Box ml="48vw" transition="all 500ms ease-in-out">
-            <SkeletonRow isLoading={!userInfo} />
-          </Box>
+            <Box
+              sx={{
+                borderRadius: "4px",
+                shadow: "0px 3px 8px rgba(75, 75, 75, 0.08)",
+                bg: "#ffffff",
+                border: "1px solid rgba(204, 204, 204, 0.4)",
+              }}
+            >
+              <Flex
+                sx={{
+                  w: "100%",
+                  bg: "#002F94",
+                  h: "46px",
+                  borderRadius: "4px 4px 0px 0px",
+                  pl: 4,
+                  pr: 8,
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Flex h="100%">{/* blue bar */}</Flex>
+              </Flex>
+              <Flex
+                w="100%"
+                minH="70vh"
+                justifyContent={"center"}
+                alignItems="center"
+                overflow={"auto"}
+                pt={4}
+                px={4}
+                pb={12}
+              ></Flex>
+            </Box>
+          </Flex>
+          <Flex
+            w={"25%"}
+            sx={{
+              transition: "all 2s ease-in-out",
+            }}
+            h="92vh"
+            py={8}
+            flexDirection={"column"}
+            position="sticky"
+            top={0}
+          >
+            <UserCoursePanel />
+          </Flex>
         </Flex>
       </Flex>
     </>
