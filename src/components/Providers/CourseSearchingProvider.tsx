@@ -58,7 +58,13 @@ const emptyFilterObject: Filter = {
   time: [[], [], [], [], [], [], []],
   department: [],
   enroll_method: [],
-  other_limit: [],
+  englishOnly: false,
+  remoteOnly: false,
+  changeOnly: false,
+  addOnly: false,
+  noPrerequisiteOnly: false,
+  noConflictOnly: false,
+  notEnrolledOnly: false,
   general_course_type: [],
   common_target_department: [],
   common_course_type: [],
@@ -165,7 +171,15 @@ const CourseSearchingProvider: React.FC<{
           return isEnrollMethodFilterActive(searchFilters.enroll_method);
         }
         case "other_limit": {
-          return searchFilters.other_limit.length > 0;
+          return (
+            searchFilters.englishOnly ||
+            searchFilters.remoteOnly ||
+            searchFilters.changeOnly ||
+            searchFilters.addOnly ||
+            searchFilters.noPrerequisiteOnly ||
+            searchFilters.noConflictOnly ||
+            searchFilters.notEnrolledOnly
+          );
         }
         case "general_course_type": {
           return isGeneralCourseTypeFilterActive(

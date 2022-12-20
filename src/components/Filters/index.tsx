@@ -10,7 +10,7 @@ import {
   Icon,
   Button,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import TimeFilterModal from "@/components/Filters/TimeFilterModal";
 import DeptFilterModal from "@/components/Filters/DeptFilterModal";
 import ProgramFilterModal from "@/components/Filters/ProgramFilterModal";
@@ -22,7 +22,6 @@ import { useCourseSearchingContext } from "@/components/Providers/CourseSearchin
 import {
   EnrollMethod,
   otherLimits,
-  OtherLimit,
   GeneralCourseType,
   generalCourseTypes,
   CommonTargetDepartment,
@@ -300,12 +299,76 @@ export function EnrollMethodFilter() {
   );
 }
 
+type limitId = typeof otherLimits[number]["value"];
+
 export function OtherLimitFilter() {
   const { searchFilters, setSearchFilters, setPageIndex, isFilterEdited } =
     useCourseSearchingContext();
-  const [selectedOtherLimit, setSelectedOtherLimit] = useState<OtherLimit[]>(
-    searchFilters.other_limit
+  const [englishOnly, setEnglishOnly] = useState(searchFilters.englishOnly);
+  const [remoteOnly, setRemoteOnly] = useState(searchFilters.remoteOnly);
+  const [changeOnly, setChangeOnly] = useState(searchFilters.changeOnly);
+  const [addOnly, setAddOnly] = useState(searchFilters.addOnly);
+  const [noPrerequisiteOnly, setNoPrerequisiteOnly] = useState(
+    searchFilters.noPrerequisiteOnly
   );
+  const [noConflictOnly, setNoConflictOnly] = useState(
+    searchFilters.noConflictOnly
+  );
+  const [notEnrolledOnly, setNotEnrolledOnly] = useState(
+    searchFilters.notEnrolledOnly
+  );
+
+  const limitIdStateMap: Record<
+    limitId,
+    {
+      state: boolean;
+      setState: React.Dispatch<React.SetStateAction<boolean>>;
+    }
+  > = useMemo(
+    () => ({
+      englishOnly: {
+        state: englishOnly,
+        setState: setEnglishOnly,
+      },
+      remoteOnly: {
+        state: remoteOnly,
+        setState: setRemoteOnly,
+      },
+      changeOnly: {
+        state: changeOnly,
+        setState: setChangeOnly,
+      },
+      addOnly: {
+        state: addOnly,
+        setState: setAddOnly,
+      },
+      noPrerequisiteOnly: {
+        state: noPrerequisiteOnly,
+        setState: setNoPrerequisiteOnly,
+      },
+      noConflictOnly: {
+        state: noConflictOnly,
+        setState: setNoConflictOnly,
+      },
+      notEnrolledOnly: {
+        state: notEnrolledOnly,
+        setState: setNotEnrolledOnly,
+      },
+    }),
+    [
+      englishOnly,
+      remoteOnly,
+      addOnly,
+      changeOnly,
+      noPrerequisiteOnly,
+      notEnrolledOnly,
+      noConflictOnly,
+    ]
+  );
+  const numOfTrues = useMemo(() => {
+    return Object.values(limitIdStateMap).filter((item) => item.state).length;
+  }, [limitIdStateMap]);
+
   const otherLimitsGroupByType = _.groupBy(
     otherLimits,
     (limit) => limit.type_label
@@ -318,23 +381,50 @@ export function OtherLimitFilter() {
     <FilterDropdown
       title={`其他限制${
         isFilterEdited("other_limit")
-          ? ` (${searchFilters.other_limit.length})`
+          ? ` (${
+              [
+                searchFilters.englishOnly,
+                searchFilters.remoteOnly,
+                searchFilters.changeOnly,
+                searchFilters.addOnly,
+                searchFilters.noPrerequisiteOnly,
+                searchFilters.noConflictOnly,
+                searchFilters.notEnrolledOnly,
+              ].filter((item) => item).length
+            })`
           : ``
       }`}
       onClick={() => {
-        setSelectedOtherLimit(searchFilters.other_limit);
+        // sync from context
+        setRemoteOnly(searchFilters.remoteOnly);
+        setEnglishOnly(searchFilters.englishOnly);
+        setChangeOnly(searchFilters.changeOnly);
+        setAddOnly(searchFilters.addOnly);
+        setNoPrerequisiteOnly(searchFilters.noPrerequisiteOnly);
+        setNoConflictOnly(searchFilters.noConflictOnly);
+        setNotEnrolledOnly(searchFilters.notEnrolledOnly);
       }}
       onSave={() => {
         setSearchFilters({
           ...searchFilters,
-          other_limit: selectedOtherLimit,
+          // sync to context
+          remoteOnly: remoteOnly,
+          englishOnly: englishOnly,
+          changeOnly: changeOnly,
+          addOnly: addOnly,
+          noPrerequisiteOnly: noPrerequisiteOnly,
+          noConflictOnly: noConflictOnly,
+          notEnrolledOnly: notEnrolledOnly,
         });
         backToFirstPage();
       }}
       onClear={() => {
-        setSelectedOtherLimit([]);
+        // set all to false
+        Object.values(limitIdStateMap).forEach((item) => {
+          item.setState(false);
+        });
       }}
-      isEmpty={selectedOtherLimit.length === 0}
+      isEmpty={numOfTrues === 0} // all false
       isActive={isFilterEdited("other_limit")}
     >
       <Stack
@@ -366,11 +456,9 @@ export function OtherLimitFilter() {
                   <Checkbox
                     key={limit.label}
                     isDisabled={!limit.avaliable}
-                    isChecked={selectedOtherLimit.includes(limit.value)}
+                    isChecked={limitIdStateMap[limit.value].state}
                     onChange={() => {
-                      setSelectedOtherLimit(
-                        getNextCheckListState(selectedOtherLimit, limit.value)
-                      );
+                      limitIdStateMap[limit.value].setState((prev) => !prev);
                     }}
                   >
                     {limit.label}{" "}

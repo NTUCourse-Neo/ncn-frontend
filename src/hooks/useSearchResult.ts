@@ -27,11 +27,27 @@ function generateSearchAPIFilterObject(
       isFilterEdited("enroll_method")
         ? searchFilters.enroll_method
         : null,
-    other_limit:
-      searchMode.filters.includes("other_limit") &&
-      isFilterEdited("other_limit")
-        ? searchFilters.other_limit
-        : null,
+    englishOnly: searchMode.filters.includes("other_limit")
+      ? searchFilters.englishOnly
+      : null,
+    remoteOnly: searchMode.filters.includes("other_limit")
+      ? searchFilters.remoteOnly
+      : null,
+    changeOnly: searchMode.filters.includes("other_limit")
+      ? searchFilters.changeOnly
+      : null,
+    addOnly: searchMode.filters.includes("other_limit")
+      ? searchFilters.addOnly
+      : null,
+    noConflictOnly: searchMode.filters.includes("other_limit")
+      ? searchFilters.noConflictOnly
+      : null,
+    noPrerequisiteOnly: searchMode.filters.includes("other_limit")
+      ? searchFilters.noPrerequisiteOnly
+      : null,
+    notEnrolledOnly: searchMode.filters.includes("other_limit")
+      ? searchFilters.notEnrolledOnly
+      : null,
     general_course_type:
       searchMode.filters.includes("general_course_type") &&
       isFilterEdited("general_course_type")

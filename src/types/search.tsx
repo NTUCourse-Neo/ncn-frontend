@@ -20,7 +20,14 @@ export type Filter = {
   time: Interval[][]; // time
   department: string[]; // departments
   enroll_method: EnrollMethod[]; // enrollMethods
-  other_limit: OtherLimit[]; // otherLimits
+  // otherLimits
+  englishOnly: boolean;
+  remoteOnly: boolean;
+  changeOnly: boolean;
+  addOnly: boolean;
+  noPrerequisiteOnly: boolean;
+  noConflictOnly: boolean;
+  notEnrolledOnly: boolean;
   general_course_type: GeneralCourseType[]; // generalCourseTypes
   common_target_department: CommonTargetDepartment[]; // commonTargetDepartments
   common_course_type: CommonCourseType[]; // commonCourseTypes
@@ -54,47 +61,46 @@ export const otherLimits = [
   {
     type_label: "上課形式",
     label: "只顯示英文授課",
-    value: "english_only",
+    value: "englishOnly",
     avaliable: true,
   },
   {
     type_label: "上課形式",
     label: "只顯示遠距課程",
-    value: "remote_only",
+    value: "remoteOnly",
     avaliable: true,
   },
   {
     type_label: "課程調整",
     label: "只顯示異動課程",
-    value: "change_only",
+    value: "changeOnly",
     avaliable: true,
   },
   {
     type_label: "課程調整",
     label: "只顯示加開課程",
-    value: "add_only",
+    value: "addOnly",
     avaliable: true,
   },
   {
     type_label: "個人設定",
     label: "只顯示沒有先修規定/資格限制的課程",
-    value: "no_prerequisite",
+    value: "noPrerequisiteOnly",
     avaliable: true,
   },
   {
     type_label: "個人設定",
     label: "只顯示未衝堂的課程",
-    value: "no_clash",
+    value: "noConflictOnly",
     avaliable: false,
   },
   {
     type_label: "個人設定",
     label: "只顯示未加入課程",
-    value: "no_enroll",
+    value: "notEnrolledOnly",
     avaliable: false,
   },
 ] as const;
-export type OtherLimit = typeof otherLimits[number]["value"];
 
 // general course type
 export const generalCourseTypes = [
