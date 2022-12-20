@@ -1,4 +1,4 @@
-import { Flex, useToast, Box, HStack, Text, Center } from "@chakra-ui/react";
+import { Flex, useToast, Box, HStack, Text } from "@chakra-ui/react";
 import { HashLoader } from "react-spinners";
 import useCourseTable from "hooks/useCourseTable";
 import { withPageAuthRequired, UserProfile } from "@auth0/nextjs-auth0";
@@ -7,10 +7,10 @@ import useUserInfo from "hooks/useUserInfo";
 import CustomBreadcrumb from "@/components/Breadcrumb";
 import UserCoursePanel from "@/components/UserCoursePanel";
 import CourseTable from "@/components/CourseTable";
-import { InfoOutlineIcon } from "@chakra-ui/icons";
 import { useState } from "react";
 import CourseOrderList from "@/components/CourseTable/CourseOrderList";
 import CourseOrderTable from "@/components/CourseTable/CourseOrderTable";
+import InfoModal from "@/components/CourseTable/InfoModal";
 
 const tabs = [
   {
@@ -167,15 +167,7 @@ export default function CourseTablePage({
                 >
                   預選課表
                 </Text>
-                <Center>
-                  <InfoOutlineIcon
-                    boxSize={"15px"}
-                    color={"#6F6F6F"}
-                    sx={{
-                      cursor: "pointer",
-                    }}
-                  />
-                </Center>
+                <InfoModal />
               </HStack>
               <Flex
                 sx={{
