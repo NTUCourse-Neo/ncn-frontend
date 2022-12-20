@@ -40,7 +40,7 @@ export type Filter = {
   grouping_course_type: string[]; // groupingCourseTypes
   dept: Department | null; // for singleDept, department
   department_course_type: string | null; // for singleDept, departmentCourseTypes
-  singleDeptIsSelective: boolean | null; // for singleDept, isSelectiveSingleDept
+  singleDeptIsSelective: IsSelectiveOption; // for singleDept, isSelectiveSingleDept
   suggestedGrade: string | null; // for singleDept, suggestedGrade
 };
 

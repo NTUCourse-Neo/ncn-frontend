@@ -45,15 +45,16 @@ import { CloseIcon } from "@chakra-ui/icons";
 import { searchDept } from "@/components/Filters/DeptFilterModal";
 import Dropdown from "@/components/Dropdown";
 import { ChevronDownIcon } from "@chakra-ui/icons";
+import { IsSelectiveOption, isSelectiveOptions } from "@/types/search";
 
 // TODO: add API & hook to fetch options
 interface DropdownGroupProps extends FlexProps {
   readonly deptId: string | null;
   readonly selectedCourseType: string | null;
   readonly setSelectedCourseType: (courseType: string | null) => void;
-  readonly isSingleDeptSelective: boolean | null;
+  readonly isSingleDeptSelective: IsSelectiveOption;
   readonly setIsSingleDeptSelective: (
-    isSingleDeptSelective: boolean | null
+    isSingleDeptSelective: IsSelectiveOption
   ) => void;
   readonly suggestedGrade: string | null;
   readonly setSuggestedGrade: (suggestedGrade: string | null) => void;
@@ -69,25 +70,21 @@ function DropdownGroup(props: DropdownGroupProps) {
     setSuggestedGrade,
     ...rest
   } = props;
-  const selectiveOptions = {
-    All: {
-      label: "必修 + 選修",
-      value: null,
-    },
-    Selective: {
-      label: "選修",
-      value: true,
-    },
-    Required: {
-      label: "必修",
-      value: false,
-    },
-  } as const;
-  const findSelevtiveOption = (value: boolean | null) => {
-    if (value === null) {
-      return selectiveOptions.All;
+  const selectiveOptions: Record<
+    IsSelectiveOption,
+    {
+      label: string;
     }
-    return value ? selectiveOptions.Selective : selectiveOptions.Required;
+  > = {
+    all: {
+      label: "必修 + 選修",
+    },
+    selective: {
+      label: "選修",
+    },
+    required: {
+      label: "必修",
+    },
   };
   return (
     <Flex alignItems={"center"} {...rest}>
@@ -109,7 +106,11 @@ function DropdownGroup(props: DropdownGroupProps) {
                 fontSize: "12px",
               }}
             >
-              {findSelevtiveOption(isSingleDeptSelective).label}
+              {isSingleDeptSelective === "all"
+                ? "必修 + 選修"
+                : isSingleDeptSelective === "selective"
+                ? "選修"
+                : "必修"}
             </Text>
             <ChevronDownIcon />
           </HStack>
@@ -122,17 +123,9 @@ function DropdownGroup(props: DropdownGroupProps) {
           }}
         >
           <RadioGroup
-            value={
-              isSingleDeptSelective === null
-                ? "All"
-                : isSingleDeptSelective
-                ? "Selective"
-                : "Required"
-            }
+            value={isSingleDeptSelective}
             onChange={(next) => {
-              setIsSingleDeptSelective(
-                next === "All" ? null : next === "Selective" ? true : false
-              );
+              setIsSingleDeptSelective(next as IsSelectiveOption);
             }}
             gap={2}
           >
@@ -289,9 +282,8 @@ function SingleDeptFilterModal({
   const [selectedCourseType, setSelectedCourseType] = useState<string | null>(
     searchFilters.department_course_type
   );
-  const [isSingleDeptSelective, setIsSingleDeptSelective] = useState<
-    boolean | null
-  >(searchFilters.singleDeptIsSelective);
+  const [isSingleDeptSelective, setIsSingleDeptSelective] =
+    useState<IsSelectiveOption>(searchFilters.singleDeptIsSelective);
   const [suggestedGrade, setSuggestedGrade] = useState(
     searchFilters.suggestedGrade
   );
@@ -349,7 +341,7 @@ function SingleDeptFilterModal({
     // fire when click "Reset"
     // set local state to empty array
     setSelectedDept(null);
-    setIsSingleDeptSelective(null);
+    setIsSingleDeptSelective(isSelectiveOptions[0]);
     setSelectedCourseType(null);
     setSuggestedGrade(null);
   };

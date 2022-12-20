@@ -77,7 +77,7 @@ const emptyFilterObject: Filter = {
   grouping_course_type: [],
   dept: null,
   department_course_type: null,
-  singleDeptIsSelective: null,
+  singleDeptIsSelective: isSelectiveOptions[0],
   suggestedGrade: null,
 };
 
@@ -214,7 +214,7 @@ const CourseSearchingProvider: React.FC<{
           return (
             searchFilters.dept !== null ||
             searchFilters.department_course_type !== null ||
-            searchFilters.singleDeptIsSelective !== null ||
+            searchFilters.singleDeptIsSelective !== isSelectiveOptions[0] ||
             searchFilters.suggestedGrade !== null
           );
         }
