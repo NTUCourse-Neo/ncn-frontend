@@ -35,7 +35,7 @@ export type Filter = {
   host_college: HostCollege[]; // hostColleges
   program: ProgramCode[]; // programs
   is_full_year: boolean | null; // isFullYear
-  is_selective: boolean | null; // isSelective
+  is_selective: IsSelectiveOption; // isSelective
   time_strict_match: boolean; // timeStrictMatch
   grouping_course_type: string[]; // groupingCourseTypes
   dept: Department | null; // for singleDept, department
@@ -54,6 +54,9 @@ export type SearchFieldName =
 
 // enroll method filter
 export type EnrollMethod = "1" | "2" | "3";
+
+export const isSelectiveOptions = ["all", "selective", "required"] as const;
+export type IsSelectiveOption = typeof isSelectiveOptions[number];
 
 // otherLimit filter
 // need english label in the future

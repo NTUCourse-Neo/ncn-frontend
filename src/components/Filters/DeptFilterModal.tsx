@@ -41,6 +41,7 @@ import type { Department } from "types/course";
 import { generateScrollBarCss } from "styles/customScrollBar";
 import { useInView } from "react-intersection-observer";
 import { CloseIcon } from "@chakra-ui/icons";
+import { IsSelectiveOption, isSelectiveOptions } from "@/types/search";
 
 export function searchDept(
   searchText: string,
@@ -62,8 +63,8 @@ export function searchDept(
 }
 
 interface IsSeleciveRadioGroupProps extends FlexProps {
-  readonly isSelective: boolean | null;
-  readonly setIsSelective: (isSelective: boolean | null) => void;
+  readonly isSelective: IsSelectiveOption;
+  readonly setIsSelective: (isSelective: IsSelectiveOption) => void;
 }
 function IsSeleciveRadioGroup(props: IsSeleciveRadioGroupProps) {
   const { isSelective, setIsSelective, ...rest } = props;
@@ -71,21 +72,9 @@ function IsSeleciveRadioGroup(props: IsSeleciveRadioGroupProps) {
     <Flex alignItems={"center"} {...rest}>
       <RadioGroup
         onChange={(next) => {
-          if (next === "all") {
-            setIsSelective(null);
-          } else if (next === "selective") {
-            setIsSelective(true);
-          } else if (next === "required") {
-            setIsSelective(false);
-          }
+          setIsSelective(next as IsSelectiveOption);
         }}
-        value={
-          isSelective === null
-            ? "all"
-            : isSelective === false
-            ? "required"
-            : "selective"
-        }
+        value={isSelective}
       >
         <Stack
           direction="row"
@@ -98,9 +87,15 @@ function IsSeleciveRadioGroup(props: IsSeleciveRadioGroupProps) {
             letterSpacing: "0.05em",
           }}
         >
-          <Radio value={"all"}>全部</Radio>
-          <Radio value={"required"}>必修課程</Radio>
-          <Radio value={"selective"}>選修課程</Radio>
+          {isSelectiveOptions.map((option) => (
+            <Radio value={option} key={option}>
+              {option === "all"
+                ? "全部"
+                : option === "required"
+                ? "必修課程"
+                : "選修課程"}
+            </Radio>
+          ))}
         </Stack>
       </RadioGroup>
     </Flex>
@@ -207,7 +202,7 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
   const { searchFilters, setSearchFilters, setPageIndex } =
     useCourseSearchingContext();
   const [selectedDept, setSelectedDept] = useState(searchFilters.department);
-  const [isSelective, setIsSelective] = useState<boolean | null>(
+  const [isSelective, setIsSelective] = useState<IsSelectiveOption>(
     searchFilters.is_selective
   );
   const modalBodyRef = useRef<HTMLDivElement>(null);
@@ -265,7 +260,7 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
     // fire when click "Reset"
     // set local state to empty array
     setSelectedDept([]);
-    setIsSelective(null);
+    setIsSelective(isSelectiveOptions[0]);
   };
 
   const modalBody = useMemo(() => {
