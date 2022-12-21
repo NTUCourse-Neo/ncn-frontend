@@ -65,10 +65,10 @@ const emptyFilterObject: Filter = {
   noPrerequisite: false,
   noConflictOnly: false,
   notEnrolledOnly: false,
-  general_course_type: [],
-  common_target_department: [],
-  common_course_type: [],
-  pearmy_course_type: [],
+  generalCourseTypes: [],
+  commonTargetDepartments: [],
+  commonCourseTypes: [],
+  peArmyCourseTypes: [],
   host_college: [],
   program: [],
   is_full_year: null,
@@ -183,22 +183,22 @@ const CourseSearchingProvider: React.FC<{
         }
         case "general_course_type": {
           return isGeneralCourseTypeFilterActive(
-            searchFilters.general_course_type
+            searchFilters.generalCourseTypes
           );
         }
         case "common_target_dept": {
           return isCommonTargetDeptFilterActive(
-            searchFilters.common_target_department
+            searchFilters.commonTargetDepartments
           );
         }
         case "common_course_type": {
           return isCommonCourseTypeFilterActive(
-            searchFilters.common_course_type
+            searchFilters.commonCourseTypes
           );
         }
         case "pearmy_course_type": {
           return isPeArmyCourseTypeFilterActive(
-            searchFilters.pearmy_course_type
+            searchFilters.peArmyCourseTypes
           );
         }
         case "host_college": {

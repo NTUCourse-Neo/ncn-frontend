@@ -485,7 +485,7 @@ export function GeneralCourseTypeFilter() {
     useCourseSearchingContext();
   const [selectedGeneralCourseType, setSelectedGeneralCourseType] = useState<
     GeneralCourseType[]
-  >(searchFilters.general_course_type);
+  >(searchFilters.generalCourseTypes);
   const backToFirstPage = () => {
     setPageIndex(0);
   };
@@ -494,16 +494,16 @@ export function GeneralCourseTypeFilter() {
     <FilterDropdown
       title={`課程類別${
         isFilterEdited("general_course_type")
-          ? ` (${searchFilters.general_course_type.length})`
+          ? ` (${searchFilters.generalCourseTypes.length})`
           : ""
       }`}
       onClick={() => {
-        setSelectedGeneralCourseType(searchFilters.general_course_type);
+        setSelectedGeneralCourseType(searchFilters.generalCourseTypes);
       }}
       onSave={() => {
         setSearchFilters({
           ...searchFilters,
-          general_course_type: selectedGeneralCourseType,
+          generalCourseTypes: selectedGeneralCourseType,
         });
         backToFirstPage();
       }}
@@ -552,7 +552,7 @@ export function CommonTargetDeptFilter() {
   const { searchFilters, setSearchFilters, setPageIndex, isFilterEdited } =
     useCourseSearchingContext();
   const [selectedCommonTargetDepartment, setSelectedCommonTargetDepartment] =
-    useState<CommonTargetDepartment[]>(searchFilters.common_target_department);
+    useState<CommonTargetDepartment[]>(searchFilters.commonTargetDepartments);
   const backToFirstPage = () => {
     setPageIndex(0);
   };
@@ -561,18 +561,18 @@ export function CommonTargetDeptFilter() {
     <FilterDropdown
       title={`授課對象${
         isFilterEdited("common_target_dept")
-          ? ` (${searchFilters.common_target_department.length})`
+          ? ` (${searchFilters.commonTargetDepartments.length})`
           : ``
       }`}
       onClick={() => {
         setSelectedCommonTargetDepartment(
-          searchFilters.common_target_department
+          searchFilters.commonTargetDepartments
         );
       }}
       onSave={() => {
         setSearchFilters({
           ...searchFilters,
-          common_target_department: selectedCommonTargetDepartment,
+          commonTargetDepartments: selectedCommonTargetDepartment,
         });
         backToFirstPage();
       }}
@@ -621,7 +621,7 @@ export function CommonCourseTypeFilter() {
     useCourseSearchingContext();
   const [selectedCommonCourseType, setSelectedCommonCourseType] = useState<
     CommonCourseType[]
-  >(searchFilters.common_course_type);
+  >(searchFilters.commonCourseTypes);
   const backToFirstPage = () => {
     setPageIndex(0);
   };
@@ -630,16 +630,16 @@ export function CommonCourseTypeFilter() {
     <FilterDropdown
       title={`領域別${
         isFilterEdited("common_course_type")
-          ? ` (${searchFilters.common_course_type.length})`
+          ? ` (${searchFilters.commonCourseTypes.length})`
           : ``
       }`}
       onClick={() => {
-        setSelectedCommonCourseType(searchFilters.common_course_type);
+        setSelectedCommonCourseType(searchFilters.commonCourseTypes);
       }}
       onSave={() => {
         setSearchFilters({
           ...searchFilters,
-          common_course_type: selectedCommonCourseType,
+          commonCourseTypes: selectedCommonCourseType,
         });
         backToFirstPage();
       }}
@@ -684,7 +684,7 @@ export function PeArmyCourseTypeFilter() {
     useCourseSearchingContext();
   const [selectedPeArmyCourseType, setSelectedPeArmyCourseType] = useState<
     PeArmyCourseType[]
-  >(searchFilters.pearmy_course_type);
+  >(searchFilters.peArmyCourseTypes);
   const backToFirstPage = () => {
     setPageIndex(0);
   };
@@ -693,16 +693,16 @@ export function PeArmyCourseTypeFilter() {
     <FilterDropdown
       title={`課程類別${
         isFilterEdited("pearmy_course_type")
-          ? ` (${searchFilters.pearmy_course_type.length})`
+          ? ` (${searchFilters.peArmyCourseTypes.length})`
           : ``
       }`}
       onClick={() => {
-        setSelectedPeArmyCourseType(searchFilters.pearmy_course_type);
+        setSelectedPeArmyCourseType(searchFilters.peArmyCourseTypes);
       }}
       onSave={() => {
         setSearchFilters({
           ...searchFilters,
-          pearmy_course_type: selectedPeArmyCourseType,
+          peArmyCourseTypes: selectedPeArmyCourseType,
         });
         backToFirstPage();
       }}

@@ -48,25 +48,25 @@ function generateSearchAPIFilterObject(
     notEnrolledOnly: searchMode.filters.includes("other_limit")
       ? searchFilters.notEnrolledOnly
       : null,
-    general_course_type:
+    generalCourseTypes:
       searchMode.filters.includes("general_course_type") &&
       isFilterEdited("general_course_type")
-        ? searchFilters.general_course_type
+        ? searchFilters.generalCourseTypes
         : null,
-    common_target_department:
+    commonTargetDepartments:
       searchMode.filters.includes("common_target_dept") &&
       isFilterEdited("common_target_dept")
-        ? searchFilters.common_target_department
+        ? searchFilters.commonTargetDepartments
         : null,
-    common_course_type:
+    commonCourseTypes:
       searchMode.filters.includes("common_course_type") &&
       isFilterEdited("common_course_type")
-        ? searchFilters.common_course_type
+        ? searchFilters.commonCourseTypes
         : null,
-    pearmy_course_type:
+    peArmyCourseTypes:
       searchMode.filters.includes("pearmy_course_type") &&
       isFilterEdited("pearmy_course_type")
-        ? searchFilters.pearmy_course_type
+        ? searchFilters.peArmyCourseTypes
         : null,
     host_college:
       searchMode.filters.includes("host_college") &&

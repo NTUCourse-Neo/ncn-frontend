@@ -28,10 +28,10 @@ export type Filter = {
   noPrerequisite: boolean;
   noConflictOnly: boolean;
   notEnrolledOnly: boolean;
-  general_course_type: GeneralCourseType[]; // generalCourseTypes
-  common_target_department: CommonTargetDepartment[]; // commonTargetDepartments
-  common_course_type: CommonCourseType[]; // commonCourseTypes
-  pearmy_course_type: PeArmyCourseType[]; // peArmyCourseTypes
+  generalCourseTypes: GeneralCourseType[];
+  commonTargetDepartments: CommonTargetDepartment[];
+  commonCourseTypes: CommonCourseType[];
+  peArmyCourseTypes: PeArmyCourseType[];
   host_college: HostCollege[]; // hostColleges
   program: ProgramCode[]; // programs
   is_full_year: boolean | null; // isFullYear
