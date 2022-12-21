@@ -1,4 +1,18 @@
-import searchModeList, { SearchMode } from "@/types/searchMode";
+import searchModeList, {
+  BaseQueryType,
+  DeptQueryType,
+  FastQueryType,
+  GeneralQueryType,
+  CommonQueryType,
+  PeArmyQueryType,
+  ProgramQueryType,
+  ExpertiseQueryType,
+  InterschoolQueryType,
+  IntensiveQueryType,
+  EnglishQueryType,
+  GroupingQueryType,
+  SearchMode,
+} from "@/types/searchMode";
 import React, {
   createContext,
   useContext,
@@ -16,6 +30,7 @@ import {
   isPeArmyCourseTypeFilterActive,
 } from "utils/searchFilter";
 import { mapStateToIntervals } from "utils/timeTableConverter";
+import { assertNever } from "@/utils/assert";
 
 // for sorting
 export const sortOptions = [
@@ -60,8 +75,8 @@ interface CourseSearchingContextType {
   setBatchSize: (batchSize: number) => void;
   searchFilters: Filter;
   setSearchFilters: (searchFilters: Filter) => void;
-  searchSemester: string | null;
-  setSearchSemester: (searchSemester: string | null) => void;
+  searchSemester: string;
+  setSearchSemester: (searchSemester: string) => void;
   searchMode: SearchMode;
   setSearchMode: (searchMode: SearchMode) => void;
   sortOption: SortOption;
@@ -74,6 +89,18 @@ interface CourseSearchingContextType {
   isFilterEdited: (filterComponentId: FilterComponentId) => boolean;
   searchPageTopRef: React.RefObject<HTMLDivElement>;
   searchCallback: () => void;
+  searchQuery:
+    | FastQueryType
+    | DeptQueryType
+    | GeneralQueryType
+    | CommonQueryType
+    | PeArmyQueryType
+    | ProgramQueryType
+    | InterschoolQueryType
+    | GroupingQueryType
+    | ExpertiseQueryType
+    | IntensiveQueryType
+    | EnglishQueryType;
 }
 
 const emptyFilterObject: Filter = {
@@ -133,6 +160,23 @@ const CourseSearchingContext = createContext<CourseSearchingContextType>({
   dispatchSearch: () => {},
   resetFilters: () => {},
   setSortOption: () => {},
+  searchQuery: {
+    keyword: "",
+    semester: "",
+    time: emptyFilterObject.time,
+    isFullYear: emptyFilterObject.isFullYear,
+    timeStrictMatch: emptyFilterObject.timeStrictMatch,
+    enrollMethod: emptyFilterObject.enroll_method,
+    isEnglishTaught: emptyFilterObject.isEnglishTaught,
+    isDistanceLearning: emptyFilterObject.isDistanceLearning,
+    hasChanged: emptyFilterObject.hasChanged,
+    isAdditionalCourse: emptyFilterObject.isAdditionalCourse,
+    noPrerequisite: emptyFilterObject.noPrerequisite,
+    noConflictOnly: emptyFilterObject.noConflictOnly,
+    notEnrolledOnly: emptyFilterObject.notEnrolledOnly,
+    department: emptyFilterObject.department,
+    isCompulsory: emptyFilterObject.isCompulsory,
+  },
 });
 
 const CourseSearchingProvider: React.FC<{
@@ -145,9 +189,13 @@ const CourseSearchingProvider: React.FC<{
   const [batchSize, setBatchSize] = useState(50);
 
   const [searchFilters, setSearchFilters] = useState<Filter>(emptyFilterObject);
-  const [searchSemester, setSearchSemester] = useState(
-    process.env.NEXT_PUBLIC_SEMESTER ?? null
-  );
+  const [searchSemester, setSearchSemester] = useState(() => {
+    if (process.env.NEXT_PUBLIC_SEMESTER) {
+      return process.env.NEXT_PUBLIC_SEMESTER;
+    } else {
+      throw new Error("NEXT_PUBLIC_SEMESTER is not defined");
+    }
+  });
   const [searchMode, setSearchMode] = useState<SearchMode>(searchModeList[0]);
   const [sortOption, setSortOption] = useState<SortOption>(
     defaultSortOption.id
@@ -254,6 +302,115 @@ const CourseSearchingProvider: React.FC<{
     }
   };
 
+  // transform filters state, keyword, semester to query type
+  const searchQuery = useMemo(() => {
+    const baseQuery: BaseQueryType = {
+      keyword: search as string,
+      semester: searchSemester,
+      time: searchFilters.time,
+      isFullYear: searchFilters.isFullYear,
+      timeStrictMatch: searchFilters.timeStrictMatch,
+      isEnglishTaught: searchFilters.isEnglishTaught,
+      isDistanceLearning: searchFilters.isDistanceLearning,
+      hasChanged: searchFilters.hasChanged,
+      isAdditionalCourse: searchFilters.isAdditionalCourse,
+      noPrerequisite: searchFilters.noPrerequisite,
+      noConflictOnly: searchFilters.noConflictOnly,
+      notEnrolledOnly: searchFilters.notEnrolledOnly,
+      enrollMethod: searchFilters.enroll_method,
+    };
+    switch (searchMode.id) {
+      case "fast": {
+        const fastQuery: FastQueryType = {
+          ...baseQuery,
+          department: searchFilters.department,
+          isCompulsory: searchFilters.isCompulsory,
+        };
+        return fastQuery;
+      }
+      case "dept": {
+        const singleDeptQuery: DeptQueryType = {
+          ...baseQuery,
+          department: searchFilters.dept?.id ?? null,
+          departmentCourseType: searchFilters.departmentCourseType,
+          isCompulsory: searchFilters.singleDeptIsCompulsory,
+          suggestedGrade: searchFilters.suggestedGrade,
+        };
+        return singleDeptQuery;
+      }
+      case "general": {
+        const generalQuery: GeneralQueryType = {
+          ...baseQuery,
+          generalCourseTypes: searchFilters.generalCourseTypes,
+        };
+        return generalQuery;
+      }
+      case "common": {
+        const commonQuery: CommonQueryType = {
+          ...baseQuery,
+          commonTargetDepartments: searchFilters.commonTargetDepartments,
+          commonCourseTypes: searchFilters.commonCourseTypes,
+        };
+        return commonQuery;
+      }
+      case "pearmy": {
+        const peArmyQuery: PeArmyQueryType = {
+          ...baseQuery,
+          peArmyCourseTypes: searchFilters.peArmyCourseTypes,
+        };
+        return peArmyQuery;
+      }
+      case "program": {
+        const programQuery: ProgramQueryType = {
+          ...baseQuery,
+          programs: searchFilters.programs,
+        };
+        return programQuery;
+      }
+      case "expertise": {
+        const expertiseQuery: ExpertiseQueryType = {
+          ...baseQuery,
+          department: searchFilters.department,
+          isCompulsory: searchFilters.isCompulsory,
+        };
+        return expertiseQuery;
+      }
+      case "interschool": {
+        const interschoolQuery: InterschoolQueryType = {
+          ...baseQuery,
+          courseProviders: searchFilters.courseProviders,
+        };
+        return interschoolQuery;
+      }
+      case "grouping": {
+        const groupingQuery: GroupingQueryType = {
+          ...baseQuery,
+          groupingCourseTypes: searchFilters.groupingCourseTypes,
+        };
+        return groupingQuery;
+      }
+      case "intensive": {
+        const intensiveQuery: IntensiveQueryType = {
+          ...baseQuery,
+          department: searchFilters.department,
+          isCompulsory: searchFilters.isCompulsory,
+        };
+        return intensiveQuery;
+      }
+      case "english": {
+        const englishQuery: EnglishQueryType = {
+          ...baseQuery,
+          department: searchFilters.department,
+          isCompulsory: searchFilters.isCompulsory,
+        };
+        return englishQuery;
+      }
+      default: {
+        assertNever(searchMode.id);
+      }
+    }
+  }, [searchMode, searchFilters, search, searchSemester]);
+
   return (
     <CourseSearchingContext.Provider
       value={{
@@ -283,6 +440,7 @@ const CourseSearchingProvider: React.FC<{
         resetFilters,
         setSortOption,
         setIsSearchBoxInView,
+        searchQuery,
       }}
     >
       {children}

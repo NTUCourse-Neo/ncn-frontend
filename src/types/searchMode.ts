@@ -1,5 +1,56 @@
-import { FilterComponentId } from "@/types/filter";
+import { FilterComponentId, Filter } from "@/types/filter";
 import type { PrecautionName } from "@/components/InstructionModals";
+
+export type BaseQueryType = {
+  keyword: string;
+  semester: string;
+  // time
+  time: Filter["time"];
+  isFullYear: Filter["isFullYear"];
+  timeStrictMatch: Filter["timeStrictMatch"];
+  // otherLimit
+  isEnglishTaught: Filter["isEnglishTaught"];
+  isDistanceLearning: Filter["isDistanceLearning"];
+  hasChanged: Filter["hasChanged"];
+  isAdditionalCourse: Filter["isAdditionalCourse"];
+  noConflictOnly: Filter["noConflictOnly"];
+  noPrerequisite: Filter["noPrerequisite"];
+  notEnrolledOnly: Filter["notEnrolledOnly"];
+  // enrollMethod
+  enrollMethod: Filter["enroll_method"];
+};
+export type FastQueryType = BaseQueryType & {
+  department: Filter["department"];
+  isCompulsory: Filter["isCompulsory"];
+};
+export type DeptQueryType = BaseQueryType & {
+  department: string | null;
+  departmentCourseType: Filter["departmentCourseType"];
+  isCompulsory: Filter["singleDeptIsCompulsory"];
+  suggestedGrade: Filter["suggestedGrade"];
+};
+export type GeneralQueryType = BaseQueryType & {
+  generalCourseTypes: Filter["generalCourseTypes"];
+};
+export type CommonQueryType = BaseQueryType & {
+  commonTargetDepartments: Filter["commonTargetDepartments"];
+  commonCourseTypes: Filter["commonCourseTypes"];
+};
+export type PeArmyQueryType = BaseQueryType & {
+  peArmyCourseTypes: Filter["peArmyCourseTypes"];
+};
+export type ProgramQueryType = BaseQueryType & {
+  programs: Filter["programs"];
+};
+export type ExpertiseQueryType = FastQueryType;
+export type InterschoolQueryType = BaseQueryType & {
+  courseProviders: Filter["courseProviders"];
+};
+export type GroupingQueryType = BaseQueryType & {
+  groupingCourseTypes: Filter["groupingCourseTypes"];
+};
+export type IntensiveQueryType = FastQueryType;
+export type EnglishQueryType = FastQueryType;
 
 export type SearchModeID =
   | "fast"
