@@ -304,12 +304,18 @@ type limitId = typeof otherLimits[number]["value"];
 export function OtherLimitFilter() {
   const { searchFilters, setSearchFilters, setPageIndex, isFilterEdited } =
     useCourseSearchingContext();
-  const [englishOnly, setEnglishOnly] = useState(searchFilters.englishOnly);
-  const [remoteOnly, setRemoteOnly] = useState(searchFilters.remoteOnly);
-  const [changeOnly, setChangeOnly] = useState(searchFilters.changeOnly);
-  const [addOnly, setAddOnly] = useState(searchFilters.addOnly);
-  const [noPrerequisiteOnly, setNoPrerequisiteOnly] = useState(
-    searchFilters.noPrerequisiteOnly
+  const [isEnglishTaught, setIsEnglishTaught] = useState(
+    searchFilters.isEnglishTaught
+  );
+  const [isDistanceLearning, setIsDistanceLearning] = useState(
+    searchFilters.isDistanceLearning
+  );
+  const [hasChanged, setHasChanged] = useState(searchFilters.hasChanged);
+  const [isAdditionalCourse, setIsAdditionalCourse] = useState(
+    searchFilters.isAdditionalCourse
+  );
+  const [noPrerequisite, setNoPrerequisite] = useState(
+    searchFilters.noPrerequisite
   );
   const [noConflictOnly, setNoConflictOnly] = useState(
     searchFilters.noConflictOnly
@@ -326,25 +332,25 @@ export function OtherLimitFilter() {
     }
   > = useMemo(
     () => ({
-      englishOnly: {
-        state: englishOnly,
-        setState: setEnglishOnly,
+      isEnglishTaught: {
+        state: isEnglishTaught,
+        setState: setIsEnglishTaught,
       },
-      remoteOnly: {
-        state: remoteOnly,
-        setState: setRemoteOnly,
+      isDistanceLearning: {
+        state: isDistanceLearning,
+        setState: setIsDistanceLearning,
       },
-      changeOnly: {
-        state: changeOnly,
-        setState: setChangeOnly,
+      hasChanged: {
+        state: hasChanged,
+        setState: setHasChanged,
       },
-      addOnly: {
-        state: addOnly,
-        setState: setAddOnly,
+      isAdditionalCourse: {
+        state: isAdditionalCourse,
+        setState: setIsAdditionalCourse,
       },
-      noPrerequisiteOnly: {
-        state: noPrerequisiteOnly,
-        setState: setNoPrerequisiteOnly,
+      noPrerequisite: {
+        state: noPrerequisite,
+        setState: setNoPrerequisite,
       },
       noConflictOnly: {
         state: noConflictOnly,
@@ -356,11 +362,11 @@ export function OtherLimitFilter() {
       },
     }),
     [
-      englishOnly,
-      remoteOnly,
-      addOnly,
-      changeOnly,
-      noPrerequisiteOnly,
+      isEnglishTaught,
+      isDistanceLearning,
+      hasChanged,
+      isAdditionalCourse,
+      noPrerequisite,
       notEnrolledOnly,
       noConflictOnly,
     ]
@@ -383,11 +389,11 @@ export function OtherLimitFilter() {
         isFilterEdited("other_limit")
           ? ` (${
               [
-                searchFilters.englishOnly,
-                searchFilters.remoteOnly,
-                searchFilters.changeOnly,
-                searchFilters.addOnly,
-                searchFilters.noPrerequisiteOnly,
+                searchFilters.isEnglishTaught,
+                searchFilters.isDistanceLearning,
+                searchFilters.hasChanged,
+                searchFilters.isAdditionalCourse,
+                searchFilters.noPrerequisite,
                 searchFilters.noConflictOnly,
                 searchFilters.notEnrolledOnly,
               ].filter((item) => item).length
@@ -396,11 +402,11 @@ export function OtherLimitFilter() {
       }`}
       onClick={() => {
         // sync from context
-        setRemoteOnly(searchFilters.remoteOnly);
-        setEnglishOnly(searchFilters.englishOnly);
-        setChangeOnly(searchFilters.changeOnly);
-        setAddOnly(searchFilters.addOnly);
-        setNoPrerequisiteOnly(searchFilters.noPrerequisiteOnly);
+        setIsEnglishTaught(searchFilters.isEnglishTaught);
+        setIsDistanceLearning(searchFilters.isDistanceLearning);
+        setHasChanged(searchFilters.hasChanged);
+        setIsAdditionalCourse(searchFilters.isAdditionalCourse);
+        setNoPrerequisite(searchFilters.noPrerequisite);
         setNoConflictOnly(searchFilters.noConflictOnly);
         setNotEnrolledOnly(searchFilters.notEnrolledOnly);
       }}
@@ -408,11 +414,11 @@ export function OtherLimitFilter() {
         setSearchFilters({
           ...searchFilters,
           // sync to context
-          remoteOnly: remoteOnly,
-          englishOnly: englishOnly,
-          changeOnly: changeOnly,
-          addOnly: addOnly,
-          noPrerequisiteOnly: noPrerequisiteOnly,
+          isEnglishTaught: isEnglishTaught,
+          isDistanceLearning: isDistanceLearning,
+          hasChanged: hasChanged,
+          isAdditionalCourse: isAdditionalCourse,
+          noPrerequisite: noPrerequisite,
           noConflictOnly: noConflictOnly,
           notEnrolledOnly: notEnrolledOnly,
         });

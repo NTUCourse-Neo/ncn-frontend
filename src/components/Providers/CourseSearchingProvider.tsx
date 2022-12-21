@@ -58,11 +58,11 @@ const emptyFilterObject: Filter = {
   time: [[], [], [], [], [], [], []],
   department: [],
   enroll_method: [],
-  englishOnly: false,
-  remoteOnly: false,
-  changeOnly: false,
-  addOnly: false,
-  noPrerequisiteOnly: false,
+  isEnglishTaught: false,
+  isDistanceLearning: false,
+  hasChanged: false,
+  isAdditionalCourse: false,
+  noPrerequisite: false,
   noConflictOnly: false,
   notEnrolledOnly: false,
   general_course_type: [],
@@ -172,11 +172,11 @@ const CourseSearchingProvider: React.FC<{
         }
         case "other_limit": {
           return (
-            searchFilters.englishOnly ||
-            searchFilters.remoteOnly ||
-            searchFilters.changeOnly ||
-            searchFilters.addOnly ||
-            searchFilters.noPrerequisiteOnly ||
+            searchFilters.isEnglishTaught ||
+            searchFilters.isDistanceLearning ||
+            searchFilters.hasChanged ||
+            searchFilters.isAdditionalCourse ||
+            searchFilters.noPrerequisite ||
             searchFilters.noConflictOnly ||
             searchFilters.notEnrolledOnly
           );

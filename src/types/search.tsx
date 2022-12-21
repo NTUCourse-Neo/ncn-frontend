@@ -21,11 +21,11 @@ export type Filter = {
   department: string[]; // departments // TODO: wait for new API
   enroll_method: EnrollMethod[]; // enrollMethods // TODO: wait for new API
   // otherLimits
-  englishOnly: boolean;
-  remoteOnly: boolean;
-  changeOnly: boolean;
-  addOnly: boolean;
-  noPrerequisiteOnly: boolean;
+  isEnglishTaught: boolean;
+  isDistanceLearning: boolean;
+  hasChanged: boolean;
+  isAdditionalCourse: boolean;
+  noPrerequisite: boolean;
   noConflictOnly: boolean;
   notEnrolledOnly: boolean;
   general_course_type: GeneralCourseType[]; // generalCourseTypes
@@ -65,31 +65,31 @@ export const otherLimits = [
   {
     type_label: "上課形式",
     label: "只顯示英文授課",
-    value: "englishOnly",
+    value: "isEnglishTaught",
     avaliable: true,
   },
   {
     type_label: "上課形式",
     label: "只顯示遠距課程",
-    value: "remoteOnly",
+    value: "isDistanceLearning",
     avaliable: true,
   },
   {
     type_label: "課程調整",
     label: "只顯示異動課程",
-    value: "changeOnly",
+    value: "hasChanged",
     avaliable: true,
   },
   {
     type_label: "課程調整",
     label: "只顯示加開課程",
-    value: "addOnly",
+    value: "isAdditionalCourse",
     avaliable: true,
   },
   {
     type_label: "個人設定",
     label: "只顯示沒有先修規定/資格限制的課程",
-    value: "noPrerequisiteOnly",
+    value: "noPrerequisite",
     avaliable: true,
   },
   {
