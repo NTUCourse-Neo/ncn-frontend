@@ -40,7 +40,7 @@ import {
 } from "@chakra-ui/icons";
 import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
 import useHorizontalScrollable from "@/hooks/useHorizontalScrollable";
-import searchModeList from "@/data/searchMode";
+import searchModeList from "@/types/searchMode";
 import { availableSemesters } from "@/constant";
 import SearchFilters from "@/components/SearchFilters";
 import { precautions } from "@/components/InstructionModals";

@@ -1,4 +1,4 @@
-import searchModeList, { SearchMode } from "@/data/searchMode";
+import searchModeList, { SearchMode } from "@/types/searchMode";
 import React, {
   createContext,
   useContext,

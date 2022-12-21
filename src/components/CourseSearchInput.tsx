@@ -22,7 +22,7 @@ import { useCourseSearchingContext } from "components/Providers/CourseSearchingP
 import { reportEvent } from "utils/ga";
 import { ChevronDownIcon, SearchIcon } from "@chakra-ui/icons";
 import { availableSemesters } from "@/constant";
-import searchModeList from "@/data/searchMode";
+import searchModeList from "@/types/searchMode";
 import { useSWRConfig } from "swr";
 
 function SearchModeMenu() {
