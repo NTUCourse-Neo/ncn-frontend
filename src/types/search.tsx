@@ -8,7 +8,7 @@ import {
   CommonTargetDeptFilter,
   CommonCourseTypeFilter,
   PeArmyCourseTypeFilter,
-  HostCollegeFilter,
+  CourseProviderFilter,
   ProgramFilter,
   GroupingCourseTypeFilter,
   SingleDeptFilter,
@@ -329,7 +329,7 @@ export const filterComponentMap = {
   },
   host_college: {
     id: "host_college",
-    component: <HostCollegeFilter />,
+    component: <CourseProviderFilter />,
   },
   program: {
     id: "program",

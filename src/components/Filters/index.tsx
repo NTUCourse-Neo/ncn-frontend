@@ -742,7 +742,7 @@ export function PeArmyCourseTypeFilter() {
   );
 }
 
-export function HostCollegeFilter() {
+export function CourseProviderFilter() {
   const { searchFilters, setSearchFilters, setPageIndex, isFilterEdited } =
     useCourseSearchingContext();
   const [selectedCourseProvider, setSelectedCourseProvider] = useState<
