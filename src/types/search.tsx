@@ -17,9 +17,9 @@ import { programs as AllPrograms } from "@/data/program";
 import { Department } from "types/course";
 
 export type Filter = {
-  time: Interval[][]; // time
-  department: string[]; // departments
-  enroll_method: EnrollMethod[]; // enrollMethods
+  time: Interval[][]; // time // TODO: wait for new API
+  department: string[]; // departments // TODO: wait for new API
+  enroll_method: EnrollMethod[]; // enrollMethods // TODO: wait for new API
   // otherLimits
   englishOnly: boolean;
   remoteOnly: boolean;
