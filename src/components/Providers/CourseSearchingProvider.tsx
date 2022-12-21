@@ -7,12 +7,7 @@ import React, {
   useMemo,
   useCallback,
 } from "react";
-import type {
-  SearchFieldName,
-  Filter,
-  SortOption,
-  FilterComponentId,
-} from "types/search";
+import type { Filter, SortOption, FilterComponentId } from "types/search";
 import { sortOptions } from "types/search";
 import {
   isEnrollMethodFilterActive,
@@ -34,8 +29,6 @@ interface CourseSearchingContextType {
   setTotalCount: (totalCount: number) => void;
   batchSize: number;
   setBatchSize: (batchSize: number) => void;
-  searchColumns: SearchFieldName[]; // deprecated
-  setSearchColumns: (searchColumns: SearchFieldName[]) => void; // deprecated
   searchFilters: Filter;
   setSearchFilters: (searchFilters: Filter) => void;
   searchSemester: string | null;
@@ -90,7 +83,6 @@ const CourseSearchingContext = createContext<CourseSearchingContextType>({
   pageIndex: 0,
   totalCount: 0,
   batchSize: 20,
-  searchColumns: ["name", "teacher", "serial", "code", "identifier"], // deprecated
   searchFilters: emptyFilterObject,
   searchSemester: "",
   searchMode: defaultSearchMode,
@@ -105,7 +97,6 @@ const CourseSearchingContext = createContext<CourseSearchingContextType>({
   setPageIndex: () => {},
   setTotalCount: () => {},
   setBatchSize: () => {},
-  setSearchColumns: () => {}, // deprecated
   setSearchFilters: () => {},
   setSearchSemester: () => {},
   setSearchMode: () => {},
@@ -124,14 +115,6 @@ const CourseSearchingProvider: React.FC<{
   const [pageIndex, setPageIndex] = useState(0); // current page index
   const [batchSize, setBatchSize] = useState(50);
 
-  // deprecated
-  const [searchColumns, setSearchColumns] = useState<SearchFieldName[]>([
-    "name",
-    "teacher",
-    "serial",
-    "code",
-    "identifier",
-  ]);
   const [searchFilters, setSearchFilters] = useState<Filter>(emptyFilterObject);
   const [searchSemester, setSearchSemester] = useState(
     process.env.NEXT_PUBLIC_SEMESTER ?? null
@@ -250,7 +233,6 @@ const CourseSearchingProvider: React.FC<{
         pageIndex,
         totalCount,
         batchSize,
-        searchColumns,
         searchFilters,
         searchSemester,
         searchMode,
@@ -264,7 +246,6 @@ const CourseSearchingProvider: React.FC<{
         setNumOfPages,
         setPageIndex,
         setBatchSize,
-        setSearchColumns,
         setSearchFilters,
         setTotalCount,
         setSearchSemester,

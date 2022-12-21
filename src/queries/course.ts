@@ -1,5 +1,5 @@
 import instance from "@/queries/axiosInstance";
-import type { SearchFieldName, Filter } from "@/types/search";
+import type { Filter } from "@/types/search";
 import type { Course, CourseEnrollStatus, CourseSyllabus } from "types/course";
 const api_version = "v2";
 
@@ -7,9 +7,9 @@ export type NullableSearchFilter = {
   [P in keyof Filter]: Filter[P] | null;
 };
 
+// TODO: refactor when new backend is ready
 export const fetchSearchResult = async (
   searchString: string,
-  fields: SearchFieldName[],
   filter_obj: NullableSearchFilter,
   batchSize: number,
   offset: number,
@@ -17,7 +17,7 @@ export const fetchSearchResult = async (
 ) => {
   const { data } = await instance.post(`${api_version}/courses/search`, {
     keyword: searchString,
-    fields: fields,
+    fields: ["name", "teacher", "serial", "code", "identifier"],
     filter: filter_obj,
     batch_size: batchSize,
     offset: offset,

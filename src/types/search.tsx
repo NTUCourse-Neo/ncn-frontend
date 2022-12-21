@@ -44,14 +44,6 @@ export type Filter = {
   suggestedGrade: string | null; // for singleDept,
 };
 
-// deprecated
-export type SearchFieldName =
-  | "name"
-  | "teacher"
-  | "serial"
-  | "code"
-  | "identifier";
-
 // enroll method filter
 export type EnrollMethod = "1" | "2" | "3";
 

@@ -119,7 +119,6 @@ export default function useSearchResult(
 ) {
   const toast = useToast();
   const {
-    searchColumns,
     searchFilters,
     batchSize,
     searchSemester,
@@ -154,7 +153,6 @@ export default function useSearchResult(
       );
       const coursesData = await fetchSearchResult(
         searchKeyword ?? "",
-        searchColumns,
         filters,
         batchSize,
         pageIndex * batchSize,
