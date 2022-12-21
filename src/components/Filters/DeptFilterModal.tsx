@@ -41,7 +41,7 @@ import type { Department } from "types/course";
 import { generateScrollBarCss } from "styles/customScrollBar";
 import { useInView } from "react-intersection-observer";
 import { CloseIcon } from "@chakra-ui/icons";
-import { IsSelectiveOption, isSelectiveOptions } from "@/types/search";
+import { isSelectiveOptions } from "@/types/search";
 
 export function searchDept(
   searchText: string,
@@ -62,19 +62,23 @@ export function searchDept(
   return result;
 }
 
-interface IsSeleciveRadioGroupProps extends FlexProps {
-  readonly isSelective: IsSelectiveOption;
-  readonly setIsSelective: (isSelective: IsSelectiveOption) => void;
+interface IsCompulsoryRadioGroupProps extends FlexProps {
+  readonly isCompulsory: boolean | null;
+  readonly setIsCompulsory: (isCompulsory: boolean | null) => void;
 }
-function IsSeleciveRadioGroup(props: IsSeleciveRadioGroupProps) {
-  const { isSelective, setIsSelective, ...rest } = props;
+function IsCompulsoryRadioGroup(props: IsCompulsoryRadioGroupProps) {
+  const { isCompulsory, setIsCompulsory, ...rest } = props;
   return (
     <Flex alignItems={"center"} {...rest}>
       <RadioGroup
         onChange={(next) => {
-          setIsSelective(next as IsSelectiveOption);
+          setIsCompulsory(
+            next === "all" ? null : next === "required" ? true : false
+          );
         }}
-        value={isSelective}
+        value={
+          isCompulsory === null ? "all" : isCompulsory ? "required" : "elective"
+        }
       >
         <Stack
           direction="row"
@@ -202,8 +206,8 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
   const { searchFilters, setSearchFilters, setPageIndex } =
     useCourseSearchingContext();
   const [selectedDept, setSelectedDept] = useState(searchFilters.department);
-  const [isSelective, setIsSelective] = useState<IsSelectiveOption>(
-    searchFilters.is_selective
+  const [isCompulsory, setIsCompulsory] = useState<boolean | null>( // TODO: to isCompulsory
+    searchFilters.isCompulsory
   );
   const modalBodyRef = useRef<HTMLDivElement>(null);
   const [activeDept, setActiveDept] = useState<string | null>(null);
@@ -234,7 +238,7 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
   const onOpenModal = () => {
     // overwrite local states by context
     setSelectedDept(searchFilters.department);
-    setIsSelective(searchFilters.is_selective);
+    setIsCompulsory(searchFilters.isCompulsory);
     onOpen();
   };
   const onCancelEditing = () => {
@@ -242,7 +246,7 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
     // overwrite local state by context
     onClose();
     setSelectedDept(searchFilters.department);
-    setIsSelective(searchFilters.is_selective);
+    setIsCompulsory(searchFilters.isCompulsory);
   };
   const onSaveEditing = () => {
     // fire when click "Save"
@@ -250,7 +254,7 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
     setSearchFilters({
       ...searchFilters,
       department: selectedDept,
-      is_selective: isSelective,
+      isCompulsory: isCompulsory,
     });
     // Reset indexed page
     setPageIndex(0);
@@ -260,7 +264,7 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
     // fire when click "Reset"
     // set local state to empty array
     setSelectedDept([]);
-    setIsSelective(isSelectiveOptions[0]);
+    setIsCompulsory(null);
   };
 
   const modalBody = useMemo(() => {
@@ -412,9 +416,9 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
                 mt="2"
                 display={{ base: "block", md: "none" }}
               >
-                <IsSeleciveRadioGroup
-                  isSelective={isSelective}
-                  setIsSelective={setIsSelective}
+                <IsCompulsoryRadioGroup
+                  isCompulsory={isCompulsory}
+                  setIsCompulsory={setIsCompulsory}
                   my={2}
                 />
                 <Button
@@ -431,7 +435,9 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
                 <Button
                   size="sm"
                   variant="ghost"
-                  isDisabled={selectedDept.length === 0 && isSelective === null}
+                  isDisabled={
+                    selectedDept.length === 0 && isCompulsory === null
+                  }
                   onClick={() => {
                     onResetEditing();
                     reportEvent("filter_department", "click", "reset_changes");
@@ -579,9 +585,9 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
             boxSizing="border-box"
           >
             <Flex justifyContent={"space-between"} w="100%">
-              <IsSeleciveRadioGroup
-                isSelective={isSelective}
-                setIsSelective={setIsSelective}
+              <IsCompulsoryRadioGroup
+                isCompulsory={isCompulsory}
+                setIsCompulsory={setIsCompulsory}
               />
               <Flex alignItems={"center"}>
                 <Button
@@ -593,7 +599,9 @@ function DeptFilterModal({ title, isActive = false }: DeptFilterModalProps) {
                     fontWeight: 600,
                   }}
                   mx={6}
-                  isDisabled={selectedDept.length === 0 && isSelective === null}
+                  isDisabled={
+                    selectedDept.length === 0 && isCompulsory === null
+                  }
                   onClick={() => {
                     onResetEditing();
                     reportEvent("filter_department", "click", "reset_changes");

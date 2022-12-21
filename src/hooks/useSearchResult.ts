@@ -86,9 +86,9 @@ function generateSearchAPIFilterObject(
       searchMode.filters.includes("time") && isFilterEdited("time")
         ? searchFilters.is_full_year
         : null,
-    is_selective:
+    isCompulsory:
       searchMode.filters.includes("dept") && isFilterEdited("dept")
-        ? searchFilters.is_selective
+        ? searchFilters.isCompulsory
         : null,
     time_strict_match:
       searchMode.filters.includes("time") && isFilterEdited("time")

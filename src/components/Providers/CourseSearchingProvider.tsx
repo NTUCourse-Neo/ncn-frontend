@@ -72,7 +72,7 @@ const emptyFilterObject: Filter = {
   host_college: [],
   program: [],
   is_full_year: null,
-  is_selective: isSelectiveOptions[0],
+  isCompulsory: null,
   time_strict_match: false,
   grouping_course_type: [],
   dept: null,
@@ -164,7 +164,7 @@ const CourseSearchingProvider: React.FC<{
         case "dept": {
           return (
             searchFilters.department.length > 0 ||
-            searchFilters.is_selective !== isSelectiveOptions[0]
+            searchFilters.isCompulsory !== null
           );
         }
         case "enroll_method": {

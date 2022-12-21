@@ -35,7 +35,7 @@ export type Filter = {
   host_college: HostCollege[]; // hostColleges
   program: ProgramCode[]; // programs
   is_full_year: boolean | null; // isFullYear
-  is_selective: IsSelectiveOption; // isSelective
+  isCompulsory: boolean | null; // null: all, true: compulsory, false: elective
   time_strict_match: boolean; // timeStrictMatch
   grouping_course_type: string[]; // groupingCourseTypes
   dept: Department | null; // for singleDept, department
@@ -55,6 +55,7 @@ export type SearchFieldName =
 // enroll method filter
 export type EnrollMethod = "1" | "2" | "3";
 
+// refactor these to isCompulsoryOptions
 export const isSelectiveOptions = ["all", "selective", "required"] as const;
 export type IsSelectiveOption = typeof isSelectiveOptions[number];
 
