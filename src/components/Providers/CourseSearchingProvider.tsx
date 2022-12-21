@@ -13,7 +13,7 @@ import type {
   SortOption,
   FilterComponentId,
 } from "types/search";
-import { sortOptions, isSelectiveOptions } from "types/search";
+import { sortOptions } from "types/search";
 import {
   isEnrollMethodFilterActive,
   isGeneralCourseTypeFilterActive,
@@ -77,7 +77,7 @@ const emptyFilterObject: Filter = {
   grouping_course_type: [],
   dept: null,
   department_course_type: null,
-  singleDeptIsSelective: isSelectiveOptions[0],
+  singleDeptIsCompulsory: null,
   suggestedGrade: null,
 };
 
@@ -214,7 +214,7 @@ const CourseSearchingProvider: React.FC<{
           return (
             searchFilters.dept !== null ||
             searchFilters.department_course_type !== null ||
-            searchFilters.singleDeptIsSelective !== isSelectiveOptions[0] ||
+            searchFilters.singleDeptIsCompulsory !== null ||
             searchFilters.suggestedGrade !== null
           );
         }

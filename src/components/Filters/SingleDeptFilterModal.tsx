@@ -45,16 +45,16 @@ import { CloseIcon } from "@chakra-ui/icons";
 import { searchDept } from "@/components/Filters/DeptFilterModal";
 import Dropdown from "@/components/Dropdown";
 import { ChevronDownIcon } from "@chakra-ui/icons";
-import { IsSelectiveOption, isSelectiveOptions } from "@/types/search";
+import { IsSelectiveOption } from "@/types/search";
 
 // TODO: add API & hook to fetch options
 interface DropdownGroupProps extends FlexProps {
   readonly deptId: string | null;
   readonly selectedCourseType: string | null;
   readonly setSelectedCourseType: (courseType: string | null) => void;
-  readonly isSingleDeptSelective: IsSelectiveOption;
-  readonly setIsSingleDeptSelective: (
-    isSingleDeptSelective: IsSelectiveOption
+  readonly isSingleDeptCompulsory: boolean | null;
+  readonly setIsSingleDeptCompulsory: (
+    isSingleDeptCompulsory: boolean | null
   ) => void;
   readonly suggestedGrade: string | null;
   readonly setSuggestedGrade: (suggestedGrade: string | null) => void;
@@ -64,8 +64,8 @@ function DropdownGroup(props: DropdownGroupProps) {
     deptId,
     selectedCourseType,
     setSelectedCourseType,
-    isSingleDeptSelective,
-    setIsSingleDeptSelective,
+    isSingleDeptCompulsory,
+    setIsSingleDeptCompulsory,
     suggestedGrade,
     setSuggestedGrade,
     ...rest
@@ -106,9 +106,9 @@ function DropdownGroup(props: DropdownGroupProps) {
                 fontSize: "12px",
               }}
             >
-              {isSingleDeptSelective === "all"
+              {isSingleDeptCompulsory === null
                 ? "必修 + 選修"
-                : isSingleDeptSelective === "selective"
+                : !isSingleDeptCompulsory
                 ? "選修"
                 : "必修"}
             </Text>
@@ -123,9 +123,17 @@ function DropdownGroup(props: DropdownGroupProps) {
           }}
         >
           <RadioGroup
-            value={isSingleDeptSelective}
+            value={
+              isSingleDeptCompulsory === null
+                ? "all"
+                : isSingleDeptCompulsory
+                ? "required"
+                : "selective"
+            }
             onChange={(next) => {
-              setIsSingleDeptSelective(next as IsSelectiveOption);
+              setIsSingleDeptCompulsory(
+                next === "all" ? null : next === "selective" ? false : true
+              );
             }}
             gap={2}
           >
@@ -282,8 +290,9 @@ function SingleDeptFilterModal({
   const [selectedCourseType, setSelectedCourseType] = useState<string | null>(
     searchFilters.department_course_type
   );
-  const [isSingleDeptSelective, setIsSingleDeptSelective] =
-    useState<IsSelectiveOption>(searchFilters.singleDeptIsSelective);
+  const [isSingleDeptCompulsory, setIsSingleDeptCompulsory] = useState<
+    boolean | null
+  >(searchFilters.singleDeptIsCompulsory);
   const [suggestedGrade, setSuggestedGrade] = useState(
     searchFilters.suggestedGrade
   );
@@ -309,7 +318,7 @@ function SingleDeptFilterModal({
   const onOpenModal = () => {
     // overwrite local states by context
     setSelectedDept(searchFilters.dept);
-    setIsSingleDeptSelective(searchFilters.singleDeptIsSelective);
+    setIsSingleDeptCompulsory(searchFilters.singleDeptIsCompulsory);
     setSelectedCourseType(searchFilters.department_course_type);
     setSuggestedGrade(searchFilters.suggestedGrade);
     onOpen();
@@ -319,7 +328,7 @@ function SingleDeptFilterModal({
     // overwrite local state by context
     onClose();
     setSelectedDept(searchFilters.dept);
-    setIsSingleDeptSelective(searchFilters.singleDeptIsSelective);
+    setIsSingleDeptCompulsory(searchFilters.singleDeptIsCompulsory);
     setSelectedCourseType(searchFilters.department_course_type);
     setSuggestedGrade(searchFilters.suggestedGrade);
   };
@@ -329,7 +338,7 @@ function SingleDeptFilterModal({
     setSearchFilters({
       ...searchFilters,
       dept: selectedDept,
-      singleDeptIsSelective: isSingleDeptSelective,
+      singleDeptIsCompulsory: isSingleDeptCompulsory,
       department_course_type: selectedCourseType,
       suggestedGrade: suggestedGrade,
     });
@@ -341,7 +350,7 @@ function SingleDeptFilterModal({
     // fire when click "Reset"
     // set local state to empty array
     setSelectedDept(null);
-    setIsSingleDeptSelective(isSelectiveOptions[0]);
+    setIsSingleDeptCompulsory(null);
     setSelectedCourseType(null);
     setSuggestedGrade(null);
   };
@@ -508,8 +517,8 @@ function SingleDeptFilterModal({
               >
                 <DropdownGroup
                   deptId={selectedDept?.id ?? null}
-                  isSingleDeptSelective={isSingleDeptSelective}
-                  setIsSingleDeptSelective={setIsSingleDeptSelective}
+                  isSingleDeptCompulsory={isSingleDeptCompulsory}
+                  setIsSingleDeptCompulsory={setIsSingleDeptCompulsory}
                   selectedCourseType={selectedCourseType}
                   setSelectedCourseType={setSelectedCourseType}
                   suggestedGrade={suggestedGrade}
@@ -532,7 +541,7 @@ function SingleDeptFilterModal({
                   variant="ghost"
                   isDisabled={
                     selectedDept === null &&
-                    isSingleDeptSelective === null &&
+                    isSingleDeptCompulsory === null &&
                     selectedCourseType === null
                   }
                   onClick={() => {
@@ -599,8 +608,8 @@ function SingleDeptFilterModal({
             <Flex justifyContent={"space-between"} w="100%">
               <DropdownGroup
                 deptId={selectedDept?.id ?? null}
-                isSingleDeptSelective={isSingleDeptSelective}
-                setIsSingleDeptSelective={setIsSingleDeptSelective}
+                isSingleDeptCompulsory={isSingleDeptCompulsory}
+                setIsSingleDeptCompulsory={setIsSingleDeptCompulsory}
                 selectedCourseType={selectedCourseType}
                 setSelectedCourseType={setSelectedCourseType}
                 suggestedGrade={suggestedGrade}
@@ -619,7 +628,7 @@ function SingleDeptFilterModal({
                   mx={6}
                   isDisabled={
                     selectedDept === null &&
-                    isSingleDeptSelective === null &&
+                    isSingleDeptCompulsory === null &&
                     selectedCourseType === null
                   }
                   onClick={() => {

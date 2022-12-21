@@ -104,10 +104,10 @@ function generateSearchAPIFilterObject(
       isFilterEdited("single_dept")
         ? searchFilters.department_course_type
         : null,
-    singleDeptIsSelective:
+    singleDeptIsCompulsory:
       searchMode.filters.includes("single_dept") &&
       isFilterEdited("single_dept")
-        ? searchFilters.singleDeptIsSelective
+        ? searchFilters.singleDeptIsCompulsory
         : null,
     suggestedGrade:
       searchMode.filters.includes("single_dept") &&
