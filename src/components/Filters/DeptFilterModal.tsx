@@ -41,7 +41,7 @@ import type { Department } from "types/course";
 import { generateScrollBarCss } from "styles/customScrollBar";
 import { useInView } from "react-intersection-observer";
 import { CloseIcon } from "@chakra-ui/icons";
-import { isSelectiveOptions } from "@/types/search";
+import { isCompulsoryOptions } from "@/types/search";
 
 export function searchDept(
   searchText: string,
@@ -91,7 +91,7 @@ function IsCompulsoryRadioGroup(props: IsCompulsoryRadioGroupProps) {
             letterSpacing: "0.05em",
           }}
         >
-          {isSelectiveOptions.map((option) => (
+          {isCompulsoryOptions.map((option) => (
             <Radio value={option} key={option}>
               {option === "all"
                 ? "全部"

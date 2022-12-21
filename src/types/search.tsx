@@ -55,9 +55,8 @@ export type SearchFieldName =
 // enroll method filter
 export type EnrollMethod = "1" | "2" | "3";
 
-// refactor these to isCompulsoryOptions
-export const isSelectiveOptions = ["all", "selective", "required"] as const;
-export type IsSelectiveOption = typeof isSelectiveOptions[number];
+export const isCompulsoryOptions = ["all", "selective", "required"] as const;
+export type IsCompulsoryOption = typeof isCompulsoryOptions[number];
 
 // otherLimit filter
 // need english label in the future
