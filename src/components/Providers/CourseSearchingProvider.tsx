@@ -7,8 +7,7 @@ import React, {
   useMemo,
   useCallback,
 } from "react";
-import type { Filter, SortOption, FilterComponentId } from "types/search";
-import { sortOptions } from "types/search";
+import type { Filter, FilterComponentId } from "types/search";
 import {
   isEnrollMethodFilterActive,
   isGeneralCourseTypeFilterActive,
@@ -17,6 +16,36 @@ import {
   isPeArmyCourseTypeFilterActive,
 } from "utils/searchFilter";
 import { mapStateToIntervals } from "utils/timeTableConverter";
+
+// for sorting
+export const sortOptions = [
+  {
+    id: "correlation",
+    chinese: "相關性",
+    english: "Correlation",
+  },
+  {
+    id: "limit_asc",
+    chinese: "修課總人數 (遞增)",
+    english: "Enrollment Limit (Ascending)",
+  },
+  {
+    id: "limit_desc",
+    chinese: "修課總人數 (遞減)",
+    english: "Enrollment Limit (Descending)",
+  },
+  {
+    id: "credits_asc",
+    chinese: "學分數 (遞增)",
+    english: "Credits (Ascending)",
+  },
+  {
+    id: "credits_desc",
+    chinese: "學分數 (遞減)",
+    english: "Credits (Descending)",
+  },
+] as const;
+export type SortOption = typeof sortOptions[number]["id"];
 
 interface CourseSearchingContextType {
   search: string | null;

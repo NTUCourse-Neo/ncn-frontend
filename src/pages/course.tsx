@@ -10,7 +10,11 @@ import {
   Radio,
   VStack,
 } from "@chakra-ui/react";
-import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
+import {
+  useCourseSearchingContext,
+  SortOption,
+  sortOptions,
+} from "components/Providers/CourseSearchingProvider";
 import Head from "next/head";
 import { useInView } from "react-intersection-observer";
 import CourseSearchInput from "@/components/CourseSearchInput";
@@ -25,7 +29,6 @@ import {
 import { BiFilterAlt } from "react-icons/bi";
 import CourseInfoRowPage from "@/components/CourseInfoRowPage";
 import Dropdown from "@/components/Dropdown";
-import { SortOption, sortOptions } from "@/types/search";
 import UserCoursePanel from "@/components/UserCoursePanel";
 import { precautions } from "@/components/InstructionModals";
 import CustomBreadcrumb from "@/components/Breadcrumb";

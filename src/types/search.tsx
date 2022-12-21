@@ -336,33 +336,3 @@ export const filterComponentMap = {
   },
 } as const;
 export type FilterComponentId = keyof typeof filterComponentMap;
-
-// for sorting
-export const sortOptions = [
-  {
-    id: "correlation",
-    chinese: "相關性",
-    english: "Correlation",
-  },
-  {
-    id: "limit_asc",
-    chinese: "修課總人數 (遞增)",
-    english: "Enrollment Limit (Ascending)",
-  },
-  {
-    id: "limit_desc",
-    chinese: "修課總人數 (遞減)",
-    english: "Enrollment Limit (Descending)",
-  },
-  {
-    id: "credits_asc",
-    chinese: "學分數 (遞增)",
-    english: "Credits (Ascending)",
-  },
-  {
-    id: "credits_desc",
-    chinese: "學分數 (遞減)",
-    english: "Credits (Descending)",
-  },
-] as const;
-export type SortOption = typeof sortOptions[number]["id"];
