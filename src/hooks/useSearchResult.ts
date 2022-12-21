@@ -6,8 +6,7 @@ import type { NullableSearchFilter } from "queries/course";
 import { SearchMode } from "@/types/searchMode";
 import { Filter, FilterComponentId } from "@/types/filter";
 
-// generate filter for search API, only current searchMode-related filter will be used, otherwise null.
-// if it is not edited, then it will also be null
+// TODO: delete this when new backend is ready
 function generateSearchAPIFilterObject(
   searchMode: SearchMode,
   searchFilters: Filter,
@@ -151,6 +150,7 @@ export default function useSearchResult(
         searchFilters,
         isFilterEdited
       );
+      // TODO: use Query instead of Filter when new backend is ready
       const coursesData = await fetchSearchResult(
         searchKeyword ?? "",
         filters,
