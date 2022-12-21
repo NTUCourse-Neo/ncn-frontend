@@ -32,7 +32,7 @@ export type Filter = {
   commonTargetDepartments: CommonTargetDepartment[];
   commonCourseTypes: CommonCourseType[];
   peArmyCourseTypes: PeArmyCourseType[];
-  host_college: HostCollege[]; // hostColleges
+  courseProviders: CourseProvider[];
   program: ProgramCode[]; // programs
   is_full_year: boolean | null; // isFullYear
   isCompulsory: boolean | null; // null: all, true: compulsory, false: elective
@@ -277,7 +277,7 @@ export const peArmyCourseTypes = [
 ] as const;
 export type PeArmyCourseType = typeof peArmyCourseTypes[number]["value"];
 
-export const hostColleges = [
+export const courseProviders = [
   {
     value: "NTNU",
     chinese_label: "臺師大",
@@ -287,7 +287,7 @@ export const hostColleges = [
     chinese_label: "臺科大",
   },
 ] as const;
-export type HostCollege = typeof hostColleges[number]["value"];
+export type CourseProvider = typeof courseProviders[number]["value"];
 
 // Program
 export const programs = AllPrograms;

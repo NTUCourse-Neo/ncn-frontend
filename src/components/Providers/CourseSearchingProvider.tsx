@@ -69,7 +69,7 @@ const emptyFilterObject: Filter = {
   commonTargetDepartments: [],
   commonCourseTypes: [],
   peArmyCourseTypes: [],
-  host_college: [],
+  courseProviders: [],
   program: [],
   is_full_year: null,
   isCompulsory: null,
@@ -202,7 +202,7 @@ const CourseSearchingProvider: React.FC<{
           );
         }
         case "host_college": {
-          return searchFilters.host_college.length > 0;
+          return searchFilters.courseProviders.length > 0;
         }
         case "program": {
           return searchFilters.program.length > 0;

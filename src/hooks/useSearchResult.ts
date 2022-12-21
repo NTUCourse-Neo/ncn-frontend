@@ -68,10 +68,10 @@ function generateSearchAPIFilterObject(
       isFilterEdited("pearmy_course_type")
         ? searchFilters.peArmyCourseTypes
         : null,
-    host_college:
+    courseProviders:
       searchMode.filters.includes("host_college") &&
       isFilterEdited("host_college")
-        ? searchFilters.host_college
+        ? searchFilters.courseProviders
         : null,
     program:
       searchMode.filters.includes("program") && isFilterEdited("program")

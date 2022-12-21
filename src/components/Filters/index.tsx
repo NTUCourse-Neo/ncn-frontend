@@ -30,8 +30,8 @@ import {
   commonCourseTypes,
   PeArmyCourseType,
   peArmyCourseTypes,
-  HostCollege,
-  hostColleges,
+  courseProviders,
+  CourseProvider,
 } from "types/search";
 import _ from "lodash";
 import Dropdown from "@/components/Dropdown";
@@ -745,9 +745,9 @@ export function PeArmyCourseTypeFilter() {
 export function HostCollegeFilter() {
   const { searchFilters, setSearchFilters, setPageIndex, isFilterEdited } =
     useCourseSearchingContext();
-  const [selectedHostCollege, setSelectedHostCollege] = useState<HostCollege[]>(
-    searchFilters.host_college
-  );
+  const [selectedCourseProvider, setSelectedCourseProvider] = useState<
+    CourseProvider[]
+  >(searchFilters.courseProviders);
   const backToFirstPage = () => {
     setPageIndex(0);
   };
@@ -756,23 +756,23 @@ export function HostCollegeFilter() {
     <FilterDropdown
       title={`開課學校${
         isFilterEdited("host_college")
-          ? ` (${searchFilters.host_college.length})`
+          ? ` (${searchFilters.courseProviders.length})`
           : ``
       }`}
       onClick={() => {
-        setSelectedHostCollege(searchFilters.host_college);
+        setSelectedCourseProvider(searchFilters.courseProviders);
       }}
       onSave={() => {
         setSearchFilters({
           ...searchFilters,
-          host_college: selectedHostCollege,
+          courseProviders: selectedCourseProvider,
         });
         backToFirstPage();
       }}
       onClear={() => {
-        setSelectedHostCollege([]);
+        setSelectedCourseProvider([]);
       }}
-      isEmpty={selectedHostCollege.length === 0}
+      isEmpty={selectedCourseProvider.length === 0}
       isActive={isFilterEdited("host_college")}
     >
       <Stack
@@ -785,14 +785,14 @@ export function HostCollegeFilter() {
           letterSpacing: "0.05em",
         }}
       >
-        {hostColleges.map((c) => {
+        {courseProviders.map((c) => {
           return (
             <Checkbox
               key={c.value}
-              isChecked={selectedHostCollege.includes(c.value)}
+              isChecked={selectedCourseProvider.includes(c.value)}
               onChange={() => {
-                setSelectedHostCollege(
-                  getNextCheckListState(selectedHostCollege, c.value)
+                setSelectedCourseProvider(
+                  getNextCheckListState(selectedCourseProvider, c.value)
                 );
               }}
             >
