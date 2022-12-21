@@ -23,54 +23,54 @@ function generateSearchAPIFilterObject(
         ? searchFilters.department
         : null,
     enroll_method:
-      searchMode.filters.includes("enroll_method") &&
-      isFilterEdited("enroll_method")
+      searchMode.filters.includes("enrollMethod") &&
+      isFilterEdited("enrollMethod")
         ? searchFilters.enroll_method
         : null,
-    isEnglishTaught: searchMode.filters.includes("other_limit")
+    isEnglishTaught: searchMode.filters.includes("otherLimit")
       ? searchFilters.isEnglishTaught
       : null,
-    isDistanceLearning: searchMode.filters.includes("other_limit")
+    isDistanceLearning: searchMode.filters.includes("otherLimit")
       ? searchFilters.isDistanceLearning
       : null,
-    hasChanged: searchMode.filters.includes("other_limit")
+    hasChanged: searchMode.filters.includes("otherLimit")
       ? searchFilters.hasChanged
       : null,
-    isAdditionalCourse: searchMode.filters.includes("other_limit")
+    isAdditionalCourse: searchMode.filters.includes("otherLimit")
       ? searchFilters.isAdditionalCourse
       : null,
-    noConflictOnly: searchMode.filters.includes("other_limit")
+    noConflictOnly: searchMode.filters.includes("otherLimit")
       ? searchFilters.noConflictOnly
       : null,
-    noPrerequisite: searchMode.filters.includes("other_limit")
+    noPrerequisite: searchMode.filters.includes("otherLimit")
       ? searchFilters.noPrerequisite
       : null,
-    notEnrolledOnly: searchMode.filters.includes("other_limit")
+    notEnrolledOnly: searchMode.filters.includes("otherLimit")
       ? searchFilters.notEnrolledOnly
       : null,
     generalCourseTypes:
-      searchMode.filters.includes("general_course_type") &&
-      isFilterEdited("general_course_type")
+      searchMode.filters.includes("generalCourseType") &&
+      isFilterEdited("generalCourseType")
         ? searchFilters.generalCourseTypes
         : null,
     commonTargetDepartments:
-      searchMode.filters.includes("common_target_dept") &&
-      isFilterEdited("common_target_dept")
+      searchMode.filters.includes("commonTargetDept") &&
+      isFilterEdited("commonTargetDept")
         ? searchFilters.commonTargetDepartments
         : null,
     commonCourseTypes:
-      searchMode.filters.includes("common_course_type") &&
-      isFilterEdited("common_course_type")
+      searchMode.filters.includes("commonCourseType") &&
+      isFilterEdited("commonCourseType")
         ? searchFilters.commonCourseTypes
         : null,
     peArmyCourseTypes:
-      searchMode.filters.includes("pearmy_course_type") &&
-      isFilterEdited("pearmy_course_type")
+      searchMode.filters.includes("peArmyCourseType") &&
+      isFilterEdited("peArmyCourseType")
         ? searchFilters.peArmyCourseTypes
         : null,
     courseProviders:
-      searchMode.filters.includes("host_college") &&
-      isFilterEdited("host_college")
+      searchMode.filters.includes("courseProvider") &&
+      isFilterEdited("courseProvider")
         ? searchFilters.courseProviders
         : null,
     programs:
@@ -78,8 +78,8 @@ function generateSearchAPIFilterObject(
         ? searchFilters.programs
         : null,
     groupingCourseTypes:
-      searchMode.filters.includes("grouping_course_type") &&
-      isFilterEdited("grouping_course_type")
+      searchMode.filters.includes("groupingCourseType") &&
+      isFilterEdited("groupingCourseType")
         ? searchFilters.groupingCourseTypes
         : null,
     isFullYear:
@@ -95,23 +95,19 @@ function generateSearchAPIFilterObject(
         ? searchFilters.timeStrictMatch
         : null,
     dept:
-      searchMode.filters.includes("single_dept") &&
-      isFilterEdited("single_dept")
+      searchMode.filters.includes("singleDept") && isFilterEdited("singleDept")
         ? searchFilters.dept
         : null,
     departmentCourseType:
-      searchMode.filters.includes("single_dept") &&
-      isFilterEdited("single_dept")
+      searchMode.filters.includes("singleDept") && isFilterEdited("singleDept")
         ? searchFilters.departmentCourseType
         : null,
     singleDeptIsCompulsory:
-      searchMode.filters.includes("single_dept") &&
-      isFilterEdited("single_dept")
+      searchMode.filters.includes("singleDept") && isFilterEdited("singleDept")
         ? searchFilters.singleDeptIsCompulsory
         : null,
     suggestedGrade:
-      searchMode.filters.includes("single_dept") &&
-      isFilterEdited("single_dept")
+      searchMode.filters.includes("singleDept") && isFilterEdited("singleDept")
         ? searchFilters.suggestedGrade
         : null,
   };

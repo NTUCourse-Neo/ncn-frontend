@@ -302,44 +302,44 @@ export const filterComponentMap = {
     id: "dept",
     component: <DeptFilter />,
   },
-  enroll_method: {
-    id: "enroll_method",
+  enrollMethod: {
+    id: "enrollMethod",
     component: <EnrollMethodFilter />,
   },
-  other_limit: {
-    id: "other_limit",
+  otherLimit: {
+    id: "otherLimit",
     component: <OtherLimitFilter />,
   },
-  general_course_type: {
-    id: "general_course_type",
+  generalCourseType: {
+    id: "generalCourseType",
     component: <GeneralCourseTypeFilter />,
   },
-  common_target_dept: {
-    id: "common_target_dept",
+  commonTargetDept: {
+    id: "commonTargetDept",
     component: <CommonTargetDeptFilter />,
   },
-  common_course_type: {
-    id: "common_course_type",
+  commonCourseType: {
+    id: "commonCourseType",
     component: <CommonCourseTypeFilter />,
   },
-  pearmy_course_type: {
-    id: "pearmy_course_type",
+  peArmyCourseType: {
+    id: "peArmyCourseType",
     component: <PeArmyCourseTypeFilter />,
   },
-  host_college: {
-    id: "host_college",
+  courseProvider: {
+    id: "courseProvider",
     component: <CourseProviderFilter />,
   },
   program: {
     id: "program",
     component: <ProgramFilter />,
   },
-  grouping_course_type: {
-    id: "grouping_course_type",
+  groupingCourseType: {
+    id: "groupingCourseType",
     component: <GroupingCourseTypeFilter />,
   },
-  single_dept: {
-    id: "single_dept",
+  singleDept: {
+    id: "singleDept",
     component: <SingleDeptFilter />,
   },
 } as const;

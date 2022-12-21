@@ -167,10 +167,10 @@ const CourseSearchingProvider: React.FC<{
             searchFilters.isCompulsory !== null
           );
         }
-        case "enroll_method": {
+        case "enrollMethod": {
           return isEnrollMethodFilterActive(searchFilters.enroll_method);
         }
-        case "other_limit": {
+        case "otherLimit": {
           return (
             searchFilters.isEnglishTaught ||
             searchFilters.isDistanceLearning ||
@@ -181,36 +181,36 @@ const CourseSearchingProvider: React.FC<{
             searchFilters.notEnrolledOnly
           );
         }
-        case "general_course_type": {
+        case "generalCourseType": {
           return isGeneralCourseTypeFilterActive(
             searchFilters.generalCourseTypes
           );
         }
-        case "common_target_dept": {
+        case "commonTargetDept": {
           return isCommonTargetDeptFilterActive(
             searchFilters.commonTargetDepartments
           );
         }
-        case "common_course_type": {
+        case "commonCourseType": {
           return isCommonCourseTypeFilterActive(
             searchFilters.commonCourseTypes
           );
         }
-        case "pearmy_course_type": {
+        case "peArmyCourseType": {
           return isPeArmyCourseTypeFilterActive(
             searchFilters.peArmyCourseTypes
           );
         }
-        case "host_college": {
+        case "courseProvider": {
           return searchFilters.courseProviders.length > 0;
         }
         case "program": {
           return searchFilters.programs.length > 0;
         }
-        case "grouping_course_type": {
+        case "groupingCourseType": {
           return searchFilters.groupingCourseTypes.length > 0;
         }
-        case "single_dept": {
+        case "singleDept": {
           return (
             searchFilters.dept !== null ||
             searchFilters.departmentCourseType !== null ||

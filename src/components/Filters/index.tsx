@@ -188,7 +188,7 @@ export function SingleDeptFilter() {
   return (
     <SingleDeptFilterModal
       title={`系所必選修`}
-      isActive={isFilterEdited("single_dept")}
+      isActive={isFilterEdited("singleDept")}
     />
   );
 }
@@ -210,11 +210,11 @@ export function GroupingCourseTypeFilter() {
   return (
     <GroupingCourseFilterModal
       title={`課程種類${
-        isFilterEdited("grouping_course_type")
+        isFilterEdited("groupingCourseType")
           ? ` (${searchFilters.groupingCourseTypes.length})`
           : ""
       }`}
-      isActive={isFilterEdited("grouping_course_type")}
+      isActive={isFilterEdited("groupingCourseType")}
     />
   );
 }
@@ -233,7 +233,7 @@ export function EnrollMethodFilter() {
   return (
     <FilterDropdown
       title={`加選方式${
-        isFilterEdited("enroll_method")
+        isFilterEdited("enrollMethod")
           ? ` (${[...searchFilters.enroll_method].sort().join(", ")})`
           : ""
       }`}
@@ -251,7 +251,7 @@ export function EnrollMethodFilter() {
         setSelectedEnrollMethod([]);
       }}
       isEmpty={selectedEnrollMethod.length === 0}
-      isActive={isFilterEdited("enroll_method")}
+      isActive={isFilterEdited("enrollMethod")}
     >
       <Stack
         w="280px"
@@ -386,7 +386,7 @@ export function OtherLimitFilter() {
   return (
     <FilterDropdown
       title={`其他限制${
-        isFilterEdited("other_limit")
+        isFilterEdited("otherLimit")
           ? ` (${
               [
                 searchFilters.isEnglishTaught,
@@ -431,7 +431,7 @@ export function OtherLimitFilter() {
         });
       }}
       isEmpty={numOfTrues === 0} // all false
-      isActive={isFilterEdited("other_limit")}
+      isActive={isFilterEdited("otherLimit")}
     >
       <Stack
         spacing={3}
@@ -493,7 +493,7 @@ export function GeneralCourseTypeFilter() {
   return (
     <FilterDropdown
       title={`課程類別${
-        isFilterEdited("general_course_type")
+        isFilterEdited("generalCourseType")
           ? ` (${searchFilters.generalCourseTypes.length})`
           : ""
       }`}
@@ -511,7 +511,7 @@ export function GeneralCourseTypeFilter() {
         setSelectedGeneralCourseType([]);
       }}
       isEmpty={selectedGeneralCourseType.length === 0}
-      isActive={isFilterEdited("general_course_type")}
+      isActive={isFilterEdited("generalCourseType")}
     >
       <Stack
         spacing={3}
@@ -560,7 +560,7 @@ export function CommonTargetDeptFilter() {
   return (
     <FilterDropdown
       title={`授課對象${
-        isFilterEdited("common_target_dept")
+        isFilterEdited("commonTargetDept")
           ? ` (${searchFilters.commonTargetDepartments.length})`
           : ``
       }`}
@@ -580,7 +580,7 @@ export function CommonTargetDeptFilter() {
         setSelectedCommonTargetDepartment([]);
       }}
       isEmpty={selectedCommonTargetDepartment.length === 0}
-      isActive={isFilterEdited("common_target_dept")}
+      isActive={isFilterEdited("commonTargetDept")}
     >
       <Stack
         spacing={3}
@@ -629,7 +629,7 @@ export function CommonCourseTypeFilter() {
   return (
     <FilterDropdown
       title={`領域別${
-        isFilterEdited("common_course_type")
+        isFilterEdited("commonCourseType")
           ? ` (${searchFilters.commonCourseTypes.length})`
           : ``
       }`}
@@ -647,7 +647,7 @@ export function CommonCourseTypeFilter() {
         setSelectedCommonCourseType([]);
       }}
       isEmpty={selectedCommonCourseType.length === 0}
-      isActive={isFilterEdited("common_course_type")}
+      isActive={isFilterEdited("commonCourseType")}
     >
       <Stack
         spacing={3}
@@ -692,7 +692,7 @@ export function PeArmyCourseTypeFilter() {
   return (
     <FilterDropdown
       title={`課程類別${
-        isFilterEdited("pearmy_course_type")
+        isFilterEdited("peArmyCourseType")
           ? ` (${searchFilters.peArmyCourseTypes.length})`
           : ``
       }`}
@@ -710,7 +710,7 @@ export function PeArmyCourseTypeFilter() {
         setSelectedPeArmyCourseType([]);
       }}
       isEmpty={selectedPeArmyCourseType.length === 0}
-      isActive={isFilterEdited("pearmy_course_type")}
+      isActive={isFilterEdited("peArmyCourseType")}
     >
       <Stack
         spacing={3}
@@ -755,7 +755,7 @@ export function CourseProviderFilter() {
   return (
     <FilterDropdown
       title={`開課學校${
-        isFilterEdited("host_college")
+        isFilterEdited("courseProvider")
           ? ` (${searchFilters.courseProviders.length})`
           : ``
       }`}
@@ -773,7 +773,7 @@ export function CourseProviderFilter() {
         setSelectedCourseProvider([]);
       }}
       isEmpty={selectedCourseProvider.length === 0}
-      isActive={isFilterEdited("host_college")}
+      isActive={isFilterEdited("courseProvider")}
     >
       <Stack
         spacing={3}
