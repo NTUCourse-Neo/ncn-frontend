@@ -1,7 +1,7 @@
 import { Flex, Box, FlexProps } from "@chakra-ui/react";
 import React from "react";
 import { useCourseSearchingContext } from "@/components/Providers/CourseSearchingProvider";
-import { filterComponentMap } from "@/types/search";
+import { filterComponentMap } from "@/types/filter";
 
 function SearchFilters(props: FlexProps) {
   const { resetFilters, isFiltersEdited, searchMode } =

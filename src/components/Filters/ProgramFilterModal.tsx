@@ -23,7 +23,7 @@ import { useState, useMemo } from "react";
 import { SearchOutlineIcon } from "components/CustomIcons";
 import { CloseIcon } from "@chakra-ui/icons";
 import FilterElement from "@/components/Filters/components/FilterElement";
-import { programs } from "@/types/search";
+import { programs } from "@/types/filter";
 
 export interface ProgramFilterModalProps {
   readonly title: string;

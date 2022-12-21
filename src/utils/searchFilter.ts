@@ -8,7 +8,7 @@ import {
   CommonCourseType,
   peArmyCourseTypes,
   PeArmyCourseType,
-} from "@/types/search";
+} from "@/types/filter";
 
 // enroll method
 export const MAX_ENROLL_METHOD_NUMBER = 3;

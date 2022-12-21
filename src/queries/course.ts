@@ -1,5 +1,5 @@
 import instance from "@/queries/axiosInstance";
-import type { Filter } from "@/types/search";
+import type { Filter } from "@/types/filter";
 import type { Course, CourseEnrollStatus, CourseSyllabus } from "types/course";
 const api_version = "v2";
 

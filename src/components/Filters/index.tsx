@@ -32,7 +32,7 @@ import {
   peArmyCourseTypes,
   courseProviders,
   CourseProvider,
-} from "types/search";
+} from "@/types/filter";
 import _ from "lodash";
 import Dropdown from "@/components/Dropdown";
 

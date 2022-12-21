@@ -4,7 +4,7 @@ import { useCourseSearchingContext } from "components/Providers/CourseSearchingP
 import { useToast } from "@chakra-ui/react";
 import type { NullableSearchFilter } from "queries/course";
 import { SearchMode } from "@/data/searchMode";
-import { Filter, FilterComponentId } from "@/types/search";
+import { Filter, FilterComponentId } from "@/types/filter";
 
 // generate filter for search API, only current searchMode-related filter will be used, otherwise null.
 // if it is not edited, then it will also be null

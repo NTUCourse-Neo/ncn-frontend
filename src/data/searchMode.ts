@@ -1,4 +1,4 @@
-import { FilterComponentId } from "@/types/search";
+import { FilterComponentId } from "@/types/filter";
 import type { PrecautionName } from "@/components/InstructionModals";
 
 export type SearchModeID =

@@ -45,7 +45,7 @@ import { CloseIcon } from "@chakra-ui/icons";
 import { searchDept } from "@/components/Filters/DeptFilterModal";
 import Dropdown from "@/components/Dropdown";
 import { ChevronDownIcon } from "@chakra-ui/icons";
-import { IsCompulsoryOption } from "@/types/search";
+import { IsCompulsoryOption } from "@/types/filter";
 
 // TODO: add API & hook to fetch options
 interface DropdownGroupProps extends FlexProps {

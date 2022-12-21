@@ -41,7 +41,7 @@ import type { Department } from "types/course";
 import { generateScrollBarCss } from "styles/customScrollBar";
 import { useInView } from "react-intersection-observer";
 import { CloseIcon } from "@chakra-ui/icons";
-import { isCompulsoryOptions } from "@/types/search";
+import { isCompulsoryOptions } from "@/types/filter";
 
 export function searchDept(
   searchText: string,

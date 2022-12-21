@@ -7,7 +7,7 @@ import React, {
   useMemo,
   useCallback,
 } from "react";
-import type { Filter, FilterComponentId } from "types/search";
+import type { Filter, FilterComponentId } from "@/types/filter";
 import {
   isEnrollMethodFilterActive,
   isGeneralCourseTypeFilterActive,
