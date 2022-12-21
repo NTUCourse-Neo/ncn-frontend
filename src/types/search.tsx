@@ -33,15 +33,15 @@ export type Filter = {
   commonCourseTypes: CommonCourseType[];
   peArmyCourseTypes: PeArmyCourseType[];
   courseProviders: CourseProvider[];
-  program: ProgramCode[]; // programs
-  is_full_year: boolean | null; // isFullYear
-  isCompulsory: boolean | null; // null: all, true: compulsory, false: elective
-  time_strict_match: boolean; // timeStrictMatch
-  grouping_course_type: string[]; // groupingCourseTypes
-  dept: Department | null; // for singleDept, department
-  department_course_type: string | null; // for singleDept, departmentCourseTypes
-  singleDeptIsCompulsory: boolean | null; // null: all, true: compulsory, false: elective // for singleDept
-  suggestedGrade: string | null; // for singleDept, suggestedGrade
+  programs: ProgramCode[];
+  isFullYear: boolean | null;
+  isCompulsory: boolean | null;
+  timeStrictMatch: boolean;
+  groupingCourseTypes: string[];
+  dept: Department | null; // for singleDept, department // TODO: wait for new API
+  departmentCourseType: string | null; // for singleDept,
+  singleDeptIsCompulsory: boolean | null; // for singleDept,
+  suggestedGrade: string | null; // for singleDept,
 };
 
 // deprecated

@@ -70,13 +70,13 @@ const emptyFilterObject: Filter = {
   commonCourseTypes: [],
   peArmyCourseTypes: [],
   courseProviders: [],
-  program: [],
-  is_full_year: null,
+  programs: [],
+  isFullYear: null,
   isCompulsory: null,
-  time_strict_match: false,
-  grouping_course_type: [],
+  timeStrictMatch: false,
+  groupingCourseTypes: [],
   dept: null,
-  department_course_type: null,
+  departmentCourseType: null,
   singleDeptIsCompulsory: null,
   suggestedGrade: null,
 };
@@ -158,7 +158,7 @@ const CourseSearchingProvider: React.FC<{
         case "time": {
           return (
             mapStateToIntervals(searchFilters.time) > 0 ||
-            searchFilters.is_full_year !== null
+            searchFilters.isFullYear !== null
           );
         }
         case "dept": {
@@ -205,15 +205,15 @@ const CourseSearchingProvider: React.FC<{
           return searchFilters.courseProviders.length > 0;
         }
         case "program": {
-          return searchFilters.program.length > 0;
+          return searchFilters.programs.length > 0;
         }
         case "grouping_course_type": {
-          return searchFilters.grouping_course_type.length > 0;
+          return searchFilters.groupingCourseTypes.length > 0;
         }
         case "single_dept": {
           return (
             searchFilters.dept !== null ||
-            searchFilters.department_course_type !== null ||
+            searchFilters.departmentCourseType !== null ||
             searchFilters.singleDeptIsCompulsory !== null ||
             searchFilters.suggestedGrade !== null
           );

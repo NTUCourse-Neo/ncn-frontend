@@ -73,36 +73,36 @@ function generateSearchAPIFilterObject(
       isFilterEdited("host_college")
         ? searchFilters.courseProviders
         : null,
-    program:
+    programs:
       searchMode.filters.includes("program") && isFilterEdited("program")
-        ? searchFilters.program
+        ? searchFilters.programs
         : null,
-    grouping_course_type:
+    groupingCourseTypes:
       searchMode.filters.includes("grouping_course_type") &&
       isFilterEdited("grouping_course_type")
-        ? searchFilters.grouping_course_type
+        ? searchFilters.groupingCourseTypes
         : null,
-    is_full_year:
+    isFullYear:
       searchMode.filters.includes("time") && isFilterEdited("time")
-        ? searchFilters.is_full_year
+        ? searchFilters.isFullYear
         : null,
     isCompulsory:
       searchMode.filters.includes("dept") && isFilterEdited("dept")
         ? searchFilters.isCompulsory
         : null,
-    time_strict_match:
+    timeStrictMatch:
       searchMode.filters.includes("time") && isFilterEdited("time")
-        ? searchFilters.time_strict_match
+        ? searchFilters.timeStrictMatch
         : null,
     dept:
       searchMode.filters.includes("single_dept") &&
       isFilterEdited("single_dept")
         ? searchFilters.dept
         : null,
-    department_course_type:
+    departmentCourseType:
       searchMode.filters.includes("single_dept") &&
       isFilterEdited("single_dept")
-        ? searchFilters.department_course_type
+        ? searchFilters.departmentCourseType
         : null,
     singleDeptIsCompulsory:
       searchMode.filters.includes("single_dept") &&

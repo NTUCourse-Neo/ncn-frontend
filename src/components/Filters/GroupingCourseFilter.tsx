@@ -37,22 +37,22 @@ export default function GroupingCourseFilterModal(
     useCourseSearchingContext();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedGroupingCourse, setSelectedGroupingCourse] = useState(
-    searchFilters.grouping_course_type
+    searchFilters.groupingCourseTypes
   );
   const [searchString, setSearchString] = useState("");
 
   const onOpenModal = () => {
-    setSelectedGroupingCourse(searchFilters.grouping_course_type);
+    setSelectedGroupingCourse(searchFilters.groupingCourseTypes);
     onOpen();
   };
   const onCancelEditing = () => {
     onClose();
-    setSelectedGroupingCourse(searchFilters.grouping_course_type);
+    setSelectedGroupingCourse(searchFilters.groupingCourseTypes);
   };
   const onSaveEditing = () => {
     setSearchFilters({
       ...searchFilters,
-      grouping_course_type: selectedGroupingCourse,
+      groupingCourseTypes: selectedGroupingCourse,
     });
     // Reset indexed page
     setPageIndex(0);

@@ -288,7 +288,7 @@ function SingleDeptFilterModal({
     useCourseSearchingContext();
   const [selectedDept, setSelectedDept] = useState(searchFilters.dept);
   const [selectedCourseType, setSelectedCourseType] = useState<string | null>(
-    searchFilters.department_course_type
+    searchFilters.departmentCourseType
   );
   const [isSingleDeptCompulsory, setIsSingleDeptCompulsory] = useState<
     boolean | null
@@ -319,7 +319,7 @@ function SingleDeptFilterModal({
     // overwrite local states by context
     setSelectedDept(searchFilters.dept);
     setIsSingleDeptCompulsory(searchFilters.singleDeptIsCompulsory);
-    setSelectedCourseType(searchFilters.department_course_type);
+    setSelectedCourseType(searchFilters.departmentCourseType);
     setSuggestedGrade(searchFilters.suggestedGrade);
     onOpen();
   };
@@ -329,7 +329,7 @@ function SingleDeptFilterModal({
     onClose();
     setSelectedDept(searchFilters.dept);
     setIsSingleDeptCompulsory(searchFilters.singleDeptIsCompulsory);
-    setSelectedCourseType(searchFilters.department_course_type);
+    setSelectedCourseType(searchFilters.departmentCourseType);
     setSuggestedGrade(searchFilters.suggestedGrade);
   };
   const onSaveEditing = () => {
@@ -339,7 +339,7 @@ function SingleDeptFilterModal({
       ...searchFilters,
       dept: selectedDept,
       singleDeptIsCompulsory: isSingleDeptCompulsory,
-      department_course_type: selectedCourseType,
+      departmentCourseType: selectedCourseType,
       suggestedGrade: suggestedGrade,
     });
     // Reset indexed page

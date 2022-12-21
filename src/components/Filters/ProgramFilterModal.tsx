@@ -35,21 +35,23 @@ export default function ProgramFilterModal(props: ProgramFilterModalProps) {
   const { searchFilters, setSearchFilters, setPageIndex } =
     useCourseSearchingContext();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [selectedProgram, setSelectedProgram] = useState(searchFilters.program);
+  const [selectedProgram, setSelectedProgram] = useState(
+    searchFilters.programs
+  );
   const [searchString, setSearchString] = useState("");
 
   const onOpenModal = () => {
-    setSelectedProgram(searchFilters.program);
+    setSelectedProgram(searchFilters.programs);
     onOpen();
   };
   const onCancelEditing = () => {
     onClose();
-    setSelectedProgram(searchFilters.program);
+    setSelectedProgram(searchFilters.programs);
   };
   const onSaveEditing = () => {
     setSearchFilters({
       ...searchFilters,
-      program: selectedProgram,
+      programs: selectedProgram,
     });
     // Reset indexed page
     setPageIndex(0);

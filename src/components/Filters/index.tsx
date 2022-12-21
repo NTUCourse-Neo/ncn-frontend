@@ -198,7 +198,7 @@ export function ProgramFilter() {
   return (
     <ProgramFilterModal
       title={`開課學程${
-        isFilterEdited("program") ? ` (${searchFilters.program.length})` : ""
+        isFilterEdited("program") ? ` (${searchFilters.programs.length})` : ""
       }`}
       isActive={isFilterEdited("program")}
     />
@@ -211,7 +211,7 @@ export function GroupingCourseTypeFilter() {
     <GroupingCourseFilterModal
       title={`課程種類${
         isFilterEdited("grouping_course_type")
-          ? ` (${searchFilters.grouping_course_type.length})`
+          ? ` (${searchFilters.groupingCourseTypes.length})`
           : ""
       }`}
       isActive={isFilterEdited("grouping_course_type")}

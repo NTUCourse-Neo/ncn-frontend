@@ -93,10 +93,10 @@ function TimeFilterModal(props: TimeFilterModalProps) {
     mapStateToTimeTable(searchFilters.time)
   );
   const [isStrictSearch, setIsStrictSearch] = useState(
-    searchFilters.time_strict_match
+    searchFilters.timeStrictMatch
   );
   const [isFullYear, setIsFullYear] = useState<null | boolean>(
-    searchFilters.is_full_year
+    searchFilters.isFullYear
   );
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -115,8 +115,8 @@ function TimeFilterModal(props: TimeFilterModalProps) {
     setSearchFilters({
       ...searchFilters,
       time: timeTable,
-      is_full_year: isFullYear,
-      time_strict_match: isStrictSearch,
+      isFullYear: isFullYear,
+      timeStrictMatch: isStrictSearch,
     });
     // Reset indexed page
     setPageIndex(0);
@@ -168,8 +168,8 @@ function TimeFilterModal(props: TimeFilterModalProps) {
         onClick={() => {
           onOpen();
           setSelectedTime(mapStateToTimeTable(searchFilters.time));
-          setIsFullYear(searchFilters.is_full_year);
-          setIsStrictSearch(searchFilters.time_strict_match);
+          setIsFullYear(searchFilters.isFullYear);
+          setIsStrictSearch(searchFilters.timeStrictMatch);
           reportEvent("filter_time", "click", "open_modal");
         }}
         bg={isActive ? "#cccccc" : "white"}
