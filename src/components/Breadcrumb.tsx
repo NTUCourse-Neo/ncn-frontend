@@ -34,7 +34,7 @@ export default function CustomBreadcrumb(props: CustomBreadcrumbProps) {
             key={index}
             color={isLastPage ? "#002F94" : "#6f6f6f"}
             sx={{
-              fontSize: "14px",
+              fontSize: { base: '12px', md: '14px' },
               lineHeight: "1.4",
             }}
           >

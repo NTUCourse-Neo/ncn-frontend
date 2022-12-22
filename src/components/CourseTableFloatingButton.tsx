@@ -40,6 +40,7 @@ export default function CourseTableFloatingButton() {
             color: "#2D2D2D",
             letterSpacing: "0.05em",
           }}
+          display={{ base: "none", md: "block" }}
         >
           我的課表
         </Text>

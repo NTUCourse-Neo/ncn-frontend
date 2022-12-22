@@ -69,7 +69,7 @@ export default function FaqAccordion({
   readonly items: ReadonlyArray<AccordionItemProps>;
 }) {
   return (
-    <Box w="80%" minH="58vh">
+    <Box w={{ base: "95%", md: "80%" }} minH="58vh">
       <Accordion allowToggle defaultIndex={0}>
         {items.map((item, index) => (
           <AccordionItem

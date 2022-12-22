@@ -49,7 +49,7 @@ const sections = [
     id: "nol",
     name: "課程網",
     tutorial: (
-      <Center my={5} w="80%" h="52vh" bg="#d9d9d9">
+      <Center my={5} w={{ base: "95%", md: "80%" }} h="52vh" bg="#d9d9d9">
         Tutorial PPT / Video{" "}
       </Center>
     ),
@@ -59,7 +59,7 @@ const sections = [
     id: "selection1",
     name: "初選第一階段",
     tutorial: (
-      <Center my={5} w="80%" h="52vh" bg="#d9d9d9">
+      <Center my={5} w={{ base: "95%", md: "80%" }} h="52vh" bg="#d9d9d9">
         Tutorial PPT / Video{" "}
       </Center>
     ),
@@ -69,7 +69,7 @@ const sections = [
     id: "selection2",
     name: "初選第二階段",
     tutorial: (
-      <Center my={5} w="80%" h="52vh" bg="#d9d9d9">
+      <Center my={5} w={{ base: "95%", md: "80%" }} h="52vh" bg="#d9d9d9">
         Tutorial PPT / Video{" "}
       </Center>
     ),
@@ -79,7 +79,7 @@ const sections = [
     id: "enrollWeeks",
     name: "加退選",
     tutorial: (
-      <Center my={5} w="80%" h="52vh" bg="#d9d9d9">
+      <Center my={5} w={{ base: "95%", md: "80%" }} h="52vh" bg="#d9d9d9">
         Tutorial PPT / Video{" "}
       </Center>
     ),
@@ -89,7 +89,7 @@ const sections = [
     id: "manualEnrollWeeks",
     name: "人工加簽",
     tutorial: (
-      <Center my={5} w="80%" h="52vh" bg="#d9d9d9">
+      <Center my={5} w={{ base: "95%", md: "80%" }} h="52vh" bg="#d9d9d9">
         Tutorial PPT / Video{" "}
       </Center>
     ),
@@ -205,21 +205,23 @@ function ContactTab() {
     },
   ];
   return (
-    <TableContainer w="70%" border="1px solid #2D2D2D">
+    <TableContainer w={{ base: "95%", md: "70%" }} border="1px solid #2D2D2D">
       <Table>
         <Thead>
           <Tr>
-            <Th w="40%">問題類別</Th>
-            <Th w="20%">負責單位</Th>
-            <Th w="40%">負責人及聯絡資訊</Th>
+            <Th w={{ base: "50%", md: "40%" }}>問題類別</Th>
+            <Th w={{ base: "0%", md: "20%" }} display={{ base: "none", md: "table-cell" }}>負責單位</Th>
+            <Th w={{ base: "0%", md: "40%" }} display={{ base: "none", md: "table-cell" }}>負責人及聯絡資訊</Th>
+            <Th w={{ base: "50%", md: "0%" }} display={{ base: "table-cell", md: "none" }}>負責單位/負責人/聯絡資訊</Th>
           </Tr>
         </Thead>
         <Tbody>
           {rows.map((row, index) => (
             <Tr key={`${row.questionType}-${row.office}-${index}`}>
               <Td alignStart>{row.questionType}</Td>
-              <Td>{row.office}</Td>
-              <Td alignStart>{row.contactInfo}</Td>
+              <Td display={{ base: "none", md: "table-cell" }}>{row.office}</Td>
+              <Td alignStart display={{ base: "none", md: "table-cell" }}>{row.contactInfo}</Td>
+              <Td alignStart display={{ base: "table-cell", md: "none" }}>{row.office}<td/>{row.contactInfo}</Td>
             </Tr>
           ))}
         </Tbody>
@@ -295,12 +297,13 @@ function TutorialTab() {
   return (
     <Flex w="100%" h="60vh" position="relative" ref={containerBodyRef}>
       <Flex
-        w="25%"
+        w={{ base: "0%", md: "25%" }}
         justifyContent={"end"}
         overflow="hidden"
         pr={"52px"}
         position="sticky"
         top={0}
+        display={{ base: "none", md: "block" }}
       >
         <Box mt={9}>
           {sections.map((section, index) => {
@@ -329,7 +332,8 @@ function TutorialTab() {
       </Flex>
       <Box
         h="100%"
-        w="75%"
+        w= {{ base: "100%", md: "75%" }}
+        pl="7%"
         justifyContent={"column"}
         overflowY="scroll"
         sx={{
@@ -354,12 +358,12 @@ function TutorialTab() {
                   sx={{
                     color: "#2d2d2d",
                     fontWeight: 500,
-                    fontSize: "18px",
+                    fontSize: { base: "16px", md: "18px" },
                     lineHeight: 1.4,
                     py: 6,
                   }}
                 >{`使用教學 - ${section.name}`}</Flex>
-                <Flex w="80%" borderBottom="1px solid #000000" />
+                <Flex w={{ base: "95%", md: "80%" }} borderBottom="1px solid #000000" />
                 {section.tutorial}
               </Flex>
             </SectionWrapper>
@@ -390,12 +394,13 @@ function FAQTab() {
   return (
     <Flex w="100%" h="60vh" position="relative" ref={containerBodyRef}>
       <Flex
-        w="25%"
+        w={{ base: "0%", md: "25%" }}
         justifyContent={"end"}
         overflow="hidden"
         pr={"52px"}
         position="sticky"
         top={0}
+        display={{ base: "none", md: "block" }}
       >
         <Box mt={9}>
           {sections
@@ -426,7 +431,8 @@ function FAQTab() {
       </Flex>
       <Box
         h="100%"
-        w="75%"
+        w={{ base: "100%", md: "75%" }}
+        pl="7%"
         justifyContent={"column"}
         overflowY="scroll"
         sx={{
@@ -454,7 +460,7 @@ function FAQTab() {
                   sx={{
                     color: "#2d2d2d",
                     fontWeight: 500,
-                    fontSize: "18px",
+                    fontSize: { base: "16px", md: "18px" },
                     lineHeight: 1.4,
                     py: 6,
                   }}
@@ -494,8 +500,9 @@ export default function HelpCenterPage() {
         alignItems="center"
         py={6}
       >
-        <Flex flexDirection={"column"} w="80%">
+        <Flex flexDirection={"column"} w={{ base: '100%', md: '80%' }}>
           <CustomBreadcrumb
+            ms={{ base: "16px", md: "0px" }}
             pageItems={[
               {
                 text: "首頁",
@@ -510,8 +517,9 @@ export default function HelpCenterPage() {
           <Flex
             w="100%"
             my={6}
+            ms={{ base: "16px", md: "0px" }}
             sx={{
-              fontSize: "24px",
+              fontSize: { base: '20px', md: '24px' },
               lineHeight: "1.4",
             }}
           >
@@ -521,7 +529,7 @@ export default function HelpCenterPage() {
             w="100%"
             sx={{
               shadow: "0px 3px 8px rgba(75, 75, 75, 0.08)",
-              borderRadius: "4px",
+              borderRadius: { base: "0px", md: "4px" },
               border: "1px solid rgba(204, 204, 204, 0.4)",
               bg: "white",
             }}
@@ -536,7 +544,7 @@ export default function HelpCenterPage() {
               sx={{
                 fontSize: "14px",
                 lineHeight: "1.4",
-                borderRadius: "4px 4px 0 0",
+                borderRadius: { base: "0px", md: "4px 4px 0 0" },
               }}
               justifyContent="center"
               gap={16}
@@ -558,8 +566,8 @@ export default function HelpCenterPage() {
                   }
                   sx={{
                     fontWeight: 500,
-                    fontSize: "16px",
-                    lineHeight: "1.4",
+                    fontSize: { base: '14px', md: '16px' },
+                    lineHeight: { base: '0.8', md: '1.4' },
                   }}
                 >
                   {tabItem.text}
