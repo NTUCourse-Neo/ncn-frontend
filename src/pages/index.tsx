@@ -24,6 +24,7 @@ import {
   MenuList,
   Radio,
   RadioGroup,
+  Image,
 } from "@chakra-ui/react";
 import { FaArrowRight, FaChevronDown } from "react-icons/fa";
 import { useRouter } from "next/router";
@@ -225,16 +226,21 @@ function HomePage() {
           position={"relative"}
           overflowX="hidden"
         >
-          <Box
-            position={"absolute"}
-            w="4656px"
-            h="4656px"
-            borderRadius={"50%"}
-            bg="#d9d9d9"
-            top="-4268px"
-          />
+          <Box position={"absolute"} w="100%" minH="50vh" top="0px">
+            <Image
+              src={"/img/home_bg.png"}
+              sx={{
+                maxW: "100%",
+                maxH: "100%",
+                m: "0 auto",
+                p: 0,
+                w: "100%",
+              }}
+            />
+          </Box>
           <Flex
             w="100%"
+            mt="100px"
             h="470px"
             bg="transparent"
             zIndex={1}
@@ -290,12 +296,16 @@ function HomePage() {
                     py={2}
                     w="fit-content"
                     minWidth={"fit-content"}
-                    borderLeft={index !== 0 ? "1px solid #F6F6F6" : "none"}
+                    textDecoration={
+                      searchMode.id === option.id ? "underline" : "none"
+                    }
+                    textUnderlineOffset="10px"
                     sx={{
                       fontSize: "16px",
                       fontWeight: 500,
                       lineHeight: "20px",
-                      color: searchMode.id === option.id ? "white" : "#484848",
+                      color:
+                        searchMode.id === option.id ? "white" : "#ffffff80",
                       transition: "all 0.2s ease-in-out",
                     }}
                     cursor="pointer"
