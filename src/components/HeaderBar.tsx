@@ -322,353 +322,357 @@ function HeaderBar() {
   }, [isSearchModeEnable]);
 
   return (
-    <Box position={"relative"}>
-      <Flex
-        top={0}
-        position="sticky"
-        w="100%"
-        h="64px"
-        bg={"white"}
-        flexDirection="row"
-        justifyContent="center"
-        alignItems="center"
-        zIndex={1299}
-        pr={{ base: 6, md: 10, lg: 20 }}
-        pl={!isSearchModeEnable ? { base: 6, md: 10, lg: 20 } : "9%"}
-        shadow={
-          isHeaderFilterActive
-            ? "none"
-            : "0px 20px 24px -4px rgba(85, 105, 135, 0.04), 0px 8px 8px -4px rgba(85, 105, 135, 0.02)"
-        }
-        ref={headerBarRef}
-      >
-        {isSearchModeEnable ? null : (
-          <Flex justifyContent="flex-start" alignItems="center" flex={1}>
-            <Link href="/" passHref>
-              <Flex alignItems="center" flexDirection="row" cursor="pointer">
-                <Image
-                  src={`/img/ncn_logo.png`}
-                  alt="ncnLogo"
-                  width="25"
-                  height="25"
-                  layout="fixed"
-                />
-                <Heading
-                  ml="2"
-                  fontSize={{ base: "lg", md: "xl" }}
-                  fontWeight="700"
-                  color={"heading.light"}
-                  display={{ base: "none", md: "inline-block" }}
-                >
-                  NTUCourse Neo
-                </Heading>
-              </Flex>
-            </Link>
-          </Flex>
-        )}
-        {isSearchModeEnable ? (
-          <Flex
-            flexDirection={"row"}
-            alignItems="center"
-            w={{ lg: "75%", xl: "60%" }}
-            gap={5}
-          >
-            <CourseSearchInput />
-            <Center
-              p={2}
-              cursor={"pointer"}
-              borderRadius="full"
-              sx={{
-                bg: isHeaderFilterActive ? "#ececec" : "white",
-                border: isFiltersEdited
-                  ? "0.6px solid #007AFF"
-                  : "0.6px solid #ffffff",
-              }}
-              onClick={() => {
-                setIsHeaderFilterActive(!isHeaderFilterActive);
-              }}
-              position="relative"
-              transition="all ease-in-out 0.2s"
-            >
-              <BiFilterAlt size={"24px"} />
-              {isFiltersEdited ? (
-                <Box
-                  position={"absolute"}
-                  top={0.5}
-                  right={0.5}
-                  w="8px"
-                  h="8px"
-                  sx={{
-                    borderRadius: "full",
-                    bg: "blue.500",
-                    border: "0.1px solid white",
-                  }}
-                />
-              ) : null}
-            </Center>
-          </Flex>
-        ) : (
-          <Flex flexDirection={"row"} alignItems="center" gap={6}>
-            <Dropdown
-              renderDropdownButton={(isOpen) => (
-                <DropdownButton title={"課程資訊"} isOpen={isOpen} />
-              )}
-            >
-              <Flex
-                flexDirection={{ base: "column", md: "row" }}
-                gap={6}
-                px={10}
-                pt={4}
-                pb={6}
-                sx={{
-                  fontSize: "16px",
-                  lineHeight: 1.6,
-                  color: "#484848",
-                }}
-              >
-                <Flex
-                  flexDirection={"column"}
-                  gap={3}
-                  w={{ md: "40%", lg: "192px" }}
-                >
-                  <Text
-                    sx={{
-                      fontSize: "18px",
-                      fontWeight: "700",
-                      lineHeight: 1.5,
-                    }}
-                  >
-                    修課認識
-                  </Text>
-                  <Divider />
-                  <MegaMenuLink
-                    href="/courseDocuments"
-                    isExternal={false}
-                    hasArrow
-                  >
-                    課程相關說明文件
-                  </MegaMenuLink>
-                  <MegaMenuLink href="http://140.112.161.31/NTUVoxCourse/index.php/uquery/index">
-                    必修科目及應修學分
-                  </MegaMenuLink>
-                  <MegaMenuLink href="https://specom.aca.ntu.edu.tw/">
-                    領域專長
-                  </MegaMenuLink>
-                  <MegaMenuLink href="http://coursemap.aca.ntu.edu.tw/course_map_all/index.php.htm">
-                    台大課程地圖
-                  </MegaMenuLink>
-                </Flex>
-                <Flex
-                  flexDirection={"column"}
-                  gap={3}
-                  w={{ md: "40%", lg: "192px" }}
-                >
-                  <Text
-                    sx={{
-                      fontSize: "18px",
-                      fontWeight: "700",
-                      lineHeight: 1.5,
-                    }}
-                  >
-                    相關申請
-                  </Text>
-                  <Divider />
-                  <MegaMenuLink href="http://curri.aca.ntu.edu.tw/aca_doc/waive.asp">
-                    學分抵免申請
-                  </MegaMenuLink>
-                  <MegaMenuLink href="http://curri.aca.ntu.edu.tw/cur/N1.htm">
-                    進階英語免修
-                  </MegaMenuLink>
-                </Flex>
-                <Flex
-                  flexDirection={"column"}
-                  gap={3}
-                  w={{ md: "40%", lg: "192px" }}
-                >
-                  <Text
-                    sx={{
-                      fontSize: "18px",
-                      fontWeight: "700",
-                      lineHeight: 1.5,
-                    }}
-                  >
-                    其他
-                  </Text>
-                  <Divider />
-                  <MegaMenuLink href="https://gra206.aca.ntu.edu.tw/classrm/">
-                    教務處教室查詢借用系統
-                  </MegaMenuLink>
-                  <MegaMenuLink href="https://course.lib.ntu.edu.tw/">
-                    臺灣大學歷年課表
-                  </MegaMenuLink>
-                </Flex>
-              </Flex>
-            </Dropdown>
-            <Dropdown
-              renderDropdownButton={(isOpen) => (
-                <DropdownButton title={"課程網站"} isOpen={isOpen} />
-              )}
-            >
-              <Flex
-                flexDirection={"column"}
-                w="288px"
-                gap={3}
-                px={10}
-                pt={4}
-                pb={6}
-                sx={{
-                  fontSize: "16px",
-                  lineHeight: 1.6,
-                  color: "#484848",
-                }}
-              >
-                <MegaMenuLink href="https://eclass.fltc.ntu.edu.tw/">
-                  線上英語課程
-                </MegaMenuLink>
-                <MegaMenuLink href="http://coursemap.aca.ntu.edu.tw/summer/">
-                  暑期課程網
-                </MegaMenuLink>
-                <MegaMenuLink href="http://teach.cc.ntu.edu.tw/distance/Default.html">
-                  臺大遠距教學
-                </MegaMenuLink>
-                <MegaMenuLink href="http://training.dpd.ntu.edu.tw/">
-                  進修推廣部課程網
-                </MegaMenuLink>
-                <MegaMenuLink href="https://webpageprodvm.ntu.edu.tw/e-learning/">
-                  計中資訊應用課程網
-                </MegaMenuLink>
-                <MegaMenuLink href="http://ocw.aca.ntu.edu.tw/ntu-ocw/">
-                  臺大開放式課程
-                </MegaMenuLink>
-                <MegaMenuLink href="https://www.n2.org.tw/enter/main">
-                  全國夏季學院
-                </MegaMenuLink>
-              </Flex>
-            </Dropdown>
-            <Dropdown
-              renderDropdownButton={(isOpen) => (
-                <DropdownButton title={"正式選課"} isOpen={isOpen} />
-              )}
-            >
-              <Flex
-                flexDirection={"column"}
-                w="288px"
-                gap={3}
-                px={10}
-                pt={4}
-                pb={6}
-                sx={{
-                  fontSize: "16px",
-                  lineHeight: 1.6,
-                  color: "#484848",
-                }}
-              >
-                <MegaMenuLink href="https://if192.aca.ntu.edu.tw/index.php">
-                  網路選課系統 1
-                </MegaMenuLink>
-                <MegaMenuLink href="https://if177.aca.ntu.edu.tw/index.php">
-                  網路選課系統 2
-                </MegaMenuLink>
-                <MegaMenuLink href="https://if177.aca.ntu.edu.tw/qcaureg/stulogin.asp">
-                  選課結果查詢
-                </MegaMenuLink>
-              </Flex>
-            </Dropdown>
-          </Flex>
-        )}
+    <Box top={0} position="sticky" zIndex={1299}>
+      <Box position={"relative"}>
         <Flex
-          justifyContent="flex-end"
+          w="100%"
+          h="64px"
+          bg={"white"}
+          flexDirection="row"
+          justifyContent="center"
           alignItems="center"
-          gap={{ base: 2, xl: 6 }}
-          flex={1}
+          pr={{ base: 6, md: 10, lg: 20 }}
+          pl={!isSearchModeEnable ? { base: 6, md: 10, lg: 20 } : "9%"}
+          shadow={
+            isHeaderFilterActive
+              ? "none"
+              : "0px 20px 24px -4px rgba(85, 105, 135, 0.04), 0px 8px 8px -4px rgba(85, 105, 135, 0.02)"
+          }
+          ref={headerBarRef}
         >
           {isSearchModeEnable ? null : (
-            <Flex gap={{ base: 2, xl: 6 }}>
-              <Box position={"relative"}>
-                <Link href="/news">
-                  <Text
-                    textStyle={"body1"}
-                    cursor="pointer"
-                    onClick={() => {
-                      const now = Math.floor(Date.now() / 1000);
-                      setNeoLocalStorage({
-                        ...neoLocalStorage,
-                        latestNewsLastCheckTs: now,
-                      });
-                      localStorage.setItem(LATEST_NEWS_LASTCHECK_TS, `${now}`);
-                    }}
-                  >
-                    最新消息
-                  </Text>
-                </Link>
-                {hasNewPost ? (
-                  <Box
-                    position={"absolute"}
-                    boxSizing="content-box"
-                    bg="#ff0000"
-                    width="8px"
-                    height="8px"
-                    borderRadius="50%"
-                    borderColor={"headerBar.light"}
-                    borderWidth="2px"
-                    top="0px"
-                    right="-4px"
-                    zIndex={100}
+            <Flex justifyContent="flex-start" alignItems="center" flex={1}>
+              <Link href="/" passHref>
+                <Flex alignItems="center" flexDirection="row" cursor="pointer">
+                  <Image
+                    src={`/img/ncn_logo.png`}
+                    alt="ncnLogo"
+                    width="25"
+                    height="25"
+                    layout="fixed"
                   />
-                ) : null}
-              </Box>
-              <Link href="/help">
-                <Text textStyle={"body1"} cursor="pointer">
-                  幫助中心
-                </Text>
+                  <Heading
+                    ml="2"
+                    fontSize={{ base: "lg", md: "xl" }}
+                    fontWeight="700"
+                    color={"heading.light"}
+                    display={{ base: "none", md: "inline-block" }}
+                  >
+                    NTUCourse Neo
+                  </Heading>
+                </Flex>
               </Link>
-              <Text textStyle={"body1"} cursor="pointer">
-                ENG
-              </Text>
             </Flex>
           )}
-          <SignInButton />
-        </Flex>
-      </Flex>
-      <Flex
-        ref={headerFilterRef}
-        w="100%"
-        bg="transparent"
-        flexDirection={"column"}
-        visibility={isHeaderFilterActive ? "visible" : "hidden"}
-        top={0}
-        position="absolute"
-        zIndex="990"
-        transform={
-          isHeaderFilterActive ? "translateY(0%)" : "translateY(-200%)"
-        }
-        transition={"all ease-in-out .2s"}
-        shadow={
-          isHeaderFilterActive ? "0px 1px 2px rgba(85, 105, 135, 0.1)" : "none"
-        }
-      >
-        <Flex h="64px" bg="transparent" />
-        <Flex px="9%" bg="white" w="100%" h="100%" pb="20px">
-          <Box py="20px" bg="white">
-            <Flex alignItems={"center"}>
-              <HStack
+          {isSearchModeEnable ? (
+            <Flex
+              flexDirection={"row"}
+              alignItems="center"
+              w={{ lg: "75%", xl: "60%" }}
+              gap={5}
+            >
+              <CourseSearchInput />
+              <Center
+                p={2}
+                cursor={"pointer"}
+                borderRadius="full"
                 sx={{
-                  fontSize: "14px",
-                  lineHeight: "20px",
-                  color: "#6f6f6f",
+                  bg: isHeaderFilterActive ? "#ececec" : "white",
+                  border: isFiltersEdited
+                    ? "0.6px solid #007AFF"
+                    : "0.6px solid #ffffff",
                 }}
-                w="fit-content"
-                mr={3}
-                spacing={1}
+                onClick={() => {
+                  setIsHeaderFilterActive(!isHeaderFilterActive);
+                }}
+                position="relative"
+                transition="all ease-in-out 0.2s"
               >
-                <BiFilterAlt size={"20px"} />
-                <Flex>篩選條件</Flex>
-              </HStack>
-              <SearchFilters />
+                <BiFilterAlt size={"24px"} />
+                {isFiltersEdited ? (
+                  <Box
+                    position={"absolute"}
+                    top={0.5}
+                    right={0.5}
+                    w="8px"
+                    h="8px"
+                    sx={{
+                      borderRadius: "full",
+                      bg: "blue.500",
+                      border: "0.1px solid white",
+                    }}
+                  />
+                ) : null}
+              </Center>
             </Flex>
-          </Box>
+          ) : (
+            <Flex flexDirection={"row"} alignItems="center" gap={6}>
+              <Dropdown
+                renderDropdownButton={(isOpen) => (
+                  <DropdownButton title={"課程資訊"} isOpen={isOpen} />
+                )}
+              >
+                <Flex
+                  flexDirection={{ base: "column", md: "row" }}
+                  gap={6}
+                  px={10}
+                  pt={4}
+                  pb={6}
+                  sx={{
+                    fontSize: "16px",
+                    lineHeight: 1.6,
+                    color: "#484848",
+                  }}
+                >
+                  <Flex
+                    flexDirection={"column"}
+                    gap={3}
+                    w={{ md: "40%", lg: "192px" }}
+                  >
+                    <Text
+                      sx={{
+                        fontSize: "18px",
+                        fontWeight: "700",
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      修課認識
+                    </Text>
+                    <Divider />
+                    <MegaMenuLink
+                      href="/courseDocuments"
+                      isExternal={false}
+                      hasArrow
+                    >
+                      課程相關說明文件
+                    </MegaMenuLink>
+                    <MegaMenuLink href="http://140.112.161.31/NTUVoxCourse/index.php/uquery/index">
+                      必修科目及應修學分
+                    </MegaMenuLink>
+                    <MegaMenuLink href="https://specom.aca.ntu.edu.tw/">
+                      領域專長
+                    </MegaMenuLink>
+                    <MegaMenuLink href="http://coursemap.aca.ntu.edu.tw/course_map_all/index.php.htm">
+                      台大課程地圖
+                    </MegaMenuLink>
+                  </Flex>
+                  <Flex
+                    flexDirection={"column"}
+                    gap={3}
+                    w={{ md: "40%", lg: "192px" }}
+                  >
+                    <Text
+                      sx={{
+                        fontSize: "18px",
+                        fontWeight: "700",
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      相關申請
+                    </Text>
+                    <Divider />
+                    <MegaMenuLink href="http://curri.aca.ntu.edu.tw/aca_doc/waive.asp">
+                      學分抵免申請
+                    </MegaMenuLink>
+                    <MegaMenuLink href="http://curri.aca.ntu.edu.tw/cur/N1.htm">
+                      進階英語免修
+                    </MegaMenuLink>
+                  </Flex>
+                  <Flex
+                    flexDirection={"column"}
+                    gap={3}
+                    w={{ md: "40%", lg: "192px" }}
+                  >
+                    <Text
+                      sx={{
+                        fontSize: "18px",
+                        fontWeight: "700",
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      其他
+                    </Text>
+                    <Divider />
+                    <MegaMenuLink href="https://gra206.aca.ntu.edu.tw/classrm/">
+                      教務處教室查詢借用系統
+                    </MegaMenuLink>
+                    <MegaMenuLink href="https://course.lib.ntu.edu.tw/">
+                      臺灣大學歷年課表
+                    </MegaMenuLink>
+                  </Flex>
+                </Flex>
+              </Dropdown>
+              <Dropdown
+                renderDropdownButton={(isOpen) => (
+                  <DropdownButton title={"課程網站"} isOpen={isOpen} />
+                )}
+              >
+                <Flex
+                  flexDirection={"column"}
+                  w="288px"
+                  gap={3}
+                  px={10}
+                  pt={4}
+                  pb={6}
+                  sx={{
+                    fontSize: "16px",
+                    lineHeight: 1.6,
+                    color: "#484848",
+                  }}
+                >
+                  <MegaMenuLink href="https://eclass.fltc.ntu.edu.tw/">
+                    線上英語課程
+                  </MegaMenuLink>
+                  <MegaMenuLink href="http://coursemap.aca.ntu.edu.tw/summer/">
+                    暑期課程網
+                  </MegaMenuLink>
+                  <MegaMenuLink href="http://teach.cc.ntu.edu.tw/distance/Default.html">
+                    臺大遠距教學
+                  </MegaMenuLink>
+                  <MegaMenuLink href="http://training.dpd.ntu.edu.tw/">
+                    進修推廣部課程網
+                  </MegaMenuLink>
+                  <MegaMenuLink href="https://webpageprodvm.ntu.edu.tw/e-learning/">
+                    計中資訊應用課程網
+                  </MegaMenuLink>
+                  <MegaMenuLink href="http://ocw.aca.ntu.edu.tw/ntu-ocw/">
+                    臺大開放式課程
+                  </MegaMenuLink>
+                  <MegaMenuLink href="https://www.n2.org.tw/enter/main">
+                    全國夏季學院
+                  </MegaMenuLink>
+                </Flex>
+              </Dropdown>
+              <Dropdown
+                renderDropdownButton={(isOpen) => (
+                  <DropdownButton title={"正式選課"} isOpen={isOpen} />
+                )}
+              >
+                <Flex
+                  flexDirection={"column"}
+                  w="288px"
+                  gap={3}
+                  px={10}
+                  pt={4}
+                  pb={6}
+                  sx={{
+                    fontSize: "16px",
+                    lineHeight: 1.6,
+                    color: "#484848",
+                  }}
+                >
+                  <MegaMenuLink href="https://if192.aca.ntu.edu.tw/index.php">
+                    網路選課系統 1
+                  </MegaMenuLink>
+                  <MegaMenuLink href="https://if177.aca.ntu.edu.tw/index.php">
+                    網路選課系統 2
+                  </MegaMenuLink>
+                  <MegaMenuLink href="https://if177.aca.ntu.edu.tw/qcaureg/stulogin.asp">
+                    選課結果查詢
+                  </MegaMenuLink>
+                </Flex>
+              </Dropdown>
+            </Flex>
+          )}
+          <Flex
+            justifyContent="flex-end"
+            alignItems="center"
+            gap={{ base: 2, xl: 6 }}
+            flex={1}
+          >
+            {isSearchModeEnable ? null : (
+              <Flex gap={{ base: 2, xl: 6 }}>
+                <Box position={"relative"}>
+                  <Link href="/news">
+                    <Text
+                      textStyle={"body1"}
+                      cursor="pointer"
+                      onClick={() => {
+                        const now = Math.floor(Date.now() / 1000);
+                        setNeoLocalStorage({
+                          ...neoLocalStorage,
+                          latestNewsLastCheckTs: now,
+                        });
+                        localStorage.setItem(
+                          LATEST_NEWS_LASTCHECK_TS,
+                          `${now}`
+                        );
+                      }}
+                    >
+                      最新消息
+                    </Text>
+                  </Link>
+                  {hasNewPost ? (
+                    <Box
+                      position={"absolute"}
+                      boxSizing="content-box"
+                      bg="#ff0000"
+                      width="8px"
+                      height="8px"
+                      borderRadius="50%"
+                      borderColor={"headerBar.light"}
+                      borderWidth="2px"
+                      top="0px"
+                      right="-4px"
+                      zIndex={100}
+                    />
+                  ) : null}
+                </Box>
+                <Link href="/help">
+                  <Text textStyle={"body1"} cursor="pointer">
+                    幫助中心
+                  </Text>
+                </Link>
+                <Text textStyle={"body1"} cursor="pointer">
+                  ENG
+                </Text>
+              </Flex>
+            )}
+            <SignInButton />
+          </Flex>
         </Flex>
-      </Flex>
+        <Flex
+          ref={headerFilterRef}
+          w="100%"
+          bg="transparent"
+          flexDirection={"column"}
+          visibility={isHeaderFilterActive ? "visible" : "hidden"}
+          top={0}
+          position="absolute"
+          zIndex="990"
+          transform={
+            isHeaderFilterActive ? "translateY(0%)" : "translateY(-200%)"
+          }
+          transition={"all ease-in-out .2s"}
+          shadow={
+            isHeaderFilterActive
+              ? "0px 1px 2px rgba(85, 105, 135, 0.1)"
+              : "none"
+          }
+        >
+          <Flex h="64px" bg="transparent" />
+          <Flex px="9%" bg="white" w="100%" h="100%" pb="20px">
+            <Box py="20px" bg="white">
+              <Flex alignItems={"center"}>
+                <HStack
+                  sx={{
+                    fontSize: "14px",
+                    lineHeight: "20px",
+                    color: "#6f6f6f",
+                  }}
+                  w="fit-content"
+                  mr={3}
+                  spacing={1}
+                >
+                  <BiFilterAlt size={"20px"} />
+                  <Flex>篩選條件</Flex>
+                </HStack>
+                <SearchFilters />
+              </Flex>
+            </Box>
+          </Flex>
+        </Flex>
+      </Box>
     </Box>
   );
 }
