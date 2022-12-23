@@ -1,13 +1,17 @@
 import { Interval } from "types/course";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
+
+const EmptyTable = [[], [], [], [], [], [], []];
+const Days = 7;
+const Lessons = 15;
 
 const mapStateToTimeTable = (time_state: Interval[][]) => {
-  if (_.isEqual(time_state, [[], [], [], [], [], [], []])) {
-    return new Array(15).fill(0).map((x) => new Array(7).fill(false));
+  if (isEqual(time_state, EmptyTable)) {
+    return new Array(Lessons).fill(0).map((x) => new Array(Days).fill(false));
   } else {
-    const time_table = new Array(15)
+    const time_table = new Array(Lessons)
       .fill(0)
-      .map((x) => new Array(7).fill(false));
+      .map((x) => new Array(Days).fill(false));
     for (let i = 0; i < 7; i++) {
       const day = time_state[i];
       for (let j = 0; j < day.length; j++) {

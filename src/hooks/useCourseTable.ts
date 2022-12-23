@@ -1,7 +1,7 @@
 import useSWR from "swr";
 import { useState } from "react";
 import { fetchCourseTable } from "queries/courseTable";
-import { useToast } from "@chakra-ui/react";
+import useNeoToast from "@/hooks/useNeoToast";
 import { patchCourseTable } from "queries/courseTable";
 import type { Course } from "types/course";
 
@@ -20,7 +20,7 @@ export default function useCourseTable(
     ) => void;
   }
 ) {
-  const toast = useToast();
+  const toast = useNeoToast();
   const [isExpired, setIsExpired] = useState(false);
   const onSuccessCallback = options?.onSuccessCallback;
   const onErrorCallback = options?.onErrorCallback;
@@ -76,33 +76,32 @@ export default function useCourseTable(
             populateCache: true,
           }
         );
-        const operation_str =
+        if (
           (newCourseTableData?.course_table?.courses?.length ?? 0) >
           originalCourseTableLength
-            ? "加入"
-            : "移除";
-        toast({
-          title: `已${operation_str} ${course.name}`,
-          description: `課表: ${courseTable.name}`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
+        ) {
+          toast("add_course", course.name);
+        } else {
+          toast("remove_course", course.name, {}, async () => {
+            await mutate(
+              async (prev) => {
+                const data = await patchCourseTable(
+                  courseTableId,
+                  courseTable.name,
+                  courseTable.user_id,
+                  [...courseTable.courses.map((c) => c.id)]
+                );
+                return data ?? prev;
+              },
+              { revalidate: false, populateCache: true }
+            );
+          });
+        }
       } catch (e) {
-        toast({
-          title: `新增 ${course.name} 失敗`,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
+        toast("operation_failed", `新增${course.name}失敗`);
       }
     } else {
-      toast({
-        title: `新增 ${course.name} 失敗`,
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
+      toast("operation_failed", `新增${course.name}失敗`);
     }
   };
 

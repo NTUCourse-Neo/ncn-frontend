@@ -1,29 +1,14 @@
 import {
   HStack,
-  Tag,
   Text,
-  ButtonGroup,
   Button,
   Icon,
   Flex,
-  Menu,
-  MenuItem,
-  MenuButton,
-  MenuList,
-  MenuDivider,
   useToast,
-  Stack,
   useColorModeValue,
-  Tooltip,
-  IconButton,
 } from "@chakra-ui/react";
 import Image from "next/image";
-import CourseDetailInfoContainer from "components/CourseInfo/CourseDetailInfoContainer";
-import { useState, useEffect, useMemo } from "react";
-import { useRouter } from "next/router";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-import Moment from "moment";
-import { IoMdOpen } from "react-icons/io";
+import { useState, useMemo } from "react";
 import {
   FaPlus,
   FaMinus,
@@ -31,40 +16,17 @@ import {
   FaHeart,
   FaRegHeart,
 } from "react-icons/fa";
-import { FiMoreHorizontal } from "react-icons/fi";
-import { BiCopy } from "react-icons/bi";
-import { getNolAddUrl, getNolUrl } from "utils/getNolUrls";
-import openPage from "utils/openPage";
 import useUserInfo from "hooks/useUserInfo";
 import { fetchCourse } from "queries/course";
 import useCourseTable from "hooks/useCourseTable";
-import useNeoLocalStorage from "hooks/useNeoLocalStorage";
 import Head from "next/head";
 import { useUser } from "@auth0/nextjs-auth0";
 import { reportEvent } from "utils/ga";
 import { GetServerSideProps } from "next";
 import { Course } from "types/course";
 import { ParsedUrlQuery } from "querystring";
-
-interface CopyWordType {
-  readonly word: string;
-  readonly count: number;
-  readonly color?: string;
-  readonly bg?: string;
-}
-const copyWordList: CopyWordType[] = [
-  { count: 100, word: "複製終結者!!", color: "purple.600", bg: "purple.50" },
-  { count: 50, word: "終極複製!!", color: "red.600", bg: "red.50" },
-  { count: 25, word: "超級複製!!", color: "orange.600", bg: "orange.50" },
-  { count: 10, word: "瘋狂複製!!", color: "yellow.600", bg: "yellow.50" },
-  { count: 3, word: "三倍複製!", color: "green.600", bg: "green.50" },
-  { count: 2, word: "雙倍複製!", color: "green.600", bg: "green.50" },
-  { count: 1, word: "已複製", color: "green.600", bg: "green.50" },
-  {
-    count: 0,
-    word: "複製連結",
-  },
-];
+import CustomBreadcrumb from "@/components/Breadcrumb";
+import CourseDetailInfoContainer from "@/components/CourseInfo/CourseDetailInfoContainer";
 
 interface PageProps {
   readonly code: string;
@@ -104,6 +66,52 @@ export const getServerSideProps: GetServerSideProps<
   };
 };
 
+function ErrorPage() {
+  return (
+    <Flex h="95vh" pt="64px" justifyContent="center" alignItems="center">
+      <Flex flexDirection="column" justifyContent="center" alignItems="center">
+        <HStack>
+          <Image
+            width={64}
+            height={64}
+            layout="fixed"
+            src={"/img/parrot/ultrafastparrot.gif"}
+            alt="Loading Parrot"
+          />
+        </HStack>
+        <Text mt="8" mb="4" fontSize="3xl" fontWeight="600" color="gray.500">
+          喔哦! 找不到課程資料
+        </Text>
+        <HStack>
+          <Button
+            variant="solid"
+            onClick={() => {
+              window.open(
+                "https://github.com/NTUCourse-Neo/ncn-frontend/issues/new?assignees=&labels=bug&template=bug_report.md&title=",
+                "_blank"
+              );
+              reportEvent("course_info_page", "click", "report_bug");
+            }}
+          >
+            問題回報
+          </Button>
+          <Button
+            variant="solid"
+            colorScheme="teal"
+            leftIcon={<FaHeartbeat />}
+            onClick={() => {
+              window.open("https://status.course.myntu.me/", "_blank");
+              reportEvent("course_info_page", "click", "status_page");
+            }}
+          >
+            服務狀態
+          </Button>
+        </HStack>
+      </Flex>
+    </Flex>
+  );
+}
+
 function CourseInfoPage({ code, course }: PageProps) {
   const bgcolor = useColorModeValue("white", "black");
   const headingColor = useColorModeValue("heading.light", "heading.dark");
@@ -111,19 +119,13 @@ function CourseInfoPage({ code, course }: PageProps) {
   const { userInfo, addOrRemoveFavorite, isLoading } = useUserInfo(
     user?.sub ?? null
   );
-  const { neoLocalCourseTableKey } = useNeoLocalStorage();
-  const courseTableKey = userInfo
-    ? userInfo?.course_tables?.[0] ?? null
-    : neoLocalCourseTableKey;
+  const courseTableKey = userInfo?.course_tables?.[0] ?? null;
   const {
     courseTable,
     isLoading: isCourseTableLoading,
     addOrRemoveCourse,
   } = useCourseTable(courseTableKey);
-  const router = useRouter();
   const toast = useToast();
-
-  Moment.locale("zh-tw");
 
   const selected = useMemo(
     () => (courseTable?.courses ?? []).map((c) => c.id).includes(code),
@@ -134,26 +136,6 @@ function CourseInfoPage({ code, course }: PageProps) {
     [userInfo, course.id]
   );
   const [isAddingFavorite, setIsAddingFavorite] = useState(false);
-  const [copiedLinkClicks, setCopiedLinkClicks] = useState(0);
-  const initCopyword: CopyWordType = useMemo(
-    () => ({
-      count: 0,
-      word: "複製連結",
-    }),
-    []
-  );
-  const [copyWord, setCopyWord] = useState<CopyWordType>(
-    copyWordList.find((word) => word.count <= copiedLinkClicks) ?? initCopyword
-  );
-  const copyBtnDefaultColor = useColorModeValue("gray.700", "gray.100");
-  const copyBtnBg = useColorModeValue("white", "gray.800");
-
-  useEffect(() => {
-    setCopyWord(
-      copyWordList.find((word) => word.count <= copiedLinkClicks) ??
-        initCopyword
-    );
-  }, [copiedLinkClicks, initCopyword]);
 
   const handleAddCourse = async (course: Course) => {
     if (!isLoading && !isCourseTableLoading) {
@@ -172,11 +154,11 @@ function CourseInfoPage({ code, course }: PageProps) {
     }
   };
 
-  const handleAddFavorite = async (course_id: string) => {
+  const handleAddFavorite = async (course_id: string, course_name: string) => {
     if (!isLoading) {
       if (userInfo) {
         setIsAddingFavorite(true);
-        await addOrRemoveFavorite(course_id);
+        await addOrRemoveFavorite(course_id, course_name);
         setIsAddingFavorite(false);
       } else {
         toast({
@@ -191,341 +173,137 @@ function CourseInfoPage({ code, course }: PageProps) {
   };
 
   if (!course) {
-    return (
-      <Flex h="95vh" pt="64px" justifyContent="center" alignItems="center">
-        <Flex
-          flexDirection="column"
-          justifyContent="center"
-          alignItems="center"
-        >
-          <HStack>
-            <Image
-              width={64}
-              height={64}
-              layout="fixed"
-              src={"/img/parrot/ultrafastparrot.gif"}
-              alt="Loading Parrot"
-            />
-          </HStack>
-          <Text mt="8" mb="4" fontSize="3xl" fontWeight="600" color="gray.500">
-            喔哦! 找不到課程資料
-          </Text>
-          <HStack>
-            <Button
-              variant="solid"
-              onClick={() => {
-                window.open(
-                  "https://github.com/NTUCourse-Neo/ncn-frontend/issues/new?assignees=&labels=bug&template=bug_report.md&title=",
-                  "_blank"
-                );
-                reportEvent("course_info_page", "click", "report_bug");
-              }}
-            >
-              問題回報
-            </Button>
-            <Button
-              variant="solid"
-              colorScheme="teal"
-              leftIcon={<FaHeartbeat />}
-              onClick={() => {
-                window.open("https://status.course.myntu.me/", "_blank");
-                reportEvent("course_info_page", "click", "status_page");
-              }}
-            >
-              服務狀態
-            </Button>
-          </HStack>
-        </Flex>
-      </Flex>
-    );
-  } else {
-    return (
-      <>
-        <Head>
-          <title>{`${course.name} - 課程資訊 | NTUCourse Neo`}</title>
-          <meta
-            name="description"
-            content={`${course.name} 課程的詳細資訊 | NTUCourse Neo，全新的臺大選課網站。`}
+    return <ErrorPage />;
+  }
+
+  return (
+    <>
+      <Head>
+        <title>{`${course.name} - 課程資訊 | NTUCourse Neo`}</title>
+        <meta
+          name="description"
+          content={`${course.name} 課程的詳細資訊 | NTUCourse Neo，全新的臺大選課網站。`}
+        />
+      </Head>
+      <Flex w="100vw" justifyContent={"center"} alignItems="center" py={6}>
+        <Flex flexDirection={"column"} w="80%">
+          <CustomBreadcrumb
+            pageItems={[
+              {
+                text: "首頁",
+                href: "/",
+              },
+              {
+                text: "課程搜尋結果",
+                href: "/course",
+              },
+              {
+                text: "課程大綱",
+                href: `/courseinfo/${course.id}`,
+              },
+            ]}
           />
-        </Head>
-        <Flex
-          pt="64px"
-          w="100%"
-          justifyContent={"center"}
-          position={{ base: "fixed", lg: "static" }}
-          zIndex={{ base: 100, lg: 0 }}
-          bg={bgcolor}
-        >
-          <HStack
-            my="2"
-            mx="4%"
-            spacing="4"
+          <Flex
             w="100%"
-            align="center"
-            pt={2}
-            pb={1}
+            sx={{
+              color: "#1A181C",
+              fontWeight: 500,
+              fontSize: "28px",
+              lineHeight: "1.25",
+              mt: 6,
+              mb: 10,
+            }}
           >
-            <Stack w="100%" direction={{ base: "column", lg: "row" }}>
-              <HStack>
-                <Tag size="md" variant="outline" w="fit-content">
-                  <Text fontWeight="800" fontSize={{ base: "md", lg: "md" }}>
-                    {course.semester}
-                  </Text>
-                </Tag>
-                {course.serial ? (
-                  <Tag size="md" colorScheme="blue" w="fit-content">
-                    <Text fontWeight="800" fontSize={{ base: "md", lg: "lg" }}>
-                      {course.serial}
-                    </Text>
-                  </Tag>
-                ) : null}
-                <CopyToClipboard
-                  text={`${process.env.NEXT_PUBLIC_BASE_URL}/courseinfo/${course.id}`}
-                >
-                  <Button
-                    rightIcon={
-                      <Icon
-                        as={BiCopy}
-                        color={
-                          copyWord.count === 0
-                            ? copyBtnDefaultColor
-                            : copyWord.color
-                        }
-                      />
-                    }
-                    variant="ghost"
-                    size="xs"
-                    bg={copyBtnBg}
-                    color={
-                      copyWord.count === 0
-                        ? copyBtnDefaultColor
-                        : copyWord.color
-                    }
-                    onClick={() => {
-                      setCopiedLinkClicks(copiedLinkClicks + 1);
-                      reportEvent("course_info_page", "click", "copy_link");
-                    }}
-                    display={{ base: "inline-block", lg: "none" }}
-                  >
-                    {copyWord.word}
-                  </Button>
-                </CopyToClipboard>
-              </HStack>
-              <HStack>
-                <Tooltip
-                  label={course.name}
-                  placement="bottom"
-                  hasArrow
-                  shouldWrapChildren
-                  colorScheme="blackAlpha"
-                  closeOnClick={false}
-                >
-                  <Text
-                    fontSize={{ base: "xl", lg: "3xl" }}
-                    fontWeight="800"
-                    color={headingColor}
-                    maxW={{ base: "52vw", md: "30vw" }}
-                    noOfLines={1}
-                  >
-                    {course.name}
-                  </Text>
-                </Tooltip>
-                <Text
-                  fontSize={{ base: "md", lg: "2xl" }}
-                  fontWeight="500"
-                  color="gray.500"
-                >
-                  {course.teacher}
-                </Text>
-              </HStack>
-            </Stack>
-            <HStack spacing="2" display={{ base: "none", lg: "flex" }}>
-              <Tooltip
-                label={isFavorite ? "移除最愛" : "加入最愛"}
-                placement="bottom"
-                hasArrow
-              >
-                <Button
-                  key={"NolContent_Button_" + code + "_addToFavorite"}
-                  size="md"
-                  colorScheme="red"
-                  variant="ghost"
-                  isLoading={isLoading || isAddingFavorite}
-                  disabled={!userInfo}
-                  onClick={() => {
-                    handleAddFavorite(course.id);
-                    reportEvent(
-                      "course_info_page",
-                      isFavorite ? "remove_favorite" : "add_favorite",
-                      course.id
-                    );
-                  }}
-                >
-                  <Icon as={isFavorite ? FaHeart : FaRegHeart} boxSize="6" />
-                </Button>
-              </Tooltip>
-              <Tooltip
-                label="非當學期課程"
-                hasArrow
-                shouldWrapChildren
-                placement="top"
-                isDisabled={
-                  course.semester === process.env.NEXT_PUBLIC_SEMESTER
-                }
-              >
-                <ButtonGroup isAttached>
-                  <Button
-                    key={"NolContent_Button_" + code + "_addToCourseTable"}
-                    mr="-px"
-                    size="md"
-                    colorScheme={selected ? "red" : "blue"}
-                    variant="outline"
-                    leftIcon={selected ? <FaMinus /> : <FaPlus />}
-                    isLoading={isCourseTableLoading}
-                    onClick={() => {
-                      handleAddCourse(course);
-                      reportEvent(
-                        "course_info_page",
-                        selected ? "remove_course" : "add_course",
-                        course.id
-                      );
-                    }}
-                    disabled={
-                      course.semester !== process.env.NEXT_PUBLIC_SEMESTER
-                    }
-                  >
-                    {selected ? "從課表移除" : "加入課表"}
-                  </Button>
-                  <Button
-                    key={"NolContent_Button_" + code + "_addToNol"}
-                    size="md"
-                    colorScheme="blue"
-                    variant="outline"
-                    leftIcon={<FaPlus />}
-                    onClick={() => {
-                      openPage(getNolAddUrl(course), true);
-                      reportEvent("course_info_page", "click", "add_to_nol");
-                    }}
-                    disabled={
-                      course.semester !== process.env.NEXT_PUBLIC_SEMESTER
-                    }
-                  >
-                    課程網
-                  </Button>
-                </ButtonGroup>
-              </Tooltip>
+            {course.name}
+          </Flex>
+          <Flex w="100%" justify={"space-between"} alignItems="end">
+            <Flex
+              gap="32px"
+              sx={{
+                color: "#4b4b4b",
+                fontWeight: 500,
+                fontSize: "16px",
+                lineHeight: "1.4",
+              }}
+            >
+              <Flex gap={"6px"}>
+                <Text>開課學期</Text>
+                <Text>{`${course.semester.substring(
+                  0,
+                  3
+                )}-${course.semester.substring(3, 4)}`}</Text>
+              </Flex>
+              <Flex gap={"6px"}>
+                <Text>開課單位</Text>
+                <Text>{`${course.provider.toUpperCase()}`}</Text>
+              </Flex>
+            </Flex>
+            <Flex gap={"10px"}>
               <Button
-                key={"NolContent_Button_" + code + "_OpenNol"}
                 size="md"
-                rightIcon={<IoMdOpen />}
+                variant="outline"
+                w="116px"
+                sx={{
+                  borderRadius: "4px",
+                  filter: "drop-shadow(0px 1px 2px rgba(105, 81, 255, 0.05))",
+                  p: "8px 16px",
+                  gap: "6px",
+                  alignItems: "center",
+                }}
+                isLoading={isLoading || isAddingFavorite}
+                disabled={!userInfo}
                 onClick={() => {
-                  window.open(getNolUrl(course), "_blank");
-                  reportEvent("course_info_page", "click", "open_nol");
+                  handleAddFavorite(course.id, course.name);
+                  reportEvent(
+                    "course_info_page",
+                    isFavorite ? "remove_favorite" : "add_favorite",
+                    course.id
+                  );
                 }}
               >
-                課程頁面
+                <Icon as={isFavorite ? FaHeart : FaRegHeart} boxSize="18px" />
+                <Text
+                  sx={{
+                    fontSize: "14px",
+                    lineHeight: "1.4",
+                  }}
+                >
+                  {isFavorite ? "移除收藏" : "加入收藏"}
+                </Text>
               </Button>
-              <CopyToClipboard
-                text={`${process.env.NEXT_PUBLIC_BASE_URL}/courseinfo/${course.id}`}
+              <Button
+                w="145px"
+                colorScheme={selected ? "red" : "primary"}
+                leftIcon={selected ? <FaMinus /> : <FaPlus />}
+                isLoading={isCourseTableLoading}
+                onClick={() => {
+                  handleAddCourse(course);
+                  reportEvent(
+                    "course_info_page",
+                    selected ? "remove_course" : "add_course",
+                    course.id
+                  );
+                }}
+                disabled={course.semester !== process.env.NEXT_PUBLIC_SEMESTER}
+                sx={{
+                  borderRadius: "4px",
+                  filter: "drop-shadow(0px 1px 2px rgba(105, 81, 255, 0.05))",
+                  p: "8px 16px",
+                  gap: "6px",
+                  alignItems: "center",
+                  fontSize: "14px",
+                  lineHeight: "1.4",
+                }}
               >
-                <Button
-                  rightIcon={
-                    <Icon
-                      as={BiCopy}
-                      color={
-                        copyWord.count === 0
-                          ? copyBtnDefaultColor
-                          : copyWord.color
-                      }
-                    />
-                  }
-                  variant="ghost"
-                  size="md"
-                  bg={copyBtnBg}
-                  color={
-                    copyWord.count === 0 ? copyBtnDefaultColor : copyWord.color
-                  }
-                  onClick={() => {
-                    setCopiedLinkClicks(copiedLinkClicks + 1);
-                    reportEvent("course_info_page", "click", "copy_link");
-                  }}
-                >
-                  {copyWord.word}
-                </Button>
-              </CopyToClipboard>
-            </HStack>
-            <Menu autoSelect={false}>
-              <MenuButton
-                isLoading={
-                  isLoading || isCourseTableLoading || isAddingFavorite
-                }
-                as={IconButton}
-                variant="ghost"
-                icon={<Icon as={FiMoreHorizontal} boxSize="6" />}
-                display={{ base: "inline-block", lg: "none" }}
-              />
-              <MenuList display={{ base: "inline-block", lg: "none" }}>
-                <MenuItem
-                  key={"NolContent_Button_" + code + "_addToCourseTable"}
-                  mr="-px"
-                  color={selected ? "red.500" : "blue.600"}
-                  icon={selected ? <FaMinus /> : <FaPlus />}
-                  onClick={() => {
-                    handleAddCourse(course);
-                    reportEvent(
-                      "course_info_page",
-                      selected ? "remove_course" : "add_course",
-                      course.id
-                    );
-                  }}
-                >
-                  {selected ? "從課表移除" : "加入課表"}
-                </MenuItem>
-                <MenuItem
-                  key={"NolContent_Button_" + code + "_addToNol"}
-                  color="blue.600"
-                  icon={<FaPlus />}
-                  onClick={() => {
-                    openPage(getNolAddUrl(course), true);
-                    reportEvent("course_info_page", "click", "add_to_nol");
-                  }}
-                >
-                  課程網
-                </MenuItem>
-                <MenuItem
-                  key={"NolContent_Button_" + code + "_addToFavorite"}
-                  color="red.500"
-                  icon={isFavorite ? <FaMinus /> : <FaRegHeart />}
-                  disabled={!userInfo}
-                  onClick={() => {
-                    handleAddFavorite(course.id);
-                    reportEvent(
-                      "course_info_page",
-                      isFavorite ? "remove_favorite" : "add_favorite",
-                      course.id
-                    );
-                  }}
-                >
-                  {isFavorite ? "從最愛移除" : "加入最愛"}
-                </MenuItem>
-                <MenuDivider />
-                <MenuItem
-                  icon={<IoMdOpen />}
-                  onClick={() => {
-                    window.open(getNolUrl(course), "_blank");
-                    reportEvent("course_info_page", "click", "open_nol");
-                  }}
-                >
-                  課程頁面
-                </MenuItem>
-              </MenuList>
-            </Menu>
-          </HStack>
+                {selected ? "從課表移除" : "加入預選課表"}
+              </Button>
+            </Flex>
+          </Flex>
+          <CourseDetailInfoContainer course={course} />
         </Flex>
-        <CourseDetailInfoContainer course={course} />
-      </>
-    );
-  }
+      </Flex>
+    </>
+  );
 }
 
 export default CourseInfoPage;

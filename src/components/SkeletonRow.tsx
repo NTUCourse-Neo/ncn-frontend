@@ -1,30 +1,68 @@
 import React from "react";
-import { Flex, Skeleton } from "@chakra-ui/react";
-import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
+import { Flex, SkeletonText, SkeletonTextProps, Box } from "@chakra-ui/react";
 
-export interface SkeletonProps {
-  loading?: boolean;
-  times?: number;
+function SkeletonBox(props: SkeletonTextProps) {
+  return (
+    <SkeletonText
+      noOfLines={1}
+      startColor="black.200"
+      endColor="black.500"
+      w="100%"
+      skeletonHeight={"15px"}
+      {...props}
+    />
+  );
 }
 
-function SkeletonRow({ loading, times = 1 }: SkeletonProps) {
-  const { searchLoading } = useCourseSearchingContext();
-  const isLoading = loading ?? searchLoading;
+export interface SkeletonProps {
+  isLoading?: boolean;
+  noOfLines?: number;
+}
 
+function SkeletonRow({ isLoading, noOfLines = 10 }: SkeletonProps) {
   if (isLoading) {
     return (
-      <Flex direction={"column"} w="100%" justifyContent={"center"}>
-        {[...Array(times)].map((_, index) => (
-          <Skeleton
-            mb={1}
-            mx={{ base: "5", md: "0" }}
-            height={{ base: "120px", md: "45px" }}
-            borderRadius="md"
-            speed={1 + index * 0.5}
-            key={`skeleton-${index}`}
-          />
+      <Box>
+        {Array.from({ length: noOfLines }).map((_, i) => (
+          <Flex
+            key={i}
+            w="100%"
+            flexDirection={{ base: "column", md: "row" }}
+            alignItems="center"
+            _hover={{
+              bg: "#f6f6f6",
+            }}
+            gap={6}
+            p={6}
+            shadow={"0px 0.5px 0px rgba(144, 144, 144, 0.8)"}
+          >
+            <Flex
+              w={{ base: "100%", md: "40%" }}
+              flexDirection={"column"}
+              gap={"4px"}
+              lineHeight="1.6"
+            >
+              <SkeletonBox w="90%" />
+              <SkeletonBox w="90%" />
+              <SkeletonBox w="90%" />
+            </Flex>
+            <Flex
+              w={{ base: "100%", md: "20%" }}
+              flexDirection="column"
+              alignItems={"start"}
+            >
+              <SkeletonBox w="90%" />
+            </Flex>
+            <Flex w={{ base: "100%", md: "20%" }} flexDirection={"column"}>
+              <SkeletonBox w="40%" />
+            </Flex>
+            <Flex w={{ base: "100%", md: "15%" }} gap={4}>
+              <SkeletonBox w="30%" />
+              <SkeletonBox w="50%" />
+            </Flex>
+          </Flex>
         ))}
-      </Flex>
+      </Box>
     );
   }
 

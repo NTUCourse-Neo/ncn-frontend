@@ -1,7 +1,7 @@
 import useSWR from "swr";
 import handleFetch from "utils/CustomFetch";
 import { useRouter } from "next/router";
-import { useToast } from "@chakra-ui/react";
+import useNeoToast from "@/hooks/useNeoToast";
 import type { User } from "types/user";
 import type { Course } from "types/course";
 import { AxiosError } from "axios";
@@ -24,7 +24,7 @@ export default function useUserInfo(
     ) => void;
   }
 ) {
-  const toast = useToast();
+  const toast = useNeoToast();
   const onSuccessCallback = options?.onSuccessCallback;
   const onErrorCallback = options?.onErrorCallback;
   const router = useRouter();
@@ -52,7 +52,7 @@ export default function useUserInfo(
     }
   );
 
-  const addOrRemoveFavorite = async (courseId: string) => {
+  const addOrRemoveFavorite = async (courseId: string, courseName: string) => {
     try {
       await mutate(
         async (prevUser) => {
@@ -69,6 +69,36 @@ export default function useUserInfo(
               message: string;
             }>(`/api/user/removeFavoriteCourse`, {
               course_id: courseId,
+            });
+            toast("remove_favorite", `${courseName}`, {}, async () => {
+              // Undo remove favorite
+              await mutate(
+                async (prev) => {
+                  if (!prev?.user?.db?.favorites) {
+                    return prev;
+                  }
+                  const data = await handleFetch<{
+                    favorites: Course[];
+                    message: string;
+                  }>(`/api/user/addFavoriteCourse`, {
+                    course_id: courseId,
+                  });
+                  return {
+                    ...prev,
+                    user: {
+                      ...prev.user,
+                      db: {
+                        ...prev.user.db,
+                        favorites: data.favorites,
+                      },
+                    },
+                  };
+                },
+                {
+                  revalidate: false,
+                  populateCache: true,
+                }
+              );
             });
             return {
               ...prevUser,
@@ -87,6 +117,7 @@ export default function useUserInfo(
             }>(`/api/user/addFavoriteCourse`, {
               course_id: courseId,
             });
+            toast("add_favorite", `${courseName}`);
             return {
               ...prevUser,
               user: {
@@ -104,20 +135,8 @@ export default function useUserInfo(
           populateCache: true,
         }
       );
-      toast({
-        title: `更改最愛課程成功`,
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
     } catch (error) {
-      toast({
-        title: `更改最愛課程失敗`,
-        description: `請稍後再試`,
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
+      toast("operation_failed", `${courseName}`);
       if ((error as AxiosError)?.response?.status === 401) {
         router.push("/api/auth/login");
       }

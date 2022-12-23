@@ -30,6 +30,7 @@ export interface CourseInfoTranslateMap {
 }
 
 // TODO: get rid of this? because the information already in v2 API
+// TODO: logo is not used anymore in new design
 const info_view_map: CourseInfoTranslateMap = {
   requirement: {
     name: "課程必選修",
@@ -90,42 +91,42 @@ const info_view_map: CourseInfoTranslateMap = {
       g_a1: {
         id: "g_a1",
         code: "A1",
-        full_name: "A1 文學與藝術領域",
+        full_name: "通識 A1",
       },
       g_a2: {
         id: "g_a2",
         code: "A2",
-        full_name: "A2 歷史思維領域",
+        full_name: "通識 A2",
       },
       g_a3: {
         id: "g_a3",
         code: "A3",
-        full_name: "A3 世界文明領域",
+        full_name: "通識 A3",
       },
       g_a4: {
         id: "g_a4",
         code: "A4",
-        full_name: "A4 哲學與道德思考領域",
+        full_name: "通識 A4",
       },
       g_a5: {
         id: "g_a5",
         code: "A5",
-        full_name: "A5 公民意識與社會分析領域",
+        full_name: "通識 A5",
       },
       g_a6: {
         id: "g_a6",
         code: "A6",
-        full_name: "A6 量化分析與數學素養領域",
+        full_name: "通識 A6",
       },
       g_a7: {
         id: "g_a7",
         code: "A7",
-        full_name: "A7 物質科學領域",
+        full_name: "通識 A7",
       },
       g_a8: {
         id: "g_a8",
         code: "A8",
-        full_name: "A8 生命科學領域",
+        full_name: "通識 A8",
       },
       freshman: {
         id: "freshman",
@@ -175,7 +176,7 @@ const info_view_map: CourseInfoTranslateMap = {
     },
   },
   enroll_method: {
-    name: "加簽方式",
+    name: "加選方式",
     logo: FaFileImport,
     color: "blue",
     map: {

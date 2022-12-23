@@ -1,141 +1,86 @@
-import {
-  Flex,
-  Spacer,
-  Text,
-  Button,
-  ButtonGroup,
-  HStack,
-  Icon,
-  Center,
-  useColorModeValue,
-} from "@chakra-ui/react";
-import { FaCodeBranch, FaGithub, FaHeartbeat } from "react-icons/fa";
+import { Flex, Text, Heading } from "@chakra-ui/react";
 import Link from "next/link";
-import { DiscordIcon } from "components/CustomIcons";
 import Image from "next/image";
-import { reportEvent } from "utils/ga";
+import openPage from "@/utils/openPage";
 
 function Footer() {
-  const ver = "beta (20220721)";
-  const secondaryColor = useColorModeValue("gray.400", "gray.500");
-  const handleOpenPage = (page: string) => {
-    window.open(page, "_blank");
-  };
   return (
-    <Flex
-      flexDirection="row"
-      flexWrap="wrap"
-      justifyContent="space-between"
-      alignItems="center"
-      px="4"
-      py={{ base: 2, md: 4 }}
-      borderTop="1px solid"
-      borderColor={useColorModeValue("gray.200", "gray.700")}
-      zIndex="9999"
-      css={{ gap: "10px" }}
-      bg={useColorModeValue("white", "black")}
-    >
-      <Link href="/">
-        <Center w="30px" h="30px">
-          <Image
-            src={`/img/ncn_logo.png`}
-            alt="ncnLogo"
-            height="30px"
-            width="30px"
-            layout="fixed"
-          />
-        </Center>
-      </Link>
-      <HStack ml="2">
-        <Icon as={FaCodeBranch} color={secondaryColor} size="4"></Icon>
-        <Text fontSize="xs" color={secondaryColor} fontWeight="600">
-          {ver}
-        </Text>
-      </HStack>
-      <Spacer display={{ base: "none", lg: "inline-block" }} />
-      <ButtonGroup spacing="2" h="100%">
-        <Button
-          size={{ base: "sm", md: "xs" }}
-          variant="ghost"
-          color={secondaryColor}
-          px="1"
-          justifyContent={"center"}
-          alignItems={"center"}
-          onClick={() => {
-            handleOpenPage("https://status.course.myntu.me/");
-            reportEvent("footer", "click_external", "status");
+    <Flex w="100%" flexDirection={"column"}>
+      <Flex
+        w="100%"
+        h="115px"
+        bg={"#ececec"}
+        flexDirection="row"
+        justifyContent="center"
+        alignItems="center"
+        sx={{
+          p: "32px 144px",
+        }}
+      >
+        <Flex justifyContent="flex-start" alignItems="center" flex={1}>
+          <Link href="/" passHref>
+            <Flex alignItems="center" flexDirection="row" cursor="pointer">
+              <Image
+                src={`/img/ncn_logo.png`}
+                alt="ncnLogo"
+                width="25"
+                height="25"
+                layout="fixed"
+              />
+              <Heading
+                ml="2"
+                fontSize={{ base: "lg", md: "xl" }}
+                fontWeight="700"
+                color={"heading.light"}
+                display={{ base: "none", md: "inline-block" }}
+              >
+                NTUCourse Neo
+              </Heading>
+            </Flex>
+          </Link>
+        </Flex>
+        <Flex
+          sx={{
+            fontWeight: 500,
+            fontSize: "14px",
+            lineHeight: "1.4",
+            color: "#484848",
           }}
         >
-          <Center
-            w={{ base: "20px", md: "20px" }}
-            h={{ base: "20px", md: "20px" }}
-          >
-            <FaHeartbeat size="20" />
-          </Center>
           <Text
-            display={{ base: "none", md: "inline-block" }}
-            fontSize={{ base: "sm", md: "xs" }}
-            pl={2}
-            py={2}
+            onClick={() => {
+              openPage("https://www.ntu.edu.tw");
+            }}
+            cursor="pointer"
           >
-            服務狀態
+            國立臺灣大學首頁
           </Text>
-        </Button>
-        <Button
-          size={{ base: "sm", md: "xs" }}
-          variant="ghost"
-          color={secondaryColor}
-          px="1"
-          justifyContent={"center"}
-          alignItems={"center"}
-          onClick={() => {
-            handleOpenPage("https://discord.gg/M7NrenYEbS");
-            reportEvent("footer", "click_external", "discord");
-          }}
-        >
-          <Center
-            w={{ base: "15px", md: "20px" }}
-            h={{ base: "15px", md: "20px" }}
-          >
-            <DiscordIcon boxSize={5} />
-          </Center>
+          <Text mx={4}>|</Text>
           <Text
-            display={{ base: "none", md: "inline-block" }}
-            fontSize={{ base: "sm", md: "xs" }}
-            pl={2}
-            py={2}
+            onClick={() => {
+              openPage("https://www.aca.ntu.edu.tw/w/aca/index");
+            }}
+            cursor="pointer"
           >
-            Discord
+            教務處首頁
           </Text>
-        </Button>
-        <Button
-          size={{ base: "sm", md: "xs" }}
-          variant="ghost"
-          color={secondaryColor}
-          px="1"
-          justifyContent={"center"}
-          alignItems={"center"}
-          onClick={() => {
-            handleOpenPage("https://github.com/NTUCourse-Neo");
-            reportEvent("footer", "click_external", "github");
-          }}
-        >
-          <Center
-            w={{ base: "20px", md: "20px" }}
-            h={{ base: "20px", md: "20px" }}
-          >
-            <FaGithub size="20" />
-          </Center>
-          <Text
-            display={{ base: "none", md: "inline-block" }}
-            fontSize={{ base: "sm", md: "xs" }}
-            pl={2}
-            py={2}
-          >
-            Github
-          </Text>
-        </Button>
-      </ButtonGroup>
+        </Flex>
+      </Flex>
+      <Flex
+        bg="white"
+        sx={{
+          p: "24px 16px",
+          h: "68px",
+          justifyContent: "center",
+          alignItems: "center",
+          fontSize: "14px",
+          lineHeight: "1.4",
+          color: "#484848",
+        }}
+      >
+        Copyright © 2022 國立臺灣大學教務處 Office of Academic Affairs, National
+        Taiwan University
+      </Flex>
     </Flex>
   );
 }

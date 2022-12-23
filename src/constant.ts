@@ -1,7 +1,6 @@
 import type { Interval } from "types/course";
 
-export const NCN_COURSE_TABLE_LOCAL_STORAGE_KEY =
-  "NTU_CourseNeo_Course_Table_Key_v2";
+export const LATEST_NEWS_LASTCHECK_TS = "latest_news_lastcheck_ts";
 export const intervals: Interval[] = [
   "0",
   "1",
@@ -19,3 +18,5 @@ export const intervals: Interval[] = [
   "C",
   "D",
 ];
+export const days = ["一", "二", "三", "四", "五", "六"] as const;
+export const availableSemesters = ["1111", "1102"] as const;

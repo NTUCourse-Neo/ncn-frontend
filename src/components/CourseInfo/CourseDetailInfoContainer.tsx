@@ -1,405 +1,340 @@
-import {
-  Flex,
-  Text,
-  Stat,
-  StatLabel,
-  StatNumber,
-  HStack,
-  Tab,
-  TabList,
-  TabPanels,
-  TabPanel,
-  Tabs,
-  Icon,
-  Tag,
-  VStack,
-  Divider,
-  useColorModeValue,
-} from "@chakra-ui/react";
-import React from "react";
-import { FaCircle, FaRss } from "react-icons/fa";
-import BetaBadge from "components/BetaBadge";
+import { Flex, Box, Text, HStack, Center, Tooltip } from "@chakra-ui/react";
+import { IoWarningOutline } from "react-icons/io5";
+import React, { useState, useMemo } from "react";
 import { info_view_map } from "data/mapping_table";
-import parseCourseSchedlue from "utils/parseCourseSchedule";
-import {
-  SignUpPanel,
-  EnrollStatusPanel,
-  NTURatingPanel,
-  PTTReviewPanel,
-  PTTExamPanel,
-  SyllabusPanel,
-  GradePolicyPanel,
-} from "components/CourseInfo/Panel";
+import { parseCourseTimeLocation } from "utils/parseCourseSchedule";
+import { EnrollStatusPanel, SyllabusPanel } from "components/CourseInfo/Panel";
 import type { Course } from "types/course";
+import { CoffeeOutlineIcon } from "@/components/CustomIcons";
 
-function DataSourceTag({ source }: { readonly source: string }) {
+const tabs = [
+  {
+    id: "basicInfo",
+    chinese_label: "基本資訊",
+  },
+  {
+    id: "courseRules",
+    chinese_label: "課程規定",
+  },
+  {
+    id: "courseSchedule",
+    chinese_label: "課程進度",
+  },
+] as const;
+type TabId = typeof tabs[number]["id"];
+
+function BasicInfoDataCell({
+  title,
+  content,
+  useTooltip = false,
+  tooltipText = "",
+}: {
+  readonly title: string;
+  readonly content?: string | null;
+  readonly useTooltip?: boolean;
+  readonly tooltipText?: string;
+}) {
   return (
-    <HStack spacing="2">
-      <FaRss color="gray" size="12" />
+    <Flex
+      w="100%"
+      borderBottom={"1px solid #909090"}
+      pb={4}
+      justifyContent="space-between"
+      sx={{
+        fontWeight: 500,
+        fontSize: "14px",
+        lineHeight: 1.4,
+      }}
+    >
       <Text
-        fontSize="sm"
-        textAlign="center"
-        color={useColorModeValue("gray.500", "gray.400")}
+        sx={{
+          color: "#4b4b4b",
+        }}
       >
-        資料來源: {source}
+        {title}
       </Text>
-    </HStack>
+      {!useTooltip ? (
+        <Text color="#2d2d2d" noOfLines={1}>
+          {content || "-"}
+        </Text>
+      ) : (
+        <Tooltip label={tooltipText}>
+          <Text color="#2d2d2d" noOfLines={1} cursor="pointer">
+            {content || "-"}
+          </Text>
+        </Tooltip>
+      )}
+    </Flex>
+  );
+}
+
+function BasicInfoTab({ course }: { readonly course: Course }) {
+  const timeLocationPairs = parseCourseTimeLocation(course.schedules);
+  return (
+    <Box>
+      <Flex w="100%">
+        <Flex
+          sx={{
+            fontWeight: 500,
+            fontSize: "14px",
+            lineHeight: 1.4,
+            color: "#2d2d2d",
+          }}
+        >{`授課語言：${info_view_map.language.map[course.language]}`}</Flex>
+      </Flex>
+      <Flex
+        mt={8}
+        w="100%"
+        h="320px"
+        justify={"space-between"}
+        alignItems={"start"}
+      >
+        <Flex w="20%" flexDirection={"column"} gap={6}>
+          <BasicInfoDataCell title="流水號" content={course.serial} />
+          <BasicInfoDataCell title="課程識別碼" content={course.identifier} />
+          <BasicInfoDataCell title="課號" content={course.code} />
+          <BasicInfoDataCell title="班次" content={course?.class} />
+          <BasicInfoDataCell
+            title="學分"
+            content={
+              course?.credits ? course.credits.toString().padStart(2, "0") : "-"
+            }
+          />
+        </Flex>
+        <Flex w="33%" flexDirection={"column"} gap={6}>
+          <BasicInfoDataCell
+            title="開課系所"
+            content={
+              course.departments.length > 1
+                ? "多個系所"
+                : course.departments?.[0]?.name_full ?? "-"
+            }
+            useTooltip={course.departments.length > 1}
+            tooltipText={course.departments.map((d) => d.name_full).join(", ")}
+          />
+          <BasicInfoDataCell title="授課教師" content={course.teacher} />
+          <BasicInfoDataCell
+            title="上課時間"
+            content={timeLocationPairs.map((p) => p.time).join(", ")}
+          />
+          <BasicInfoDataCell
+            title="上課地點"
+            content={timeLocationPairs.map((p) => p.location).join(", ")}
+          />
+          <BasicInfoDataCell
+            title="加選方式"
+            content={
+              `${course.enroll_method} - ${
+                info_view_map.enroll_method.map[course.enroll_method]
+              }` ?? "-"
+            }
+          />
+        </Flex>
+        <Flex w="33%" flexDirection={"column"} gap={6}>
+          <BasicInfoDataCell
+            title="課程類別"
+            content={info_view_map.requirement.map[course.requirement]}
+          />
+          <BasicInfoDataCell title="領域專長" content={"-"} />
+          <BasicInfoDataCell
+            title="修課總人數"
+            content={course.slot.toString()}
+          />
+          <BasicInfoDataCell title="Office Hour" content={"-"} />
+        </Flex>
+      </Flex>
+      <Flex w="100%" justifyContent={"space-between"}>
+        <Flex
+          w="60%"
+          flexDirection="column"
+          alignItems="start"
+          justifyContent="start"
+          borderRadius="4px"
+          gap={"12px"}
+          p={4}
+          sx={{
+            bg: "#f6f6f6",
+            borderRadius: "4px",
+          }}
+        >
+          {course?.limitation ? (
+            <Flex
+              w="100%"
+              flexDirection="column"
+              alignItems="start"
+              justifyContent="start"
+              gap={2}
+            >
+              <HStack
+                spacing={1}
+                color="error.main"
+                sx={{
+                  fontSize: "12px",
+                  lineHeight: "1.4",
+                  fontWeight: 500,
+                }}
+              >
+                <Center h="100%">
+                  <IoWarningOutline />
+                </Center>
+                <Text> 修課限制 </Text>
+              </HStack>
+              <Text
+                mx="2px"
+                sx={{
+                  fontSize: "12px",
+                  lineHeight: "1.4",
+                  fontWeight: 400,
+                  color: "#2d2d2d",
+                }}
+              >
+                {course?.limitation ?? "無"}
+              </Text>
+            </Flex>
+          ) : null}
+          <Flex
+            w="100%"
+            flexDirection="column"
+            alignItems="start"
+            justifyContent="start"
+            gap={2}
+          >
+            <HStack
+              spacing={1}
+              color="#6f6f6f"
+              sx={{
+                fontSize: "12px",
+                lineHeight: "1.4",
+                fontWeight: 500,
+              }}
+            >
+              <Text> 備註 </Text>
+            </HStack>
+            <Text
+              sx={{
+                fontSize: "12px",
+                lineHeight: "1.4",
+                fontWeight: 400,
+                color: "#6f6f6f",
+              }}
+            >
+              {course?.note || "無"}
+            </Text>
+          </Flex>
+        </Flex>
+        <EnrollStatusPanel courseSerial={course.serial} />
+      </Flex>
+    </Box>
+  );
+}
+
+function CourseRulesTab({ course }: { readonly course: Course }) {
+  return (
+    <Box>
+      {/* TODO: syllabus.workload */}
+      <Flex
+        w="100%"
+        sx={{
+          fontSize: "14px",
+          fontWeight: 500,
+          lineHeight: "1.4",
+          color: "#2d2d2d",
+        }}
+      >{`預計每週課後學習時數：${"2~3 小時"}`}</Flex>{" "}
+      <SyllabusPanel courseId={course.id} />
+    </Box>
+  );
+}
+
+function CourseScheduleTab({ course }: { readonly course: Course }) {
+  return (
+    <Center h="60vh">
+      <Flex
+        flexDirection={"column"}
+        justifyContent="center"
+        alignItems={"center"}
+      >
+        <CoffeeOutlineIcon color="#909090" boxSize={"40px"} />
+        <Flex
+          mt={2}
+          sx={{
+            fontSize: "14px",
+            fontWeight: 500,
+            lineHeight: 1.4,
+            color: "#909090",
+          }}
+        >{`尚未提供`}</Flex>
+      </Flex>
+    </Center>
   );
 }
 
 function CourseDetailInfoContainer({ course }: { readonly course: Course }) {
-  const course_codes_1 = [
-    { title: "流水號", value: course.serial },
-    { title: "課號", value: course.code },
-    { title: "課程識別碼", value: course.identifier },
-    { title: "班次", value: course?.class ?? "無" },
-  ];
-  const course_codes_2 = [
-    { title: "人數上限", value: course.slot },
-    {
-      title: "必選修",
-      value: info_view_map.requirement.map[course.requirement],
-    },
-    { title: "開課學期", value: course.semester },
-    { title: "授課語言", value: info_view_map.language.map[course.language] },
-  ];
-  const headingColor = useColorModeValue("heading.light", "heading.dark");
-  const textColor = useColorModeValue("text.light", "text.dark");
-  const statsTitleColor = useColorModeValue("gray.500", "gray.500");
-  const bgCard = useColorModeValue("card.light", "card.dark");
+  const [tabId, setTabId] = useState<TabId>("basicInfo");
+  const tabContent = useMemo<Record<TabId, JSX.Element>>(
+    () => ({
+      basicInfo: <BasicInfoTab course={course} />,
+      courseRules: <CourseRulesTab course={course} />,
+      courseSchedule: <CourseScheduleTab course={course} />,
+    }),
+    [course]
+  );
 
   return (
-    <Flex
-      w="100%"
-      minH="83vh"
-      pt={{ base: "150px", lg: 0 }}
-      flexDirection={{ base: "column", lg: "row" }}
-      flexWrap="wrap"
-      justify={"center"}
-      bg={useColorModeValue("white", "black")}
+    <Box
+      mt={4}
+      sx={{
+        borderRadius: "4px",
+      }}
     >
-      {/* COL 1 */}
-      <Flex w={{ base: "100%", lg: "30%" }} flexDirection={"column"}>
-        {/* Box1 */}
-        <Flex
-          bg={bgCard}
-          my="1vh"
-          px="6"
-          py="4"
-          borderRadius="xl"
-          flexDirection="column"
-          flexGrow={1}
-          flexShrink={1}
-        >
-          <Text fontSize="2xl" fontWeight="800" color={headingColor}>
-            詳細資料
-          </Text>
-          <Flex
-            mt="4"
-            justifyContent="start"
-            alignItems="start"
-            flexWrap="wrap"
-            gap="2"
-          >
-            <Flex mr="16" flexDirection="column" flexWrap="wrap">
-              {course_codes_1.map((item, index) => {
-                if (!item.value) {
-                  return null;
-                }
-                return (
-                  <Stat key={"code_stats_1" + index}>
-                    <StatLabel color={statsTitleColor} mb="-1">
-                      {item.title}
-                    </StatLabel>
-                    <StatNumber mb="2">{item.value}</StatNumber>
-                  </Stat>
-                );
-              })}
-            </Flex>
-            <Flex mr="16" flexDirection="column" flexWrap="wrap">
-              {course_codes_2.map((item, index) => {
-                if (!item.value) {
-                  return null;
-                }
-                return (
-                  <Stat key={"code_stats_2" + index}>
-                    <StatLabel color={statsTitleColor} mb="-1">
-                      {item.title}
-                    </StatLabel>
-                    <StatNumber mb="2">{item.value}</StatNumber>
-                  </Stat>
-                );
-              })}
-            </Flex>
-            <Flex flexDirection="column" flexWrap="wrap">
-              <Stat>
-                <StatLabel color={statsTitleColor} mb="-1">
-                  系所
-                </StatLabel>
-                <StatNumber mb="1">
-                  <HStack spacing="2">
-                    {course.departments.length === 0 ? (
-                      <Tag colorScheme="blackAlpha" size="lg">
-                        無資訊
-                      </Tag>
-                    ) : (
-                      <Flex flexDirection={"row"} flexWrap="wrap">
-                        {course.departments.map((department, index) => {
-                          return (
-                            <Tag
-                              key={"department_" + index}
-                              colorScheme="blue"
-                              size="lg"
-                              m={1}
-                            >
-                              {department.name_full}
-                            </Tag>
-                          );
-                        })}
-                      </Flex>
-                    )}
-                  </HStack>
-                </StatNumber>
-              </Stat>
-              <Stat>
-                <StatLabel color={statsTitleColor} mb="-1">
-                  學分
-                </StatLabel>
-                <StatNumber mb="2">{course.credits}</StatNumber>
-              </Stat>
-              {course.enroll_method ? (
-                <Stat>
-                  <StatLabel color={statsTitleColor} mb="-1">
-                    加簽方式
-                  </StatLabel>
-                  <StatNumber mb="2">
-                    <HStack spacing="2">
-                      <Tag
-                        colorScheme="blue"
-                        size="md"
-                        fontWeight="800"
-                        fontSize="lg"
-                      >
-                        {course.enroll_method}
-                      </Tag>
-                      <Text>
-                        {info_view_map.enroll_method.map[course.enroll_method]}
-                      </Text>
-                    </HStack>
-                  </StatNumber>
-                </Stat>
-              ) : null}
-              <Stat>
-                <StatLabel color={statsTitleColor} mb="-1">
-                  開課單位
-                </StatLabel>
-                <StatNumber>{course.provider.toUpperCase()}</StatNumber>
-              </Stat>
-            </Flex>
-          </Flex>
-          <Divider mt="4" mb="4" borderColor="gray.300" />
-          {course?.limitation && (
-            <VStack mt="2" align="start">
-              <Text
-                fontSize="md"
-                textAlign="center"
-                color={headingColor}
-                fontWeight="700"
-              >
-                修課限制
-              </Text>
-              <Text fontSize="sm" color={textColor} align="start">
-                {course.limitation}
-              </Text>
-            </VStack>
-          )}
-          {course?.note && (
-            <VStack mt="2" align="start">
-              <Text
-                fontSize="md"
-                textAlign="center"
-                color={headingColor}
-                fontWeight="700"
-              >
-                備註
-              </Text>
-              <Text fontSize="sm" color={textColor} align="start">
-                {course.note}
-              </Text>
-            </VStack>
-          )}
-          <Divider mt="4" mb="4" borderColor="gray.300" />
-          <Text mb="2" fontSize="lg" color={headingColor} fontWeight="700">
-            節次資訊
-          </Text>
-          <Text fontSize="sm" color={textColor}>
-            {parseCourseSchedlue(course) ?? "無資訊"}
-          </Text>
-        </Flex>
-        {/* Box2 */}
-        <Flex
-          bg={bgCard}
-          my="1vh"
-          px="6"
-          py="4"
-          borderRadius="xl"
-          flexDirection="column"
-          justifyContent="space-between"
-          flexGrow={1}
-          flexShrink={1}
-        >
-          <Tabs variant="soft-rounded" size="sm">
-            <HStack spacing="4">
-              <Text fontSize="2xl" fontWeight="800" color={headingColor}>
-                選課資訊
-              </Text>
-              <TabList>
-                <Tab>
-                  <Icon mr="2" w="2" as={FaCircle} color="red.600" />
-                  即時
-                </Tab>
-              </TabList>
-            </HStack>
-            <TabPanels my="3">
-              <TabPanel>
-                <EnrollStatusPanel courseSerial={course.serial} />
-              </TabPanel>
-              <TabPanel></TabPanel>
-            </TabPanels>
-          </Tabs>
-          <DataSourceTag source={"臺大選課系統"} />
-        </Flex>
-      </Flex>
-      {/* COL 2 */}
       <Flex
-        w={{ base: "100%", lg: "30%" }}
-        mx={{ base: 0, lg: "1%" }}
-        flexDirection={"column"}
+        h="46px"
+        justify={"center"}
+        bg="#002F94"
+        sx={{
+          borderRadius: "4px 4px 0 0",
+        }}
+        gap={"64px"}
       >
-        {/* Box3 */}
-        <Flex
-          bg={bgCard}
-          my="1vh"
-          px="6"
-          py="4"
-          borderRadius="xl"
-          flexDirection="column"
-          flexGrow={1}
-          flexShrink={1}
-        >
-          <Text fontSize="2xl" fontWeight="800" color={headingColor}>
-            加簽資訊
-            <BetaBadge content="beta" size="sm" />
-          </Text>
-          <SignUpPanel courseId={course.id} />
-        </Flex>
-        {/* Box4 */}
-        <Flex
-          bg={bgCard}
-          my="1vh"
-          px="6"
-          py="4"
-          borderRadius="xl"
-          flexDirection="column"
-          justifyContent="space-between"
-          flexGrow={1}
-          flexShrink={1}
-        >
-          <Tabs h="100%" variant="soft-rounded" size="sm">
-            <HStack spacing="4">
-              <Text fontSize="2xl" fontWeight="800" color={headingColor}>
-                評價
-              </Text>
-              <TabList>
-                <Tab color={textColor}>PTT</Tab>
-                <Tab color={textColor}>NTURating</Tab>
-              </TabList>
-            </HStack>
-            <TabPanels>
-              <TabPanel>
-                <PTTReviewPanel courseId={course.id} />
-              </TabPanel>
-              <TabPanel>
-                <NTURatingPanel courseId={course.id} />
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
-          <DataSourceTag source="PTT NTUCourse, NTURating" />
-        </Flex>
-        {/* Box5 */}
-        <Flex
-          bg={bgCard}
-          my="1vh"
-          px="6"
-          py="4"
-          borderRadius="xl"
-          flexDirection="column"
-          justifyContent="space-between"
-          flexGrow={1}
-          flexShrink={1}
-        >
-          <Tabs variant="soft-rounded" size="sm">
-            <HStack spacing="4">
-              <Text fontSize="2xl" fontWeight="800" color={headingColor}>
-                考古題資訊
-              </Text>
-              <TabList>
-                <Tab>PTT</Tab>
-              </TabList>
-            </HStack>
-            <TabPanels>
-              <TabPanel>
-                <PTTExamPanel courseId={course.id} />
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
-          <DataSourceTag source="PTT NTU-Exam" />
-        </Flex>
+        {tabs.map((tab) => {
+          const isActive = tab.id === tabId;
+          return (
+            <Flex
+              key={tab.id}
+              sx={{
+                color: isActive ? "white" : "#ffffff80",
+                cursor: "pointer",
+                fontSize: "16px",
+                fontWeight: 500,
+                lineHeight: 1.4,
+                borderBottom: `2px solid ${
+                  isActive ? "#FFFFFF" : "transparent"
+                }`,
+              }}
+              h="100%"
+              alignItems={"center"}
+              onClick={() => setTabId(tab.id)}
+              transition={"0.3s ease-in-out"}
+            >
+              {tab.chinese_label}
+            </Flex>
+          );
+        })}
       </Flex>
-      {/* COL 3 */}
-      <Flex w={{ base: "100%", lg: "30%" }} flexDirection={"column"}>
-        {/* Box6 */}
-        <Flex
-          bg={bgCard}
-          h={{ base: "", md: "55vh" }}
-          my="1vh"
-          px="6"
-          py="4"
-          borderRadius="xl"
-          flexDirection="column"
-          justifyContent="space-between"
-          flexGrow={1}
-          flexShrink={1}
-        >
-          <VStack h="95%" align="start">
-            <Text fontSize="2xl" fontWeight="800" color={headingColor}>
-              課程大綱
-            </Text>
-            <SyllabusPanel courseId={course.id} />
-          </VStack>
-          <DataSourceTag source="臺大課程網" />
-        </Flex>
-        {/* Box7 */}
-        <Flex
-          bg={bgCard}
-          h={{ base: "", md: "31vh" }}
-          my="1vh"
-          px="6"
-          py="4"
-          borderRadius="xl"
-          flexDirection="column"
-          justifyContent="space-between"
-          flexGrow={1}
-          flexShrink={1}
-        >
-          <Text fontSize="2xl" fontWeight="800" color={headingColor}>
-            評分方式
-          </Text>
-          <GradePolicyPanel courseId={course.id} />
-          <DataSourceTag source="臺大課程網" />
-        </Flex>
-      </Flex>
-    </Flex>
+      <Box
+        w="100%"
+        minH="60vh"
+        sx={{
+          borderRadius: "0 0 4px 4px",
+          shadow: "0px 3px 8px rgba(75, 75, 75, 0.08)",
+          border: "1px solid rgba(204, 204, 204, 0.4)",
+          px: 10,
+          py: 6,
+        }}
+      >
+        {tabContent[tabId]}
+      </Box>
+    </Box>
   );
 }
 

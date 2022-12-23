@@ -1,137 +1,306 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef } from "react";
 import {
   Box,
   Flex,
   Text,
-  Collapse,
-  IconButton,
-  Button,
-  Fade,
   useMediaQuery,
-  AlertDialog,
-  AlertDialogOverlay,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogBody,
-  AlertDialogFooter,
-  Alert,
-  AlertIcon,
-  Icon,
-  useColorModeValue,
+  Center,
+  HStack,
+  RadioGroup,
+  Radio,
+  VStack,
 } from "@chakra-ui/react";
-import { BeatLoader } from "react-spinners";
 import {
-  FaChevronDown,
-  FaChevronUp,
-  FaArrowRight,
-  FaRegCalendarAlt,
-} from "react-icons/fa";
-import { useCourseSearchingContext } from "components/Providers/CourseSearchingProvider";
-import CourseInfoRowContainer from "components/CourseInfoRowContainer";
-import CourseSearchInput from "components/CourseSearchInput";
-import SkeletonRow from "components/SkeletonRow";
-import SideCourseTableContainer from "components/CourseTable/SideCourseTableContainer";
-import usePagination from "hooks/usePagination";
-import { useRouter } from "next/router";
+  useCourseSearchingContext,
+  SortOption,
+  sortOptions,
+} from "components/Providers/CourseSearchingProvider";
 import Head from "next/head";
-import { reportEvent } from "utils/ga";
+import { useInView } from "react-intersection-observer";
+import CourseSearchInput from "@/components/CourseSearchInput";
+import SearchFilters from "@/components/SearchFilters";
+import {
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronUpIcon,
+  InfoOutlineIcon,
+} from "@chakra-ui/icons";
+import { BiFilterAlt } from "react-icons/bi";
+import CourseInfoRowPage from "@/components/CourseInfoRowPage";
+import Dropdown from "@/components/Dropdown";
+import UserCoursePanel from "@/components/UserCoursePanel";
+import { precautions } from "@/components/InstructionModals";
+import CustomBreadcrumb from "@/components/Breadcrumb";
 
-function NoLoginWarningDialog({
-  isOpen,
-  setIsOpen,
-  setAgreeToCreateTableWithoutLogin,
-}: {
-  readonly isOpen: boolean;
-  readonly setIsOpen: (isOpen: boolean) => void;
-  readonly setAgreeToCreateTableWithoutLogin: (x: boolean) => void;
-}) {
-  const router = useRouter();
-  const leastDestructiveElement = useRef<HTMLDivElement>(null);
+function SearchResultTopBar({ isTop = true }: { isTop?: boolean }) {
+  const currentPageRef = useRef<HTMLDivElement>(null);
+  const pageMenuRef = useRef<HTMLDivElement>(null);
+  const {
+    setPageIndex,
+    totalCount,
+    pageIndex,
+    numOfPages,
+    setBatchSize,
+    batchSize,
+    setSortOption,
+    sortOption,
+  } = useCourseSearchingContext();
+
   return (
-    <AlertDialog
-      isOpen={isOpen}
-      onClose={() => setIsOpen(false)}
-      motionPreset="slideInBottom"
-      isCentered
-      leastDestructiveRef={leastDestructiveElement}
+    <Flex
+      w="100%"
+      justifyContent={"space-between"}
+      px={4}
+      py={2}
+      sx={{
+        borderBottom: isTop ? "1px solid #CCCCCC" : "none",
+        borderTop: !isTop ? "1px solid #CCCCCC" : "none",
+      }}
+      textStyle={"body2"}
     >
-      <AlertDialogOverlay>
-        <AlertDialogContent>
-          <AlertDialogHeader fontSize="lg" fontWeight="bold">
-            等等，你還沒登入啊！
-          </AlertDialogHeader>
-          <AlertDialogBody>
-            <Alert status="warning">
-              <AlertIcon />
-              訪客課表將於一天後過期，屆時您將無法存取此課表。
-            </Alert>
-            <Text
-              mt={4}
-              color="gray.600"
-              fontWeight="700"
-              fontSize="lg"
-              ref={leastDestructiveElement}
-            >
-              真的啦！相信我。
-              <br />
-              註冊跟登入非常迅速，而且課表還能永久保存喔！
-            </Text>
-          </AlertDialogBody>
-          <AlertDialogFooter>
-            <Button
-              onClick={() => {
-                setIsOpen(false);
-                setAgreeToCreateTableWithoutLogin(true);
-                reportEvent(
-                  "course_page",
-                  "click",
-                  "agree_to_create_table_without_login"
-                );
+      <Flex justifyContent="flex-start" flex={1} gap={2} alignItems={"center"}>
+        <Flex>{`共 ${totalCount} 筆結果`}</Flex>
+        <Dropdown
+          closeAfterClick={true}
+          reverse={!isTop}
+          renderDropdownButton={() => (
+            <HStack
+              sx={{
+                border: "1px solid #CCCCCC",
+                borderRadius: "4px",
+                px: "8px",
               }}
             >
-              等等再說
-            </Button>
-            <Button
-              colorScheme="teal"
-              rightIcon={<FaArrowRight />}
-              onClick={() => {
-                setIsOpen(false);
-                reportEvent(
-                  "course_page",
-                  "click",
-                  "login_before_create_table"
-                );
-                router.push("/api/auth/login");
+              <Text minW="40px" noOfLines={1}>
+                排序：
+                {sortOptions.find((option) => option.id === sortOption)
+                  ?.chinese ?? "請選擇排序方式"}
+              </Text>
+              <ChevronDownIcon />
+            </HStack>
+          )}
+        >
+          <Box
+            sx={{
+              px: 2,
+              my: 2,
+            }}
+          >
+            <RadioGroup
+              value={sortOption}
+              onChange={(next) => {
+                setSortOption(next as SortOption);
+                setPageIndex(0);
               }}
-              ml={3}
+              gap={2}
             >
-              去登入
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialogOverlay>
-    </AlertDialog>
+              {sortOptions.map((option) => (
+                <Radio key={option.id} p={2} value={option.id}>
+                  <Flex
+                    w="120px"
+                    sx={{
+                      fontWeight: 500,
+                      fontSize: "13px",
+                      lineHeight: "1.4",
+                      color: "#4b4b4b",
+                    }}
+                  >
+                    {option.chinese}
+                  </Flex>
+                </Radio>
+              ))}
+            </RadioGroup>
+          </Box>
+        </Dropdown>
+      </Flex>
+      <Flex justifyContent={"center"} alignItems={"center"}>
+        每頁顯示{" "}
+        <Dropdown
+          reverse={!isTop}
+          renderDropdownButton={() => (
+            <Flex
+              sx={{
+                border: "1px solid #CCCCCC",
+                borderRadius: "4px",
+                px: "8px",
+                mx: 1,
+              }}
+              minW="50px"
+              alignItems={"center"}
+              justifyContent={"space-between"}
+            >
+              <Text noOfLines={1}>{batchSize}</Text>
+              <VStack h="22px" position={"relative"}>
+                <ChevronUpIcon position={"absolute"} />
+                <ChevronDownIcon position={"absolute"} />
+              </VStack>
+            </Flex>
+          )}
+          closeAfterClick={true}
+        >
+          <Box
+            sx={{
+              px: 4,
+              my: 2,
+            }}
+          >
+            <RadioGroup
+              value={batchSize}
+              onChange={(next) => {
+                setBatchSize(parseInt(next, 10));
+                setPageIndex(0);
+              }}
+              gap={2}
+            >
+              {[25, 50, 100, 150].map((size) => (
+                <Radio key={size} p={2} value={size}>
+                  {size}
+                </Radio>
+              ))}
+            </RadioGroup>
+          </Box>
+        </Dropdown>{" "}
+        筆
+      </Flex>
+      <Flex justifyContent="flex-end" flex={1} gap={4}>
+        <Flex gap={2} alignItems={"center"}>
+          <Flex
+            alignItems="center"
+            cursor="pointer"
+            sx={{
+              opacity: pageIndex === 0 ? 0.5 : 1,
+            }}
+            onClick={() => {
+              if (pageIndex > 0) {
+                setPageIndex(pageIndex - 1);
+              }
+            }}
+          >
+            <ChevronLeftIcon boxSize={"20px"} />
+            上一頁
+          </Flex>
+          <Flex
+            alignItems="center"
+            cursor="pointer"
+            sx={{
+              opacity:
+                pageIndex === numOfPages - 1 || numOfPages === 0 ? 0.5 : 1,
+            }}
+            onClick={() => {
+              if (pageIndex < numOfPages - 1) {
+                setPageIndex(pageIndex + 1);
+              }
+            }}
+          >
+            下一頁
+            <ChevronRightIcon boxSize={"20px"} />
+          </Flex>
+        </Flex>
+        <Flex alignItems={"center"}>
+          第
+          <Dropdown
+            reverse={!isTop}
+            closeAfterClick={true}
+            disabled={numOfPages === 0}
+            onOpen={() => {
+              const offsetY =
+                parseInt(currentPageRef?.current?.id ?? "0", 10) ?? 0;
+              if (pageMenuRef?.current) {
+                pageMenuRef.current.scrollTop = 36 * Math.max(offsetY - 3, 0);
+              }
+            }}
+            renderDropdownButton={() => (
+              <Flex
+                sx={{
+                  border: "1px solid #CCCCCC",
+                  borderRadius: "4px",
+                  px: "8px",
+                  mx: 1,
+                }}
+                minW="50px"
+                justifyContent={"space-between"}
+              >
+                <Text noOfLines={1}>{pageIndex + 1}</Text>
+                <VStack h="22px" position={"relative"}>
+                  <ChevronUpIcon position={"absolute"} />
+                  <ChevronDownIcon position={"absolute"} />
+                </VStack>
+              </Flex>
+            )}
+          >
+            <Box
+              w="100%"
+              h="48px"
+              position={"absolute"}
+              zIndex={101}
+              top={0}
+              left={0}
+              bg="linear-gradient(180.5deg, #FFFFFF -84.02%, #FFFFFF 31.81%, rgba(255, 255, 255, 0) 49.08%)s"
+              pointerEvents={"none"}
+            />
+            <Box
+              sx={{
+                px: 4,
+                my: 2,
+              }}
+              position="relative"
+              maxH="250px"
+              overflowY="scroll"
+              ref={pageMenuRef}
+            >
+              <Flex flexDirection={"column"} justifyContent={"center"}>
+                <RadioGroup
+                  onChange={(i) => {
+                    setPageIndex(parseInt(i));
+                  }}
+                  value={pageIndex}
+                >
+                  {Array.from({ length: numOfPages }, (_, i) => (
+                    <Radio value={i} height="36px" key={i}>
+                      <Box
+                        id={`${i}`}
+                        ref={pageIndex === i ? currentPageRef : undefined}
+                      >
+                        {i + 1}
+                      </Box>
+                    </Radio>
+                  ))}
+                </RadioGroup>
+              </Flex>
+            </Box>
+            <Box
+              w="100%"
+              h="48px"
+              position={"absolute"}
+              zIndex={101}
+              bottom={0}
+              left={0}
+              bg="linear-gradient(180.5deg, #FFFFFF -84.02%, #FFFFFF 31.81%, rgba(255, 255, 255, 0) 49.08%)"
+              transform={"rotate(180deg)"}
+              pointerEvents={"none"}
+            />
+          </Dropdown>
+          頁
+        </Flex>
+      </Flex>
+    </Flex>
   );
 }
 
 function CoursePage() {
-  const topRef = useRef<HTMLDivElement>(null);
-  const bottomRef = usePagination();
-  const { searchLoading, totalCount, setBatchSize } =
-    useCourseSearchingContext();
+  const { ref: searchBoxRef, inView: searchBoxInView } = useInView({
+    threshold: 0,
+  });
+  const {
+    setIsSearchBoxInView,
+    setBatchSize,
+    pageIndex,
+    searchPageTopRef,
+    searchMode,
+  } = useCourseSearchingContext();
 
-  const [isMobile, isHigherThan1325] = useMediaQuery([
-    "(max-width: 1000px)",
-    "(min-height: 1325px)",
-  ]);
-
-  const [displayFilter, setDisplayFilter] = useState(false);
-  const [displayTable, setDisplayTable] = useState(!isMobile);
-
-  // state for no login warning when creating a course table.
-  const [isLoginWarningOpen, setIsLoginWarningOpen] = useState(false);
-  const [agreeToCreateTableWithoutLogin, setAgreeToCreateTableWithoutLogin] =
-    useState(false);
+  const [isHigherThan1325] = useMediaQuery(["(min-height: 1325px)"]);
 
   useEffect(() => {
     if (isHigherThan1325) {
@@ -139,17 +308,9 @@ function CoursePage() {
     }
   }, [isHigherThan1325, setBatchSize]);
 
-  const searchCallback = () => {
-    topRef.current?.focus();
-    setDisplayFilter(false);
-  };
-
-  // if isMobile, when show Alert Modal, set displayTable to false to prevent ugly overlapping
   useEffect(() => {
-    if (isLoginWarningOpen || isMobile) {
-      setDisplayTable(false);
-    }
-  }, [isLoginWarningOpen, isMobile]);
+    setIsSearchBoxInView(searchBoxInView);
+  }, [searchBoxInView, setIsSearchBoxInView]);
 
   return (
     <>
@@ -160,173 +321,103 @@ function CoursePage() {
           content="課程搜尋頁面 | NTUCourse Neo，全新的臺大選課網站。"
         />
       </Head>
-      <NoLoginWarningDialog
-        isOpen={isLoginWarningOpen}
-        setIsOpen={setIsLoginWarningOpen}
-        setAgreeToCreateTableWithoutLogin={setAgreeToCreateTableWithoutLogin}
-      />
       <Flex
         w="100vw"
+        h="93vh"
         direction="row"
         justifyContent="center"
-        alignItems="center"
-        overflow="hidden"
-        bg={useColorModeValue("white", "black")}
+        alignItems="start"
+        overflow="auto"
+        bg={"black.100"}
       >
-        <Box
-          display="flex"
-          flexBasis="100vw"
-          flexDirection="column"
-          alignItems="start"
-          h="95vh"
-          overflow="auto"
-          maxW="screen-md"
-          mx="auto"
-          pt="64px"
-          pb="40px"
-        >
-          <div ref={topRef} />
-          <Flex
-            w="100%"
-            direction="column"
-            position="sticky"
-            top="0"
-            zIndex="100"
-            boxShadow="md"
-            borderBottom={useColorModeValue("gray.200", "gray.100")}
-            bg={useColorModeValue("white", "gray.800")}
-          >
-            <Flex
-              w="100%"
-              px={{ base: "5vw", md: "10vw" }}
-              py="4"
-              direction="column"
-              bg={useColorModeValue("white", "black")}
-            >
-              <CourseSearchInput
-                displayPanel={displayFilter}
-                searchCallback={searchCallback}
-              />
-            </Flex>
-            <IconButton
-              aria-label="searchInputDrawer"
-              size="xs"
-              variant="ghost"
-              bg={useColorModeValue("white", "black")}
-              icon={displayFilter ? <FaChevronUp /> : <FaChevronDown />}
-              onClick={() => {
-                setDisplayFilter(!displayFilter);
-                reportEvent("course_page", "click", "toggle_filter");
-              }}
-            />
-          </Flex>
-          <Flex
-            flexDirection={"column"}
-            alignItems={{ base: "center", lg: "start" }}
-            ml={{
-              base: "0",
-              lg: displayTable ? "2vw" : "5vw",
-              xl: displayTable ? "2vw" : "10vw",
-            }}
-            w={{
-              base: "100%",
-              lg: displayTable ? "50vw" : "90vw",
-              xl: displayTable ? "55vw" : "80vw",
-            }}
-            transition="all 500ms ease-in-out"
-          >
-            <Flex
-              flexDirection="row"
-              alignItems="center"
-              justifyContent="start"
-            >
-              {searchLoading ? <BeatLoader size={8} color="teal" /> : <></>}
-              <Text
-                fontSize="md"
-                fontWeight="medium"
-                color="gray.400"
-                my="2"
-                ml="1"
-              >
-                {searchLoading ? "載入中" : `共找到 ${totalCount} 筆結果`}
-              </Text>
-            </Flex>
-            <CourseInfoRowContainer displayTable={displayTable} />
-            <SkeletonRow times={3} />
-          </Flex>
-          <Flex
-            alignItems="center"
-            w={displayTable ? "60%" : "100%"}
-            justifyContent={{ base: "center", lg: "start" }}
-            transition="all 500ms ease-in-out"
-          ></Flex>
-          <div ref={bottomRef} />
-        </Box>
-      </Flex>
-      <Fade in={!displayTable}>
         <Flex
-          as="button"
-          flexDirection="row"
-          alignItems="center"
+          w="100vw"
+          h="93vh"
+          flexDirection={"row"}
+          gap={10}
           justifyContent="center"
-          position="absolute"
-          top={{ base: "85vh", lg: "80vh" }}
-          left={{ base: "70vw", md: "85vw", lg: "90vw" }}
-          bg={useColorModeValue("gray.100", "gray.600")}
-          boxShadow="md"
-          py="1"
-          px="4"
-          borderRadius="xl"
-          onClick={() => {
-            setDisplayTable(!displayTable);
-            reportEvent("course_page", "click", "expand_table");
-          }}
-          _hover={{
-            boxShadow: "lg",
-            transform: "translateY(-2px) scale(1.02)",
-          }}
-          transition="all 200ms"
+          alignItems="start"
+          overflowY={"auto"}
+          overflowX={"hidden"}
+          position="relative"
         >
-          <Icon
-            mr="1"
-            as={FaRegCalendarAlt}
-            boxSize="4"
-            color={useColorModeValue("teal.500", "teal.300")}
-          />
-          <Text
-            my="2"
-            fontWeight={800}
-            fontSize={{ base: "md", lg: "lg" }}
-            color={useColorModeValue("text.light", "text.dark")}
-          >
-            課表
-          </Text>
-        </Flex>
-      </Fade>
-      <Collapse in={displayTable} animateOpacity>
-        <Flex justifyContent="end" mr="2">
-          <Box
-            position="absolute"
-            top={{ base: "", lg: "8vh" }}
-            bottom="0"
-            right="0"
-            zIndex={{ base: "10000", lg: "1" }}
-            w={{ base: "100vw", lg: "45vw", xl: "40vw" }}
-            h={{ base: "90vh", lg: "70vh" }}
-            bg={useColorModeValue("card.light", "card.dark")}
-            mt="128px"
-            borderRadius="lg"
-            boxShadow="xl"
-          >
-            <SideCourseTableContainer
-              isDisplay={displayTable}
-              setIsDisplay={setDisplayTable}
-              setIsLoginWarningOpen={setIsLoginWarningOpen}
-              agreeToCreateTableWithoutLogin={agreeToCreateTableWithoutLogin}
+          <Flex w="60%" flexDirection={"column"} py={8}>
+            <Box
+              ref={searchPageTopRef}
+              h="1px"
+              w="80vw"
+              position="relative"
+              bottom="30px"
             />
-          </Box>
+            <CustomBreadcrumb
+              pageItems={[
+                {
+                  text: "首頁",
+                  href: "/",
+                },
+                {
+                  text: "課程搜尋",
+                  href: "/course",
+                },
+              ]}
+              mb={6}
+            />
+            <Flex ref={searchBoxRef} w="100%" mb={8} flexDirection={"column"}>
+              <CourseSearchInput />
+              <Flex flexDirection={"row"} alignItems={"center"} mt={6}>
+                <HStack
+                  sx={{
+                    fontSize: "14px",
+                    lineHeight: "20px",
+                    color: "#6f6f6f",
+                  }}
+                  w="fit-content"
+                  mr={3}
+                  spacing={1}
+                >
+                  <BiFilterAlt size={"20px"} />
+                  <Text noOfLines={1} w="60px">
+                    篩選條件
+                  </Text>
+                </HStack>
+                <SearchFilters />
+              </Flex>
+              <Flex mt={4} alignItems="center" gap={2}>
+                <Center h="100%" justifyContent={"center"}>
+                  <InfoOutlineIcon boxSize={"20px"} color="primary.600" />
+                </Center>
+                {searchMode.precautions.map((precaution) => {
+                  const component = precautions[precaution];
+                  return component;
+                })}
+              </Flex>
+            </Flex>
+            <Box
+              w="100%"
+              sx={{
+                border: "1px solid #CCCCCC",
+                borderRadius: "4px",
+              }}
+            >
+              <SearchResultTopBar />
+              <Box w="100%" minH="57vh">
+                <CourseInfoRowPage pageIndex={pageIndex} />
+              </Box>
+              <SearchResultTopBar isTop={false} />
+            </Box>
+          </Flex>
+          <Flex
+            w="20%"
+            h="92vh"
+            py={8}
+            flexDirection={"column"}
+            position="sticky"
+            top={0}
+          >
+            <UserCoursePanel />
+          </Flex>
         </Flex>
-      </Collapse>
+      </Flex>
     </>
   );
 }

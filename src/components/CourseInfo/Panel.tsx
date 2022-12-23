@@ -2,15 +2,13 @@ import {
   Flex,
   Text,
   Stat,
-  StatLabel,
-  StatNumber,
+  StatLabel as ChakraStatLabel,
+  StatNumber as ChakraStatNumber,
+  StatNumberProps,
   HStack,
   Icon,
   Box,
-  Button,
   VStack,
-  StatHelpText,
-  Divider,
   Popover,
   PopoverTrigger,
   PopoverContent,
@@ -18,638 +16,517 @@ import {
   PopoverCloseButton,
   PopoverHeader,
   PopoverBody,
-  Spacer,
-  IconButton,
-  useColorModeValue,
   FlexProps,
+  StatLabelProps,
+  Center,
+  Skeleton,
+  Tag,
+  TagLabel,
+  TagLeftIcon,
 } from "@chakra-ui/react";
-import React, { useState, useEffect } from "react";
-import { PieChart } from "react-minimal-pie-chart";
+import React, { useRef, forwardRef } from "react";
+import { FaCircle } from "react-icons/fa";
+import { useCourseEnrollData, useSyllabusData } from "hooks/useCourseInfo";
 import {
-  FaCircle,
-  FaExclamationTriangle,
-  FaQuestionCircle,
-  FaChevronLeft,
-  FaChevronRight,
-  FaInfoCircle,
-} from "react-icons/fa";
-import { IoMdOpen } from "react-icons/io";
-import PTTContentRowContainer from "components/CourseInfo/PTTContentRowContainer";
-import SignUpCard from "components/CourseInfo/SignUpCard";
-import SignUpSubmitForm from "components/CourseInfo/SignUpSubmitForm";
-import { useUser } from "@auth0/nextjs-auth0";
-import { useRouter } from "next/router";
-import Image from "next/image";
-import {
-  useCourseEnrollData,
-  useNTURatingData,
-  usePTTReviewData,
-  usePTTExamData,
-  useSyllabusData,
-  useSignUpPostData,
-} from "hooks/useCourseInfo";
-import { reportEvent } from "utils/ga";
-import {
-  syllabusFields,
   syllabusFieldSource as syllabusTitle,
+  SyllabusFieldName,
 } from "types/course";
+import { customScrollBarCss } from "@/styles/customScrollBar";
+import { useInView } from "react-intersection-observer";
+import { CoffeeOutlineIcon } from "@/components/CustomIcons";
+import { ArrowForwardIcon } from "@chakra-ui/icons";
+import { Pie } from "@visx/shape";
+import { Group } from "@visx/group";
 
-interface LoadingPanelProps extends FlexProps {
-  readonly title: string;
-}
-function LoadingPanel({ title, ...restProps }: LoadingPanelProps) {
+function StatNumber(props: StatNumberProps) {
   return (
-    <Flex
-      w="100%"
-      flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      {...restProps}
-    >
-      <VStack>
-        <Image
-          alt=""
-          src={"/img/parrot/parrot.gif"}
-          height={32}
-          width={32}
-          layout="fixed"
-        />
-        <Text
-          fontSize="lg"
-          fontWeight="800"
-          color="gray.500"
-          textAlign="center"
-        >
-          {title}
-        </Text>
-      </VStack>
-    </Flex>
+    <ChakraStatNumber
+      textAlign="center"
+      sx={{
+        fontWeight: 500,
+        fontSize: "18px",
+        lineHeight: 1.4,
+        color: "#2d2d2d",
+      }}
+      {...props}
+    />
+  );
+}
+
+function StatLabel(props: StatLabelProps) {
+  return (
+    <ChakraStatLabel
+      textAlign="center"
+      sx={{
+        fontSize: "12px",
+        lineHeight: 1.4,
+        color: "#4b4b4b",
+      }}
+      {...props}
+    />
   );
 }
 
 interface PanelPlaceholderProps extends FlexProps {
-  readonly title: string;
-  readonly isEmpty?: boolean;
+  readonly title?: string;
 }
-function PanelPlaceholder({
-  title = "暫無資訊",
-  isEmpty = true,
-  ...restProps
-}: PanelPlaceholderProps) {
-  return (
-    <Flex
-      w="100%"
-      flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      {...restProps}
-    >
-      <Icon
-        as={isEmpty ? FaQuestionCircle : FaExclamationTriangle}
-        boxSize="32px"
-        color="gray.500"
-      />
-      <Text
-        mt="2"
-        fontSize="lg"
-        fontWeight="800"
-        color="gray.500"
-        textAlign="center"
-      >
-        {title}
-      </Text>
-    </Flex>
-  );
-}
-
-function UnauthenticatedPanel({ ...restProps }: FlexProps) {
-  const router = useRouter();
-  return (
-    <Flex
-      flexDirection={"column"}
-      py={2}
-      my={3}
-      h="100%"
-      w="100%"
-      align="center"
-      justify="center"
-      {...restProps}
-    >
-      <Icon as={FaInfoCircle} boxSize="32px" color="gray.500" />
-      <Text
-        mt="2"
-        fontSize="lg"
-        fontWeight="800"
-        color="gray.500"
-        textAlign="center"
-      >
-        會員專屬功能
-      </Text>
-      <Button
-        rightIcon={<FaChevronRight />}
-        size="md"
-        my={2}
-        py={2}
-        colorScheme="blue"
-        fontSize="md"
-        fontWeight="800"
-        onClick={() => {
-          reportEvent("member_only_panel", "click", "login");
-          router.push("/api/auth/login");
-        }}
-      >
-        來去登入
-      </Button>
-    </Flex>
-  );
-}
-
-interface PanelWrapperProps {
-  readonly children: JSX.Element;
-  readonly isLoading: boolean;
-  readonly isUnauth: boolean | null;
-  readonly loadingFallback?: JSX.Element;
-  readonly unauthFallback?: JSX.Element;
-}
-function PanelWrapper({
-  isLoading,
-  loadingFallback = <LoadingPanel title="載入中..." height="100%" />,
-  isUnauth,
-  unauthFallback = <UnauthenticatedPanel />,
-  children,
-}: PanelWrapperProps): JSX.Element {
-  if (isUnauth) {
-    return unauthFallback;
-  }
-  if (isLoading) {
-    return loadingFallback;
-  }
-  return <>{children}</>;
-}
-
-export function SignUpPanel({ courseId }: { readonly courseId: string }) {
-  const { user, isLoading: isAuth0Loading } = useUser();
-  const {
-    data: signUpPostData,
-    isLoading,
-    mutate,
-  } = useSignUpPostData(courseId);
-  const [signUpCardIdx, setSignUpCardIdx] = useState(0);
-  const textColor = useColorModeValue("text.light", "text.dark");
-
-  // trigger after delete sign up card
-  useEffect(() => {
-    if (
-      Array.isArray(signUpPostData) &&
-      signUpCardIdx >= signUpPostData.length
-    ) {
-      setSignUpCardIdx(Math.max(signUpPostData.length - 1, 0));
-    }
-  }, [signUpPostData, setSignUpCardIdx, signUpCardIdx]);
-
-  return (
-    <PanelWrapper
-      isLoading={isLoading || isAuth0Loading}
-      isUnauth={!user}
-      loadingFallback={
-        <LoadingPanel title="努力跑加簽大地中..." height="100%" />
-      }
-    >
-      {!signUpPostData ? (
-        <PanelPlaceholder title="無加簽相關資訊" height="100%" />
-      ) : signUpPostData.length === 0 ? (
+const PanelPlaceholder = forwardRef<HTMLDivElement, PanelPlaceholderProps>(
+  (props, ref) => {
+    const { title } = props;
+    return (
+      <Center h="100%" ref={ref}>
         <Flex
-          w="100%"
-          h="100%"
-          mt="4"
-          flexDirection="column"
+          flexDirection={"column"}
           justifyContent="center"
-          alignItems={{ base: "start", lg: "center" }}
+          alignItems={"center"}
         >
-          <PanelPlaceholder title="無加簽相關資訊" h="100%" pt="0" />
-          <HStack w="100%" pr="8" mt="8" justify="end">
-            <SignUpSubmitForm
-              courseId={courseId}
-              haveSubmitted={signUpPostData.some((obj) => obj.is_owner)}
-            />
-          </HStack>
+          <CoffeeOutlineIcon color="#909090" boxSize={"40px"} />
+          <Flex
+            mt={2}
+            sx={{
+              fontSize: "14px",
+              fontWeight: 500,
+              lineHeight: 1.4,
+              color: "#909090",
+            }}
+          >
+            {title || `尚未提供`}
+          </Flex>
         </Flex>
-      ) : (
-        <Flex
-          w="100%"
-          h="100%"
-          mt="4"
-          flexDirection="column"
-          justifyContent="center"
-          alignItems={{ base: "start", lg: "center" }}
-        >
-          <SignUpCard
-            post={signUpPostData[signUpCardIdx]}
-            courseId={courseId}
-          />
-          <HStack w="100%" pr="8" mt="8">
-            <HStack>
-              <IconButton
-                aria-label="prev"
-                size="md"
-                variant="ghost"
-                icon={<FaChevronLeft />}
-                onClick={() =>
-                  setSignUpCardIdx(
-                    signUpCardIdx === 0
-                      ? signUpPostData.length - 1
-                      : signUpCardIdx - 1
-                  )
-                }
-              />
-              <IconButton
-                aria-label="next"
-                size="md"
-                variant="ghost"
-                icon={<FaChevronRight />}
-                onClick={() =>
-                  setSignUpCardIdx((signUpCardIdx + 1) % signUpPostData.length)
-                }
-              />
-              <Text
-                fontSize="sm"
-                fontWeight="800"
-                color={textColor}
-                textAlign="center"
-              >
-                {signUpCardIdx + 1}/{signUpPostData.length}
-              </Text>
-            </HStack>
-            <Spacer />
-            <SignUpSubmitForm
-              courseId={courseId}
-              haveSubmitted={signUpPostData.some((obj) => obj.is_owner)}
-            />
-          </HStack>
-        </Flex>
-      )}
-    </PanelWrapper>
-  );
-}
+      </Center>
+    );
+  }
+);
+PanelPlaceholder.displayName = "PanelPlaceholder";
 
 export function EnrollStatusPanel({
   courseSerial,
 }: {
   readonly courseSerial: string | null;
 }) {
-  const { user, isLoading: isAuth0Loading } = useUser();
   const { data: courseEnrollStatus, isLoading } =
     useCourseEnrollData(courseSerial);
   return (
-    <PanelWrapper
-      isLoading={isLoading || isAuth0Loading}
-      isUnauth={!user}
-      loadingFallback={
-        <LoadingPanel title="努力取得資訊中..." height="100%" pt={8} />
-      }
+    <Skeleton
+      isLoaded={isLoading}
+      w="33%"
+      startColor="black.200"
+      endColor="black.500"
+      sx={{
+        borderRadius: "4px",
+      }}
     >
-      {!courseEnrollStatus || courseSerial === null ? (
-        <PanelPlaceholder
-          title="無法取得課程即時資訊"
-          isEmpty={false}
-          h="100%"
-          pt="8"
-        />
-      ) : (
+      <Flex
+        w="100%"
+        flexDirection="column"
+        sx={{
+          bg: "#F6F6F6",
+          borderRadius: "4px",
+          pt: 4,
+          px: 4,
+          pb: 6,
+        }}
+      >
         <Flex
-          w="100%"
-          mt="4"
-          flexDirection="row"
-          justifyContent="center"
-          alignItems={{ base: "start", lg: "center" }}
-          flexWrap="wrap"
+          sx={{
+            fontWeight: 500,
+            fontSize: "14px",
+            lineHeight: 1.4,
+            color: "#2d2d2d",
+          }}
+          cursor="default"
         >
-          <Stat>
-            <StatLabel>選上</StatLabel>
-            <StatNumber>{courseEnrollStatus.enrolled}</StatNumber>
-            <StatHelpText>人</StatHelpText>
-          </Stat>
-          <Stat>
-            <StatLabel>選上外系</StatLabel>
-            <StatNumber>{courseEnrollStatus.enrolled_other}</StatNumber>
-            <StatHelpText>人</StatHelpText>
-          </Stat>
-          <Stat>
-            <StatLabel>登記</StatLabel>
-            <StatNumber>{courseEnrollStatus.registered}</StatNumber>
-            <StatHelpText>人</StatHelpText>
-          </Stat>
-          <Stat>
-            <StatLabel>剩餘</StatLabel>
-            <StatNumber>{courseEnrollStatus.remain}</StatNumber>
-            <StatHelpText>空位</StatHelpText>
-          </Stat>
+          已選人數
+          <Tag colorScheme={"secondary"} size="sm" ml={3}>
+            <TagLeftIcon as={ArrowForwardIcon} color={"#BBF7D0"} />
+            <TagLabel>即時</TagLabel>
+          </Tag>
         </Flex>
-      )}
-    </PanelWrapper>
-  );
-}
-
-export function NTURatingPanel({ courseId }: { readonly courseId: string }) {
-  const { user, isLoading: isAuth0Loading } = useUser();
-  const { data: ntuRatingData, isLoading } = useNTURatingData(courseId);
-  return (
-    <PanelWrapper
-      isLoading={isLoading || isAuth0Loading}
-      isUnauth={!user}
-      loadingFallback={
-        <LoadingPanel title="查詢評價中..." height="100%" pt={8} />
-      }
-    >
-      {!ntuRatingData ? (
-        <Flex h="100%" flexDirection="column" alignItems="center">
-          <PanelPlaceholder title="無評價資訊" h="100%" pt="8" />
-          <Button
-            mt="4"
-            colorScheme="blue"
-            variant="outline"
-            size="sm"
-            rightIcon={<IoMdOpen />}
-            onClick={() => {
-              window.open(
-                "https://rating.myntu.me/?referrer=ntucourse_neo",
-                "_blank"
-              );
-              reportEvent("rating_panel", "click_external", "nturating");
-            }}
+        {!courseEnrollStatus || courseSerial === null ? (
+          <PanelPlaceholder title="無法取得課程即時資訊" />
+        ) : (
+          <Flex
+            w="100%"
+            mt="6"
+            flexDirection="row"
+            justifyContent="center"
+            alignItems={{ base: "start", lg: "center" }}
+            flexWrap="wrap"
           >
-            前往 NTURating 撰寫評價
-          </Button>
+            <Stat>
+              <StatNumber>{courseEnrollStatus.enrolled}</StatNumber>
+              <StatLabel>已選上</StatLabel>
+            </Stat>
+            <Stat>
+              <StatNumber>{courseEnrollStatus.enrolled_other}</StatNumber>
+              <StatLabel>外系已選上</StatLabel>
+            </Stat>
+            <Stat>
+              <StatNumber>{courseEnrollStatus.registered}</StatNumber>
+              <StatLabel>登記</StatLabel>
+            </Stat>
+            <Stat>
+              <StatNumber>{courseEnrollStatus.remain}</StatNumber>
+              <StatLabel>剩餘</StatLabel>
+            </Stat>
+          </Flex>
+        )}
+      </Flex>
+    </Skeleton>
+  );
+}
+
+interface PanelBlockProps extends FlexProps {
+  readonly title: string;
+  readonly content: string | JSX.Element | null;
+  readonly blockH: number;
+  readonly isLoading?: boolean;
+  readonly index?: number;
+}
+function PanelBlock(props: PanelBlockProps) {
+  const {
+    isLoading = false,
+    title,
+    content: rawContent,
+    blockH,
+    index = 0,
+    ...restProps
+  } = props;
+  const contentRef = useRef<HTMLDivElement>(null);
+  const contentContainerRef = useRef<HTMLDivElement>(null);
+  const { ref: reachBottomDetecter, inView } = useInView({
+    /* Optional options */
+    threshold: 0,
+  });
+  const scrollable =
+    contentRef.current?.clientHeight &&
+    contentContainerRef.current?.clientHeight
+      ? contentRef.current?.clientHeight >
+        contentContainerRef.current?.clientHeight
+      : false;
+
+  const content =
+    rawContent === null ? (
+      <PanelPlaceholder ref={contentRef} />
+    ) : typeof rawContent === "string" ? (
+      <Box ref={contentRef}>
+        {rawContent.split("\n").map((item, index) => {
+          return (
+            <Text key={index} mb={1}>
+              {item.trim()}
+            </Text>
+          );
+        })}
+      </Box>
+    ) : (
+      <Box ref={contentRef}>{rawContent}</Box>
+    );
+  return (
+    <Skeleton
+      isLoaded={!isLoading}
+      speed={1 + index * 0.2}
+      startColor="black.200"
+      endColor="black.500"
+    >
+      <Flex
+        bg="#f6f6f6"
+        gap={"10px"}
+        borderRadius={"4px"}
+        flexDirection="column"
+        h={`${blockH}px`}
+        position="relative"
+        {...restProps}
+      >
+        <Flex
+          sx={{
+            fontWeight: 500,
+            fontSize: "14px",
+            lineHeight: 1.4,
+            color: "#2d2d2d",
+          }}
+          pt="16px"
+          px="24px"
+        >
+          {title}
         </Flex>
-      ) : (
-        <Flex h="100%" flexDirection="column" alignItems="start">
-          <Text fontSize="md" fontWeight="600" color="gray.700">
-            NTURating 上共有 {ntuRatingData.count} 筆評價
-          </Text>
-          <HStack w="100%" justify="space-between" my="2">
-            <Stat>
-              <StatLabel>甜度</StatLabel>
-              <StatNumber>{ntuRatingData.sweety}</StatNumber>
-              <StatHelpText>平均值</StatHelpText>
-            </Stat>
-            <Stat>
-              <StatLabel>涼度</StatLabel>
-              <StatNumber>{ntuRatingData.breeze}</StatNumber>
-              <StatHelpText>平均值</StatHelpText>
-            </Stat>
-            <Stat>
-              <StatLabel>紮實度</StatLabel>
-              <StatNumber>{ntuRatingData.workload}</StatNumber>
-              <StatHelpText>平均值</StatHelpText>
-            </Stat>
-            <Stat>
-              <StatLabel>品質</StatLabel>
-              <StatNumber>{ntuRatingData.quality}</StatNumber>
-              <StatHelpText>平均值</StatHelpText>
-            </Stat>
-          </HStack>
-          <Button
-            colorScheme="blue"
-            variant="outline"
-            size="sm"
-            rightIcon={<IoMdOpen />}
-            onClick={() => {
-              window.open(
-                ntuRatingData?.url + "&referrer=ntucourse_neo",
-                "_blank"
-              );
-              reportEvent("rating_panel", "click_external", ntuRatingData?.url);
+        <Flex
+          ref={contentContainerRef}
+          flexDirection={"column"}
+          sx={{
+            fontWeight: 400,
+            fontSize: "14px",
+            lineHeight: 1.4,
+            color: "#6f6f6f",
+            ...customScrollBarCss,
+          }}
+          pb="16px"
+          px="24px"
+          flexGrow={1}
+          overflowY={"auto"}
+        >
+          {content}
+          <Box ref={reachBottomDetecter} h="2px" bg="transparent" />
+        </Flex>
+        {scrollable && !inView ? (
+          <Box
+            w="100%"
+            h="36px"
+            position="absolute"
+            bottom={0}
+            sx={{
+              bg: "linear-gradient(180deg, rgba(246, 246, 246, 0.12) 0%, rgba(246, 246, 246, 0.599779) 24.59%, #F6F6F6 62.79%)",
+              borderRadius: "0px 0px 4px 4px",
             }}
-          >
-            前往 NTURating 查看該課程評價
-          </Button>
-        </Flex>
-      )}
-    </PanelWrapper>
+          />
+        ) : null}
+      </Flex>
+    </Skeleton>
   );
 }
 
-export function PTTReviewPanel({ courseId }: { readonly courseId: string }) {
-  const { user, isLoading: isAuth0Loading } = useUser();
-  const { data: pttReviewData, isLoading } = usePTTReviewData(courseId);
-  return (
-    <PanelWrapper
-      isLoading={isLoading || isAuth0Loading}
-      isUnauth={!user}
-      loadingFallback={
-        <LoadingPanel title="努力爬文中..." height="100%" pt={8} />
-      }
-    >
-      {!pttReviewData || !Array.isArray(pttReviewData) ? (
-        <PanelPlaceholder title="無相關貼文資訊" h="100%" pt="8" />
-      ) : (
-        <PTTContentRowContainer info={pttReviewData} height="150px" />
-      )}
-    </PanelWrapper>
-  );
+interface ChartDatum {
+  color: string;
+  comment: string;
+  title: string;
+  value: number;
 }
-
-export function PTTExamPanel({ courseId }: { readonly courseId: string }) {
-  const { user, isLoading: isAuth0Loading } = useUser();
-  const { data: pttExamData, isLoading } = usePTTExamData(courseId);
-  return (
-    <PanelWrapper
-      isLoading={isLoading || isAuth0Loading}
-      isUnauth={!user}
-      loadingFallback={
-        <LoadingPanel title="努力爬文中..." height="100%" pt={8} />
-      }
-    >
-      {!pttExamData || !Array.isArray(pttExamData) ? (
-        <PanelPlaceholder title="無相關貼文資訊" h="100%" pt="8" />
-      ) : (
-        <PTTContentRowContainer info={pttExamData} height="150px" />
-      )}
-    </PanelWrapper>
-  );
-}
+const getPercentage = (d: ChartDatum) => d.value;
+const donutChartColors = [
+  "#072164",
+  "#0D40C4",
+  "#1552EF",
+  "#4575F3",
+  "#7499F6",
+  "#A4BCF9",
+  "#D4DFFC",
+];
+const getPieColor = (index: number) => donutChartColors?.[index] ?? "#D4DFFC";
 
 export function SyllabusPanel({ courseId }: { readonly courseId: string }) {
   const { data: syllabusData, isLoading } = useSyllabusData(courseId);
-  const headingColor = useColorModeValue("heading.light", "heading.dark");
-  const textColor = useColorModeValue("text.light", "text.dark");
+  const pieChartData = syllabusData?.grade
+    ? (syllabusData?.grade
+        .sort((a, b) => b.value - a.value)
+        .filter((g) => g.color !== null) as ChartDatum[])
+    : undefined;
+
+  const leftBlocks: { section: SyllabusFieldName; h: number }[] = [
+    { section: "intro", h: 320 },
+    { section: "objective", h: 320 },
+    { section: "requirement", h: 320 },
+  ];
+  const rightBlocks: { section: SyllabusFieldName; h: number }[] = [
+    { section: "material", h: 240 },
+    { section: "specify", h: 240 },
+  ];
 
   return (
-    <PanelWrapper isLoading={isLoading} isUnauth={null}>
-      {!syllabusData || !syllabusData?.syllabus ? (
-        <PanelPlaceholder title="無課程大綱資訊" h="100%" pt="8" />
-      ) : (
-        <Flex
-          w="100%"
-          my="4"
-          flexDirection="column"
-          justifyContent="start"
-          alignItems="start"
-          wordBreak="break-all"
-          overflow="auto"
-        >
-          {syllabusFields.map((key) => {
-            const line = syllabusData.syllabus[key].split("\n");
-            const content = line.map((item, index) => {
-              return (
-                <Text
-                  key={syllabusTitle[key] + "content" + index}
-                  mb="0.5"
-                  fontSize="md"
-                  fontWeight="400"
-                  color={textColor}
-                >
-                  {item.trim()}
-                </Text>
-              );
-            });
-
-            return (
-              <React.Fragment key={syllabusTitle[key]}>
-                <Text
-                  flexBasis="20%"
-                  mb="1"
-                  fontSize="lg"
-                  fontWeight="600"
-                  color={headingColor}
-                >
-                  {syllabusTitle[key]}
-                </Text>
-                {syllabusData.syllabus[key] !== "" ? (
-                  content
-                ) : (
-                  <Text
-                    key={syllabusTitle[key] + "content"}
-                    fontSize="md"
-                    fontWeight="400"
-                    color="gray.500"
-                  >
-                    無
-                  </Text>
-                )}
-                <Divider my="4" />
-              </React.Fragment>
-            );
-          })}
-        </Flex>
-      )}
-    </PanelWrapper>
+    <Flex
+      w="100%"
+      justify={"space-between"}
+      mt={6}
+      flexDirection={{ base: "column", md: "row" }}
+      gap={{ base: 4, md: 0 }}
+    >
+      <Flex w={{ base: "100%", md: "48%" }} gap={4} flexDirection="column">
+        {leftBlocks.map((block, index) => {
+          const section = block.section;
+          const content = syllabusData?.syllabus?.[section] || null;
+          return (
+            <PanelBlock
+              key={section}
+              title={syllabusTitle[section]}
+              content={content}
+              blockH={block.h}
+              isLoading={isLoading}
+              index={index}
+            />
+          );
+        })}
+      </Flex>
+      <Flex w={{ base: "100%", md: "48%" }} gap={4} flexDirection="column">
+        <PanelBlock
+          title={"評量方式"}
+          blockH={320}
+          isLoading={isLoading}
+          index={3}
+          content={
+            !syllabusData || !syllabusData.grade || !pieChartData ? null : (
+              <Flex
+                my="4"
+                flexDirection={{ base: "column", lg: "row" }}
+                justifyContent="space-evenly"
+                alignItems="center"
+              >
+                <Box w="200px" h="200px">
+                  <DonutChart
+                    data={pieChartData}
+                    w={200}
+                    h={200}
+                    mt={30}
+                    mb={30}
+                    ml={30}
+                    mr={30}
+                  />
+                </Box>
+                <VStack mt={{ base: 4, lg: 0 }} align="start">
+                  {pieChartData.map((item, index) => {
+                    const line = item.comment.split("\n");
+                    const content = line.map((item, index) => {
+                      return (
+                        <Text
+                          key={"SyllabusDataContent" + index}
+                          mb="1"
+                          fontSize="md"
+                          fontWeight="400"
+                          color={"text.light"}
+                        >
+                          {item.trim()}
+                        </Text>
+                      );
+                    });
+                    return (
+                      <Popover key={"SyllabusData" + index} autoFocus={false}>
+                        <PopoverTrigger>
+                          <HStack justify="start" cursor="pointer">
+                            <Icon
+                              as={FaCircle}
+                              size="20px"
+                              color={getPieColor(index)}
+                            />
+                            <Text
+                              fontSize="lg"
+                              fontWeight="800"
+                              color={getPieColor(index)}
+                            >
+                              {item.value}%
+                            </Text>
+                            <Text
+                              fontSize="md"
+                              fontWeight="600"
+                              color={"heading.light"}
+                            >
+                              {item.title}
+                            </Text>
+                          </HStack>
+                        </PopoverTrigger>
+                        <PopoverContent>
+                          <PopoverArrow />
+                          <PopoverCloseButton />
+                          <PopoverHeader>
+                            <HStack>
+                              <Text
+                                fontSize="lg"
+                                fontWeight="800"
+                                color={getPieColor(index)}
+                              >
+                                {item.value}%
+                              </Text>
+                              <Text
+                                fontSize="md"
+                                fontWeight="600"
+                                color="gray.700"
+                              >
+                                {item.title}
+                              </Text>
+                            </HStack>
+                          </PopoverHeader>
+                          <PopoverBody>
+                            {item.comment === "" ? (
+                              <Text
+                                fontSize="md"
+                                fontWeight="400"
+                                color="gray.700"
+                              >
+                                無詳細資訊
+                              </Text>
+                            ) : (
+                              content
+                            )}
+                          </PopoverBody>
+                        </PopoverContent>
+                      </Popover>
+                    );
+                  })}
+                </VStack>
+              </Flex>
+            )
+          }
+        />
+        {rightBlocks.map((block, index) => {
+          const section = block.section;
+          const content = syllabusData?.syllabus?.[section] ?? null;
+          return (
+            <PanelBlock
+              key={section}
+              title={syllabusTitle[section]}
+              content={content}
+              blockH={block.h}
+              isLoading={isLoading}
+              index={index}
+            />
+          );
+        })}
+        <PanelBlock
+          title={"針對學生困難提供學生調整方式"}
+          content={null}
+          blockH={144}
+          isLoading={isLoading}
+          index={2}
+        />
+      </Flex>
+    </Flex>
   );
 }
 
-export function GradePolicyPanel({ courseId }: { readonly courseId: string }) {
-  const { data: syllabusData, isLoading } = useSyllabusData(courseId);
-  const headingColor = useColorModeValue("heading.light", "heading.dark");
-  const textColor = useColorModeValue("text.light", "text.dark");
-  const pieChartData = syllabusData?.grade
-    ? (syllabusData?.grade.filter((g) => g.color !== null) as {
-        title?: string | number;
-        color: string;
-        value: number;
-        key?: string | number;
-        [key: string]: unknown;
-      }[]) // Type def: https://github.com/toomuchdesign/react-minimal-pie-chart/blob/master/src/commonTypes.ts
-    : undefined;
+interface DonutChartProps<T> {
+  data: T[];
+  w: number;
+  h: number;
+  mt?: number;
+  mr?: number;
+  mb?: number;
+  ml?: number;
+}
+
+function DonutChart(props: DonutChartProps<ChartDatum>) {
+  const { data, w, h, mt = 0, mb = 0, mr = 0, ml = 0 } = props;
+  const innerWidth = w - ml - mr;
+  const innerHeight = h - mt - mb;
+  const radius = Math.min(innerWidth, innerHeight) / 2;
+  const centerY = innerHeight / 2;
+  const centerX = innerWidth / 2;
+  const top = centerY + mt;
+  const left = centerX + ml;
+  const donutThickness = 33;
+
   return (
-    <PanelWrapper
-      isLoading={isLoading}
-      isUnauth={null}
-      loadingFallback={
-        <LoadingPanel title="查看配分中..." height="100%" pt={8} />
-      }
-    >
-      {!syllabusData || !syllabusData.grade ? (
-        <PanelPlaceholder title="無評分相關資訊" h="100%" pt="8" />
-      ) : (
-        <Flex
-          my="4"
-          flexDirection={{ base: "column", lg: "row" }}
-          justifyContent="space-evenly"
-          alignItems="center"
+    <svg width={w} height={h}>
+      <Group top={top} left={left}>
+        <Pie
+          data={data}
+          pieValue={getPercentage}
+          outerRadius={radius}
+          innerRadius={radius - donutThickness}
+          cornerRadius={6}
+          padAngle={0.05}
         >
-          <Box w="200px" h="200px">
-            <PieChart
-              lineWidth={50}
-              label={({ dataEntry }) => dataEntry.value + "%"}
-              labelPosition={75}
-              data={pieChartData}
-              labelStyle={() => ({
-                fill: "white",
-                fontSize: "10px",
-                fontFamily: "sans-serif",
-              })}
-            />
-          </Box>
-          <VStack mt={{ base: 4, lg: 0 }} align="start">
-            {syllabusData.grade.map((item, index) => {
-              const line = item.comment.split("\n");
-              const content = line.map((item, index) => {
-                return (
-                  <Text
-                    key={"SyllabusDataContent" + index}
-                    mb="1"
-                    fontSize="md"
-                    fontWeight="400"
-                    color={textColor}
-                  >
-                    {item.trim()}
-                  </Text>
-                );
-              });
+          {(pie) => {
+            return pie.arcs.map((arc, index) => {
+              const chartDatum = arc.data;
+              // const [centroidX, centroidY] = pie.path.centroid(arc);
+              // const hasSpaceForLabel = arc.endAngle - arc.startAngle >= 0.1;
+              const arcPath = pie.path(arc);
+              const arcFill = getPieColor(index);
               return (
-                <Popover key={"SyllabusData" + index}>
-                  <PopoverTrigger>
-                    <HStack justify="start" cursor="pointer">
-                      <Icon
-                        as={FaCircle}
-                        size="20px"
-                        color={item.color ?? "current"}
-                      />
-                      <Text
-                        fontSize="lg"
-                        fontWeight="800"
-                        color={item.color ?? "current"}
-                      >
-                        {item.value}%
-                      </Text>
-                      <Text fontSize="md" fontWeight="600" color={headingColor}>
-                        {item.title}
-                      </Text>
-                    </HStack>
-                  </PopoverTrigger>
-                  <PopoverContent>
-                    <PopoverArrow />
-                    <PopoverCloseButton />
-                    <PopoverHeader>
-                      <HStack>
-                        <Text
-                          fontSize="lg"
-                          fontWeight="800"
-                          color={item.color ?? "current"}
-                        >
-                          {item.value}%
-                        </Text>
-                        <Text fontSize="md" fontWeight="600" color="gray.700">
-                          {item.title}
-                        </Text>
-                      </HStack>
-                    </PopoverHeader>
-                    <PopoverBody>
-                      {item.comment === "" ? (
-                        <Text fontSize="md" fontWeight="400" color="gray.700">
-                          無詳細資訊
-                        </Text>
-                      ) : (
-                        content
-                      )}
-                    </PopoverBody>
-                  </PopoverContent>
-                </Popover>
+                <g key={`arc-${chartDatum.title ?? ""}-${index}`}>
+                  <path d={`${arcPath}` ?? undefined} fill={arcFill} />
+                </g>
               );
-            })}
-          </VStack>
-        </Flex>
-      )}
-    </PanelWrapper>
+            });
+          }}
+        </Pie>
+      </Group>
+    </svg>
   );
 }
