@@ -138,7 +138,14 @@ const Th: React.FC<ThProps> = ({ children, ...rest }) => {
       }}
       {...rest}
     >
-      {children}
+      <Text
+        justifyContent={"center"}
+        sx={{
+          whiteSpace: "initial",
+        }}
+      >
+        {children}
+      </Text>
     </ChakraTh>
   );
 };
@@ -150,7 +157,7 @@ interface TdProps extends TableCellProps {
 const Td: React.FC<TdProps> = ({ children, alignStart, ...rest }) => {
   return (
     <ChakraTd
-      px={10}
+      px={{ base: 4, md: 10 }}
       sx={{
         border: "1px solid #CCCCCC",
         textAlign: alignStart ? "start" : "center",
@@ -158,6 +165,8 @@ const Td: React.FC<TdProps> = ({ children, alignStart, ...rest }) => {
         color: "#2d2d2d",
         fontWeight: 400,
         fontSize: "14px",
+        maxW: "170px",
+        overflow: "hidden",
       }}
       {...rest}
     >
@@ -172,7 +181,7 @@ function ContactTab() {
       questionType: "課程查詢相關疑義",
       office: "教務處 課務組",
       contactInfo: (
-        <Flex>
+        <Flex wrap={"wrap"}>
           曾俊綺{" "}
           <ELink href="mailto:tsengchi@ntu.edu.tw">tsengchi@ntu.edu.tw</ELink>
         </Flex>
@@ -182,7 +191,7 @@ function ContactTab() {
       questionType: "課程大綱建置相關問題",
       office: "教務處 課務組",
       contactInfo: (
-        <Flex>
+        <Flex wrap={"wrap"}>
           曾俊綺{" "}
           <ELink href="mailto:tsengchi@ntu.edu.tw">tsengchi@ntu.edu.tw</ELink>
         </Flex>
@@ -191,13 +200,17 @@ function ContactTab() {
     {
       questionType: "帳號相關問題",
       office: "計中 帳號室",
-      contactInfo: "Tel: 02-3366-5023、 02-3366-5022",
+      contactInfo: (
+        <Flex wrap={"wrap"}>
+          Tel: <Text>02-3366-5023</Text>、 <Text>02-3366-5022</Text>
+        </Flex>
+      ),
     },
     {
       questionType: "系統及其它相關問題",
       office: "教務處 資訊組",
       contactInfo: (
-        <Flex>
+        <Flex wrap={"wrap"}>
           陳建吉{" "}
           <ELink href="mailto:ajaxchen@ntu.edu.tw">ajaxchen@ntu.edu.tw</ELink>
         </Flex>
@@ -210,9 +223,24 @@ function ContactTab() {
         <Thead>
           <Tr>
             <Th w={{ base: "50%", md: "40%" }}>問題類別</Th>
-            <Th w={{ base: "0%", md: "20%" }} display={{ base: "none", md: "table-cell" }}>負責單位</Th>
-            <Th w={{ base: "0%", md: "40%" }} display={{ base: "none", md: "table-cell" }}>負責人及聯絡資訊</Th>
-            <Th w={{ base: "50%", md: "0%" }} display={{ base: "table-cell", md: "none" }}>負責單位/負責人/聯絡資訊</Th>
+            <Th
+              w={{ base: "0%", md: "20%" }}
+              display={{ base: "none", md: "table-cell" }}
+            >
+              負責單位
+            </Th>
+            <Th
+              w={{ base: "0%", md: "40%" }}
+              display={{ base: "none", md: "table-cell" }}
+            >
+              負責人及聯絡資訊
+            </Th>
+            <Th
+              w={{ base: "50%", md: "0%" }}
+              display={{ base: "table-cell", md: "none" }}
+            >
+              負責單位 / 負責人 / 聯絡資訊
+            </Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -220,8 +248,14 @@ function ContactTab() {
             <Tr key={`${row.questionType}-${row.office}-${index}`}>
               <Td alignStart>{row.questionType}</Td>
               <Td display={{ base: "none", md: "table-cell" }}>{row.office}</Td>
-              <Td alignStart display={{ base: "none", md: "table-cell" }}>{row.contactInfo}</Td>
-              <Td alignStart display={{ base: "table-cell", md: "none" }}>{row.office}<td/>{row.contactInfo}</Td>
+              <Td alignStart display={{ base: "none", md: "table-cell" }}>
+                {row.contactInfo}
+              </Td>
+              <Td alignStart display={{ base: "table-cell", md: "none" }}>
+                {row.office}
+                <td />
+                {row.contactInfo}
+              </Td>
             </Tr>
           ))}
         </Tbody>
@@ -332,7 +366,7 @@ function TutorialTab() {
       </Flex>
       <Box
         h="100%"
-        w= {{ base: "100%", md: "75%" }}
+        w={{ base: "100%", md: "75%" }}
         pl="7%"
         justifyContent={"column"}
         overflowY="scroll"
@@ -363,7 +397,10 @@ function TutorialTab() {
                     py: 6,
                   }}
                 >{`使用教學 - ${section.name}`}</Flex>
-                <Flex w={{ base: "95%", md: "80%" }} borderBottom="1px solid #000000" />
+                <Flex
+                  w={{ base: "95%", md: "80%" }}
+                  borderBottom="1px solid #000000"
+                />
                 {section.tutorial}
               </Flex>
             </SectionWrapper>
@@ -493,14 +530,8 @@ export default function HelpCenterPage() {
           content="課程相關說明文件 | NTUCourse Neo，全新的臺大選課網站。"
         />
       </Head>
-      <Flex
-        maxH="92vh"
-        w="100vw"
-        justifyContent={"center"}
-        alignItems="center"
-        py={6}
-      >
-        <Flex flexDirection={"column"} w={{ base: '100%', md: '80%' }}>
+      <Flex w="100vw" justifyContent={"center"} alignItems="center" py={6}>
+        <Flex flexDirection={"column"} w={{ base: "100%", md: "80%" }}>
           <CustomBreadcrumb
             ms={{ base: "16px", md: "0px" }}
             pageItems={[
@@ -519,7 +550,7 @@ export default function HelpCenterPage() {
             my={6}
             ms={{ base: "16px", md: "0px" }}
             sx={{
-              fontSize: { base: '20px', md: '24px' },
+              fontSize: { base: "20px", md: "24px" },
               lineHeight: "1.4",
             }}
           >
@@ -566,8 +597,8 @@ export default function HelpCenterPage() {
                   }
                   sx={{
                     fontWeight: 500,
-                    fontSize: { base: '14px', md: '16px' },
-                    lineHeight: { base: '0.8', md: '1.4' },
+                    fontSize: { base: "14px", md: "16px" },
+                    lineHeight: { base: "0.8", md: "1.4" },
                   }}
                 >
                   {tabItem.text}
@@ -576,7 +607,7 @@ export default function HelpCenterPage() {
             </Flex>
             <Flex
               flexDirection={"column"}
-              h="60vh"
+              h={{ base: "100%", md: "60vh" }}
               w="100%"
               overflowY={"hidden"}
               justifyContent={tab === "contact" ? "center" : "start"}
